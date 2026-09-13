@@ -1,0 +1,948 @@
+{
+  "at": "2026-09-13T18:14:56.842Z",
+  "checkVersion": "research-regression.v3",
+  "ledger": {
+    "confirmedProviderCostUsd": 6.101277399999998,
+    "reservedOrUncertainUsd": 3.199728
+  },
+  "runs": [
+    {
+      "id": "8eb2daef-4515-4a2b-bd3e-e767c2303618",
+      "videoId": "J25UuUqHT3Y",
+      "title": "美国正在衰落？Trump亲手拆掉旧秩序，凭什么还能赢？ | 美国霸权 | 伊朗 | 硅谷 | 世界秩序｜霍比特小灰",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v7.evidence-spans",
+      "sourceHash": "13928de04093c597127f82f9f0c7c4822d2e6b1294addc2b177fb363d65c44ff",
+      "confirmedProviderCostUsd": 0.1139685,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 68713,
+      "outputTokens": 1211,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 5,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1919,
+        "durationSeconds": 1919,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "a8d52914-826a-41e7-8069-7763c706af9d",
+      "videoId": "wkAqHlYL7bQ",
+      "title": "5 Stocks I'm Buying In June 2026",
+      "status": "failed",
+      "stage": "source-window",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v6.windowed-source",
+      "confirmedProviderCostUsd": 0.8966737499999999,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 1103215,
+      "outputTokens": 18470,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "error": "Window transcription has invalid absolute timestamps; review required.",
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Analysis is not completed. | Retained source missing or invalid."
+      }
+    },
+    {
+      "id": "aaa3879d-773a-40f0-841d-61c21aa52853",
+      "videoId": "briefing",
+      "title": "Daily synthesis 2026-09-14",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "briefing.v1",
+      "confirmedProviderCostUsd": 0.152835,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 18862,
+      "outputTokens": 13838,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0
+    },
+    {
+      "id": "8b69df28-0c85-47ff-b199-b23ab8a2bd1f",
+      "videoId": "kXYvRR7gV2E",
+      "title": "kXYvRR7gV2E",
+      "status": "failed",
+      "stage": "metadata",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "audio-review.v2",
+      "confirmedProviderCostUsd": 0.08499675,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 108739,
+      "outputTokens": 918,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "error": "[\n  {\n    \"origin\": \"string\",\n    \"code\": \"too_small\",\n    \"minimum\": 1,\n    \"inclusive\": true,\n    \"path\": [\n      \"verdicts\",\n      0,\n      \"reason_en\"\n    ],\n    \"message\": \"Too small: expected string to have >=1 characters\"\n  },\n  {\n    \"origin\": \"string\",\n    \"code\": \"too_small\",\n    \"minimum\": 1,\n    \"inclusive\": true,\n    \"path\": [\n      \"verdicts\",\n      1,\n      \"reason_en\"\n    ],\n    \"message\": \"Too small: expected string to have >=1 characters\"\n  },\n  {\n    \"origin\": \"string\",\n    \"c"
+    },
+    {
+      "id": "2157a9db-3f10-4063-bac8-00ddebf22da1",
+      "videoId": "J25UuUqHT3Y",
+      "title": "美国正在衰落？Trump亲手拆掉旧秩序，凭什么还能赢？ | 美国霸权 | 伊朗 | 硅谷 | 世界秩序｜霍比特小灰",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v5.source-escalation",
+      "sourceHash": "13928de04093c597127f82f9f0c7c4822d2e6b1294addc2b177fb363d65c44ff",
+      "confirmedProviderCostUsd": 0.2401965,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 202014,
+      "outputTokens": 20710,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 1,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1919,
+        "durationSeconds": 1919,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Macro context coverage is too sparse (minimum four distinct supported points; not a full semantic-recall score)."
+      }
+    },
+    {
+      "id": "8d4277a2-f296-4f84-b28c-d40ba6a5d464",
+      "videoId": "wkAqHlYL7bQ",
+      "title": "5 Stocks I'm Buying In June 2026",
+      "status": "failed",
+      "stage": "source",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v5.source-escalation",
+      "confirmedProviderCostUsd": 0.27022725,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 220563,
+      "outputTokens": 27948,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "error": "Model response was incomplete; refusing partial output.",
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Analysis is not completed. | Retained source missing or invalid."
+      }
+    },
+    {
+      "id": "67322d5c-5ac9-4552-98d4-42823797c56a",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v4.reasoning",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.3020865,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 90961,
+      "outputTokens": 18405,
+      "acceptedClaims": 6,
+      "acceptedKeyPoints": 6,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "f96f89cc-ec84-4c1e-90f2-d6258bdfabb5",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v4.reasoning",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.19967625,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 85155,
+      "outputTokens": 12637,
+      "acceptedClaims": 8,
+      "acceptedKeyPoints": 3,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "4fddbd1f-22e6-437f-8220-221c0b0faebc",
+      "videoId": "1_JCqHluJ9U",
+      "title": "Is VST Stock Worth Buying? - Here's What You Need to Know",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v4.reasoning",
+      "sourceHash": "d48d0b88677ba795b90af3bbf9df79a374ad7164d9b26f41188bb270505b0aa1",
+      "confirmedProviderCostUsd": 0.16359600000000002,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 52142,
+      "outputTokens": 9487,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 5,
+      "coverage": {
+        "ratio": 0.9460929772502473,
+        "coveredSeconds": 956.5,
+        "durationSeconds": 1011,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Missing explicit VST not-buying decision."
+      }
+    },
+    {
+      "id": "8f93e168-2eff-4ce9-8ac4-6709797a3995",
+      "videoId": "1_JCqHluJ9U",
+      "title": "Is VST Stock Worth Buying? - Here's What You Need to Know",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v4.reasoning",
+      "sourceHash": "d48d0b88677ba795b90af3bbf9df79a374ad7164d9b26f41188bb270505b0aa1",
+      "confirmedProviderCostUsd": 0.1596525,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 70426,
+      "outputTokens": 9556,
+      "acceptedClaims": 2,
+      "acceptedKeyPoints": 4,
+      "coverage": {
+        "ratio": 0.9460929772502473,
+        "coveredSeconds": 956.5,
+        "durationSeconds": 1011,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "22fe4787-2d48-4355-a0e5-2e62f37da941",
+      "videoId": "v824SHV6COE",
+      "title": "AI's Hidden Debt Problem Explained",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v4.reasoning",
+      "sourceHash": "55286fc8d67da0af5b3383c6ddfade1a2524354f11478916d13d864185b7be3c",
+      "confirmedProviderCostUsd": 0.20143799999999998,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 73452,
+      "outputTokens": 10140,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 5,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1352,
+        "durationSeconds": 1352,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "e486b5e8-e19a-4852-9d4b-7207c2c3d91c",
+      "videoId": "v824SHV6COE",
+      "title": "AI's Hidden Debt Problem Explained",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "pipelineVersion": "research.v4.reasoning",
+      "sourceHash": "55286fc8d67da0af5b3383c6ddfade1a2524354f11478916d13d864185b7be3c",
+      "confirmedProviderCostUsd": 0.1294275,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 63919,
+      "outputTokens": 6829,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 5,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1352,
+        "durationSeconds": 1352,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "9d0e0f79-1d58-43ba-9be4-60635bbb8e7c",
+      "videoId": "wkAqHlYL7bQ",
+      "title": "5 Stocks I'm Buying In June 2026",
+      "status": "failed",
+      "stage": "source-repair",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v4",
+      "pipelineVersion": "research.v4.reasoning",
+      "sourceHash": "54a452641dfb236d4361a7e80e89f00a0e77b3b1c353c5e4ebdab68b0e15a149",
+      "confirmedProviderCostUsd": 0.334821,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 220640,
+      "outputTokens": 429,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "coverage": {
+        "ratio": 0.8514238547255468,
+        "coveredSeconds": 2063,
+        "durationSeconds": 2423,
+        "status": "incomplete_or_unknown",
+        "audioVerified": false
+      },
+      "error": "Source could not be processed by the provider.",
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Analysis is not completed."
+      }
+    },
+    {
+      "id": "2fb29152-43b0-44f8-8451-05643f2c66f3",
+      "videoId": "J25UuUqHT3Y",
+      "title": "美国正在衰落？Trump亲手拆掉旧秩序，凭什么还能赢？ | 美国霸权 | 伊朗 | 硅谷 | 世界秩序｜霍比特小灰",
+      "status": "failed",
+      "stage": "source",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "confirmedProviderCostUsd": 0.069754,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 174778,
+      "outputTokens": 17373,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "error": "[\n  {\n    \"code\": \"custom\",\n    \"message\": \"Duplicate segment ID or reversed timestamp\",\n    \"path\": []\n  }\n]",
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Analysis is not completed. | Retained source missing or invalid. | Macro context coverage is too sparse (minimum four distinct supported points; not a full semantic-recall score)."
+      }
+    },
+    {
+      "id": "85385e9e-b2a8-47c2-8b9a-a86695353d25",
+      "videoId": "kXYvRR7gV2E",
+      "title": "kXYvRR7gV2E",
+      "status": "failed",
+      "stage": "metadata",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "audio-review.v1",
+      "confirmedProviderCostUsd": 0.2165505,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 108739,
+      "outputTokens": 5938,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "error": "Model response was incomplete; refusing partial output."
+    },
+    {
+      "id": "4f977c91-2bce-4a69-af94-d32eafe0a6c4",
+      "videoId": "3u24qyWjSVM",
+      "title": "3u24qyWjSVM",
+      "status": "failed",
+      "stage": "metadata",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "audio-review.v1",
+      "confirmedProviderCostUsd": 0,
+      "reservedOrUncertainUsd": 3.199728,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "error": "The operation was aborted due to timeout"
+    },
+    {
+      "id": "938bd4f9-cd86-4e53-a782-6c4519dc051d",
+      "videoId": "wg5GQPMrh_8",
+      "title": "咋全崩了？！NaNa说美股(2026.07.16)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "13caead7245ca97b0d74bbbe4a5045b56c10ae32acde52889a6bcfbb23f51cd8",
+      "confirmedProviderCostUsd": 0.12241224999999999,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 122640,
+      "outputTokens": 21597,
+      "acceptedClaims": 4,
+      "acceptedKeyPoints": 2,
+      "coverage": {
+        "ratio": 0.9699103713188221,
+        "coveredSeconds": 757.5,
+        "durationSeconds": 781,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "13a22fe4-460b-4271-87d2-431947c53862",
+      "videoId": "skc2T5fcoLY",
+      "title": "When Compounding Works Against You",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "c9020960903317721c39ebd9d5936bdbc7217c96fee464048606baf505c417a0",
+      "confirmedProviderCostUsd": 0.11927425,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 140609,
+      "outputTokens": 20177,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 7,
+      "coverage": {
+        "ratio": 0.9821826280623608,
+        "coveredSeconds": 882,
+        "durationSeconds": 898,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "731653f0-a3d2-4f36-a658-44f5eb0b8964",
+      "videoId": "1_JCqHluJ9U",
+      "title": "Is VST Stock Worth Buying? - Here's What You Need to Know",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "4e5ed79edea79c72cf15b2f95ba348a29c4fe656cd393ccf9a64cdd475b0cb5d",
+      "confirmedProviderCostUsd": 0.102285,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 134385,
+      "outputTokens": 18861,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 2,
+      "coverage": {
+        "ratio": 0.9460929772502473,
+        "coveredSeconds": 956.5,
+        "durationSeconds": 1011,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Missing explicit VST not-buying decision."
+      }
+    },
+    {
+      "id": "b067d857-5dd7-4461-b156-b64571796efb",
+      "videoId": "v824SHV6COE",
+      "title": "AI's Hidden Debt Problem Explained",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "c5a1cdcc7ca2dc951bb582a7274891a9126f49f5034b7d9915d4bdc9b787d789",
+      "confirmedProviderCostUsd": 0.1310105,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 186238,
+      "outputTokens": 22303,
+      "acceptedClaims": 1,
+      "acceptedKeyPoints": 3,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1352,
+        "durationSeconds": 1352,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Explanatory research must not invent a creator investment decision."
+      }
+    },
+    {
+      "id": "733207ac-8a79-4fdd-ba33-f19706322159",
+      "videoId": "kXYvRR7gV2E",
+      "title": "How I Research Stocks - Step-by-Step Fundamental Analysis",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "13a91669d0193189b87970b210e25920fba6945ea1e5850ea7334056b478ef3d",
+      "confirmedProviderCostUsd": 0.19193100000000002,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 59080,
+      "outputTokens": 11479,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 5,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1158,
+        "durationSeconds": 1158,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "521b89b4-fe92-42ba-adad-7114a13fbae2",
+      "videoId": "kXYvRR7gV2E",
+      "title": "How I Research Stocks - Step-by-Step Fundamental Analysis",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "13a91669d0193189b87970b210e25920fba6945ea1e5850ea7334056b478ef3d",
+      "confirmedProviderCostUsd": 0.09192150000000002,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 79612,
+      "outputTokens": 8590,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 6,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1158,
+        "durationSeconds": 1158,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "14805a09-09d0-476c-abdc-1613a7c77659",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "failed",
+      "stage": "critique",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.4052235,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 82967,
+      "outputTokens": 31197,
+      "acceptedClaims": 6,
+      "acceptedKeyPoints": 4,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "error": "Model response was incomplete; refusing partial output.",
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Analysis is not completed."
+      }
+    },
+    {
+      "id": "b4c145f3-0739-41ed-bc39-0d753525bfd7",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.14968425,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 90084,
+      "outputTokens": 21899,
+      "acceptedClaims": 8,
+      "acceptedKeyPoints": 1,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Macro/context coverage is too sparse (minimum three points)."
+      }
+    },
+    {
+      "id": "df0017f4-b7b8-4284-8117-fefae17a42ec",
+      "videoId": "wkAqHlYL7bQ",
+      "title": "5 Stocks I'm Buying In June 2026",
+      "status": "needs_review",
+      "stage": "source",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v3.chunked",
+      "sourceHash": "af320f46dce65aef1b3baea029e1780139bb314ba31e03e834adf79d48ed0945",
+      "confirmedProviderCostUsd": 0.08616675,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 220563,
+      "outputTokens": 20684,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "coverage": {
+        "ratio": 0.8514238547255468,
+        "coveredSeconds": 2063,
+        "durationSeconds": 2423,
+        "status": "incomplete_or_unknown",
+        "audioVerified": false
+      },
+      "error": "Transcript timestamps do not cover enough of the video. Import a complete timed transcript to continue; no synthesis was generated.",
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Analysis is not completed."
+      }
+    },
+    {
+      "id": "2d23cb7b-827b-4bfc-89a5-271cb2256135",
+      "videoId": "briefing",
+      "title": "Daily synthesis 2026-09-13",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "briefing.v1",
+      "confirmedProviderCostUsd": 0.153423,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 17076,
+      "outputTokens": 14201,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0
+    },
+    {
+      "id": "45772417-012b-4b31-a0c8-6c1642bc78c1",
+      "videoId": "wkAqHlYL7bQ",
+      "title": "5 Stocks I'm Buying In June 2026",
+      "status": "needs_review",
+      "stage": "source",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v2",
+      "sourceHash": "47c4c94d1e1dbdc053aabe76cefd24733f0212449ebe89ff469d45abe944c94b",
+      "confirmedProviderCostUsd": 0,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "coverage": {
+        "ratio": 0.7428807263722658,
+        "coveredSeconds": 1800,
+        "durationSeconds": 2423,
+        "status": "incomplete_or_unknown",
+        "audioVerified": false
+      },
+      "error": "Transcript timestamps do not cover enough of the video. Import a complete timed transcript to continue; no synthesis was generated.",
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Analysis is not completed."
+      }
+    },
+    {
+      "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v2",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.39807450000000005,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 81213,
+      "outputTokens": 30695,
+      "acceptedClaims": 7,
+      "acceptedKeyPoints": 5,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "85c3f64f-ed06-4664-b219-34ae97680eca",
+      "videoId": "kXYvRR7gV2E",
+      "title": "How I Research Stocks - Step-by-Step Fundamental Analysis",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v2",
+      "sourceHash": "13a91669d0193189b87970b210e25920fba6945ea1e5850ea7334056b478ef3d",
+      "confirmedProviderCostUsd": 0.08970525,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 77587,
+      "outputTokens": 8404,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 7,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1158,
+        "durationSeconds": 1158,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": true,
+        "score": 1,
+        "reason": "Passed retained-text regression checks; audio fidelity and semantic accuracy remain unverified."
+      }
+    },
+    {
+      "id": "b62875da-5c4f-4e15-8e4b-ef89dcfcfff6",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "pipelineVersion": "research.v2",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.11333115,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 69447,
+      "outputTokens": 17058,
+      "acceptedClaims": 6,
+      "acceptedKeyPoints": 1,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Missing separate VOO idea from the retained source. | Macro/context coverage is too sparse (minimum three points)."
+      }
+    },
+    {
+      "id": "f706e724-5be0-4382-9290-5f7fb3ac3a80",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "needs_review",
+      "stage": "critique",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v3",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.0485985,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 6308,
+      "outputTokens": 11698,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "error": "Worker was running the previous output schema; key_points were not retained. Excluded from complete-output evaluation. Paid stage cost retained.",
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Analysis is not completed. | Missing separate VOO idea from the retained source. | Missing separate QQQ idea from the retained source. | Missing Reddit position-monitoring discussion. | Macro/context coverage is too sparse (minimum three points)."
+      }
+    },
+    {
+      "id": "9a1580b9-3bb4-4d2a-9ef0-17100d625790",
+      "videoId": "kXYvRR7gV2E",
+      "title": "How I Research Stocks - Step-by-Step Fundamental Analysis",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v2",
+      "sourceHash": "8dd3ca0403827aa3f70e378f918df8aef35e5db6c9b15abfc43ebc517dc73069",
+      "confirmedProviderCostUsd": 0.05602475,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 115079,
+      "outputTokens": 13721,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 1158,
+        "durationSeconds": 1158,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Educational synthesis misses key-point coverage (minimum three topics)."
+      }
+    },
+    {
+      "id": "5418d83b-8d60-4539-b72f-42f354974b75",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v2",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.05521274999999999,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 31722,
+      "outputTokens": 8379,
+      "acceptedClaims": 4,
+      "acceptedKeyPoints": 0,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Missing separate VOO idea from the retained source. | Missing separate QQQ idea from the retained source. | Missing Reddit position-monitoring discussion. | Macro/context coverage is too sparse (minimum three points)."
+      }
+    },
+    {
+      "id": "22a99713-f00a-4a2f-b98e-bf66d3438ce7",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.5-flash",
+      "promptVersion": "evidence-first.web.v1",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.1997475,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 43249,
+      "outputTokens": 14986,
+      "acceptedClaims": 6,
+      "acceptedKeyPoints": 0,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Macro/context coverage is too sparse (minimum three points)."
+      }
+    },
+    {
+      "id": "b97f8aa8-472e-4ef1-bad1-ba5c0ad965dc",
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "status": "completed",
+      "stage": "complete",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v1",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a",
+      "confirmedProviderCostUsd": 0.051351,
+      "reservedOrUncertainUsd": 0,
+      "inputTokens": 37633,
+      "outputTokens": 6167,
+      "acceptedClaims": 5,
+      "acceptedKeyPoints": 0,
+      "coverage": {
+        "ratio": 0.9865074626865671,
+        "coveredSeconds": 991.4399999999999,
+        "durationSeconds": 1005,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "regression": {
+        "pass": false,
+        "score": 0,
+        "reason": "Missing separate VOO idea from the retained source. | Missing separate QQQ idea from the retained source. | Macro/context coverage is too sparse (minimum three points)."
+      }
+    }
+  ],
+  "limitations": [
+    "Automated checks use retained sources, not independent audio truth.",
+    "Reserved amounts are conservative bounds, not confirmed charges.",
+    "Costs exclude historical Python experiments and external transcript/market/email services.",
+    "The corpus is small and used for prompt improvement; it is not an unbiased held-out model leaderboard."
+  ]
+}

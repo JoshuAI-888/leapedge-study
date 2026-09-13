@@ -1,0 +1,37 @@
+import { writeFileSync, mkdirSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { db } from "../src/server/youtube-intelligence/store.ts";
+const tables = [
+  "yi_runs",
+  "yi_calls",
+  "yi_responses",
+  "yi_heartbeat",
+  "yi_documents",
+  "yi_events",
+  "yi_prompts",
+  "yi_discoveries",
+  "yi_shares",
+];
+const data: Record<string, Record<string, unknown>[]> = {};
+await db().transaction(async () => {
+  for (const table of tables)
+    data[table] = await db().prepare(`SELECT * FROM ${table}`).all();
+});
+const at = new Date().toISOString(),
+  payload = JSON.stringify(data),
+  hash = createHash("sha256").update(payload).digest("hex");
+mkdirSync("data/backups", { recursive: true });
+const path = `data/backups/research-${at.replaceAll(":", "-")}.json`;
+writeFileSync(path, JSON.stringify({ version: 1, at, sha256: hash, data }), {
+  mode: 0o600,
+});
+console.log(
+  JSON.stringify({
+    path,
+    sha256: hash,
+    counts: Object.fromEntries(
+      Object.entries(data).map(([k, v]) => [k, v.length]),
+    ),
+  }),
+);
+await db().close();

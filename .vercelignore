@@ -1,0 +1,15 @@
+.env*
+!.env.example
+data
+work
+.git
+node_modules
+.next
+leapstudy
+.venv
+__pycache__
+*.sqlite*
+
+evaluations/tooling/
+
+docs/audit/*.png
