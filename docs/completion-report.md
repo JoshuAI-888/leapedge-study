@@ -50,7 +50,7 @@ A live three-video daily synthesis produced five draft points; critique accepted
 
 ## Performance and operational limits
 
-FMP adjusted-price retrieval and matching-SPY arithmetic were verified. Historical replay, analysis-date comparison and first-observed forward tracking are separate modes. Unsupported instruments, low/unspecified conviction, conditional/avoid calls, missing common sessions and stale prices do not become zero-return wins.
+FMP adjusted-price retrieval and matching-SPY arithmetic were verified, and live issuer lookup verified VOO/SPY as USD AMEX listings. All three hosted performance modes were exercised. The current selected collection has three explicit-symbol calls, all ineligible under its direction/conviction rules, so every aggregate is null rather than a fabricated zero return. A populated live creator cohort is not yet demonstrated. Historical replay, analysis-date comparison and first-observed forward tracking are separate modes. Unsupported instruments, low/unspecified conviction, conditional/avoid calls, missing common sessions and stale prices do not become zero-return wins.
 
 A mature forward 90-day creator record requires actual accumulation; it cannot be manufactured during this build. The comparison is per-call descriptive performance, not a tradeable portfolio or a replication of unpublished LeapEdge rules.
 
@@ -59,3 +59,15 @@ The live test ledger has a cumulative US$15 ceiling within the agreed NZ$500/mon
 ## Handoff
 
 Source, tests, CI, prompt bundles, runbook and integration mapping are prepared for `JoshuAI-888/leapedge-study`. Private databases, provider responses, environment files and signed-in screenshots are excluded from the public repository. See `finradar-module-handoff.md` before merging into the destination application.
+
+## Final delivery evidence
+
+- Draft PR: https://github.com/JoshuAI-888/leapedge-study/pull/1
+- Implementation commit: `eb0cc22`; both push and PR CI runs passed.
+- Final Vercel deployment: `dpl_HC8JYGERH2MLSEFokuKRSH6piFH1`.
+- Hosted collection: six selected videos; final prompt v5; experimental windows disabled.
+- Test campaign ledger: US$6.1012774 confirmed provider cost plus US$3.199728 reserved for an ambiguous audio request. These are not combined into a claimed actual charge.
+- Final backup: 35 runs, 200 call records, 178 retained responses, 250 discoveries; SHA-256 `8c0d5450eefb1dd4c021cf21cd960a7843adff8c4db355560b3647fab1c9fc8f`.
+- Browser-native YouTube check exposed the transcript button but its panel remained loading in this session; no independent transcript was obtained. Creator chapter links identify META at 32:26, reinforcing the need to verify long-video source completeness separately from declared timestamp coverage.
+
+Remaining external acceptance gates: connect and test a reliable timed transcript source for the long-video case; confirm mailbox receipt and configure live signed delivery events. These are not claimed complete. The user has been asked to configure the existing Supadata adapter while the implementation and handoff are finished.

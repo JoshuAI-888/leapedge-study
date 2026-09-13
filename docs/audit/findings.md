@@ -1,3 +1,5 @@
+> Signed-in screenshots are retained privately in the working folder and excluded from the public repository.
+
 # LeapEdge workflow audit — 13 September 2026
 
 Fresh authenticated UI observations; screenshots captured in this directory. No credits consumed by this audit.

@@ -1,0 +1,27 @@
+{
+  "at": "2026-09-13T18:18:40.874Z",
+  "results": [
+    {
+      "symbol": "VOO",
+      "status": "verified",
+      "instrument": {
+        "symbol": "VOO",
+        "currency": "USD",
+        "exchange": "AMEX",
+        "name": "Vanguard S&P 500 ETF",
+        "verifiedAt": "2026-09-13T18:18:38.470Z"
+      }
+    },
+    {
+      "symbol": "SPY",
+      "status": "verified",
+      "instrument": {
+        "symbol": "SPY",
+        "currency": "USD",
+        "exchange": "AMEX",
+        "name": "State Street SPDR S&P 500 ETF",
+        "verifiedAt": "2026-09-13T18:18:39.878Z"
+      }
+    }
+  ]
+}
