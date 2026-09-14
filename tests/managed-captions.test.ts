@@ -14,6 +14,7 @@ import {
   nativeTranscript,
   normalizeTranscriptApi,
   SourcePending,
+  captionLanguageMatches,
 } from "../src/server/youtube-intelligence/transcripts.ts";
 import { doc, put } from "../src/server/youtube-intelligence/research-store.ts";
 const payload = (id: string) => ({
@@ -30,16 +31,19 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
     let primary = 0,
       secondary = 0;
     globalThis.fetch = async (url) => {
-      if (String(url).includes("supadata")) {
+      if (String(url).includes("transcriptapi")) {
         primary++;
         return new Response("", { status: 503 });
       }
       secondary++;
-      return Response.json(payload("testvideo01"));
+      return Response.json({
+        lang: "en",
+        content: [{ text: "Do not buy.", offset: 0, duration: 8000 }],
+      });
     };
     assert.equal(
       (await nativeTranscript("testvideo01"))?.source_kind,
-      "native_captions_transcriptapi",
+      "native_captions_supadata",
     );
     await nativeTranscript("testvideo01");
     assert.equal(primary, 1);
@@ -138,6 +142,41 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
     const recovered = await doc<any>("managedCaptionAttempt", retryId);
     assert.equal(recovered.number, 2);
     assert.equal(recovered.credits, 2);
+    globalThis.fetch = async () =>
+      Response.json({
+        lang: "yue",
+        content: [{ text: "唔好買", offset: 0, duration: 5000 }],
+      });
+    assert.equal(
+      await managedTranscript("testvideo07", "supadata", { language: "zh-CN" }),
+      null,
+    );
+    assert.equal(
+      (
+        await doc<any>(
+          "managedCaptionAttempt",
+          "supadata:native:testvideo07:zh",
+        )
+      )?.status,
+      "language_mismatch",
+    );
+    assert.equal(
+      await doc("managedCaption", "supadata:native:testvideo07:zh"),
+      null,
+    );
+    await put("managedCaption", "supadata:native:testvideo08:zh", {
+      source: {
+        source_kind: "native_captions_supadata",
+        language: "yue",
+        segments: [
+          { id: "s1", text: "唔好買", start_seconds: 0, end_seconds: 5 },
+        ],
+      },
+    });
+    assert.equal(
+      await managedTranscript("testvideo08", "supadata", { language: "zh" }),
+      null,
+    );
     process.env.YTI_TRANSCRIPT_CREDIT_BUDGET = "0";
     await assert.rejects(
       managedTranscript("testvideo05", "transcriptapi"),
@@ -162,4 +201,10 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
     delete process.env.TRANSCRIPTAPI_API_KEY;
     delete process.env.YTI_TRANSCRIPT_CREDIT_BUDGET;
   }
+});
+test("Caption language validation accepts regional variants, rejects different or unreported languages", () => {
+  assert.equal(captionLanguageMatches("zh-CN", "zh"), true);
+  assert.equal(captionLanguageMatches("zh", "yue"), false);
+  assert.equal(captionLanguageMatches("en", undefined), false);
+  assert.equal(captionLanguageMatches(undefined, "yue"), true);
 });

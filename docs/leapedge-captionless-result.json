@@ -1,0 +1,21 @@
+{
+  "id": "captionless-CMjt6f4eVdA",
+  "at": "2026-09-14T09:30:59.832Z",
+  "videoId": "CMjt6f4eVdA",
+  "url": "https://leapedge.app/analyses/CMjt6f4eVdA__keypoints.v1-insights.v3-critique.v1",
+  "status": "ready",
+  "ideas": 4,
+  "keyPoints": 9,
+  "displayedCostUsd": 0.03,
+  "tokensDisplay": "88.6k",
+  "modelsDisplay": "gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite",
+  "prompt": "keypoints.v1-insights.v3-critique.v1",
+  "creditUsage": "One new agent-initiated analysis. UI showed 17 remaining before submission and 16 of 20 remaining after completion.",
+  "findings": [
+    "All three native providers returned unavailable for this video in all three rounds.",
+    "LeapEdge produced a report; this establishes observed availability, not full transcription accuracy.",
+    "No quote timestamp links were present in the inspected accessibility tree; screenshot showed the first two quote cards without timestamps.",
+    "Apple resistance range 258–260 is labeled Entry even though the supporting quote describes resistance; this is an internal evidence/price-role concern.",
+    "SPY and Tesla actions describe managing existing holdings; do not automatically label them new buys."
+  ]
+}

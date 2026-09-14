@@ -1150,6 +1150,41 @@ export function ResearchApp() {
                   <Json value={e} />
                 </details>
               ))}
+              <h2>Transcript accuracy against audio</h2>
+              <p>
+                Reviewed audio excerpts measure word or character errors,
+                financial details and timestamp accuracy. Unreviewed references
+                remain pending and receive no accuracy score. These checks are
+                separate from successful caption retrieval and model critique.
+              </p>
+              {data.transcriptAccuracy.length === 0 && (
+                <p>No audio-reference benchmark has been recorded yet.</p>
+              )}
+              {data.transcriptAccuracy.map((e) => (
+                <details key={String(e.id)}>
+                  <summary>
+                    {String(e.at)} · {String(e.scored)} scored ·{" "}
+                    {String(e.pending)} pending audio review
+                  </summary>
+                  <p>{String(e.limitation)}</p>
+                  <Json value={e} />
+                </details>
+              ))}
+              <h2>Transcript provider comparisons</h2>
+              <p>
+                Retained request outcomes, response times and source
+                differences. Matching transcripts do not establish audio
+                accuracy. Repeat rounds may include provider-side caching.
+              </p>
+              {data.captionBenchmarks.map((e) => (
+                <details key={String(e.id || e.at)}>
+                  <summary>
+                    {String(e.at)} ·{" "}
+                    {String(e.runtime || "Cloud retrieval benchmark")}
+                  </summary>
+                  <Json value={e} />
+                </details>
+              ))}
               <h2>Automated regression evaluations</h2>
               <p>
                 Promptfoo checks frozen model outputs against retained evidence
@@ -1282,7 +1317,9 @@ export function ResearchApp() {
                           <p>
                             {r.promptVersion} · ${r.cost.toFixed(4)} USD
                           </p>
-                          <a href={`/?run=${r.id}`}>Open complete analysis ↗</a>
+                          <a href={`/?run=${r.id}`}>
+                            Open complete analysis ↗
+                          </a>
                           <button
                             className="secondary"
                             disabled={busy}
@@ -1463,7 +1500,7 @@ export function ResearchApp() {
                     digestHour: Number(f.digestHour),
                     digestEnabled: f.digestEnabled === "on",
                     autoPullEnabled: f.autoPullEnabled === "on",
-                    windowedTranscription:f.windowedTranscription === "on",
+                    windowedTranscription: f.windowedTranscription === "on",
                   });
                 }}
               >
@@ -1530,7 +1567,19 @@ export function ResearchApp() {
                     />
                   </label>
                 </div>
-                <label><input name="windowedTranscription" type="checkbox" defaultChecked={p.windowedTranscription}/>{" "}Experimental long-video transcription windows</label><p>Off by default: our long-video test produced inconsistent timing. Use a verified timed transcript when source quality is critical.</p>
+                <label>
+                  <input
+                    name="windowedTranscription"
+                    type="checkbox"
+                    defaultChecked={p.windowedTranscription}
+                  />{" "}
+                  Experimental long-video transcription windows
+                </label>
+                <p>
+                  Off by default: our long-video test produced inconsistent
+                  timing. Use a verified timed transcript when source quality is
+                  critical.
+                </p>
                 <label>
                   <input
                     name="autoPullEnabled"

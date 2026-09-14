@@ -6,7 +6,7 @@ Updated 14 September 2026. Product scope is the standalone personal **YouTube In
 |---|---|---|
 | Video analysis and library | Durable queue, stage/status history, source import/fallback, reports, JSON export, reopen by ID | Live English/Chinese runs; invalid/incomplete source fails closed. Universal source success is not established. |
 | English synthesis and original citations | Exact source spans, original quotes, translated quotes, ticker/number validation, semantic critique | Live errors retained. Stops and existing-holder instructions are distinguished from new entries. Generated timestamps remain unverified estimates. |
-| Source acquisition | YouTube.js first; optional Supadata native-only adapter; Gemini video fallback; bounded gap-repair and time-window experiments (disabled by default after failed live tests) | Free extraction failed on the sampled hosted/network paths. Paid Supadata has no supplied account and was tested with controlled responses only. |
+| Source acquisition | TranscriptAPI native first, Supadata native backup, free YouTube.js, enabled capped Supadata generation, then Gemini fallback | Cloud native retrieval 40/50 after retries; ten missing tracks independently unavailable locally. Supadata generation returned 403; engineering review pending. No universal source-success claim. |
 | Channels | Follow/unfollow, favourites, latest/older discovery, opt-in automatic analysis, channel details | Five real channels resolved; 250 uploads retained. Collapsible upload lists reduce scrolling. Failed handle replaced by observed canonical channel ID. |
 | Today and daily archive | Local-date evidence digest, cross-source synthesis, independent critique, archive | Actual multi-report synthesis tested; deterministic grouped evidence remains available separately. |
 | Saved ideas and watchlist | Save, notes, open/done/dismissed, ticker watchlist | Hosted persistence/state transitions verified. These are research records, not broker orders. |
@@ -27,3 +27,7 @@ Updated 14 September 2026. Product scope is the standalone personal **YouTube In
 A completed feature is not a guarantee that every generated result equals or exceeds LeapEdge. The comparison corpus is small; missing context and source-fidelity failures are documented in the completion report and lab. LeapEdge's exact prompts, transcript provider, scheduling internals and pricing accounting are not available from UI metadata.
 
 The intended quality differences are stricter evidence and price-role handling, visible rejected claims, reproducible prompt/source versions and honest missing-data states. Remaining source or synthesis shortcomings are recorded as failed/inconclusive results, not silently relabeled as parity.
+
+## 14 September follow-up
+
+Transcript accuracy scoring now has a separate pending/scored record in Settings. Audio-review packets remain unverified until a reviewer independently checks speech and boundaries. Candidate prompt v6 is an experiment; v5 remains the default. Provider order follows the observed native-caption latency results. See `transcript-accuracy-benchmark.md` and `leapedge-source-disclosure.md`.

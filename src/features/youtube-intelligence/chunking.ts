@@ -35,12 +35,23 @@ export function uniqueClaims(claims: ClaimData[]) {
   return claims.filter((c) => {
     const key = JSON.stringify([
       c.thesis_en,
+      c.instrument_as_spoken,
       c.ticker,
+      c.ticker_explicit,
       c.stance,
       c.horizon_en,
+      c.creator_conviction,
       c.conditions_en,
+      c.risks_en,
       c.levels,
-      c.evidence.map((e) => [e.segment_id, e.quote_original]).sort(),
+      c.evidence
+        .map((e) => [
+          e.segment_id,
+          e.end_segment_id,
+          e.quote_original,
+          e.quote_translation_en,
+        ])
+        .sort(),
     ]);
     if (seen.has(key)) return false;
     seen.add(key);

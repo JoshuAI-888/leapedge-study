@@ -14,6 +14,7 @@
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "typecheck": "next typegen && tsc --noEmit",
     "eval:replay": "node --experimental-strip-types scripts/evaluate.ts",
+    "eval:transcripts": "node --experimental-strip-types scripts/transcript-accuracy.ts",
     "test:captions": "node --experimental-strip-types scripts/caption-smoke.ts"
   },
   "dependencies": {

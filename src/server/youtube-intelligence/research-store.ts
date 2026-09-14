@@ -372,6 +372,8 @@ export async function researchSnapshot() {
       limitations: string;
     }>("reference"),
     audioReviews: await readDocs("audioReview"),
+    transcriptAccuracy: await readDocs("transcriptAccuracy"),
+    captionBenchmarks: await readDocs("captionBenchmark"),
     experiments: await readDocs("experiment"),
     evaluations: await readDocs<{
       id: string;

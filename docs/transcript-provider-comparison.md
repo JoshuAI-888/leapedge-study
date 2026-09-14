@@ -1,48 +1,45 @@
-# Transcript provider decision — 13 September 2026
+# Transcript provider comparison and captionless test
 
-Recommendation: trial Supadata Free as the first native-caption provider, with TranscriptAPI.com as the cost challenger. Do not buy an annual plan or turn on automatic credit recharge before a same-video test. This is a product-fit recommendation, not a measured reliability ranking. No paid transcript provider has yet been tested with a live key in this project.
+14 September 2026. Six selected videos, three rounds, 54 live requests from the same local client to cloud APIs. Four had retrievable captions; two were previously unavailable through both managed providers and the free local library. This is repeatability evidence in one short window, not an uptime study. No local response cache was used; upstream caches can still affect timing.
 
-## Current advertised costs (USD, before taxes)
+| Native provider | Successful responses | Median successful request | Range | Captionless success |
+|---|---:|---:|---:|---:|
+| TranscriptAPI | 12/18 | 0.768 sec | 0.382–1.683 sec | 0/6 |
+| Tapline | 12/18 | 1.205 sec | 0.385–4.400 sec | 0/6 |
+| Supadata | 12/18 | 2.882 sec | 2.415–24.412 sec | 0/6 |
 
-| Option | Entry / allowance | Evidence and language features | Main tradeoff |
-|---|---|---|---|
-| Supadata | Free: 100 credits/month. Pro: $17 for 3,000 credits/month. Mega: $47 for 30,000. The $5/300-credit Basic tier is described as annual-only in the pricing footnote. | Native-only mode; timestamped original-language text; separate generation mode; asynchronous jobs. Native request: 1 credit; generation: 2 credits/minute. | An unavailable native-caption lookup (206) still costs 1 credit. Monthly credits expire. The current adapter is already wired and mock-tested. |
-| TranscriptAPI.com (not the separate .io business) | 100 free trial credits. $5/month for 1,000 successful requests; monthly top-ups $2.50/1,000. | Timestamped text with start/duration, language priority, channel/search/playlist endpoints. | Lower YouTube-only cost; limited independent evidence found. Missing captions require a separate transcription fallback. |
-| ScrapeCreators | 100 free credits. $47 prepaid for 25,000 credits, no expiry. | YouTube caption segments with startMs/endMs and language selection; broad social APIs. Caption endpoint: 1 credit; eligible cached responses: 0. | Higher initial outlay, useful for irregular usage or future broader social research. No generated-audio fallback is established by the transcript endpoint documentation reviewed. |
-| Self-managed youtube-transcript-api | Open-source software has no API charge; proxies, compute and maintenance are separate. | Native and automatic captions, timestamps, language/track selection. | Maintainer documents cloud-IP blocking. More operational work than a hosted provider; not recommended as this Vercel app's primary source. |
+The success column means a nonempty, structurally valid transcript. **One Supadata success returned `lang=yue` despite requesting `zh-CN`; only 11/12 successes matched requested primary-language metadata.** The next two responses returned `zh`. This is a language-selection consistency failure, not a transport error. The production adapter now withholds mismatched fresh and cached tracks. Tapline does not echo a returned language in this response schema; its requested language alone is not proof of original-language selection.
 
-Sources: [Supadata pricing](https://supadata.ai/pricing), [Supadata transcript documentation](https://github.com/supadata-ai/supadata-docs/blob/main/get-transcript.mdx), [TranscriptAPI.com pricing](https://transcriptapi.com/), [TranscriptAPI.com API](https://transcriptapi.com/docs/api/), [ScrapeCreators pricing](https://scrapecreators.com/), [ScrapeCreators transcript endpoint](https://docs.scrapecreators.com/v1/youtube/video/transcript/), [OSS maintainer documentation](https://github.com/jdepoix/youtube-transcript-api).
+On the AI-debt video and short control, all providers returned the same text after whitespace normalization. Tapline and TranscriptAPI also agreed on the Mandarin video. On the long Pronk video, text differed: Supadata differed from TranscriptAPI by three commas, while Tapline had many punctuation/case differences and some wording differences. These comparisons do not establish which transcript matches audio. No audio accuracy score has been asserted.
 
-## Volume examples
+Tapline with `language=orig` initially returned 404 for the long English video. The documented explicit `en` request succeeded. This separate initial probe is not included in the 54-request table. Production integration must not rely on that orig behavior without further validation.
 
-For 1,000 native transcripts in one month, excluding retries, metadata and generation: Supadata Pro costs $17; TranscriptAPI.com monthly costs $5; ScrapeCreators requires a $47 upfront pack, of which about $1.88 of credits would be consumed. The last number is consumed credit value, not the invoice.
+## LeapEdge captionless comparison
 
-For 10,000 native transcripts: Supadata Mega $47; TranscriptAPI.com monthly $27.50; ScrapeCreators consumes $18.80 of its $47 prepaid pack. These are calculated examples, not measured bills.
+Video: `CMjt6f4eVdA`, a Chinese Alpha-channel weekly review. All three native APIs returned unavailable in all three rounds. LeapEdge completed an analysis with four ideas, nine key points, 88.6k displayed tokens, and $0.030 displayed cost. This used one new LeapEdge analysis allowance.
 
-Supadata generated transcription of a 40-minute video consumes 80 credits, versus one native-caption credit. Therefore 100 such generated videos require 8,000 credits. This is why native and generated paths need separate budgets. We do not need provider translation: preserve original captions and synthesize English in our existing model pipeline.
+LeapEdge therefore demonstrated report availability where our native providers did not. Its public fallback description is consistent with multimodal video transcription, but the UI does not prove which internal source path ran. No quote timestamp links appeared in the inspected accessibility tree, and the visible first two quote cards had no timestamp controls. Apple's 258–260 resistance zone appeared as an Entry despite the displayed quote describing resistance. Preserve this discrepancy in evaluations; do not reproduce it to improve superficial parity.
 
-## User feedback and confidence
+Reference: https://leapedge.app/analyses/CMjt6f4eVdA__keypoints.v1-insights.v3-critique.v1
 
-Supadata: a public evaluator reports duplicated text and weak sentence structuring; the report is marked In Review. It does not establish a population failure rate or conclusively identify native versus generated mode. Another user reports needing separate title/channel and transcript requests. Our existing YouTube metadata adapter avoids that extra Supadata lookup. [Duplication report](https://feedback.supadata.ai/p/consistent-duplicated-lines-in-transcripts), [metadata request feedback](https://feedback.supadata.ai/p/combined-requests).
+## Costs and integration decision
 
-ScrapeCreators: G2's seller page displayed 4.6/5 from 382 reviews at inspection. Visible users praise setup, cost and reliability. These concern the broader product, not a controlled Chinese-caption evaluation. Visible examples are seller-invited; the vendor also offers credits for honest G2 feedback. Treat these as adoption/support signals, not proof of transcript accuracy. [G2](https://www.g2.com/sellers/scrape-creators), [vendor incentive disclosure](https://scrapecreators.com/).
+Tapline documents two credits per subtitle request, zero credits for failed requests, and 500 free starter credits. The table used at most 24 successful-request credits. Its Starter tier is $49/month, or $39/month equivalent billed annually, for 100,000 monthly credits. Supadata's test allowance accounting is at most 18 credits and TranscriptAPI's 12; these are documented request-cost bounds, not reconciled invoices.
 
-TranscriptAPI.com: searched independent reviews and developer feedback, but found little sufficiently detailed independent evidence to rank multilingual accuracy or long-term uptime. Much discoverable content is vendor-authored. Its low price makes it worth testing, not automatically more reliable. No star score is assigned.
+Keep TranscriptAPI first. Tapline is a plausible additional native-caption backup, but adds no captionless coverage in this test. It is tested through a standalone harness and has an SRT normalizer; it is **not enabled in the production fallback chain**. Supadata remains the configured backup, now with language guards. Its generated-media issue is still with engineering.
 
-The OSS maintainer's cloud-blocking warning is direct operational evidence; it explains why a locally working library may fail after deployment.
+Sources: https://tapline.sh/youtube-transcript-api and https://api.tapline.sh/openapi.json
 
-## Acceptance experiment
+## BibiGPT
 
-Use the same 20 public videos against Supadata and TranscriptAPI.com: eight Chinese-language finance, eight English finance, two long videos over one hour, two known caption-unavailable cases. Reuse existing LeapEdge comparisons where possible; this provider test does not require new LeapEdge credits. Include the current NaNa, Plain Bagel and partial-source Pronk examples.
+BibiGPT documents `GET /api/v1/getSubtitle`, original-language selection, timestamped subtitle arrays, and async summary tasks for longer videos. For integration, use raw subtitles, not polished-text/article endpoints. A normalizer now rejects preview-only, wrong-video and malformed-timestamp payloads, but it has only controlled-response tests until API access is supplied.
 
-Record each provider attempt, video duration, selected language/track, raw response hash, source kind, normalized segments, credits, latency and error. Preserve immutable originals and distinguish automatic captions from manually authored captions where the provider exposes that fact. Do not label all native captions as human-verified.
+The web attempt reached a login requirement. An API key was requested; no account was created and no subscription purchased. Documentation warns that API behavior may differ from the website. Its machine-readable pricing page is dated May 2026 and lists API credit packs starting at $20 for 2,000 credits, but does not define a reliable credit-to-transcription-minute conversion there. Confirm live account pricing and API quota before purchase. Website membership is not sufficient evidence of funded API access.
 
-Assess retrieval rate among known-caption videos, median/p95 latency, timestamp order/overlaps, duplicated lines, missing beginning/end passages and cost per usable transcript. Manually listen to sample passages and all extracted ticker/price quotations; transcript-to-transcript agreement alone cannot establish audio accuracy. First run the same synthesis prompt/model on each retrieved source so the source variable is isolated; only then compare model/prompt changes.
+Sources: https://bibigpt.co/developers , https://docs.bibigpt.co/api-reference/introduction , https://docs.bibigpt.co/api-reference/open/only-returns-the-video-subtitles-array-in-detail , https://bibigpt.co/pricing.md
 
-Proposed gate: no silently truncated source accepted; no fabricated timing or undetected ticker/price changes in audited evidence; all expected no-caption failures correctly identified. The sample is a pilot, not a production SLA. Store per-case outcomes and reviewer observations in Evaluation Lab. Move to Supadata Pro only if the free trial passes and usage exceeds the free quota. Select TranscriptAPI.com instead if it matches the evidence checks with better cost/latency.
+## Reproduction
 
-## Architecture fit
+`node --env-file=.env scripts/benchmark-transcript-providers.mjs` makes at most 18 requests per configured provider across three rounds and saves raw data under ignored `data/provider-benchmark`. It skips already recorded attempts and interrupted/uncertain submissions. No automatic top-up or new subscription is included. Start a separate explicitly named campaign when a later time window is needed; do not silently overwrite earlier evidence.
 
-Vercel TypeScript worker steps call provider HTTPS endpoints; Neon stores immutable transcript snapshots, provenance, analyses and spend events. No additional Python host is needed. Keep YouTube Data API for metadata/discovery. A native-caption miss can enter the separately budgeted multimodal fallback, visibly labelled generated and subject to stronger evidence checks. Never assume a provider's generated transcript is verbatim audio truth.
-
-The exact transcript vendor behind LeapEdge is unknown. Its developer statement and pipeline metadata do not identify a supplier; this recommendation does not claim to reproduce undisclosed infrastructure.
+Structured results: `three-provider-repeat-results.json`. Audio review protocol: `transcript-accuracy-benchmark.md`. Settings retains provider comparisons separately from audio-reference accuracy and synthesis A/B results.

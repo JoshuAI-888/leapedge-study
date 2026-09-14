@@ -8,6 +8,12 @@ import {
 import { doc, docs, put } from "./research-store.ts";
 export class SourcePending extends Error {}
 export type CaptionProvider = "supadata" | "transcriptapi";
+export function captionLanguageMatches(requested?: string, returned?: string) {
+  if (!requested) return true;
+  const primary = (value: string) =>
+    value.toLowerCase().replace(/^asr-/, "").split(/[-_]/)[0];
+  return !!returned && primary(requested) === primary(returned);
+}
 const Native = z.object({
   lang: z.string().optional(),
   content: z
@@ -125,8 +131,30 @@ export async function managedTranscript(
   const language = generated ? undefined : options.language?.split("-")[0];
   const id = `${provider}:${generated ? "generate" : "native"}:${videoId}:${language || "original"}`;
   const cached = await doc<{ source: SourceData }>("managedCaption", id);
-  if (cached) return Source.parse(cached.source);
   let prior = await doc<Attempt>("managedCaptionAttempt", id);
+  const acceptLanguage = async (
+    source: SourceData,
+    record: object = prior || {},
+  ) => {
+    if (captionLanguageMatches(language, source.language)) return true;
+    await put("managedCaptionAttempt", id, {
+      ...record,
+      id,
+      provider,
+      videoId,
+      mode: generated ? "generate" : "native",
+      status: "language_mismatch",
+      requestedLanguage: language,
+      returnedLanguage: source.language || null,
+      reason:
+        "Returned caption language differs from requested language; source withheld and reservation retained.",
+    });
+    return false;
+  };
+  if (cached) {
+    const source = Source.parse(cached.source);
+    return (await acceptLanguage(source)) ? source : null;
+  }
   const headers: Record<string, string> =
     provider === "supadata"
       ? { "x-api-key": key }
@@ -167,6 +195,7 @@ export async function managedTranscript(
     if (value.status !== "completed")
       throw new SourcePending("Waiting for transcript provider.");
     const source = normalize(value.result || value);
+    if (!(await acceptLanguage(source))) return null;
     await put("managedCaption", id, {
       source,
       at: new Date().toISOString(),
@@ -316,6 +345,7 @@ export async function managedTranscript(
       throw new SourcePending("Waiting for transcript provider.");
     }
     const source = normalize(value);
+    if (!(await acceptLanguage(source, record))) return null;
     await put("managedCaption", id, {
       source,
       at: new Date().toISOString(),
@@ -340,7 +370,7 @@ export async function nativeTranscript(
   videoId: string,
   options: { duration?: number; language?: string } = {},
 ): Promise<SourceData | null> {
-  for (const provider of ["supadata", "transcriptapi"] as const) {
+  for (const provider of ["transcriptapi", "supadata"] as const) {
     try {
       const source = await managedTranscript(videoId, provider, options);
       if (source) return source;

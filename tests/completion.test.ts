@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import {
   sourceChunks,
   missingRanges,
+  uniqueClaims,
 } from "../src/features/youtube-intelligence/chunking.ts";
+import type { ClaimData } from "../src/features/youtube-intelligence/contracts.ts";
 import {
   directionChanges,
   trendSummary,
@@ -11,6 +13,40 @@ import {
 } from "../src/features/youtube-intelligence/trends.ts";
 import { scoreCall } from "../src/features/youtube-intelligence/performance.ts";
 import { postgresSQL } from "../src/server/youtube-intelligence/database.ts";
+test("Deduplication never erases different risks, conviction or evidence boundaries", () => {
+  const c: ClaimData = {
+    thesis_en: "Creator holds the company",
+    instrument_as_spoken: "Example",
+    ticker: null,
+    ticker_explicit: false,
+    stance: "hold",
+    horizon_en: null,
+    creator_conviction: "unspecified",
+    conditions_en: [],
+    risks_en: [],
+    levels: [],
+    evidence: [
+      {
+        segment_id: "s1",
+        quote_original: "I hold it",
+        quote_translation_en: "I hold it",
+      },
+    ],
+  };
+  assert.equal(uniqueClaims([c, structuredClone(c)]).length, 1);
+  assert.equal(uniqueClaims([c, { ...c, risks_en: ["Debt risk"] }]).length, 2);
+  assert.equal(
+    uniqueClaims([c, { ...c, creator_conviction: "low" }]).length,
+    2,
+  );
+  assert.equal(
+    uniqueClaims([
+      c,
+      { ...c, evidence: [{ ...c.evidence[0], end_segment_id: "s2" }] },
+    ]).length,
+    2,
+  );
+});
 test("Chunking retains every source segment and overlaps boundaries without rewriting evidence", () => {
   const segments = Array.from({ length: 20 }, (_, i) => ({
     id: `s${i}`,

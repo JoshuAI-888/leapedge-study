@@ -44,6 +44,12 @@ const act = async (action: string, data: unknown) => {
 const snapshot = await get();
 assert.ok(snapshot.runs.length > 0);
 assert.ok(snapshot.prompts.length >= 3);
+assert.ok(Array.isArray(snapshot.transcriptAccuracy));
+assert.ok(
+  snapshot.prompts.some(
+    (p: { id: string }) => p.id === "evidence-first.web.v6",
+  ),
+);
 results.push({
   check: "Signed access reads migrated Neon collection and prompt registry",
   status: "passed",
