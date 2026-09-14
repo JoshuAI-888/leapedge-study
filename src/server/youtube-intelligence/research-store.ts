@@ -45,9 +45,7 @@ export async function docs<T = Record<string, unknown>>(
   kind: string,
 ): Promise<T[]> {
   return (
-    await (
-      await researchDB()
-    )
+    await (await researchDB())
       .prepare(
         "SELECT payload FROM yi_documents WHERE kind=? ORDER BY created_at DESC",
       )
@@ -58,17 +56,13 @@ export async function doc<T = Record<string, unknown>>(
   kind: string,
   id: string,
 ): Promise<T | null> {
-  const row = await (
-    await researchDB()
-  )
+  const row = await (await researchDB())
     .prepare("SELECT payload FROM yi_documents WHERE kind=? AND id=?")
     .get(kind, id);
   return row ? JSON.parse(String(row.payload)) : null;
 }
 export async function event(kind: string, id: string, payload: unknown) {
-  await (
-    await researchDB()
-  )
+  await (await researchDB())
     .prepare("INSERT INTO yi_events VALUES(?,?,?,?,?)")
     .run(
       randomUUID(),
@@ -96,9 +90,7 @@ export async function put(kind: string, id: string, payload: unknown) {
 export async function promptVersions() {
   await seed();
   return (
-    await (
-      await researchDB()
-    )
+    await (await researchDB())
       .prepare(
         "SELECT payload,hash,created_at FROM yi_prompts ORDER BY created_at DESC",
       )
@@ -116,9 +108,7 @@ export async function addPrompt(input: unknown) {
         JSON.stringify([p.transcribe, p.extraction, p.synthesis, p.critique]),
       )
       .digest("hex");
-  await (
-    await researchDB()
-  )
+  await (await researchDB())
     .prepare("INSERT INTO yi_prompts VALUES(?,?,?,?)")
     .run(p.id, hash, JSON.stringify(p), new Date().toISOString());
   return p;
@@ -136,9 +126,7 @@ async function seed() {
 }
 export async function prompt(id: string) {
   await seed();
-  const row = await (
-    await researchDB()
-  )
+  const row = await (await researchDB())
     .prepare("SELECT payload FROM yi_prompts WHERE id=?")
     .get(id);
   if (!row) throw Error("Unknown prompt version.");
@@ -401,7 +389,10 @@ export async function researchSnapshot() {
         reason: string;
       }[];
     }>("evaluation"),
-    captionAttempts: (await readDocs("youtubeJsAttempt"))
+    captionAttempts: [
+      ...(await readDocs("managedCaptionAttempt")),
+      ...(await readDocs("youtubeJsAttempt")),
+    ]
       .slice(0, 30)
       .map(({ source, payload, ...r }) => r),
     jobs: allRuns
@@ -419,7 +410,9 @@ export async function researchSnapshot() {
       youtube: !!process.env.YOUTUBE_API_KEY,
       openrouter: !!process.env.OPENROUTER_API_KEY,
       fmp: !!process.env.FMP_API_KEY,
-      nativeCaptions: !!process.env.SUPADATA_API_KEY,
+      nativeCaptions: !!(
+        process.env.SUPADATA_API_KEY || process.env.TRANSCRIPTAPI_API_KEY
+      ),
       emailConfigured: !!(
         process.env.RESEND_API_KEY &&
         process.env.YTI_EMAIL_TO &&
@@ -437,17 +430,13 @@ export async function researchSnapshot() {
     improvements: await readDocs("improvement"),
     briefings: await readDocs("briefing"),
     deliveries: await readDocs("delivery"),
-    shares: await (
-      await researchDB()
-    )
+    shares: await (await researchDB())
       .prepare(
         "SELECT id,created_at,expires_at,revoked_at FROM yi_shares ORDER BY created_at DESC",
       )
       .all(),
     discoveries: (
-      await (
-        await researchDB()
-      )
+      await (await researchDB())
         .prepare(
           "SELECT * FROM yi_discoveries ORDER BY json_extract(payload, '$.publishedAt') DESC",
         )
@@ -461,9 +450,7 @@ export async function researchSnapshot() {
       payload: JSON.parse(String(r.payload)),
     })),
     events: (
-      await (
-        await researchDB()
-      )
+      await (await researchDB())
         .prepare("SELECT * FROM yi_events ORDER BY at DESC LIMIT 100")
         .all()
     ).map((r) => ({
@@ -514,9 +501,7 @@ export async function continueAfterAuditFailure(id: string) {
     `Audit could not finish: ${r.error}. Dropped without retrying the paid call.`,
   );
   r.output.auditIndex = index + 1;
-  await (
-    await researchDB()
-  )
+  await (await researchDB())
     .prepare(
       "UPDATE yi_runs SET output=?,status='queued',error=NULL,lease_until=0,lease_token=NULL WHERE id=? AND status='failed'",
     )

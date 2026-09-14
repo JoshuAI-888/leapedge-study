@@ -183,6 +183,39 @@ export function anchorClaimEvidence(
   return {
     ...claim,
     evidence: claim.evidence.map((e) => {
+      // Native caption models can choose an adjacent cue ID. Repair only a unique,
+      // exact contiguous text occurrence; repeated quotes remain ambiguous.
+      if (
+        source.source_kind.includes("captions") &&
+        source.segment_separator !== undefined
+      ) {
+        const separator = source.segment_separator;
+        const offsets: number[] = [];
+        let cursor = 0;
+        for (const segment of source.segments) {
+          offsets.push(cursor);
+          cursor += segment.text.length + separator.length;
+        }
+        const text = source.segments.map((s) => s.text).join(separator);
+        const match = text.indexOf(e.quote_original);
+        if (match >= 0 && text.indexOf(e.quote_original, match + 1) < 0) {
+          const start = offsets.findLastIndex((offset) => offset <= match);
+          const end = offsets.findLastIndex(
+            (offset) => offset < match + e.quote_original.length,
+          );
+          if (
+            start >= 0 &&
+            end >= start &&
+            end - start < 12 &&
+            match < offsets[start] + source.segments[start].text.length
+          )
+            return {
+              ...e,
+              segment_id: source.segments[start].id,
+              end_segment_id: end > start ? source.segments[end].id : undefined,
+            };
+        }
+      }
       if (e.end_segment_id) return e;
       const start = source.segments.findIndex((s) => s.id === e.segment_id);
       if (start < 0 || source.segments[start].text.includes(e.quote_original))

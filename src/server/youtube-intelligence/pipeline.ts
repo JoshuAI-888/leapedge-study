@@ -52,7 +52,8 @@ export async function modelCall(
   ];
   if (video) content.push({ type: "video_url", video_url: { url: run.url } });
   const config = run.input.inferenceConfig as
-    { critiqueMaxTokens?: number; reasoningEffort?: string } | undefined;
+    | { critiqueMaxTokens?: number; reasoningEffort?: string }
+    | undefined;
   const isCritique =
     stage.startsWith("critique") ||
     stage === "audio-review" ||
@@ -189,12 +190,16 @@ export async function step(run: Run) {
       publishedAt: v.snippet.publishedAt,
       duration,
       description: v.snippet.description,
+      language: v.snippet.defaultAudioLanguage,
     };
     run.stage = "source";
   } else if (run.stage === "source") {
     const supplied = run.input.source
       ? Source.parse(run.input.source)
-      : await nativeTranscript(run.videoId);
+      : await nativeTranscript(
+          run.videoId,
+          run.output.metadata as { duration: number; language?: string },
+        );
     const duration = (run.output.metadata as { duration: number }).duration;
     if (!supplied && run.input.transcriptionWindowSeconds && duration > 1800) {
       run.output.transcriptionChunks = [];

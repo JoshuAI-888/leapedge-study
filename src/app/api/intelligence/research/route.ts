@@ -20,6 +20,11 @@ import { queueBriefing } from "../../../../server/youtube-intelligence/briefing-
 import { queueAudioReview } from "../../../../server/youtube-intelligence/audio-review.ts";
 import { startExperiment } from "../../../../server/youtube-intelligence/experiments.ts";
 import { performance } from "../../../../server/youtube-intelligence/market.ts";
+import {
+  managedTranscript,
+  SourcePending,
+} from "../../../../server/youtube-intelligence/transcripts.ts";
+export const maxDuration = 120;
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function GET(r: Request) {
@@ -45,6 +50,54 @@ export async function POST(r: Request) {
       .parse(JSON.parse(text));
     let result: unknown;
     switch (a.action) {
+      case "captionProbe": {
+        const v = z
+          .object({
+            videoId: z.string().regex(/^[\w-]{11}$/),
+            provider: z.enum(["supadata", "transcriptapi"]),
+            language: z
+              .string()
+              .regex(/^[a-zA-Z-]{2,12}$/)
+              .optional(),
+          })
+          .parse(a.data);
+        try {
+          const source = await managedTranscript(v.videoId, v.provider, {
+            language: v.language,
+          });
+          const attempt = await R.doc<{
+            status: string;
+            http?: number;
+            providerError?: string;
+          }>(
+            "managedCaptionAttempt",
+            `${v.provider}:native:${v.videoId}:${v.language?.split("-")[0] || "original"}`,
+          );
+          result = {
+            provider: v.provider,
+            providerHttp: attempt?.http,
+            providerError: attempt?.providerError,
+            videoId: v.videoId,
+            status: source ? "completed" : attempt?.status || "unavailable",
+            sourceKind: source?.source_kind,
+            language: source?.language,
+            segments: source?.segments.length,
+            lastEnd: source
+              ? Math.max(...source.segments.map((s) => s.end_seconds || 0))
+              : null,
+            runtime: process.env.VERCEL ? "vercel" : "local",
+          };
+        } catch (e) {
+          if (e instanceof SourcePending)
+            result = {
+              status: "pending",
+              videoId: v.videoId,
+              provider: v.provider,
+            };
+          else throw e;
+        }
+        break;
+      }
       case "audioReview":
         result = await queueAudioReview(z.string().parse(a.data));
         break;

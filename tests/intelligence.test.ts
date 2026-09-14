@@ -117,9 +117,7 @@ test("Persisted jobs deduplicate, fence stale workers and preserve uncertain spe
     assert.equal(a.id, b.id);
     const first = (await store.claimNext())!;
     assert.equal(await store.claimNext(), null);
-    await (
-      await store.db()
-    )
+    await (await store.db())
       .prepare("UPDATE yi_runs SET lease_until=0 WHERE id=?")
       .run(a.id);
     const second = (await store.claimNext())!;
@@ -148,8 +146,9 @@ test("Persisted jobs deduplicate, fence stale workers and preserve uncertain spe
   }
 });
 test("Incomplete imported source is held for review before any paid synthesis", async () => {
-  const { step } =
-    await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { step } = await import(
+    "../src/server/youtube-intelligence/pipeline.ts"
+  );
   const r = {
     id: "x",
     videoId: "wkAqHlYL7bQ",
@@ -250,19 +249,93 @@ test("Verbatim quotes may span adjacent original segments without rewriting any 
   );
 });
 
-test('English caption boundaries preserve spaces without accepting altered words or skipped segments', () => {
-  const source = {source_kind:'native_captions_youtube_transcript_api',segment_separator:' ' as const,segments:[
-    {id:'a',text:'I would not',start_seconds:0,end_seconds:2},
-    {id:'b',text:'buy this stock',start_seconds:2,end_seconds:4},
-    {id:'c',text:'until earnings improve.',start_seconds:4,end_seconds:6},
-  ]};
-  const make = (text:string) => ({...claim,ticker:null,ticker_explicit:false,levels:[],evidence:[{segment_id:'a',quote_original:text,quote_translation_en:text}]});
+test("English caption boundaries preserve spaces without accepting altered words or skipped segments", () => {
+  const source = {
+    source_kind: "native_captions_youtube_transcript_api",
+    segment_separator: " " as const,
+    segments: [
+      { id: "a", text: "I would not", start_seconds: 0, end_seconds: 2 },
+      { id: "b", text: "buy this stock", start_seconds: 2, end_seconds: 4 },
+      {
+        id: "c",
+        text: "until earnings improve.",
+        start_seconds: 4,
+        end_seconds: 6,
+      },
+    ],
+  };
+  const make = (text: string) => ({
+    ...claim,
+    ticker: null,
+    ticker_explicit: false,
+    levels: [],
+    evidence: [
+      { segment_id: "a", quote_original: text, quote_translation_en: text },
+    ],
+  });
   const original = JSON.stringify(source.segments);
-  const anchored = anchorClaimEvidence(make('would not buy this stock until earnings improve.'),source);
-  assert.equal(anchored.evidence[0].end_segment_id,'c');
-  assert.deepEqual(validateClaim(anchored,source),[]);
-  for(const text of ['would buy this stock','would not until earnings improve.','would not buy this Stock'])
-    assert.ok(validateClaim(anchorClaimEvidence(make(text),source),source).length);
-  assert.ok(validateClaim(anchored,{...source,segment_separator:''}).length);
-  assert.equal(JSON.stringify(source.segments),original);
+  const anchored = anchorClaimEvidence(
+    make("would not buy this stock until earnings improve."),
+    source,
+  );
+  assert.equal(anchored.evidence[0].end_segment_id, "c");
+  assert.deepEqual(validateClaim(anchored, source), []);
+  for (const text of [
+    "would buy this stock",
+    "would not until earnings improve.",
+    "would not buy this Stock",
+  ])
+    assert.ok(
+      validateClaim(anchorClaimEvidence(make(text), source), source).length,
+    );
+  assert.ok(
+    validateClaim(anchored, { ...source, segment_separator: "" }).length,
+  );
+  assert.equal(JSON.stringify(source.segments), original);
+});
+
+test("Caption anchors recover only unique exact words and retain ambiguity or altered speech as failures", () => {
+  const source = {
+    source_kind: "native_captions_fixture",
+    segment_separator: " " as const,
+    segments: [
+      { id: "a", text: "Full disclosure,", start_seconds: 1, end_seconds: 2 },
+      { id: "b", text: "I am buying this.", start_seconds: 2, end_seconds: 4 },
+    ],
+  };
+  const c = {
+    ...claim,
+    ticker: null,
+    ticker_explicit: false,
+    levels: [],
+    evidence: [
+      {
+        segment_id: "b",
+        quote_original: "Full disclosure, I am buying this.",
+        quote_translation_en: "Full disclosure, I am buying this.",
+      },
+    ],
+  };
+  const anchored = anchorClaimEvidence(c, source);
+  assert.equal(anchored.evidence[0].segment_id, "a");
+  assert.equal(anchored.evidence[0].end_segment_id, "b");
+  assert.deepEqual(validateClaim(anchored, source), []);
+  const wrong = {
+    ...c,
+    evidence: [
+      {
+        ...c.evidence[0],
+        quote_original: "Full disclosure, I am selling this.",
+      },
+    ],
+  };
+  assert.ok(validateClaim(anchorClaimEvidence(wrong, source), source).length);
+  const repeated = {
+    ...source,
+    segments: [
+      ...source.segments,
+      ...source.segments.map((s) => ({ ...s, id: s.id + "2" })),
+    ],
+  };
+  assert.ok(validateClaim(anchorClaimEvidence(c, repeated), repeated).length);
 });
