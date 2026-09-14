@@ -1,0 +1,35 @@
+{
+  "verifiedCommit": "4929280f4b0785660ce36e6bfb4b10c8184b291c",
+  "ciRunId": 34892975548,
+  "ciUrl": "https://github.com/JoshuAI-888/leapedge-study/actions/runs/34892975548",
+  "conclusion": "success",
+  "nativeControlledTests": 15,
+  "applicationChecks": [
+    "tests",
+    "typecheck",
+    "production build",
+    "production-dependency audit"
+  ],
+  "nativeChecks": [
+    "typecheck",
+    "tests",
+    "dependency audit"
+  ],
+  "priorCiFailure": {
+    "commit": "927173b04e24d59d479664c7c2b89ca8c8959a26",
+    "runId": 34892861948,
+    "cause": "Native-only CI installed isolated dependencies but shared application contracts resolve zod from the root package. Missing root zod caused TypeScript errors.",
+    "resolution": "Install both pinned root and isolated dependencies in native CI before typecheck/tests. No model retry or production routing change."
+  },
+  "artifactChecks": [
+    "25 raw response SHA-256 values match retained files",
+    "All white-paper relative links resolve",
+    "Configured secret scan passed for selected publication files",
+    "Ledger count and NZ37.86 retained reservation total match public report",
+    "Settings readback confirmed 25 attempts and matching white-paper hash"
+  ],
+  "limitations": [
+    "CI uses controlled fixtures and does not rerun paid video experiments.",
+    "Successful build is not a new production deployment or independent audio verification."
+  ]
+}
