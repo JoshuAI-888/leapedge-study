@@ -33,10 +33,12 @@ These counts do not establish LeapEdge parity. The long draft duplicates Nubank 
 
 Supadata returned HTTP 403 `forbidden` for both the macro reference and a short control video. The control's detailed response said the video was age-restricted and required authentication; this is the provider's report, not independently established YouTube policy classification. The native track for that short control was retrievable. Consequently existing-caption access and media access for new ASR are separate capabilities.
 
-The first full cloud macro run reached the Gemini fallback, but its generated transcript failed schema validation for duplicate segment IDs or reversed timing. That failed result is retained. A stronger fallback run is separately recorded; consult its final result in the evaluation history. The integration is operational, but no claim of 100% source availability or superior synthesis accuracy is made.
+The first full cloud macro run reached the Gemini fallback, but its generated transcript failed schema validation for duplicate segment IDs or reversed timing. That failed result is retained. The stronger Gemini 3.8 fallback also failed: the provider response was incomplete, so it was rejected. Both terminal failures are separately recorded in the evaluation history. The integration is operational, but no claim of 100% source availability or superior synthesis accuracy is made.
 
 ## Validation
 
 38 unit/integration tests passed, including failover, concurrent deduplication, uncertain spend retention, async polling, credit limits, explicit temporary-failure retry, and exact-quote corruption/ambiguity rejection. Type checking and Vercel production builds passed. Seven hosted checks passed for private access, database reads, settings, saved-idea transitions, share/revocation, dispatcher authentication and cross-origin rejection.
 
 Zero new LeapEdge analysis credits were used; saved signed-in reference reports were reused. Detailed provider attempt metadata is in `managed-caption-cloud-results.json`; raw transcripts and diagnostic responses remain private. Further work: captionless media acquisition, exact issuer/ticker evidence association, duplicate idea consolidation and audio-grounded quality evaluation.
+
+Final deployment: `dpl_4RwV8KMC9HotiyugkGPFjcjZhSis` at https://youtube-intelligence-two.vercel.app. Final cached-provider endpoint checks passed for both providers. New model cost for the five analysis/re-audit runs: **US$2.2868875 confirmed**, excluding earlier campaigns and transcript-provider credits. All five runs are terminal. No new LeapEdge credits were spent. See `managed-caption-synthesis-results.json` and `managed-caption-deployment-check.json`.
