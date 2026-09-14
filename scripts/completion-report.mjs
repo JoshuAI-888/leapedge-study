@@ -50,6 +50,7 @@ const files = [
   "src/server/youtube-intelligence/webhooks.ts",
   "tests/email-reconciliation.test.ts",
   "scripts/completion-live-events.ts",
+  "scripts/completion-final-status.ts",
   "scripts/save-completion-research.ts",
 ];
 const report = {
@@ -74,6 +75,9 @@ const report = {
   webhookSetup: load("docs/completion-webhook-setup-20260915.json"),
   independentAudioWindowsScored: 0,
   leapedgeCreditsUsedThisCampaign: 0,
+  leapedgeComparison: {videoId: "J25UuUqHT3Y", status: "READY", tradeIdeas: 0, keyPoints: 11, tokensDisplayed: "195.4k", prompt: "keypoints.v1-insights.v3-critique.v1", models: ["gemini-3.1-flash-lite", "gemini-3.7-flash", "gemini-3.1-flash-lite"], creditsBefore: 19, creditsAfter: 19, freshIngestionProven: false, audioAccuracyVerified: false},
+  finalHostedStatus: load("docs/completion-final-hosted-status-20260915.json"),
+  ci: {commit: "919c530a612efada1f17be4cb2e4a50bc1930a23", runs: [34898044303,34898040967], conclusion: "success"},
   promotion: false,
   scriptManifest: files.map((path) => ({
     path,

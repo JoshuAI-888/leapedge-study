@@ -1,6 +1,6 @@
 {
   "id": "completion-campaign-20260915",
-  "at": "2026-09-14T21:17:31.417Z",
+  "at": "2026-09-14T21:22:56.412Z",
   "outcomes": [
     {
       "case": "alpha",
@@ -773,6 +773,51 @@
   },
   "independentAudioWindowsScored": 0,
   "leapedgeCreditsUsedThisCampaign": 0,
+  "leapedgeComparison": {
+    "videoId": "J25UuUqHT3Y",
+    "status": "READY",
+    "tradeIdeas": 0,
+    "keyPoints": 11,
+    "tokensDisplayed": "195.4k",
+    "prompt": "keypoints.v1-insights.v3-critique.v1",
+    "models": [
+      "gemini-3.1-flash-lite",
+      "gemini-3.7-flash",
+      "gemini-3.1-flash-lite"
+    ],
+    "creditsBefore": 19,
+    "creditsAfter": 19,
+    "freshIngestionProven": false,
+    "audioAccuracyVerified": false
+  },
+  "finalHostedStatus": {
+    "at": "2026-09-14T21:16:57.690Z",
+    "origin": "https://youtube-intelligence-two.vercel.app",
+    "authenticatedRead": "passed",
+    "promptVersion": "evidence-first.web.v5",
+    "nativeGoogleExperimental": false,
+    "deliveryStatuses": [
+      {
+        "id": "completion-event-bounced-20260915",
+        "status": "bounced",
+        "lastEvent": "email.bounced"
+      },
+      {
+        "id": "completion-event-delivered-20260915",
+        "status": "delivered",
+        "lastEvent": "email.delivered"
+      }
+    ],
+    "findingsVisible": true
+  },
+  "ci": {
+    "commit": "919c530a612efada1f17be4cb2e4a50bc1930a23",
+    "runs": [
+      34898044303,
+      34898040967
+    ],
+    "conclusion": "success"
+  },
   "promotion": false,
   "scriptManifest": [
     {
@@ -813,7 +858,7 @@
     },
     {
       "path": "scripts/completion-report.mjs",
-      "sha256": "120abc2e76bd5e8806e5e805d0d6eaeabbb19cd3c763577710afa22124a34858"
+      "sha256": "f9d5a77bf44702ac928b64ff83ae298b41ae2f5f7cea0ce6464b48c1c00cc469"
     },
     {
       "path": "tests/native-google.test.ts",
@@ -838,6 +883,10 @@
     {
       "path": "scripts/completion-live-events.ts",
       "sha256": "ac935702fb935976ded6bcfb61fc586bff5814783460efd87e1f7bdb662b99b5"
+    },
+    {
+      "path": "scripts/completion-final-status.ts",
+      "sha256": "949b9c429fd8d60bd06a14c8deea1b3c09d8b500c6e6df5d981e42e9a19f7bd7"
     },
     {
       "path": "scripts/save-completion-research.ts",

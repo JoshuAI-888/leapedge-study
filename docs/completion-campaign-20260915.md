@@ -1,5 +1,12 @@
 # Completion campaign — 15 September 2026
 
+## Current checkpoint — final update
+
+Production includes the gated native adapter and email-event reconciliation. Native ingestion remains disabled and the default synthesis prompt remains v5. Both CI runs for commit `919c530a612efada1f17be4cb2e4a50bc1930a23` passed (34898044303 and 34898040967). Application tests passed 50/50; native fixtures passed 15/15. Earlier approval-pending and preview-only paragraphs below are chronological intermediate observations, superseded by this checkpoint.
+
+All five priorities are **not yet accepted**: independent audio review has zero scored windows; synthesis omissions persist; hosted live native recovery remains untested; the full fresh discovery-to-email chain and UI scenario matrix remain open; no eligible priced creator cohort exists. Email callback acceptance is complete, but delivery to the user's intended reading mailbox awaits its address.
+
+
 Status: in progress. Native adapter deployed behind disabled gates; fidelity prompt remains experimental.
 
 ## Authorized scope and method
@@ -125,3 +132,9 @@ Public DNS check (`dig +short MX accounts.joshuai.nz`) returned `10 inbound-smtp
 Browser inspection of `https://resend.com/emails/receiving` found **all three prior test digests**, including the 2026-09-14 subject, from and to `welcome@accounts.joshuai.nz`. Their receipt is now observed in Resend's inbound service; it was not delivery to the user's Gmail inbox. The public MX observation is consistent with that receiving route. Visible evidence: `data/native-google-20260915/resend-receiving-digests.txt`. The user's intended reading address remains to be specified before changing `YTI_EMAIL_TO`; leave the sender unchanged. No DNS or forwarding change was made.
 
 The follow-up production deployment including early-event reconciliation succeeded. Native Google remains behind disabled gates, and v5 remains the selected prompt. Earlier preview-only/approval-pending statements above describe intermediate checkpoints, not the final deployment state.
+
+## LeapEdge macro availability comparison
+
+On 2026-09-15 Pacific/Auckland, entered `https://www.youtube.com/watch?v=J25UuUqHT3Y` in the visible Run form and clicked Run once. LeapEdge displayed READY, an English macro summary, 11 key points and “No trade ideas extracted.” UI metadata: `keypoints.v1-insights.v3-critique.v1`; 195.4k tokens; `gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite`; displayed cost $0.060 (currency not established). Daily credits were 19 before and 19 after. This is an available result, potentially cached, **not evidence of fresh successful ingestion**, measured latency or current captionless fallback. No observed credit decrement. Private visible-page evidence: `data/native-google-20260915/leapedge-macro-result.txt`.
+
+Our earlier full native extraction of this 31:59 video failed timestamp validation. LeapEdge's usable summary therefore exposes a user-visible availability difference, but its page supplies no transcript, quote-level evidence or timestamp audit for these macro points. It does not establish that its source timing is more accurate. No trade ideas is an acceptable outcome for a macro-only video; forcing a trading setup would be a defect. A fresh source-grounded audit is still required.
