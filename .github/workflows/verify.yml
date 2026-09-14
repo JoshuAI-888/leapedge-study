@@ -31,6 +31,9 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: evaluations/native-google/package-lock.json
+      # Shadow tests reuse application source/claim validation; install its pinned dependencies too.
+      - run: npm ci --ignore-scripts
+        working-directory: .
       - run: npm ci --ignore-scripts
       - run: npm run typecheck
       - run: npm test
