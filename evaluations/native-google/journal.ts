@@ -16,8 +16,9 @@ export type Attempt = {
   reservedNzd: number;
   createdAt: string;
   artifact?: string;
+  retryOf?: string;
 };
-export function reserve(directory: string, caseKey: string, capNzd = 10) {
+export function reserve(directory: string, caseKey: string, capNzd = 10, retryOf?: string) {
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const lock = join(directory, "ledger.lock");
   const fd = openSync(lock, "wx", 0o600);
@@ -26,6 +27,11 @@ export function reserve(directory: string, caseKey: string, capNzd = 10) {
     const rows: Attempt[] = existsSync(p)
       ? JSON.parse(readFileSync(p, "utf8"))
       : [];
+    if (retryOf) {
+      const prior = rows.find(r => r.id === retryOf);
+      if (!prior || prior.caseKey !== caseKey || prior.status !== "quota_or_rate_limit") throw Error("Retry requires a matching explicit quota rejection");
+      caseKey = `${caseKey}:retry:${retryOf}`;
+    }
     if (rows.some((r) => r.caseKey === caseKey))
       throw Error(
         "Attempt already recorded; review it instead of resubmitting",
@@ -37,6 +43,7 @@ export function reserve(directory: string, caseKey: string, capNzd = 10) {
       throw Error("Campaign reservation cap reached");
     const row: Attempt = {
       id: randomUUID(),
+      retryOf,
       caseKey,
       status: "reserved",
       reservedNzd: 2.5,

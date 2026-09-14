@@ -4,9 +4,9 @@ Isolated from application dependencies and Vercel uploads. Uses published `@goog
 
 ## Current evidence
 
-Nine controlled tests pass, including real SDK HTTP requests to a local fixture: structured video/offset serialization, one attempt on HTTP503, connected cancellation, truncation, empty output, timestamp bounds, unknown usage and immutable budgeted artifacts. TypeScript compilation passes. These do not establish live YouTube access or audio accuracy.
+Ten controlled tests pass, including real SDK HTTP requests to a local fixture. Live funding is now working. Native Google returned a short English control, an offset clip and a captionless Mandarin source. Another captionless source was rejected for an out-of-duration timestamp. See `docs/native-google-live-assessment.md` and the immutable attempt summary in `docs/native-google-live-results.json` for the complete results and remaining accuracy limitations.
 
-The user configured GEMINI_API_KEY. Model access and independent YouTube metadata preflight succeeded. One English-control generation was rejected in 345ms with HTTP429 RESOURCE_EXHAUSTED: Gemini prepayment credits depleted. No transcript was returned; this is a billing blocker, not an ingestion failure. The attempt and NZ$2.50 reservation are retained. Do not rerun the identical configuration blindly: after confirmed funding, create an explicitly linked retry without deleting the rejected record.
+The original generated `responseJsonSchema` configuration received HTTP400. The simplified Google `responseSchema` format succeeded. The public runner now uses that format, structured fileUri, default static processing and provider-default thinking/media resolution. This is an empirically working configuration, not proof that all JSON-schema configurations are unsupported.
 
 ## Reproduce
 
@@ -27,11 +27,11 @@ node --env-file=.env --experimental-strip-types evaluations/native-google/runner
 node --env-file=.env --experimental-strip-types evaluations/native-google/runner.ts english --execute
 ```
 
-First phase cases: `english` (short English control), `alpha` (CMjt6f4eVdA captionless), `macro` (J25UuUqHT3Y captionless), `offset` (60–120 seconds of the English control). Run one at a time and inspect each result before the next. The same configuration cannot be submitted twice. This runner deliberately does not yet expose repeated rounds, agentic mode, alternate models or automatic repair; extend only after inspecting feasibility results.
+First phase cases: `english` (short English control), `alpha` (CMjt6f4eVdA captionless), `macro` (J25UuUqHT3Y captionless), `offset` (60–120 seconds of the English control), `long` and `mandarin` (existing provider benchmarks). Run one at a time and inspect each result before the next. The same configuration cannot be submitted twice. This runner deliberately does not yet expose repeated rounds, agentic mode, alternate models or automatic repair; extend only after inspecting feasibility results.
 
 ## Budget and artifacts
 
-New campaign directory: ignored `data/native-google-20260915`. Before sending a model request, reserve NZ$2.50 under the NZ$10 feasibility cap. The complete approved campaign cap is NZ$50 / 60 model requests, but this runner restricts itself to phase one. Reservations are retained after every outcome until reconciliation. No automatic retries/top-ups. Requests use LOW thinking level and a 32,768 output cap; a thinking level is not itself a numeric hard limit. A stale lock or recorded attempt requires inspection, not blind deletion.
+New campaign directory: ignored `data/native-google-20260915`. Before sending a model request, reserve NZ$2.50 under the cumulative NZ$35 feasibility/acquisition cap. The complete approved campaign cap is NZ$50 / 60 model requests, with NZ$15 retained for the later review/hosted phase. Reservations are retained after every outcome until reconciliation. No automatic retries/top-ups. Requests use provider-default thinking and a 32,768 output cap. A stale lock or recorded attempt requires inspection, not blind deletion.
 
 NZ$2.50 is a conservative reservation, not an exchange-rate quote: it accommodates up to 1.1M input tokens plus 32,768 output plus an additional conservative 32,768-token thought allowance at recorded 3.8 Flash rates, using a conservative NZ$2 per US$1 conversion and additional margin. Verify model pricing/access before subsequent phases. Input beyond context limits is an explicit provider failure, not a reason to increase spend automatically.
 

@@ -1,0 +1,562 @@
+{
+  "id": "native-google-feasibility-20260915",
+  "at": "2026-09-14T19:28:36.845Z",
+  "status": "live_evaluation",
+  "hypothesis": "Native Google-only ingestion can replace external transcript providers.",
+  "attempts": [
+    {
+      "attemptId": "10ba7b31-e1ff-4120-93e2-a512134e44a5",
+      "at": "2026-09-14T19:17:18.570Z",
+      "videoId": "SHMPiWbbR6E",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-source.v1",
+        "input": {
+          "videoId": "SHMPiWbbR6E",
+          "durationSeconds": 165,
+          "startSeconds": 0,
+          "endSeconds": 165,
+          "mode": "STATIC"
+        },
+        "maxOutputTokens": 32768,
+        "thinkingLevel": "LOW",
+        "mediaResolution": "LOW",
+        "fps": 1
+      },
+      "outcome": "quota_or_rate_limit",
+      "validationOutcome": "quota_or_rate_limit",
+      "httpStatus": 429,
+      "latencyMs": 345,
+      "estimatedUsd": null,
+      "usage": null,
+      "billing": "potentially_billable",
+      "reservedNzd": 2.5,
+      "segments": null,
+      "textCharacters": null,
+      "rawTextCharacters": 0,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": null,
+      "sourceHash": null,
+      "error": "{\"error\":{\"code\":429,\"message\":\"Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. \",\"status\":\"RESOURCE_EXHAUSTED\"}}"
+    },
+    {
+      "attemptId": "eb6fb3c1-3a19-40e2-9416-f24a0b39576a",
+      "retryOf": "10ba7b31-e1ff-4120-93e2-a512134e44a5",
+      "at": "2026-09-14T19:20:27.698Z",
+      "videoId": "SHMPiWbbR6E",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-source.v1",
+        "input": {
+          "videoId": "SHMPiWbbR6E",
+          "durationSeconds": 165,
+          "startSeconds": 0,
+          "endSeconds": 165,
+          "mode": "STATIC"
+        },
+        "maxOutputTokens": 32768,
+        "thinkingLevel": "LOW",
+        "mediaResolution": "LOW",
+        "fps": 1
+      },
+      "outcome": "api_error_requires_diagnosis",
+      "validationOutcome": "api_error_requires_diagnosis",
+      "httpStatus": 400,
+      "latencyMs": 11364,
+      "estimatedUsd": null,
+      "usage": null,
+      "billing": "potentially_billable",
+      "reservedNzd": 2.5,
+      "segments": null,
+      "textCharacters": null,
+      "rawTextCharacters": 0,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": null,
+      "sourceHash": null,
+      "error": "{\"error\":{\"code\":400,\"message\":\"Request contains an invalid argument.\",\"status\":\"INVALID_ARGUMENT\"}}"
+    },
+    {
+      "attemptId": "faa76fc7-3b3a-4cc6-a39f-fb511484b3fd",
+      "at": "2026-09-14T19:21:33.685Z",
+      "videoId": "SHMPiWbbR6E",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "diagnostic": "minimal-file-uri.v1",
+        "input": {
+          "videoId": "SHMPiWbbR6E",
+          "durationSeconds": 165,
+          "startSeconds": 0,
+          "endSeconds": 165,
+          "mode": "STATIC"
+        },
+        "notes": "Whole video default processing; no MIME, videoMetadata, response schema or thinking controls. Text output is diagnostic, not a validated source."
+      },
+      "outcome": "diagnostic_text_received",
+      "validationOutcome": "invalid_json",
+      "latencyMs": 11172,
+      "estimatedUsd": 0.019842,
+      "usage": {
+        "promptTokenCount": 15041,
+        "candidatesTokenCount": 1422,
+        "totalTokenCount": 17324,
+        "promptTokensDetails": [
+          {
+            "modality": "VIDEO",
+            "tokenCount": 15013
+          },
+          {
+            "modality": "TEXT",
+            "tokenCount": 28
+          }
+        ],
+        "thoughtsTokenCount": 861,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": null,
+      "textCharacters": null,
+      "rawTextCharacters": 3352,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": null,
+      "sourceHash": null,
+      "error": null
+    },
+    {
+      "attemptId": "6df01eb9-f4ca-410d-a4a7-262d9f31be6f",
+      "at": "2026-09-14T19:22:26.502Z",
+      "videoId": "SHMPiWbbR6E",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "diagnostic": "minimal-plus-original-schema.v1",
+        "input": {
+          "videoId": "SHMPiWbbR6E",
+          "durationSeconds": 165,
+          "startSeconds": 0,
+          "endSeconds": 165,
+          "mode": "STATIC"
+        },
+        "notes": "Whole video default processing, adding original response JSON schema to the successful minimal request; no MIME, offsets or thinking controls."
+      },
+      "outcome": "api_error_requires_diagnosis",
+      "validationOutcome": "api_error_requires_diagnosis",
+      "httpStatus": 400,
+      "latencyMs": 5597,
+      "estimatedUsd": null,
+      "usage": null,
+      "billing": "potentially_billable",
+      "reservedNzd": 2.5,
+      "segments": null,
+      "textCharacters": null,
+      "rawTextCharacters": 0,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": null,
+      "sourceHash": null,
+      "error": "{\"error\":{\"code\":400,\"message\":\"Request contains an invalid argument.\",\"status\":\"INVALID_ARGUMENT\"}}"
+    },
+    {
+      "attemptId": "2acd7054-a4f3-4aae-875e-972f7c44dc5d",
+      "at": "2026-09-14T19:22:52.841Z",
+      "videoId": "SHMPiWbbR6E",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "diagnostic": "minimal-google-schema.v1",
+        "input": {
+          "videoId": "SHMPiWbbR6E",
+          "durationSeconds": 165,
+          "startSeconds": 0,
+          "endSeconds": 165,
+          "mode": "STATIC"
+        },
+        "notes": "Whole video default processing, adding original response JSON schema to the successful minimal request; no MIME, offsets or thinking controls."
+      },
+      "outcome": "structurally_valid_unverified",
+      "validationOutcome": "structurally_valid_unverified",
+      "latencyMs": 12499,
+      "estimatedUsd": 0.02054025,
+      "usage": {
+        "promptTokenCount": 15052,
+        "candidatesTokenCount": 2417,
+        "totalTokenCount": 17519,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 39
+          },
+          {
+            "modality": "VIDEO",
+            "tokenCount": 15013
+          }
+        ],
+        "thoughtsTokenCount": 50,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": 39,
+      "textCharacters": 1978,
+      "rawTextCharacters": 6941,
+      "language": "en",
+      "firstStart": 0,
+      "lastEnd": 164.92,
+      "coverageFraction": 0.9345454545454547,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": false,
+      "sourceHash": "a29a58fda819750de26ff0affa5ca8ce7b812c6752fcf5dce8912ad346e2d914",
+      "error": null
+    },
+    {
+      "attemptId": "4e93d949-2083-43e3-98f5-fea6b133a4ad",
+      "at": "2026-09-14T19:24:12.671Z",
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-source.v2",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "STATIC"
+        },
+        "maxOutputTokens": 32768,
+        "processing": "documented_default_static",
+        "thinkingLevel": "provider_default",
+        "mediaResolution": "provider_default",
+        "schemaTransport": "responseSchema"
+      },
+      "outcome": "structurally_valid_unverified",
+      "validationOutcome": "structurally_valid_unverified",
+      "latencyMs": 31030,
+      "estimatedUsd": null,
+      "usage": {
+        "promptTokenCount": 70956,
+        "candidatesTokenCount": 6385,
+        "totalTokenCount": 77341,
+        "promptTokensDetails": [
+          {
+            "modality": "VIDEO",
+            "tokenCount": 70809
+          },
+          {
+            "modality": "TEXT",
+            "tokenCount": 147
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": 110,
+      "textCharacters": 3505,
+      "rawTextCharacters": 12960,
+      "language": "zh",
+      "firstStart": 6.2,
+      "lastEnd": 779,
+      "coverageFraction": 0.9920410783055198,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": null,
+      "sourceHash": "526b9305b0b3d431ec50109f83be6f95b974f690085dc45f5f4734bac0088536",
+      "error": null
+    },
+    {
+      "attemptId": "58f33c11-2036-42e7-8d8c-b4a5f0b9e02c",
+      "at": "2026-09-14T19:25:06.515Z",
+      "videoId": "J25UuUqHT3Y",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-source.v2",
+        "input": {
+          "videoId": "J25UuUqHT3Y",
+          "durationSeconds": 1919,
+          "startSeconds": 0,
+          "endSeconds": 1919,
+          "mode": "STATIC"
+        },
+        "maxOutputTokens": 32768,
+        "processing": "documented_default_static",
+        "thinkingLevel": "provider_default",
+        "mediaResolution": "provider_default",
+        "schemaTransport": "responseSchema"
+      },
+      "outcome": "invalid_timing_or_coordinate_system",
+      "validationOutcome": "invalid_timing_or_coordinate_system",
+      "latencyMs": 89152,
+      "estimatedUsd": 0.19020525,
+      "usage": {
+        "promptTokenCount": 174777,
+        "candidatesTokenCount": 15662,
+        "totalTokenCount": 190543,
+        "promptTokensDetails": [
+          {
+            "modality": "VIDEO",
+            "tokenCount": 174626
+          },
+          {
+            "modality": "TEXT",
+            "tokenCount": 151
+          }
+        ],
+        "thoughtsTokenCount": 104,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": 199,
+      "textCharacters": 8957,
+      "rawTextCharacters": 32426,
+      "language": "zh",
+      "firstStart": 0,
+      "lastEnd": 1919,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [
+        {
+          "startSeconds": 1198.14,
+          "endSeconds": 2016.14,
+          "textOmittedFromPublicReport": true
+        }
+      ],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": null,
+      "sourceHash": "3acf5e396baa17a790a167acfc5efbb86af7fb2457639b919dfd5dd20b131cf7",
+      "error": null
+    },
+    {
+      "attemptId": "ce8cb5e5-de59-4e95-9925-8670e43e9a37",
+      "at": "2026-09-14T19:26:49.950Z",
+      "videoId": "SHMPiWbbR6E",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-source.v2",
+        "input": {
+          "videoId": "SHMPiWbbR6E",
+          "durationSeconds": 165,
+          "startSeconds": 60,
+          "endSeconds": 120,
+          "mode": "STATIC"
+        },
+        "maxOutputTokens": 32768,
+        "processing": "documented_default_static",
+        "thinkingLevel": "provider_default",
+        "mediaResolution": "provider_default",
+        "schemaTransport": "responseSchema"
+      },
+      "outcome": "structurally_valid_unverified",
+      "validationOutcome": "structurally_valid_unverified",
+      "latencyMs": 7976,
+      "estimatedUsd": 0.01133925,
+      "usage": {
+        "promptTokenCount": 5609,
+        "candidatesTokenCount": 941,
+        "totalTokenCount": 7511,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 148
+          },
+          {
+            "modality": "VIDEO",
+            "tokenCount": 5461
+          }
+        ],
+        "thoughtsTokenCount": 961,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": 15,
+      "textCharacters": 852,
+      "rawTextCharacters": 2812,
+      "language": "eng",
+      "firstStart": 60,
+      "lastEnd": 120,
+      "coverageFraction": 1,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": false,
+      "sourceHash": "5cadf77a19fb9312051301c2947b68e94ae8adfa638d19e5b6bb2c2e6dbfa186",
+      "error": null
+    },
+    {
+      "attemptId": "0df6588a-cad3-411f-9202-12aac1c57495",
+      "at": "2026-09-14T19:27:10.251Z",
+      "videoId": "wkAqHlYL7bQ",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-source.v2",
+        "input": {
+          "videoId": "wkAqHlYL7bQ",
+          "durationSeconds": 2423,
+          "startSeconds": 0,
+          "endSeconds": 2423,
+          "mode": "STATIC"
+        },
+        "maxOutputTokens": 32768,
+        "processing": "documented_default_static",
+        "thinkingLevel": "provider_default",
+        "mediaResolution": "provider_default",
+        "schemaTransport": "responseSchema"
+      },
+      "outcome": "structurally_valid_unverified",
+      "validationOutcome": "structurally_valid_unverified",
+      "latencyMs": 80157,
+      "estimatedUsd": 0.25975125,
+      "usage": {
+        "promptTokenCount": 220560,
+        "candidatesTokenCount": 25059,
+        "totalTokenCount": 245715,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 149
+          },
+          {
+            "modality": "VIDEO",
+            "tokenCount": 220411
+          }
+        ],
+        "thoughtsTokenCount": 96,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": 348,
+      "textCharacters": 31222,
+      "rawTextCharacters": 77905,
+      "language": "en",
+      "firstStart": 0,
+      "lastEnd": 2423,
+      "coverageFraction": 1,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": false,
+      "sourceHash": "4a225d227f09f9afd7a9216135c33ecfa7cb8bc852317fd3e5b45e6e925118da",
+      "error": null
+    },
+    {
+      "attemptId": "fe349e23-40c9-4f38-986d-a252a6591b96",
+      "at": "2026-09-14T19:27:25.976Z",
+      "videoId": "3u24qyWjSVM",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-source.v2",
+        "input": {
+          "videoId": "3u24qyWjSVM",
+          "durationSeconds": 1005,
+          "startSeconds": 0,
+          "endSeconds": 1005,
+          "mode": "STATIC"
+        },
+        "maxOutputTokens": 32768,
+        "processing": "documented_default_static",
+        "thinkingLevel": "provider_default",
+        "mediaResolution": "provider_default",
+        "schemaTransport": "responseSchema"
+      },
+      "outcome": "structurally_valid_unverified",
+      "validationOutcome": "structurally_valid_unverified",
+      "latencyMs": 42559,
+      "estimatedUsd": null,
+      "usage": {
+        "promptTokenCount": 91603,
+        "candidatesTokenCount": 5528,
+        "totalTokenCount": 97131,
+        "promptTokensDetails": [
+          {
+            "modality": "VIDEO",
+            "tokenCount": 91453
+          },
+          {
+            "modality": "TEXT",
+            "tokenCount": 150
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": 51,
+      "textCharacters": 4456,
+      "rawTextCharacters": 9597,
+      "language": "zh",
+      "firstStart": 12.8,
+      "lastEnd": 1005,
+      "coverageFraction": 0.9784079601990042,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "identicalToPriorCaptionText": false,
+      "sourceHash": "22ea76bb5029ea5f906c337520876b2c75bd8a6836f220cd9bcff933830915d9",
+      "error": null
+    }
+  ],
+  "estimatedKnownUsd": 0.501678,
+  "unknownCostAttempts": 5,
+  "reservedNzd": 25,
+  "limitations": [
+    "Model-generated transcript is not independently audio verified.",
+    "Token modality metadata does not prove full original-audio access or transcription accuracy.",
+    "Source interval coverage is not semantic recall.",
+    "Estimates use recorded uncached model prices, not reconciled invoices; reservations are retained.",
+    "The minimal unstructured diagnostic deliberately did not request JSON; its invalid_json validator outcome is not an API failure.",
+    "Different diagnostic configurations and earlier provider time windows are not controlled causal comparisons."
+  ]
+}

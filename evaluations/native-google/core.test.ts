@@ -38,13 +38,15 @@ function response(p: unknown = payload): GenerateContentResponse {
     ],
   } as GenerateContentResponse;
 }
-test("Native request uses structured video, explicit mode, interval and connected abort with no SDK retries", () => {
+test("Native request uses structured video, default static mode, interval and connected abort with no SDK retries", () => {
   const c = new AbortController();
   const r = requestFor(input, c.signal);
   assert.equal(r.config?.abortSignal, c.signal);
   assert.equal(r.config?.httpOptions?.retryOptions?.attempts, 1);
   assert.equal(JSON.stringify(r).includes("fileUri"), true);
-  assert.equal(JSON.stringify(r).includes("STATIC"), true);
+  assert.equal(JSON.stringify(r).includes("mediaProcessing"), false);
+    assert.ok(r.config?.responseSchema);
+    assert.equal(r.config?.responseJsonSchema, undefined);
 });
 test("Deadline aborts actual signal and never invokes a retry", async () => {
   let n = 0;

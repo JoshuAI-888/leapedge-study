@@ -16,10 +16,12 @@ const choices = {
   macro: "J25UuUqHT3Y",
   english: "SHMPiWbbR6E",
   offset: "SHMPiWbbR6E",
+  long: "wkAqHlYL7bQ",
+  mandarin: "3u24qyWjSVM",
 } as const;
 const name = process.argv[2] as keyof typeof choices;
 if (!choices[name])
-  throw Error("Choose alpha, macro, english or offset. No automatic batch.");
+  throw Error("Choose alpha, macro, english, offset, long or mandarin. No automatic batch.");
 const key = process.env.GEMINI_API_KEY;
 const yt = process.env.YOUTUBE_API_KEY;
 if (!key || !yt) {
@@ -72,9 +74,10 @@ if (!key || !yt) {
       prompt: PROMPT_VERSION,
       input,
       maxOutputTokens: 32768,
-      thinkingLevel: "LOW",
-      mediaResolution: "LOW",
-      fps: 1,
+      processing: "documented_default_static",
+      thinkingLevel: "provider_default",
+      mediaResolution: "provider_default",
+      schemaTransport: "responseSchema",
     };
     const caseKey = createHash("sha256")
       .update(JSON.stringify(configuration))
@@ -90,7 +93,10 @@ if (!key || !yt) {
         }),
       );
     } else {
-      const attempt = reserve(directory, caseKey, 10);
+      const retryIndex = process.argv.indexOf("--retry-of");
+      const retryOf = retryIndex >= 0 ? process.argv[retryIndex + 1] : undefined;
+      if (retryIndex >= 0 && !retryOf) throw Error("Missing retry attempt ID");
+      const attempt = reserve(directory, caseKey, 35, retryOf);
       console.log(
         JSON.stringify({
           attemptId: attempt.id,

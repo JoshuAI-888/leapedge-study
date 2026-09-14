@@ -1,15 +1,13 @@
 import {
   GoogleGenAI,
-  MediaProcessing,
-  MediaResolution,
-  ThinkingLevel,
+  Type,
   type GenerateContentParameters,
   type GenerateContentResponse,
 } from "@google/genai";
 import { z } from "zod";
 export const SDK_VERSION = "2.22.0";
 export const MODEL = "gemini-3.8-flash";
-export const PROMPT_VERSION = "native-source.v1";
+export const PROMPT_VERSION = "native-source.v2";
 export const Input = z
   .object({
     videoId: z.string().regex(/^[A-Za-z0-9_-]{11}$/),
@@ -43,6 +41,7 @@ export function requestFor(
   signal: AbortSignal,
 ): GenerateContentParameters {
   const x = Input.parse(input);
+  if(x.mode !== "STATIC") throw Error("Agentic mode requires a separate validated experiment");
   return {
     model: MODEL,
     contents: [
@@ -52,17 +51,8 @@ export function requestFor(
           {
             fileData: {
               fileUri: `https://www.youtube.com/watch?v=${x.videoId}`,
-              mimeType: "video/mp4",
             },
-            mediaProcessing:
-              x.mode === "STATIC"
-                ? MediaProcessing.STATIC
-                : MediaProcessing.AGENTIC,
-            videoMetadata: {
-              startOffset: `${x.startSeconds}s`,
-              endOffset: `${x.endSeconds}s`,
-              fps: 1,
-            },
+            ...(x.startSeconds > 0 || x.endSeconds < x.durationSeconds ? {videoMetadata:{startOffset:`${x.startSeconds}s`,endOffset:`${x.endSeconds}s`}} : {}),
           },
           {
             text: `Transcribe ALL audible speech in the supplied video interval, ${x.startSeconds} through ${x.endSeconds} seconds. This is source acquisition, not a summary or trading analysis. Preserve the original spoken language, words, repeated letters, tickers, numbers and negations. Do not translate, correct a symbol using outside knowledge, or substitute chart text for speech. Use short consecutive segments. Report uncertain/inaudible speech explicitly; do not invent words. Timestamps must be seconds from the ORIGINAL video origin, not clip-relative; do not claim that this instruction verifies alignment. video_id must be ${x.videoId}. Return an empty array if no speech is accessible. Report any known omissions separately; do not invent completeness.`,
@@ -73,12 +63,9 @@ export function requestFor(
     config: {
       abortSignal: signal,
       httpOptions: { retryOptions: { attempts: 1 } },
-      temperature: 0,
-      mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW,
       maxOutputTokens: 32768,
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
-      responseJsonSchema: z.toJSONSchema(Transcript),
+      responseSchema: {type:Type.OBJECT,properties:{video_id:{type:Type.STRING},language:{type:Type.STRING},segments:{type:Type.ARRAY,items:{type:Type.OBJECT,properties:{start_seconds:{type:Type.NUMBER},end_seconds:{type:Type.NUMBER},text:{type:Type.STRING},uncertainty:{type:Type.STRING,nullable:true}},required:['start_seconds','end_seconds','text','uncertainty']}},model_reported_omissions:{type:Type.ARRAY,items:{type:Type.STRING}}},required:['video_id','language','segments','model_reported_omissions']},
     },
   };
 }

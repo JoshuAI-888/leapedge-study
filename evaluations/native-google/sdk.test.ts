@@ -70,7 +70,7 @@ test("Actual SDK serializes native media settings and does not retry HTTP503", a
       part.fileData.fileUri,
       "https://www.youtube.com/watch?v=CMjt6f4eVdA",
     );
-    assert.equal(part.mediaProcessing, "STATIC");
+    assert.equal(part.mediaProcessing, undefined);
     assert.equal(part.videoMetadata.startOffset, "20s");
     assert.equal(part.videoMetadata.endOffset, "80s");
   } finally {
