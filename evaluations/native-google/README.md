@@ -6,7 +6,7 @@ Isolated from application dependencies and Vercel uploads. Uses published `@goog
 
 Nine controlled tests pass, including real SDK HTTP requests to a local fixture: structured video/offset serialization, one attempt on HTTP503, connected cancellation, truncation, empty output, timestamp bounds, unknown usage and immutable budgeted artifacts. TypeScript compilation passes. These do not establish live YouTube access or audio accuracy.
 
-At preparation, GEMINI_API_KEY was absent. The existing YouTube key was not repurposed. No Google model request has been submitted and no native usage has been incurred.
+The user configured GEMINI_API_KEY. Model access and independent YouTube metadata preflight succeeded. One English-control generation was rejected in 345ms with HTTP429 RESOURCE_EXHAUSTED: Gemini prepayment credits depleted. No transcript was returned; this is a billing blocker, not an ingestion failure. The attempt and NZ$2.50 reservation are retained. Do not rerun the identical configuration blindly: after confirmed funding, create an explicitly linked retry without deleting the rejected record.
 
 ## Reproduce
 
