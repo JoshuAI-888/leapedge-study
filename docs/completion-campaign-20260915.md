@@ -4,7 +4,7 @@
 
 Production includes the gated native adapter and email-event reconciliation. Native ingestion remains disabled and the default synthesis prompt remains v5. Both CI runs for commit `919c530a612efada1f17be4cb2e4a50bc1930a23` passed (34898044303 and 34898040967). Application tests passed 50/50; native fixtures passed 15/15. Earlier approval-pending and preview-only paragraphs below are chronological intermediate observations, superseded by this checkpoint.
 
-All five priorities are **not yet accepted**: independent audio review has zero scored windows; synthesis omissions persist; hosted live native recovery remains untested; the full fresh discovery-to-email chain and UI scenario matrix remain open; no eligible priced creator cohort exists. Email callback acceptance is complete, but delivery to the user's intended reading mailbox awaits its address.
+All five priorities are **not yet accepted**: independent audio review has zero scored windows; synthesis omissions persist; hosted live native recovery remains untested; the full fresh discovery-to-email chain and UI scenario matrix remain open; no eligible priced creator cohort exists. Email callback acceptance is complete. The user subsequently designated a Gmail recipient; configuration was updated locally and on Vercel. Human inbox receipt remains unconfirmed.
 
 
 Status: in progress. Native adapter deployed behind disabled gates; fidelity prompt remains experimental.
@@ -138,3 +138,17 @@ The follow-up production deployment including early-event reconciliation succeed
 On 2026-09-15 Pacific/Auckland, entered `https://www.youtube.com/watch?v=J25UuUqHT3Y` in the visible Run form and clicked Run once. LeapEdge displayed READY, an English macro summary, 11 key points and “No trade ideas extracted.” UI metadata: `keypoints.v1-insights.v3-critique.v1`; 195.4k tokens; `gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite`; displayed cost $0.060 (currency not established). Daily credits were 19 before and 19 after. This is an available result, potentially cached, **not evidence of fresh successful ingestion**, measured latency or current captionless fallback. No observed credit decrement. Private visible-page evidence: `data/native-google-20260915/leapedge-macro-result.txt`.
 
 Our earlier full native extraction of this 31:59 video failed timestamp validation. LeapEdge's usable summary therefore exposes a user-visible availability difference, but its page supplies no transcript, quote-level evidence or timestamp audit for these macro points. It does not establish that its source timing is more accurate. No trade ideas is an acceptable outcome for a macro-only video; forcing a trading setup would be a defect. A fresh source-grounded audit is still required.
+
+## Recipient correction and next decision gate
+
+The user explicitly designated their Gmail address as the digest recipient. Updated only `YTI_EMAIL_TO` locally and in Vercel production/preview; retained the existing verified sender. Production deployment succeeded: `https://youtube-intelligence-4t5d250mi-joshu-ai.vercel.app`, aliased to the existing production app. Deployment log: `completion-recipient-deploy-20260915.log`. No DNS change, forwarding change or automatic resend of old digests.
+
+Next priority is a frozen, independently scored source benchmark, not additional feature breadth. First score the nine development audio windows; then use fresh English, Mandarin/Cantonese, long and captionless cases, separately measuring quote, number, ticker, condition, timestamp and omission rates. Compare both products against the source rather than treating LeapEdge output as ground truth. Promote prompt/native changes only after paired held-out improvement without increased unsupported claims. Retain caption providers pending hosted native recovery observation. Complete the fresh channel-to-digest workflow and recipient receipt check, then populate a legitimately eligible creator cohort while forward history accumulates.
+
+Confidence is an engineering judgment, not a measured probability: high in implementing comparable workflows; moderate in achieving synthesis parity after iteration; currently insufficient evidence to claim better multilingual accuracy or long-video reliability. Cached LeapEdge availability is not a fresh reliability trial.
+
+Post-recipient deployment readback: the local verification command initially lacked YTI_APP_ORIGIN; supplying the explicit origin reached the access endpoint but returned HTTP401 rather than303. This attempt does not establish a production regression or successful authenticated readback; reconcile the local test credential with the deployment before accepting this check. Earlier successful hosted evidence is retained.
+
+## Active scope update
+
+The user deferred Gmail receipt testing to Finradar migration and prioritized steps 1–2. New source-selection experiments and blind reviewer materials are documented in `source-selection-findings-20260915.md`. The user volunteered for nine-window audio review. No email work is required before that comparison.
