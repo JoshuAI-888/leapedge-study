@@ -2,6 +2,7 @@ import {
   GoogleGenAI,
   MediaProcessing,
   MediaResolution,
+  ThinkingLevel,
   type GenerateContentParameters,
   type GenerateContentResponse,
 } from "@google/genai";
@@ -75,7 +76,7 @@ export function requestFor(
       temperature: 0,
       mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW,
       maxOutputTokens: 32768,
-      thinkingConfig: { thinkingBudget: 4096 },
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
       responseMimeType: "application/json",
       responseJsonSchema: z.toJSONSchema(Transcript),
     },

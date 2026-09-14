@@ -72,7 +72,7 @@ if (!key || !yt) {
       prompt: PROMPT_VERSION,
       input,
       maxOutputTokens: 32768,
-      thinkingBudget: 4096,
+      thinkingLevel: "LOW",
       mediaResolution: "LOW",
       fps: 1,
     };
