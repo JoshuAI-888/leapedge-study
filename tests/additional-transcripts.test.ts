@@ -72,3 +72,24 @@ test("BibiGPT never admits preview, polished-only or reversed-time subtitles as 
     ),
   );
 });
+
+test("BibiGPT missing language stays unknown and success with empty subtitles is rejected", () => {
+  const input = {
+    success: true,
+    id: "fixture",
+    service: "youtube",
+    detail: {
+      id: "fixture",
+      duration: 10,
+      rawLang: "",
+      subtitlesArray: [{ startTime: 0, end: 3, text: "Original text" }],
+    },
+  };
+  assert.equal(normalizeBibiGPT(input, "fixture").source.language, undefined);
+  assert.throws(() =>
+    normalizeBibiGPT(
+      { ...input, detail: { ...input.detail, subtitlesArray: [] } },
+      "fixture",
+    ),
+  );
+});

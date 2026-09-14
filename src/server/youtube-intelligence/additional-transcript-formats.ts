@@ -69,7 +69,7 @@ export function normalizeBibiGPT(input: unknown, videoId: string) {
       detail: z.object({
         id: z.literal(videoId),
         duration: z.number().positive(),
-        rawLang: z.string().min(1),
+        rawLang: z.string(),
         isPreviewOnly: z.boolean().optional(),
         subtitlesArray: z
           .array(
@@ -87,7 +87,9 @@ export function normalizeBibiGPT(input: unknown, videoId: string) {
     throw Error("Preview subtitles are not a complete source");
   const source = Source.parse({
     video_id: videoId,
-    language: data.detail.rawLang,
+    // Live API can return an empty language even with valid subtitles.
+    // Preserve that uncertainty instead of asserting the requested language.
+    language: data.detail.rawLang || undefined,
     source_kind: "provider_transcript_bibigpt",
     segment_separator: /^(zh|yue|ja)/.test(data.detail.rawLang) ? "" : " ",
     segments: data.detail.subtitlesArray.map((s, i) => ({

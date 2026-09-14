@@ -1,0 +1,106 @@
+{
+  "tickerDiscrepancy": {
+    "videoId": "3u24qyWjSVM",
+    "prior": "QQQ",
+    "bibigpt": "Q",
+    "occurrences": 7,
+    "reproduced": true,
+    "audioVerified": false
+  },
+  "id": "bibigpt-live-20260915",
+  "at": "2026-09-14T16:31:46.698Z",
+  "runtime": "local client calling cloud API",
+  "attempts": [
+    {
+      "videoId": "CMjt6f4eVdA",
+      "http": 200,
+      "durationMs": 80738,
+      "success": true,
+      "keys": [
+        "success",
+        "id",
+        "service",
+        "sourceUrl",
+        "htmlUrl",
+        "costDuration",
+        "remainingTime",
+        "detail"
+      ],
+      "segments": 0,
+      "costDuration": 778,
+      "remainingTime": 8222,
+      "validated": false,
+      "reason": "empty_subtitles"
+    },
+    {
+      "videoId": "SHMPiWbbR6E",
+      "language": "en",
+      "http": 200,
+      "durationMs": 21646,
+      "success": true,
+      "segments": 63,
+      "costDuration": 165,
+      "remainingTime": 8057,
+      "validated": true,
+      "reportedLanguage": null,
+      "durationSeconds": 165,
+      "firstStart": 0.24,
+      "lastEnd": 166.8,
+      "characters": 1913,
+      "normalizedTextHash": "7903e78e8f94b22ac9f17b600dd3455c7225cb2478eead77a325616c31e04ae7",
+      "identicalToPriorTranscriptApiText": true
+    },
+    {
+      "videoId": "3u24qyWjSVM",
+      "language": "zh",
+      "http": 200,
+      "durationMs": 21092,
+      "success": true,
+      "segments": 278,
+      "costDuration": 1005,
+      "remainingTime": 7052,
+      "validated": true,
+      "reportedLanguage": null,
+      "durationSeconds": 1005,
+      "firstStart": 13.166,
+      "lastEnd": 991.166,
+      "characters": 3848,
+      "normalizedTextHash": "92592c18b1570527d4748cf95dbfa5a10110fb3a275c4242a23384238d112b85",
+      "identicalToPriorTranscriptApiText": false
+    },
+    {
+      "videoId": "J25UuUqHT3Y",
+      "language": "zh",
+      "http": 200,
+      "durationMs": 130756,
+      "success": true,
+      "segments": 0,
+      "costDuration": 1919,
+      "remainingTime": 4128,
+      "validated": false,
+      "reason": "empty_subtitles"
+    },
+    {
+      "videoId": "3u24qyWjSVM",
+      "language": "zh",
+      "http": 200,
+      "durationMs": 9735,
+      "success": true,
+      "segments": 278,
+      "costDuration": 1005,
+      "remainingTime": 6047,
+      "round": 2,
+      "validated": true,
+      "reportedLanguage": null,
+      "identicalToFirstBibiSubtitles": true
+    }
+  ],
+  "reportedDebitSeconds": 4872,
+  "limitations": [
+    "HTTP success is not transcript success; empty subtitles are rejected.",
+    "No independent audio accuracy review. Text equality is only agreement with a previous provider response.",
+    "Requests occurred in a different time window from the three-provider benchmark; latency is not a simultaneous comparison.",
+    "Provider omitted language metadata in observed responses; unknown language is retained, not inferred from the requested language.",
+    "No production fallback integration or automatic retry is enabled."
+  ]
+}
