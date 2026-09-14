@@ -2,6 +2,45 @@ import { createHmac } from "node:crypto";
 import { constantEqual } from "./access.ts";
 import { db } from "./store.ts";
 import { doc, docs, put } from "./research-store.ts";
+const EVENT_STATUS: Record<string, string> = {
+  "email.delivered": "delivered",
+  "email.bounced": "bounced",
+  "email.complained": "complained",
+  "email.failed": "failed",
+  "email.delivery_delayed": "delayed",
+};
+export async function reconcileDeliveryEvents(id: string) {
+  return db().transaction(async () => {
+    const delivery = await doc<{
+      id: string;
+      providerId?: string;
+      eventAt?: string;
+    }>("delivery", id);
+    if (!delivery?.providerId) return delivery;
+    const events = (
+      await docs<{ emailId: string; type: string; at: string }>("emailEvent")
+    )
+      .filter(
+        (e) =>
+          e.emailId === delivery.providerId &&
+          EVENT_STATUS[e.type] &&
+          Number.isFinite(Date.parse(e.at)),
+      )
+      .sort((a, b) => a.at.localeCompare(b.at));
+    const latest = events.at(-1);
+    if (latest && (!delivery.eventAt || latest.at >= delivery.eventAt)) {
+      const updated = {
+        ...delivery,
+        status: EVENT_STATUS[latest.type],
+        eventAt: latest.at,
+        lastEvent: latest.type,
+      };
+      await put("delivery", id, updated);
+      return updated;
+    }
+    return delivery;
+  });
+}
 export function verifyEmailWebhook(
   body: string,
   headers: Headers,

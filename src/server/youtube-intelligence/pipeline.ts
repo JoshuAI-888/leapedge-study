@@ -146,6 +146,10 @@ export async function modelCall(
   return value;
 }
 export async function step(run: Run) {
+  if (run.stage === "native-source" || run.stage === "native-recovery") {
+    const { nativeGoogleStep } = await import("./native-google.ts");
+    return nativeGoogleStep(run);
+  }
   if (run.input.task === "audio-review") {
     const { audioReviewStep } = await import("./audio-review.ts");
     return audioReviewStep(run);
@@ -196,11 +200,15 @@ export async function step(run: Run) {
   } else if (run.stage === "source") {
     const supplied = run.input.source
       ? Source.parse(run.input.source)
-      : await nativeTranscript(
-          run.videoId,
-          run.output.metadata as { duration: number; language?: string },
-        );
+      : await nativeTranscript(run.videoId, {
+          ...(run.output.metadata as { duration: number; language?: string }),
+          managedCaptionsOnly: run.input.nativeGoogleExperimental === true,
+        });
     const duration = (run.output.metadata as { duration: number }).duration;
+    if (!supplied && run.input.nativeGoogleExperimental === true) {
+      run.stage = "native-source";
+      return;
+    }
     if (!supplied && run.input.transcriptionWindowSeconds && duration > 1800) {
       run.output.transcriptionChunks = [];
       run.stage = "source-window";

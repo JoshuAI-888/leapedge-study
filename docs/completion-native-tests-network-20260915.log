@@ -1,0 +1,27 @@
+
+> test
+> node --experimental-strip-types --test *.test.ts
+
+✔ Native request uses structured video, default static mode, interval and connected abort with no SDK retries (1.085083ms)
+✔ Deadline aborts actual signal and never invokes a retry (11.217625ms)
+✔ STOP or token counts cannot turn empty, truncated or blocked output into a source (0.580959ms)
+✔ Retains exact speech but rejects wrong video, out-of-duration and clip-relative timestamps (0.303167ms)
+✔ Gaps are explicit review candidates, not automatically called silence or missing speech (0.079834ms)
+✔ Unknown thinking or missing usage does not become a zero cost (0.070333ms)
+✔ Schema ablations change only maxItems from the frozen failing request (1.018041ms)
+✔ Macro windows overlap without inheriting any full-video transcript answer (0.856417ms)
+✔ Journal prevents repeated submissions, caps reservations and preserves unique redacted artifacts (3.972917ms)
+✔ Explicit quota retry links prior evidence and cannot retry uncertain or duplicate requests (1.796958ms)
+✔ Actual SDK serializes native media settings and does not retry HTTP503 (17.643416ms)
+✔ Actual SDK request is aborted at the connected deadline (103.163583ms)
+✔ Reconstructed shadow prompts match hashes from both actual live runs (1.267875ms)
+✔ Text reservations include input bytes, output/thought allowance, FX and margin (0.566292ms)
+✔ Variable reservations cannot bypass the cumulative campaign cap (2.124583ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 305.0945

@@ -1501,6 +1501,8 @@ export function ResearchApp() {
                     digestEnabled: f.digestEnabled === "on",
                     autoPullEnabled: f.autoPullEnabled === "on",
                     windowedTranscription: f.windowedTranscription === "on",
+                    nativeGoogleExperimental:
+                      f.nativeGoogleExperimental === "on",
                   });
                 }}
               >
@@ -1567,6 +1569,19 @@ export function ResearchApp() {
                     />
                   </label>
                 </div>
+                <label>
+                  <input
+                    name="nativeGoogleExperimental"
+                    type="checkbox"
+                    defaultChecked={p.nativeGoogleExperimental}
+                  />{" "}
+                  Experimental native Google fallback when captions fail
+                </label>
+                <p>
+                  Requires the server experiment switch. Failed sources and up
+                  to two recovery clips are retained for review; generated
+                  speech and timestamps are not independently verified.
+                </p>
                 <label>
                   <input
                     name="windowedTranscription"

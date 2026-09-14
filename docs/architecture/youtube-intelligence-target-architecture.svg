@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2560" height="1440" viewBox="0 0 2560 1440">
+<title>YouTube Intelligence — proposed target architecture</title>
+<desc>Keep caption providers, pilot native Google ingestion, preserve evidence validation and compare cautiously with LeapEdge.</desc>
+<rect x="0" y="0" width="2560" height="1440" rx="0" fill="#F3F6FA" stroke="none" stroke-width="2"/>
+<text x="48" y="54.400000000000006" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#1767CE">YOUTUBE INTELLIGENCE</text>
+<text x="48" y="119.80000000000001" font-family="Arial, sans-serif" font-size="51" font-weight="700" fill="#142D48">A simpler acquisition path. An uncompromised evidence trail.</text>
+<text x="48" y="168.0" font-family="Arial, sans-serif" font-size="25" font-weight="400" fill="#51657A">PROPOSED TARGET  /  15 SEP 2026  /  Standalone now → Finradar · Intelligence → YouTube Intelligence</text>
+<rect x="1670" y="32" width="100" height="37" rx="8" fill="#E3F3EC" stroke="none" stroke-width="2"/>
+<text x="1682" y="55.2" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#087B61">KEEP</text>
+<rect x="1785" y="32" width="265" height="37" rx="8" fill="#FFF0D5" stroke="none" stroke-width="2"/>
+<text x="1797" y="55.2" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#9B6200">PILOT / CONDITIONAL</text>
+<rect x="2065" y="32" width="290" height="37" rx="8" fill="#F6E8E8" stroke="none" stroke-width="2"/>
+<text x="2077" y="55.2" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#A34545">OUT OF TARGET PATH</text>
+<rect x="48" y="215" width="468" height="510" rx="18" fill="#FFFFFF" stroke="#DCE4EE" stroke-width="2"/>
+<text x="72" y="257.2" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#1767CE">01</text>
+<path d="M519,470 h24 m-8,-7 l8,7 -8,7" fill="none" stroke="#1767CE" stroke-width="3"/>
+<rect x="547" y="215" width="468" height="510" rx="18" fill="#FFFFFF" stroke="#DCE4EE" stroke-width="2"/>
+<text x="571" y="257.2" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#1767CE">02</text>
+<path d="M1018,470 h24 m-8,-7 l8,7 -8,7" fill="none" stroke="#1767CE" stroke-width="3"/>
+<rect x="1046" y="215" width="468" height="510" rx="18" fill="#FFFFFF" stroke="#DCE4EE" stroke-width="2"/>
+<text x="1070" y="257.2" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#1767CE">03</text>
+<path d="M1517,470 h24 m-8,-7 l8,7 -8,7" fill="none" stroke="#1767CE" stroke-width="3"/>
+<rect x="1545" y="215" width="468" height="510" rx="18" fill="#FFFFFF" stroke="#DCE4EE" stroke-width="2"/>
+<text x="1569" y="257.2" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#1767CE">04</text>
+<path d="M2016,470 h24 m-8,-7 l8,7 -8,7" fill="none" stroke="#1767CE" stroke-width="3"/>
+<rect x="2044" y="215" width="468" height="510" rx="18" fill="#FFFFFF" stroke="#DCE4EE" stroke-width="2"/>
+<text x="2068" y="257.2" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#1767CE">05</text>
+<text x="72" y="305.6" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#142D48">Discover &amp; schedule</text>
+<rect x="72" y="336" width="340" height="37" rx="8" fill="#E3F3EC" stroke="none" stroke-width="2"/>
+<text x="84" y="359.2" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#087B61">KEEP · YOUTUBE DATA API</text>
+<text x="72" y="418.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Video URLs • channels • new uploads</text>
+<text x="72" y="453.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Titles, duration and source identity</text>
+<text x="72" y="488.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Metadata key ≠ arbitrary captions</text>
+<text x="72" y="553.6" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#142D48">Vercel job orchestration</text>
+<text x="72" y="595.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Bounded stages, leases and retries</text>
+<text x="72" y="630.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Idempotent jobs; spend reservations</text>
+<text x="72" y="665.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Resume failures without double work</text>
+<text x="571" y="305.6" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#142D48">Acquire the source</text>
+<text x="571" y="358.0" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#087B61">KEEP  TranscriptAPI → Supadata</text>
+<text x="571" y="400.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Primary captions → caption backup</text>
+<text x="571" y="432.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Historical median: 0.77s → 2.88s</text>
+<text x="571" y="464.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Both retrieved 4/6 test videos</text>
+<rect x="571" y="502" width="345" height="37" rx="8" fill="#FFF0D5" stroke="none" stroke-width="2"/>
+<text x="583" y="525.2" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#9B6200">PILOT · NATIVE GEMINI API</text>
+<text x="571" y="576.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">When captions fail: YouTube fileUri</text>
+<text x="571" y="608.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Tested: gemini-3.8-flash, static mode</text>
+<text x="571" y="640.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Short clip re-extraction for repair</text>
+<text x="571" y="672.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Promote only after accuracy gates</text>
+<text x="1070" y="305.6" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#142D48">Validate &amp; preserve</text>
+<text x="1070" y="361.0" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#087B61">KEEP  Evidence validation</text>
+<text x="1070" y="409.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Source ID • duration • schema</text>
+<text x="1070" y="444.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Quote anchors • tickers • price roles</text>
+<text x="1070" y="479.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Original language + raw artifacts</text>
+<text x="1070" y="514.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Explicit empty / timeout / invalid states</text>
+<rect x="1066" y="550" width="428" height="147" rx="12" fill="#FFF6E6" stroke="none" stroke-width="2"/>
+<text x="1082" y="585.6" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#9B6200">TRUST BOUNDARY</text>
+<text x="1082" y="624.6" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#9B6200">Valid structure ≠ accurate speech.</text>
+<text x="1082" y="652.6" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#9B6200">Reject invalid evidence; review doubts.</text>
+<text x="1082" y="680.6" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#9B6200">No silent repair or “100%” guarantee.</text>
+<text x="1569" y="305.6" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#142D48">Synthesize &amp; audit</text>
+<text x="1569" y="361.0" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#087B61">KEEP  OpenRouter · text models</text>
+<text x="1569" y="409.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Gemini 3.8 draft → Gemini 3.5 critic</text>
+<text x="1569" y="444.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">English synthesis; original quotes</text>
+<text x="1569" y="479.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Exact quote checks + semantic audit</text>
+<text x="1569" y="514.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Separate entries, levels and holdings</text>
+<rect x="1569" y="551" width="315" height="37" rx="8" fill="#FFF0D5" stroke="none" stroke-width="2"/>
+<text x="1581" y="574.2" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#9B6200">CONDITIONAL REMOVAL</text>
+<text x="1569" y="626.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Retire OpenRouter MEDIA fallback</text>
+<text x="1569" y="657.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">only when native passes its gates.</text>
+<text x="1569" y="688.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Text routing stays for now.</text>
+<text x="2068" y="305.6" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#142D48">Research &amp; monitor</text>
+<text x="2068" y="359.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Analysis • idea library • channel views</text>
+<text x="2068" y="396.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Settings: prompts, tokens, A/B history</text>
+<text x="2068" y="433.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">KEEP FMP: adjusted prices + SPY</text>
+<text x="2068" y="470.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">KEEP Resend: scheduled digests</text>
+<text x="2068" y="548.8" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#142D48">Finradar integration later</text>
+<text x="2068" y="593.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Reuse auth, owner scope and services</text>
+<text x="2068" y="625.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Accumulate forward channel cohorts</text>
+<text x="2068" y="657.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Show benchmark rules and sample size</text>
+<text x="2068" y="689.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">No new account / billing subsystem</text>
+<rect x="48" y="755" width="2464" height="119" rx="16" fill="#142D48" stroke="none" stroke-width="2"/>
+<text x="73" y="800.6" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#FFFFFF">KEEP · VERCEL + NEON</text>
+<text x="73" y="842.4" font-family="Arial, sans-serif" font-size="23" font-weight="400" fill="#CBD9E9">UI / API + durable job state</text>
+<text x="560" y="799.0" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#FFFFFF">SOURCE &amp; AUDIT RECORD</text>
+<text x="560" y="842.4" font-family="Arial, sans-serif" font-size="23" font-weight="400" fill="#CBD9E9">Sources, hashes, quotes, failures, model versions</text>
+<text x="1230" y="799.0" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#FFFFFF">EXPERIMENT &amp; BUDGET RECORD</text>
+<text x="1230" y="842.4" font-family="Arial, sans-serif" font-size="23" font-weight="400" fill="#CBD9E9">Prompt versions, A/B outcomes, tokens, spend caps</text>
+<text x="1920" y="799.0" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#FFFFFF">SIMPLIFICATION</text>
+<text x="1920" y="842.4" font-family="Arial, sans-serif" font-size="23" font-weight="400" fill="#CBD9E9">No vector DB needed for this pipeline</text>
+<rect x="48" y="906" width="800" height="431" rx="18" fill="#FFFFFF" stroke="#DCE4EE" stroke-width="2"/>
+<rect x="880" y="906" width="800" height="431" rx="18" fill="#FFFFFF" stroke="#DCE4EE" stroke-width="2"/>
+<rect x="1712" y="906" width="800" height="431" rx="18" fill="#FFFFFF" stroke="#DCE4EE" stroke-width="2"/>
+<text x="72" y="952.6" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#A34545">OUT OF THE TARGET PATH — WHY</text>
+<text x="72" y="998.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Tapline — same 4/6 coverage; slower than TranscriptAPI.</text>
+<text x="72" y="1037.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">BibiGPT — 2 empty-caption “successes”; minutes debited;</text>
+<text x="72" y="1076.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Mandarin QQQ → Q discrepancy versus retained captions.</text>
+<text x="72" y="1115.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">YouTube.js / free scraping — no proven cloud advantage.</text>
+<text x="72" y="1154.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Supadata generated ASR — hold: tested 403 responses.</text>
+<text x="72" y="1193.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Alpha Vantage — reserve only; FMP avoids duplication.</text>
+<text x="72" y="1261.4" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#51657A">Archive adapters and results; do not cancel accounts.</text>
+<text x="72" y="1297.6" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#51657A">These are proposed routing decisions, not deployed changes.</text>
+<text x="904" y="952.6" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#1767CE">WHAT OUR TESTING ESTABLISHED</text>
+<text x="904" y="998.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Native: 12:59 caption-unavailable case passed structure;</text>
+<text x="904" y="1037.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">40:23 video also passed. Audio accuracy is still unscored.</text>
+<text x="904" y="1076.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">31:59 macro failed timestamp bounds; two 90s clips</text>
+<text x="904" y="1115.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">passed locally. No automatic repair has been approved.</text>
+<text x="904" y="1154.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Quote A/B: 1/9 → 8/9 text-audit passes on one source.</text>
+<text x="904" y="1193.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Critic still missed a condition; some views were omitted.</text>
+<text x="904" y="1261.4" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#9B6200">NEXT GATE: independent audio + held-out repeat tests.</text>
+<text x="904" y="1298.4" font-family="Arial, sans-serif" font-size="23" font-weight="400" fill="#51657A">Then hosted reliability, cost limits and rollback testing.</text>
+<text x="1736" y="952.6" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#1767CE">VERSUS LEAPEDGE</text>
+<text x="1736" y="998.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Similar: discovery → evidence → synthesis → critique.</text>
+<text x="1736" y="1037.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">LeapEdge reports Firebase / GCP; we retain Vercel / Neon.</text>
+<text x="1736" y="1076.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Its exact transcript vendor and prompt text are unknown.</text>
+<text x="1736" y="1115.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Captured Alpha output: 4 ideas + 9 points; one entry</text>
+<text x="1736" y="1154.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">appeared to be resistance. Overall parity is unproven.</text>
+<text x="1736" y="1193.2" font-family="Arial, sans-serif" font-size="24" font-weight="400" fill="#51657A">Our target adds inspectable sources, failures and A/B runs.</text>
+<text x="1736" y="1261.4" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#9B6200">RISKS: shared YouTube access, drift, missed claims, cost.</text>
+<text x="1736" y="1298.4" font-family="Arial, sans-serif" font-size="23" font-weight="400" fill="#51657A">No vendor chain or critic guarantees truthful coverage.</text>
+<text x="48" y="1387.6" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#51657A">Evidence: native-google-findings-white-paper.md + provider test artifacts  •  Historical small samples; timings are not SLA measurements.</text>
+<text x="48" y="1421.0" font-family="Arial, sans-serif" font-size="20" font-weight="400" fill="#51657A">Status: native ingestion and candidate quote prompt remain experimental. No production routing or provider subscriptions changed by this diagram.</text>
+</svg>

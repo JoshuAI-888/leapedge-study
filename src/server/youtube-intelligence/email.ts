@@ -2,6 +2,7 @@ import { get, db } from "./store.ts";
 import { createHash } from "node:crypto";
 import { doc, docs, put, preferences } from "./research-store.ts";
 import type { Briefing } from "./briefings.ts";
+import { reconcileDeliveryEvents } from "./webhooks.ts";
 export function emailText(b: Briefing, origin: string) {
   return [
     `YouTube Intelligence — ${b.date}`,
@@ -104,14 +105,18 @@ export async function sendPreview(id: string) {
     throw Error(`Email provider HTTP ${r.status}.`);
   }
   const result = await r.json();
-  return await put("delivery", id, {
+  const accepted = {
     ...delivery,
     status: "provider_accepted",
     providerId: result.id,
     idempotencyKey,
     acceptedAt: new Date().toISOString(),
     reason: "Accepted by provider; mailbox delivery is not yet confirmed.",
-  });
+  };
+  await put("delivery", id, accepted);
+  // A fast webhook can arrive before the provider ID is persisted. Replay retained
+  // matching events so acceptance cannot erase a delivered/bounced outcome.
+  return { ...accepted, ...(await reconcileDeliveryEvents(id)) };
 }
 export async function deliverDue() {
   for (const d of await docs<{

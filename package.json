@@ -18,6 +18,7 @@
     "test:captions": "node --experimental-strip-types scripts/caption-smoke.ts"
   },
   "dependencies": {
+    "@google/genai": "2.22.0",
     "lucide-react": "^1.43.0",
     "next": "16.3.4",
     "pg": "^8.23.0",

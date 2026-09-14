@@ -368,7 +368,11 @@ export async function managedTranscript(
 }
 export async function nativeTranscript(
   videoId: string,
-  options: { duration?: number; language?: string } = {},
+  options: {
+    duration?: number;
+    language?: string;
+    managedCaptionsOnly?: boolean;
+  } = {},
 ): Promise<SourceData | null> {
   for (const provider of ["transcriptapi", "supadata"] as const) {
     try {
@@ -384,6 +388,7 @@ export async function nativeTranscript(
       });
     }
   }
+  if (options.managedCaptionsOnly) return null;
   const free = await youtubeJsTranscript(videoId);
   if (free) return free;
   if (process.env.YTI_GENERATED_TRANSCRIPTS === "true" && options.duration)

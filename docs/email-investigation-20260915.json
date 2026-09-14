@@ -1,0 +1,9 @@
+{
+  "at": "2026-09-14T20:55:22.301Z",
+  "providerId": "aebd2984-81ba-4f33-84d4-18ccf78bc38a",
+  "http": 401,
+  "status": null,
+  "error": "This API key is restricted to only send emails",
+  "webhookSecretConfigured": false,
+  "userReportsReceipt": false
+}

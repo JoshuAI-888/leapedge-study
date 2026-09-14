@@ -28,6 +28,7 @@ export const Preferences = z.object({
   model: z.enum(MODELS),
   criticModel: z.enum(MODELS),
   windowedTranscription: z.boolean().default(false),
+  nativeGoogleExperimental: z.boolean().default(false),
   transcriptionModel: z
     .enum(["google/gemini-3.1-flash-lite", ...MODELS])
     .default("google/gemini-3.1-flash-lite"),
@@ -168,11 +169,12 @@ export async function queue(
       criticModel: p.criticModel,
       transcriptionModel: p.transcriptionModel,
       promptSnapshot: snapshot,
-      experiment,
+      experiment: experiment || p.nativeGoogleExperimental,
       pipelineVersion: "research.v4.reasoning",
       inferenceConfig: { critiqueMaxTokens: 6000, reasoningEffort: "low" },
       sourceRepairEnabled: false,
       transcriptionWindowSeconds: p.windowedTranscription ? 600 : 0,
+      nativeGoogleExperimental: p.nativeGoogleExperimental,
     },
     p.promptVersion,
   );

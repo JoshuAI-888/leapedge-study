@@ -1,0 +1,150 @@
+{
+  "instructions": "Listen independently before inspecting candidate transcripts. Record exact source words, critical facts and absolute timestamps. Do not mark verified without listening. These are development windows.",
+  "packetSha256": "aba6d2f7236d405bb2814876a952c711077032f0b2a7ae4f81234a440ad9de9f",
+  "windows": [
+    {
+      "id": "native-review-1",
+      "videoId": "SHMPiWbbR6E",
+      "language": "en",
+      "split": "development",
+      "startSeconds": 50,
+      "endSeconds": 110,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    },
+    {
+      "id": "native-review-2",
+      "videoId": "CMjt6f4eVdA",
+      "language": "zh",
+      "split": "development",
+      "startSeconds": 500,
+      "endSeconds": 540,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    },
+    {
+      "id": "native-review-3",
+      "videoId": "CMjt6f4eVdA",
+      "language": "zh",
+      "split": "development",
+      "startSeconds": 610,
+      "endSeconds": 665,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    },
+    {
+      "id": "native-review-4",
+      "videoId": "CMjt6f4eVdA",
+      "language": "zh",
+      "split": "development",
+      "startSeconds": 680,
+      "endSeconds": 730,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    },
+    {
+      "id": "native-review-5",
+      "videoId": "J25UuUqHT3Y",
+      "language": "zh",
+      "split": "development",
+      "startSeconds": 1170,
+      "endSeconds": 1260,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    },
+    {
+      "id": "native-review-6",
+      "videoId": "wkAqHlYL7bQ",
+      "language": "en",
+      "split": "development",
+      "startSeconds": 0,
+      "endSeconds": 60,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    },
+    {
+      "id": "native-review-7",
+      "videoId": "wkAqHlYL7bQ",
+      "language": "en",
+      "split": "development",
+      "startSeconds": 1180,
+      "endSeconds": 1240,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    },
+    {
+      "id": "native-review-8",
+      "videoId": "wkAqHlYL7bQ",
+      "language": "en",
+      "split": "development",
+      "startSeconds": 2350,
+      "endSeconds": 2423,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    },
+    {
+      "id": "native-review-9",
+      "videoId": "3u24qyWjSVM",
+      "language": "zh",
+      "split": "development",
+      "startSeconds": 395,
+      "endSeconds": 475,
+      "reference": {
+        "status": "pending_audio_review",
+        "text": "",
+        "reviewer": "",
+        "reviewedAt": "",
+        "criticalFacts": [],
+        "anchors": []
+      }
+    }
+  ]
+}

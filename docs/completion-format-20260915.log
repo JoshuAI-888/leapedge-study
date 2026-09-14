@@ -1,0 +1,22 @@
+src/server/youtube-intelligence/native-google.ts 39ms
+src/server/youtube-intelligence/native-google-core.ts 16ms (unchanged)
+src/server/youtube-intelligence/webhooks.ts 8ms
+src/server/youtube-intelligence/email.ts 8ms
+src/server/youtube-intelligence/pipeline.ts 21ms
+src/server/youtube-intelligence/research-store.ts 18ms (unchanged)
+src/server/youtube-intelligence/transcripts.ts 12ms
+src/features/youtube-intelligence/ResearchApp.tsx 58ms
+src/features/youtube-intelligence/evidence-boundaries.ts 3ms
+tests/native-google.test.ts 3ms
+tests/evidence-boundaries.test.ts 2ms
+tests/email-reconciliation.test.ts 1ms
+evaluations/native-google/fidelity-prompts.ts 1ms
+evaluations/native-google/fidelity-synthesis.ts 8ms
+evaluations/native-google/boundary-replay.ts 3ms
+scripts/completion-cohort.ts 3ms
+scripts/completion-final-status.ts 2ms
+scripts/completion-hosted-check.ts 3ms (unchanged)
+scripts/completion-live-events.ts 2ms
+scripts/completion-report.mjs 13ms
+scripts/configure-delivery-webhook.mjs 3ms
+scripts/save-completion-research.ts 1ms
