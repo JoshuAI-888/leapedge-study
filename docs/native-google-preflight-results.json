@@ -1,0 +1,25 @@
+{
+  "id": "native-google-feasibility-20260915",
+  "at": "2026-09-15",
+  "hypothesis": "Native Google can replace all transcript providers without reducing accuracy, completeness or operational reliability.",
+  "status": "awaiting_native_api_credential",
+  "liveModelRequests": 0,
+  "nativeModelCostUsd": 0,
+  "sdk": "@google/genai@2.22.0",
+  "model": "gemini-3.8-flash",
+  "controlledTests": {
+    "passed": 9,
+    "failed": 0,
+    "includesActualSdkLoopbackHttp": true
+  },
+  "typecheck": "passed",
+  "firstCases": [
+    "SHMPiWbbR6E",
+    "CMjt6f4eVdA",
+    "J25UuUqHT3Y",
+    "SHMPiWbbR6E:60-120s"
+  ],
+  "phaseOneCapNzd": 10,
+  "campaignCapNzd": 50,
+  "conclusion": "No live acquisition, transcript accuracy, latency or cost-effectiveness conclusion is available. Production routing remains unchanged."
+}
