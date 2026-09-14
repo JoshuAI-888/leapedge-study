@@ -15,6 +15,8 @@ export const Source = z
     video_id: z.string().optional(),
     language: z.string().optional(),
     source_kind: z.string().default("imported_transcript"),
+    // Explicit caption boundary formatting; original segment text is never rewritten.
+    segment_separator: z.enum(["", " "]).optional(),
     segments: z.array(Segment).min(1).max(20000),
   })
   .superRefine((s, c) => {
@@ -121,7 +123,7 @@ export function validateClaim(claim: ClaimData, source: SourceData) {
         ? source.segments
             .slice(start, end + 1)
             .map((s) => s.text)
-            .join("")
+            .join(source.segment_separator || "")
         : "";
     const offset = text.indexOf(e.quote_original);
     if (offset < 0 || offset >= (source.segments[start]?.text.length || 0))
@@ -191,7 +193,7 @@ export function anchorClaimEvidence(
         end < Math.min(source.segments.length, start + 12);
         end++
       ) {
-        text += source.segments[end].text;
+        text += (source.segment_separator || "") + source.segments[end].text;
         const offset = text.indexOf(e.quote_original);
         if (offset >= 0 && offset < source.segments[start].text.length)
           return { ...e, end_segment_id: source.segments[end].id };

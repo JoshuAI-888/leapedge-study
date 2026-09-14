@@ -249,3 +249,20 @@ test("Verbatim quotes may span adjacent original segments without rewriting any 
     ).length,
   );
 });
+
+test('English caption boundaries preserve spaces without accepting altered words or skipped segments', () => {
+  const source = {source_kind:'native_captions_youtube_transcript_api',segment_separator:' ' as const,segments:[
+    {id:'a',text:'I would not',start_seconds:0,end_seconds:2},
+    {id:'b',text:'buy this stock',start_seconds:2,end_seconds:4},
+    {id:'c',text:'until earnings improve.',start_seconds:4,end_seconds:6},
+  ]};
+  const make = (text:string) => ({...claim,ticker:null,ticker_explicit:false,levels:[],evidence:[{segment_id:'a',quote_original:text,quote_translation_en:text}]});
+  const original = JSON.stringify(source.segments);
+  const anchored = anchorClaimEvidence(make('would not buy this stock until earnings improve.'),source);
+  assert.equal(anchored.evidence[0].end_segment_id,'c');
+  assert.deepEqual(validateClaim(anchored,source),[]);
+  for(const text of ['would buy this stock','would not until earnings improve.','would not buy this Stock'])
+    assert.ok(validateClaim(anchorClaimEvidence(make(text),source),source).length);
+  assert.ok(validateClaim(anchored,{...source,segment_separator:''}).length);
+  assert.equal(JSON.stringify(source.segments),original);
+});
