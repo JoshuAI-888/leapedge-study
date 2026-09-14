@@ -28,4 +28,21 @@ test("Journal prevents repeated submissions, caps reservations and preserves uni
   }
 });
 
-test('Explicit quota retry links prior evidence and cannot retry uncertain or duplicate requests',()=>{const d=mkdtempSync(join(tmpdir(),'native-google-retry-'));try{const a=reserve(d,'quota',10);finish(d,a.id,'quota_or_rate_limit','private.json');const retry=reserve(d,'quota',10,a.id);assert.equal(retry.retryOf,a.id);assert.throws(()=>reserve(d,'quota',10,a.id),/already/);const b=reserve(d,'uncertain',10);finish(d,b.id,'transport_uncertain','private2.json');assert.throws(()=>reserve(d,'uncertain',10,b.id),/matching explicit quota/)}finally{rmSync(d,{recursive:true,force:true})}});
+test("Explicit quota retry links prior evidence and cannot retry uncertain or duplicate requests", () => {
+  const d = mkdtempSync(join(tmpdir(), "native-google-retry-"));
+  try {
+    const a = reserve(d, "quota", 10);
+    finish(d, a.id, "quota_or_rate_limit", "private.json");
+    const retry = reserve(d, "quota", 10, a.id);
+    assert.equal(retry.retryOf, a.id);
+    assert.throws(() => reserve(d, "quota", 10, a.id), /already/);
+    const b = reserve(d, "uncertain", 10);
+    finish(d, b.id, "transport_uncertain", "private2.json");
+    assert.throws(
+      () => reserve(d, "uncertain", 10, b.id),
+      /matching explicit quota/,
+    );
+  } finally {
+    rmSync(d, { recursive: true, force: true });
+  }
+});

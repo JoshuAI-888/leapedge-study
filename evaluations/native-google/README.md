@@ -4,7 +4,10 @@ Isolated from application dependencies and Vercel uploads. Uses published `@goog
 
 ## Current evidence
 
-Ten controlled tests pass, including real SDK HTTP requests to a local fixture. Live funding is now working. Native Google returned a short English control, an offset clip and a captionless Mandarin source. Another captionless source was rejected for an out-of-duration timestamp. See `docs/native-google-live-assessment.md` and the immutable attempt summary in `docs/native-google-live-results.json` for the complete results and remaining accuracy limitations.
+The detailed [findings white paper](../../docs/native-google-findings-white-paper.md) is the current decision record, including documentation research, all failures, controlled follow-ups and synthesis A/B outcomes. The first-funded assessment remains a historical snapshot.
+
+
+Fifteen controlled tests pass, including real SDK HTTP requests to a local fixture. Live funding is now working. Native Google returned a short English control, an offset clip and a captionless Mandarin source. Another captionless source was rejected for an out-of-duration timestamp. See `docs/native-google-live-assessment.md` and the immutable attempt summary in `docs/native-google-live-results.json` for the complete results and remaining accuracy limitations.
 
 The original generated `responseJsonSchema` configuration received HTTP400. The simplified Google `responseSchema` format succeeded. The public runner now uses that format, structured fileUri, default static processing and provider-default thinking/media resolution. This is an empirically working configuration, not proof that all JSON-schema configurations are unsupported.
 
@@ -40,3 +43,21 @@ Raw responses, usage, configuration, source intervals and metadata remain privat
 ## Promotion
 
 No sources from this harness become canonical reports automatically. Normalize and review them first, attach independent audio-reference windows, then run unchanged v5 synthesis for the same-source quality comparison. Retain failures and missing tails. Follow `docs/native-google-ingestion-plan.md` before changing production routing or retiring providers.
+
+## Follow-up and offline reproduction
+
+`followup.ts` offers `schema-no-max`, `schema-small-max`, `macro-window-a` and `macro-window-b`, with dry-run default. The frozen failing request lives in `fixtures/rejected-schema-request.json`. Both schema variants timed out; both macro windows passed structural checks. Do not retry the uncertain schema requests blindly.
+
+`shadow-synthesis.ts` executes the existing v5 prompts on the retained Alpha source. `--single-segment-quotes` creates the separately labeled candidate. `--execute` is required for either. Raw source/prompt snapshots, per-item failures and critics remain private. No source or prompt is automatically promoted.
+
+Text-only stages use byte/output/thought-based reservations from `text-budget.ts`, sharing the same NZ$50/60-request journal; media reservations remain NZ$2.50. The smaller text reservations do not release previous holds. Current totals and unknown billing are in the white paper.
+
+Offline report commands (from repository root, private artifacts required):
+
+```sh
+node --experimental-strip-types evaluations/native-google/compare.mjs
+node --experimental-strip-types evaluations/native-google/report.mjs
+node evaluations/native-google/whitepaper-appendix.mjs
+```
+
+The comparison's edit rates are differences from historical captions, not audio-grounded WER/CER. The generated audio review packet deliberately remains unscored. `snapshot-sources.py` archives consulted public pages with verified TLS; it makes no model calls.

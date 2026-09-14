@@ -1,5 +1,7 @@
 # Native Google ingestion: first funded decision
 
+**Historical first-ten-request snapshot.** See the [findings white paper](native-google-findings-white-paper.md) for the subsequent controlled experiments, synthesis A/B and current totals.
+
 15 September 2026. Funding is working. Native ingestion is feasible, including a video for which our earlier caption-provider tests returned no transcript. **Do not retire TranscriptAPI or Supadata yet.** The native adapter remains isolated from production routing.
 
 ## What the live tests establish

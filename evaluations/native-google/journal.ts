@@ -18,7 +18,19 @@ export type Attempt = {
   artifact?: string;
   retryOf?: string;
 };
-export function reserve(directory: string, caseKey: string, capNzd = 10, retryOf?: string) {
+export function reserve(
+  directory: string,
+  caseKey: string,
+  capNzd = 10,
+  retryOf?: string,
+  reservationNzd = 2.5,
+) {
+  if (
+    !Number.isFinite(reservationNzd) ||
+    reservationNzd <= 0 ||
+    reservationNzd > 2.5
+  )
+    throw Error("Invalid bounded reservation");
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const lock = join(directory, "ledger.lock");
   const fd = openSync(lock, "wx", 0o600);
@@ -28,8 +40,13 @@ export function reserve(directory: string, caseKey: string, capNzd = 10, retryOf
       ? JSON.parse(readFileSync(p, "utf8"))
       : [];
     if (retryOf) {
-      const prior = rows.find(r => r.id === retryOf);
-      if (!prior || prior.caseKey !== caseKey || prior.status !== "quota_or_rate_limit") throw Error("Retry requires a matching explicit quota rejection");
+      const prior = rows.find((r) => r.id === retryOf);
+      if (
+        !prior ||
+        prior.caseKey !== caseKey ||
+        prior.status !== "quota_or_rate_limit"
+      )
+        throw Error("Retry requires a matching explicit quota rejection");
       caseKey = `${caseKey}:retry:${retryOf}`;
     }
     if (rows.some((r) => r.caseKey === caseKey))
@@ -38,7 +55,8 @@ export function reserve(directory: string, caseKey: string, capNzd = 10, retryOf
       );
     if (
       rows.length >= 60 ||
-      rows.reduce((n, r) => n + r.reservedNzd, 0) + 2.5 > Math.min(50, capNzd)
+      rows.reduce((n, r) => n + r.reservedNzd, 0) + reservationNzd >
+        Math.min(50, capNzd)
     )
       throw Error("Campaign reservation cap reached");
     const row: Attempt = {
@@ -46,7 +64,7 @@ export function reserve(directory: string, caseKey: string, capNzd = 10, retryOf
       retryOf,
       caseKey,
       status: "reserved",
-      reservedNzd: 2.5,
+      reservedNzd: reservationNzd,
       createdAt: new Date().toISOString(),
     };
     rows.push(row);

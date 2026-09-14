@@ -45,8 +45,8 @@ test("Native request uses structured video, default static mode, interval and co
   assert.equal(r.config?.httpOptions?.retryOptions?.attempts, 1);
   assert.equal(JSON.stringify(r).includes("fileUri"), true);
   assert.equal(JSON.stringify(r).includes("mediaProcessing"), false);
-    assert.ok(r.config?.responseSchema);
-    assert.equal(r.config?.responseJsonSchema, undefined);
+  assert.ok(r.config?.responseSchema);
+  assert.equal(r.config?.responseJsonSchema, undefined);
 });
 test("Deadline aborts actual signal and never invokes a retry", async () => {
   let n = 0;

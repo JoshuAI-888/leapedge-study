@@ -21,7 +21,9 @@ const choices = {
 } as const;
 const name = process.argv[2] as keyof typeof choices;
 if (!choices[name])
-  throw Error("Choose alpha, macro, english, offset, long or mandarin. No automatic batch.");
+  throw Error(
+    "Choose alpha, macro, english, offset, long or mandarin. No automatic batch.",
+  );
 const key = process.env.GEMINI_API_KEY;
 const yt = process.env.YOUTUBE_API_KEY;
 if (!key || !yt) {
@@ -94,7 +96,8 @@ if (!key || !yt) {
       );
     } else {
       const retryIndex = process.argv.indexOf("--retry-of");
-      const retryOf = retryIndex >= 0 ? process.argv[retryIndex + 1] : undefined;
+      const retryOf =
+        retryIndex >= 0 ? process.argv[retryIndex + 1] : undefined;
       if (retryIndex >= 0 && !retryOf) throw Error("Missing retry attempt ID");
       const attempt = reserve(directory, caseKey, 35, retryOf);
       console.log(

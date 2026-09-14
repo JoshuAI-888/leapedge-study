@@ -86,3 +86,8 @@ Google documents structured YouTube inputs, static/agentic processing and interv
 - https://ai.google.dev/gemini-api/docs/pricing
 - https://ai.google.dev/api/generate-content
 - Existing evidence: docs/three-provider-repeat-results.json, docs/bibigpt-live-assessment.md, docs/leapedge-captionless-result.json, docs/transcript-accuracy-benchmark.md.
+
+
+## Execution record — 15 September 2026
+
+The [findings white paper](native-google-findings-white-paper.md) records completed native feasibility tests, documentation/issue research, schema ablations, clipped-window recovery, caption disagreement and v5 quotation A/B. Native and prompt candidates remain experimental. Independent audio review and hosted observation are still required before provider retirement.

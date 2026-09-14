@@ -1,12 +1,14 @@
 {
   "id": "native-google-feasibility-20260915",
-  "at": "2026-09-14T19:28:36.845Z",
-  "status": "live_evaluation",
+  "at": "2026-09-14T20:25:11.714Z",
+  "status": "completed_recorded_attempts",
   "hypothesis": "Native Google-only ingestion can replace external transcript providers.",
   "attempts": [
     {
       "attemptId": "10ba7b31-e1ff-4120-93e2-a512134e44a5",
+      "retryOf": null,
       "at": "2026-09-14T19:17:18.570Z",
+      "terminal": true,
       "videoId": "SHMPiWbbR6E",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -29,12 +31,13 @@
       "httpStatus": 429,
       "latencyMs": 345,
       "estimatedUsd": null,
+      "observedComponentEstimateUsd": null,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": null,
       "billing": "potentially_billable",
       "reservedNzd": 2.5,
       "segments": null,
       "textCharacters": null,
-      "rawTextCharacters": 0,
       "language": null,
       "firstStart": null,
       "lastEnd": null,
@@ -44,14 +47,16 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": null,
       "sourceHash": null,
+      "rawArtifactSha256": "966c526e82df37c47b8b4eaecc9c824e52097a46dd109eab210cae7fd4bf56e6",
+      "requestHash": null,
       "error": "{\"error\":{\"code\":429,\"message\":\"Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. \",\"status\":\"RESOURCE_EXHAUSTED\"}}"
     },
     {
       "attemptId": "eb6fb3c1-3a19-40e2-9416-f24a0b39576a",
       "retryOf": "10ba7b31-e1ff-4120-93e2-a512134e44a5",
       "at": "2026-09-14T19:20:27.698Z",
+      "terminal": true,
       "videoId": "SHMPiWbbR6E",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -74,12 +79,13 @@
       "httpStatus": 400,
       "latencyMs": 11364,
       "estimatedUsd": null,
+      "observedComponentEstimateUsd": null,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": null,
       "billing": "potentially_billable",
       "reservedNzd": 2.5,
       "segments": null,
       "textCharacters": null,
-      "rawTextCharacters": 0,
       "language": null,
       "firstStart": null,
       "lastEnd": null,
@@ -89,13 +95,16 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": null,
       "sourceHash": null,
+      "rawArtifactSha256": "35815569d8a615e6d0b72c987508795dc0eba428ef79e106798d011f329269cb",
+      "requestHash": null,
       "error": "{\"error\":{\"code\":400,\"message\":\"Request contains an invalid argument.\",\"status\":\"INVALID_ARGUMENT\"}}"
     },
     {
       "attemptId": "faa76fc7-3b3a-4cc6-a39f-fb511484b3fd",
+      "retryOf": null,
       "at": "2026-09-14T19:21:33.685Z",
+      "terminal": true,
       "videoId": "SHMPiWbbR6E",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -111,8 +120,11 @@
       },
       "outcome": "diagnostic_text_received",
       "validationOutcome": "invalid_json",
+      "httpStatus": null,
       "latencyMs": 11172,
       "estimatedUsd": 0.019842,
+      "observedComponentEstimateUsd": 0.01661325,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": {
         "promptTokenCount": 15041,
         "candidatesTokenCount": 1422,
@@ -134,7 +146,6 @@
       "reservedNzd": 2.5,
       "segments": null,
       "textCharacters": null,
-      "rawTextCharacters": 3352,
       "language": null,
       "firstStart": null,
       "lastEnd": null,
@@ -144,13 +155,16 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": null,
       "sourceHash": null,
+      "rawArtifactSha256": "da67d891d522f7eb23fdb8ead0c0088a18bc89dc9b1505ef8cb3a228440345c2",
+      "requestHash": "fb3d362ca76e6f3fceb257ab257cd76d720a53547a4c7bcf47124df1c5b9bf87",
       "error": null
     },
     {
       "attemptId": "6df01eb9-f4ca-410d-a4a7-262d9f31be6f",
+      "retryOf": null,
       "at": "2026-09-14T19:22:26.502Z",
+      "terminal": true,
       "videoId": "SHMPiWbbR6E",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -169,12 +183,13 @@
       "httpStatus": 400,
       "latencyMs": 5597,
       "estimatedUsd": null,
+      "observedComponentEstimateUsd": null,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": null,
       "billing": "potentially_billable",
       "reservedNzd": 2.5,
       "segments": null,
       "textCharacters": null,
-      "rawTextCharacters": 0,
       "language": null,
       "firstStart": null,
       "lastEnd": null,
@@ -184,13 +199,16 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": null,
       "sourceHash": null,
+      "rawArtifactSha256": "784abfb93e2f3bbb3cadf0245b29444ed5664136db706e3c264f014beb39bdab",
+      "requestHash": "3550601cced5ca0fa923b5f05d8a85b667f38fbff51db969bfa97fde383ac952",
       "error": "{\"error\":{\"code\":400,\"message\":\"Request contains an invalid argument.\",\"status\":\"INVALID_ARGUMENT\"}}"
     },
     {
       "attemptId": "2acd7054-a4f3-4aae-875e-972f7c44dc5d",
+      "retryOf": null,
       "at": "2026-09-14T19:22:52.841Z",
+      "terminal": true,
       "videoId": "SHMPiWbbR6E",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -206,8 +224,11 @@
       },
       "outcome": "structurally_valid_unverified",
       "validationOutcome": "structurally_valid_unverified",
+      "httpStatus": null,
       "latencyMs": 12499,
       "estimatedUsd": 0.02054025,
+      "observedComponentEstimateUsd": 0.02035275,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": {
         "promptTokenCount": 15052,
         "candidatesTokenCount": 2417,
@@ -229,7 +250,6 @@
       "reservedNzd": 2.5,
       "segments": 39,
       "textCharacters": 1978,
-      "rawTextCharacters": 6941,
       "language": "en",
       "firstStart": 0,
       "lastEnd": 164.92,
@@ -239,13 +259,16 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": false,
       "sourceHash": "a29a58fda819750de26ff0affa5ca8ce7b812c6752fcf5dce8912ad346e2d914",
+      "rawArtifactSha256": "5c5a4400a589920fbd26cf575be6ce3ddfe5fc6390b79df4542c43730068fdb1",
+      "requestHash": "abfdcad40c24590dcefd19a68d564288531ba3bc278a561e6634a9935d5d8b04",
       "error": null
     },
     {
       "attemptId": "4e93d949-2083-43e3-98f5-fea6b133a4ad",
+      "retryOf": null,
       "at": "2026-09-14T19:24:12.671Z",
+      "terminal": true,
       "videoId": "CMjt6f4eVdA",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -266,8 +289,11 @@
       },
       "outcome": "structurally_valid_unverified",
       "validationOutcome": "structurally_valid_unverified",
+      "httpStatus": null,
       "latencyMs": 31030,
       "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.07716075,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": {
         "promptTokenCount": 70956,
         "candidatesTokenCount": 6385,
@@ -288,7 +314,6 @@
       "reservedNzd": 2.5,
       "segments": 110,
       "textCharacters": 3505,
-      "rawTextCharacters": 12960,
       "language": "zh",
       "firstStart": 6.2,
       "lastEnd": 779,
@@ -298,13 +323,16 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": null,
       "sourceHash": "526b9305b0b3d431ec50109f83be6f95b974f690085dc45f5f4734bac0088536",
+      "rawArtifactSha256": "3d35caa87ba60568bd31f1b8d2ae2abdc75124cbe167982f3b61b4139461aa82",
+      "requestHash": null,
       "error": null
     },
     {
       "attemptId": "58f33c11-2036-42e7-8d8c-b4a5f0b9e02c",
+      "retryOf": null,
       "at": "2026-09-14T19:25:06.515Z",
+      "terminal": true,
       "videoId": "J25UuUqHT3Y",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -325,8 +353,11 @@
       },
       "outcome": "invalid_timing_or_coordinate_system",
       "validationOutcome": "invalid_timing_or_coordinate_system",
+      "httpStatus": null,
       "latencyMs": 89152,
       "estimatedUsd": 0.19020525,
+      "observedComponentEstimateUsd": 0.18981525,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": {
         "promptTokenCount": 174777,
         "candidatesTokenCount": 15662,
@@ -348,7 +379,6 @@
       "reservedNzd": 2.5,
       "segments": 199,
       "textCharacters": 8957,
-      "rawTextCharacters": 32426,
       "language": "zh",
       "firstStart": 0,
       "lastEnd": 1919,
@@ -357,20 +387,22 @@
       "invalidSegments": [
         {
           "startSeconds": 1198.14,
-          "endSeconds": 2016.14,
-          "textOmittedFromPublicReport": true
+          "endSeconds": 2016.14
         }
       ],
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": null,
       "sourceHash": "3acf5e396baa17a790a167acfc5efbb86af7fb2457639b919dfd5dd20b131cf7",
+      "rawArtifactSha256": "f303bba95211e9287c13750ace0106c778f6082dd5800c1b00f0dfe179192e44",
+      "requestHash": null,
       "error": null
     },
     {
       "attemptId": "ce8cb5e5-de59-4e95-9925-8670e43e9a37",
+      "retryOf": null,
       "at": "2026-09-14T19:26:49.950Z",
+      "terminal": true,
       "videoId": "SHMPiWbbR6E",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -391,8 +423,11 @@
       },
       "outcome": "structurally_valid_unverified",
       "validationOutcome": "structurally_valid_unverified",
+      "httpStatus": null,
       "latencyMs": 7976,
       "estimatedUsd": 0.01133925,
+      "observedComponentEstimateUsd": 0.0077355,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": {
         "promptTokenCount": 5609,
         "candidatesTokenCount": 941,
@@ -414,7 +449,6 @@
       "reservedNzd": 2.5,
       "segments": 15,
       "textCharacters": 852,
-      "rawTextCharacters": 2812,
       "language": "eng",
       "firstStart": 60,
       "lastEnd": 120,
@@ -424,13 +458,16 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": false,
       "sourceHash": "5cadf77a19fb9312051301c2947b68e94ae8adfa638d19e5b6bb2c2e6dbfa186",
+      "rawArtifactSha256": "dc173926a957c301743000a883a9cc5925eded8736aef7d770fc458e1e313d59",
+      "requestHash": null,
       "error": null
     },
     {
       "attemptId": "0df6588a-cad3-411f-9202-12aac1c57495",
+      "retryOf": null,
       "at": "2026-09-14T19:27:10.251Z",
+      "terminal": true,
       "videoId": "wkAqHlYL7bQ",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -451,8 +488,11 @@
       },
       "outcome": "structurally_valid_unverified",
       "validationOutcome": "structurally_valid_unverified",
+      "httpStatus": null,
       "latencyMs": 80157,
       "estimatedUsd": 0.25975125,
+      "observedComponentEstimateUsd": 0.25939125,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": {
         "promptTokenCount": 220560,
         "candidatesTokenCount": 25059,
@@ -474,7 +514,6 @@
       "reservedNzd": 2.5,
       "segments": 348,
       "textCharacters": 31222,
-      "rawTextCharacters": 77905,
       "language": "en",
       "firstStart": 0,
       "lastEnd": 2423,
@@ -484,13 +523,16 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": false,
       "sourceHash": "4a225d227f09f9afd7a9216135c33ecfa7cb8bc852317fd3e5b45e6e925118da",
+      "rawArtifactSha256": "041a6197930de879689ddd19c376a148dbdd2f704856cb0d89af7d41d3ae8e71",
+      "requestHash": null,
       "error": null
     },
     {
       "attemptId": "fe349e23-40c9-4f38-986d-a252a6591b96",
+      "retryOf": null,
       "at": "2026-09-14T19:27:25.976Z",
+      "terminal": true,
       "videoId": "3u24qyWjSVM",
       "configuration": {
         "model": "gemini-3.8-flash",
@@ -511,8 +553,11 @@
       },
       "outcome": "structurally_valid_unverified",
       "validationOutcome": "structurally_valid_unverified",
+      "httpStatus": null,
       "latencyMs": 42559,
       "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.08943225,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
       "usage": {
         "promptTokenCount": 91603,
         "candidatesTokenCount": 5528,
@@ -533,7 +578,6 @@
       "reservedNzd": 2.5,
       "segments": 51,
       "textCharacters": 4456,
-      "rawTextCharacters": 9597,
       "language": "zh",
       "firstStart": 12.8,
       "lastEnd": 1005,
@@ -543,20 +587,1028 @@
       "modelReportedOmissions": [],
       "audioVerified": false,
       "timestampAlignmentVerified": false,
-      "identicalToPriorCaptionText": false,
       "sourceHash": "22ea76bb5029ea5f906c337520876b2c75bd8a6836f220cd9bcff933830915d9",
+      "rawArtifactSha256": "a7d9499a32ca66040bb167b7b6a99e8dc8a3783006ebdda59b0eab16814cda8c",
+      "requestHash": null,
+      "error": null
+    },
+    {
+      "attemptId": "6b8eeeac-3add-4215-a839-04117f802fe7",
+      "retryOf": null,
+      "at": "2026-09-14T20:11:36.031Z",
+      "terminal": true,
+      "videoId": "SHMPiWbbR6E",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-followup.v1",
+        "input": {
+          "videoId": "SHMPiWbbR6E",
+          "durationSeconds": 165,
+          "startSeconds": 0,
+          "endSeconds": 165,
+          "mode": "STATIC"
+        },
+        "case": "schema-no-max",
+        "hypothesis": "A large maxItems constraint, rather than JSON-schema transport itself, may cause schema complexity rejection. Only maxItems changes from the saved failing request.",
+        "requestHash": "c0459dc10c4cd8bf87ac89155cbc02a0319e36e3ce9e73ded52fdc18cb00186a"
+      },
+      "outcome": "transport_uncertain_timeout",
+      "validationOutcome": "transport_uncertain_timeout",
+      "httpStatus": null,
+      "latencyMs": 180008,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": null,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": null,
+      "billing": "potentially_billable",
+      "reservedNzd": 2.5,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "4fd04f5687b96e8d8aee4ce29866ea61cfbf49a6f61944531e6aace759a1c5c2",
+      "requestHash": "c0459dc10c4cd8bf87ac89155cbc02a0319e36e3ce9e73ded52fdc18cb00186a",
+      "error": "LOCAL_REQUEST_DEADLINE"
+    },
+    {
+      "attemptId": "2acff7f9-64dc-47af-91db-d5f681735dfd",
+      "retryOf": null,
+      "at": "2026-09-14T20:11:54.622Z",
+      "terminal": true,
+      "videoId": "J25UuUqHT3Y",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-followup.v1",
+        "input": {
+          "videoId": "J25UuUqHT3Y",
+          "durationSeconds": 1919,
+          "startSeconds": 1170,
+          "endSeconds": 1260,
+          "mode": "STATIC"
+        },
+        "case": "macro-window-a",
+        "hypothesis": "A 90-second static window may avoid the out-of-duration timestamp in the full-video output. Overlapping outputs are consistency checks, not independent audio truth.",
+        "requestHash": "1a44e28d9a87746070d9830c35183bb2d427e292458e2b64a717d7ad677c07e9"
+      },
+      "outcome": "structurally_valid_unverified",
+      "validationOutcome": "structurally_valid_unverified",
+      "httpStatus": null,
+      "latencyMs": 12781,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.01539,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 8345,
+        "candidatesTokenCount": 2435,
+        "totalTokenCount": 10780,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 154
+          },
+          {
+            "modality": "VIDEO",
+            "tokenCount": 8191
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": 42,
+      "textCharacters": 379,
+      "language": "zh",
+      "firstStart": 1170.6,
+      "lastEnd": 1260,
+      "coverageFraction": 0.9933333333333343,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": "bc50bc3fc856682229b83fc9c1bfc3887f053c99d78e2deb47caed5b8a21d11f",
+      "rawArtifactSha256": "9508fa20c15166e6b36512179637665327041d44e288e59229e7c88c9cfeb040",
+      "requestHash": "1a44e28d9a87746070d9830c35183bb2d427e292458e2b64a717d7ad677c07e9",
+      "error": null
+    },
+    {
+      "attemptId": "dd779b84-cc28-472a-a67c-31479490f216",
+      "retryOf": null,
+      "at": "2026-09-14T20:12:15.144Z",
+      "terminal": true,
+      "videoId": "J25UuUqHT3Y",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-followup.v1",
+        "input": {
+          "videoId": "J25UuUqHT3Y",
+          "durationSeconds": 1919,
+          "startSeconds": 1200,
+          "endSeconds": 1290,
+          "mode": "STATIC"
+        },
+        "case": "macro-window-b",
+        "hypothesis": "A 90-second static window may avoid the out-of-duration timestamp in the full-video output. Overlapping outputs are consistency checks, not independent audio truth.",
+        "requestHash": "a29c9350068d0d2d123b391dd9087bdc4142d6a4b40e7a490f6a97b05731985e"
+      },
+      "outcome": "structurally_valid_unverified",
+      "validationOutcome": "structurally_valid_unverified",
+      "httpStatus": null,
+      "latencyMs": 7031,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.01104375,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 8345,
+        "candidatesTokenCount": 1276,
+        "totalTokenCount": 9621,
+        "promptTokensDetails": [
+          {
+            "modality": "VIDEO",
+            "tokenCount": 8191
+          },
+          {
+            "modality": "TEXT",
+            "tokenCount": 154
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 2.5,
+      "segments": 19,
+      "textCharacters": 423,
+      "language": "zh",
+      "firstStart": 1200,
+      "lastEnd": 1290,
+      "coverageFraction": 0.9404444444444481,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": "441602ef2a9b417e29ab3af20300c21c4bcfba4b72a44b5256cf9791f7d550b6",
+      "rawArtifactSha256": "f6c03b480eaf67cc9e337356331252c6f2a6ceff754ce5e7abf880c7ae352165",
+      "requestHash": "a29c9350068d0d2d123b391dd9087bdc4142d6a4b40e7a490f6a97b05731985e",
+      "error": null
+    },
+    {
+      "attemptId": "40bf97a3-db3a-460f-8aec-69ddde5088c9",
+      "retryOf": null,
+      "at": "2026-09-14T20:14:53.245Z",
+      "terminal": true,
+      "videoId": "SHMPiWbbR6E",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "sdk": "2.22.0",
+        "prompt": "native-followup.v1",
+        "input": {
+          "videoId": "SHMPiWbbR6E",
+          "durationSeconds": 165,
+          "startSeconds": 0,
+          "endSeconds": 165,
+          "mode": "STATIC"
+        },
+        "case": "schema-small-max",
+        "hypothesis": "A large maxItems constraint, rather than JSON-schema transport itself, may cause schema complexity rejection. Only maxItems changes from the saved failing request.",
+        "requestHash": "db51ca0d08201e03378ece5a36fa0209eb4139b68ac814d82089a0a1c7303e66"
+      },
+      "outcome": "transport_uncertain_timeout",
+      "validationOutcome": "transport_uncertain_timeout",
+      "httpStatus": null,
+      "latencyMs": 180006,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": null,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": null,
+      "billing": "potentially_billable",
+      "reservedNzd": 2.5,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "50cd59a0743b8a146a13c7d57458d52c4957112ce48ea986520ff57a4080efe2",
+      "requestHash": "db51ca0d08201e03378ece5a36fa0209eb4139b68ac814d82089a0a1c7303e66",
+      "error": "LOCAL_REQUEST_DEADLINE"
+    },
+    {
+      "attemptId": "340bb8f5-307d-4b3d-81f4-8a007c36cfed",
+      "retryOf": null,
+      "at": "2026-09-14T20:16:11.376Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "stage": "synthesis",
+        "prompt": "evidence-first.web.v5",
+        "promptHash": "c99156cf37f0d66ea6fb2b61bc2340328875402bccdbd4277cbc36a4addd499c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.35,
+          "inputUpperBound": 25319,
+          "maxOutputTokens": 16000,
+          "additionalThoughtAllowance": 16000,
+          "rates": {
+            "input": 0.75,
+            "output": 3.75
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 21907,
+      "estimatedUsd": 0.030066,
+      "observedComponentEstimateUsd": 0.02133975,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 6438,
+        "candidatesTokenCount": 4403,
+        "totalTokenCount": 13168,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 6438
+          }
+        ],
+        "thoughtsTokenCount": 2327,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.35,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "3149934243dac09be781fb144f9b7e7ac92a2e62fbba3dca70beeaedbd06d825",
+      "requestHash": "bbacf3c59ab202a46d74b832f6e323654382c11918226ed1266a180e292a7c69",
+      "error": null
+    },
+    {
+      "attemptId": "444f41bb-b635-43a4-a410-0cf569a71202",
+      "retryOf": null,
+      "at": "2026-09-14T20:16:33.297Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-4",
+        "prompt": "evidence-first.web.v5",
+        "promptHash": "c99156cf37f0d66ea6fb2b61bc2340328875402bccdbd4277cbc36a4addd499c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 27611,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 1861,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.011874,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 7058,
+        "candidatesTokenCount": 143,
+        "totalTokenCount": 7201,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 7058
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "3913f9c9eafef8b0f2988e75cb05a1c0da8fec93d2b880b2b125b413f1dc5af8",
+      "requestHash": "38ae2da18222b690d24ad1b027664125e945b38baa21f157b10c43c80fd38d69",
+      "error": null
+    },
+    {
+      "attemptId": "4c3e25b0-64bb-4edc-9d87-fe2e0995651f",
+      "retryOf": null,
+      "at": "2026-09-14T20:18:31.221Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.8-flash",
+        "stage": "synthesis",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.35,
+          "inputUpperBound": 25735,
+          "maxOutputTokens": 16000,
+          "additionalThoughtAllowance": 16000,
+          "rates": {
+            "input": 0.75,
+            "output": 3.75
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 22537,
+      "estimatedUsd": 0.026553,
+      "observedComponentEstimateUsd": 0.02231925,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 6514,
+        "candidatesTokenCount": 4649,
+        "totalTokenCount": 12292,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 6514
+          }
+        ],
+        "thoughtsTokenCount": 1129,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.35,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "fdf9729aa66bc34c04bcc642f88e40b71dcaa4928400d51e773eda0e4e64abda",
+      "requestHash": "3d94c5afcf1c3e0e8547a9bd69e77c1a4637efa82f254523d46964dddba01353",
+      "error": null
+    },
+    {
+      "attemptId": "44f9ce21-058a-49ea-a293-47f284936e2b",
+      "retryOf": null,
+      "at": "2026-09-14T20:18:53.770Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-2",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 27648,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 2106,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.0119835,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 7041,
+        "candidatesTokenCount": 158,
+        "totalTokenCount": 7199,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 7041
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "6724c383e538dba4c9f8051f320a4b758e5916a06cf8e419a63395fa254daf94",
+      "requestHash": "bea93f2df8946624745ea688227ac584a973a7163465e168adc0fb796071c868",
+      "error": null
+    },
+    {
+      "attemptId": "37791d63-ceb8-453a-9618-0f78b9fac93f",
+      "retryOf": null,
+      "at": "2026-09-14T20:18:55.881Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-3",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 27794,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 1946,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.0117165,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 7091,
+        "candidatesTokenCount": 120,
+        "totalTokenCount": 7211,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 7091
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "61220033db3c26f660c32bce356deb46b9988364cbc5d82b8d81ea0ad0a768e2",
+      "requestHash": "6c8f3721a8db26844fe0ab26ce4528fbde7c1a86337d5124665c4b3fb6be7c1e",
+      "error": null
+    },
+    {
+      "attemptId": "fee32449-734b-4a53-99c0-5b46c798e939",
+      "retryOf": null,
+      "at": "2026-09-14T20:18:57.831Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-4",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 26554,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 2501,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.011004,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 6778,
+        "candidatesTokenCount": 93,
+        "totalTokenCount": 6871,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 6778
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "6c92ef6186b096b2472a14f986264e7d06643f1ac3404747d569c72eff7f54a2",
+      "requestHash": "0d8a31968b68f39fedbfeb60addf7251375695f633071ddf5e21cf6fc6361413",
+      "error": null
+    },
+    {
+      "attemptId": "dfc97a2f-cf60-494f-8873-2d3b574ceebc",
+      "retryOf": null,
+      "at": "2026-09-14T20:19:00.335Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-5",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 27166,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 2467,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.011349,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 6918,
+        "candidatesTokenCount": 108,
+        "totalTokenCount": 7026,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 6918
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "3f38caeada69c67d6ff8a2d1cb01cf9d2b44014f8b3f4a96f2261ba16009d178",
+      "requestHash": "fa51a1baf2a47407b0cb9a128374d7b57aa74e85bcd60180d684c404fe4cd5a1",
+      "error": null
+    },
+    {
+      "attemptId": "5a3b82c7-d6f9-4186-9b07-ff9311fb47cb",
+      "retryOf": null,
+      "at": "2026-09-14T20:19:02.807Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-6",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 26899,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 2653,
+      "estimatedUsd": 0.0132825,
+      "observedComponentEstimateUsd": 0.0110505,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 6839,
+        "candidatesTokenCount": 88,
+        "totalTokenCount": 7175,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 6839
+          }
+        ],
+        "thoughtsTokenCount": 248,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "355694ae53c39ed7efc6e4e2d85ae126b9ab6e5f67dd5fc09a2f510100c98b8a",
+      "requestHash": "31f4524a319dc0bd5ce06f21627c718e2a424a96ec58a6ea3fad5ccb2e4e2494",
+      "error": null
+    },
+    {
+      "attemptId": "2606ce09-9f10-49be-883d-55df8d747635",
+      "retryOf": null,
+      "at": "2026-09-14T20:19:05.464Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-7",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 27072,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 4170,
+      "estimatedUsd": 0.016854,
+      "observedComponentEstimateUsd": 0.011283,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 6904,
+        "candidatesTokenCount": 103,
+        "totalTokenCount": 7626,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 6904
+          }
+        ],
+        "thoughtsTokenCount": 619,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "d5a2814bee2ca4828145da6d806eba04896091f8006ed0ef23fa3730fe1b9f31",
+      "requestHash": "ec421411a0ea15e5bddecb5e335b7d620f05a3f9dcc80edd8a3089f9e60b8ac5",
+      "error": null
+    },
+    {
+      "attemptId": "eeb27b5b-d471-4c0e-9a24-b4f50f4b806d",
+      "retryOf": null,
+      "at": "2026-09-14T20:19:09.638Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-8",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 27097,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 3370,
+      "estimatedUsd": 0.0158655,
+      "observedComponentEstimateUsd": 0.0113025,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 6899,
+        "candidatesTokenCount": 106,
+        "totalTokenCount": 7512,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 6899
+          }
+        ],
+        "thoughtsTokenCount": 507,
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "5f713a416234862da13fa92bfe09b625276edfb29c41832a95368f5aa1c06231",
+      "requestHash": "742321ef3ef10de394c3e47152c39e0c2ee4b7b6a8d366ee4a5ff302e4c954e3",
+      "error": null
+    },
+    {
+      "attemptId": "345609bc-898e-4f8d-9cc7-509488278d6d",
+      "retryOf": null,
+      "at": "2026-09-14T20:19:13.012Z",
+      "terminal": true,
+      "videoId": "CMjt6f4eVdA",
+      "configuration": {
+        "model": "gemini-3.5-flash",
+        "stage": "critique-item-9",
+        "prompt": "evidence-first.web.v5+single-segment-quotes.v1",
+        "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "input": {
+          "videoId": "CMjt6f4eVdA",
+          "durationSeconds": 779,
+          "startSeconds": 0,
+          "endSeconds": 779,
+          "mode": "TEXT"
+        },
+        "budget": {
+          "reservedNzd": 0.24,
+          "inputUpperBound": 27141,
+          "maxOutputTokens": 3000,
+          "additionalThoughtAllowance": 3000,
+          "rates": {
+            "input": 1.5,
+            "output": 9
+          },
+          "conversionAssumption": 2,
+          "margin": 1.25
+        },
+        "transport": "native_generateContent",
+        "temperature": 0
+      },
+      "outcome": "text_stage_unverified",
+      "validationOutcome": "text_stage_unverified",
+      "httpStatus": null,
+      "latencyMs": 1879,
+      "estimatedUsd": null,
+      "observedComponentEstimateUsd": 0.011196,
+      "observedComponentEstimateNote": "Recorded-rate arithmetic on observed prompt and candidate tokens only; excludes missing thoughts and discounts; not invoice.",
+      "usage": {
+        "promptTokenCount": 6894,
+        "candidatesTokenCount": 95,
+        "totalTokenCount": 6989,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 6894
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "billing": "unreconciled",
+      "reservedNzd": 0.24,
+      "segments": null,
+      "textCharacters": null,
+      "language": null,
+      "firstStart": null,
+      "lastEnd": null,
+      "coverageFraction": null,
+      "warnings": [],
+      "invalidSegments": [],
+      "modelReportedOmissions": [],
+      "audioVerified": false,
+      "timestampAlignmentVerified": false,
+      "sourceHash": null,
+      "rawArtifactSha256": "62bf626716fb3f577a726cc29d120ac8aa661bf8da6eb56f7f27bf968b9b90b6",
+      "requestHash": "1d065cba10506e0ac04b8b547ada8502c42ed112955e87cc37fb92d9dc0b3301",
       "error": null
     }
   ],
-  "estimatedKnownUsd": 0.501678,
-  "unknownCostAttempts": 5,
-  "reservedNzd": 25,
+  "estimatedKnownUsd": 0.604299,
+  "unknownCostAttempts": 15,
+  "reservedNzd": 37.86,
+  "campaignCapNzd": 50,
+  "requestCap": 60,
+  "shadowId": "native-google-shadow-comparison-20260915",
   "limitations": [
-    "Model-generated transcript is not independently audio verified.",
-    "Token modality metadata does not prove full original-audio access or transcription accuracy.",
-    "Source interval coverage is not semantic recall.",
-    "Estimates use recorded uncached model prices, not reconciled invoices; reservations are retained.",
-    "The minimal unstructured diagnostic deliberately did not request JSON; its invalid_json validator outcome is not an API failure.",
-    "Different diagnostic configurations and earlier provider time windows are not controlled causal comparisons."
+    "No independent audio reference was scored.",
+    "Model-to-model or caption agreement is not ground truth.",
+    "Static interval coverage does not measure semantic recall.",
+    "Unknown billing and timed-out requests remain reserved; estimates are not invoices.",
+    "Historical and follow-up configurations differ, so pooled success percentages are not reliability estimates.",
+    "Old diagnostics use their saved effective request when available; configuration hashes alone cannot reconstruct every historical request."
   ]
 }

@@ -1,0 +1,104 @@
+{
+  "reviewedAt": "2026-09-14T20:13:49.389595+00:00",
+  "method": "Official docs, SDK source and first-person issue reports; general social snippets excluded from conclusions. Queries recorded in white paper.",
+  "sources": [
+    {
+      "id": "G1",
+      "title": "Google GenerateContent video guide",
+      "url": "https://ai.google.dev/gemini-api/docs/generate-content/video-understanding",
+      "evidenceClass": "official_documentation",
+      "relevance": "Structured YouTube fileData; public-video limitations; static/agentic modes; clipping; MM:SS prompts; streaming. Not a guarantee of verbatim accuracy."
+    },
+    {
+      "id": "G2",
+      "title": "Google structured output guide",
+      "url": "https://ai.google.dev/gemini-api/docs/structured-output",
+      "evidenceClass": "official_documentation",
+      "relevance": "Subset support, maxItems and schema complexity. Application semantic validation remains necessary."
+    },
+    {
+      "id": "G3",
+      "title": "Google pricing",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "evidenceClass": "official_documentation",
+      "relevance": "Gemini 3.8 Flash standard input/output rates, dated promotional pricing and cache rates."
+    },
+    {
+      "id": "G4",
+      "title": "Google response API reference",
+      "url": "https://ai.google.dev/api/generate-content",
+      "evidenceClass": "official_documentation",
+      "relevance": "Token modality details and thought counts; prompt blocking and finish reasons. These are not accuracy measurements."
+    },
+    {
+      "id": "G5",
+      "title": "Google troubleshooting",
+      "url": "https://ai.google.dev/gemini-api/docs/troubleshooting",
+      "evidenceClass": "official_documentation",
+      "relevance": "Diagnose structured API errors rather than treating all HTTP400 as inaccessible media."
+    },
+    {
+      "id": "G6",
+      "title": "YouTube captions download",
+      "url": "https://developers.google.com/youtube/v3/docs/captions/download",
+      "evidenceClass": "official_documentation",
+      "relevance": "Requires permission to edit the video and OAuth. Ordinary API key is not arbitrary public-caption access."
+    },
+    {
+      "id": "G7",
+      "title": "Google URL Context",
+      "url": "https://ai.google.dev/gemini-api/docs/url-context",
+      "evidenceClass": "official_documentation",
+      "relevance": "YouTube, audio and video unsupported by URL Context; use video input API."
+    },
+    {
+      "id": "G8",
+      "title": "Google audio guide",
+      "url": "https://ai.google.dev/gemini-api/docs/audio",
+      "evidenceClass": "official_documentation",
+      "relevance": "Transcription examples and separate dedicated speech-to-text service; does not prove our output exact."
+    },
+    {
+      "id": "I1",
+      "title": "js-genai issue 1318",
+      "url": "https://github.com/googleapis/js-genai/issues/1318",
+      "evidenceClass": "firsthand_issue_report",
+      "relevance": "Generic INVALID_ARGUMENT with Zod-derived schema; different version/date, not diagnosis of our failure."
+    },
+    {
+      "id": "I2",
+      "title": "Progressive timestamp drift report",
+      "url": "https://discuss.ai.google.dev/t/bug-gemini-3-flash-and-3-1-pro-progressive-timestamp-drift-in-audio-transcription/129501",
+      "evidenceClass": "firsthand_issue_report",
+      "relevance": "User reports timing drift across models and a model-dependent tradeoff. Not our model/video; no causal transfer."
+    },
+    {
+      "id": "I3",
+      "title": "Gemini 2.0 timestamp issue",
+      "url": "https://discuss.ai.google.dev/t/gemini-flash-2-0-audio-transcription-timestamps-incorrect/66777",
+      "evidenceClass": "firsthand_issue_report",
+      "relevance": "Forum response reports reproduction/escalation for that example. No current universal fix established."
+    },
+    {
+      "id": "I4",
+      "title": "python-genai schema issue 1815",
+      "url": "https://github.com/googleapis/python-genai/issues/1815",
+      "evidenceClass": "maintainer_issue_thread",
+      "relevance": "Schema-path compatibility differences and recommendation to use response_json_schema; different SDK, not direct fix."
+    },
+    {
+      "id": "S1",
+      "title": "js-genai implementation",
+      "url": "https://github.com/googleapis/js-genai/blob/main/src/models.ts",
+      "evidenceClass": "official_source_code",
+      "relevance": "Schema backward-compatibility conversion; main is mutable, pinned installed SDK remains reproduction basis."
+    },
+    {
+      "id": "A1",
+      "title": "WhisperX maintained repository",
+      "url": "https://github.com/m-bain/whisperX",
+      "evidenceClass": "primary_implementation",
+      "relevance": "Forced alignment/VAD alternative needs media bytes, language-specific models and separate compute; numeric alignment limitations."
+    }
+  ]
+}
