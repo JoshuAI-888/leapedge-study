@@ -1,0 +1,29 @@
+{
+  "at": "2026-09-14T03:21:34.487Z",
+  "deployment": "dpl_4RwV8KMC9HotiyugkGPFjcjZhSis",
+  "checks": [
+    {
+      "provider": "supadata",
+      "providerHttp": 200,
+      "videoId": "wkAqHlYL7bQ",
+      "status": "completed",
+      "sourceKind": "native_captions_supadata",
+      "language": "en",
+      "segments": 1108,
+      "lastEnd": 2423.76,
+      "runtime": "vercel"
+    },
+    {
+      "provider": "transcriptapi",
+      "providerHttp": 200,
+      "videoId": "wkAqHlYL7bQ",
+      "status": "completed",
+      "sourceKind": "native_captions_transcriptapi",
+      "language": "en",
+      "segments": 1108,
+      "lastEnd": 2423.76,
+      "runtime": "vercel"
+    }
+  ],
+  "source": "Existing provider cache: verifies deployed route and persistence, not fresh retrieval."
+}

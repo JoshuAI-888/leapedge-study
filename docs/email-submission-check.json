@@ -1,0 +1,11 @@
+{
+  "id": "final-hosted-email-check-20260914",
+  "status": "provider_accepted",
+  "providerId": "aebd2984-81ba-4f33-84d4-18ccf78bc38a",
+  "acceptedAt": "2026-09-13T18:06:13.887Z",
+  "briefingRunId": "aaa3879d-773a-40f0-841d-61c21aa52853",
+  "acceptedSynthesisPoints": 4,
+  "rejectedSynthesisPoints": 1,
+  "mailboxDeliveryVerified": false,
+  "reason": "Accepted by provider; mailbox delivery is not yet confirmed."
+}

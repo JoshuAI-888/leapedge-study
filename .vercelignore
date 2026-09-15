@@ -1,0 +1,18 @@
+.env*
+!.env.example
+data
+work
+.git
+node_modules
+.next
+leapstudy
+.venv
+__pycache__
+*.sqlite*
+
+evaluations/tooling/
+
+docs/audit/*.png
+
+# Keep native evaluation source: research persistence scripts import its frozen prompts.
+# Dependencies remain excluded by node_modules above; private results live in data/.

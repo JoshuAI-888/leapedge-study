@@ -1,0 +1,130 @@
+{
+  "version": "human-review-intake.v1",
+  "inputSha256": "25b8cecfea70d7afa113254b0b0faf060ab66c4a054b164293ff10f360d65e77",
+  "packetSha256": "aba6d2f7236d405bb2814876a952c711077032f0b2a7ae4f81234a440ad9de9f",
+  "attestedWindows": 9,
+  "audioConfirmation": "User explicitly confirmed Chinese embedded subtitles checked against spoken audio in conversation",
+  "split": "development",
+  "overallAccuracy": null,
+  "timestampAccuracy": null,
+  "timestampReferenceStatus": "UNVALIDATED_PAUSE_TIMES",
+  "timingClarification": "User clarified timestamps reflect when they stopped to transcribe, not precise spoken landmarks. Numerical differences are not measured timestamp errors.",
+  "limitations": [
+    "Diagnostic landmarks selected after inspection; not an unbiased aggregate accuracy sample",
+    "Reviewer times are pause/transcription times; differences cannot establish drift, offset direction or timestamp accuracy",
+    "Whole-window WER/CER not scored: boundary and transcription ambiguity reconciliation pending",
+    "No new LeapEdge comparison performed"
+  ],
+  "landmarkChecks": [
+    {
+      "windowId": "native-review-2",
+      "videoId": "CMjt6f4eVdA",
+      "landmark": "10\u4e07",
+      "referenceSeconds": 501,
+      "candidateStart": 530.8,
+      "candidateEnd": 536.8,
+      "unvalidatedPauseTimeDifference": 29.8,
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5",
+      "segmentId": "s00077"
+    },
+    {
+      "windowId": "native-review-2",
+      "videoId": "CMjt6f4eVdA",
+      "landmark": "\u7279\u65af\u62c9",
+      "referenceSeconds": 522,
+      "candidateStart": 551.4,
+      "candidateEnd": 558,
+      "unvalidatedPauseTimeDifference": 29.4,
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5",
+      "segmentId": "s00080"
+    },
+    {
+      "windowId": "native-review-3",
+      "videoId": "CMjt6f4eVdA",
+      "landmark": "\u5e95\u4ed3",
+      "referenceSeconds": 614,
+      "candidateStart": 646.8,
+      "candidateEnd": 655,
+      "unvalidatedPauseTimeDifference": 32.8,
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5",
+      "segmentId": "s00093"
+    },
+    {
+      "windowId": "native-review-3",
+      "videoId": "CMjt6f4eVdA",
+      "landmark": "258",
+      "referenceSeconds": 655,
+      "candidateStart": 692.6,
+      "candidateEnd": 700.8,
+      "unvalidatedPauseTimeDifference": 37.6,
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5",
+      "segmentId": "s00099"
+    },
+    {
+      "windowId": "native-review-4",
+      "videoId": "CMjt6f4eVdA",
+      "landmark": "\u505a\u7a7a",
+      "referenceSeconds": 691,
+      "candidateStart": 729,
+      "candidateEnd": 735.6,
+      "unvalidatedPauseTimeDifference": 38,
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5",
+      "segmentId": "s00104"
+    },
+    {
+      "windowId": "native-review-7",
+      "videoId": "wkAqHlYL7bQ",
+      "landmark": "double",
+      "referenceSeconds": 1185,
+      "candidateStart": 1286,
+      "candidateEnd": 1293,
+      "unvalidatedPauseTimeDifference": 101,
+      "sourceSha256": "ecea0589172435da57f26495b4a7353ffdffc40ff15f6ba17985c67677b7be26",
+      "segmentId": "s00183"
+    },
+    {
+      "windowId": "native-review-7",
+      "videoId": "wkAqHlYL7bQ",
+      "landmark": "49%",
+      "referenceSeconds": 1208,
+      "candidateStart": 1317,
+      "candidateEnd": 1324,
+      "unvalidatedPauseTimeDifference": 109,
+      "sourceSha256": "ecea0589172435da57f26495b4a7353ffdffc40ff15f6ba17985c67677b7be26",
+      "segmentId": "s00188"
+    },
+    {
+      "windowId": "native-review-7",
+      "videoId": "wkAqHlYL7bQ",
+      "landmark": "trillion",
+      "referenceSeconds": 1233,
+      "candidateStart": 1345.5,
+      "candidateEnd": 1353,
+      "unvalidatedPauseTimeDifference": 112.5,
+      "sourceSha256": "ecea0589172435da57f26495b4a7353ffdffc40ff15f6ba17985c67677b7be26",
+      "segmentId": "s00193"
+    },
+    {
+      "windowId": "native-review-9",
+      "videoId": "3u24qyWjSVM",
+      "landmark": "VOO",
+      "referenceSeconds": 419,
+      "candidateStart": 448,
+      "candidateEnd": 465,
+      "unvalidatedPauseTimeDifference": 29,
+      "sourceSha256": "da308450a5835156e2d267cfbcc277d09c9b12fd259890d1f5c44f93ba4d8aea",
+      "segmentId": "s00024"
+    },
+    {
+      "windowId": "native-review-9",
+      "videoId": "3u24qyWjSVM",
+      "landmark": "\u578b\u53cd\u8f6c",
+      "referenceSeconds": 474,
+      "candidateStart": 505.8,
+      "candidateEnd": 526,
+      "unvalidatedPauseTimeDifference": 31.8,
+      "sourceSha256": "da308450a5835156e2d267cfbcc277d09c9b12fd259890d1f5c44f93ba4d8aea",
+      "segmentId": "s00027"
+    }
+  ]
+}

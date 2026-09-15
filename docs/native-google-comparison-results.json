@@ -1,0 +1,149 @@
+{
+  "at": "2026-09-14T20:17:23.089Z",
+  "comparisons": [
+    {
+      "videoId": "SHMPiWbbR6E",
+      "attemptId": "2acd7054-a4f3-4aae-875e-972f7c44dc5d",
+      "language": "en",
+      "baseline": "Historical TranscriptAPI captions (not ground truth)",
+      "baselineUnits": 401,
+      "candidateUnits": 395,
+      "edits": {
+        "errors": 17,
+        "substitutions": 11,
+        "deletions": 6,
+        "insertions": 0
+      },
+      "tokenEditDisagreement": 0.04239401496259352,
+      "normalizationVersion": "audio-reference.v1",
+      "baselineHash": "2d2e46a746ec23df765e30b3cce9b56cc949f2a87d48199b5782f21e36bff0b9",
+      "nativeHash": "c714d454cb7c115cf449eed5f897ccbfd25c47e470677da1cc5451fa3f7ed59b",
+      "audioVerified": false,
+      "captionQqqOccurrences": 0,
+      "nativeQqqOccurrences": 0
+    },
+    {
+      "videoId": "wkAqHlYL7bQ",
+      "attemptId": "0df6588a-cad3-411f-9202-12aac1c57495",
+      "language": "en",
+      "baseline": "Historical TranscriptAPI captions (not ground truth)",
+      "baselineUnits": 7472,
+      "candidateUnits": 6520,
+      "edits": {
+        "errors": 1185,
+        "substitutions": 201,
+        "deletions": 968,
+        "insertions": 16
+      },
+      "tokenEditDisagreement": 0.15859207708779444,
+      "normalizationVersion": "audio-reference.v1",
+      "baselineHash": "e770054f11168f3ff36df122adeb82406dc350c25dbeaabc94dc621b4fcd8ebf",
+      "nativeHash": "b42b726d4d3723083976071ded57303d01858ea98a6b32a0d89f6832f0fbffbd",
+      "audioVerified": false,
+      "captionQqqOccurrences": 0,
+      "nativeQqqOccurrences": 0
+    },
+    {
+      "videoId": "3u24qyWjSVM",
+      "attemptId": "fe349e23-40c9-4f38-986d-a252a6591b96",
+      "language": "zh",
+      "baseline": "Historical TranscriptAPI captions (not ground truth)",
+      "baselineUnits": 3783,
+      "candidateUnits": 4145,
+      "edits": {
+        "errors": 961,
+        "substitutions": 117,
+        "deletions": 241,
+        "insertions": 603
+      },
+      "tokenEditDisagreement": 0.25403119217552206,
+      "normalizationVersion": "audio-reference.v1",
+      "baselineHash": "1036b6c5547bf558272cc967ad3ceb95fbd58c52069b7f24c492937bd5482a3a",
+      "nativeHash": "a4802e4f1fc11e311e73ee06008563a5ca34f6ae00262c086754a0cc4288a98d",
+      "audioVerified": false,
+      "captionQqqOccurrences": 7,
+      "nativeQqqOccurrences": 8
+    }
+  ],
+  "independentAudioScoresComputed": 0,
+  "pendingCandidateReviews": 14,
+  "reviewWindows": [
+    {
+      "id": "native-review-1",
+      "videoId": "SHMPiWbbR6E",
+      "start": 50,
+      "end": 110,
+      "url": "https://www.youtube.com/watch?v=SHMPiWbbR6E&t=50s",
+      "status": "pending_audio_review"
+    },
+    {
+      "id": "native-review-2",
+      "videoId": "CMjt6f4eVdA",
+      "start": 500,
+      "end": 540,
+      "url": "https://www.youtube.com/watch?v=CMjt6f4eVdA&t=500s",
+      "status": "pending_audio_review"
+    },
+    {
+      "id": "native-review-3",
+      "videoId": "CMjt6f4eVdA",
+      "start": 610,
+      "end": 665,
+      "url": "https://www.youtube.com/watch?v=CMjt6f4eVdA&t=610s",
+      "status": "pending_audio_review"
+    },
+    {
+      "id": "native-review-4",
+      "videoId": "CMjt6f4eVdA",
+      "start": 680,
+      "end": 730,
+      "url": "https://www.youtube.com/watch?v=CMjt6f4eVdA&t=680s",
+      "status": "pending_audio_review"
+    },
+    {
+      "id": "native-review-5",
+      "videoId": "J25UuUqHT3Y",
+      "start": 1170,
+      "end": 1260,
+      "url": "https://www.youtube.com/watch?v=J25UuUqHT3Y&t=1170s",
+      "status": "pending_audio_review"
+    },
+    {
+      "id": "native-review-6",
+      "videoId": "wkAqHlYL7bQ",
+      "start": 0,
+      "end": 60,
+      "url": "https://www.youtube.com/watch?v=wkAqHlYL7bQ&t=0s",
+      "status": "pending_audio_review"
+    },
+    {
+      "id": "native-review-7",
+      "videoId": "wkAqHlYL7bQ",
+      "start": 1180,
+      "end": 1240,
+      "url": "https://www.youtube.com/watch?v=wkAqHlYL7bQ&t=1180s",
+      "status": "pending_audio_review"
+    },
+    {
+      "id": "native-review-8",
+      "videoId": "wkAqHlYL7bQ",
+      "start": 2350,
+      "end": 2423,
+      "url": "https://www.youtube.com/watch?v=wkAqHlYL7bQ&t=2350s",
+      "status": "pending_audio_review"
+    },
+    {
+      "id": "native-review-9",
+      "videoId": "3u24qyWjSVM",
+      "start": 395,
+      "end": 475,
+      "url": "https://www.youtube.com/watch?v=3u24qyWjSVM&t=395s",
+      "status": "pending_audio_review"
+    }
+  ],
+  "limitations": [
+    "Edit disagreement measures differences from captions, not accuracy.",
+    "Candidate excerpts retain whole overlapping segments and require boundary review.",
+    "All windows are development cases; independently selected held-out videos are still required."
+  ]
+}

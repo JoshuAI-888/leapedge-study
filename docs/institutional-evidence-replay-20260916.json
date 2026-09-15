@@ -1,0 +1,224 @@
+{
+  "version": "caption-alignment.v2",
+  "sourceKind": "native_captions_supadata",
+  "sourceSegments": 1544,
+  "rootCauses": [
+    "Range encoded in segment_id instead of separate start/end IDs",
+    "CJK caption formatting whitespace differs from model quotation",
+    "Twelve-cue bound too short for densely fragmented captions",
+    "Some drafts paraphrase, omit words or insert ellipses; must remain rejected"
+  ],
+  "beforeStructurallyPassing": 0,
+  "afterStructurallyPassing": 3,
+  "limitations": "Structural recovery only. These items have NOT been promoted or counted as verified research. Semantic critique and source audio review remain required.",
+  "rows": [
+    {
+      "id": "c1",
+      "baselineReasons": [
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [],
+      "alignmentChanged": true,
+      "anchors": [
+        {
+          "start": "s00219",
+          "end": "s00225"
+        },
+        {
+          "start": "s00254",
+          "end": "s00297"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "c2",
+      "baselineReasons": [
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [
+        "Quote does not match the retained source."
+      ],
+      "alignmentChanged": false,
+      "anchors": [
+        {
+          "start": "s00383-s00418"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "c3",
+      "baselineReasons": [
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [
+        "Price is not present verbatim in its evidence."
+      ],
+      "alignmentChanged": true,
+      "anchors": [
+        {
+          "start": "s01310",
+          "end": "s01334"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "c4",
+      "baselineReasons": [
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [],
+      "alignmentChanged": true,
+      "anchors": [
+        {
+          "start": "s01412",
+          "end": "s01425"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "k1",
+      "baselineReasons": [
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [],
+      "alignmentChanged": true,
+      "anchors": [
+        {
+          "start": "s00433",
+          "end": "s00446"
+        },
+        {
+          "start": "s00542",
+          "end": "s00578"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "k2",
+      "baselineReasons": [
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source."
+      ],
+      "alignmentChanged": false,
+      "anchors": [
+        {
+          "start": "s00666-s00673"
+        },
+        {
+          "start": "s00685-s00701"
+        },
+        {
+          "start": "s00739-s00750"
+        },
+        {
+          "start": "s00794-s00823"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "k3",
+      "baselineReasons": [
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source."
+      ],
+      "alignmentChanged": false,
+      "anchors": [
+        {
+          "start": "s01007-s01040"
+        },
+        {
+          "start": "s01133-s01144"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "k4",
+      "baselineReasons": [
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [
+        "Quote does not match the retained source."
+      ],
+      "alignmentChanged": true,
+      "anchors": [
+        {
+          "start": "s01110-s01132"
+        },
+        {
+          "start": "s01253",
+          "end": "s01277"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "k5",
+      "baselineReasons": [
+        "Quote does not match the retained source.",
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [
+        "Quote does not match the retained source."
+      ],
+      "alignmentChanged": true,
+      "anchors": [
+        {
+          "start": "s01348-s01372"
+        },
+        {
+          "start": "s01393",
+          "end": "s01412"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    },
+    {
+      "id": "k6",
+      "baselineReasons": [
+        "Quote does not match the retained source."
+      ],
+      "afterStructuralReasons": [
+        "Quote does not match the retained source."
+      ],
+      "alignmentChanged": false,
+      "anchors": [
+        {
+          "start": "s01490-s01528"
+        }
+      ],
+      "semanticAuditRerun": false,
+      "audioVerified": false
+    }
+  ]
+}

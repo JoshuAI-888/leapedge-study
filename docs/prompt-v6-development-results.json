@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-14T09:21:04.435Z",
+  "prompt": "evidence-first.web.v6",
+  "status": "development_only_not_promoted",
+  "results": [
+    {
+      "videoId": "wkAqHlYL7bQ",
+      "baselineId": "5a748c0f-fd61-4c6d-9eb1-c71e7d80235f",
+      "candidateId": "7b78d2bd-b495-4eaa-83e5-7d0225c10104",
+      "comparisonId": "24fd7157-bcf5-4922-b1a0-a11c30c67084",
+      "sourceMatched": true,
+      "baseline": {
+        "claims": 4,
+        "keyPoints": 5
+      },
+      "candidate": {
+        "claims": 5,
+        "keyPoints": 9
+      },
+      "costUsd": 1.3684447499999999
+    },
+    {
+      "videoId": "v824SHV6COE",
+      "baselineId": "51811a40-fe90-4ada-96b7-fb6d401e12bf",
+      "candidateId": "61a6dd2b-4473-466e-9c6e-20c67dc8a74d",
+      "comparisonId": "2b85a089-599c-49e5-aa24-3d28e0c376a9",
+      "sourceMatched": true,
+      "baseline": {
+        "claims": 0,
+        "keyPoints": 5
+      },
+      "candidate": {
+        "claims": 0,
+        "keyPoints": 7
+      },
+      "costUsd": 0.3921945
+    }
+  ],
+  "newCostUsd": 1.7606392499999999,
+  "limitations": [
+    "Accepted counts are model-critique outcomes, not independently verified facts.",
+    "The long-video critic rejected one duplicate NuBank long thesis because no shares had been bought; long sentiment need not imply ownership, so this reasoning needs semantic review.",
+    "Same-source comparisons reuse retained v5 baselines, not simultaneous repeated statistical trials.",
+    "AI-debt seven points still differs from the saved LeapEdge nine-point reference.",
+    "Independent audio verification and held-out synthesis comparisons remain outstanding."
+  ]
+}

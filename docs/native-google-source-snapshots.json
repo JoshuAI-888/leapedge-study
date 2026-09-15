@@ -1,0 +1,128 @@
+[
+  {
+    "id": "G1",
+    "url": "https://ai.google.dev/gemini-api/docs/generate-content/video-understanding",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:43.216721+00:00",
+    "sha256": "7370aff2b12cb3f9bbde221d392a7ca461af79b6fce91c969a536e91248be3ed",
+    "bytes": 240363,
+    "privateArtifact": "G1.html"
+  },
+  {
+    "id": "G2",
+    "url": "https://ai.google.dev/gemini-api/docs/structured-output",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:43.217236+00:00",
+    "sha256": "de75102dc93fa6c4d0c9ee7d4c8071f80cedd6c3b1db5fb997e6576d80b1edec",
+    "bytes": 259911,
+    "privateArtifact": "G2.html"
+  },
+  {
+    "id": "G3",
+    "url": "https://ai.google.dev/gemini-api/docs/pricing",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:43.217297+00:00",
+    "sha256": "f5c8b8d1f9dcd2533755ebdc7a72c5c27a827ae299997d4d3d439b5ee8d9c5f2",
+    "bytes": 241769,
+    "privateArtifact": "G3.html"
+  },
+  {
+    "id": "G4",
+    "url": "https://ai.google.dev/api/generate-content",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:43.217390+00:00",
+    "sha256": "276b0ed136a71f1698fb4bbe75e3c5d43368b6baa979da10a2daba154274e4dd",
+    "bytes": 1215807,
+    "privateArtifact": "G4.html"
+  },
+  {
+    "id": "G5",
+    "url": "https://ai.google.dev/gemini-api/docs/troubleshooting",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:44.277316+00:00",
+    "sha256": "e8a890dc67855fe8d322dc8f46f23e329c2169adb81779fa006fcfbbdc43c200",
+    "bytes": 103255,
+    "privateArtifact": "G5.html"
+  },
+  {
+    "id": "G6",
+    "url": "https://developers.google.com/youtube/v3/docs/captions/download",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:44.293114+00:00",
+    "sha256": "bf178fda23f244b61c9519dadbfd0ceb3e62fb683de042e9d3bf8da4348d2a89",
+    "bytes": 90514,
+    "privateArtifact": "G6.html"
+  },
+  {
+    "id": "G7",
+    "url": "https://ai.google.dev/gemini-api/docs/url-context",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:44.298845+00:00",
+    "sha256": "78a49a260345612af171a4564debbb1e51144c5725e19f2db41bc30a8869e7c1",
+    "bytes": 126500,
+    "privateArtifact": "G7.html"
+  },
+  {
+    "id": "G8",
+    "url": "https://ai.google.dev/gemini-api/docs/audio",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:45.138229+00:00",
+    "sha256": "21af8b36083e8b2b87a12031afc968c61b5024d193dd5f1f36e60ed1b6e556f2",
+    "bytes": 229512,
+    "privateArtifact": "G8.html"
+  },
+  {
+    "id": "I1",
+    "url": "https://github.com/googleapis/js-genai/issues/1318",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:45.164775+00:00",
+    "sha256": "c229a40962e0d2db42faf11bc3af01d1de435a49d2c3f806ab868b165bc3d455",
+    "bytes": 292247,
+    "privateArtifact": "I1.html"
+  },
+  {
+    "id": "I2",
+    "url": "https://discuss.ai.google.dev/t/bug-gemini-3-flash-and-3-1-pro-progressive-timestamp-drift-in-audio-transcription/129501",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:45.205196+00:00",
+    "sha256": "9e976d6fb3dc5cccefad9c15df24d942c9bca1ede62a2887d5405f4ecf8e1e6e",
+    "bytes": 50888,
+    "privateArtifact": "I2.html"
+  },
+  {
+    "id": "I3",
+    "url": "https://discuss.ai.google.dev/t/gemini-flash-2-0-audio-transcription-timestamps-incorrect/66777",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:45.317910+00:00",
+    "sha256": "8d17f014720a0e6d4a38535768f34aa1f0144fd0f26d9d9745f14f167c37600d",
+    "bytes": 37521,
+    "privateArtifact": "I3.html"
+  },
+  {
+    "id": "I4",
+    "url": "https://github.com/googleapis/python-genai/issues/1815",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:46.172591+00:00",
+    "sha256": "4add0a8f675caa40e475fa5d99d8695cc7e37cd9ca8a5f535cb9b81b6598e100",
+    "bytes": 302486,
+    "privateArtifact": "I4.html"
+  },
+  {
+    "id": "S1",
+    "url": "https://github.com/googleapis/js-genai/blob/main/src/models.ts",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:46.185484+00:00",
+    "sha256": "696025f03338091423d4fbdf1eedf1502ba8b10bc0eed2d399fa31d208f9af0c",
+    "bytes": 1009657,
+    "privateArtifact": "S1.html"
+  },
+  {
+    "id": "A1",
+    "url": "https://github.com/m-bain/whisperX",
+    "status": "curl_success",
+    "capturedAt": "2026-09-14T20:14:46.251788+00:00",
+    "sha256": "fdf012708c6783c71644abd073ce50aad60bdc319dc1fe8295b819afd29f6fb7",
+    "bytes": 396732,
+    "privateArtifact": "A1.html"
+  }
+]
