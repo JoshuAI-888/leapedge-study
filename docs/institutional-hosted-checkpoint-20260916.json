@@ -1,0 +1,14 @@
+{
+  "deploymentId": "dpl_fH3q4fEabvwA2aKwDd9mYMdQZC6D",
+  "previewUrl": "https://youtube-intelligence-c1n0z19ug-joshu-ai.vercel.app",
+  "build": "READY",
+  "productionPromoted": false,
+  "readOnlyDispatcher": {"skipped": true, "reason": "Read-only preview"},
+  "method": "Vercel CLI authenticated curl GET /api/cron/intelligence; no model or email work executed",
+  "browserAcceptance": "pending: Vercel login gate in automation profile; existing Mac locked",
+  "supersededPreviewRemoved": "youtube-intelligence-p0osgggtd-joshu-ai.vercel.app",
+  "localTests": {"passed": 65, "failed": 0},
+  "typecheck": "passed",
+  "localBuild": "passed",
+  "modelTests": {"syntheticClassifier": "passed", "retainedCorpusClassifier": "awaiting explicit transfer approval", "chineseSemanticAudit": "awaiting explicit transfer approval"}
+}
