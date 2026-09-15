@@ -1,3 +1,4 @@
+import { semanticPrompts } from './semantic-prompts.ts';
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
@@ -47,14 +48,14 @@ const source = Source.parse({
     end_seconds: s.end_seconds,
   })),
 });
-const prompts = selectionPrompts();
+const prompts = process.argv.includes('--v9') ? semanticPrompts() : selectionPrompts();
 const sourceHash = createHash("sha256")
   .update(JSON.stringify(source))
   .digest("hex");
 const promptHash = createHash("sha256")
   .update(JSON.stringify(prompts))
   .digest("hex");
-const resultPath = `${directory}/${caseName}-v8-selection-shadow.json`;
+const resultPath = `${directory}/${caseName}-${process.argv.includes("--v9") ? "v9" : "v8"}-selection-shadow.json`;
 if (existsSync(resultPath))
   throw Error("Shadow result exists; inspect rather than resubmit");
 if (!process.argv.includes("--execute")) {

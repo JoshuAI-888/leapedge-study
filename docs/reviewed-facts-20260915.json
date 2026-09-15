@@ -1,0 +1,97 @@
+{
+  "method": "Content correspondence reviewed independently of pause timestamps; targeted post-inspection sample, no recall or overall accuracy estimate.",
+  "scope": "native ingestion text only, not synthesis or LeapEdge",
+  "humanReference": "Audio checked by user; individual comparison labels adjudicated by assistant",
+  "timestampAccuracy": null,
+  "overallAccuracy": null,
+  "checks": [
+    {
+      "windowId": "native-review-2",
+      "videoId": "CMjt6f4eVdA",
+      "kind": "number",
+      "referencePhrase": "10万",
+      "candidatePhrase": "10万",
+      "verdict": "preserved",
+      "reason": "BTC 100,000 remains a question/possibility, not an entry.",
+      "segmentId": "s00077",
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5"
+    },
+    {
+      "windowId": "native-review-3",
+      "videoId": "CMjt6f4eVdA",
+      "kind": "condition",
+      "referencePhrase": "底仓",
+      "candidatePhrase": "底仓",
+      "verdict": "preserved",
+      "reason": "Retain a base position, not a new unconditional entry.",
+      "segmentId": "s00093",
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5"
+    },
+    {
+      "windowId": "native-review-3",
+      "videoId": "CMjt6f4eVdA",
+      "kind": "number",
+      "referencePhrase": "550以上",
+      "candidatePhrase": "550以上",
+      "verdict": "preserved",
+      "reason": "The above-550 qualifier is retained.",
+      "segmentId": "s00093",
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5"
+    },
+    {
+      "windowId": "native-review-4",
+      "videoId": "CMjt6f4eVdA",
+      "kind": "negation",
+      "referencePhrase": "绝对不是让你去做空",
+      "candidatePhrase": "绝对不是让你去做空",
+      "verdict": "preserved",
+      "reason": "Target is not an instruction to short; lexical error elsewhere in cue remains outside this fact.",
+      "segmentId": "s00104",
+      "sourceSha256": "d77567db7859174bfbc7174b400706f46da63f395095832b9a5b73155b66c2f5"
+    },
+    {
+      "windowId": "native-review-7",
+      "videoId": "wkAqHlYL7bQ",
+      "kind": "number",
+      "referencePhrase": "49%",
+      "candidatePhrase": "49%",
+      "verdict": "preserved",
+      "reason": "49% year-over-year growth retained.",
+      "segmentId": "s00188",
+      "sourceSha256": "ecea0589172435da57f26495b4a7353ffdffc40ff15f6ba17985c67677b7be26"
+    },
+    {
+      "windowId": "native-review-7",
+      "videoId": "wkAqHlYL7bQ",
+      "kind": "condition",
+      "referencePhrase": "wouldn't be surprised",
+      "candidatePhrase": "wouldn't be surprised",
+      "verdict": "preserved",
+      "reason": "Trillion-dollar future remains hedged speculation.",
+      "segmentId": "s00193",
+      "sourceSha256": "ecea0589172435da57f26495b4a7353ffdffc40ff15f6ba17985c67677b7be26"
+    },
+    {
+      "windowId": "native-review-9",
+      "videoId": "3u24qyWjSVM",
+      "kind": "issuer",
+      "referencePhrase": "VOO为主",
+      "candidatePhrase": "VOO为主",
+      "verdict": "preserved",
+      "reason": "VOO primary and QQQ secondary DCA preference retained.",
+      "segmentId": "s00024",
+      "sourceSha256": "da308450a5835156e2d267cfbcc277d09c9b12fd259890d1f5c44f93ba4d8aea"
+    },
+    {
+      "windowId": "native-review-9",
+      "videoId": "3u24qyWjSVM",
+      "kind": "condition",
+      "referencePhrase": "新出现的风险",
+      "candidatePhrase": "今年新出现的风险",
+      "verdict": "altered",
+      "reason": "Candidate adds this year to newly emerged risk; reference does not specify this year.",
+      "segmentId": "s00025",
+      "sourceSha256": "da308450a5835156e2d267cfbcc277d09c9b12fd259890d1f5c44f93ba4d8aea"
+    }
+  ]
+}
