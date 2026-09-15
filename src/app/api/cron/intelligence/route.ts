@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 800;
 export async function GET(r: Request) {
+  if(process.env.YTI_PREVIEW_READ_ONLY === "true")return Response.json({skipped:true,reason:"Read-only preview"});
   const secret = process.env.CRON_SECRET;
   if (
     !secret ||

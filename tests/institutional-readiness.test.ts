@@ -230,3 +230,7 @@ test("Preview origin is platform-defined, while production keeps configured orig
     }
   }
 });
+test('Read-only preview blocks mutations before they can enqueue model work',async()=>{
+ const {guard}=await import('../src/server/youtube-intelligence/http.ts');const prior=process.env.YTI_PREVIEW_READ_ONLY;process.env.YTI_PREVIEW_READ_ONLY='true';
+ try{assert.throws(()=>guard(new Request('http://127.0.0.1:3016/api/intelligence/research',{method:'POST'})),/read-only/);guard(new Request('http://127.0.0.1:3016/api/intelligence/research'));}finally{if(prior===undefined)delete process.env.YTI_PREVIEW_READ_ONLY;else process.env.YTI_PREVIEW_READ_ONLY=prior;}
+});

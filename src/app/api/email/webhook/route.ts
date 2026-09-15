@@ -2,6 +2,7 @@ import { receiveEmailWebhook } from "../../../../server/youtube-intelligence/web
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function POST(r: Request) {
+  if(process.env.YTI_PREVIEW_READ_ONLY === "true")return Response.json({error:"Read-only preview"},{status:503});
   if (!process.env.RESEND_WEBHOOK_SECRET)
     return Response.json({ error: "Webhook not configured" }, { status: 503 });
   try {

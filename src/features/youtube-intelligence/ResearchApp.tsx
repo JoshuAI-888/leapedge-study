@@ -110,6 +110,7 @@ export function ResearchApp() {
     return () => media.removeEventListener("change", apply);
   }, [data?.preferences.theme]);
   async function act(action: string, payload: unknown) {
+    if(data?.integrations.readOnly){setError("This hosted preview is read-only; use the isolated local workspace for changes.");return;}
     setBusy(true);
     setError("");
     setMessage("");
@@ -233,6 +234,7 @@ export function ResearchApp() {
             </button>
           ))}
         </nav>
+        {data.integrations.readOnly && <p className="notice">Read-only hosted preview. Production research and settings cannot be changed here.</p>}
         {error && (
           <p className="notice error" role="alert">
             {error}

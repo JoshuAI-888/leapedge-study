@@ -126,6 +126,7 @@ export async function addPrompt(input: unknown) {
   return p;
 }
 async function seed() {
+  if(process.env.YTI_PREVIEW_READ_ONLY === "true")return;
   await researchDB().transaction(async () => {
     for (const p of bundledPrompts)
       if (
@@ -219,7 +220,7 @@ export async function canonicalRuns() {
     seen.add(r.videoId);
     return true;
   });
-  for (const r of result) {
+  for (const r of process.env.YTI_PREVIEW_READ_ONLY === "true" ? [] : result) {
     await researchDB().transaction(async () => {
       if (!(await doc("forwardObservation", r.videoId)))
         await put("forwardObservation", r.videoId, {
@@ -423,6 +424,7 @@ export async function researchSnapshot() {
         cost: r.cost,
       })),
     integrations: {
+      readOnly: process.env.YTI_PREVIEW_READ_ONLY === "true",
       youtubeJs: process.env.YTI_YOUTUBEJS_ENABLED !== "false",
       youtube: !!process.env.YOUTUBE_API_KEY,
       openrouter: !!process.env.OPENROUTER_API_KEY,

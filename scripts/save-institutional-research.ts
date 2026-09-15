@@ -22,7 +22,7 @@ try {
     proposal:
       "English entity registry and corpus; channel discovery; bounded history; exact share selection; source playback repair; conservative CJK alignment and entry qualifier guard.",
     outcome:
-      "64 local tests pass. Three of ten Chinese items structurally recover, not semantically or audio verified. Hosted preview built; production unchanged. Retained-corpus model tests await explicit approval.",
+      "65 local tests pass. Three of ten Chinese items structurally recover, not semantically or audio verified. Hosted preview built; production unchanged. Retained-corpus model tests await explicit approval.",
     results: JSON.parse(
       readFileSync("docs/institutional-evidence-replay-20260916.json", "utf8"),
     ),

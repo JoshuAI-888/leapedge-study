@@ -1,6 +1,7 @@
 import { requestSession, workspaceOrigin } from "./access.ts";
 const loopback = ["localhost", "127.0.0.1", "[::1]"];
 export function guard(request: Request) {
+  if(process.env.YTI_PREVIEW_READ_ONLY === "true" && !["GET","HEAD"].includes(request.method))throw Error("This preview is read-only. Changes are tested in the isolated local workspace.");
   const origin = request.headers.get("origin"),
     host = request.headers.get("host") || new URL(request.url).host;
   const configured = workspaceOrigin();
