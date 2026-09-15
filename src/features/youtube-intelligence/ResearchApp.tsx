@@ -17,7 +17,14 @@ import type { researchSnapshot } from "../../server/youtube-intelligence/researc
 import type { performance } from "../../server/youtube-intelligence/market";
 import type { Channel } from "../../server/youtube-intelligence/channels";
 import type { Briefing } from "../../server/youtube-intelligence/briefings";
-import { MODELS, type CheckedClaim, type Run } from "./contracts";
+import {
+  MODELS,
+  type CheckedClaim,
+  type ClaimData,
+  type Run,
+} from "./contracts";
+import { CorpusPanel } from "./CorpusPanel";
+import { displayEntity, englishText } from "./entities";
 import { TrendsPanel } from "./TrendsPanel";
 import { localDate } from "./research-utils";
 type Snapshot = Awaited<ReturnType<typeof researchSnapshot>> & {
@@ -26,6 +33,7 @@ type Snapshot = Awaited<ReturnType<typeof researchSnapshot>> & {
 const tabs = [
   ["today", "Today", Sun],
   ["channels", "Channels", Users],
+  ["corpus", "Instruments & topics", Search],
   ["ideas", "Saved ideas", Bookmark],
   ["search", "Search & trends", Search],
   ["performance", "Performance", ChartNoAxesCombined],
@@ -182,10 +190,7 @@ export function ResearchApp() {
   );
   const byTicker = Object.groupBy(
     filtered,
-    (x) =>
-      x.item.claim.ticker ||
-      x.item.claim.instrument_as_spoken ||
-      "Macro context",
+    (x) => displayEntity(x.item.claim, data.entities || []).name,
   );
   return (
     <>
@@ -409,6 +414,74 @@ export function ResearchApp() {
           </>
         )}
         {tab === "channels" && (
+          <section className="panel research-panel">
+            <h2>Discover investment channels</h2>
+            <p>
+              Search investment themes, companies or sectors in any input
+              language. Results are candidates, not endorsements. Following does
+              not enable paid analysis.
+            </p>
+            <form
+              className="inline-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const f = new FormData(e.currentTarget);
+                act("discoverChannels", {
+                  query: f.get("query"),
+                  language: f.get("language"),
+                });
+              }}
+            >
+              <input
+                name="query"
+                required
+                minLength={3}
+                maxLength={150}
+                aria-label="Investment channel search"
+                placeholder="Equity research, earnings, semiconductor investing"
+              />
+              <select name="language" aria-label="Preferred source language">
+                <option value="en">English</option>
+                <option value="zh-Hans">Mandarin / Simplified Chinese</option>
+                <option value="zh-Hant">Chinese / Traditional Chinese</option>
+              </select>
+              <button disabled={busy}>Find channels</button>
+            </form>
+            {(data.channelCandidates || []).map((c) => (
+              <article className="research-row" key={String(c.id)}>
+                <div>
+                  <strong>
+                    {englishText.safeParse(String(c.sourceTitle)).success
+                      ? String(c.sourceTitle)
+                      : "Investment channel · English name pending"}
+                  </strong>
+                  <p>{String(c.reasonEn)}</p>
+                  <details>
+                    <summary>Original channel name and sample videos</summary>
+                    <p>{String(c.sourceTitle)}</p>
+                    {(
+                      c.examples as { videoId: string; sourceTitle: string }[]
+                    ).map((v) => (
+                      <p key={v.videoId}>
+                        <a
+                          href={`https://www.youtube.com/watch?v=${v.videoId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {v.sourceTitle}
+                        </a>
+                      </p>
+                    ))}
+                  </details>
+                  <button disabled={busy} onClick={() => act("follow", c.id)}>
+                    Follow channel
+                  </button>
+                </div>
+              </article>
+            ))}
+          </section>
+        )}
+        {tab === "channels" && (
           <>
             <section className="panel research-panel">
               <h2>Follow a channel</h2>
@@ -561,6 +634,16 @@ export function ResearchApp() {
                           Discover older uploads
                         </button>
                       )}
+                      {c.nextPageToken && (
+                        <button
+                          disabled={busy}
+                          onClick={() =>
+                            act("backfillChannel", { id: c.id, pages: 3 })
+                          }
+                        >
+                          Discover up to 150 older uploads (metadata only)
+                        </button>
+                      )}
                       <button
                         onClick={() =>
                           act("channel", { id: c.id, active: false })
@@ -663,7 +746,8 @@ export function ResearchApp() {
                 <article key={String(i.id)}>
                   <h3>
                     {String(
-                      (i.claim as { ticker: string }).ticker || "Research idea",
+                      displayEntity(i.claim as ClaimData, data.entities || [])
+                        .name,
                     )}{" "}
                     · {String(i.channel)}
                   </h3>
@@ -710,23 +794,32 @@ export function ResearchApp() {
             )}
           </section>
         )}
+        {tab === "corpus" && (
+          <CorpusPanel
+            runs={runs}
+            entities={data.entities || []}
+            busy={busy}
+            act={act}
+          />
+        )}
         {tab === "search" && (
           <>
             <section className="panel research-panel">
               <h2>Search your evidence</h2>
               <button
-                disabled={busy || !filtered.length}
+                disabled={busy || !filtered.length || filtered.length > 500}
                 onClick={() =>
-                  act("shareSelection", {
-                    query,
-                    direction,
-                    conviction,
-                    channel,
-                    range,
-                  })
+                  act(
+                    "shareSelection",
+                    filtered.map(({ run, item }) => ({
+                      runId: run.id,
+                      claimId: item.id,
+                    })),
+                  )
                 }
               >
-                Share this filtered snapshot for 7 days
+                Share these {filtered.length} claims from{" "}
+                {new Set(filtered.map((x) => x.run.id)).size} videos for 7 days
               </button>
               <div className="filter-grid">
                 <input
@@ -815,10 +908,8 @@ export function ResearchApp() {
                 <article key={r.id + c.id}>
                   <div className="section-heading">
                     <h3>
-                      {c.claim.ticker ||
-                        c.claim.instrument_as_spoken ||
-                        "Macro context"}{" "}
-                      · {c.claim.stance}
+                      {displayEntity(c.claim, data.entities || []).name} ·{" "}
+                      {c.claim.stance}
                     </h3>
                     <span>{c.claim.creator_conviction} creator conviction</span>
                   </div>
@@ -832,7 +923,10 @@ export function ResearchApp() {
                   {c.claim.evidence.map((e, i) => (
                     <blockquote key={i}>
                       {e.quote_original}
-                      <p>{e.quote_translation_en}</p>
+                      {e.quote_translation_en &&
+                      e.quote_translation_en !== e.quote_original ? (
+                        <p>{e.quote_translation_en}</p>
+                      ) : null}
                     </blockquote>
                   ))}
                   <div className="inline-form">
@@ -1317,9 +1411,7 @@ export function ResearchApp() {
                           <p>
                             {r.promptVersion} · ${r.cost.toFixed(4)} USD
                           </p>
-                          <a href={`/?run=${r.id}`}>
-                            Open complete analysis ↗
-                          </a>
+                          <a href={`/?run=${r.id}`}>Open complete analysis ↗</a>
                           <button
                             className="secondary"
                             disabled={busy}

@@ -1286,3 +1286,5 @@ meter::-moz-meter-bar {
   content-visibility: auto;
   contain-intrinsic-size: auto 70px;
 }
+
+.corpus-card { padding: 20px; margin-top: 16px; }

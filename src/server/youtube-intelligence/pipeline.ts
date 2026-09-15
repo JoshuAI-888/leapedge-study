@@ -52,8 +52,7 @@ export async function modelCall(
   ];
   if (video) content.push({ type: "video_url", video_url: { url: run.url } });
   const config = run.input.inferenceConfig as
-    | { critiqueMaxTokens?: number; reasoningEffort?: string }
-    | undefined;
+    { critiqueMaxTokens?: number; reasoningEffort?: string } | undefined;
   const isCritique =
     stage.startsWith("critique") ||
     stage === "audio-review" ||
@@ -146,6 +145,11 @@ export async function modelCall(
   return value;
 }
 export async function step(run: Run) {
+  run.output.pipelineRevision = "institutional.v1";
+  if (run.input.task === "entity-classification") {
+    const { entityStep } = await import("./entities.ts");
+    return entityStep(run);
+  }
   if (run.stage === "native-source" || run.stage === "native-recovery") {
     const { nativeGoogleStep } = await import("./native-google.ts");
     return nativeGoogleStep(run);
@@ -401,6 +405,8 @@ export async function step(run: Run) {
               : ""),
           {
             source: chunks[chunkIndex],
+            evidenceFormat:
+              "Use segment_id for the first real cue ID and end_segment_id for the last real cue ID. Never put a range in segment_id. Copy an exact contiguous quote; no ellipses, paraphrases or omitted words. Preserve all numerical comparators and conditions. value_original must include the exact comparator where spoken (for example under $20), not just the number.",
             chunk: chunkIndex + 1,
             totalChunks: chunks.length,
           },
@@ -417,6 +423,7 @@ export async function step(run: Run) {
     if (chunkIndex + 1 < chunks.length) return;
     draft.claims = uniqueClaims(drafts.flatMap((d) => d.claims));
     draft.key_points = uniqueClaims(drafts.flatMap((d) => d.key_points));
+    run.output.validationVersion = "caption-alignment.v2";
     run.output.claims = draft.claims
       .map((c) => anchorClaimEvidence(c, source))
       .map((claim, i) => ({
@@ -459,7 +466,10 @@ export async function step(run: Run) {
             run,
             `critique-${i}`,
             String(run.input.criticModel || run.model),
-            prompts.critique,
+            prompts.critique +
+              (item.id.startsWith("k")
+                ? "\nThis is a contextual key point. It need not recommend a trade. Audit evidence, attribution and meaning; do not reject solely for absence of an action."
+                : ""),
             {
               claim: item.claim,
               source: auditSource(run.output.source as SourceData, item.claim),

@@ -1,3 +1,8 @@
+import {
+  saveEntity,
+  suggestEntities,
+  mergeEntities,
+} from "../../../../server/youtube-intelligence/entities.ts";
 import { z } from "zod";
 import {
   guard,
@@ -6,6 +11,8 @@ import {
 import * as R from "../../../../server/youtube-intelligence/research-store.ts";
 import {
   follow,
+  discoverChannels,
+  backfillChannel,
   pull,
   updateChannel,
   analyzeDiscovery,
@@ -119,6 +126,18 @@ export async function POST(r: Request) {
       case "prompt":
         result = await R.addPrompt(a.data);
         break;
+      case "discoverChannels":
+        result = await discoverChannels(a.data);
+        break;
+      case "suggestEntities":
+        result = await suggestEntities();
+        break;
+      case "entityMerge":
+        result = await mergeEntities(a.data);
+        break;
+      case "entity":
+        result = await saveEntity(a.data);
+        break;
       case "follow":
         result = await follow(z.string().max(500).parse(a.data));
         break;
@@ -127,6 +146,9 @@ export async function POST(r: Request) {
         break;
       case "pull":
         result = await pull(z.string().parse(a.data));
+        break;
+      case "backfillChannel":
+        result = await backfillChannel(a.data);
         break;
       case "pullOlder":
         result = await pull(z.string().parse(a.data), true);

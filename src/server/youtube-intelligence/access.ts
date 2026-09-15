@@ -37,3 +37,11 @@ export function requestSession(r: Request) {
     .find((x) => x.startsWith("yti_session="));
   return validSession(cookie?.slice("yti_session=".length) || "");
 }
+
+// Preview deployments authenticate on their platform-assigned host; production
+// retains its configured origin. Never derive the trusted origin from a request.
+export function workspaceOrigin() {
+  if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL)
+    return `https://${process.env.VERCEL_URL}`;
+  return process.env.YTI_APP_ORIGIN;
+}

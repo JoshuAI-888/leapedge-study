@@ -1,10 +1,11 @@
-import { requestSession } from "./access.ts";
+import { requestSession, workspaceOrigin } from "./access.ts";
 const loopback = ["localhost", "127.0.0.1", "[::1]"];
 export function guard(request: Request) {
   const origin = request.headers.get("origin"),
     host = request.headers.get("host") || new URL(request.url).host;
-  if (process.env.YTI_APP_ORIGIN) {
-    const app = new URL(process.env.YTI_APP_ORIGIN);
+  const configured = workspaceOrigin();
+  if (configured) {
+    const app = new URL(configured);
     if (app.protocol !== "https:" && !loopback.includes(app.hostname))
       throw Error("Hosted workspace requires HTTPS.");
     if (host !== app.host || (origin && origin !== app.origin))

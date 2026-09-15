@@ -32,6 +32,9 @@ type Health = {
   budgetUsd: number;
   spentOrReservedUsd: number;
 };
+import { displayEntity, type EntityData } from "./entities";
+import { SourcePlayer } from "./SourcePlayer";
+import { researchOutcome, canDropFailedAudit } from "./research-quality";
 const label = (s: string) => s.replaceAll("_", " ");
 const modelName = (s: string) =>
   s.replace("google/", "").replace("gemini-", "Gemini ").replaceAll("-", " ");
@@ -187,7 +190,9 @@ export function IntelligenceApp() {
       .toLowerCase()
       .includes(query.toLowerCase()),
   );
-  const completed = runs.filter((r) => r.status === "completed").length;
+  const completed = runs.filter(
+    (r) => r.status === "completed" && Number(r.output.acceptedCount || 0) > 0,
+  ).length;
   return (
     <>
       <header className="topbar">
@@ -455,7 +460,7 @@ export function IntelligenceApp() {
                       </span>
                     </button>
                     <span className={`badge ${r.status}`}>
-                      {label(r.status)}
+                      {researchOutcome(r)}
                     </span>
                     <button
                       className="icon-button"
@@ -628,7 +633,7 @@ function Report({ run }: { run: Run }) {
     <>
       <div className="eyebrow">
         VIDEO RESEARCH{" "}
-        <span className={`badge ${run.status}`}>{label(run.status)}</span>
+        <span className={`badge ${run.status}`}>{researchOutcome(run)}</span>
       </div>
       <h2 className="report-title">{run.title}</h2>
       <p className="muted">
@@ -664,13 +669,10 @@ function Report({ run }: { run: Run }) {
           Export JSON
         </button>
       </div>
-      {seek !== null ? (
-        <iframe
-          title="YouTube source at cited timestamp"
-          src={`https://www.youtube-nocookie.com/embed/${run.videoId}?start=${Math.floor(seek)}`}
-          allowFullScreen
-        />
-      ) : null}
+      <SourcePlayer videoId={run.videoId} seconds={seek || 0} />
+      <p role="status">
+        <strong>{researchOutcome(run)}</strong>
+      </p>
       <div className="progress-strip">
         {["metadata", "source", "synthesis", "critique", "complete"].map(
           (s, i) => (
@@ -699,7 +701,7 @@ function Report({ run }: { run: Run }) {
           </div>
         </div>
       ) : null}
-      {run.status === "failed" && run.stage === "critique" ? (
+      {canDropFailedAudit(run) ? (
         <button
           className="secondary"
           onClick={async () => {
@@ -747,7 +749,10 @@ function Report({ run }: { run: Run }) {
                       return (
                         <div className="evidence" key={i}>
                           <blockquote>{e.quote_original}</blockquote>
-                          <p>{e.quote_translation_en}</p>
+                          {e.quote_translation_en &&
+                          e.quote_translation_en !== e.quote_original ? (
+                            <p>{e.quote_translation_en}</p>
+                          ) : null}
                           {segment?.start_seconds != null ? (
                             <button
                               className="text-button"
@@ -790,9 +795,12 @@ function Report({ run }: { run: Run }) {
               >
                 <div className="claim-meta">
                   <span className="ticker">
-                    {item.claim.ticker ||
-                      item.claim.instrument_as_spoken ||
-                      "Market context"}
+                    {
+                      displayEntity(
+                        item.claim,
+                        (run.output.entityRegistry || []) as EntityData[],
+                      ).name
+                    }
                   </span>
                   <span className="badge">{item.claim.stance}</span>
                   <span className="muted">
@@ -815,7 +823,10 @@ function Report({ run }: { run: Run }) {
                   <p>
                     <strong>Levels:</strong>{" "}
                     {item.claim.levels
-                      .map((l) => `${l.kind}: ${l.value_original}`)
+                      .map(
+                        (l) =>
+                          `${l.kind}: ${/\p{Script=Han}/u.test(l.value_original) ? "See translated source evidence" : l.value_original}`,
+                      )
                       .join(" · ")}
                   </p>
                 ) : null}
@@ -886,6 +897,11 @@ function Report({ run }: { run: Run }) {
               model: run.model,
               prompt: run.promptVersion,
               sourceHash: run.output.sourceHash,
+              pipelineRevision:
+                run.output.pipelineRevision ||
+                run.input.pipelineVersion ||
+                "legacy",
+              validationVersion: run.output.validationVersion || "legacy",
               costOrReservationUsd: run.cost,
               metrics: run.output.metrics,
             },

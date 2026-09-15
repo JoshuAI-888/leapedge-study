@@ -1,7 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { validSession } from "./server/youtube-intelligence/access";
+import {
+  validSession,
+  workspaceOrigin,
+} from "./server/youtube-intelligence/access";
 export function proxy(r: NextRequest) {
-  if (!process.env.YTI_APP_ORIGIN) return NextResponse.next();
+  const origin = workspaceOrigin();
+  if (!origin) return NextResponse.next();
   const path = r.nextUrl.pathname;
   if (path.startsWith("/share/"))
     return process.env.YTI_PUBLIC_SHARES === "true"
@@ -16,13 +20,11 @@ export function proxy(r: NextRequest) {
         { error: "Workspace access required." },
         { status: 401 },
       );
-    return NextResponse.redirect(
-      new URL("/access", process.env.YTI_APP_ORIGIN),
-    );
+    return NextResponse.redirect(new URL("/access", origin));
   }
   const response = NextResponse.next();
   response.headers.set("Cache-Control", "private, no-store");
-  response.headers.set("Referrer-Policy", "no-referrer");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   return response;
 }
 export const config = {

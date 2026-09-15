@@ -13,6 +13,7 @@ export type Channel = {
   lastAttempt?: string;
   nextPullAt?: string;
   nextPageToken?: string | null;
+  historyStarted?: boolean;
   error: string | null;
 };
 export function channelQuery(raw: string): Record<string, string> {
@@ -67,6 +68,9 @@ export async function follow(raw: string) {
     autoAnalyze: old?.autoAnalyze || false,
     createdAt: old?.createdAt || new Date().toISOString(),
     lastPull: old?.lastPull || null,
+    nextPageToken: old?.nextPageToken,
+    historyStarted: old?.historyStarted,
+    nextPullAt: old?.nextPullAt,
     error: null,
   })) as Channel;
 }
@@ -118,7 +122,11 @@ export async function pull(id: string, older = false) {
       lastPull: new Date().toISOString(),
       lastAttempt: attempt,
       nextPullAt: new Date(Date.now() + 3600000).toISOString(),
-      nextPageToken: data.nextPageToken || null,
+      nextPageToken:
+        older || !c.historyStarted
+          ? data.nextPageToken || null
+          : c.nextPageToken,
+      historyStarted: true,
       error: null,
     });
     return {
@@ -184,4 +192,84 @@ export async function pullDue() {
       /* Error persisted on channel; retry next scheduled sweep. */
     }
   }
+}
+
+export async function discoverChannels(input: unknown) {
+  const q = z
+    .object({
+      query: z.string().trim().min(3).max(150),
+      language: z.enum(["en", "zh-Hans", "zh-Hant"]).default("en"),
+    })
+    .parse(input);
+  const cacheId = `${q.language}:${q.query.toLowerCase()}`;
+  const cached = await doc<{ at: string; items: unknown[] }>(
+    "channelSearch",
+    cacheId,
+  );
+  if (cached && Date.now() - Date.parse(cached.at) < 86400000)
+    return { items: cached.items, cached: true };
+  const result = await youtube("search", {
+    part: "snippet",
+    type: "video",
+    q: q.query,
+    maxResults: "20",
+    relevanceLanguage: q.language,
+    order: "relevance",
+  });
+  const candidates = new Map<
+    string,
+    {
+      id: string;
+      sourceTitle: string;
+      query: string;
+      language: string;
+      examples: { videoId: string; sourceTitle: string }[];
+      at: string;
+      reasonEn: string;
+    }
+  >();
+  for (const v of result.items || []) {
+    const id = v.snippet?.channelId,
+      videoId = v.id?.videoId;
+    if (!/^UC[\w-]{22}$/.test(id || "") || !/^[\w-]{11}$/.test(videoId || ""))
+      continue;
+    const c = candidates.get(id) || {
+      id,
+      sourceTitle: v.snippet.channelTitle,
+      query: q.query,
+      language: q.language,
+      examples: [] as { videoId: string; sourceTitle: string }[],
+      at: new Date().toISOString(),
+      reasonEn:
+        "Found through your investment search. Relevance and research quality require review; this is not a performance endorsement.",
+    };
+    c.examples.push({ videoId, sourceTitle: v.snippet.title });
+    candidates.set(id, c);
+  }
+  for (const c of candidates.values()) await put("channelCandidate", c.id, c);
+  const items = [...candidates.values()];
+  await put("channelSearch", cacheId, { at: new Date().toISOString(), items });
+  return { items, cached: false };
+}
+
+export async function backfillChannel(input: unknown) {
+  const spec = z
+    .object({ id: z.string().min(1), pages: z.number().int().min(1).max(3) })
+    .parse(input);
+  let added = 0,
+    pages = 0;
+  for (let i = 0; i < spec.pages; i++) {
+    const c = await doc<Channel>("channel", spec.id);
+    if (!c?.active) throw Error("Channel is not followed.");
+    if (c.historyStarted && !c.nextPageToken) break;
+    const result = await pull(c.id, !!c.historyStarted);
+    added += result.added;
+    pages++;
+  }
+  return {
+    added,
+    pages,
+    message:
+      "Metadata only. Analysis requires a separate action. Continue from the saved cursor for more history.",
+  };
 }

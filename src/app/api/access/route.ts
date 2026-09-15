@@ -1,9 +1,10 @@
 import {
   constantEqual,
   sessionToken,
+  workspaceOrigin,
 } from "../../../server/youtube-intelligence/access";
 export async function POST(r: Request) {
-  const configured = process.env.YTI_APP_ORIGIN,
+  const configured = workspaceOrigin(),
     key = process.env.YTI_ACCESS_TOKEN;
   if (!configured || !key || key.length < 32)
     return new Response("Hosted access is not configured.", { status: 503 });

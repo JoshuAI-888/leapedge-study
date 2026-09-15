@@ -1,3 +1,7 @@
+import {
+  displayEntity,
+  type EntityData,
+} from "../../features/youtube-intelligence/entities.ts";
 import { randomUUID, randomBytes, createHash } from "node:crypto";
 import {
   canonicalRuns,
@@ -51,6 +55,7 @@ export async function buildBriefing(date?: string) {
   const runs = (await canonicalRuns()).filter(
     (r) => localDay(r.createdAt, p.timezone) === day,
   );
+  const registry = await docs<EntityData>("entity");
   const groups = new Map<string, Briefing["groups"][number]["calls"]>();
   for (const r of runs)
     for (const c of [
@@ -60,10 +65,7 @@ export async function buildBriefing(date?: string) {
           []) as import("../../features/youtube-intelligence/contracts.ts").CheckedClaim[]
       ).filter((c) => c.passed),
     ]) {
-      const ticker =
-        c.claim.ticker ||
-        c.claim.instrument_as_spoken ||
-        "Macro / unresolved instrument";
+      const ticker = displayEntity(c.claim, registry).name;
       const group = groups.get(ticker) || [];
       group.push({
         runId: r.id,
@@ -201,43 +203,30 @@ export async function prepareScheduledDigest() {
 }
 export async function shareSelection(input: unknown) {
   const { z } = await import("zod");
-  const filter = z
-    .object({
-      query: z.string().max(300),
-      direction: z.string().max(30),
-      conviction: z.string().max(30),
-      channel: z.string().max(200),
-      range: z.enum(["all", "1", "7", "30", "90", "365"]),
-    })
+  const selection = z
+    .array(z.object({ runId: z.string().min(1), claimId: z.string().min(1) }))
+    .min(1)
+    .max(500)
     .parse(input);
   const p = await preferences();
-  const rows = (await canonicalRuns())
-    .flatMap((run) => accepted(run).map((item) => ({ run, item })))
-    .filter(
-      ({ run, item }) =>
-        (!filter.query ||
-          `${run.title} ${item.claim.ticker || ""} ${item.claim.thesis_en}`
-            .toLowerCase()
-            .includes(filter.query.toLowerCase())) &&
-        (!filter.direction || item.claim.stance === filter.direction) &&
-        (!filter.conviction ||
-          item.claim.creator_conviction === filter.conviction) &&
-        (!filter.channel ||
-          (run.output.metadata as { channel?: string })?.channel ===
-            filter.channel) &&
-        (filter.range === "all" ||
-          Date.now() - Date.parse(run.createdAt) <=
-            Number(filter.range) * 86400000),
+  const available = (await canonicalRuns()).flatMap((run) =>
+    accepted(run).map((item) => ({ run, item })),
+  );
+  const keys = new Set(
+    selection.map((s) => JSON.stringify([s.runId, s.claimId])),
+  );
+  if (keys.size !== selection.length) throw Error("Duplicate share selection.");
+  const rows = available.filter(({ run, item }) =>
+    keys.has(JSON.stringify([run.id, item.id])),
+  );
+  if (rows.length !== selection.length)
+    throw Error(
+      "Selection changed or contains unpublished evidence. Refresh and review before sharing.",
     );
   if (!rows.length) throw Error("No matching accepted research to share.");
+  const registry = await docs<EntityData>("entity");
   const groups = Object.entries(
-    Object.groupBy(
-      rows,
-      (r) =>
-        r.item.claim.ticker ||
-        r.item.claim.instrument_as_spoken ||
-        "Unresolved",
-    ),
+    Object.groupBy(rows, (r) => displayEntity(r.item.claim, registry).name),
   ).map(([ticker, items]) => ({
     ticker,
     agreement: "Filtered research snapshot; inspect conditions and horizons",
@@ -259,7 +248,7 @@ export async function shareSelection(input: unknown) {
     kind: "Filtered trends snapshot",
     runIds: [...new Set(rows.map((r) => r.run.id))],
     groups,
-    filters: filter,
+    selection,
     limitations: [
       "Frozen selection from this private collection; no network-wide totals.",
       "Quotes are retained text, not independent audio verification.",

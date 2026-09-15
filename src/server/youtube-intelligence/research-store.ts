@@ -1,3 +1,4 @@
+import { canDropFailedAudit } from "../../features/youtube-intelligence/research-quality.ts";
 import { randomUUID, createHash } from "node:crypto";
 import { z } from "zod";
 import { db, get, list, create } from "./store.ts";
@@ -46,7 +47,9 @@ export async function docs<T = Record<string, unknown>>(
   kind: string,
 ): Promise<T[]> {
   return (
-    await (await researchDB())
+    await (
+      await researchDB()
+    )
       .prepare(
         "SELECT payload FROM yi_documents WHERE kind=? ORDER BY created_at DESC",
       )
@@ -57,13 +60,17 @@ export async function doc<T = Record<string, unknown>>(
   kind: string,
   id: string,
 ): Promise<T | null> {
-  const row = await (await researchDB())
+  const row = await (
+    await researchDB()
+  )
     .prepare("SELECT payload FROM yi_documents WHERE kind=? AND id=?")
     .get(kind, id);
   return row ? JSON.parse(String(row.payload)) : null;
 }
 export async function event(kind: string, id: string, payload: unknown) {
-  await (await researchDB())
+  await (
+    await researchDB()
+  )
     .prepare("INSERT INTO yi_events VALUES(?,?,?,?,?)")
     .run(
       randomUUID(),
@@ -91,7 +98,9 @@ export async function put(kind: string, id: string, payload: unknown) {
 export async function promptVersions() {
   await seed();
   return (
-    await (await researchDB())
+    await (
+      await researchDB()
+    )
       .prepare(
         "SELECT payload,hash,created_at FROM yi_prompts ORDER BY created_at DESC",
       )
@@ -109,7 +118,9 @@ export async function addPrompt(input: unknown) {
         JSON.stringify([p.transcribe, p.extraction, p.synthesis, p.critique]),
       )
       .digest("hex");
-  await (await researchDB())
+  await (
+    await researchDB()
+  )
     .prepare("INSERT INTO yi_prompts VALUES(?,?,?,?)")
     .run(p.id, hash, JSON.stringify(p), new Date().toISOString());
   return p;
@@ -127,7 +138,9 @@ async function seed() {
 }
 export async function prompt(id: string) {
   await seed();
-  const row = await (await researchDB())
+  const row = await (
+    await researchDB()
+  )
     .prepare("SELECT payload FROM yi_prompts WHERE id=?")
     .get(id);
   if (!row) throw Error("Unknown prompt version.");
@@ -170,7 +183,7 @@ export async function queue(
       transcriptionModel: p.transcriptionModel,
       promptSnapshot: snapshot,
       experiment: experiment || p.nativeGoogleExperimental,
-      pipelineVersion: "research.v4.reasoning",
+      pipelineVersion: "research.v5.institutional-candidate",
       inferenceConfig: { critiqueMaxTokens: 6000, reasoningEffort: "low" },
       sourceRepairEnabled: false,
       transcriptionWindowSeconds: p.windowedTranscription ? 600 : 0,
@@ -434,13 +447,22 @@ export async function researchSnapshot() {
     improvements: await readDocs("improvement"),
     briefings: await readDocs("briefing"),
     deliveries: await readDocs("delivery"),
-    shares: await (await researchDB())
+    entities:
+      await docs<
+        import("../../features/youtube-intelligence/entities.ts").EntityData
+      >("entity"),
+    channelCandidates: await docs("channelCandidate"),
+    shares: await (
+      await researchDB()
+    )
       .prepare(
         "SELECT id,created_at,expires_at,revoked_at FROM yi_shares ORDER BY created_at DESC",
       )
       .all(),
     discoveries: (
-      await (await researchDB())
+      await (
+        await researchDB()
+      )
         .prepare(
           "SELECT * FROM yi_discoveries ORDER BY json_extract(payload, '$.publishedAt') DESC",
         )
@@ -454,7 +476,9 @@ export async function researchSnapshot() {
       payload: JSON.parse(String(r.payload)),
     })),
     events: (
-      await (await researchDB())
+      await (
+        await researchDB()
+      )
         .prepare("SELECT * FROM yi_events ORDER BY at DESC LIMIT 100")
         .all()
     ).map((r) => ({
@@ -492,7 +516,7 @@ export async function researchSnapshot() {
 }
 export async function continueAfterAuditFailure(id: string) {
   const r = await get(id);
-  if (!r || r.status !== "failed" || r.stage !== "critique")
+  if (!r || !canDropFailedAudit(r))
     throw Error("Only a failed critique can use this recovery.");
   const all = [
       ...((r.output.claims || []) as CheckedClaim[]),
@@ -505,7 +529,9 @@ export async function continueAfterAuditFailure(id: string) {
     `Audit could not finish: ${r.error}. Dropped without retrying the paid call.`,
   );
   r.output.auditIndex = index + 1;
-  await (await researchDB())
+  await (
+    await researchDB()
+  )
     .prepare(
       "UPDATE yi_runs SET output=?,status='queued',error=NULL,lease_until=0,lease_token=NULL WHERE id=? AND status='failed'",
     )

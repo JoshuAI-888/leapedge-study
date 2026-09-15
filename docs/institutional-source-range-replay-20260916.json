@@ -1,0 +1,152 @@
+{
+  "experimental": true,
+  "method": "Materialize declared source ranges, NOT repair generated quotes. Translations cleared because old translations do not cover the new excerpts. Fresh semantic and translation audit required.",
+  "structurallyPassing": 9,
+  "rows": [
+    {
+      "id": "c1",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s00218",
+          "end_id": "s00225"
+        },
+        {
+          "start_id": "s00258",
+          "end_id": "s00297"
+        }
+      ],
+      "copiedSourceCharacters": 154
+    },
+    {
+      "id": "c2",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s00383",
+          "end_id": "s00418"
+        }
+      ],
+      "copiedSourceCharacters": 113
+    },
+    {
+      "id": "c3",
+      "structuralReasons": [
+        "Price is not present verbatim in its evidence."
+      ],
+      "ranges": [
+        {
+          "start_id": "s01310",
+          "end_id": "s01334"
+        }
+      ],
+      "copiedSourceCharacters": 80
+    },
+    {
+      "id": "c4",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s01412",
+          "end_id": "s01425"
+        }
+      ],
+      "copiedSourceCharacters": 44
+    },
+    {
+      "id": "k1",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s00433",
+          "end_id": "s00446"
+        },
+        {
+          "start_id": "s00543",
+          "end_id": "s00578"
+        }
+      ],
+      "copiedSourceCharacters": 164
+    },
+    {
+      "id": "k2",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s00666",
+          "end_id": "s00673"
+        },
+        {
+          "start_id": "s00685",
+          "end_id": "s00701"
+        },
+        {
+          "start_id": "s00739",
+          "end_id": "s00750"
+        },
+        {
+          "start_id": "s00794",
+          "end_id": "s00823"
+        }
+      ],
+      "copiedSourceCharacters": 208
+    },
+    {
+      "id": "k3",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s01007",
+          "end_id": "s01040"
+        },
+        {
+          "start_id": "s01133",
+          "end_id": "s01144"
+        }
+      ],
+      "copiedSourceCharacters": 145
+    },
+    {
+      "id": "k4",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s01110",
+          "end_id": "s01132"
+        },
+        {
+          "start_id": "s01253",
+          "end_id": "s01277"
+        }
+      ],
+      "copiedSourceCharacters": 150
+    },
+    {
+      "id": "k5",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s01348",
+          "end_id": "s01372"
+        },
+        {
+          "start_id": "s01393",
+          "end_id": "s01411"
+        }
+      ],
+      "copiedSourceCharacters": 137
+    },
+    {
+      "id": "k6",
+      "structuralReasons": [],
+      "ranges": [
+        {
+          "start_id": "s01490",
+          "end_id": "s01528"
+        }
+      ],
+      "copiedSourceCharacters": 123
+    }
+  ],
+  "published": false
+}

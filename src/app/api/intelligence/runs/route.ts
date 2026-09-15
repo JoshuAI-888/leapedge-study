@@ -25,6 +25,14 @@ export async function GET(r: Request) {
             metadata: r.output.metadata,
             sourceHash: r.output.sourceHash,
             coverage: r.output.coverage,
+            acceptedEvidenceCount: [
+              ...(Array.isArray(r.output.claims) ? r.output.claims : []),
+              ...(Array.isArray(r.output.keyPoints) ? r.output.keyPoints : []),
+            ].filter((c) => c.passed).length,
+            rejectedEvidenceCount: [
+              ...(Array.isArray(r.output.claims) ? r.output.claims : []),
+              ...(Array.isArray(r.output.keyPoints) ? r.output.keyPoints : []),
+            ].filter((c) => !c.passed).length,
             acceptedCount:
               r.status === "completed" && Array.isArray(r.output.claims)
                 ? r.output.claims.filter((c) => c.passed).length

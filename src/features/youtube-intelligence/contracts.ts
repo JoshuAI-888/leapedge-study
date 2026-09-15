@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { levelQualifierIssues } from "./level-qualifiers.ts";
+import { alignCaptionEvidence } from "./evidence-alignment.ts";
 export const MODELS = [
   "google/gemini-3.8-flash",
   "google/gemini-3.5-flash",
@@ -35,8 +37,14 @@ export const Source = z
       ids.add(x.id);
     }
   });
+const englishOutput = z
+  .string()
+  .refine(
+    (s) => !/\p{Script=Han}/u.test(s),
+    "Research display and translations must be English; preserve original language only in source fields.",
+  );
 export const Claim = z.object({
-  thesis_en: z.string().min(1),
+  thesis_en: englishOutput.refine((s) => s.trim().length > 0),
   instrument_as_spoken: z.string().nullable(),
   ticker: z.string().nullable(),
   ticker_explicit: z.boolean(),
@@ -49,10 +57,10 @@ export const Claim = z.object({
     "hold",
     "conditional",
   ]),
-  horizon_en: z.string().nullable(),
-  conditions_en: z.array(z.string()),
+  horizon_en: englishOutput.nullable(),
+  conditions_en: z.array(englishOutput),
   creator_conviction: z.enum(["high", "medium", "low", "unspecified"]),
-  risks_en: z.array(z.string()),
+  risks_en: z.array(englishOutput),
   levels: z.array(
     z.object({
       kind: z.enum(["entry", "target", "stop", "support", "resistance"]),
@@ -65,7 +73,7 @@ export const Claim = z.object({
         segment_id: z.string(),
         end_segment_id: z.string().optional(),
         quote_original: z.string().min(1),
-        quote_translation_en: z.string(),
+        quote_translation_en: englishOutput,
       }),
     )
     .min(1),
@@ -119,7 +127,7 @@ export function validateClaim(claim: ClaimData, source: SourceData) {
         ? source.segments.findIndex((s) => s.id === e.end_segment_id)
         : start;
     const text =
-      start >= 0 && end >= start && end - start < 12
+      start >= 0 && end >= start && end - start < 100
         ? source.segments
             .slice(start, end + 1)
             .map((s) => s.text)
@@ -150,7 +158,7 @@ export function validateClaim(claim: ClaimData, source: SourceData) {
       ))
   )
     reasons.push("Ticker is not explicit in its evidence.");
-  return reasons;
+  return [...reasons, ...levelQualifierIssues(claim)];
 }
 export function coverage(source: SourceData, duration: number) {
   const spans = source.segments
@@ -183,39 +191,8 @@ export function anchorClaimEvidence(
   return {
     ...claim,
     evidence: claim.evidence.map((e) => {
-      // Native caption models can choose an adjacent cue ID. Repair only a unique,
-      // exact contiguous text occurrence; repeated quotes remain ambiguous.
-      if (
-        source.source_kind.includes("captions") &&
-        source.segment_separator !== undefined
-      ) {
-        const separator = source.segment_separator;
-        const offsets: number[] = [];
-        let cursor = 0;
-        for (const segment of source.segments) {
-          offsets.push(cursor);
-          cursor += segment.text.length + separator.length;
-        }
-        const text = source.segments.map((s) => s.text).join(separator);
-        const match = text.indexOf(e.quote_original);
-        if (match >= 0 && text.indexOf(e.quote_original, match + 1) < 0) {
-          const start = offsets.findLastIndex((offset) => offset <= match);
-          const end = offsets.findLastIndex(
-            (offset) => offset < match + e.quote_original.length,
-          );
-          if (
-            start >= 0 &&
-            end >= start &&
-            end - start < 12 &&
-            match < offsets[start] + source.segments[start].text.length
-          )
-            return {
-              ...e,
-              segment_id: source.segments[start].id,
-              end_segment_id: end > start ? source.segments[end].id : undefined,
-            };
-        }
-      }
+      const aligned = alignCaptionEvidence(e, source);
+      if (aligned !== e) return aligned;
       if (e.end_segment_id) return e;
       const start = source.segments.findIndex((s) => s.id === e.segment_id);
       if (start < 0 || source.segments[start].text.includes(e.quote_original))
