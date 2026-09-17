@@ -18,7 +18,6 @@ import {
   GateReport,
   GATE_CHECK_IDS,
   GATE_REPORT_VERSION,
-  vcAdvisory,
   type GateMeasurements,
 } from "../scripts/promotion-gate.ts";
 
@@ -27,7 +26,6 @@ const run = promisify(execFile);
 
 function measurements(over: {
   gold?: Partial<GateMeasurements["gold"]>;
-  vc?: Partial<GateMeasurements["vc"]>;
 } = {}): GateMeasurements {
   return {
     gold: {
@@ -38,12 +36,6 @@ function measurements(over: {
       cost: { perAcceptedClaimUsd: 0.1 },
       ...over.gold,
     },
-    vc: {
-      advisory: false,
-      advisoryReason: null,
-      agreement: { stance: { rate: 0.85 } },
-      ...over.vc,
-    },
   };
 }
 
@@ -53,7 +45,6 @@ test("lab.gates defaults match the spec thresholds and stay outside the configur
     goldPrecisionMin: 0.9,
     goldRecallMin: 0.8,
     anchorWithin2sMin: 0.95,
-    vcStanceAgreementMin: 0.8,
     costPerAcceptedClaimMaxUsd: 0.25,
     advisoryPolicy: "report-only",
   });
@@ -87,7 +78,7 @@ test("every binding check above threshold passes the gate with nothing advisory"
   assert.equal(gate.results.goldPrecision.comparison, "min");
   assert.equal(gate.results.costPerAcceptedClaim.comparison, "max");
   assert.equal(gate.results.costPerAcceptedClaim.threshold, 0.25);
-  assert.equal(gate.binding.total, 5);
+  assert.equal(gate.binding.total, 4);
   assert.equal(gate.binding.failed, 0);
 });
 
@@ -117,7 +108,6 @@ test("a binding metric below its threshold fails the gate; a value at the thresh
         anchors: { accuracy: 0.95, toleranceSeconds: 2 },
         cost: { perAcceptedClaimUsd: 0.25 },
       },
-      vc: { agreement: { stance: { rate: 0.8 } } },
     }),
     thresholds,
   );
@@ -126,10 +116,10 @@ test("a binding metric below its threshold fails the gate; a value at the thresh
 
   const stricter = evaluateGate(
     measurements(),
-    GateThresholds.parse({ vcStanceAgreementMin: 0.9 }),
+    GateThresholds.parse({ goldRecallMin: 0.95 }),
   );
   assert.equal(stricter.pass, false);
-  assert.equal(stricter.results.vcStanceAgreement.blocking, true);
+  assert.equal(stricter.results.goldRecall.blocking, true);
 });
 
 test("an unmeasured binding metric blocks; an unmeasured advisory metric is only reported", () => {
@@ -173,18 +163,13 @@ test("advisory results never fail the gate but are reported with their reason", 
         anchors: { accuracy: 0.2, toleranceSeconds: 2 },
         cost: { perAcceptedClaimUsd: 0.9 },
       },
-      vc: {
-        advisory: true,
-        advisoryReason: "offline fake extraction",
-        agreement: { stance: { rate: 0.53 } },
-      },
     }),
     thresholds,
   );
   assert.equal(gate.pass, true);
   assert.equal(gate.verdict, "advisory-only");
   assert.equal(gate.binding.total, 0);
-  assert.equal(gate.advisory.length, 5);
+  assert.equal(gate.advisory.length, 4);
   const ids = gate.advisory.map((a) => a.id).sort();
   assert.deepEqual(ids, [...GATE_CHECK_IDS].sort());
   for (const a of gate.advisory) {
@@ -195,11 +180,8 @@ test("advisory results never fail the gate but are reported with their reason", 
   }
   const precision = gate.advisory.find((a) => a.id === "goldPrecision")!;
   assert.match(precision.reason, /12 of 50/);
-  const stance = gate.advisory.find((a) => a.id === "vcStanceAgreement")!;
-  assert.match(stance.reason, /fake extraction/);
-
-  // Mixed: gold advisory and failing, VideoConviction binding and passing.
-  const mixed = evaluateGate(
+  // An advisory gold set with failing numbers is still advisory-only, never a fail.
+  const failingNumbers = evaluateGate(
     measurements({
       gold: {
         advisory: true,
@@ -209,31 +191,10 @@ test("advisory results never fail the gate but are reported with their reason", 
     }),
     thresholds,
   );
-  assert.equal(mixed.pass, true);
-  assert.equal(mixed.verdict, "pass");
-  assert.equal(mixed.binding.total, 1);
-  assert.equal(mixed.advisory.length, 4);
-  // ...and the reverse: a failing binding check is not rescued by the advisory ones.
-  const failing = evaluateGate(
-    measurements({
-      gold: { advisory: true, advisoryReason: "pending review" },
-      vc: { agreement: { stance: { rate: 0.1 } } },
-    }),
-    thresholds,
-  );
-  assert.equal(failing.pass, false);
-  assert.equal(failing.verdict, "fail");
-});
-
-test("VideoConviction results are advisory for a fake extraction or a placeholder fixture", () => {
-  assert.equal(vcAdvisory({ fake: true, placeholder: false }).advisory, true);
-  assert.match(vcAdvisory({ fake: true, placeholder: false }).reason!, /fake extraction/i);
-  assert.equal(vcAdvisory({ fake: false, placeholder: true }).advisory, true);
-  assert.match(vcAdvisory({ fake: false, placeholder: true }).reason!, /placeholder/i);
-  assert.deepEqual(vcAdvisory({ fake: false, placeholder: false }), {
-    advisory: false,
-    reason: null,
-  });
+  assert.equal(failingNumbers.pass, true);
+  assert.equal(failingNumbers.verdict, "advisory-only");
+  assert.equal(failingNumbers.binding.total, 0);
+  assert.equal(failingNumbers.advisory.length, 4);
 });
 
 test("gateReport carries configHash, thresholds, results, advisory and pass, and validates", () => {
@@ -243,12 +204,9 @@ test("gateReport carries configHash, thresholds, results, advisory and pass, and
   const report = gateReport({
     team,
     mode: "offline",
-    measurements: measurements({
-      vc: { advisory: true, advisoryReason: "offline fake extraction" },
-    }),
+    measurements: measurements(),
     sources: {
       goldSet: { casesPath: "evaluations/gold-set/cases.json", casesHash: "abc", runs: 0 },
-      vcBenchmark: { id: "vcBenchmark:0123", fixtureHash: "def", rows: 60 },
     },
   });
   assert.equal(report.version, GATE_REPORT_VERSION);
@@ -261,9 +219,8 @@ test("gateReport carries configHash, thresholds, results, advisory and pass, and
   assert.equal(report.configuration.models.extraction.id, "gemini-3.8-pro");
   assert.equal(report.configuration.prompts.version, "evidence-first.web.v5");
   assert.equal(report.pass, true);
-  assert.equal(report.advisory.length, 1);
-  assert.equal(report.advisory[0].id, "vcStanceAgreement");
-  assert.equal(report.results.vcStanceAgreement.advisory, true);
+  assert.equal(report.verdict, "pass");
+  assert.deepEqual(report.advisory, []);
   assert.equal(report.results.goldPrecision.meetsThreshold, true);
   const parsed = GateReport.parse(JSON.parse(JSON.stringify(report)));
   assert.equal(parsed.configHash, report.configHash);
@@ -278,7 +235,7 @@ test("the committed phase-0 baseline is a valid, passing gate report for the v5 
   assert.equal(baseline.pass, true);
   assert.equal(baseline.configuration.prompts.version, "evidence-first.web.v5");
   assert.equal(baseline.thresholds.advisoryPolicy, "report-only");
-  // Phase 0 has no verified gold cases and no live extraction: everything is advisory.
+  // Phase 0 has no verified gold cases: everything is advisory.
   assert.equal(baseline.verdict, "advisory-only");
   assert.equal(baseline.advisory.length, GATE_CHECK_IDS.length);
 });
@@ -320,10 +277,9 @@ test("the command runs offline without keys and writes the report to --out", asy
   assert.equal(report.thresholds.goldRecallMin, 0.7);
   assert.equal(report.mode, "offline");
   assert.equal(report.pass, true);
-  assert.equal(report.sources.vcBenchmark.extraction, "fake");
-  assert.equal(report.results.vcStanceAgreement.advisory, true);
+  assert.equal(report.verdict, "advisory-only");
   assert.equal(report.results.goldPrecision.advisory, true);
-  assert.ok(typeof report.results.vcStanceAgreement.value === "number");
+  assert.equal(report.sources.goldSet.runs, 0);
   const summary = JSON.parse(stdout.trim().split("\n").at(-1)!);
   assert.equal(summary.out, out);
   assert.equal(summary.pass, true);

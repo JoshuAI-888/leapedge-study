@@ -56,7 +56,6 @@ export const GateThresholds = z
     goldPrecisionMin: share.default(0.9),
     goldRecallMin: share.default(0.8),
     anchorWithin2sMin: share.default(0.95),
-    vcStanceAgreementMin: share.default(0.8),
     costPerAcceptedClaimMaxUsd: z.number().min(0).default(0.25),
     // Advisory results are reported but can never fail the gate.
     advisoryPolicy: z.literal("report-only").default("report-only"),

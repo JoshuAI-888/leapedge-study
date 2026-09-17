@@ -18,35 +18,25 @@ import {
   DEFAULT_CASES_PATH,
 } from "../evaluations/gold-set/schema.ts";
 import { goldReport, type GoldReport } from "../evaluations/gold-set/report.ts";
-import {
-  loadFixture,
-  benchmark,
-  fakeExtraction,
-  FIXTURE_PATH,
-  type VcBenchmarkReport,
-  type VcExtraction,
-} from "../src/server/youtube-intelligence/vc-benchmark.ts";
 /**
  * Promotion gate (spec 4.9 and 9; build plan F08).
  *
  *   node --experimental-strip-types scripts/promotion-gate.ts --offline
  *     [--config <team-preferences.json>]      default: teamDefaults()
  *     [--cases evaluations/gold-set/cases.json] [--runs <runs.json>]
- *     [--fixture evaluations/vc-benchmark-fixture.json] [--extraction <extraction.json>]
  *     [--out data/gates/gate-<configHash>.json]
  *
  * One command for one team configuration: compute its configuration hash,
- * run the gold-set report (evaluations/gold-set) and the VideoConviction
- * benchmark (vc-benchmark.ts), compare both with the thresholds in
- * `lab.gates`, and write a dated JSON report with configHash, thresholds,
- * results, advisory and pass. Exit status 1 when the gate fails.
+ * run the gold-set report (evaluations/gold-set), compare it with the
+ * thresholds in `lab.gates`, and write a dated JSON report with configHash,
+ * thresholds, results, advisory and pass. Exit status 1 when the gate fails.
+ * The gold set is the only gate: the VideoConviction benchmark was removed
+ * from the design on 17 September 2026 because no product surface uses it.
  *
  * --offline needs no key and spends nothing: every model call is routed
- * through FakeModelTransport, the gold set replays stored runs (or --runs),
- * and VideoConviction scores the deterministic fake extraction unless
- * --extraction supplies a real one. Advisory results (gold set below its
- * minimum of verified cases, fake extraction, placeholder fixture) are
- * reported but never fail the gate, per lab.gates.advisoryPolicy.
+ * through FakeModelTransport and the gold set replays stored runs (or
+ * --runs). Advisory results (gold set below its minimum of verified cases)
+ * are reported but never fail the gate, per lab.gates.advisoryPolicy.
  * --live (extraction through the transports with keys) arrives with the
  * phase-1 gate (F21).
  */
@@ -55,12 +45,11 @@ export const GATE_CHECK_IDS = [
   "goldPrecision",
   "goldRecall",
   "anchorWithin2s",
-  "vcStanceAgreement",
   "costPerAcceptedClaim",
 ] as const;
 export type GateCheckId = (typeof GATE_CHECK_IDS)[number];
 
-/** The slice of the two harness reports the gate reads; both real reports satisfy it. */
+/** The slice of the gold-set report the gate reads; the real report satisfies it. */
 export type GateMeasurements = {
   gold: {
     advisory: boolean;
@@ -69,17 +58,12 @@ export type GateMeasurements = {
     anchors: { accuracy: number | null; toleranceSeconds?: number };
     cost: { perAcceptedClaimUsd: number | null };
   };
-  vc: {
-    advisory: boolean;
-    advisoryReason?: string | null;
-    agreement: { stance: { rate: number | null } };
-  };
 };
 
 const GateCheckIdSchema = z.enum(GATE_CHECK_IDS);
 export const GateCheck = z.object({
   id: GateCheckIdSchema,
-  source: z.enum(["gold-set", "vc-benchmark"]),
+  source: z.literal("gold-set"),
   metric: z.string().min(1),
   comparison: z.enum(["min", "max"]),
   threshold: z.number(),
@@ -105,7 +89,6 @@ export const GateEvaluation = z.object({
     goldPrecision: GateCheck,
     goldRecall: GateCheck,
     anchorWithin2s: GateCheck,
-    vcStanceAgreement: GateCheck,
     costPerAcceptedClaim: GateCheck,
   }),
   advisory: z.array(GateAdvisory),
@@ -121,7 +104,7 @@ export type GateEvaluationData = z.infer<typeof GateEvaluation>;
 
 type CheckSpec = {
   id: GateCheckId;
-  source: "gold-set" | "vc-benchmark";
+  source: "gold-set";
   metric: string;
   comparison: "min" | "max";
   threshold: (t: GateThresholdsData) => number;
@@ -153,14 +136,6 @@ const CHECKS: CheckSpec[] = [
     value: (m) => m.gold.anchors.accuracy,
   },
   {
-    id: "vcStanceAgreement",
-    source: "vc-benchmark",
-    metric: "agreement.stance.rate",
-    comparison: "min",
-    threshold: (t) => t.vcStanceAgreementMin,
-    value: (m) => m.vc.agreement.stance.rate,
-  },
-  {
     id: "costPerAcceptedClaim",
     source: "gold-set",
     metric: "cost.perAcceptedClaimUsd",
@@ -189,7 +164,7 @@ export function evaluateGate(
   let bindingTotal = 0,
     bindingPassed = 0;
   for (const spec of CHECKS) {
-    const side = spec.source === "gold-set" ? measurements.gold : measurements.vc;
+    const side = measurements.gold;
     const isAdvisory = side.advisory === true;
     const threshold = spec.threshold(t);
     const value = finite(spec.value(measurements));
@@ -242,28 +217,8 @@ export function evaluateGate(
   });
 }
 
-/** Why a VideoConviction result is advisory: its extraction was fake or its fixture a placeholder. */
-export function vcAdvisory(input: { fake: boolean; placeholder: boolean }): {
-  advisory: boolean;
-  reason: string | null;
-} {
-  const reasons: string[] = [];
-  if (input.fake)
-    reasons.push("offline fake extraction scored, not a model result");
-  if (input.placeholder)
-    reasons.push("placeholder fixture, not dataset rows");
-  return reasons.length
-    ? { advisory: true, reason: reasons.join("; ") }
-    : { advisory: false, reason: null };
-}
-
-/** The measurements slice of the real harness reports, with the VideoConviction advisory rule applied. */
-export function measurementsFrom(
-  gold: GoldReport,
-  vc: VcBenchmarkReport,
-  vcMode: { fake: boolean },
-): GateMeasurements {
-  const a = vcAdvisory({ fake: vcMode.fake, placeholder: vc.fixture.placeholder });
+/** The measurements slice of the real gold-set report. */
+export function measurementsFrom(gold: GoldReport): GateMeasurements {
   return {
     gold: {
       advisory: gold.advisory,
@@ -275,11 +230,6 @@ export function measurementsFrom(
       },
       cost: { perAcceptedClaimUsd: gold.cost.perAcceptedClaimUsd },
     },
-    vc: {
-      advisory: a.advisory,
-      advisoryReason: a.reason,
-      agreement: { stance: { rate: vc.agreement.stance.rate } },
-    },
   };
 }
 
@@ -289,12 +239,6 @@ const GateSources = z.object({
       casesPath: z.string(),
       casesHash: z.string(),
       runs: z.number().int().min(0),
-    }),
-  vcBenchmark: z
-    .looseObject({
-      id: z.string(),
-      fixtureHash: z.string(),
-      rows: z.number().int().min(0),
     }),
 });
 export const GateReport = z.object({
@@ -344,8 +288,8 @@ export function gateReport(input: {
     sources: input.sources,
     limitation:
       input.mode === "offline"
-        ? "Offline: the gold set replays stored runs and VideoConviction scores a fake or supplied extraction; prompt, model or transport changes need fresh runs or a live extraction before the numbers reflect them. Advisory checks are reported, never enforced."
-        : "Live: extraction ran through the configured transports with keys. Advisory checks are reported, never enforced.",
+        ? "Offline: the gold set replays stored runs; prompt, model or transport changes need fresh runs before the numbers reflect them. Advisory checks are reported, never enforced."
+        : "Live: runs went through the configured transports with keys. Advisory checks are reported, never enforced.",
   });
 }
 
@@ -367,18 +311,6 @@ const RunRow = z.object({
   output: z.record(z.string(), z.unknown()),
   cost: z.number(),
 });
-const Extraction = z.record(
-  z.string(),
-  z.array(
-    z.object({
-      ticker: z.string().nullable(),
-      tickerExplicit: z.boolean(),
-      stance: z.string(),
-      conviction: z.string(),
-    }),
-  ),
-);
-
 /** Newest completed, non-task, non-experiment run per gold video (as scripts/gold-set.ts). */
 function canonical(runs: Run[], goldVideos: Set<string>): Run[] {
   const seen = new Set<string>();
@@ -457,24 +389,10 @@ async function main() {
     .update(readFileSync(resolve(casesPath), "utf8"))
     .digest("hex");
 
-  // VideoConviction: the deterministic fake extraction unless one is supplied.
-  const fixture = loadFixture(option("fixture") ?? FIXTURE_PATH);
-  const extractionPath = option("extraction");
-  const extraction: VcExtraction = extractionPath
-    ? Extraction.parse(JSON.parse(readFileSync(resolve(extractionPath), "utf8")))
-    : fakeExtraction(fixture);
-  const fake = !extractionPath;
-  const vc = benchmark(fixture, extraction, {
-    model: fake ? "fake" : team.models.extraction.id,
-    promptVersion: team.prompts.version,
-    arm: "text",
-    label: fake ? "offline fake extraction" : `offline replay of ${extractionPath}`,
-  });
-
   const report = gateReport({
     team,
     mode: "offline",
-    measurements: measurementsFrom(gold, vc, { fake }),
+    measurements: measurementsFrom(gold),
     sources: {
       goldSet: {
         casesPath,
@@ -491,18 +409,6 @@ async function main() {
         sentiment: gold.sentiment,
         cost: gold.cost,
         validity: { graded: gold.validity.graded, passed: gold.validity.passed },
-      },
-      vcBenchmark: {
-        id: vc.id,
-        fixtureHash: vc.fixture.hash,
-        rows: vc.fixture.rowCount,
-        extraction: fake ? "fake" : extractionPath,
-        version: vc.version,
-        fixture: vc.fixture,
-        config: vc.config,
-        counts: vc.counts,
-        agreement: vc.agreement,
-        attribution: vc.attribution,
       },
     },
   });

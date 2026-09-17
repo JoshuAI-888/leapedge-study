@@ -1,7 +1,7 @@
 {
   "version": "promotion-gate.v1",
   "id": "gate-8208231c53f67f62",
-  "at": "2026-09-17T13:09:55.051Z",
+  "at": "2026-09-17T18:48:27.950Z",
   "date": "2026-09-17",
   "mode": "offline",
   "configHash": "8208231c53f67f6225a96ffee7a8c0dbb9e524d00561ea1c54297575d6c60836",
@@ -81,7 +81,6 @@
     "goldPrecisionMin": 0.9,
     "goldRecallMin": 0.8,
     "anchorWithin2sMin": 0.95,
-    "vcStanceAgreementMin": 0.8,
     "costPerAcceptedClaimMaxUsd": 0.25,
     "advisoryPolicy": "report-only"
   },
@@ -122,18 +121,6 @@
       "blocking": false,
       "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. anchors.accuracy not measured (no denominator)."
     },
-    "vcStanceAgreement": {
-      "id": "vcStanceAgreement",
-      "source": "vc-benchmark",
-      "metric": "agreement.stance.rate",
-      "comparison": "min",
-      "threshold": 0.8,
-      "value": 0.5333333333333333,
-      "meetsThreshold": false,
-      "advisory": true,
-      "blocking": false,
-      "reason": "Advisory, not a gate: offline fake extraction scored, not a model result. agreement.stance.rate = 0.5333333333333333 (at least 0.8 required)."
-    },
     "costPerAcceptedClaim": {
       "id": "costPerAcceptedClaim",
       "source": "gold-set",
@@ -170,13 +157,6 @@
       "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. anchors.accuracy not measured (no denominator)."
     },
     {
-      "id": "vcStanceAgreement",
-      "value": 0.5333333333333333,
-      "threshold": 0.8,
-      "meetsThreshold": false,
-      "reason": "Advisory, not a gate: offline fake extraction scored, not a model result. agreement.stance.rate = 0.5333333333333333 (at least 0.8 required)."
-    },
-    {
       "id": "costPerAcceptedClaim",
       "value": null,
       "threshold": 0.25,
@@ -205,15 +185,6 @@
       },
       "cost": {
         "perAcceptedClaimUsd": null
-      }
-    },
-    "vc": {
-      "advisory": true,
-      "advisoryReason": "offline fake extraction scored, not a model result",
-      "agreement": {
-        "stance": {
-          "rate": 0.5333333333333333
-        }
       }
     }
   },
@@ -277,64 +248,7 @@
         "graded": 0,
         "passed": 0
       }
-    },
-    "vcBenchmark": {
-      "id": "vcBenchmark:30efb9e38c2361da",
-      "fixtureHash": "540b6ef552a36c02",
-      "rows": 60,
-      "extraction": "fake",
-      "version": "vc-benchmark.v1",
-      "fixture": {
-        "dataset": "gtfintechlab/VideoConviction",
-        "split": "train",
-        "fetchedAt": "2026-09-17T12:51:58.465Z",
-        "placeholder": false,
-        "rowCount": 60,
-        "hash": "540b6ef552a36c02"
-      },
-      "config": {
-        "model": "fake",
-        "promptVersion": "evidence-first.web.v5",
-        "arm": "text",
-        "label": "offline fake extraction"
-      },
-      "counts": {
-        "rows": 60,
-        "scored": 60,
-        "missing": 0,
-        "rec": 60,
-        "noRec": 0,
-        "predictions": 48
-      },
-      "agreement": {
-        "ticker": {
-          "agree": 36,
-          "total": 60,
-          "rate": 0.6
-        },
-        "stance": {
-          "agree": 32,
-          "total": 60,
-          "rate": 0.5333333333333333
-        },
-        "action": {
-          "agree": 32,
-          "total": 60,
-          "rate": 0.5333333333333333
-        },
-        "conviction": {
-          "agree": 41,
-          "total": 60,
-          "rate": 0.6833333333333333
-        },
-        "noRec": {
-          "agree": 0,
-          "total": 0,
-          "rate": null
-        }
-      },
-      "attribution": "Contains a derived sample of the VideoConviction dataset (Galarnyk, Kejriwal, Shah, Bhardwaj, Watney Meyer, Krishnan, Chava - Georgia Institute of Technology, KDD 2025), licensed CC BY-NC 4.0. Used for non-commercial benchmarking of the YouTube Intelligence research lab. Labels are expert annotations; provenance and licence: https://huggingface.co/datasets/gtfintechlab/VideoConviction"
     }
   },
-  "limitation": "Offline: the gold set replays stored runs and VideoConviction scores a fake or supplied extraction; prompt, model or transport changes need fresh runs or a live extraction before the numbers reflect them. Advisory checks are reported, never enforced."
+  "limitation": "Offline: the gold set replays stored runs; prompt, model or transport changes need fresh runs before the numbers reflect them. Advisory checks are reported, never enforced."
 }

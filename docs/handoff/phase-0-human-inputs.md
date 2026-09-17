@@ -2,17 +2,15 @@
 
 **For:** the person running the live keys.
 **Branch:** `feat/yti-v2` (worktree of `youtube-intelligence`), commits `dea63a4` (F01) to `b94831e` (F08a, the four scripts named below).
-**Why this exists:** phase 0 built the evaluation harness (gold set, VideoConviction benchmark, promotion gate) but every number it reports is still *advisory*, because the inputs that make it binding can only be produced by a person with the audio, the keys and the licence decision. The moment each input lands, the matching gate check becomes binding.
+**Why this exists:** phase 0 built the evaluation harness (gold set and promotion gate) but every number it reports is still *advisory*, because the inputs that make it binding can only be produced by a person with the audio and the keys. The moment each input lands, the matching gate check becomes binding.
 
 | Input | Makes binding | Deliverable file |
 |---|---|---|
 | A. 50 verified gold cases | gold precision, gold recall, anchor accuracy, sentiment agreement | `gold-cases.json` |
 | B. v5 runs for every gold video | the same four plus cost per accepted claim | `runs.json` |
-| C. real extraction over the 60 fixture rows | VideoConviction stance agreement | `vc-extraction.json` + `vc-extraction.meta.json` |
-| D. frozen responses per stage | offline replay of the gold set in CI | `frozen-model.zip` |
-| E. licence confirmation | pushing the 60-row fixture to a shared remote | one sentence in chat |
+| C. frozen responses per stage | offline replay of the gold set in CI | `frozen-model.zip` |
 
-Send everything back as **attachments in the chat with Claude**. On receipt each file is validated against its schema, placed in the branch, the gate is run, and the result is reported.
+Send everything back as **attachments in the chat with Claude**. The VideoConviction benchmark and its licence question were removed from the design on 17 September 2026; nothing about it is needed. On receipt each file is validated against its schema, placed in the branch, the gate is run, and the result is reported.
 
 ---
 
@@ -26,11 +24,9 @@ Send everything back as **attachments in the chat with Claude**. On receipt each
 | A | none | Watching and listening only |
 | B (export) | `DATABASE_URL` (Neon) | Read-only export of runs already there |
 | B (new runs) | `OPENROUTER_API_KEY`, `YOUTUBE_API_KEY`, `TRANSCRIPTAPI_API_KEY`, optional `SUPADATA_API_KEY` | `YTI_BUDGET_USD` must be raised: default is 2 |
-| C | `OPENROUTER_API_KEY` (v5 path) or `GEMINI_API_KEY` (native) | Under US$1 for 60 rows |
-| D | same as B (new runs) | One short video |
-| E | none | |
+| C | same as B (new runs) | One short video |
 
-3. Live model spend expected: B about US$0.20 to US$0.95 per video (measured range on this pipeline); C under US$1; D one video. Set `YTI_BUDGET_USD=30` in `.env` for the session and lower it afterwards.
+3. Live model spend expected: B about US$0.20 to US$0.95 per video (measured range on this pipeline); C one video. Set `YTI_BUDGET_USD=30` in `.env` for the session and lower it afterwards.
 
 All commands are run from the branch root: `node --env-file=.env --experimental-strip-types scripts/<name>.ts ...`
 
@@ -43,7 +39,7 @@ One video, with every actionable call and every stance-tagged instrument mention
 
 ### Video selection
 - At least **20 English** and at least **15 Chinese** videos; the remaining 15 either language.
-- Take them from the seeded channels (LeapEdge top 20, TrueAlphaData Tier 1, VideoConviction channels), published in 2026, with a mix of lengths (at least 10 videos over 25 minutes).
+- Take them from the seeded channels (LeapEdge top 20, TrueAlphaData Tier 1), published in 2026, with a mix of lengths (at least 10 videos over 25 minutes).
 - Include at least **10 videos with no actionable call** (news round-ups, education). These carry `expectedRejections` only and are what stops the model inventing calls.
 - The five cases already in `evaluations/gold-set/cases.json` (`v824SHV6COE`, `J25UuUqHT3Y`, `3u24qyWjSVM`, `wkAqHlYL7bQ`, `kXYvRR7gV2E`) count once verified.
 
@@ -142,23 +138,9 @@ Prints one line per gold video: the run id found, or `MISSING`. Only completed, 
 
 ---
 
-## C. Real extraction over the 60 VideoConviction rows
-
-```
-node --env-file=.env --experimental-strip-types scripts/vc-extract.ts --out vc-extraction.json --budget-usd 2 --model google/gemini-3.8-flash
-node --experimental-strip-types scripts/vc-benchmark.ts --extraction vc-extraction.json --model <model id from the meta file> --prompt-version evidence-first.web.v5
-```
-The first writes `vc-extraction.json` and `vc-extraction.meta.json` (model, prompt version, rows done, rows missing, estimated spend) and prints the exact scoring command as `score` in its summary; copy that line rather than retyping it. The second prints the agreement figures so you can see them before sending. Defaults: all 60 rows, four rows in parallel, the app's default OpenRouter model and the team prompt version, a stop at US$2 measured after each batch of four rows (exit 1 with partial output kept). If it stops early, rerun the same command with `--resume` to fill in the rest.
-
-### Success criteria
-- All 60 row ids (`train:0` to `train:59`) present. A row that failed (parse error, provider error) is left out of the file and listed in `meta.missing`; at most 3 may be missing. Rerun with `--resume` to retry them.
-- Run the command from the repository root so the printed `score` line and the written file agree.
-- `meta` records the model id and prompt version used.
-- Deliverables: `vc-extraction.json`, `vc-extraction.meta.json`.
-
 ---
 
-## D. Frozen responses, one per stage
+## C. Frozen responses, one per stage
 
 Pick one short English gold video with captions. Then:
 ```
@@ -176,25 +158,14 @@ Two cautions. Run it with `DATABASE_URL` **unset** so it uses a fresh local SQLi
 
 ---
 
-## E. Licence confirmation
-
-`evaluations/vc-benchmark-fixture.json` holds the first 60 training rows of VideoConviction (labels and segment transcripts only). The dataset card states CC BY-NC 4.0; the GitHub repository's licence file states CC BY-NC-SA 4.0. Both forbid commercial use and require attribution; ShareAlike additionally requires derivatives to carry the same licence.
-
-Reply in chat with one sentence covering three points: which licence text you accept as governing, confirmation that Finradar remains non-commercial, and confirmation that the 60-row fixture may be pushed to the shared remote with the attribution paragraph already in `docs/videoconviction-dataset.md`.
-
-### Success criteria
-- The sentence is recorded verbatim in `docs/videoconviction-dataset.md` and the fixture's `license` field is set to match.
-
----
-
 ## What happens after you send the files
 
-1. Each file is validated: `gold-validate` for A, the `RunRow` schema for B, the `VcExtraction` schema for C, `loadFrozen` for D.
+1. Each file is validated: `gold-validate` for A, the `RunRow` schema for B, `loadFrozen` for C.
 2. The gate runs:
    ```
    node --experimental-strip-types scripts/promotion-gate.ts --offline \
      --cases evaluations/gold-set/cases.json --runs runs.json \
-     --extraction vc-extraction.json --out docs/gates/phase-0-live.json
+     --out docs/gates/phase-0-live.json
    ```
 3. The result is reported against the thresholds in team settings (`lab.gates`):
 
@@ -203,7 +174,6 @@ Reply in chat with one sentence covering three points: which licence text you ac
 | Gold precision | ≥ 0.90 | A and B |
 | Gold recall | ≥ 0.80 | A and B |
 | Anchors within 2 s | ≥ 0.95 | A and B |
-| VideoConviction stance agreement | ≥ 0.80 | C |
 | Cost per accepted claim | ≤ US$0.25 | B |
 
 **Definition of done for the phase-0 gate:** `verdict: pass` with no advisory checks, or a written decision on any check that fails (raise the threshold's rationale, fix the prompt, or accept and record).
