@@ -85,6 +85,28 @@ export function uniqueClaims(claims: ClaimData[]) {
     return true;
   });
 }
+/**
+ * The source slice a per-claim audit reads: the full transcript when it fits,
+ * otherwise the claim's evidence segments with twelve neighbours either side.
+ * The pipeline's batched critique (F15) no longer calls this; it is kept for
+ * the shadow-synthesis harness under evaluations/native-google.
+ */
+export function auditSource(source: SourceData, claim: ClaimData) {
+  if (
+    new TextEncoder().encode(JSON.stringify(source.segments)).length <= 180000
+  )
+    return { scope: "full transcript", segments: source.segments };
+  const indexes = source.segments.flatMap((s, i) =>
+    claim.evidence.some((e) => e.segment_id === s.id) ? [i] : [],
+  );
+  return {
+    scope:
+      "evidence and 12 neighboring segments either side; cross-video context not inferred",
+    segments: source.segments.filter((_, i) =>
+      indexes.some((j) => Math.abs(i - j) <= 12),
+    ),
+  };
+}
 export function missingRanges(source: SourceData, duration: number) {
   const ranges: { start: number; end: number }[] = [];
   let end = 0;
