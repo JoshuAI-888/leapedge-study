@@ -221,7 +221,7 @@ Market prices from FMP are external but not static: each fetched bar is stored w
 
 **What a benchmark is, in plain words.** A benchmark is the yardstick a call is measured against. If a creator's NVDA long gained 10% over 90 days and SPY gained 8% over the same days, the call's excess return is +2%. Without a benchmark, a creator looks skilled in any rising market. The hover on every excess-return column carries this sentence.
 
-**Sector benchmark options considered.** (a) The SPDR sector ETF matched to the ticker's FMP sector, such as XLK for technology: cheap, liquid, well understood; the proposal. (b) An equal-weight index ETF such as RSP: removes mega-cap dominance but is not sector-aware. (c) An industry peer average computed from FMP's peer list for the ticker: closest comparison, but peers change and the series must be built by us. (d) A custom ticker or list the team maintains. (e) None, absolute return. All five are offered; the default is SPY and the sector option uses (a).
+**Sector benchmark options considered.** (a) The SPDR sector ETF matched to the ticker's FMP sector, such as XLK for technology: cheap, liquid, well understood; the proposal. (b) An equal-weight index ETF such as RSP: removes mega-cap dominance but is not sector-aware. (c) An industry peer average computed from FMP's peer list for the ticker: closest comparison, but peers change and the series must be built by us. (d) A custom ticker or list the team maintains. (e) None, absolute return. All five are offered. The team sets the default (SPY unless changed); each account may override it, and Settings shows the override with a "Reset to team default" action. The sector option uses (a).
 
 **Markets and instrument filter.** Extraction never drops an instrument because of its market. Hong Kong, China A-share and other non-US names are extracted, graded and shown on the per-video report and the channel page like any other. The ticker boards and both leaderboards carry a market filter, default "US stocks and ETFs", with options for US stocks, US ETFs, Hong Kong, China A-shares and other markets. A call in a market without a price series in FMP is listed with the label "not settleable, no price source" rather than hidden; the settlement sweep picks it up automatically if a price source is added later.
 
@@ -251,7 +251,7 @@ Market prices from FMP are external but not static: each fetched bar is stored w
 
 **Purpose.** Give a short, sourced statement of what the market, the company's filings and the news said in the days around the video, so a reader can judge the call against what was knowable then. Never against what happened later, unless labelled "since then".
 
-**The window, in plain words.** "At the time" has to mean something exact. The context window is the span of dates whose news, filings and prices count as what the creator could have known: by default from 14 days before the video was published to 2 days after it, the 2 days allowing for late-indexed articles about the same event. Anything dated outside that span is not shown as context. The team can change both numbers.
+**The window, in plain words.** "At the time" has to mean something exact. The context window is the span of dates whose news, filings and prices count as what the creator could have known: by default from 14 days before the video was published to 2 days after it, the 2 days allowing for late-indexed articles about the same event. Anything dated outside that span is not shown as context. Both numbers are settings on Settings → Context check, with a "Reset to default" action that restores 14 and 2.
 
 **Sources, gathered deterministically before any model runs.**
 
@@ -274,7 +274,7 @@ OpenRouter's own web plugin is not used for this: it has no publication-date fil
 
 **Decision.** On first run the team's channel list is seeded with, deduplicated by YouTube channel ID: the 47 creators on LeapEdge's public leaderboard, the TrueAlphaData Tier 1 to Tier 3 creators from the handoff (about 20), and the 22 channels behind VideoConviction (three are named on the dataset card: Let's Talk Money with Joseph Hogue, Financial Education, Ryne Williams; the rest are read from the dataset's channel metadata at seed time). Known overlaps include Joseph Hogue, Financial Education, Daniel Pronk, Ticker Symbol: YOU, Invest with Henry, Business With Brian, Stealth Wealth Investing, Everything Money and Joseph Carlson, so the seed is about 75 to 80 channels, roughly a third of them Chinese-language.
 
-**Selection, as decided.** All seeded channels are listed on the Channels page with a "Process" checkbox. Tier-1 TrueAlphaData channels and LeapEdge's top 20 are selected by default; the rest are followed but not processed. Any user can change the selection and save it; the saved selection is the team's list and is versioned like other configuration. Unselected channels still receive push notifications and show their uploads, so switching one on starts analysis from the next upload without a backfill.
+**Selection, as decided.** All seeded channels are listed on the Channels page with a "Process" checkbox. Tier-1 TrueAlphaData channels and LeapEdge's top 20 are selected by default; the rest are followed but not processed. Any user can change the selection and save it; the saved selection is the team's list and is versioned like other configuration. Unselected channels still receive push notifications, and every new upload is listed on the Channels page unanalysed with a one-click "Analyse this one". Using it analyses that video and switches the channel's Process checkbox on, so from then on the channel is analysed and counts against the budget; the page says so on the button. The LeapEdge top-20 default is taken from their public ranking at seed time; once our own forward record has n ≥ 20 for enough creators, the default selection follows our record instead, and the change is versioned like any configuration.
 
 **Budget.** The monthly budget is a setting with a default of US$150 that the team can raise, below the environment hard ceiling. The Channels page shows the projected monthly cost of the current selection (uploads per month per channel from the last 90 days times the measured cost per video) so a change to the selection shows its cost before it is saved. When the projection exceeds the budget the page says so; nothing is blocked, because the cap itself stops spend. Each channel row shows the trust distribution of its calls, its record against the viewer's benchmark, its discovery and processing mode and its tier.
 
@@ -290,8 +290,8 @@ YouTube becomes a fourth source in the existing `briefing-read-v1` contract alon
 
 Team members have their own Finradar accounts, so:
 
-- **Account scope:** benchmark, sentiment comparison period, sentiment basis, default horizon, Today trust filter, saved calls, digest delivery, display language and theme.
-- **Team scope (administrator):** channels and their automation, monthly budget, providers and models, trust thresholds, context check on or off, sharing policy.
+- **Account scope, each with a "Reset to team default" action:** benchmark, sentiment comparison period, market filter, default horizon, Today trust filter. Account-only: saved calls, digest delivery, display language and theme.
+- **Team scope (administrator):** channel selection and automation, monthly budget, providers and models, trust thresholds, context check on or off and its window, team defaults for the account-scope settings, sharing policy.
 - **Reviews** are signed with the account identity; the review table is append-only.
 - **Sharing:** links are indefinite until revoked, matching LeapEdge. Each share is an immutable snapshot with a revoke action and an optional expiry.
 
@@ -379,7 +379,7 @@ RESEND_API_KEY=            # optional; digest delivery
   },
   "context": {
     "enabled": true,
-    "windowDaysBefore": 14,
+    "windowDaysBefore": 14,              // user-editable, reset to default available
     "windowDaysAfter": 2,
     "webSearch": "off",                  // off | exa
     "sinceThenAtSettlement": true
@@ -407,6 +407,9 @@ RESEND_API_KEY=            # optional; digest delivery
     "autoAnalyzeNewChannels": false,
     "historicalReplay": { "tiers": ["tier1"], "from": "2026-01-01" }
   },
+  "accountDefaults": {                   // team defaults; each account may override and reset
+    "benchmark": "SPY", "sentimentPeriodDays": 7, "marketFilter": ["us-stock", "us-etf"], "defaultHorizonDays": 90
+  },
   "leaderboard": {
     "markets": ["us-stock", "us-etf", "hk", "cn-a", "other"],   // all extracted; none suppressed
     "minSettledForRank": 20,
@@ -428,7 +431,7 @@ RESEND_API_KEY=            # optional; digest delivery
 
 ```jsonc
 {
-  "benchmark": "SPY",                    // SPY | QQQ | IWM | sector-etf | custom:<ticker> | none
+  "benchmark": "SPY",                    // SPY | QQQ | IWM | sector-etf | custom:<ticker> | none; null = team default
   "sentiment": { "periodDays": 7, "minimumTrust": "text-checked" },   // 7 | 14 | 30
   "marketFilter": ["us-stock", "us-etf"],   // default view on ticker boards; any market can be added
   "defaultHorizonDays": 90,              // 90 | 180 | 365
@@ -652,10 +655,12 @@ Decisions taken from the review round (recorded so they are not reopened):
 - Benchmark and market filter are per account; the team can set the defaults.
 - Supadata on the free plan until standby use is observed; a clear out-of-credit error on the portal.
 
-Open questions remaining:
+- Context window numbers are user-editable in Settings with a reset to 14 and 2.
+- Benchmark, period, market filter and horizon: team default with per-account override and a "Reset to team default" action.
+- LeapEdge top-20 default: their public ranking at seed time, our own forward record once it exists.
+- Unselected channels list every new upload; "Analyse this one" analyses the video and switches the channel on, with its cost stated.
 
-1. Should the LeapEdge top-20 default use their public ranking as of seed date, or our own forward record once it exists? The spec assumes their ranking at seed and our record thereafter.
-2. For channels that are followed but not selected, keep listing every new upload on the Channels page, or only a count? The spec assumes every upload, unanalysed, with a one-click "analyse this one".
+No open questions remain from the review round.
 
 ---
 
