@@ -39,17 +39,20 @@
 <div style="width: 1280px; height: 900px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden;">
   <header class="top" style="height: 56px; box-sizing: border-box; padding: 0 24px; background: #ffffff; border-bottom: 1px solid #e5e9f0; display: flex; align-items: center; gap: 18px;">
     <div style="display: flex; align-items: center; gap: 10px; margin-right: 10px;"><div style="width: 26px; height: 26px; border-radius: 7px; background: #194df4;"></div><div style="font-weight: 700; font-size: 16px;">Finradar</div></div>
-    <a href="#">Briefing</a>
+    <a href="#">Daily briefing</a>
     <a href="#" class="active">Intelligence<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></a>
-    <a href="#">Ideas</a>
+    <a href="#">Research<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></a>
+    <a href="#">Settings</a>
     <div style="flex-grow: 1;"></div>
     <a href="#" aria-label="Account" style="width: 32px; height: 32px; border-radius: 50%; background: #edf3ff; padding: 0; justify-content: center;"><span style="font-size: 12px; font-weight: 700; color: #194df4;">JF</span></a>
   </header>
   <div style="position: relative; height: 0;">
-    <div style="position: absolute; left: 118px; top: -4px; width: 220px; background: #ffffff; border: 1px solid #e5e9f0; border-radius: 12px; box-shadow: 0 8px 24px rgba(38,38,38,0.08); padding: 6px; z-index: 2;">
-      <a href="#" style="display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #262626;">X and Reddit</a>
-      <a href="#" style="display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #262626;">Podcasts</a>
-      <a href="#" style="display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #194df4; background: #edf3ff; font-weight: 600;">YouTube Intelligence</a>
+    <div style="position: absolute; left: 160px; top: -4px; width: 232px; background: #ffffff; border: 1px solid #e5e9f0; border-radius: 12px; box-shadow: 0 8px 24px rgba(38,38,38,0.08); padding: 6px; z-index: 2;">
+      <a href="#" style="display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #262626;">X intelligence</a>
+      <a href="#" style="display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #262626;">Reddit intelligence</a>
+      <a href="#" style="display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #262626;">Podcast intelligence</a>
+      <a href="#" style="display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #262626;">News intelligence</a>
+      <a href="#" style="display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #194df4; background: #edf3ff; font-weight: 600;">YouTube intelligence</a>
     </div>
   </div>
 
@@ -161,6 +164,16 @@
         </section>
 
         <aside style="display: flex; flex-direction: column; gap: 14px;">
+          <section class="card" style="padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;"><h2 style="margin: 0; font-size: 14px; font-weight: 700;">Sentiment shift</h2><span class="muted" style="font-size: 11px;">7 days vs prior 7 · <a href="Settings.dc.html">change</a></span></div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+              <div style="display: flex; justify-content: space-between;"><span class="ticker" style="font-size: 14px;">NVDA</span><span><span style="color: #0b6b37; font-weight: 700;">▲ 14 bullish</span> <span class="muted">from 6</span></span></div>
+              <div style="display: flex; justify-content: space-between;"><span class="ticker" style="font-size: 14px;">TSLA</span><span><span style="color: #a93226; font-weight: 700;">▼ 5 bullish</span> <span class="muted">from 9</span></span></div>
+              <div style="display: flex; justify-content: space-between;"><span class="ticker" style="font-size: 14px;">PLTR</span><span><span style="color: #0b6b37; font-weight: 700;">▲ 8 bullish</span> <span class="muted">from 3</span></span></div>
+            </div>
+            <div class="muted" style="font-size: 12px; margin-top: 10px; line-height: 16px;">Counts stance-tagged mentions, text-checked or better, across followed channels. Hover any number for the steps. <a href="Leaderboard.dc.html">All tickers</a></div>
+          </section>
+
           <section class="card" style="padding: 14px 16px;">
             <h2 style="margin: 0 0 10px; font-size: 14px; font-weight: 700;">Agreement across creators</h2>
             <div style="display: flex; flex-direction: column; gap: 10px;">

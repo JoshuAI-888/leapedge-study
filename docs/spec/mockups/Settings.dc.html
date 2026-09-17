@@ -39,9 +39,10 @@
 <div style="width: 1280px; height: 1000px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden;">
   <header class="top" style="height: 56px; box-sizing: border-box; padding: 0 24px; background: #ffffff; border-bottom: 1px solid #e5e9f0; display: flex; align-items: center; gap: 18px;">
     <div style="display: flex; align-items: center; gap: 10px; margin-right: 10px;"><div style="width: 26px; height: 26px; border-radius: 7px; background: #194df4;"></div><div style="font-weight: 700; font-size: 16px;">Finradar</div></div>
-    <a href="#">Briefing</a>
+    <a href="#">Daily briefing</a>
     <a href="#" class="active">Intelligence<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></a>
-    <a href="#">Ideas</a>
+    <a href="#">Research<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></a>
+    <a href="#">Settings</a>
     <div style="flex-grow: 1;"></div>
     <a href="#" aria-label="Account" style="width: 32px; height: 32px; border-radius: 50%; background: #edf3ff; padding: 0; justify-content: center;"><span style="font-size: 12px; font-weight: 700; color: #194df4;">JF</span></a>
   </header>
@@ -69,8 +70,10 @@
 
       <div style="display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 18px; min-height: 0; flex-grow: 1;">
         <nav class="sub" style="display: flex; flex-direction: column; gap: 2px;">
-          <a href="#" class="active">Sources</a>
+          <a href="#" class="active">Leaderboard and sentiment</a>
+          <a href="#">Sources</a>
           <a href="#">Models and transport</a>
+          <a href="#">Context check</a>
           <a href="#">Processing and budget</a>
           <a href="#">Channels</a>
           <a href="#">Trust</a>
@@ -79,8 +82,17 @@
 
         <div style="display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: hidden;">
           <section class="card" style="padding: 4px 20px;">
+            <div style="padding: 12px 0 4px;"><div style="font-size: 15px; font-weight: 700;">Leaderboard and sentiment</div><div class="muted" style="font-size: 13px;">Your own view. Every number is recomputed from the settlement rows with these choices; nothing is stored as a result.</div></div>
+            <div class="field"><label for="bm">Compare calls with<span class="hint">Excess return is the call's return minus this benchmark over the same days. "Sector ETF" picks the SPDR fund for each ticker's sector.</span></label><select id="bm"><option>SPY (S&amp;P 500)</option><option>QQQ (Nasdaq 100)</option><option>IWM (Russell 2000)</option><option>Sector ETF of each ticker</option><option>Custom ticker…</option><option>None (absolute return)</option></select></div>
+            <div class="field"><label for="cp">Sentiment comparison period<span class="hint">Mentions in the latest period against the period before it.</span></label><select id="cp"><option>7 days vs prior 7 days</option><option>14 days vs prior 14 days</option><option>30 days vs prior 30 days</option></select></div>
+            <div class="field"><label for="sb">Sentiment counts<span class="hint">Mentions include every stance-tagged reference; calls are only the actionable ones.</span></label><select id="sb"><option>Mentions, text-checked or better</option><option>Calls only</option></select></div>
+            <div class="field"><label for="hz2">Default horizon<span class="hint"></span></label><select id="hz2"><option>90 days</option><option>180 days</option><option>365 days</option></select></div>
+          </section>
+
+          <section class="card" style="padding: 4px 20px;">
             <div style="padding: 12px 0 4px;"><div style="font-size: 15px; font-weight: 700;">Sources</div><div class="muted" style="font-size: 13px;">Where the words come from and how they are cross-checked.</div></div>
             <div class="field"><label for="cap">Captions<span class="hint">Fast draft, about half a cent per video. Every caption vendor reads the same YouTube track.</span></label><select id="cap"><option>TranscriptAPI</option><option>None</option></select></div>
+            <div class="field"><label for="sby">Standby provider<span class="hint">Used only when the primary vendor errors, or as a third opinion when captions and audio disagree. Never for routine coverage.</span></label><select id="sby"><option>Supadata (captions and Whisper)</option><option>None</option></select></div>
             <div class="field"><label for="asr">Audio transcript<span class="hint">Independent reference from the public YouTube URL, in fixed windows. No download.</span></label><select id="asr"><option>Gemini, 5-minute windows (recommended)</option><option>Off</option></select></div>
             <div class="field"><label for="pol">When to run it<span class="hint">"On demand" runs it only for calls that reach Today.</span></label><select id="pol"><option>When captions are missing, plus on demand</option><option>Always</option><option>On demand only</option></select></div>
             <div class="field"><label for="res">Media resolution<span class="hint">Low keeps the audio and drops most frames; transcription does not need frames.</span></label><select id="res"><option>Low (recommended)</option><option>Default</option></select></div>
@@ -95,12 +107,6 @@
             <div class="field"><label for="fb">Fall back to OpenRouter if Google is down<span class="hint">Off keeps cost predictable; on keeps work moving during an outage.</span></label><span class="toggle off" aria-hidden="true"></span></div>
           </section>
 
-          <section class="card" style="padding: 4px 20px;">
-            <div style="padding: 12px 0 4px;"><div style="font-size: 15px; font-weight: 700;">Processing and budget</div><div class="muted" style="font-size: 13px;">Batch is half price and lands within a day. Immediate runs now.</div></div>
-            <div class="field"><label for="ch">New channel uploads<span class="hint">Found by YouTube push notification, free.</span></label><select id="ch"><option>Batch, overnight (half price)</option><option>Immediate</option></select></div>
-            <div class="field"><label for="us">Links you paste<span class="hint"></span></label><select id="us"><option>Immediate</option><option>Batch</option></select></div>
-            <div class="field"><label for="bud">Monthly budget<span class="hint">Alert at 70%. Hard stop set by the administrator at US$250.</span></label><div style="display: flex; align-items: center; gap: 10px;"><input id="bud" type="number" value="150" style="width: 110px;"><span class="muted" style="font-size: 13px;">USD · 23% used</span></div></div>
-          </section>
         </div>
       </div>
     </main>
