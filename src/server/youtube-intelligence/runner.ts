@@ -6,6 +6,7 @@ import { preferences, doc, put } from "./research-store.ts";
 import { pullDue } from "./channels.ts";
 import { prepareScheduledDigest } from "./briefings.ts";
 import { deliverDue } from "./email.ts";
+import { reconcileUnknown } from "./reconcile.ts";
 export async function processNext() {
   await heartbeat();
   const job = await claimNext();
@@ -34,7 +35,13 @@ export async function sweep() {
     if ((await preferences()).autoPullEnabled) await pullDue();
     await prepareScheduledDigest();
     await deliverDue();
-    return { skipped: false };
+    /**
+     * Unknown provider outcomes are held for budget.unknownOutcomeHoldMinutes
+     * and then reconciled here (spec 4.4), by the worker that is already
+     * awake rather than by the run that hit the uncertainty.
+     */
+    const reconciled = await reconcileUnknown();
+    return { skipped: false, reconciled };
   } finally {
     await put("scheduler", "lease", { until: Date.now() + 60000 });
   }

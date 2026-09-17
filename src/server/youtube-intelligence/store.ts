@@ -131,12 +131,17 @@ const COUNTED = "status<>'released'";
  * A completed, failed or released attempt no longer blocks the next one; an OPEN
  * attempt does, because a call still running or of unknown outcome may already
  * have been billed. Spec section 4.4.
+ *
+ * `perVideoCapUsd` is budget.perVideoMaxUsd (spec 6.2): the run's own settled
+ * and still-open cost plus this reservation may not pass it, so one video can
+ * never spend the month's budget on retries. A cap of 0 or less is no cap.
  */
 export async function reserve(
   runId: string,
   stage: string,
   amount: number,
   attempt = 1,
+  perVideoCapUsd?: number,
 ) {
   const d = await db();
   return d.transaction(async () => {
@@ -150,6 +155,25 @@ export async function reserve(
       throw Error(
         "Previous provider call for this stage is still open; recovery is uncertain. Review before retrying.",
       );
+    if (
+      perVideoCapUsd !== undefined &&
+      Number.isFinite(perVideoCapUsd) &&
+      perVideoCapUsd > 0
+    ) {
+      const spent = Number(
+        (
+          (await d
+            .prepare(
+              `SELECT COALESCE(SUM(amount),0) AS total FROM yi_calls WHERE run_id=? AND ${COUNTED}`,
+            )
+            .get(runId)) as { total: number }
+        ).total,
+      );
+      if (spent + amount > perVideoCapUsd)
+        throw Error(
+          `This run has reached its per-video cost limit: US$${spent.toFixed(4)} is already spent or reserved and the "${stage}" call needs US$${amount.toFixed(4)}, above the US$${perVideoCapUsd.toFixed(2)} allowed by budget.perVideoMaxUsd.`,
+        );
+    }
     const used = Number(
       (
         (await d
@@ -210,6 +234,77 @@ export async function settle(
   ).exec(
     `UPDATE yi_runs SET cost=(SELECT COALESCE(SUM(amount),0) FROM yi_calls WHERE run_id=yi_runs.id AND ${COUNTED})`,
   );
+}
+/**
+ * The outcome of this attempt is not known: the provider may or may not have
+ * billed it. The reservation stays (bounded, and still open, so the stage is
+ * not retried behind its back) and the row records when the uncertainty began,
+ * which is what reconcile.ts measures budget.unknownOutcomeHoldMinutes from.
+ * Spec section 4.4.
+ */
+export async function markUnknown(
+  id: string,
+  reason: string,
+  now = new Date(),
+) {
+  const d = await db();
+  await d.transaction(async () => {
+    const row = (await d
+      .prepare("SELECT run_id, metrics FROM yi_calls WHERE id=?")
+      .get(id)) as { run_id: string; metrics: string } | undefined;
+    if (!row) return;
+    await d
+      .prepare("UPDATE yi_calls SET status='unknown',metrics=? WHERE id=?")
+      .run(
+        JSON.stringify({
+          ...parseMetrics(row.metrics),
+          unknown_since: now.toISOString(),
+          unknown_reason: reason,
+        }),
+        id,
+      );
+    await recomputeCost(String(row.run_id));
+  });
+}
+/** A held attempt of unknown outcome, oldest uncertainty first. */
+export type UnknownCall = {
+  id: string;
+  runId: string;
+  stage: string;
+  attempt: number;
+  amount: number;
+  /** When the outcome became unknown; null for a row written before the field existed. */
+  unknownSince: string | null;
+  metrics: Record<string, unknown>;
+};
+/**
+ * The reconciliation queue: attempts whose outcome became unknown at or before
+ * `before` (an ISO timestamp). The timestamp lives inside the metrics JSON, so
+ * the window is applied here rather than in SQL, which keeps one query shape
+ * across SQLite and Postgres; the queue is a handful of rows at most.
+ */
+export async function unknownCalls(before: string): Promise<UnknownCall[]> {
+  const rows = (await (
+    await db()
+  )
+    .prepare("SELECT * FROM yi_calls WHERE status='unknown'")
+    .all()) as Record<string, unknown>[];
+  return rows
+    .map((r) => {
+      const metrics = parseMetrics(r.metrics);
+      const since = metrics.unknown_since;
+      return {
+        id: String(r.id),
+        runId: String(r.run_id),
+        stage: String(r.stage),
+        attempt: Number(r.attempt ?? 1),
+        amount: Number(r.amount),
+        unknownSince: typeof since === "string" ? since : null,
+        metrics,
+      };
+    })
+    .filter((row) => (row.unknownSince ?? "") <= before)
+    .sort((a, b) => (a.unknownSince ?? "").localeCompare(b.unknownSince ?? ""));
 }
 /**
  * Give a reservation back: the attempt is closed, holds no money, and a further
@@ -318,6 +413,24 @@ export async function health() {
       }
     ).total,
   };
+}
+/**
+ * The provider response kept for one call id, if one was kept. An unknown
+ * outcome whose response was retained can be settled from what it reports
+ * instead of being released on guesswork.
+ */
+export async function retainedResponse(id: string): Promise<unknown> {
+  const row = (await (
+    await db()
+  )
+    .prepare("SELECT payload FROM yi_responses WHERE id=?")
+    .get(id)) as { payload: string } | undefined;
+  if (!row) return undefined;
+  try {
+    return JSON.parse(String(row.payload));
+  } catch {
+    return undefined;
+  }
 }
 export async function retainResponse(
   id: string,

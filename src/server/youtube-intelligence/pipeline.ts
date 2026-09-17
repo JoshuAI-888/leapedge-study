@@ -45,7 +45,14 @@ import {
   translationTargets,
   type TranslatedMention,
 } from "./schemas/translation.ts";
-import { reserve, settle, retainResponse } from "./store.ts";
+import {
+  markUnknown,
+  release,
+  reserve,
+  settle,
+  retainResponse,
+} from "./store.ts";
+import { isRetryableTransportError, withRetry } from "./retry.ts";
 import * as P from "./prompts.ts";
 import { nativeTranscript } from "./transcripts.ts";
 import { prompt as getPrompt, teamPreferences } from "./research-store.ts";
@@ -55,6 +62,7 @@ import {
   modelIdFor,
   assertCriticIndependent,
   ModelRequest,
+  type ModelRequestData,
   type ModelResponseData,
   type ModelTransport,
   type TextPart,
@@ -109,6 +117,76 @@ export const extractionPayload = (
   totalChunks,
 });
 /**
+ * Tokens a video minute costs on top of the text, per second of media: audio
+ * is 32 tokens a second and one frame a second is 66 tokens at
+ * MEDIA_RESOLUTION_LOW and 258 at the default (spec 5). Only a reservation is
+ * built from this; the call itself settles on the provider's reported usage.
+ */
+export const MEDIA_TOKENS_PER_SECOND = { low: 100, default: 290 } as const;
+function mediaTokensPerSecond(settings: TeamPreferencesData) {
+  return settings.sources.mediaResolution === "default"
+    ? MEDIA_TOKENS_PER_SECOND.default
+    : MEDIA_TOKENS_PER_SECOND.low;
+}
+/** A windowed transcription names its own window; any other video call is the whole video. */
+const MediaWindow = z.object({
+  window_start_seconds: z.number().nonnegative(),
+  window_end_seconds: z.number().nonnegative(),
+});
+function mediaSeconds(run: Run, payload: unknown) {
+  const window = MediaWindow.safeParse(payload);
+  if (window.success) {
+    const seconds =
+      window.data.window_end_seconds - window.data.window_start_seconds;
+    if (seconds > 0) return seconds;
+  }
+  const duration = (run.output.metadata as { duration?: number } | undefined)
+    ?.duration;
+  return typeof duration === "number" && duration > 0 ? duration : 0;
+}
+/**
+ * The input tokens a reservation is built from (spec 4.4): the provider's own
+ * count where the transport offers one, the local bytes/4 floor otherwise. An
+ * estimated count is never allowed to read below the floor, and a failed count
+ * falls back to it rather than failing the call — a reservation is an estimate,
+ * and settle() reconciles it against the usage the provider reports.
+ */
+async function countedInputTokens(
+  transport: ModelTransport,
+  request: ModelRequestData,
+) {
+  const text = [...(request.system ?? []), ...request.user]
+    .map((part) => part.text)
+    .join("\n");
+  const floor = estimateTokens(text);
+  if (typeof transport.countTokens !== "function")
+    return { tokens: floor, estimated: true };
+  try {
+    const counted = await transport.countTokens(request);
+    return counted.estimated
+      ? { tokens: Math.max(floor, counted.totalTokens), estimated: true }
+      : { tokens: counted.totalTokens, estimated: false };
+  } catch {
+    return { tokens: floor, estimated: true };
+  }
+}
+/**
+ * Could this failure have been billed? A retryable one certainly was not (429,
+ * 5xx, a timeout before any response bytes). A failure the provider answered
+ * with a status is terminal but just as certainly unbilled at that status. What
+ * is left — a timeout after bytes had arrived, a dropped connection, a response
+ * we could not read — may already be on the invoice, so the reservation is held
+ * for reconcile.ts instead of being given back. Spec 4.4.
+ */
+function unknownOutcome(error: unknown) {
+  if (isRetryableTransportError(error)) return false;
+  const status =
+    error && typeof error === "object"
+      ? (error as { status?: unknown }).status
+      : undefined;
+  return typeof status !== "number";
+}
+/**
  * One model call for a stage. Builds a transport-agnostic ModelRequest and
  * hands it to the stage's transport; the ledger reservation and settlement,
  * the retained raw response and the run metrics all happen here, above the
@@ -124,6 +202,12 @@ export const extractionPayload = (
  * (spec 5). Its tokens are not added to the reservation: they are billed at the
  * cached rate, which only the provider's own usage reports, and settle()
  * reconciles the call against that report.
+ *
+ * The reservation is counted input tokens at the model's input rate plus the
+ * output cap at its output rate (spec 4.4), and the retries live here too, so
+ * every attempt gets its own ledger row and only the attempt the provider
+ * billed keeps any money. processing.maxRetriesPerStage caps the attempts and
+ * budget.perVideoMaxUsd caps what one run may hold.
  */
 export async function modelCall(
   run: Run,
@@ -139,6 +223,11 @@ export async function modelCall(
     cachedContent?: string;
     /** Output cap for a stage whose answer grows with its input, e.g. one verdict per id. */
     maxOutputTokens?: number;
+    /** withRetry's clock, injected by tests so a backoff is asserted, never waited on. */
+    retry?: {
+      sleep?: (ms: number) => Promise<void>;
+      random?: () => number;
+    };
   } = {},
 ) {
   const settings = options.settings ?? (await teamPreferences());
@@ -175,20 +264,6 @@ export async function modelCall(
         : stage.startsWith("critique")
           ? config?.critiqueMaxTokens || 3000
           : 16000);
-  const inputRate = video
-    ? Math.max(spec.inputRate, spec.audioRate)
-    : spec.inputRate;
-  const outputRate = spec.outputRate;
-  const inputBound = video
-    ? spec.contextLength
-    : Buffer.byteLength(JSON.stringify(user)) + 4096;
-  if (!video && inputBound + maxTokens > spec.contextLength)
-    throw Error("Source exceeds the configured context window.");
-  const id = await reserve(
-    run.id,
-    stage,
-    inputBound * inputRate + maxTokens * outputRate,
-  );
   const request = ModelRequest.parse({
     stage,
     model: modelId,
@@ -200,8 +275,68 @@ export async function modelCall(
     temperature: 0,
     ...(effort ? { reasoningEffort: effort } : {}),
   });
+  const counted = await countedInputTokens(transport, request);
+  if (!video && counted.tokens + maxTokens > spec.contextLength)
+    throw Error("Source exceeds the configured context window.");
+  /**
+   * Media the counted text cannot see. A provider count already includes the
+   * video's own tokens; the local bytes/4 floor counts text only, so a video
+   * call adds an allowance per second of media at the audio rate. That is the
+   * whole of what replaces the old worst case of the entire context window at
+   * the highest rate the model has.
+   */
+  const mediaTokens =
+    video && counted.estimated
+      ? Math.round(mediaSeconds(run, payload) * mediaTokensPerSecond(settings))
+      : 0;
+  const amount =
+    counted.tokens * spec.inputRate +
+    mediaTokens * spec.audioRate +
+    maxTokens * spec.outputRate;
+  // Wall time over every attempt, including the waits between them.
   const start = Date.now();
-  const response = await transport.call(request);
+  /**
+   * One ledger row per try, keyed by (run, stage, attempt). A retryable failure
+   * certainly did not bill, so its row is released before the next attempt
+   * reserves — reserve() refuses a second row while one is open. A failure the
+   * provider gave a status for is terminal and also released. An outcome that
+   * cannot be classified keeps its reservation, marked unknown, for
+   * reconcile.ts to settle or release once the hold has passed. Spec 4.4.
+   */
+  let id = "";
+  const { result: response, attempts } = await withRetry(
+    async (attempt) => {
+      id = await reserve(
+        run.id,
+        stage,
+        amount,
+        attempt,
+        settings.budget.perVideoMaxUsd,
+      );
+      try {
+        return await transport.call(request);
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        if (unknownOutcome(error)) {
+          await settle(id, null, {
+            model: modelId,
+            maxTokens,
+            attempt,
+            reservedUsd: amount,
+            inputTokens: counted.tokens,
+            error: reason,
+          });
+          await markUnknown(id, reason);
+        } else await release(id, reason);
+        throw error;
+      }
+    },
+    {
+      // maxRetriesPerStage counts retries; withRetry counts calls.
+      maxAttempts: Math.min(10, settings.processing.maxRetriesPerStage + 1),
+      ...(options.retry ?? {}),
+    },
+  );
   await retainResponse(id, run.id, stage, response.raw);
   const metrics = {
     model: response.model,
@@ -211,6 +346,12 @@ export async function modelCall(
     seconds: (Date.now() - start) / 1000,
     usage: providerUsage(response),
     tokens: response.usage,
+    /** What was held before the provider reported, and how it was counted. */
+    reservedUsd: amount,
+    inputTokens: counted.tokens,
+    inputTokensCounted: !counted.estimated,
+    ...(mediaTokens ? { mediaTokens } : {}),
+    attempts,
   };
   await settle(id, response.usage.costUsd, metrics);
   if (response.finishReason !== "stop")
