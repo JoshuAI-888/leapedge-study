@@ -72,6 +72,8 @@
           <div class="muted" style="font-size: 13px; margin-top: 2px;">What creators agree on, where their calls have worked, and who has earned trust on each name. Every number is computed from the settlement rows when the page loads.</div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
+          <label for="mk" class="muted" style="font-size: 13px;">Markets</label>
+          <select id="mk"><option>US stocks and ETFs</option><option>US stocks</option><option>US ETFs</option><option>Hong Kong</option><option>China A-shares</option><option>Other markets</option><option>All</option></select>
           <label for="bm" class="muted" style="font-size: 13px;">Compare with</label>
           <select id="bm"><option>SPY (S&amp;P 500)</option><option>QQQ (Nasdaq 100)</option><option>IWM (Russell 2000)</option><option>Sector ETF of each ticker</option><option>Custom ticker…</option><option>None (absolute return)</option></select>
           <label for="hz" class="muted" style="font-size: 13px;">Horizon</label>
@@ -132,7 +134,7 @@
           <div class="muted">Not enough settled calls</div>
         </div>
         <div style="padding: 10px 18px; border-top: 1px solid #e5e9f0; display: flex; justify-content: space-between; align-items: center;">
-          <span class="muted" style="font-size: 12px;">Sentiment counts stance-tagged mentions, text-checked or better, in the last 7 days against the 7 days before. Change the periods in Settings. Consensus counts open calls only.</span>
+          <span class="muted" style="font-size: 12px;">Sentiment grades every mention bullish, neutral or bearish with a cited reason; click a count to see the mentions, creators and moments. Last 7 days against the 7 before; change the period in Settings. Non-US names are extracted too; widen the Markets filter to see them.</span>
           <a href="#" style="font-size: 13px; font-weight: 600;">Methodology and export rows</a>
         </div>
       </section>

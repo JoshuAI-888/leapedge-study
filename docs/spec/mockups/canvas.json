@@ -43,7 +43,7 @@
       "y": 1120,
       "w": 1280,
       "h": 820,
-      "title": "Channels — creator trust and automation"
+      "title": "Channels — pick which of the 80 seeded channels to process, under budget"
     },
     "Settings.dc.html": {
       "x": 2720,
@@ -97,7 +97,7 @@
       "x": 480,
       "y": 2880,
       "w": 390,
-      "text": "Per-account choices: benchmark (SPY default; QQQ, IWM, sector ETF, custom, none), sentiment comparison period (7 vs prior 7 default; 14, 30), default horizon. Team-wide: channels, budget, trust thresholds, providers.",
+      "text": "Per-account choices: benchmark (SPY default; QQQ, IWM, sector ETF, custom, none), sentiment comparison period (7 vs prior 7 default; 14, 30), market filter (US stocks and ETFs default; HK, A-shares, other selectable), default horizon. Team-wide: channel selection, budget (US$150 default, raisable), trust thresholds, providers.",
       "color": "gray",
       "size": "s"
     }

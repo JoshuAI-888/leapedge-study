@@ -23,7 +23,7 @@
     .grey { background: #f1f3f6; color: #4b5563; }
     .warn { background: #fff4e0; color: #8a5a00; }
     .head { font-size: 11px; font-weight: 600; color: #626b7b; text-transform: uppercase; letter-spacing: 0.06em; }
-    .row { display: grid; grid-template-columns: minmax(0, 1.4fr) 90px 150px 160px 140px 140px; gap: 12px; align-items: center; padding: 13px 18px; border-top: 1px solid #e5e9f0; }
+    .row { display: grid; grid-template-columns: 34px minmax(0, 1.4fr) 80px 150px 160px 140px 140px; gap: 12px; align-items: center; padding: 13px 18px; border-top: 1px solid #e5e9f0; }
     .bar { display: flex; height: 8px; border-radius: 999px; overflow: hidden; background: #e5e9f0; width: 130px; }
     button { font-family: inherit; }
     .btn { border: 0; background: #194df4; color: #ffffff; font-weight: 600; font-size: 13px; padding: 0 14px; height: 36px; border-radius: 10px; cursor: pointer; }
@@ -70,18 +70,19 @@
       </div>
 
       <section class="card" style="padding: 12px 18px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;">
-        <div><div class="head">Followed</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">12 channels</div><div class="muted" style="font-size: 12px;">9 via push notifications, 3 polled hourly</div></div>
+        <div><div class="head">Followed · processing</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">80 · 28 selected</div><div class="muted" style="font-size: 12px;">Default: Tier 1 and LeapEdge top 20. Tick to change, then save.</div></div>
         <div><div class="head">Forward record</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">1,951 settled calls</div><div class="muted" style="font-size: 12px;">Since 1 May 2026, adjusted close vs SPY</div></div>
         <div><div class="head">Statistically supported</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">4 of 12</div><div class="muted" style="font-size: 12px;">n ≥ 20 and FDR-adjusted q &lt; 0.05</div></div>
-        <div><div class="head">This month</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">US$34.60 spent</div><div class="muted" style="font-size: 12px;">23% of the US$150 budget · 61 videos</div></div>
+        <div><div class="head">Budget</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">US$34.60 of US$150</div><div class="muted" style="font-size: 12px;">Selection projects US$118 a month · <a href="Settings.dc.html">raise</a></div></div>
       </section>
 
       <section class="card" style="overflow: hidden;">
         <div class="row head" style="border-top: 0; padding-bottom: 8px;">
-          <div>Creator</div><div>Calls</div><div>Trust of calls</div><div>Excess return vs SPY</div><div>Significance</div><div>Automation</div>
+          <div>Run</div><div>Creator</div><div>Calls</div><div>Trust of calls</div><div>Excess return vs SPY</div><div>Significance</div><div>Automation</div>
         </div>
 
         <div class="row">
+          <div><input type="checkbox" checked aria-label="Process"></div>
           <div><div style="font-weight: 600; font-size: 14px;">Jose Najarro Stocks</div><div class="muted" style="font-size: 12px;">Last upload 16 Sep · Analysed overnight</div></div>
           <div style="font-size: 14px; font-weight: 600;">209</div>
           <div><div class="bar"><div style="width: 30%; background: #194df4;"></div><div style="width: 55%; background: #98b7ff;"></div><div style="width: 15%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">30% human · 55% audio · 15% text</div></div>
@@ -91,6 +92,7 @@
         </div>
 
         <div class="row">
+          <div><input type="checkbox" checked aria-label="Process"></div>
           <div><div style="font-weight: 600; font-size: 14px;">Bullmarket Lifestyle</div><div class="muted" style="font-size: 12px;">Last upload 15 Sep</div></div>
           <div style="font-size: 14px; font-weight: 600;">73</div>
           <div><div class="bar"><div style="width: 10%; background: #194df4;"></div><div style="width: 70%; background: #98b7ff;"></div><div style="width: 20%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">10% human · 70% audio · 20% text</div></div>
@@ -100,6 +102,7 @@
         </div>
 
         <div class="row">
+          <div><input type="checkbox" checked aria-label="Process"></div>
           <div><div style="font-weight: 600; font-size: 14px;">Chit Chat Stocks</div><div class="muted" style="font-size: 12px;">Last upload 14 Sep</div></div>
           <div style="font-size: 14px; font-weight: 600;">37</div>
           <div><div class="bar"><div style="width: 5%; background: #194df4;"></div><div style="width: 60%; background: #98b7ff;"></div><div style="width: 35%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">5% human · 60% audio · 35% text</div></div>
@@ -109,6 +112,7 @@
         </div>
 
         <div class="row">
+          <div><input type="checkbox" checked aria-label="Process"></div>
           <div><div style="font-weight: 600; font-size: 14px;">Alpha 週報 (Mandarin)</div><div class="muted" style="font-size: 12px;">Last upload 16 Sep · Captions unavailable, audio route</div></div>
           <div style="font-size: 14px; font-weight: 600;">28</div>
           <div><div class="bar"><div style="width: 0%; background: #194df4;"></div><div style="width: 80%; background: #98b7ff;"></div><div style="width: 20%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">0% human · 80% audio · 20% text</div></div>
@@ -118,6 +122,7 @@
         </div>
 
         <div class="row">
+          <div><input type="checkbox" aria-label="Process Patrick Boyle"></div>
           <div><div style="font-weight: 600; font-size: 14px;">Patrick Boyle</div><div class="muted" style="font-size: 12px;">Last upload 12 Sep · Educational, few calls</div></div>
           <div style="font-size: 14px; font-weight: 600;">73</div>
           <div><div class="bar"><div style="width: 8%; background: #194df4;"></div><div style="width: 62%; background: #98b7ff;"></div><div style="width: 30%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">8% human · 62% audio · 30% text</div></div>
@@ -127,8 +132,8 @@
         </div>
 
         <div style="padding: 12px 18px; border-top: 1px solid #e5e9f0; display: flex; justify-content: space-between; align-items: center;">
-          <span class="muted" style="font-size: 13px;">Per-call statistics on adjusted closes. Not portfolio returns. Historical replay is shown separately from the forward record.</span>
-          <a href="#" style="font-size: 13px; font-weight: 600;">Methodology</a>
+          <span class="muted" style="font-size: 13px;">Unticked channels are still followed: new uploads are listed and can be analysed one at a time. Non-US instruments are extracted and shown here; the ticker boards filter to US by default.</span>
+          <div style="display: flex; gap: 8px; align-items: center;"><a href="#" style="font-size: 13px; font-weight: 600;">Methodology</a><button type="button" class="btn">Save selection</button></div>
         </div>
       </section>
     </main>

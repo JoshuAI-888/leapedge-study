@@ -32,9 +32,9 @@ Changes, in delivery order:
 | 9 | Gold set plus the VideoConviction benchmark as promotion gates | Confidence in every later change |
 | 10 | Computed metrics registry: one definition per figure, rendered as hover text, Methodology page and CI test | Trust in every number |
 | 11 | Leaderboard by ticker and by creator, with a user-chosen benchmark, sample-size gates and multiple-comparison control | Parity with LeapEdge, then beyond |
-| 12 | Sentiment shift per ticker over a user-chosen comparison period | Decision support |
+| 12 | Sentiment engine: every mention graded bullish, neutral or bearish with a cited rationale, persisted per ticker, traceable to video and channel; sentiment shift over a user-chosen comparison period | Decision support |
 | 13 | Context check: dated external evidence from the days around the video, summarised through OpenRouter | Trusted, time-matched context |
-| 14 | Default channel seed from LeapEdge, TrueAlphaData and VideoConviction, plus a Tier-1 historical replay from January 2026 | A populated product on day one |
+| 14 | Default channel seed of about 80 from LeapEdge, TrueAlphaData and VideoConviction; the team picks which to process (Tier 1 and LeapEdge's top 20 selected by default) under a US$150 budget it can raise; Tier-1 historical replay from January 2026 | A populated product on day one, under budget |
 | 15 | Front-end revamp inside Finradar's shell: module side panel, decision-first surfaces, sortable tables with hover definitions | Usability |
 
 ---
@@ -189,7 +189,9 @@ Google native costs roughly 20 to 40 times TranscriptAPI per video, so it is not
 
 Cost per 30-minute video for a Whisper transcript is 60 credits: about US$0.34 on Pro, about US$0.094 on Mega. That is comparable to Gemini batch, which is why it is a credible fallback and not a replacement.
 
-**Proposed update.** Keep the existing Supadata adapter, extend it with explicit `mode=native` and `mode=generate` (never `auto`, which would spend without our consent), the 202 polling loop, and the batch endpoint. Add a per-vendor circuit breaker: TranscriptAPI vendor errors (5xx, 429, timeout) route captions to Supadata for the next fifteen minutes; "no captions" never does. Add a tie-break rule: when caption-to-Gemini span agreement falls below the L2 threshold on a promoted claim, request one Whisper transcript and take the two-of-three agreement. Setting: `sources.standby = supadata | none`, default `supadata` when a key is present.
+**Plan, as decided.** Start on the free plan (100 credits a month, 1 request per second) and decide on a paid plan only once standby use has been observed. When Supadata answers `limit-exceeded` (429) or the credit balance reaches zero, the portal shows a clear error: a banner on Today's pipeline panel and on Settings → Sources reading "Standby provider out of credits since <time>; captions fall back to none on vendor error until credits are added", plus the circuit-breaker state. The error is a stored event, so it also appears in the Lab cost history.
+
+**Proposed update.** Keep the existing Supadata adapter, extend it with explicit `mode=native` and `mode=generate` (never `auto`, which would spend without our consent), the 202 polling loop, and the batch endpoint. Add a per-vendor circuit breaker: TranscriptAPI vendor errors (5xx, 429, timeout) route captions to Supadata for the next fifteen minutes; "no captions" never does. Add a tie-break rule: when caption-to-Gemini span agreement falls below the L2 threshold on a promoted claim, request one Whisper transcript and take the two-of-three agreement. Settings: `sources.standby = supadata | none`, default `supadata` when a key is present; `sources.standbyPlan` records the plan so the credit alert can state the monthly allowance.
 
 ### 4.11 Computed, never copied
 
@@ -217,23 +219,39 @@ Market prices from FMP are external but not static: each fetched bar is stored w
 
 **Benchmark, user-chosen.** Excess return is the call's return minus the benchmark's return over the same days. The benchmark is an account setting: SPY (default), QQQ, IWM, the SPDR sector ETF matched to each ticker's sector from its FMP profile, a custom ticker, or none (absolute return). Settlement rows store the ticker's entry and exit adjusted closes and dates; benchmark series are stored per benchmark ticker; excess is computed at query time for whichever benchmark the viewer selected. Changing the benchmark changes nothing stored.
 
+**What a benchmark is, in plain words.** A benchmark is the yardstick a call is measured against. If a creator's NVDA long gained 10% over 90 days and SPY gained 8% over the same days, the call's excess return is +2%. Without a benchmark, a creator looks skilled in any rising market. The hover on every excess-return column carries this sentence.
+
+**Sector benchmark options considered.** (a) The SPDR sector ETF matched to the ticker's FMP sector, such as XLK for technology: cheap, liquid, well understood; the proposal. (b) An equal-weight index ETF such as RSP: removes mega-cap dominance but is not sector-aware. (c) An industry peer average computed from FMP's peer list for the ticker: closest comparison, but peers change and the series must be built by us. (d) A custom ticker or list the team maintains. (e) None, absolute return. All five are offered; the default is SPY and the sector option uses (a).
+
+**Markets and instrument filter.** Extraction never drops an instrument because of its market. Hong Kong, China A-share and other non-US names are extracted, graded and shown on the per-video report and the channel page like any other. The ticker boards and both leaderboards carry a market filter, default "US stocks and ETFs", with options for US stocks, US ETFs, Hong Kong, China A-shares and other markets. A call in a market without a price series in FMP is listed with the label "not settleable, no price source" rather than hidden; the settlement sweep picks it up automatically if a price source is added later.
+
 **Statistics.** Per creator and per ticker: settled count, win rate with a Wilson 95% interval, mean and median excess, standard deviation, one-sample t and p against zero, Benjamini–Hochberg q across all creators, badges "supported" (n ≥ 20 and q < 0.05), "negative", "not yet". Horizons 90, 180 and 365 days. Forward record (from follow date) and historical replay are never mixed; the record selector states which is shown. Scoring convention follows the repo's `scoreCall`: adjusted close on the video date to the horizon date, sign flipped for shorts, medium and high creator-conviction long/short calls only, audio-agreed or better.
 
 **By-ticker columns (in the mockup order).** Ticker · Sentiment shift for the viewer's period · Consensus now (open calls by stance, labelled agree, lean, split) · Creators · Settled calls · Median excess vs the chosen benchmark · Most reliable creator on this ticker (n ≥ 10 on that ticker, ranked by win rate, badge from the creator-level q).
 
 **Every column** has a hover from the registry and a sort control; the default sort is stated in the table footer.
 
-### 4.13 Sentiment shift per ticker
+### 4.13 Sentiment engine and sentiment shift
 
-**Definition.** For a ticker and a period length P chosen by the viewer (7, 14 or 30 days; default 7): count stance-tagged mentions at trust L1 or better across followed channels in the latest P days, and in the P days before that, split by bullish and bearish, with distinct creator counts alongside. Show both counts and the change. Basis is mentions by default; an account setting switches it to calls only.
+**Gap today.** The repository has no sentiment logic. Claims carry a stance (long, short, neutral, avoid, watch, hold, conditional) and nothing else is graded. This section is a build.
 
-**Where it appears.** A panel on Today for the biggest movers, a column on the by-ticker leaderboard, and a `youtube` observation in the Finradar briefing (section 4.17) with `mentions`, `prior` and `change` computed the same way.
+**What is graded.** Every stance-tagged mention of an instrument, whether or not it is an actionable call, receives a sentiment of bullish, neutral or bearish. For actionable calls the sentiment is derived deterministically from the stance (long → bullish; short and avoid → bearish; neutral, watch and hold → neutral; conditional → the direction of the condition). For non-call mentions the extraction model assigns the sentiment under a `responseSchema` and must return a one-sentence rationale that quotes or paraphrases the cited segment; the application copies the exact span text as with claims (section 4.2). A mention without a span pointer is rejected.
 
-**Why mentions.** Actionable calls are sparse; a creator can be loudly bullish on a name for weeks without stating a level. Mentions capture that. Because they carry trust levels, the viewer can restrict them the same way as calls.
+**Persistence and traceability.** Each `mentions` row stores ticker, market, sentiment, rationale, `span_id`, `video_id`, `channel_id`, `published_at`, `is_call`, `claim_id` when it is a call, the trust level and the config hash. Every aggregate a user sees links back to the rows: clicking a sentiment count opens the mention list with the rationale, the creator and a play-from link to the cited moment. Sentiment is never stored as an aggregate; the aggregates are registry metrics computed over the rows.
+
+**Trust.** Mentions go through the same deterministic checks and the same batched critic as claims, so they carry L1 to L3. Sentiment aggregates count L1 or better by default; the viewer can raise the bar.
+
+**Sentiment shift.** For a ticker and a period length P chosen by the viewer (7, 14 or 30 days; default 7): count mentions and distinct creators by sentiment in the latest P days and in the P days before that. Show the counts, the change and the direction. Both mentions and calls are displayed, side by side, with calls as the stricter subset.
+
+**Where it appears.** A panel on Today for the biggest movers, a column on the by-ticker leaderboard, the ticker drill-down, and a `youtube` observation in the Finradar briefing (section 4.17).
+
+**Evaluation.** The gold set gains a sentiment label per mention, and the VideoConviction stance labels double as a check on call-derived sentiment. Sentiment agreement with the labels is a promotion gate like the others.
 
 ### 4.14 Context check: time-matched external evidence
 
 **Purpose.** Give a short, sourced statement of what the market, the company's filings and the news said in the days around the video, so a reader can judge the call against what was knowable then. Never against what happened later, unless labelled "since then".
+
+**The window, in plain words.** "At the time" has to mean something exact. The context window is the span of dates whose news, filings and prices count as what the creator could have known: by default from 14 days before the video was published to 2 days after it, the 2 days allowing for late-indexed articles about the same event. Anything dated outside that span is not shown as context. The team can change both numbers.
 
 **Sources, gathered deterministically before any model runs.**
 
@@ -256,7 +274,9 @@ OpenRouter's own web plugin is not used for this: it has no publication-date fil
 
 **Decision.** On first run the team's channel list is seeded with, deduplicated by YouTube channel ID: the 47 creators on LeapEdge's public leaderboard, the TrueAlphaData Tier 1 to Tier 3 creators from the handoff (about 20), and the 22 channels behind VideoConviction (three are named on the dataset card: Let's Talk Money with Joseph Hogue, Financial Education, Ryne Williams; the rest are read from the dataset's channel metadata at seed time). Known overlaps include Joseph Hogue, Financial Education, Daniel Pronk, Ticker Symbol: YOU, Invest with Henry, Business With Brian, Stealth Wealth Investing, Everything Money and Joseph Carlson, so the seed is about 75 to 80 channels, roughly a third of them Chinese-language.
 
-**Automation default.** All seeded channels are followed by push and analysed in batch. The Tier-1 TrueAlphaData channels are flagged `tier1` for the historical replay. The monthly budget cap and the per-video ceiling protect spend; at roughly three uploads a week per channel the seed produces about 1,000 videos a month, which at US$0.15 to US$0.25 each is US$150 to US$250 a month, at or above the default budget. That is a decision for the team (open question 1).
+**Selection, as decided.** All seeded channels are listed on the Channels page with a "Process" checkbox. Tier-1 TrueAlphaData channels and LeapEdge's top 20 are selected by default; the rest are followed but not processed. Any user can change the selection and save it; the saved selection is the team's list and is versioned like other configuration. Unselected channels still receive push notifications and show their uploads, so switching one on starts analysis from the next upload without a backfill.
+
+**Budget.** The monthly budget is a setting with a default of US$150 that the team can raise, below the environment hard ceiling. The Channels page shows the projected monthly cost of the current selection (uploads per month per channel from the last 90 days times the measured cost per video) so a change to the selection shows its cost before it is saved. When the projection exceeds the budget the page says so; nothing is blocked, because the cap itself stops spend. Each channel row shows the trust distribution of its calls, its record against the viewer's benchmark, its discovery and processing mode and its tier.
 
 ### 4.16 Historical replay
 
@@ -346,6 +366,7 @@ RESEND_API_KEY=            # optional; digest delivery
   "sources": {
     "captionProvider": "transcriptapi",  // transcriptapi | none
     "standby": "supadata",               // supadata | none
+    "standbyPlan": "free",               // free | basic | pro | mega; drives the credit alert
     "standbyCooldownMinutes": 15,
     "asr": "gemini-windowed",            // gemini-windowed | gemini-file | chirp3 | off
     "asrPolicy": "when-captions-missing",// always | when-captions-missing | on-demand
@@ -381,10 +402,13 @@ RESEND_API_KEY=            # optional; digest delivery
     "discovery": "push",                 // push | poll
     "pollIntervalMinutes": 60,
     "seedDefaults": true,                // LeapEdge + TrueAlphaData + VideoConviction
-    "autoAnalyzeNewChannels": true,
+    "defaultSelection": ["tier1", "leapedge-top20"],
+    "selection": [],                     // channel IDs the team chose to process; saved and versioned
+    "autoAnalyzeNewChannels": false,
     "historicalReplay": { "tiers": ["tier1"], "from": "2026-01-01" }
   },
   "leaderboard": {
+    "markets": ["us-stock", "us-etf", "hk", "cn-a", "other"],   // all extracted; none suppressed
     "minSettledForRank": 20,
     "fdrQ": 0.05,
     "minSettledPerTicker": 10,
@@ -405,7 +429,8 @@ RESEND_API_KEY=            # optional; digest delivery
 ```jsonc
 {
   "benchmark": "SPY",                    // SPY | QQQ | IWM | sector-etf | custom:<ticker> | none
-  "sentiment": { "periodDays": 7, "basis": "mentions" },   // 7 | 14 | 30; mentions | calls
+  "sentiment": { "periodDays": 7, "minimumTrust": "text-checked" },   // 7 | 14 | 30
+  "marketFilter": ["us-stock", "us-etf"],   // default view on ticker boards; any market can be added
   "defaultHorizonDays": 90,              // 90 | 180 | 365
   "todayTrustFilter": "audio-agreed",
   "digest": { "enabled": true, "hourLocal": 7, "timezone": "Pacific/Auckland",
@@ -501,8 +526,8 @@ Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#26262
 | Phase | Work | Gate to exit |
 |---|---|---|
 | 0 | Gold set of 50 verified claims; VideoConviction benchmark harness; `ModelTransport` interface; metrics registry skeleton; settings schemas | Evaluation harness reports precision, recall, expert-label agreement, anchor accuracy and cost per accepted claim for the current v5 configuration |
-| 1 | Native transport for all stages; pointer evidence with `responseSchema`; mentions; batched critique with explicit caching; low media resolution; realistic reservations with retries; Supadata standby with circuit breaker | Gold-set precision and recall not below v5; cost per accepted claim at least 40% lower; zero structural rejections on the gold set; standby engages on an injected vendor error and not on a missing-captions case |
-| 2 | Always-on worker with Postgres queue; Postgres-only with PGlite tests; relational tables and migrations; prices and settlements; default channel seed | Four videos processed in parallel end to end; restart during a run resumes without duplicate spend; CI runs on the production dialect; seed produces the deduplicated channel list |
+| 1 | Native transport for all stages; pointer evidence with `responseSchema`; mentions with sentiment and rationale; batched critique with explicit caching; low media resolution; realistic reservations with retries; Supadata standby with circuit breaker | Gold-set precision and recall not below v5; cost per accepted claim at least 40% lower; zero structural rejections on the gold set; standby engages on an injected vendor error and not on a missing-captions case |
+| 2 | Always-on worker with Postgres queue; Postgres-only with PGlite tests; relational tables and migrations; prices and settlements; default channel seed with selection and cost projection | Four videos processed in parallel end to end; restart during a run resumes without duplicate spend; CI runs on the production dialect; seed produces the deduplicated channel list |
 | 3 | Windowed ASR, agreement scoring and Whisper tie-break; trust ladder; Today, Channels, Leaderboard (by ticker, then by creator), Saved calls, Lab surfaces inside the Finradar shell; hover definitions and sorting on every table; benchmark and period settings; push notifications; batch mode; historical replay from January 2026 | At least 95% of L2 anchors within two seconds on the gold set; a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write |
 | 4 | Context check with dated sources; Finradar `youtube` observation; File Search corpus; sharing with revoke; digest | A context check cites only sources inside its window on 100% of a 50-call sample; a Finradar edition renders a youtube observation with evidence links; a cross-video question returns cited spans |
 
@@ -616,16 +641,21 @@ Risks:
 - **Finradar contract drift.** The handoff pins a commit that has moved; the `youtube` observation shape must be re-checked against the current contract before phase 4.
 - **Sonar retirement.** Not used, but any Lab experiment on Perplexity through OpenRouter must move to the Agent API after 27 September 2026.
 
-Open questions (answers change the design):
+Decisions taken from the review round (recorded so they are not reopened):
 
-1. **Seed budget.** With about 80 channels analysed automatically, do you raise the monthly budget to about US$250, or keep US$150 and let only Tier-1 and LeapEdge top-20 channels auto-analyse while the rest are analysed on demand?
-2. **Sentiment basis.** Default to mentions (every stance-tagged reference, denser) or calls only (actionable, sparser)? The spec defaults to mentions with a per-account switch.
-3. **Context window.** Default 14 days before publication to 2 days after. Different?
-4. **Sector benchmark mapping.** SPDR sector ETFs from the FMP sector field is the proposal. Any preferred alternative, such as an equal-weight index?
-5. **Historical replay scope.** Approved for Tier-1 from January 2026. Should the LeapEdge top creators also be replayed from January 2026 (roughly 3,000 more videos, about US$400 in batch)?
-6. **Chinese creators' instruments.** Assume US-listed tickers only, as on LeapEdge, or also Hong Kong and A-shares (which need a different price source than FMP's US coverage)?
-7. **Team versus account settings.** The split in section 4.18 is a proposal. Should benchmark be a team-wide default with a per-account override, or purely per account?
-8. **Standby plan.** Supadata Pro (US$17 a month) is enough for the standby roles. Approve, or prefer no standby until an outage is observed?
+- Seed about 80 channels; process Tier 1 and LeapEdge's top 20 by default; the team edits and saves the selection; budget US$150, raisable.
+- Sentiment is bullish, neutral or bearish per mention, with a cited rationale, persisted and traceable to video, channel and segment; mentions and calls both displayed.
+- Context window default 14 days before publication to 2 days after.
+- Sector benchmark uses SPDR sector ETFs; the other options remain selectable.
+- Historical replay limited to what fits under US$150 alongside forward processing; Tier 1 from January 2026 first.
+- US stocks and ETFs are the default filter on ticker boards; Hong Kong, A-share and other instruments are extracted and displayed everywhere else and can be added to the boards.
+- Benchmark and market filter are per account; the team can set the defaults.
+- Supadata on the free plan until standby use is observed; a clear out-of-credit error on the portal.
+
+Open questions remaining:
+
+1. Should the LeapEdge top-20 default use their public ranking as of seed date, or our own forward record once it exists? The spec assumes their ranking at seed and our record thereafter.
+2. For channels that are followed but not selected, keep listing every new upload on the Channels page, or only a count? The spec assumes every upload, unanalysed, with a one-click "analyse this one".
 
 ---
 
@@ -643,6 +673,9 @@ Open questions (answers change the design):
 | Audio fallback | Supadata Whisper as tie-break and outage fallback | Whisper as primary reference | Cannot be windowed; long videos need polling |
 | Leaderboard | Computed from settlement rows on request, benchmark per viewer | Snapshot documents, SPY only | Snapshots cannot be recomputed; users asked for other benchmarks |
 | By-ticker priority | Consensus first, then where calls worked, then reliability per ticker | Creator-first | Confirmed by the team |
+| Sentiment | Per-mention bullish/neutral/bearish with cited rationale, computed aggregates | Aggregate-only score | Must be traceable to video, channel and words |
+| Channel processing | Team-editable selection with cost projection under a raisable US$150 budget | Process all 80 | Budget |
+| Markets | Extract everything, filter boards to US by default | Hard-code US only | Nothing suppressed; filter is a setting |
 | Sentiment | Mentions with trust levels, period per account | Calls only | Calls too sparse to show movement |
 | Context check | Dated FMP sources, validated, summarised through OpenRouter | Model web search | No provider search can be bounded by publication date on OpenRouter |
 | Metric definitions | One registry feeding hover, Methodology and CI | Hand-written help text | Drift between text and code |
