@@ -40,6 +40,7 @@ import {
   isPriced,
 } from "../src/server/youtube-intelligence/transport/prices.ts";
 import {
+  TeamPreferences,
   teamDefaults,
   migrateLegacyPreferences,
 } from "../src/features/youtube-intelligence/settings.ts";
@@ -1116,4 +1117,59 @@ test("GoogleNativeTransport counts tokens through the SDK and falls back to a lo
   } finally {
     if (old !== undefined) process.env.GEMINI_API_KEY = old;
   }
+});
+test("The comparison week: transport.default openrouter keeps the old path selectable for every stage", () => {
+  // Spec 4.1 and 4.10: F20 retires the extra caption adapters, not the
+  // OpenRouter route. For one comparison week a team must be able to run the
+  // whole pipeline on the old path, so the settings schema still accepts
+  // "openrouter" as transport.default and nothing may reach another vendor.
+  const stored = TeamPreferences.parse({ transport: { default: "openrouter" } });
+  assert.equal(stored.transport.default, "openrouter");
+  const STAGES = [
+    "metadata",
+    "extraction",
+    "synthesis",
+    "synthesis-chunk-3",
+    "transcribe",
+    "transcribe-window-0",
+    "native-source",
+    "translate",
+    "critique",
+    "critique-2",
+    "context",
+    "audio-review",
+    "experiment-x",
+  ];
+  // The flag on its own: a document that pins no per-stage transport sends
+  // every stage, keyed or not, through OpenRouter.
+  const flagOnly = { transport: { default: "openrouter" } };
+  for (const stage of STAGES) {
+    const transport = transportFor(stage, flagOnly);
+    assert.ok(
+      transport instanceof OpenRouterTransport,
+      `${stage} should run on OpenRouter for the comparison week`,
+    );
+    assert.equal(transport.family, "openrouter");
+    assert.equal(transport.name, "openrouter");
+  }
+  // The comparison-week team document: the default plus the per-stage routes
+  // the settings schema always writes, all on the old path.
+  const team = teamDefaults();
+  team.transport.default = "openrouter";
+  for (const key of Object.keys(team.models) as (keyof typeof team.models)[])
+    team.models[key].transport = "openrouter";
+  const week = TeamPreferences.parse(team);
+  assert.equal(week.transport.default, "openrouter");
+  for (const stage of STAGES) {
+    assert.ok(
+      transportFor(stage, week) instanceof OpenRouterTransport,
+      `${stage} should follow the comparison-week settings`,
+    );
+  }
+  // A stage already on OpenRouter is never wrapped in the OpenRouter fallback.
+  week.transport.fallbackToOpenRouter = true;
+  for (const stage of STAGES)
+    assert.equal(transportFor(stage, week).name, "openrouter");
+  // The other arm of the comparison is untouched: the defaults still go native.
+  assert.equal(transportFor("synthesis", teamDefaults()).name, "google-native");
 });

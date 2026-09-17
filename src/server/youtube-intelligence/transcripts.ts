@@ -1,5 +1,4 @@
 import { db } from "./store.ts";
-import { youtubeJsTranscript } from "./youtubejs.ts";
 import { z } from "zod";
 import {
   Source,
@@ -503,8 +502,6 @@ export async function nativeTranscript(
     }
   }
   if (options.managedCaptionsOnly) return null;
-  const free = await youtubeJsTranscript(videoId);
-  if (free) return free;
   if (process.env.YTI_GENERATED_TRANSCRIPTS === "true" && options.duration)
     return managedTranscript(videoId, "supadata", {
       ...options,

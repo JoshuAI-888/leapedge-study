@@ -1,6 +1,5 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-process.env.YTI_YOUTUBEJS_ENABLED = "false";
 process.env.SUPADATA_API_KEY = "fixture";
 process.env.TRANSCRIPTAPI_API_KEY = "fixture";
 process.env.YTI_TRANSCRIPT_CREDIT_BUDGET = "5000";

@@ -1,3 +1,4 @@
+// Lab only (spec 12): another model's opinion, never a trust input or a pipeline stage — queueAudioReview runs solely from the explicit "audioReview" action.
 import { z } from "zod";
 import { create, get } from "./store.ts";
 import { put, preferences } from "./research-store.ts";
@@ -43,6 +44,12 @@ export function normalizeAudioReview(value: unknown) {
     })),
   };
 }
+/**
+ * Queue one Lab audio review of an already completed analysis. Nothing in the
+ * pipeline or the trust computation calls this: the only caller is the
+ * explicit `audioReview` action on the research route, and the run it creates
+ * carries `experiment: true` so its cost is never attributed to the analysis.
+ */
 export async function queueAudioReview(id: string) {
   const run = await get(id);
   if (!run || run.status !== "completed" || run.input.task)

@@ -8,7 +8,6 @@ process.env.YTI_DB_PATH = join(
   "test.sqlite",
 );
 delete process.env.DATABASE_URL;
-process.env.YTI_YOUTUBEJS_ENABLED = "false";
 import {
   managedTranscript,
   nativeTranscript,

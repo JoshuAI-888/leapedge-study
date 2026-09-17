@@ -1565,17 +1565,15 @@ export function ResearchApp() {
             <section className="panel research-panel">
               <h2>Research preferences</h2>
               <details>
-                <summary>Free caption retrieval history</summary>
+                <summary>Caption retrieval history</summary>
                 <Json value={data.captionAttempts} />
               </details>
               <p>
                 Connections: YouTube{" "}
                 {data.integrations.youtube ? "ready" : "missing"} · OpenRouter{" "}
                 {data.integrations.openrouter ? "ready" : "missing"} · FMP{" "}
-                {data.integrations.fmp ? "ready" : "missing"} · Native captions:
-                YouTube.js{" "}
-                {data.integrations.youtubeJs ? "enabled" : "disabled"} · Paid
-                caption backup{" "}
+                {data.integrations.fmp ? "ready" : "missing"} · Caption
+                providers{" "}
                 {data.integrations.nativeCaptions
                   ? "configured"
                   : "not configured"}{" "}

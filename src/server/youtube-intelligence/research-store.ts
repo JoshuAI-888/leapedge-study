@@ -511,10 +511,7 @@ export async function researchSnapshot() {
         reason: string;
       }[];
     }>("evaluation"),
-    captionAttempts: [
-      ...(await readDocs("managedCaptionAttempt")),
-      ...(await readDocs("youtubeJsAttempt")),
-    ]
+    captionAttempts: (await readDocs("managedCaptionAttempt"))
       .slice(0, 30)
       .map(({ source, payload, ...r }) => r),
     jobs: allRuns
@@ -529,7 +526,6 @@ export async function researchSnapshot() {
       })),
     integrations: {
       readOnly: process.env.YTI_PREVIEW_READ_ONLY === "true",
-      youtubeJs: process.env.YTI_YOUTUBEJS_ENABLED !== "false",
       youtube: !!process.env.YOUTUBE_API_KEY,
       openrouter: !!process.env.OPENROUTER_API_KEY,
       fmp: !!process.env.FMP_API_KEY,

@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { stubFetch, json, type FetchStub } from "./helpers/fetch-stub.ts";
 test("Channel discovery deduplicates uploads; provider failures retain actionable state; native job polling does not resubmit", async () => {
-  process.env.YTI_YOUTUBEJS_ENABLED = "false";
   process.env.YTI_DB_PATH = join(
     mkdtempSync(join(tmpdir(), "yti-providers-")),
     "test.sqlite",
