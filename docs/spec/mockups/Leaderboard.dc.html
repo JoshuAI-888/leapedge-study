@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; background: #f7f9fc; color: #262626; -webkit-font-smoothing: antialiased; }
+    a { color: #194df4; text-decoration: none; } a:hover { color: #1238b8; }
+    .top a { color: #262626; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; }
+    .top a.active { color: #194df4; background: #edf3ff; }
+    .side a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; color: #262626; font-size: 14px; font-weight: 500; }
+    .side a.active { background: #edf3ff; color: #194df4; }
+    .card { background: #ffffff; border: 1px solid #e5e9f0; border-radius: 14px; }
+    .muted { color: #626b7b; }
+    .head { font-size: 11px; font-weight: 600; color: #626b7b; text-transform: uppercase; letter-spacing: 0.06em; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 16px; white-space: nowrap; }
+    .ok { background: #e6f4ec; color: #0b6b37; }
+    .soft { background: #edf3ff; color: #1238b8; }
+    .grey { background: #f1f3f6; color: #4b5563; }
+    .warn { background: #fff4e0; color: #8a5a00; }
+    .long { background: #e6f4ec; color: #0b6b37; }
+    .short { background: #fbe9e7; color: #a93226; }
+    .tab { padding: 8px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #626b7b; background: #ffffff; border: 1px solid #e5e9f0; cursor: pointer; }
+    .tab.active { color: #194df4; background: #edf3ff; border-color: #c9d8ff; }
+    .row { display: grid; grid-template-columns: 36px minmax(0, 1.3fr) 90px 150px 150px 150px 130px; gap: 12px; align-items: center; padding: 12px 18px; border-top: 1px solid #e5e9f0; font-size: 13px; }
+    .trow { display: grid; grid-template-columns: 90px 80px 90px 150px 160px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 18px; border-top: 1px solid #e5e9f0; font-size: 13px; }
+    button { font-family: inherit; }
+    select { height: 34px; box-sizing: border-box; padding: 0 10px; border: 1px solid #e5e9f0; border-radius: 10px; font-size: 13px; font-family: inherit; background: #ffffff; color: #262626; }
+  </style>
+</helmet>
+<div style="width: 1280px; height: 900px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden;">
+  <header class="top" style="height: 56px; box-sizing: border-box; padding: 0 24px; background: #ffffff; border-bottom: 1px solid #e5e9f0; display: flex; align-items: center; gap: 18px;">
+    <div style="display: flex; align-items: center; gap: 10px; margin-right: 10px;"><div style="width: 26px; height: 26px; border-radius: 7px; background: #194df4;"></div><div style="font-weight: 700; font-size: 16px;">Finradar</div></div>
+    <a href="#">Briefing</a>
+    <a href="#" class="active">Intelligence<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></a>
+    <a href="#">Ideas</a>
+    <div style="flex-grow: 1;"></div>
+    <a href="#" aria-label="Account" style="width: 32px; height: 32px; border-radius: 50%; background: #edf3ff; padding: 0; justify-content: center;"><span style="font-size: 12px; font-weight: 700; color: #194df4;">JF</span></a>
+  </header>
+
+  <div style="display: flex; flex-grow: 1; min-height: 0;">
+    <nav class="side" style="width: 208px; box-sizing: border-box; padding: 18px 12px; background: #ffffff; border-right: 1px solid #e5e9f0; display: flex; flex-direction: column; gap: 2px;">
+      <div class="head" style="padding: 4px 12px 10px;">YouTube Intelligence</div>
+      <a href="Main.dc.html">Today</a>
+      <a href="Channels.dc.html">Channels</a>
+      <a href="#" class="active">Leaderboard</a>
+      <a href="#">Saved calls</a>
+      <a href="#">Lab</a>
+      <div style="flex-grow: 1;"></div>
+      <a href="Settings.dc.html">Settings</a>
+    </nav>
+
+    <main style="flex-grow: 1; min-width: 0; box-sizing: border-box; padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px;">
+        <div>
+          <h1 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;">Leaderboard</h1>
+          <div class="muted" style="font-size: 13px; margin-top: 2px;">Who has been right, on what, and whether the sample is big enough to mean anything.</div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <label for="hz" class="muted" style="font-size: 13px;">Horizon</label>
+          <select id="hz"><option>90 days</option><option>180 days</option><option>365 days</option></select>
+          <label for="rec" class="muted" style="font-size: 13px;">Record</label>
+          <select id="rec"><option>Forward (since 1 May 2026)</option><option>Historical replay</option></select>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="tab active">By creator</button>
+        <button type="button" class="tab">By ticker</button>
+        <span class="muted" style="font-size: 12px; align-self: center; margin-left: 8px;">Medium and high creator-conviction long/short calls, audio-agreed or better. Adjusted close vs SPY. Descriptive, not portfolio returns.</span>
+      </div>
+
+      <section class="card" style="overflow: hidden;">
+        <div class="row head" style="border-top: 0; padding-bottom: 8px;">
+          <div>#</div><div>Creator</div><div>Calls</div><div>Win rate (95% CI)</div><div>Median excess vs SPY</div><div>Significance</div><div>Best / worst</div>
+        </div>
+        <div class="row">
+          <div style="font-weight: 700;">1</div>
+          <div><div style="font-weight: 600; font-size: 14px;">Jose Najarro Stocks</div><div class="muted" style="font-size: 12px;">209 calls · 98% equities · 30% human-verified</div></div>
+          <div style="font-weight: 600;">209</div>
+          <div><div style="font-weight: 600;">66.5%</div><div class="muted" style="font-size: 12px;">60.0–72.5</div></div>
+          <div><div style="font-weight: 600;">+23.7%</div><div class="muted" style="font-size: 12px;">SD 70, t 4.9</div></div>
+          <div><span class="chip ok">Supported, q = 0.001</span></div>
+          <div><span class="chip long">NVDA +84%</span> <span class="chip short">SNOW −41%</span></div>
+        </div>
+        <div class="row">
+          <div style="font-weight: 700;">2</div>
+          <div><div style="font-weight: 600; font-size: 14px;">Bullmarket Lifestyle</div><div class="muted" style="font-size: 12px;">73 calls · 32% equities · rest excluded from SPY comparison</div></div>
+          <div style="font-weight: 600;">73</div>
+          <div><div style="font-weight: 600;">61.6%</div><div class="muted" style="font-size: 12px;">50.1–72.0</div></div>
+          <div><div style="font-weight: 600;">+11.1%</div><div class="muted" style="font-size: 12px;">SD 31, t 3.0</div></div>
+          <div><span class="chip ok">Supported, q = 0.02</span></div>
+          <div><span class="chip long">PLTR +52%</span> <span class="chip short">RIVN −28%</span></div>
+        </div>
+        <div class="row">
+          <div style="font-weight: 700;">3</div>
+          <div><div style="font-weight: 600; font-size: 14px;">Chit Chat Stocks</div><div class="muted" style="font-size: 12px;">37 calls · small sample</div></div>
+          <div style="font-weight: 600;">37</div>
+          <div><div style="font-weight: 600;">59.5%</div><div class="muted" style="font-size: 12px;">43.5–73.7</div></div>
+          <div><div style="font-weight: 600;">+31.7%</div><div class="muted" style="font-size: 12px;">SD 66, t 3.0</div></div>
+          <div><span class="chip soft">Supported, q = 0.04</span></div>
+          <div><span class="chip long">MELI +61%</span> <span class="chip short">PYPL −19%</span></div>
+        </div>
+        <div class="row">
+          <div style="font-weight: 700;">4</div>
+          <div><div style="font-weight: 600; font-size: 14px;">Joseph Hogue</div><div class="muted" style="font-size: 12px;">127 calls</div></div>
+          <div style="font-weight: 600;">127</div>
+          <div><div style="font-weight: 600;">52.8%</div><div class="muted" style="font-size: 12px;">44.1–61.3</div></div>
+          <div><div style="font-weight: 600;">+10.5%</div><div class="muted" style="font-size: 12px;">SD 51, t 2.3</div></div>
+          <div><span class="chip soft">Supported, q = 0.05</span></div>
+          <div><span class="chip long">AMD +47%</span> <span class="chip short">SOFI −33%</span></div>
+        </div>
+        <div class="row">
+          <div style="font-weight: 700;">—</div>
+          <div><div style="font-weight: 600; font-size: 14px;">Alpha 週報 (Mandarin)</div><div class="muted" style="font-size: 12px;">28 calls · forward record only</div></div>
+          <div style="font-weight: 600;">28</div>
+          <div><div style="font-weight: 600;">50.0%</div><div class="muted" style="font-size: 12px;">32.6–67.4</div></div>
+          <div><div style="font-weight: 600;">+4.2%</div><div class="muted" style="font-size: 12px;">SD 40, t 0.6</div></div>
+          <div><span class="chip grey">Not yet, n &lt; 20 at horizon</span></div>
+          <div><span class="chip long">VOO +9%</span> <span class="chip short">TSLA −22%</span></div>
+        </div>
+        <div class="row">
+          <div style="font-weight: 700;">—</div>
+          <div><div style="font-weight: 600; font-size: 14px;">Patrick Boyle</div><div class="muted" style="font-size: 12px;">73 calls · mostly macro context</div></div>
+          <div style="font-weight: 600;">73</div>
+          <div><div style="font-weight: 600;">38.4%</div><div class="muted" style="font-size: 12px;">28.0–49.9</div></div>
+          <div><div style="font-weight: 600;">−33.3%</div><div class="muted" style="font-size: 12px;">SD 58, t −4.9</div></div>
+          <div><span class="chip warn">Negative, q = 0.001</span></div>
+          <div><span class="chip long">GLD +12%</span> <span class="chip short">ARKK −55%</span></div>
+        </div>
+        <div style="padding: 12px 18px; border-top: 1px solid #e5e9f0; display: flex; justify-content: space-between; align-items: center;">
+          <span class="muted" style="font-size: 13px;">Ranked by median excess return among creators with n ≥ 20 and FDR-adjusted q &lt; 0.05. Others listed unranked. All figures computed from the same settlement rows you can export.</span>
+          <a href="#" style="font-size: 13px; font-weight: 600;">Methodology and export</a>
+        </div>
+      </section>
+
+      <section class="card" style="overflow: hidden;">
+        <div style="padding: 12px 18px 6px; display: flex; justify-content: space-between; align-items: center;">
+          <div><span style="font-size: 14px; font-weight: 700;">By ticker</span> <span class="muted" style="font-size: 12px; margin-left: 8px;">preview of the second tab: which instruments creators call most, whether they agree, and who has been right on them</span></div>
+        </div>
+        <div class="trow head" style="border-top: 0; padding-bottom: 6px;">
+          <div>Ticker</div><div>Calls</div><div>Creators</div><div>Stance mix, 90 days</div><div>Median excess of calls</div><div>Most reliable creator on this ticker</div>
+        </div>
+        <div class="trow">
+          <div style="font-weight: 700; font-size: 14px;">NVDA</div><div>41</div><div>9</div>
+          <div><span class="chip long">34 long</span> <span class="chip short">4 short</span></div>
+          <div style="font-weight: 600;">+18.2%</div>
+          <div>Jose Najarro Stocks · 12 calls · 75% win · <span class="chip ok">supported</span></div>
+        </div>
+        <div class="trow">
+          <div style="font-weight: 700; font-size: 14px;">TSLA</div><div>27</div><div>8</div>
+          <div><span class="chip long">13 long</span> <span class="chip short">11 short</span></div>
+          <div style="font-weight: 600;">−3.1%</div>
+          <div>No creator reaches n ≥ 10 on TSLA yet · <span class="chip grey">not enough data</span></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

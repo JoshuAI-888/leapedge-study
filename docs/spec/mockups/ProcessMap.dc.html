@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; background: #ffffff; color: #262626; -webkit-font-smoothing: antialiased; }
+    a { color: #194df4; } a:hover { color: #1238b8; }
+    svg text { font-family: Inter, system-ui, sans-serif; }
+  </style>
+</helmet>
+<div style="width: 1400px; height: 860px; box-sizing: border-box; padding: 28px 32px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;">
+  <div>
+    <div style="font-size: 13px; font-weight: 500; color: #626b7b;">YouTube Intelligence v2</div>
+    <h1 style="margin: 2px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em;">How a video becomes a call you can trust</h1>
+  </div>
+  <figure style="margin: 0; flex-grow: 1; min-height: 0;">
+    <svg viewBox="0 0 1336 690" role="img" aria-label="Process map: uploads arrive by push or a pasted link, the worker fetches metadata and captions, adds an audio transcript when captions are missing, aligns the two, extracts claims that point at segments, copies the spans and checks them, runs one batched critic call, assigns a trust level with optional human review, stores claims, and serves Today, the leaderboard, the Finradar briefing and the digest; the lab gates prompt and model changes with a gold set." style="max-width: 100%; height: auto; color: #262626; font-size: 12px;">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"></path></marker>
+        <marker id="arrowblue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#194df4"></path></marker>
+      </defs>
+
+      <!-- lane labels -->
+      <text x="20" y="22" font-weight="700" fill="#626b7b" font-size="11" letter-spacing="1">1 ARRIVE</text>
+      <text x="300" y="22" font-weight="700" fill="#626b7b" font-size="11" letter-spacing="1">2 QUEUE</text>
+      <text x="540" y="22" font-weight="700" fill="#626b7b" font-size="11" letter-spacing="1">3 ACQUIRE SOURCE</text>
+      <text x="830" y="22" font-weight="700" fill="#626b7b" font-size="11" letter-spacing="1">4 VERIFY SOURCE</text>
+      <text x="1080" y="22" font-weight="700" fill="#626b7b" font-size="11" letter-spacing="1">5 EXTRACT AND CHECK</text>
+
+      <!-- 1 arrive -->
+      <rect x="20" y="60" width="210" height="64" rx="8" fill="#f7f9fc" stroke="currentColor"></rect>
+      <text x="125" y="84" text-anchor="middle" font-weight="600">Followed channels</text>
+      <text x="125" y="102" text-anchor="middle" fill="#626b7b">YouTube push hub, free</text>
+
+      <rect x="20" y="170" width="210" height="64" rx="8" fill="#f7f9fc" stroke="currentColor"></rect>
+      <text x="125" y="194" text-anchor="middle" font-weight="600">Pasted link</text>
+      <text x="125" y="212" text-anchor="middle" fill="#626b7b">analyst asks now</text>
+
+      <!-- 2 queue -->
+      <rect x="300" y="110" width="200" height="74" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="400" y="138" text-anchor="middle" font-weight="600">Worker queue</text>
+      <text x="400" y="156" text-anchor="middle" fill="#626b7b">Postgres, always-on</text>
+      <text x="400" y="172" text-anchor="middle" fill="#626b7b">4 videos in parallel</text>
+
+      <line x1="230" y1="92" x2="300" y2="132" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <text x="236" y="98" fill="#626b7b" font-size="11">new upload → batch, half price</text>
+      <line x1="230" y1="202" x2="300" y2="162" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <text x="236" y="222" fill="#626b7b" font-size="11">immediate</text>
+
+      <!-- 3 acquire -->
+      <rect x="540" y="50" width="230" height="56" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="655" y="72" text-anchor="middle" font-weight="600">Metadata</text>
+      <text x="655" y="90" text-anchor="middle" fill="#626b7b">YouTube Data API, 1 unit</text>
+
+      <rect x="540" y="130" width="230" height="64" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="655" y="152" text-anchor="middle" font-weight="600">Captions (draft)</text>
+      <text x="655" y="170" text-anchor="middle" fill="#626b7b">TranscriptAPI, about US$0.005</text>
+      <text x="655" y="185" text-anchor="middle" fill="#626b7b">available for about 80% of videos</text>
+
+      <rect x="540" y="220" width="230" height="78" rx="8" fill="#ffffff" stroke="#194df4" stroke-width="1.5"></rect>
+      <text x="655" y="242" text-anchor="middle" font-weight="600">Audio transcript (reference)</text>
+      <text x="655" y="260" text-anchor="middle" fill="#626b7b">Gemini native, 5-minute windows</text>
+      <text x="655" y="275" text-anchor="middle" fill="#626b7b">low media resolution, batch</text>
+      <text x="655" y="290" text-anchor="middle" fill="#626b7b">about US$0.10 per 30 min</text>
+
+      <line x1="500" y1="147" x2="540" y2="78" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <line x1="500" y1="147" x2="540" y2="162" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <line x1="500" y1="147" x2="540" y2="259" stroke="#194df4" stroke-dasharray="5 4" marker-end="url(#arrowblue)"></line>
+      <text x="470" y="226" fill="#194df4" font-size="11" text-anchor="middle">only if no captions,</text>
+      <text x="470" y="240" fill="#194df4" font-size="11" text-anchor="middle">or on demand for a call</text>
+
+      <!-- 4 verify -->
+      <rect x="830" y="130" width="210" height="90" rx="8" fill="#ffffff" stroke="#194df4" stroke-width="1.5"></rect>
+      <text x="935" y="154" text-anchor="middle" font-weight="600">Align and score</text>
+      <text x="935" y="172" text-anchor="middle" fill="#626b7b">edit distance per span</text>
+      <text x="935" y="188" text-anchor="middle" fill="#626b7b">agreement % + anchor error</text>
+      <text x="935" y="204" text-anchor="middle" fill="#626b7b">timestamps bounded by window</text>
+
+      <line x1="770" y1="162" x2="830" y2="168" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <line x1="770" y1="259" x2="830" y2="196" stroke="#194df4" marker-end="url(#arrowblue)"></line>
+
+      <!-- 5 extract & check (vertical) -->
+      <rect x="1080" y="50" width="236" height="70" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="1198" y="72" text-anchor="middle" font-weight="600">Extract calls</text>
+      <text x="1198" y="90" text-anchor="middle" fill="#626b7b">Gemini native, one pass, full transcript</text>
+      <text x="1198" y="105" text-anchor="middle" fill="#626b7b">returns segment IDs, not quotes</text>
+
+      <rect x="1080" y="150" width="236" height="64" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="1198" y="172" text-anchor="middle" font-weight="600">Copy spans and check</text>
+      <text x="1198" y="190" text-anchor="middle" fill="#626b7b">app copies text; price role, ticker,</text>
+      <text x="1198" y="205" text-anchor="middle" fill="#626b7b">comparator checks, deterministic</text>
+
+      <rect x="1080" y="244" width="236" height="70" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="1198" y="266" text-anchor="middle" font-weight="600">Critic, one batched call</text>
+      <text x="1198" y="284" text-anchor="middle" fill="#626b7b">different model family (OpenRouter)</text>
+      <text x="1198" y="299" text-anchor="middle" fill="#626b7b">transcript from context cache</text>
+
+      <rect x="1080" y="344" width="236" height="60" rx="8" fill="#edf3ff" stroke="#194df4" stroke-width="1.5"></rect>
+      <text x="1198" y="368" text-anchor="middle" font-weight="700" fill="#1238b8">Trust level</text>
+      <text x="1198" y="386" text-anchor="middle" fill="#1238b8">Text-checked · Audio-agreed · Human-verified</text>
+
+      <line x1="1040" y1="160" x2="1080" y2="85" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <text x="1044" y="112" fill="#626b7b" font-size="11">merged source</text>
+      <line x1="1198" y1="120" x2="1198" y2="150" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <line x1="1198" y1="214" x2="1198" y2="244" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <line x1="1198" y1="314" x2="1198" y2="344" stroke="#194df4" marker-end="url(#arrowblue)"></line>
+      <text x="1206" y="333" fill="#194df4" font-size="11">accept / reject</text>
+      <line x1="1040" y1="200" x2="1080" y2="360" stroke="#194df4" stroke-dasharray="5 4" marker-end="url(#arrowblue)"></line>
+      <text x="1000" y="292" fill="#194df4" font-size="11" text-anchor="end">agreement on the cited span</text>
+      <text x="1000" y="306" fill="#194df4" font-size="11" text-anchor="end">raises Text → Audio-agreed</text>
+
+      <!-- human review -->
+      <rect x="830" y="344" width="210" height="60" rx="8" fill="#ffffff" stroke="#194df4" stroke-width="1.5"></rect>
+      <text x="935" y="368" text-anchor="middle" font-weight="600">Human review queue</text>
+      <text x="935" y="386" text-anchor="middle" fill="#626b7b">listen to the span, sign</text>
+      <line x1="1040" y1="374" x2="1080" y2="374" stroke="#194df4" marker-end="url(#arrowblue)"></line>
+      <text x="1060" y="366" fill="#194df4" font-size="11" text-anchor="middle">L3</text>
+
+      <!-- store -->
+      <rect x="830" y="450" width="486" height="60" rx="8" fill="#f7f9fc" stroke="currentColor"></rect>
+      <text x="1073" y="474" text-anchor="middle" font-weight="600">Claims, evidence spans, transcripts, reviews, settlements</text>
+      <text x="1073" y="492" text-anchor="middle" fill="#626b7b">Postgres, relational, immutable transcripts, append-only reviews and settlements</text>
+      <line x1="1198" y1="404" x2="1198" y2="450" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <text x="1206" y="432" fill="#626b7b" font-size="11">write with trust level and config hash</text>
+
+      <!-- outputs -->
+      <text x="830" y="548" font-weight="700" fill="#626b7b" font-size="11" letter-spacing="1">6 SERVE</text>
+      <rect x="830" y="560" width="110" height="56" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="885" y="583" text-anchor="middle" font-weight="600">Today</text>
+      <text x="885" y="600" text-anchor="middle" fill="#626b7b" font-size="11">trusted calls</text>
+      <rect x="954" y="560" width="120" height="56" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="1014" y="583" text-anchor="middle" font-weight="600">Leaderboard</text>
+      <text x="1014" y="600" text-anchor="middle" fill="#626b7b" font-size="11">daily FMP settle</text>
+      <rect x="1088" y="560" width="116" height="56" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="1146" y="583" text-anchor="middle" font-weight="600">Finradar briefing</text>
+      <text x="1146" y="600" text-anchor="middle" fill="#626b7b" font-size="11">youtube source</text>
+      <rect x="1218" y="560" width="98" height="56" rx="8" fill="#ffffff" stroke="currentColor"></rect>
+      <text x="1267" y="583" text-anchor="middle" font-weight="600">Digest</text>
+      <text x="1267" y="600" text-anchor="middle" fill="#626b7b" font-size="11">email, 07:00</text>
+      <line x1="885" y1="510" x2="885" y2="560" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <line x1="1014" y1="510" x2="1014" y2="560" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <line x1="1146" y1="510" x2="1146" y2="560" stroke="currentColor" marker-end="url(#arrow)"></line>
+      <line x1="1267" y1="510" x2="1267" y2="560" stroke="currentColor" marker-end="url(#arrow)"></line>
+
+      <!-- lab loop -->
+      <rect x="300" y="450" width="470" height="90" rx="8" fill="#ffffff" stroke="currentColor" stroke-dasharray="6 4"></rect>
+      <text x="535" y="474" text-anchor="middle" font-weight="600">Lab: gold set and VideoConviction benchmark</text>
+      <text x="535" y="492" text-anchor="middle" fill="#626b7b">50 human-verified claims + 760 expert-labelled segments</text>
+      <text x="535" y="508" text-anchor="middle" fill="#626b7b">precision, recall, anchor error, cost per accepted call</text>
+      <text x="535" y="526" text-anchor="middle" fill="#626b7b">a prompt or model change ships only when it wins here</text>
+      <path d="M770 470 L 1000 470 L 1000 120 L 1080 100" fill="none" stroke="currentColor" stroke-dasharray="6 4" marker-end="url(#arrow)"></path>
+      <text x="1006" y="300" fill="#626b7b" font-size="11" transform="rotate(-90 1006 300)" text-anchor="middle">promotes prompt / model</text>
+
+      <!-- budget note -->
+      <rect x="20" y="450" width="250" height="90" rx="8" fill="#f7f9fc" stroke="currentColor"></rect>
+      <text x="145" y="474" text-anchor="middle" font-weight="600">Budget guard on every call</text>
+      <text x="145" y="492" text-anchor="middle" fill="#626b7b">reserve from counted tokens,</text>
+      <text x="145" y="508" text-anchor="middle" fill="#626b7b">reconcile from reported usage,</text>
+      <text x="145" y="524" text-anchor="middle" fill="#626b7b">retry 429/5xx up to 3 times</text>
+
+      <!-- footer -->
+      <text x="20" y="600" fill="#626b7b" font-size="12">Where the money goes per 30-minute video, estimated:  captions US$0.005 · audio transcript US$0.10 when needed · extract + critic US$0.05 to US$0.15 in batch · leaderboard settlement uses cached FMP series.</text>
+      <text x="20" y="620" fill="#626b7b" font-size="12">What was removed: five correlated caption scrapers, per-claim critique, quote string matching as a gate, the per-minute cron, SQLite, OpenRouter as the production transport.</text>
+      <text x="20" y="652" fill="#194df4" font-size="12" font-weight="600">Blue marks the trust path: the parts that turn "unverified" into a level an investment team can filter on.</text>
+    </svg>
+    <figcaption style="font-size: 12px; color: #626b7b; margin-top: 6px;">Left to right: how a video arrives, how its words are captured and cross-checked, how calls are extracted and graded, and where they are served. Dashed lines are conditional or feedback paths.</figcaption>
+  </figure>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1400,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
