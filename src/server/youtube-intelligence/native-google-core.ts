@@ -1,5 +1,6 @@
 import {
   GoogleGenAI,
+  MediaResolution,
   Type,
   type GenerateContentParameters,
   type GenerateContentResponse,
@@ -36,9 +37,51 @@ export const Transcript = z.object({
     .max(20000),
   model_reported_omissions: z.array(z.string()),
 });
+/**
+ * Per-request overrides. Both are optional and default to the behaviour this
+ * function has always had: the transcript schema below, and no explicit media
+ * resolution. The native transport (transport/google-native.ts) passes its own
+ * schema and MEDIA_RESOLUTION_LOW through here (spec 5).
+ */
+export type RequestOverrides = {
+  responseSchema?: unknown;
+  mediaResolution?: "low" | "default";
+};
+/** The transcript contract this experiment has always enforced. */
+export const TranscriptSchema = {
+  type: Type.OBJECT,
+  properties: {
+    video_id: { type: Type.STRING },
+    language: { type: Type.STRING },
+    segments: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          start_seconds: { type: Type.NUMBER },
+          end_seconds: { type: Type.NUMBER },
+          text: { type: Type.STRING },
+          uncertainty: { type: Type.STRING, nullable: true },
+        },
+        required: ["start_seconds", "end_seconds", "text", "uncertainty"],
+      },
+    },
+    model_reported_omissions: {
+      type: Type.ARRAY,
+      items: { type: Type.STRING },
+    },
+  },
+  required: [
+    "video_id",
+    "language",
+    "segments",
+    "model_reported_omissions",
+  ],
+};
 export function requestFor(
   input: TestInput,
   signal: AbortSignal,
+  overrides: RequestOverrides = {},
 ): GenerateContentParameters {
   const x = Input.parse(input);
   if (x.mode !== "STATIC")
@@ -73,36 +116,10 @@ export function requestFor(
       httpOptions: { retryOptions: { attempts: 1 } },
       maxOutputTokens: 32768,
       responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          video_id: { type: Type.STRING },
-          language: { type: Type.STRING },
-          segments: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                start_seconds: { type: Type.NUMBER },
-                end_seconds: { type: Type.NUMBER },
-                text: { type: Type.STRING },
-                uncertainty: { type: Type.STRING, nullable: true },
-              },
-              required: ["start_seconds", "end_seconds", "text", "uncertainty"],
-            },
-          },
-          model_reported_omissions: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-          },
-        },
-        required: [
-          "video_id",
-          "language",
-          "segments",
-          "model_reported_omissions",
-        ],
-      },
+      responseSchema: overrides.responseSchema ?? TranscriptSchema,
+      ...(overrides.mediaResolution === "low"
+        ? { mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW }
+        : {}),
     },
   };
 }

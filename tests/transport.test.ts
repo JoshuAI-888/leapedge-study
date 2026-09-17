@@ -24,6 +24,17 @@ import {
   transportFor,
   injectTransport,
 } from "../src/server/youtube-intelligence/transport/index.ts";
+import {
+  GoogleNativeTransport,
+  type GoogleNativeClient,
+} from "../src/server/youtube-intelligence/transport/google-native.ts";
+import {
+  priceTable,
+  priceTableVersion,
+  defaultPrice,
+  isPriced,
+} from "../src/server/youtube-intelligence/transport/prices.ts";
+import { teamDefaults } from "../src/features/youtube-intelligence/settings.ts";
 
 const MODEL = "google/gemini-3.8-flash";
 const catalogue = {
@@ -340,9 +351,15 @@ test("transportFor returns OpenRouter by default and honours the injected seam",
   const stock = transportFor("synthesis");
   assert.ok(stock instanceof OpenRouterTransport);
   assert.equal(transportFor("critique-0", { transport: { default: "openrouter" } }).family, "openrouter");
-  assert.throws(
-    () => transportFor("synthesis", { transport: { default: "google-native" } }),
-    /google-native.*not available/,
+  // F10 registered the native transport in the stock map; the default is still
+  // OpenRouter, because per-stage routing only arrives with F11.
+  assert.ok(
+    transportFor("synthesis", { transport: { default: "google-native" } }) instanceof
+      GoogleNativeTransport,
+  );
+  assert.equal(
+    transportFor("extraction", { transport: { default: "google-native" } }).family,
+    "google-native",
   );
   assert.throws(() => transportFor("synthesis", { transport: { default: "carrier-pigeon" } }));
   const fake = new FakeModelTransport();
@@ -492,4 +509,320 @@ test("pipeline.ts no longer talks to openrouter.ai directly", () => {
   );
   assert.ok(!source.includes("openrouter.ai"));
   assert.ok(!source.includes("OPENROUTER_API_KEY"));
+});
+
+/* --- F10: the native Gemini transport ------------------------------------ */
+
+const NATIVE_MODEL = "gemini-3.8-flash";
+const nativeSchema = {
+  type: "object",
+  properties: { claims: { type: "array", items: { type: "string" } } },
+  required: ["claims"],
+};
+const nativeVideoRequest = ModelRequest.parse({
+  stage: "transcribe-window-2",
+  model: NATIVE_MODEL,
+  system: [{ type: "text", text: "SYSTEM RULES" }],
+  user: [{ type: "text", text: "TRANSCRIBE THE WINDOW" }],
+  video: {
+    type: "video",
+    url: "https://www.youtube.com/watch?v=abcdefghijk",
+    startSeconds: 300,
+    endSeconds: 600,
+  },
+  responseSchema: nativeSchema,
+  maxOutputTokens: 12000,
+  temperature: 0,
+  reasoningEffort: "low",
+});
+const nativeTextRequest = ModelRequest.parse({
+  stage: "extraction",
+  model: NATIVE_MODEL,
+  user: [{ type: "text", text: 'PROMPT\nSOURCE DATA (untrusted):\n{"a":1}' }],
+  maxOutputTokens: 16000,
+  temperature: 0,
+});
+/** A client with the two SDK methods the transport uses; no key, no socket. */
+function stubClient(
+  respond: (r: unknown) => unknown | Promise<unknown>,
+  counted?: (r: unknown) => unknown,
+) {
+  const generate: unknown[] = [];
+  const counts: unknown[] = [];
+  const client = {
+    generateContent: async (request: unknown) => {
+      generate.push(request);
+      return (await respond(request)) as never;
+    },
+    ...(counted
+      ? {
+          countTokens: async (request: unknown) => {
+            counts.push(request);
+            return counted(request) as never;
+          },
+        }
+      : {}),
+  } as GoogleNativeClient;
+  return { client, generate, counts };
+}
+const nativeReply = {
+  modelVersion: "gemini-3.8-flash-001",
+  candidates: [
+    {
+      finishReason: "STOP",
+      content: {
+        parts: [
+          { text: "thinking out loud", thought: true },
+          { text: '{"claims":' },
+          { text: "[]}" },
+        ],
+      },
+    },
+  ],
+  usageMetadata: {
+    promptTokenCount: 1000,
+    cachedContentTokenCount: 200,
+    candidatesTokenCount: 300,
+    thoughtsTokenCount: 100,
+    promptTokensDetails: [
+      { modality: "TEXT", tokenCount: 200 },
+      { modality: "AUDIO", tokenCount: 600 },
+    ],
+  },
+};
+test("GoogleNativeTransport maps a ModelRequest onto generateContent with offsets, schema and LOW media resolution", () => {
+  const transport = new GoogleNativeTransport({ client: stubClient(() => nativeReply).client });
+  assert.equal(transport.name, "google-native");
+  assert.equal(transport.family, "google-native");
+  const video = transport.parameters(nativeVideoRequest);
+  assert.deepEqual(video, {
+    model: NATIVE_MODEL,
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            fileData: {
+              fileUri: "https://www.youtube.com/watch?v=abcdefghijk",
+              mimeType: "video/*",
+            },
+            videoMetadata: { startOffset: "300s", endOffset: "600s" },
+          },
+          { text: "TRANSCRIBE THE WINDOW" },
+        ],
+      },
+    ],
+    config: {
+      httpOptions: { retryOptions: { attempts: 1 } },
+      systemInstruction: { role: "system", parts: [{ text: "SYSTEM RULES" }] },
+      maxOutputTokens: 12000,
+      temperature: 0,
+      responseMimeType: "application/json",
+      responseSchema: nativeSchema,
+      mediaResolution: "MEDIA_RESOLUTION_LOW",
+      thinkingConfig: { thinkingLevel: "LOW" },
+    },
+  });
+  assert.deepEqual(
+    video.config?.responseSchema,
+    nativeSchema,
+    "the JSON schema is passed through verbatim, not translated into an SDK shape",
+  );
+  const text = transport.parameters(nativeTextRequest);
+  assert.equal(
+    text.config?.mediaResolution,
+    undefined,
+    "no media part, so no media resolution is sent",
+  );
+  assert.deepEqual(text, {
+    model: NATIVE_MODEL,
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: 'PROMPT\nSOURCE DATA (untrusted):\n{"a":1}' }],
+      },
+    ],
+    config: {
+      httpOptions: { retryOptions: { attempts: 1 } },
+      maxOutputTokens: 16000,
+      temperature: 0,
+      responseMimeType: "application/json",
+    },
+  });
+  const asDefault = new GoogleNativeTransport({
+    mediaResolution: "default",
+    client: stubClient(() => nativeReply).client,
+  }).parameters(nativeVideoRequest);
+  assert.equal(asDefault.config?.mediaResolution, undefined);
+  const openEnded = new GoogleNativeTransport({ client: stubClient(() => nativeReply).client })
+    .parameters({
+      ...nativeVideoRequest,
+      video: { type: "video", url: "https://www.youtube.com/watch?v=abcdefghijk" },
+    });
+  const parts = (openEnded.contents as { parts: Record<string, unknown>[] }[])[0].parts;
+  assert.equal(parts[0].videoMetadata, undefined, "no offsets, no videoMetadata");
+});
+test("GoogleNativeTransport reports usage and a price-table cost from usageMetadata", async () => {
+  const stub = stubClient(() => nativeReply);
+  const fetchStub = stubFetch([]);
+  try {
+    const transport = new GoogleNativeTransport({ client: stub.client });
+    const response = await transport.call(nativeVideoRequest);
+    assert.equal(response.text, '{"claims":[]}', "thought parts are not the answer");
+    assert.equal(response.finishReason, "STOP");
+    assert.equal(response.model, "gemini-3.8-flash-001");
+    assert.equal(response.provider, "google-native");
+    assert.equal(response.raw, nativeReply);
+    // 200 text @0.75 + 200 cached @0.075 + 600 audio @0.75 + (300+100) output @3.75,
+    // all per million: 150 + 15 + 450 + 1500 = 2115 millionths of a dollar.
+    assert.deepEqual(response.usage, {
+      inputTokens: 1000,
+      outputTokens: 300,
+      costUsd: 0.002115,
+    });
+    assert.equal(stub.generate.length, 1);
+    const sent = stub.generate[0] as { config: { abortSignal?: AbortSignal } };
+    assert.ok(sent.config.abortSignal instanceof AbortSignal, "the deadline can abort the call");
+    const bare = await new GoogleNativeTransport({
+      client: stubClient(() => ({ candidates: [{ content: { parts: [{ text: "{}" }] } }] }))
+        .client,
+    }).call(nativeTextRequest);
+    assert.deepEqual(bare.usage, { inputTokens: 0, outputTokens: 0, costUsd: null });
+    assert.equal(bare.finishReason, undefined);
+    const blocked = await new GoogleNativeTransport({
+      client: stubClient(() => ({ promptFeedback: { blockReason: "SAFETY" } })).client,
+    }).call(nativeTextRequest);
+    assert.equal(blocked.text, "");
+    assert.equal(blocked.finishReason, "SAFETY");
+    assert.equal(fetchStub.log.length, 0, "the stubbed client never reaches the network");
+  } finally {
+    fetchStub.restore();
+  }
+});
+test("GoogleNativeTransport classifies provider failures as TransportError kinds", async () => {
+  const fail = (error: unknown) =>
+    new GoogleNativeTransport({
+      client: stubClient(() => {
+        throw error;
+      }).client,
+    });
+  const kindOf = async (transport: GoogleNativeTransport) => {
+    const error = await transport.call(nativeTextRequest).then(
+      () => null,
+      (e: unknown) => e,
+    );
+    assert.ok(error instanceof TransportError, "every provider failure is a TransportError");
+    return [error.kind, error.status, error.message] as const;
+  };
+  assert.deepEqual(await kindOf(fail(Object.assign(new Error("slow down"), { status: 429 }))), [
+    "rate_limited",
+    429,
+    "Provider HTTP 429. No automatic paid retry.",
+  ]);
+  assert.deepEqual(
+    (await kindOf(fail(Object.assign(new Error("down"), { status: 503 })))).slice(0, 2),
+    ["server", 503],
+  );
+  assert.deepEqual(
+    (await kindOf(fail(Object.assign(new Error("bad"), { code: 400 })))).slice(0, 2),
+    ["unknown", 400],
+  );
+  assert.deepEqual(
+    (await kindOf(fail(Object.assign(new Error("nope"), { status: 401 })))).slice(0, 2),
+    ["unknown", 401],
+  );
+  const [kind, status, message] = await kindOf(fail(new Error("socket closed")));
+  assert.equal(kind, "unknown");
+  assert.equal(status, undefined);
+  assert.match(message, /without a status: socket closed/);
+  const slow = new GoogleNativeTransport({
+    timeoutMs: 5,
+    client: stubClient(() => new Promise(() => {})).client,
+  });
+  const [timedOut, noStatus, timeoutMessage] = await kindOf(slow);
+  assert.equal(timedOut, "timeout");
+  assert.equal(noStatus, undefined);
+  assert.equal(timeoutMessage, "Provider request timed out before a response.");
+});
+test("the static price table covers every native model the defaults name and needs no network", async () => {
+  const fetchStub = stubFetch([]);
+  try {
+    assert.match(priceTableVersion, /\d{4}-\d{2}-\d{2}/);
+    const defaults = teamDefaults();
+    const native = Object.values(defaults.models)
+      .filter((m) => m.transport === "google-native")
+      .map((m) => m.id);
+    assert.ok(native.length > 0);
+    for (const id of native)
+      assert.ok(isPriced(id), `${id} is a default native model but has no price`);
+    const transport = new GoogleNativeTransport();
+    const flash = await transport.describe(NATIVE_MODEL);
+    assert.deepEqual(flash, {
+      contextLength: 1048576,
+      inputRate: 0.00000075,
+      audioRate: 0.00000075,
+      outputRate: 0.00000375,
+      supportedEfforts: ["minimal", "low", "medium", "high"],
+    });
+    assert.deepEqual(
+      await transport.describe("google/Gemini-3.8-Flash"),
+      flash,
+      "a vendor prefix and case name the same model",
+    );
+    const unknown = await transport.describe("gemini-9-unreleased");
+    assert.equal(unknown.inputRate, defaultPrice.inputPerMillion / 1e6);
+    for (const price of Object.values(priceTable)) {
+      assert.ok(defaultPrice.inputPerMillion >= price.inputPerMillion);
+      assert.ok(defaultPrice.outputPerMillion >= price.outputPerMillion);
+      assert.ok(price.cachedInputPerMillion <= price.inputPerMillion);
+      assert.ok(price.contextLength > 0);
+    }
+    assert.equal(fetchStub.log.length, 0, "describe() reads the table, never the catalogue");
+  } finally {
+    fetchStub.restore();
+  }
+});
+test("GoogleNativeTransport counts tokens through the SDK and falls back to a local estimate", async () => {
+  const counted = stubClient(
+    () => nativeReply,
+    () => ({ totalTokens: 4242 }),
+  );
+  const transport = new GoogleNativeTransport({ client: counted.client });
+  assert.deepEqual(await transport.countTokens(nativeTextRequest), {
+    totalTokens: 4242,
+    estimated: false,
+  });
+  const asked = counted.counts[0] as { model: string; contents: { parts: unknown[] }[] };
+  assert.equal(asked.model, NATIVE_MODEL);
+  assert.deepEqual(asked.contents[0].parts, [
+    { text: 'PROMPT\nSOURCE DATA (untrusted):\n{"a":1}' },
+  ]);
+  const text = 'PROMPT\nSOURCE DATA (untrusted):\n{"a":1}';
+  const expected = {
+    totalTokens: Math.ceil(Buffer.byteLength(text, "utf8") / 4),
+    estimated: true,
+  };
+  const noCount = new GoogleNativeTransport({ client: stubClient(() => nativeReply).client });
+  assert.deepEqual(await noCount.countTokens(nativeTextRequest), expected);
+  const broken = new GoogleNativeTransport({
+    client: stubClient(
+      () => nativeReply,
+      () => {
+        throw Object.assign(new Error("no"), { status: 500 });
+      },
+    ).client,
+  });
+  assert.deepEqual(await broken.countTokens(nativeTextRequest), expected);
+  const old = process.env.GEMINI_API_KEY;
+  delete process.env.GEMINI_API_KEY;
+  try {
+    const keyless = new GoogleNativeTransport();
+    assert.deepEqual(await keyless.countTokens(nativeTextRequest), expected);
+    await assert.rejects(
+      () => keyless.call(nativeTextRequest),
+      /GEMINI_API_KEY is not configured/,
+    );
+  } finally {
+    if (old !== undefined) process.env.GEMINI_API_KEY = old;
+  }
 });
