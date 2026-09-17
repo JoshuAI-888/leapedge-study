@@ -1,0 +1,143 @@
+{
+  "transport": {
+    "default": "google-native",
+    "fallbackToOpenRouter": false,
+    "allowOpenRouterInLab": true
+  },
+  "models": {
+    "transcription": {
+      "id": "gemini-3.8-flash",
+      "transport": "google-native"
+    },
+    "extraction": {
+      "id": "gemini-3.8-flash",
+      "transport": "google-native"
+    },
+    "critique": {
+      "id": "anthropic/claude-sonnet-5",
+      "transport": "openrouter",
+      "requireDifferentFamily": true,
+      "thinkingBudget": "low"
+    },
+    "context": {
+      "id": "anthropic/claude-sonnet-5",
+      "transport": "openrouter"
+    },
+    "translation": {
+      "id": "gemini-3.1-flash-lite",
+      "transport": "google-native"
+    },
+    "audioReview": {
+      "id": "gemini-3.8-flash",
+      "transport": "google-native"
+    }
+  },
+  "sources": {
+    "captionProvider": "transcriptapi",
+    "standby": "supadata",
+    "standbyPlan": "free",
+    "standbyCooldownMinutes": 15,
+    "asr": "gemini-windowed",
+    "asrPolicy": "when-captions-missing",
+    "windowSeconds": 300,
+    "mediaResolution": "low",
+    "agenticAudioReview": true,
+    "agreementThreshold": 0.92,
+    "tieBreakWithStandby": true,
+    "captionLanguages": [
+      "zh",
+      "zh-Hans",
+      "zh-Hant",
+      "en"
+    ]
+  },
+  "context": {
+    "enabled": true,
+    "windowDaysBefore": 14,
+    "windowDaysAfter": 2,
+    "webSearch": "off",
+    "sinceThenAtSettlement": true
+  },
+  "processing": {
+    "userSubmitted": "immediate",
+    "channelUploads": "batch",
+    "contextCaching": true,
+    "maxRetriesPerStage": 3,
+    "parallelVideos": 4,
+    "chunkAboveTokens": 700000
+  },
+  "budget": {
+    "monthlyUsd": 150,
+    "alertAtPercent": 70,
+    "perVideoMaxUsd": 1.5,
+    "unknownOutcomeHoldMinutes": 60
+  },
+  "channels": {
+    "discovery": "push",
+    "pollIntervalMinutes": 60,
+    "seedDefaults": true,
+    "defaultSelection": [
+      "tier1",
+      "leapedge-top20"
+    ],
+    "selection": [],
+    "autoAnalyzeNewChannels": false,
+    "historicalReplay": {
+      "tiers": [
+        "tier1"
+      ],
+      "from": "2026-01-01"
+    }
+  },
+  "accountDefaults": {
+    "benchmark": "SPY",
+    "sentimentPeriodDays": 7,
+    "changeWindowDays": 30,
+    "marketFilter": [
+      "us-stock",
+      "us-etf"
+    ],
+    "defaultHorizonDays": 90
+  },
+  "leaderboard": {
+    "markets": [
+      "us-stock",
+      "us-etf",
+      "hk",
+      "cn-a",
+      "other"
+    ],
+    "minSettledForRank": 20,
+    "fdrQ": 0.05,
+    "minSettledPerTicker": 10,
+    "convictionIncluded": [
+      "high",
+      "medium"
+    ],
+    "minimumTrust": "audio-agreed"
+  },
+  "trust": {
+    "minimumLevelForToday": "audio-agreed",
+    "showExtractedInLab": true
+  },
+  "sharing": {
+    "expiry": "never",
+    "allowRevoke": true
+  },
+  "corpus": {
+    "fileSearch": true,
+    "retentionDays": 365
+  },
+  "lab": {
+    "gates": {
+      "goldPrecisionMin": 0.9,
+      "goldRecallMin": 0.8,
+      "anchorWithin2sMin": 0.95,
+      "costPerAcceptedClaimMaxUsd": 0.25,
+      "advisoryPolicy": "report-only"
+    }
+  },
+  "prompts": {
+    "version": "evidence-first.web.v7"
+  }
+}

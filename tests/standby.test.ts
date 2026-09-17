@@ -116,6 +116,41 @@ test("A 206 or 404 from TranscriptAPI never trips the breaker and never falls ba
   }
 });
 
+test("A network failure from TranscriptAPI trips the breaker as a network error and engages the standby", async () => {
+  await freshDatabase();
+  const stub = stubFetch([
+    {
+      url: "transcriptapi",
+      respond: () => {
+        throw new TypeError("fetch failed");
+      },
+    },
+    { url: "supadata", respond: supadataCaptions },
+  ]);
+  try {
+    const source = await standbyTranscript("stdbynet001", {
+      settings: settings(),
+      now: T,
+    });
+    assert.equal(
+      source?.source_kind,
+      "native_captions_supadata",
+      "an interrupted request is a vendor error, so the standby serves the captions",
+    );
+    const open = await state("transcriptapi");
+    assert.equal(
+      open?.kind,
+      "network",
+      "a rejected fetch is the vendor being down, not a video without captions",
+    );
+    assert.equal(open?.openUntil, new Date(T + 15 * minute).toISOString());
+    assert.equal(stub.calls("transcriptapi").length, 1);
+    assert.equal(stub.calls("supadata").length, 1);
+  } finally {
+    stub.restore();
+  }
+});
+
 test("Supadata requests always carry an explicit mode and never mode=auto", async () => {
   await freshDatabase();
   const stub = stubFetch([
