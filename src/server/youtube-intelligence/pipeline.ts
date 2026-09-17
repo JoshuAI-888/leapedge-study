@@ -29,6 +29,15 @@ import {
   POINTER_EVIDENCE_FORMAT,
   type MentionExtractionData,
 } from "./schemas/extraction.ts";
+import {
+  TRANSLATION_PROMPT,
+  applyTranslations,
+  parseTranslations,
+  translationPayload,
+  translationResponseSchema,
+  translationTargets,
+  type TranslatedMention,
+} from "./schemas/translation.ts";
 import { reserve, settle, retainResponse } from "./store.ts";
 import * as P from "./prompts.ts";
 import { nativeTranscript } from "./transcripts.ts";
@@ -266,6 +275,28 @@ function materializeMentions(
   }
   run.output.mentions = mentions;
   if (rejected.length) run.output.rejectedMentions = rejected;
+}
+/**
+ * The copied spans of a pointer-evidence run that still need English, and the
+ * language that decided it (spec 4.19). Called once at the end of synthesis to
+ * decide whether the translation stage exists for this run at all, and again
+ * inside it to collect the spans to send: the targets write back through the
+ * same claim, key-point and mention objects the run already holds.
+ */
+function pendingTranslations(run: Run) {
+  const source = run.output.source as SourceData;
+  const metadata = run.output.metadata as { language?: string } | undefined;
+  const language = source.language ?? metadata?.language ?? null;
+  return {
+    language,
+    targets: translationTargets({
+      claims: (run.output.claims || []) as CheckedClaim[],
+      keyPoints: (run.output.keyPoints || []) as CheckedClaim[],
+      mentions: (run.output.mentions || []) as TranslatedMention[],
+      source,
+      language,
+    }),
+  };
 }
 /**
  * One checkpointed stage of a run. `settings` is loaded once, lazily: a stage
@@ -608,6 +639,43 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
     if (warnings.length) run.output.warnings = warnings;
     if (pointer) materializeMentions(run, drafts, source);
     run.output.auditIndex = 0;
+    /**
+     * Spec 4.2 and 4.19: a run whose copied spans are not English gets one
+     * cheap pass over the copies before the critic reads them. A run with
+     * nothing to translate never enters the stage, so it neither calls nor
+     * reserves for it, and the legacy quote path never does.
+     */
+    run.stage =
+      pointer && pendingTranslations(run).targets.length
+        ? "translate"
+        : "critique";
+  } else if (run.stage === "translate") {
+    /**
+     * One call for the whole run, over the copied text only (spec 4.2): the
+     * stage receives {id, text_original} per span and may return nothing but a
+     * translation, so the evidence cannot be rewritten by the model that reads
+     * it. Every span is re-hashed afterwards against the hash recorded when it
+     * was copied, and a mismatch fails the run rather than storing evidence
+     * that no longer matches its hash.
+     */
+    const { targets, language } = pendingTranslations(run);
+    if (targets.length) {
+      const raw = await modelCall(
+        run,
+        "translate",
+        // The stage takes its model from settings.models.translation.
+        undefined,
+        (prompts as { translation?: string }).translation || TRANSLATION_PROMPT,
+        translationPayload(targets),
+        false,
+        {
+          settings: await prefs(),
+          responseSchema: translationResponseSchema,
+        },
+      );
+      applyTranslations(targets, parseTranslations(raw));
+      run.output.translation = { spans: targets.length, language };
+    }
     run.stage = "critique";
   } else if (run.stage === "critique") {
     const claims = [

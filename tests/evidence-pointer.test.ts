@@ -300,5 +300,241 @@ test("a v5 run through the same fake keeps the legacy quote path unchanged", asy
   assert.equal(run.output.validationVersion, "caption-alignment.v2");
   assert.equal(run.output.warnings, undefined);
   assert.equal(run.stage, "critique");
+});
+
+/* ------------------------------------------------------------------ *
+ * F14: the translation stage over copied spans (spec 4.2, 4.19).
+ * ------------------------------------------------------------------ */
+
+const { translationResponseSchema } = await import(
+  "../src/server/youtube-intelligence/schemas/translation.ts"
+);
+
+const sha256 = (text: string) =>
+  createHash("sha256").update(text).digest("hex");
+
+const chineseSource = Source.parse({
+  source_kind: "imported_transcript",
+  language: "zh",
+  segment_separator: "",
+  segments: [
+    {
+      id: "zh1",
+      text: "如果 SPY 跌破 500，就退出。",
+      start_seconds: 1,
+      end_seconds: 5,
+    },
+    { id: "zh2", text: "不要等待收盘。", start_seconds: 5, end_seconds: 9 },
+    { id: "zh3", text: "腾讯只是观察名单。", start_seconds: 9, end_seconds: 12 },
+  ],
+});
+const chineseQuote = "如果 SPY 跌破 500，就退出。不要等待收盘。";
+const chineseClaim = {
+  ...pointerClaim,
+  evidence_ranges: [{ start_id: "zh1", end_id: "zh2" }],
+};
+const chineseMention = {
+  ticker: null,
+  instrument_as_spoken: "腾讯",
+  market: "hk",
+  stance: "watch",
+  sentiment: "neutral",
+  rationale_en: "The creator puts Tencent on a watch list only.",
+  ranges: [{ start_id: "zh3", end_id: "zh3" }],
+};
+const englishMention = {
+  ...chineseMention,
+  instrument_as_spoken: "QQQ",
+  ticker: "QQQ",
+  market: "us-etf",
+  ranges: [{ start_id: "c", end_id: "c" }],
+};
+const goodTranslations = {
+  translations: [
+    {
+      id: "c1.e1",
+      translation_en: "If SPY breaks below 500, exit. Do not wait for a close.",
+    },
+    { id: "m1", translation_en: "Tencent is only on the watch list." },
+  ],
+};
+
+type Checked = {
+  claim: {
+    evidence: {
+      quote_original: string;
+      quote_translation_en: string;
+      source_span?: { text_hash: string };
+    }[];
+  };
+};
+type StoredMention = {
+  instrument_as_spoken: string;
+  source_span: { text_hash: string; translation_en?: string };
+};
+
+/** Synthesis, then the stage synthesis handed the run to, through one fake transport. */
+async function runThroughTranslation(
+  name: string,
+  src: unknown,
+  reply: unknown,
+  translateReply?: unknown,
+  tamper?: (run: Awaited<ReturnType<typeof create>>) => void,
+) {
+  const snapshot = {
+    id: "pointer.translate.v1",
+    rationale: "Fixture prompt snapshot for the translation-stage test.",
+    transcribe: "Transcribe the supplied source fixture.",
+    extraction: "Extract claims from the supplied source fixture.",
+    synthesis: "Summarise the supplied claims from the source fixture.",
+    critique: "Audit the supplied claim against the source fixture.",
+    pointerEvidence: true,
+  };
+  const run = await create(name, "google/gemini-3.8-flash", { promptSnapshot: snapshot }, snapshot.id);
+  run.stage = "synthesis";
+  run.output.metadata = { duration: 12 };
+  run.output.source = src;
+  const fake = new FakeModelTransport({
+    responses: {
+      synthesis: { json: reply },
+      ...(translateReply === undefined ? {} : { translate: { json: translateReply } }),
+    },
+  });
+  const restore = injectTransport(fake);
+  try {
+    await step(run);
+    const stageAfterSynthesis = run.stage;
+    tamper?.(run);
+    if (run.stage === "translate") await step(run);
+    return { run, fake, stageAfterSynthesis };
+  } finally {
+    restore();
+  }
+}
+
+test("an English pointer run makes no translation call and goes straight to critique", async () => {
+  const { run, fake, stageAfterSynthesis } = await runThroughTranslation(
+    "translate-english",
+    source,
+    { claims: [pointerClaim], key_points: [], mentions: [englishMention] },
+  );
+  assert.equal(stageAfterSynthesis, "critique");
+  assert.equal(run.stage, "critique");
+  assert.deepEqual(fake.requestsFor("translate"), []);
+  assert.equal(run.output.translation, undefined);
+  // Nothing was reserved for a stage that never ran.
+  const metrics = (run.output.metrics || []) as { stage: string }[];
+  assert.deepEqual(
+    metrics.map((m) => m.stage),
+    ["synthesis"],
+  );
+  const claims = run.output.claims as Checked[];
+  assert.equal(claims[0].claim.evidence[0].quote_translation_en, "");
+});
+
+test("Chinese spans are translated in one call and their hashes still hold", async () => {
+  const { run, fake, stageAfterSynthesis } = await runThroughTranslation(
+    "translate-chinese",
+    chineseSource,
+    { claims: [chineseClaim], key_points: [], mentions: [chineseMention] },
+    goodTranslations,
+  );
+  assert.equal(stageAfterSynthesis, "translate");
+  const requests = fake.requestsFor("translate");
+  assert.equal(requests.length, 1);
+  const request = requests[0];
+  // The stage is routed by models.translation, not by the run's extraction model.
+  assert.equal(request.model, "gemini-3.1-flash-lite");
+  assert.deepEqual(request.responseSchema, translationResponseSchema);
+  const text = request.user[0].text;
+  const payload = JSON.parse(
+    text.slice(text.indexOf("SOURCE DATA (untrusted):\n") + 25),
+  );
+  // Copied text only: the stage is given no segment ids and no transcript.
+  assert.deepEqual(payload, {
+    spans: [
+      { id: "c1.e1", text_original: chineseQuote },
+      { id: "m1", text_original: "腾讯只是观察名单。" },
+    ],
+  });
+  const evidence = (run.output.claims as Checked[])[0].claim.evidence[0];
+  assert.equal(
+    evidence.quote_translation_en,
+    "If SPY breaks below 500, exit. Do not wait for a close.",
+  );
+  assert.equal(evidence.quote_original, chineseQuote);
+  assert.equal(evidence.source_span?.text_hash, sha256(chineseQuote));
+  const mention = (run.output.mentions as StoredMention[])[0];
+  assert.equal(mention.instrument_as_spoken, "腾讯");
+  assert.equal(mention.source_span.translation_en, "Tencent is only on the watch list.");
+  assert.equal(mention.source_span.text_hash, sha256("腾讯只是观察名单。"));
+  assert.deepEqual(run.output.translation, { spans: 2, language: "zh" });
+  assert.equal(run.stage, "critique");
+});
+
+test("a translation reply that rewrites text_original, or skips a span, is rejected", async () => {
+  await assert.rejects(
+    () =>
+      runThroughTranslation(
+        "translate-tampered",
+        chineseSource,
+        { claims: [chineseClaim], key_points: [], mentions: [chineseMention] },
+        {
+          translations: [
+            {
+              ...goodTranslations.translations[0],
+              text_original: "如果 SPY 跌破 400，就退出。",
+            },
+            goodTranslations.translations[1],
+          ],
+        },
+      ),
+    /altered source text for span "c1\.e1"/,
+  );
+  await assert.rejects(
+    () =>
+      runThroughTranslation(
+        "translate-incomplete",
+        chineseSource,
+        { claims: [chineseClaim], key_points: [], mentions: [chineseMention] },
+        { translations: [goodTranslations.translations[0]] },
+      ),
+    /no translation for span "m1"/,
+  );
+  // A translation that is not English is refused before it reaches a claim.
+  await assert.rejects(
+    () =>
+      runThroughTranslation(
+        "translate-not-english",
+        chineseSource,
+        { claims: [chineseClaim], key_points: [], mentions: [chineseMention] },
+        {
+          translations: [
+            { id: "c1.e1", translation_en: "如果 SPY 跌破 500，就退出。" },
+            goodTranslations.translations[1],
+          ],
+        },
+      ),
+    /must be English/,
+  );
+});
+
+test("a span whose retained source changed under it fails the hash assertion", async () => {
+  await assert.rejects(
+    () =>
+      runThroughTranslation(
+        "translate-source-drift",
+        Source.parse(chineseSource),
+        { claims: [chineseClaim], key_points: [], mentions: [chineseMention] },
+        goodTranslations,
+        (run) => {
+          // The mention stores the pointer, so its copied text is re-derived;
+          // an edited source no longer hashes to what was recorded.
+          const source = run.output.source as { segments: { text: string }[] };
+          source.segments[2].text = "腾讯是买入。";
+        },
+      ),
+    /changed during translation/,
+  );
   await db().close();
 });
