@@ -485,6 +485,39 @@ test("withOpenRouterFallback re-issues one retryable failure and records fallbac
   // describe() stays with the primary: it is the model the call will run on.
   const described = await healthy.transport.describe(MODEL);
   assert.ok(described.contextLength > 0);
+  // A request that reads the primary's context cache is never re-issued: the
+  // other vendor has no transcript to read, so the original error surfaces.
+  const cached = attempt("5xx");
+  await assert.rejects(() =>
+    cached.transport.call({ ...request, cachedContent: "caches/abc" }),
+  );
+  assert.equal(cached.secondary.requests.length, 0);
+  // Optional capabilities are forwarded from the primary when it has them.
+  const capable = attempt(null);
+  const withCache = Object.assign(capable.primary, {
+    createCache: async () => ({ name: "caches/from-primary", model: MODEL }),
+    deleteCache: async () => undefined,
+    countTokens: async () => ({ totalTokens: 7, estimated: false }),
+  });
+  const wrapped = withOpenRouterFallback(withCache, capable.secondary);
+  assert.equal(typeof wrapped.createCache, "function");
+  assert.equal(typeof wrapped.deleteCache, "function");
+  assert.equal(typeof wrapped.countTokens, "function");
+  assert.equal((await wrapped.createCache!(MODEL, [], 300)).name, "caches/from-primary");
+  assert.equal((await wrapped.countTokens!(request)).totalTokens, 7);
+  // A primary without the capabilities leaves them undefined on the wrapper.
+  const minimal = attempt(null).primary;
+  const bare = withOpenRouterFallback(
+    {
+      name: minimal.name,
+      family: minimal.family,
+      describe: (model: string) => minimal.describe(model),
+      call: (r: typeof request) => minimal.call(r),
+    },
+    capable.secondary,
+  );
+  assert.equal(bare.createCache, undefined);
+  assert.equal(bare.countTokens, undefined);
 });
 test("A critic from the extraction model's family is refused by the settings check", () => {
   assert.equal(modelFamily("gemini-3.8-flash"), "google");

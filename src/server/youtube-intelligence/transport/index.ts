@@ -154,11 +154,26 @@ export function withOpenRouterFallback(
     name: `${primary.name}+openrouter-fallback`,
     family: primary.family,
     describe: (model: string) => primary.describe(model),
+    // Optional capabilities belong to the primary: a cache name is only
+    // meaningful to the transport that created it, and a token count is a
+    // count for the model the call will run on.
+    ...(primary.createCache
+      ? { createCache: primary.createCache.bind(primary) }
+      : {}),
+    ...(primary.deleteCache
+      ? { deleteCache: primary.deleteCache.bind(primary) }
+      : {}),
+    ...(primary.countTokens
+      ? { countTokens: primary.countTokens.bind(primary) }
+      : {}),
     async call(request: ModelRequestData): Promise<ModelResponseData> {
       try {
         return await primary.call(request);
       } catch (error) {
         if (!fallbackWorthy(error)) throw error;
+        // A request that reads the primary's context cache carries only the
+        // cache name, not the transcript; the other vendor cannot serve it.
+        if (request.cachedContent) throw error;
         const response = await secondary.call(request);
         return {
           ...response,

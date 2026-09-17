@@ -33,6 +33,9 @@ export const PromptVersion = z.object({
   extraction: z.string().min(20).max(30000),
   synthesis: z.string().min(20).max(30000),
   critique: z.string().min(20).max(30000),
+  // The translation stage (F14) reads `translation` when a version declares
+  // one and falls back to the pipeline's built-in prompt otherwise.
+  translation: z.string().min(20).max(30000).optional(),
   pointerEvidence: z.boolean().optional(),
 });
 export const Preferences = z.object({
@@ -168,6 +171,7 @@ export async function addPrompt(input: unknown) {
           p.synthesis,
           p.critique,
           ...(p.pointerEvidence === undefined ? [] : [p.pointerEvidence]),
+          ...(p.translation === undefined ? [] : [p.translation]),
         ]),
       )
       .digest("hex");
