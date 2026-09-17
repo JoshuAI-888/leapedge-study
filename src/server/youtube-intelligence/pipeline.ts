@@ -26,9 +26,12 @@ import {
 import { reserve, settle, retainResponse } from "./store.ts";
 import * as P from "./prompts.ts";
 import { nativeTranscript } from "./transcripts.ts";
-import { prompt as getPrompt } from "./research-store.ts";
+import { prompt as getPrompt, teamPreferences } from "./research-store.ts";
+import type { TeamPreferencesData } from "../../features/youtube-intelligence/settings.ts";
 import {
   transportFor,
+  modelIdFor,
+  assertCriticIndependent,
   ModelRequest,
   type ModelResponseData,
   type TextPart,
@@ -87,18 +90,30 @@ export const extractionPayload = (
  * hands it to the stage's transport; the ledger reservation and settlement,
  * the retained raw response and the run metrics all happen here, above the
  * transport, so production runs and experiments stay comparable.
+ *
+ * The team preferences decide the transport (spec 4.1) and, for a stage the
+ * run does not pin a model for, the model id. `options.settings` is the
+ * document step() already loaded, and the seam a test uses to route a stage
+ * without writing a settings document; without it the preferences are read
+ * here.
  */
 export async function modelCall(
   run: Run,
   stage: string,
-  model: string,
+  model: string | undefined,
   prompt: string,
   payload: unknown,
   video = false,
-  options: { responseSchema?: Record<string, unknown> } = {},
+  options: {
+    responseSchema?: Record<string, unknown>;
+    settings?: TeamPreferencesData;
+  } = {},
 ) {
-  const transport = transportFor(stage);
-  const spec = await transport.describe(model);
+  const settings = options.settings ?? (await teamPreferences());
+  const modelId = model || modelIdFor(stage, settings);
+  if (!modelId) throw Error(`No model is configured for the "${stage}" stage.`);
+  const transport = transportFor(stage, settings);
+  const spec = await transport.describe(modelId);
   const user: TextPart[] = [
     {
       type: "text",
@@ -142,7 +157,7 @@ export async function modelCall(
   );
   const request = ModelRequest.parse({
     stage,
-    model,
+    model: modelId,
     user,
     ...(video ? { video: { type: "video", url: run.url } } : {}),
     ...(options.responseSchema ? { responseSchema: options.responseSchema } : {}),
@@ -177,7 +192,15 @@ export async function modelCall(
   run.output.metrics = [...history, { stage, ...metrics }];
   return value;
 }
-export async function step(run: Run) {
+/**
+ * One checkpointed stage of a run. `settings` is loaded once, lazily: a stage
+ * that makes no model call (an imported source held for review) reads no
+ * settings document, and a stage that makes several reads one. A caller may
+ * supply the document — tests route a stage that way without writing one.
+ */
+export async function step(run: Run, settings?: TeamPreferencesData) {
+  let loaded = settings;
+  const prefs = async () => (loaded ??= await teamPreferences());
   run.output.pipelineRevision = "institutional.v1";
   if (run.input.task === "entity-classification") {
     const { entityStep } = await import("./entities.ts");
@@ -257,12 +280,13 @@ export async function step(run: Run) {
         ...(await modelCall(
           run,
           "transcribe",
-          String(
-            run.input.transcriptionModel || "google/gemini-3.1-flash-lite",
-          ),
+          run.input.transcriptionModel
+            ? String(run.input.transcriptionModel)
+            : undefined,
           prompts.transcribe,
           {},
           true,
+          { settings: await prefs() },
         )),
         source_kind: "model_generated_transcript",
       });
@@ -310,11 +334,14 @@ export async function step(run: Run) {
     const raw = await modelCall(
       run,
       `transcribe-window-${chunks.length}`,
-      String(run.input.transcriptionModel || "google/gemini-3.1-flash-lite"),
+      run.input.transcriptionModel
+        ? String(run.input.transcriptionModel)
+        : undefined,
       prompts.transcribe +
         "\nTranscribe ONLY speech in the requested time window. Use absolute seconds from the beginning of the video, not relative chunk times. Do not reproduce speech outside this window. Do not fill silence. Empty segments is valid only if this window contains no speech. Return concise JSON; no reasoning narrative.",
       { window_start_seconds: start, window_end_seconds: end },
       true,
+      { settings: await prefs() },
     );
     const parsed = z
       .object({
@@ -378,6 +405,7 @@ export async function step(run: Run) {
           '\nTranscribe ONLY the supplied missing time windows from actual audio, preserving original language and absolute video timestamps. Do not summarize, invent speech, or fill silent time. Return the same source JSON schema. If the windows contain no speech, return {error:"No missing speech available"}.',
         { missing_windows_seconds: ranges },
         true,
+        { settings: await prefs() },
       ),
     );
     const additions = repair.segments
@@ -431,6 +459,8 @@ export async function step(run: Run) {
     const raw = await modelCall(
       run,
       chunks.length === 1 ? "synthesis" : `synthesis-chunk-${chunkIndex}`,
+      // The run records the extraction model it was created with; the stages
+      // it names no model for take theirs from the settings.
       run.model,
       prompts.synthesis +
         "\n" +
@@ -440,7 +470,10 @@ export async function step(run: Run) {
           : ""),
       extractionPayload(chunks[chunkIndex], chunkIndex, chunks.length, pointer),
       false,
-      pointer ? { responseSchema: extractionResponseSchema } : {},
+      {
+        settings: await prefs(),
+        ...(pointer ? { responseSchema: extractionResponseSchema } : {}),
+      },
     );
     const draft = pointer
       ? (() => {
@@ -506,6 +539,10 @@ export async function step(run: Run) {
     }
     const item = claims[i];
     if (!item.reasons.length) {
+      const team = await prefs();
+      // Spec 4.1: a critic from the extractor's family fails the same way the
+      // extractor did, so a misconfiguration stops the run before it is billed.
+      assertCriticIndependent(team);
       const audit = z
         .object({
           verdict: z.enum(["accept", "reject"]),
@@ -517,7 +554,7 @@ export async function step(run: Run) {
           await modelCall(
             run,
             `critique-${i}`,
-            String(run.input.criticModel || run.model),
+            run.input.criticModel ? String(run.input.criticModel) : undefined,
             prompts.critique +
               (item.id.startsWith("k")
                 ? "\nThis is a contextual key point. It need not recommend a trade. Audit evidence, attribution and meaning; do not reject solely for absence of an action."
@@ -531,6 +568,8 @@ export async function step(run: Run) {
                 horizon: c.claim.horizon_en,
               })),
             },
+            false,
+            { settings: team },
           ),
         );
       item.audit = audit;

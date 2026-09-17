@@ -9,6 +9,7 @@ import { requestHash, loadFrozen } from "./helpers/frozen.ts";
 import { freshDatabase } from "./helpers/db.ts";
 import { FakeModelTransport } from "../src/server/youtube-intelligence/transport/fake.ts";
 import { injectTransport } from "../src/server/youtube-intelligence/transport/index.ts";
+import { teamDefaults } from "../src/features/youtube-intelligence/settings.ts";
 import {
   REDACTED,
   parseFreezeArgs,
@@ -138,6 +139,12 @@ test("RecordingTransport freezes one envelope per model stage, scrubs keys and r
       readdirSync(dir).sort(),
       recorded.map((r) => basename(r.file)).sort(),
     );
+    const critic = teamDefaults().models.critique.id;
+    const EXPECTED_MODEL: Record<string, string> = {
+      synthesis: MODEL,
+      "critique-0": critic,
+      "critique-1": critic,
+    };
     for (const record of recorded) {
       // The file is named for the hash of the request the transport received.
       const request = fake.requestsFor(record.stage)[0];
@@ -145,7 +152,13 @@ test("RecordingTransport freezes one envelope per model stage, scrubs keys and r
       assert.equal(basename(record.file), `${record.stage}-${record.hash}.json`);
       assert.equal(record.bytes, statSync(record.file).size);
       const envelope = loadFrozen(record.stage, record.hash, dir);
-      assert.equal(envelope.model, MODEL);
+      // The envelope records the model the request ran on. Since F11 that is
+      // the stage's configured model: this run pins no criticModel, so the
+      // critique stages run the team's configured critic while synthesis runs
+      // the run's own extraction model.
+      const expected = EXPECTED_MODEL[record.stage];
+      assert.equal(request.model, expected, `${record.stage} ran on ${expected}`);
+      assert.equal(envelope.model, expected);
       assert.equal(envelope.note, "unit fixture");
       assert.ok(Date.parse(envelope.capturedAt) > 0);
       assert.ok(envelope.response, "the provider's raw response is retained");

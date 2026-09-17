@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { modelFamily } from "./model-family.ts";
 /**
  * Settings schemas from spec section 6.
  *
@@ -398,6 +399,16 @@ export function migrateLegacyPreferences(input: unknown): {
       id: old.transcriptionModel,
       transport: old.nativeGoogleExperimental ? "google-native" : "openrouter",
     };
+  // The legacy document has no critic-family requirement, and every model it
+  // could name is a Google one, so carrying the v2 default over would leave
+  // the migrated team rejecting its own critic on the first critique call.
+  // Spec 4.1: a Google-only configuration remains valid; the requirement is a
+  // setting an administrator turns on once a cross-family critic is chosen.
+  if (
+    modelFamily(team.models.critique.id) ===
+    modelFamily(team.models.extraction.id)
+  )
+    team.models.critique.requireDifferentFamily = false;
   if (old.promptVersion) team.prompts.version = old.promptVersion;
   if (old.autoPullEnabled !== undefined)
     team.channels.discovery = old.autoPullEnabled ? "poll" : "push";

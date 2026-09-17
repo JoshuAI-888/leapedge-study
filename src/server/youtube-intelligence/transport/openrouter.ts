@@ -9,11 +9,17 @@ import {
   type ModelTransport,
 } from "./types.ts";
 /**
- * OpenRouter chat/completions, moved out of pipeline.ts modelCall with the
- * request body byte-for-byte unchanged. The per-call catalogue download, the
- * "Google AI Studio" pin for video and the json_object response format are
- * kept here on purpose; F11 replaces them with a cached price table and
- * responseSchema.
+ * OpenRouter chat/completions (spec 4.1).
+ *
+ * The body is the one pipeline.ts modelCall used to build inline, minus the
+ * two pins F11 removed: `response_format: {type: "json_object"}`, which asked
+ * for "some JSON" and enforced nothing, and `provider.only: ["Google AI
+ * Studio"]`, which paid a markup to reach the endpoint the native transport
+ * now calls directly. A request that carries a responseSchema asks for
+ * strict `json_schema` output instead; a request without one says nothing
+ * about the format and the prompt remains the only instruction.
+ * `allow_fallbacks: false` stays: a silent reroute to another provider would
+ * make two runs incomparable.
  */
 const CATALOGUE_URL = "https://openrouter.ai/api/v1/models";
 const COMPLETIONS_URL = "https://openrouter.ai/api/v1/chat/completions";
@@ -72,6 +78,10 @@ export function fromOpenRouter(data: unknown): ModelResponseData {
     raw: data,
   };
 }
+/** A schema name the API accepts: the stage, with anything outside [A-Za-z0-9_-] replaced. */
+function schemaName(stage: string) {
+  return stage.replace(/[^A-Za-z0-9_-]/g, "_");
+}
 export type OpenRouterOptions = {
   apiKey?: string;
   timeoutMs?: number;
@@ -125,7 +135,7 @@ export class OpenRouterTransport implements ModelTransport {
       supportedEfforts: spec.reasoning?.supported_efforts ?? [],
     };
   }
-  /** The chat/completions body for a request, exactly as modelCall used to build it. */
+  /** The chat/completions body for a request. */
   body(request: ModelRequestData) {
     const r = ModelRequest.parse(request);
     const content: unknown[] = r.user.map((p) => ({ type: "text", text: p.text }));
@@ -143,12 +153,19 @@ export class OpenRouterTransport implements ModelTransport {
       max_tokens: r.maxOutputTokens,
       temperature: r.temperature,
       ...(r.reasoningEffort ? { reasoning: { effort: r.reasoningEffort } } : {}),
-      response_format: { type: "json_object" },
-      provider: {
-        allow_fallbacks: false,
-        require_parameters: true,
-        ...(r.video ? { only: ["Google AI Studio"] } : {}),
-      },
+      ...(r.responseSchema
+        ? {
+            response_format: {
+              type: "json_schema",
+              json_schema: {
+                name: schemaName(r.stage),
+                schema: r.responseSchema,
+                strict: true,
+              },
+            },
+          }
+        : {}),
+      provider: { allow_fallbacks: false, require_parameters: true },
     };
   }
   async call(request: ModelRequestData): Promise<ModelResponseData> {

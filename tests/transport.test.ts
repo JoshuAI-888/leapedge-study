@@ -23,6 +23,11 @@ import {
 import {
   transportFor,
   injectTransport,
+  withOpenRouterFallback,
+  assertCriticIndependent,
+  modelFamily,
+  modelIdFor,
+  stageKey,
 } from "../src/server/youtube-intelligence/transport/index.ts";
 import {
   GoogleNativeTransport,
@@ -34,7 +39,10 @@ import {
   defaultPrice,
   isPriced,
 } from "../src/server/youtube-intelligence/transport/prices.ts";
-import { teamDefaults } from "../src/features/youtube-intelligence/settings.ts";
+import {
+  teamDefaults,
+  migrateLegacyPreferences,
+} from "../src/features/youtube-intelligence/settings.ts";
 
 const MODEL = "google/gemini-3.8-flash";
 const catalogue = {
@@ -80,7 +88,10 @@ const textRequest = ModelRequest.parse({
   maxOutputTokens: 16000,
   temperature: 0,
 });
-/** The exact chat/completions body modelCall sent before the transport existed. */
+/**
+ * The chat/completions body after F11: no json_object response format and no
+ * provider.only pin, even for a video request.
+ */
 const expectedVideoBody = {
   model: MODEL,
   messages: [
@@ -98,12 +109,7 @@ const expectedVideoBody = {
   max_tokens: 3000,
   temperature: 0,
   reasoning: { effort: "low" },
-  response_format: { type: "json_object" },
-  provider: {
-    allow_fallbacks: false,
-    require_parameters: true,
-    only: ["Google AI Studio"],
-  },
+  provider: { allow_fallbacks: false, require_parameters: true },
 };
 const expectedTextBody = {
   model: MODEL,
@@ -117,7 +123,6 @@ const expectedTextBody = {
   ],
   max_tokens: 16000,
   temperature: 0,
-  response_format: { type: "json_object" },
   provider: { allow_fallbacks: false, require_parameters: true },
 };
 function withKey<T>(fn: () => Promise<T>) {
@@ -128,7 +133,7 @@ function withKey<T>(fn: () => Promise<T>) {
     else process.env.OPENROUTER_API_KEY = old;
   });
 }
-test("OpenRouter transport serialises the same request body as the inline modelCall did", async () => {
+test("OpenRouter transport serialises a request without a json_object format or a provider pin", async () => {
   await withKey(async () => {
     const stub = stubFetch([
       {
@@ -347,40 +352,275 @@ test("FakeModelTransport replays frozen files named by the helper's request hash
   );
   await assert.rejects(() => fake.call(videoRequest), /malformed/);
 });
-test("transportFor returns OpenRouter by default and honours the injected seam", () => {
-  const stock = transportFor("synthesis");
-  assert.ok(stock instanceof OpenRouterTransport);
-  assert.equal(transportFor("critique-0", { transport: { default: "openrouter" } }).family, "openrouter");
-  // F10 registered the native transport in the stock map; the default is still
-  // OpenRouter, because per-stage routing only arrives with F11.
-  assert.ok(
-    transportFor("synthesis", { transport: { default: "google-native" } }) instanceof
-      GoogleNativeTransport,
-  );
+test("transportFor routes each stage by its settings key and honours the injected seam", () => {
+  // Spec 4.1: the Gemini stages go native, the critic and the context check
+  // go through OpenRouter. The defaults in settings 6.2 already say so, so a
+  // team that changed nothing gets that routing.
+  const team = teamDefaults();
+  const familyOf = (stage: string) => transportFor(stage, team).family;
+  assert.equal(familyOf("synthesis"), "google-native");
+  assert.equal(familyOf("synthesis-chunk-2"), "google-native");
+  assert.equal(familyOf("extraction"), "google-native");
+  assert.equal(familyOf("transcribe"), "google-native");
+  assert.equal(familyOf("transcribe-window-0"), "google-native");
+  assert.equal(familyOf("native-source"), "google-native");
+  assert.equal(familyOf("translate"), "google-native");
+  assert.equal(familyOf("audio-review"), "google-native");
+  assert.equal(familyOf("critique-0"), "openrouter");
+  assert.equal(familyOf("context"), "openrouter");
+  // A stage with no settings key of its own follows transport.default.
+  assert.equal(familyOf("source-repair"), "google-native");
+  assert.ok(transportFor("critique-3", team) instanceof OpenRouterTransport);
+  assert.ok(transportFor("synthesis", team) instanceof GoogleNativeTransport);
+  // The stage's own key beats the default, in either direction.
+  const mixed = teamDefaults();
+  mixed.transport.default = "openrouter";
+  mixed.models.extraction = { id: "gemini-3.8-flash", transport: "google-native" };
+  mixed.models.transcription = { id: "gpt-4o-mini", transport: "openrouter" };
+  assert.equal(transportFor("synthesis", mixed).family, "google-native");
+  assert.equal(transportFor("transcribe", mixed).family, "openrouter");
+  assert.equal(transportFor("source-repair", mixed).family, "openrouter");
+  // Stage keys also name the model id a stage runs when the run pins none.
+  assert.equal(modelIdFor("synthesis-chunk-1", team), team.models.extraction.id);
+  assert.equal(modelIdFor("critique-7", team), team.models.critique.id);
+  assert.equal(modelIdFor("transcribe-window-4", team), team.models.transcription.id);
+  assert.equal(modelIdFor("audio-review", team), team.models.audioReview.id);
+  assert.equal(modelIdFor("translate", team), team.models.translation.id);
+  assert.equal(modelIdFor("context", team), team.models.context.id);
   assert.equal(
-    transportFor("extraction", { transport: { default: "google-native" } }).family,
-    "google-native",
+    modelIdFor("source-repair", team),
+    team.models.extraction.id,
+    "an unkeyed stage falls back to the general-purpose extraction model",
   );
+  assert.equal(modelIdFor("synthesis", {}), undefined);
+  assert.equal(stageKey("experiment-x"), undefined);
+  // With no settings at all, the transport that needs no per-stage configuration.
+  assert.ok(transportFor("synthesis") instanceof OpenRouterTransport);
+  assert.equal(transportFor("critique-0", { transport: { default: "openrouter" } }).family, "openrouter");
   assert.throws(() => transportFor("synthesis", { transport: { default: "carrier-pigeon" } }));
   const fake = new FakeModelTransport();
   const restore = injectTransport(fake);
   try {
     assert.equal(transportFor("synthesis"), fake);
-    assert.equal(transportFor("critique-0", { transport: { default: "google-native" } }), fake);
+    assert.equal(transportFor("critique-0", team), fake);
   } finally {
     restore();
   }
   assert.ok(transportFor("synthesis") instanceof OpenRouterTransport);
-  const seen: string[] = [];
-  const restoreFactory = injectTransport((stage) => {
-    seen.push(stage);
+  const seen: { stage: string; critique?: string }[] = [];
+  const restoreFactory = injectTransport((stage, settings) => {
+    seen.push({ stage, critique: settings.models?.critique?.id });
     return fake;
   });
   try {
-    transportFor("audio-review");
-    assert.deepEqual(seen, ["audio-review"]);
+    transportFor("audio-review", team);
+    assert.deepEqual(seen, [
+      { stage: "audio-review", critique: team.models.critique.id },
+    ]);
   } finally {
     restoreFactory();
+  }
+});
+test("The OpenRouter fallback wraps a native stage only when the team enabled it", () => {
+  const team = teamDefaults();
+  assert.equal(transportFor("synthesis", team).name, "google-native");
+  const withFallback = teamDefaults();
+  withFallback.transport.fallbackToOpenRouter = true;
+  assert.equal(
+    transportFor("synthesis", withFallback).name,
+    "google-native+openrouter-fallback",
+  );
+  assert.equal(transportFor("synthesis", withFallback).family, "google-native");
+  assert.equal(
+    transportFor("critique-0", withFallback).name,
+    "openrouter",
+    "a stage already on OpenRouter has nothing to fall back to",
+  );
+});
+test("withOpenRouterFallback re-issues one retryable failure and records fallbackUsed", async () => {
+  const request = { ...textRequest, stage: "transcribe" };
+  const secondaryReply = { json: { segments: ["from openrouter"] } };
+  const attempt = (failure: "429" | "5xx" | "timeout" | "unknown" | null) => {
+    const primary = new FakeModelTransport({
+      responses: { transcribe: { json: { segments: ["from google"] } } },
+    });
+    if (failure) primary.failOn(1, failure);
+    const secondary = new FakeModelTransport({
+      responses: { transcribe: secondaryReply },
+    });
+    return { primary, secondary, transport: withOpenRouterFallback(primary, secondary) };
+  };
+  for (const kind of ["429", "5xx", "timeout"] as const) {
+    const { primary, secondary, transport } = attempt(kind);
+    const response = await transport.call(request);
+    assert.deepEqual(JSON.parse(response.text), { segments: ["from openrouter"] });
+    const raw = response.raw as Record<string, unknown>;
+    assert.equal(raw.fallbackUsed, true, `${kind} should fall back`);
+    assert.equal(raw.fallbackFrom, "fake");
+    assert.ok(typeof raw.fallbackReason === "string");
+    assert.equal(primary.requests.length, 1);
+    assert.equal(secondary.requests.length, 1, "re-issued exactly once");
+    assert.deepEqual(secondary.requests[0], request, "the same request, byte for byte");
+  }
+  // A non-retryable failure and a failure that is not a TransportError at all
+  // both stop the call; paying a second vendor would not help.
+  const unknown = attempt("unknown");
+  await assert.rejects(() => unknown.transport.call(request), /unknown reason/);
+  assert.equal(unknown.secondary.requests.length, 0);
+  const plain = attempt(null);
+  const restoreCall = plain.primary.call.bind(plain.primary);
+  plain.primary.call = async () => {
+    throw Error("the client blew up");
+  };
+  await assert.rejects(() => plain.transport.call(request), /the client blew up/);
+  assert.equal(plain.secondary.requests.length, 0);
+  plain.primary.call = restoreCall;
+  // A healthy primary neither calls the secondary nor marks the response.
+  const healthy = attempt(null);
+  const response = await healthy.transport.call(request);
+  assert.deepEqual(JSON.parse(response.text), { segments: ["from google"] });
+  assert.equal((response.raw as Record<string, unknown>).fallbackUsed, undefined);
+  assert.equal(healthy.secondary.requests.length, 0);
+  // describe() stays with the primary: it is the model the call will run on.
+  const described = await healthy.transport.describe(MODEL);
+  assert.ok(described.contextLength > 0);
+});
+test("A critic from the extraction model's family is refused by the settings check", () => {
+  assert.equal(modelFamily("gemini-3.8-flash"), "google");
+  assert.equal(modelFamily("google/gemini-3.1-flash-lite"), "google");
+  assert.equal(modelFamily("anthropic/claude-sonnet-5"), "anthropic");
+  assert.equal(modelFamily("openai/gpt-5-mini"), "openai");
+  assert.equal(modelFamily("openai/o3-mini"), "openai");
+  assert.equal(modelFamily("mistralai/mistral-large"), "mistral");
+  assert.equal(modelFamily("meta-llama/llama-4-maverick"), "meta");
+  assert.equal(modelFamily("deepseek/deepseek-chat"), "other");
+  // The defaults pair a Gemini extractor with an Anthropic critic.
+  assert.doesNotThrow(() => assertCriticIndependent(teamDefaults()));
+  assert.doesNotThrow(() => assertCriticIndependent({}));
+  const sameFamily = teamDefaults();
+  sameFamily.models.critique.id = "google/gemini-3.5-flash";
+  assert.throws(
+    () => assertCriticIndependent(sameFamily),
+    /same family \(google\) as the extraction model/,
+  );
+  const allowed = teamDefaults();
+  allowed.models.critique.id = "google/gemini-3.5-flash";
+  allowed.models.critique.requireDifferentFamily = false;
+  assert.doesNotThrow(() => assertCriticIndependent(allowed));
+});
+test("A migrated legacy team may audit itself: the family requirement is off when it cannot be met", async () => {
+  // Every id the old document could name is a Google one, so a migration that
+  // kept the v2 default on would make the first critique call of every
+  // migrated install throw instead of auditing (spec 4.1: a Google-only
+  // configuration remains valid).
+  const legacy = migrateLegacyPreferences({
+    model: "google/gemini-3.8-flash",
+    criticModel: "google/gemini-3.5-flash",
+  }).team;
+  assert.equal(legacy.models.critique.requireDifferentFamily, false);
+  assert.doesNotThrow(() => assertCriticIndependent(legacy));
+  // The legacy defaults name no extraction model, so the default Gemini
+  // extractor meets the migrated Gemini critic: same case, same answer.
+  const criticOnly = migrateLegacyPreferences({
+    criticModel: "google/gemini-3.5-flash",
+  }).team;
+  assert.equal(modelFamily(criticOnly.models.extraction.id), "google");
+  assert.doesNotThrow(() => assertCriticIndependent(criticOnly));
+  // A cross-family legacy pair can meet the requirement, so it keeps it.
+  const crossFamily = migrateLegacyPreferences({
+    model: "google/gemini-3.8-flash",
+    criticModel: "anthropic/claude-sonnet-5",
+  }).team;
+  assert.equal(crossFamily.models.critique.requireDifferentFamily, true);
+  assert.doesNotThrow(() => assertCriticIndependent(crossFamily));
+  // The same holds through the store, which is where a real install migrates.
+  await freshDatabase();
+  const R = await import("../src/server/youtube-intelligence/research-store.ts");
+  await R.savePreferences({
+    timezone: "Pacific/Auckland",
+    model: "google/gemini-3.8-flash",
+    criticModel: "google/gemini-3.5-flash",
+    transcriptionModel: "google/gemini-3.1-flash-lite",
+    promptVersion: "evidence-first.web.v5",
+    theme: "light",
+    digestHour: 8,
+    digestEnabled: false,
+    autoPullEnabled: false,
+  });
+  const migrated = await R.teamPreferences();
+  assert.equal(migrated.models.critique.id, "google/gemini-3.5-flash");
+  assert.doesNotThrow(() => assertCriticIndependent(migrated));
+});
+test("The critique stage refuses a same-family critic before it bills a call", async () => {
+  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const claim = {
+    thesis_en: "The creator is buying this name.",
+    stance: "long",
+    horizon_en: "into next year",
+    evidence: [{ segment_id: "s1", quote_original: "q", quote_translation_en: "q" }],
+  };
+  const run = {
+    id: "critic-family",
+    videoId: "wkAqHlYL7bQ",
+    url: "https://www.youtube.com/watch?v=wkAqHlYL7bQ",
+    model: MODEL,
+    promptVersion: "v1",
+    title: "Fixture",
+    status: "running",
+    stage: "critique",
+    createdAt: "",
+    updatedAt: "",
+    error: null,
+    input: {},
+    output: {
+      auditIndex: 0,
+      claims: [{ id: "c1", claim, passed: false, reasons: [] }],
+      source: { source_kind: "imported_transcript", segments: [] },
+    },
+    cost: 0,
+  } as unknown as Parameters<typeof step>[0];
+  const sameFamily = teamDefaults();
+  sameFamily.models.critique.id = "google/gemini-3.8-flash";
+  const fake = new FakeModelTransport();
+  const restore = injectTransport(fake);
+  try {
+    await assert.rejects(() => step(run, sameFamily), /same family \(google\)/);
+    assert.equal(fake.requests.length, 0, "no critique call was made");
+  } finally {
+    restore();
+  }
+});
+test("The OpenRouter body asks for strict json_schema only when the request carries one", async () => {
+  const transport = new OpenRouterTransport();
+  const schema = {
+    type: "object",
+    properties: { claims: { type: "array", items: { type: "string" } } },
+    required: ["claims"],
+    additionalProperties: false,
+  };
+  const withSchema = transport.body(
+    ModelRequest.parse({ ...textRequest, stage: "synthesis-chunk-1", responseSchema: schema }),
+  ) as Record<string, unknown>;
+  assert.deepEqual(withSchema.response_format, {
+    type: "json_schema",
+    json_schema: { name: "synthesis-chunk-1", schema, strict: true },
+  });
+  const without = transport.body(textRequest) as Record<string, unknown>;
+  assert.equal(
+    without.response_format,
+    undefined,
+    "no responseSchema means no response_format: json_object enforced nothing and is gone",
+  );
+  // provider.only pinned OpenRouter to one upstream; the native transport
+  // reaches it directly now, so the pin is gone from every request shape.
+  for (const body of [withSchema, without, transport.body(videoRequest)]) {
+    const text = JSON.stringify(body);
+    assert.ok(!text.includes('"only"'), "no provider.only in the request body");
+    assert.ok(!text.includes("json_object"));
+    assert.deepEqual((body as { provider: unknown }).provider, {
+      allow_fallbacks: false,
+      require_parameters: true,
+    });
   }
 });
 test("modelCall builds a ModelRequest, calls the transport and keeps the ledger, retention and metrics above it", async () => {
@@ -496,6 +736,58 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
     assert.equal(stub.log.length, 0, "no HTTP call reaches fetch through the fake transport");
   } finally {
     stub.restore();
+    restore();
+    if (oldBudget === undefined) delete process.env.YTI_BUDGET_USD;
+    else process.env.YTI_BUDGET_USD = oldBudget;
+    await d.close();
+  }
+});
+test("modelCall takes the model id and the transport from the settings when the run pins none", async () => {
+  const d = await freshDatabase();
+  const oldBudget = process.env.YTI_BUDGET_USD;
+  process.env.YTI_BUDGET_USD = "10";
+  const { create } = await import("../src/server/youtube-intelligence/store.ts");
+  const { modelCall } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const fake = new FakeModelTransport({
+    responses: {
+      "critique-0": { json: { verdict: "accept" } },
+      synthesis: { json: { claims: [] } },
+      transcribe: { json: { segments: [] } },
+    },
+  });
+  const routed: string[] = [];
+  const restore = injectTransport((stage, settings) => {
+    routed.push(`${stage}->${settings.models?.[stageKey(stage) ?? "extraction"]?.transport}`);
+    return fake;
+  });
+  const settings = teamDefaults();
+  try {
+    const run = await create("settings-routing", MODEL, {}, "fixture");
+    await modelCall(run, "critique-0", undefined, "CRITIC", { claim: 1 }, false, {
+      settings,
+    });
+    assert.equal(
+      fake.requestsFor("critique-0")[0].model,
+      settings.models.critique.id,
+      "an unpinned critique runs the configured critic, not the extraction model",
+    );
+    await modelCall(run, "transcribe", undefined, "T", {}, false, { settings });
+    assert.equal(
+      fake.requestsFor("transcribe")[0].model,
+      settings.models.transcription.id,
+    );
+    await modelCall(run, "synthesis", MODEL, "P", { a: 1 }, false, { settings });
+    assert.equal(
+      fake.requestsFor("synthesis")[0].model,
+      MODEL,
+      "a model the run pins still wins over the settings",
+    );
+    assert.deepEqual(routed, [
+      "critique-0->openrouter",
+      "transcribe->google-native",
+      "synthesis->google-native",
+    ]);
+  } finally {
     restore();
     if (oldBudget === undefined) delete process.env.YTI_BUDGET_USD;
     else process.env.YTI_BUDGET_USD = oldBudget;
