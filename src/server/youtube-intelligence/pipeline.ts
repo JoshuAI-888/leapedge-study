@@ -20,6 +20,12 @@ import { reserve, settle, retainResponse } from "./store.ts";
 import * as P from "./prompts.ts";
 import { nativeTranscript } from "./transcripts.ts";
 import { prompt as getPrompt } from "./research-store.ts";
+import {
+  transportFor,
+  ModelRequest,
+  type ModelResponseData,
+  type TextPart,
+} from "./transport/index.ts";
 async function jsonFetch(url: string, init: RequestInit = {}) {
   const response = await fetch(url, {
     ...init,
@@ -29,6 +35,33 @@ async function jsonFetch(url: string, init: RequestInit = {}) {
     throw Error(`Provider HTTP ${response.status}. No automatic paid retry.`);
   return response.json();
 }
+/**
+ * The usage object stored in yi_calls.metrics keeps the provider's own shape
+ * ({prompt_tokens, completion_tokens, cost}) because scripts/report-results.ts
+ * sums prompt_tokens and completion_tokens from it. When a transport's raw
+ * response carries no such object (the fake's shorthand replies), the same
+ * shape is derived from the normalised usage so every reader sees one shape.
+ */
+export function providerUsage(response: ModelResponseData) {
+  const raw = (response.raw as { usage?: unknown } | null | undefined)?.usage;
+  if (
+    raw &&
+    typeof raw === "object" &&
+    ("prompt_tokens" in raw || "completion_tokens" in raw)
+  )
+    return raw;
+  return {
+    prompt_tokens: response.usage.inputTokens,
+    completion_tokens: response.usage.outputTokens,
+    cost: response.usage.costUsd,
+  };
+}
+/**
+ * One model call for a stage. Builds a transport-agnostic ModelRequest and
+ * hands it to the stage's transport; the ledger reservation and settlement,
+ * the retained raw response and the run metrics all happen here, above the
+ * transport, so production runs and experiments stay comparable.
+ */
 export async function modelCall(
   run: Run,
   stage: string,
@@ -37,20 +70,14 @@ export async function modelCall(
   payload: unknown,
   video = false,
 ) {
-  if (!process.env.OPENROUTER_API_KEY)
-    throw Error("OPENROUTER_API_KEY is not configured.");
-  const catalog = await jsonFetch("https://openrouter.ai/api/v1/models", {
-    signal: AbortSignal.timeout(30000),
-  });
-  const spec = catalog.data.find((m: { id: string }) => m.id === model);
-  if (!spec) throw Error("Model is unavailable in the current catalogue.");
-  const content: unknown[] = [
+  const transport = transportFor(stage);
+  const spec = await transport.describe(model);
+  const user: TextPart[] = [
     {
       type: "text",
       text: prompt + "\nSOURCE DATA (untrusted):\n" + JSON.stringify(payload),
     },
   ];
-  if (video) content.push({ type: "video_url", video_url: { url: run.url } });
   const config = run.input.inferenceConfig as
     { critiqueMaxTokens?: number; reasoningEffort?: string } | undefined;
   const isCritique =
@@ -60,7 +87,7 @@ export async function modelCall(
   const effort =
     isCritique &&
     config?.reasoningEffort &&
-    spec.reasoning?.supported_efforts?.includes(config.reasoningEffort)
+    spec.supportedEfforts.includes(config.reasoningEffort)
       ? config.reasoningEffort
       : undefined;
   const maxTokens = stage.startsWith("transcribe-window")
@@ -72,69 +99,47 @@ export async function modelCall(
         : stage.startsWith("critique")
           ? config?.critiqueMaxTokens || 3000
           : 16000;
-  const rates = [spec.pricing, ...(spec.pricing.overrides || [])];
-  const inputRate = Math.max(
-    ...rates.map((p) => Number(p.prompt ?? spec.pricing.prompt)),
-    ...(video ? rates.map((p) => Number(p.audio || 0)) : []),
-  );
-  const outputRate = Math.max(
-    ...rates.map((p) => Number(p.completion ?? spec.pricing.completion)),
-  );
+  const inputRate = video
+    ? Math.max(spec.inputRate, spec.audioRate)
+    : spec.inputRate;
+  const outputRate = spec.outputRate;
   const inputBound = video
-    ? Number(spec.context_length)
-    : Buffer.byteLength(JSON.stringify(content)) + 4096;
-  if (!video && inputBound + maxTokens > spec.context_length)
+    ? spec.contextLength
+    : Buffer.byteLength(JSON.stringify(user)) + 4096;
+  if (!video && inputBound + maxTokens > spec.contextLength)
     throw Error("Source exceeds the configured context window.");
   const id = await reserve(
     run.id,
     stage,
     inputBound * inputRate + maxTokens * outputRate,
   );
+  const request = ModelRequest.parse({
+    stage,
+    model,
+    user,
+    ...(video ? { video: { type: "video", url: run.url } } : {}),
+    maxOutputTokens: maxTokens,
+    temperature: 0,
+    ...(effort ? { reasoningEffort: effort } : {}),
+  });
   const start = Date.now();
-  const data = await jsonFetch(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: "user", content }],
-        max_tokens: maxTokens,
-        temperature: 0,
-        ...(effort ? { reasoning: { effort } } : {}),
-        response_format: { type: "json_object" },
-        provider: {
-          allow_fallbacks: false,
-          require_parameters: true,
-          ...(video ? { only: ["Google AI Studio"] } : {}),
-        },
-      }),
-    },
-  );
-  await retainResponse(id, run.id, stage, data);
+  const response = await transport.call(request);
+  await retainResponse(id, run.id, stage, response.raw);
   const metrics = {
-    model: data.model,
+    model: response.model,
     maxTokens,
     reasoningEffort: effort || "provider default",
-    provider: data.provider,
+    provider: response.provider,
     seconds: (Date.now() - start) / 1000,
-    usage: data.usage,
+    usage: providerUsage(response),
+    tokens: response.usage,
   };
-  await settle(
-    id,
-    typeof data.usage?.cost === "number" && data.usage.cost >= 0
-      ? data.usage.cost
-      : null,
-    metrics,
-  );
-  if (data.choices?.[0]?.finish_reason !== "stop")
+  await settle(id, response.usage.costUsd, metrics);
+  if (response.finishReason !== "stop")
     throw Error("Model response was incomplete; refusing partial output.");
   let value;
   try {
-    value = JSON.parse(data.choices[0].message.content);
+    value = JSON.parse(response.text);
   } catch {
     throw Error("Provider response was not valid JSON.");
   }
