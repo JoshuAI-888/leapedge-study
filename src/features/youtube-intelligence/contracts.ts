@@ -106,6 +106,47 @@ export const Claim = z.object({
 });
 export type SourceData = z.infer<typeof Source>;
 export type ClaimData = z.infer<typeof Claim>;
+export type StanceData = ClaimData["stance"];
+/** Where a mentioned instrument trades. Resolution beyond what the creator said is the market map in the leaderboard work; the model answers "unknown" when it cannot tell. */
+export const MARKETS = [
+  "us-stock",
+  "us-etf",
+  "hk",
+  "cn-a",
+  "other",
+  "unknown",
+] as const;
+/** Every stance-tagged reference grades to one of three sentiments (spec 4.13). */
+export const SENTIMENTS = ["bullish", "neutral", "bearish"] as const;
+/**
+ * One stance-tagged reference to an instrument, whether or not it is an
+ * actionable call (spec 4.13). Two fields make an aggregate traceable and are
+ * therefore required: `source_span`, the same pointer a claim's evidence
+ * carries, so a sentiment count always opens onto the cited moment — a mention
+ * whose span does not resolve is rejected, never stored — and `rationale_en`,
+ * the one sentence that says why this reference reads bullish, neutral or
+ * bearish. `is_call` marks the stricter subset that is also a claim, and
+ * `claim_id` links to it; for those the sentiment is the deterministic value
+ * from the stance table, not the model's own reading.
+ */
+export const Mention = z.object({
+  ticker: z.string().nullable(),
+  instrument_as_spoken: z.string().min(1),
+  market: z.enum(MARKETS),
+  stance: Claim.shape.stance,
+  sentiment: z.enum(SENTIMENTS),
+  rationale_en: englishOutput
+    .min(1)
+    .refine(
+      (s) => s.trim().length > 0,
+      "A mention needs a one-sentence rationale for its sentiment.",
+    ),
+  source_span: SourceSpan,
+  is_call: z.boolean(),
+  claim_id: z.string().nullable(),
+});
+export type MentionData = z.infer<typeof Mention>;
+export type SentimentData = MentionData["sentiment"];
 export type CheckedClaim = {
   id: string;
   claim: ClaimData;

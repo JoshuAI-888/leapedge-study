@@ -8,20 +8,26 @@ import { z } from "zod";
 import { createHash } from "node:crypto";
 import {
   Claim,
+  Mention,
   Source,
   coverage,
+  deriveEvidence,
   validateClaim,
   anchorClaimEvidence,
   type ClaimData,
+  type MentionData,
   type Run,
   type SourceData,
   type CheckedClaim,
 } from "../../features/youtube-intelligence/contracts.ts";
 import { materializeEvidenceRanges } from "../../features/youtube-intelligence/evidence-selection.ts";
+import { sentimentFromStance } from "../../features/youtube-intelligence/sentiment.ts";
 import {
   extractionResponseSchema,
   parsePointerExtraction,
+  MENTION_OUTPUT_FORMAT,
   POINTER_EVIDENCE_FORMAT,
+  type MentionExtractionData,
 } from "./schemas/extraction.ts";
 import { reserve, settle, retainResponse } from "./store.ts";
 import * as P from "./prompts.ts";
@@ -80,7 +86,7 @@ export const extractionPayload = (
 ) => ({
   source: chunk,
   evidenceFormat: pointer
-    ? POINTER_EVIDENCE_FORMAT
+    ? POINTER_EVIDENCE_FORMAT + " " + MENTION_OUTPUT_FORMAT
     : "Use segment_id for the first real cue ID and end_segment_id for the last real cue ID. Never put a range in segment_id. Copy an exact contiguous quote; no ellipses, paraphrases or omitted words. Preserve all numerical comparators and conditions. value_original must include the exact comparator where spoken (for example under $20), not just the number.",
   chunk: chunkIndex + 1,
   totalChunks,
@@ -191,6 +197,75 @@ export async function modelCall(
   const history = (run.output.metrics || []) as unknown[];
   run.output.metrics = [...history, { stage, ...metrics }];
   return value;
+}
+/**
+ * Mentions for a pointer-evidence extraction (spec 4.13). Every stance-tagged
+ * reference is graded, not only the actionable calls, and each one is held to
+ * the same standard as a claim: the span is copied here with deriveEvidence,
+ * and a mention whose pointer does not resolve is rejected and recorded under
+ * run.output.rejectedMentions with its reason rather than stored without
+ * provenance.
+ *
+ * A mention becomes a call when its ticker is one an extracted claim named. For
+ * those the claim is the record of the action, so the claim's stance and the
+ * deterministic table decide the sentiment and the model's own reading survives
+ * only as the direction of a conditional stance, which the table cannot answer.
+ * A non-call keeps the sentiment the model assigned, which is why its rationale
+ * is required.
+ */
+function materializeMentions(
+  run: Run,
+  drafts: { mentions?: MentionExtractionData[] }[],
+  source: SourceData,
+) {
+  const claims = run.output.claims as CheckedClaim[];
+  const rejected: { mention: unknown; reason: string }[] = [];
+  const mentions: MentionData[] = [];
+  const seen = new Set<string>();
+  for (const draft of drafts.flatMap((d) => d.mentions || [])) {
+    try {
+      // A mention row carries one span: the first range is the citation the
+      // sentiment count opens onto, and a mention that cites none is rejected.
+      const range = draft.ranges[0];
+      if (!range) throw Error("Mention cites no source range.");
+      const derived = deriveEvidence(source, range);
+      const call = draft.ticker
+        ? claims.find(
+            (c) => c.claim.ticker?.toLowerCase() === draft.ticker!.toLowerCase(),
+          )
+        : undefined;
+      const stance = call ? call.claim.stance : draft.stance;
+      const mention = Mention.parse({
+        ...draft,
+        stance,
+        sentiment: call
+          ? sentimentFromStance(stance, draft.sentiment)
+          : draft.sentiment,
+        source_span: {
+          start_id: range.start_id,
+          end_id: range.end_id,
+          start_seconds: derived.start_seconds,
+          end_seconds: derived.end_seconds,
+          text_hash: derived.text_hash,
+        },
+        is_call: Boolean(call),
+        claim_id: call ? call.id : null,
+      });
+      // Chunked extraction sees an instrument more than once; one reference to
+      // one span is one mention, so a sentiment count cannot double.
+      const key = `${mention.ticker || mention.instrument_as_spoken}|${range.start_id}|${range.end_id}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      mentions.push(mention);
+    } catch (error) {
+      rejected.push({
+        mention: draft,
+        reason: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+  run.output.mentions = mentions;
+  if (rejected.length) run.output.rejectedMentions = rejected;
 }
 /**
  * One checkpointed stage of a run. `settings` is loaded once, lazily: a stage
@@ -475,7 +550,11 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         ...(pointer ? { responseSchema: extractionResponseSchema } : {}),
       },
     );
-    const draft = pointer
+    const draft: {
+      claims: ClaimData[];
+      key_points: ClaimData[];
+      mentions?: MentionExtractionData[];
+    } = pointer
       ? (() => {
           const pointed = parsePointerExtraction(raw);
           return {
@@ -485,6 +564,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
             key_points: pointed.key_points.map((c) =>
               materializeEvidenceRanges(c, source),
             ),
+            mentions: pointed.mentions,
           };
         })()
       : z
@@ -494,8 +574,9 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           })
           .parse(raw);
     const prior = (run.output.chunkDrafts || []) as {
-      claims: z.infer<typeof Claim>[];
-      key_points: z.infer<typeof Claim>[];
+      claims: ClaimData[];
+      key_points: ClaimData[];
+      mentions?: MentionExtractionData[];
     }[];
     const drafts = [...prior, draft];
     run.output.chunkDrafts = drafts;
@@ -525,6 +606,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
     run.output.claims = draft.claims.map((c, i) => checked(c, "c", i));
     run.output.keyPoints = draft.key_points.map((c, i) => checked(c, "k", i));
     if (warnings.length) run.output.warnings = warnings;
+    if (pointer) materializeMentions(run, drafts, source);
     run.output.auditIndex = 0;
     run.stage = "critique";
   } else if (run.stage === "critique") {
