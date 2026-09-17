@@ -90,6 +90,32 @@ export async function event(kind: string, id: string, payload: unknown) {
       JSON.stringify(payload),
     );
 }
+/**
+ * The most recent stored events of one kind, returned oldest first, so a
+ * caller that folds them into a map keyed on the entity id ends up holding
+ * the latest event per entity.
+ */
+export async function events<T = Record<string, unknown>>(
+  kind: string,
+  limit = 500,
+): Promise<{ id: string; entityId: string; at: string; payload: T }[]> {
+  return (
+    await (
+      await researchDB()
+    )
+      .prepare(
+        "SELECT id,entity_id,at,payload FROM yi_events WHERE kind=? ORDER BY at DESC,id DESC LIMIT ?",
+      )
+      .all(kind, limit)
+  )
+    .reverse()
+    .map((r) => ({
+      id: String(r.id),
+      entityId: String(r.entity_id),
+      at: String(r.at),
+      payload: JSON.parse(String(r.payload)) as T,
+    }));
+}
 export async function put(kind: string, id: string, payload: unknown) {
   const d = await researchDB(),
     now = new Date().toISOString();
