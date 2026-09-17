@@ -1,0 +1,11 @@
+{
+  "at": "2026-09-13T11:07:21.665Z",
+  "unauthenticatedApi": "401",
+  "privatePage": "redirect to access",
+  "wrongOrigin": "403",
+  "wrongCode": "401",
+  "signedSession": "accepted",
+  "publicSharesDisabled": "404",
+  "status": "passed",
+  "externalServicesCalled": false
+}

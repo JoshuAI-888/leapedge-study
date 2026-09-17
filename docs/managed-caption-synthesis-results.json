@@ -1,0 +1,94 @@
+{
+  "at": "2026-09-14T03:21:04.259Z",
+  "deployment": "dpl_4RwV8KMC9HotiyugkGPFjcjZhSis",
+  "runs": [
+    {
+      "id": "5a748c0f-fd61-4c6d-9eb1-c71e7d80235f",
+      "videoId": "wkAqHlYL7bQ",
+      "title": "5 Stocks I'm Buying In June 2026",
+      "status": "completed",
+      "stage": "complete",
+      "error": null,
+      "coverage": {
+        "ratio": 0.9999669830788279,
+        "coveredSeconds": 2422.92,
+        "durationSeconds": 2423,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "chunkCount": 2,
+      "acceptedClaims": 4,
+      "acceptedKeyPoints": 5,
+      "confirmedCostUsd": 0.8760802499999999
+    },
+    {
+      "id": "c82ae86a-70d6-4845-a418-74993f639717",
+      "videoId": "wkAqHlYL7bQ",
+      "title": "5 Stocks I'm Buying In June 2026",
+      "status": "completed",
+      "stage": "complete",
+      "error": null,
+      "coverage": {
+        "ratio": 1,
+        "coveredSeconds": 2423,
+        "durationSeconds": 2423,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "chunkCount": 2,
+      "acceptedClaims": 4,
+      "acceptedKeyPoints": 6,
+      "confirmedCostUsd": 0.8488515000000001
+    },
+    {
+      "id": "51811a40-fe90-4ada-96b7-fb6d401e12bf",
+      "videoId": "v824SHV6COE",
+      "title": "AI's Hidden Debt Problem Explained",
+      "status": "completed",
+      "stage": "complete",
+      "error": null,
+      "coverage": {
+        "ratio": 0.9998224852071006,
+        "coveredSeconds": 1351.76,
+        "durationSeconds": 1352,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "chunkCount": 2,
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 5,
+      "confirmedCostUsd": 0.2562345
+    },
+    {
+      "id": "7142bcbb-125f-45bf-ae5f-6f241811dd92",
+      "videoId": "J25UuUqHT3Y",
+      "title": "美国正在衰落？Trump亲手拆掉旧秩序，凭什么还能赢？ | 美国霸权 | 伊朗 | 硅谷 | 世界秩序｜霍比特小灰",
+      "status": "failed",
+      "stage": "source",
+      "error": "[\n  {\n    \"code\": \"custom\",\n    \"message\": \"Duplicate segment ID or reversed timestamp\",\n    \"path\": []\n  }\n]",
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "confirmedCostUsd": 0.069754
+    },
+    {
+      "id": "0bdecc2a-9d92-487a-9015-04c4b4ecaa26",
+      "videoId": "J25UuUqHT3Y",
+      "title": "美国正在衰落？Trump亲手拆掉旧秩序，凭什么还能赢？ | 美国霸权 | 伊朗 | 硅谷 | 世界秩序｜霍比特小灰",
+      "status": "failed",
+      "stage": "source",
+      "error": "Model response was incomplete; refusing partial output.",
+      "acceptedClaims": 0,
+      "acceptedKeyPoints": 0,
+      "confirmedCostUsd": 0.23596725
+    }
+  ],
+  "confirmedNewModelCostUsd": 2.2868874999999997,
+  "newLeapEdgeCreditsUsed": 0,
+  "checks": {
+    "unitIntegration": 38,
+    "hosted": 7,
+    "typecheck": "passed",
+    "build": "passed"
+  },
+  "outcome": "Managed caption integration is deployed; 40/50 videos yielded native captions. Captionless generation remains blocked by media access, and both default and stronger Gemini cloud fallbacks failed source validation in this test."
+}

@@ -1,0 +1,269 @@
+{
+  "at": "2026-09-14T21:09:07.183Z",
+  "method": "Exact adjacent-cue space split only; translations retained at group level in repair provenance, not invented per fragment.",
+  "results": [
+    {
+      "caseName": "alpha",
+      "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+      "draftHash": "af2ab8fdb1222ac00e22edb9a1399609bcfc4da32c9eb53512a07eec1746c8c4",
+      "items": [
+        {
+          "id": "item-1",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-2",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-3",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-4",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-5",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-6",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-7",
+          "before": [
+            "Quote does not match the retained source."
+          ],
+          "after": [],
+          "repairs": [
+            {
+              "evidenceIndex": 2,
+              "originalQuote": "特别是我们现在的多头趋势其实是 比较明确的 就是只要它在1小时之上 我们都可以不用右侧地去离场",
+              "groupTranslation": "especially since our current bull trend is quite clear, as long as it is above the 1-hour [20EMA], we don't need to exit on the right side",
+              "segmentIds": [
+                "s00065",
+                "s00066"
+              ]
+            }
+          ],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-8",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        }
+      ]
+    },
+    {
+      "caseName": "mandarin",
+      "sourceHash": "f091a4d19b93f3f527b992d9bacee75e3c6d537125ff703db7ef5e7a71b92dcd",
+      "draftHash": "575a4206bc9b4dbb12459a00cc2269a8ee888c760e26edab918b082583ce6f39",
+      "items": [
+        {
+          "id": "item-1",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-2",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-3",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-4",
+          "before": [
+            "Price is not present verbatim in its evidence."
+          ],
+          "after": [
+            "Price is not present verbatim in its evidence."
+          ],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-5",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-6",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-7",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-8",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-9",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        }
+      ]
+    },
+    {
+      "caseName": "long",
+      "sourceHash": "b9332d1cb00e70cd8397f7760d1da7307f8376381a20a0f7fb413f1d8c4a4280",
+      "draftHash": "e8a077d489d9ef9c21d13202796784b751daae9045e080f6f3aec1263ca29af6",
+      "items": [
+        {
+          "id": "item-1",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-2",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-3",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-4",
+          "before": [
+            "Quote does not match the retained source."
+          ],
+          "after": [],
+          "repairs": [
+            {
+              "evidenceIndex": 2,
+              "originalQuote": "And this is part of the reason why I own MasterCard and why I think that it could continue to grow even if there does end up being some slight disruption to the payments network,",
+              "groupTranslation": "And this is part of the reason why I own MasterCard and why I think that it could continue to grow even if there does end up being some slight disruption to the payments network,",
+              "segmentIds": [
+                "s00304",
+                "s00305"
+              ]
+            }
+          ],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-5",
+          "before": [
+            "Quote does not match the retained source."
+          ],
+          "after": [],
+          "repairs": [
+            {
+              "evidenceIndex": 0,
+              "originalQuote": "and it is Meta. And I have continued to buy more shares of Meta on a consistent basis in the market because I think that this stock is also truly undervalued in the market today.",
+              "groupTranslation": "and it is Meta. And I have continued to buy more shares of Meta on a consistent basis in the market because I think that this stock is also truly undervalued in the market today.",
+              "segmentIds": [
+                "s00310",
+                "s00311"
+              ]
+            }
+          ],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-6",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-7",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        },
+        {
+          "id": "item-8",
+          "before": [],
+          "after": [],
+          "repairs": [],
+          "semanticAudit": "NOT_RERUN",
+          "audioVerified": false
+        }
+      ]
+    }
+  ],
+  "defaultChanged": false,
+  "limitation": "Offline deterministic gate improvement; no semantic or audio accuracy claim."
+}

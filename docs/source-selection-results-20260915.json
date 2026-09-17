@@ -1,0 +1,565 @@
+{
+  "id": "source-selection-v8-20260915",
+  "at": "2026-09-14T21:34:50.237Z",
+  "rows": [
+    {
+      "case": "alpha",
+      "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+      "sameSourceHash": true,
+      "baseline": {
+        "items": 8,
+        "structuralFailures": 1,
+        "modelAccepted": 7,
+        "status": "shadow_completed_audio_unverified"
+      },
+      "candidate": {
+        "items": 10,
+        "structuralFailures": 0,
+        "modelAccepted": 10,
+        "status": "shadow_completed_audio_unverified",
+        "modelReportedOmissions": [],
+        "inventory": [
+          {
+            "instrument_as_spoken": "SPY",
+            "source_segment_ids": [
+              "s00009",
+              "s00042",
+              "s00043",
+              "s00044",
+              "s00045"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit holding and position management view for broader market index."
+          },
+          {
+            "instrument_as_spoken": "QQQ",
+            "source_segment_ids": [
+              "s00066",
+              "s00069",
+              "s00070",
+              "s00071",
+              "s00072"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit technical comparison and hold thesis based on 1-hour 20 EMA."
+          },
+          {
+            "instrument_as_spoken": "IWM",
+            "source_segment_ids": [
+              "s00066",
+              "s00067",
+              "s00068"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit technical assessment of moving average defense and hold rule."
+          },
+          {
+            "instrument_as_spoken": "比特币",
+            "source_segment_ids": [
+              "s00072",
+              "s00073",
+              "s00074",
+              "s00075",
+              "s00076",
+              "s00077",
+              "s00078",
+              "s00079"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit actionable left-side buy level and rebound thesis."
+          },
+          {
+            "instrument_as_spoken": "特斯拉",
+            "source_segment_ids": [
+              "s00080",
+              "s00081",
+              "s00082",
+              "s00083",
+              "s00087",
+              "s00088",
+              "s00089",
+              "s00090",
+              "s00091",
+              "s00092",
+              "s00093"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit instruction to hold core shares toward 500-550 targets."
+          },
+          {
+            "instrument_as_spoken": "谷歌",
+            "source_segment_ids": [
+              "s00094"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Incidental passing reference as part of comparative M7 performance."
+          },
+          {
+            "instrument_as_spoken": "微软",
+            "source_segment_ids": [
+              "s00095",
+              "s00096"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Incidental background context describing M7 consolidation since late July."
+          },
+          {
+            "instrument_as_spoken": "英伟达",
+            "source_segment_ids": [
+              "s00096"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Incidental mention that it is consolidating sideways without a trading thesis."
+          },
+          {
+            "instrument_as_spoken": "苹果",
+            "source_segment_ids": [
+              "s00097",
+              "s00098",
+              "s00099",
+              "s00100"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit instruction that pullbacks are buying opportunities."
+          },
+          {
+            "instrument_as_spoken": "黄金",
+            "source_segment_ids": [
+              "s00100",
+              "s00101",
+              "s00102",
+              "s00103",
+              "s00104",
+              "s00105",
+              "s00106",
+              "s00107"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit holding advice with next breakout target box."
+          },
+          {
+            "instrument_as_spoken": "恒生 还有恒生科技",
+            "source_segment_ids": [
+              "s00108",
+              "s00109",
+              "s00110"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit holding recommendation in the absence of exit signals."
+          }
+        ]
+      },
+      "attemptIds": [
+        "1b2a3488-ed79-473d-a770-3874d0f677c5",
+        "b6af3aa4-6ebe-405c-a055-c02680023e04"
+      ],
+      "sourceAudioVerified": false
+    },
+    {
+      "case": "long",
+      "sourceHash": "b9332d1cb00e70cd8397f7760d1da7307f8376381a20a0f7fb413f1d8c4a4280",
+      "sameSourceHash": true,
+      "baseline": {
+        "items": 8,
+        "structuralFailures": 2,
+        "modelAccepted": 6,
+        "status": "shadow_completed_audio_unverified"
+      },
+      "candidate": {
+        "items": 8,
+        "structuralFailures": 0,
+        "modelAccepted": 8,
+        "status": "shadow_completed_audio_unverified",
+        "modelReportedOmissions": [],
+        "inventory": [
+          {
+            "instrument_as_spoken": "Limbach",
+            "source_segment_ids": [
+              "s00018",
+              "s00019",
+              "s00020",
+              "s00053",
+              "s00054",
+              "s00055",
+              "s00069",
+              "s00130",
+              "s00132"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit creator investment position and buy recommendation."
+          },
+          {
+            "instrument_as_spoken": "Comfort Systems",
+            "source_segment_ids": [
+              "s00116"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Mentioned strictly as an industry valuation multiple benchmark peer for Limbach."
+          },
+          {
+            "instrument_as_spoken": "IESC",
+            "source_segment_ids": [
+              "s00117",
+              "s00118"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Mentioned strictly as a multiple benchmark comparison peer."
+          },
+          {
+            "instrument_as_spoken": "Sterling",
+            "source_segment_ids": [
+              "s00119"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Mentioned strictly as a multiple benchmark comparison peer."
+          },
+          {
+            "instrument_as_spoken": "MercadoLibre",
+            "source_segment_ids": [
+              "s00134",
+              "s00135",
+              "s00136",
+              "s00149",
+              "s00194",
+              "s00195"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit creator investment position and continued buying recommendation."
+          },
+          {
+            "instrument_as_spoken": "Amazon",
+            "source_segment_ids": [
+              "s00140",
+              "s00144",
+              "s00150",
+              "s00158"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Cited as an e-commerce and advertising benchmark comparison against MercadoLibre."
+          },
+          {
+            "instrument_as_spoken": "Walmart",
+            "source_segment_ids": [
+              "s00158"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Cited as an advertising market share competitor in Mexico."
+          },
+          {
+            "instrument_as_spoken": "NuBank",
+            "source_segment_ids": [
+              "s00171",
+              "s00172",
+              "s00196",
+              "s00197",
+              "s00198",
+              "s00200",
+              "s00261",
+              "s00262",
+              "s00263"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit watch instruction; creator notes active research and deep valuation interest without yet owning shares."
+          },
+          {
+            "instrument_as_spoken": "Visa",
+            "source_segment_ids": [
+              "s00237",
+              "s00238",
+              "s00239",
+              "s00246",
+              "s00273",
+              "s00290",
+              "s00294"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Mentioned as former employer of NuBank's new CFO and as a payments peer sharing network dynamics with MasterCard."
+          },
+          {
+            "instrument_as_spoken": "MasterCard",
+            "source_segment_ids": [
+              "s00264",
+              "s00265",
+              "s00267",
+              "s00286",
+              "s00296",
+              "s00300",
+              "s00304",
+              "s00307",
+              "s00308"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit existing portfolio holding and bullish stance on valuation."
+          },
+          {
+            "instrument_as_spoken": "Meta",
+            "source_segment_ids": [
+              "s00309",
+              "s00310",
+              "s00311",
+              "s00314",
+              "s00315",
+              "s00326",
+              "s00341",
+              "s00343",
+              "s00345"
+            ],
+            "disposition": "represented",
+            "reason_en": "Explicit creator investment position and continued buying recommendation."
+          }
+        ]
+      },
+      "attemptIds": [
+        "f43c94c1-9d0c-4984-9d08-1ae573fd1941",
+        "5e8b7e2c-2e14-472a-b16a-2c5874c3713c"
+      ],
+      "sourceAudioVerified": false
+    },
+    {
+      "case": "mandarin",
+      "sourceHash": "f091a4d19b93f3f527b992d9bacee75e3c6d537125ff703db7ef5e7a71b92dcd",
+      "sameSourceHash": true,
+      "baseline": {
+        "items": 9,
+        "structuralFailures": 1,
+        "modelAccepted": 0,
+        "status": "shadow_stopped_review_required"
+      },
+      "candidate": {
+        "items": 11,
+        "structuralFailures": 0,
+        "modelAccepted": 11,
+        "status": "shadow_completed_audio_unverified",
+        "modelReportedOmissions": [],
+        "inventory": [
+          {
+            "instrument_as_spoken": "日韩股市 / KOSPI",
+            "source_segment_ids": [
+              "s00001",
+              "s00003"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Macro market backdrop and market recap without specific trade advice or directional creator recommendation."
+          },
+          {
+            "instrument_as_spoken": "铠侠控股",
+            "source_segment_ids": [
+              "s00002"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Factual reporting of earnings and buyback without an investment thesis or position advice."
+          },
+          {
+            "instrument_as_spoken": "SK海力士 / 三星电子",
+            "source_segment_ids": [
+              "s00004"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Reported historical daily gains; no actionable trade or thesis."
+          },
+          {
+            "instrument_as_spoken": "美光科技",
+            "source_segment_ids": [
+              "s00014"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Used merely as an example of AI hardware stocks giving up gains on the carry trade headline."
+          },
+          {
+            "instrument_as_spoken": "标普500指数",
+            "source_segment_ids": [
+              "s00008",
+              "s00014",
+              "s00015",
+              "s00016",
+              "s00023"
+            ],
+            "disposition": "represented",
+            "reason_en": "Covered in key_points (tactical situation and call option wall) and in claims via VOO."
+          },
+          {
+            "instrument_as_spoken": "纳指",
+            "source_segment_ids": [
+              "s00019",
+              "s00020",
+              "s00021"
+            ],
+            "disposition": "represented",
+            "reason_en": "Represented in claims as a conditional rebound thesis above the 5-day moving average."
+          },
+          {
+            "instrument_as_spoken": "QQQ",
+            "source_segment_ids": [
+              "s00022",
+              "s00023",
+              "s00024",
+              "s00034"
+            ],
+            "disposition": "represented",
+            "reason_en": "Represented in claims as dip-buy vs long-term allocation conditional thesis."
+          },
+          {
+            "instrument_as_spoken": "VOO",
+            "source_segment_ids": [
+              "s00024",
+              "s00034"
+            ],
+            "disposition": "represented",
+            "reason_en": "Represented in claims as the recommended primary long-term dollar-cost averaging asset."
+          },
+          {
+            "instrument_as_spoken": "费城半导体指数",
+            "source_segment_ids": [
+              "s00025",
+              "s00026",
+              "s00027",
+              "s00028",
+              "s00029"
+            ],
+            "disposition": "represented",
+            "reason_en": "Represented in claims with a conditional rebound thesis toward the 50-day moving average based on 5-day moving average support."
+          },
+          {
+            "instrument_as_spoken": "存储板块 / DRAM",
+            "source_segment_ids": [
+              "s00030",
+              "s00031",
+              "s00032",
+              "s00033",
+              "s00034"
+            ],
+            "disposition": "represented",
+            "reason_en": "Represented in claims with an avoid overconcentration and profit reallocation thesis."
+          },
+          {
+            "instrument_as_spoken": "亚马逊",
+            "source_segment_ids": [
+              "s00034",
+              "s00035",
+              "s00036",
+              "s00037",
+              "s00038"
+            ],
+            "disposition": "represented",
+            "reason_en": "Covered in key_points explaining capex and AI monetization framework."
+          },
+          {
+            "instrument_as_spoken": "微软 / 谷歌",
+            "source_segment_ids": [
+              "s00038",
+              "s00039"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Mentioned as comparison context to Amazon's AI capex narrative and price repair."
+          },
+          {
+            "instrument_as_spoken": "格芯 / ALMU",
+            "source_segment_ids": [
+              "s00042",
+              "s00043",
+              "s00044"
+            ],
+            "disposition": "incidental",
+            "reason_en": "Reported government funding news and lack of price action; no creator recommendation made."
+          },
+          {
+            "instrument_as_spoken": "Reddit",
+            "source_segment_ids": [
+              "s00045",
+              "s00046",
+              "s00047",
+              "s00048"
+            ],
+            "disposition": "represented",
+            "reason_en": "Represented in claims as a watch instruction for existing holders at the trendline support."
+          },
+          {
+            "instrument_as_spoken": "Coinbase",
+            "source_segment_ids": [
+              "s00049",
+              "s00050"
+            ],
+            "disposition": "represented",
+            "reason_en": "Represented in claims as conditional position management instruction with a 140 stop level."
+          },
+          {
+            "instrument_as_spoken": "MSTR",
+            "source_segment_ids": [
+              "s00051"
+            ],
+            "disposition": "represented",
+            "reason_en": "Covered in key_points regarding quarterly impairment loss."
+          }
+        ]
+      },
+      "attemptIds": [
+        "9005afc0-5903-4b2f-80b0-cd39f804f5bd",
+        "d6b80bcb-a9a0-464d-84ce-9ac3a28f6e73"
+      ],
+      "sourceAudioVerified": false
+    }
+  ],
+  "knownDefects": [
+    {
+      "case": "mandarin",
+      "item": "item-8",
+      "field": "levels.kind",
+      "issue": "Observed Treasury yield labelled resistance without source support",
+      "detectedBy": "assistant retained-text review",
+      "audioVerified": false
+    },
+    {
+      "case": "mandarin",
+      "item": "item-7",
+      "field": "levels.value_original",
+      "issue": "Stop value drops slightly-below qualifier retained in thesis; structured level ambiguous",
+      "detectedBy": "assistant retained-text review",
+      "audioVerified": false
+    }
+  ],
+  "experimental": true,
+  "promotion": false,
+  "independentAudioWindowsScored": 0,
+  "accounting": {
+    "newCalls": 6,
+    "newHeldNzd": 2.93,
+    "totalCalls": 48,
+    "totalHeldNzd": 46.31,
+    "capNzd": 50,
+    "billingReconciled": false
+  },
+  "limitations": [
+    "Development corpus only; not held out",
+    "Batch critique changed from per-item critique: not a controlled prompt-only A/B",
+    "Whole-cue copying ensures provenance, not entailment or audio truth",
+    "No generated per-quote English translations in candidate",
+    "Inventory and omission assessment are model assertions",
+    "Two interpretation defects escaped model audit"
+  ],
+  "scriptManifest": [
+    {
+      "path": "src/features/youtube-intelligence/evidence-selection.ts",
+      "sha256": "2af025a8e60869d4d9df6491357afdaceb16e0335d7c1ff486a78c4c3240992c"
+    },
+    {
+      "path": "evaluations/native-google/selection-prompts.ts",
+      "sha256": "8734ff31389369d1508f73e512a94fcbd4e68d11bc38a64befa450066d53e7d0"
+    },
+    {
+      "path": "evaluations/native-google/selection-synthesis.ts",
+      "sha256": "878fac46217231a590b910ba6b77f7dfdbf31ca12a017c9e01ff87e4212863a2"
+    },
+    {
+      "path": "tests/evidence-selection.test.ts",
+      "sha256": "3462507a6a85d6e4aac644276de3f346821e0aaf4819d657db2f44e37ff5e28b"
+    },
+    {
+      "path": "scripts/build-blind-review.py",
+      "sha256": "3b279e08fabf3ef06fc39ea1139d4f1569b8b5dbe9b7162b9f481430b3620d6a"
+    },
+    {
+      "path": "scripts/selection-report.mjs",
+      "sha256": "1e0e33e5e685f5ead95fb24c0136041c7e31567c539a6afc694ef93793f98634"
+    }
+  ]
+}

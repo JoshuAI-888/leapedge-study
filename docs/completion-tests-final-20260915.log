@@ -1,0 +1,62 @@
+
+> youtube-intelligence@0.1.0 test
+> node --experimental-strip-types --test tests/*.test.ts
+
+✔ Tapline SRT retains exact multiline text and rejects mismatched or invalid sources (2.889208ms)
+✔ BibiGPT never admits preview, polished-only or reversed-time subtitles as complete evidence (12.9445ms)
+✔ BibiGPT missing language stays unknown and success with empty subtitles is rejected (0.677583ms)
+✔ Deduplication never erases different risks, conviction or evidence boundaries (1.117458ms)
+✔ Chunking retains every source segment and overlaps boundaries without rewriting evidence (0.712042ms)
+✔ Trend direction changes compare different videos from the same channel and retain horizon uncertainty (18.491292ms)
+✔ Stale exit prices do not become completed 90-day returns (3.1675ms)
+✔ Postgres SQL preserves literal question marks and parameterizes values (0.158916ms)
+✔ Email webhook signatures reject changed bodies, expired attempts and wrong keys (16.243167ms)
+✔ Missing windows preserve actual time boundaries and ignore overlaps and short pauses (0.365916ms)
+✔ Audio verdicts without explanations remain reviewable uncertainty, never verified passes (2.233167ms)
+✔ An event arriving before the send response is reconciled and older events cannot regress status (20.056042ms)
+✔ Boundary serialization splits exact cues without inventing fragment translations or repairing changed words (19.524125ms)
+✔ YouTube parser accepts canonical IDs but rejects lookalike hosts and credential URLs (1.566417ms)
+✔ Quote checks preserve Chinese punctuation and reject paraphrases and altered numeric levels (0.923875ms)
+✔ Implicit ETF mappings fail deterministic ticker checks (0.058417ms)
+✔ Coverage merges overlaps and detects missed late-video content (0.218208ms)
+✔ Duplicate segment IDs and reversed timestamps fail source parsing (2.3265ms)
+✔ Local endpoint guard blocks cross-origin paid requests and public hosts (27.579625ms)
+✔ Persisted jobs deduplicate, fence stale workers and preserve uncertain spend (26.42975ms)
+✔ Incomplete imported source is held for review before any paid synthesis (17.680042ms)
+✔ A numeric substring is not evidence for a price (0.118792ms)
+✔ Price punctuation is not mistaken for decimal continuation (0.149917ms)
+✔ Verbatim quotes may span adjacent original segments without rewriting any words (0.157875ms)
+✔ English caption boundaries preserve spaces without accepting altered words or skipped segments (0.112958ms)
+✔ Caption anchors recover only unique exact words and retain ambiguity or altered speech as failures (0.082584ms)
+✔ Managed captions fail over, deduplicate, preserve uncertain charges, poll jobs, and enforce credit caps (5535.860167ms)
+✔ Caption language validation accepts regional variants, rejects different or unreported languages (0.565334ms)
+✔ Native adapter retains full failure and bounded recovery without replacing original evidence; rollback sends nothing (11.7785ms)
+✔ Recovery windows are <=90 seconds, within duration, and cannot recover inaccessible media (0.379667ms)
+✔ Loopback browser origin succeeds even when Next internally normalizes hostname (26.819666ms)
+✔ Hosted guard requires signed unexpired session and exact configured origin (0.717ms)
+✔ Native captions preserve original Chinese text and convert milliseconds without inventing timing (3.064916ms)
+✔ Digest email links back to research and does not claim an empty day has analysis (0.152625ms)
+✔ Channel discovery deduplicates uploads; provider failures retain actionable state; native job polling does not resubmit (1255.443292ms)
+✔ Changing a collection version cannot rewrite its first forward observation (24.843875ms)
+✔ Matched adjusted prices calculate signed returns, excess and win rate independently (10.683ms)
+✔ Forward scoring cannot enter at same-day close and unmatched sessions are excluded (0.233375ms)
+✔ Conditional/low-confidence calls and unpriced sessions never become zero-return wins (0.254958ms)
+✔ Channel input resolves multilingual handles and rejects lookalike or credential URLs (0.564333ms)
+✔ Digest scheduling uses local timezone, does not repeat a day, and respects disabled state (4.410208ms)
+✔ Immutable prompt registry, snapshot comparisons, append-only reviews and share revocation persist (9.852959ms)
+✔ Scheduled digests deduplicate concurrent sweeps, await audited synthesis and send once (39.727375ms)
+✔ Accuracy scoring exposes omitted negation, decimal error and missing timestamps (2.520083ms)
+✔ Unverified audio and unreviewed excerpt boundaries cannot produce accuracy scores (0.501708ms)
+✔ Chinese CER retains negation and decimal significance; error rates can exceed one (1.929416ms)
+✔ Long-source windows checkpoint independently, retain absolute times and merge unique evidence IDs (18.422459ms)
+✔ YouTube.js keeps Chinese evidence and supplied times; malformed timing and mismatched videos fail (1.922125ms)
+✔ Successful free captions are cached and original provenance is retained (3.98625ms)
+✔ Free retrieval failures are explicit, sanitized and cooled down without throwing away fallback (0.832458ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5796.028833

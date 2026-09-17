@@ -1,0 +1,55 @@
+
+> test
+> node --experimental-strip-types --test *.test.ts
+
+✔ Native request uses structured video, default static mode, interval and connected abort with no SDK retries (1.186834ms)
+✔ Deadline aborts actual signal and never invokes a retry (11.590291ms)
+✔ STOP or token counts cannot turn empty, truncated or blocked output into a source (0.697417ms)
+✔ Retains exact speech but rejects wrong video, out-of-duration and clip-relative timestamps (0.336292ms)
+✔ Gaps are explicit review candidates, not automatically called silence or missing speech (0.163834ms)
+✔ Unknown thinking or missing usage does not become a zero cost (0.107083ms)
+✔ Schema ablations change only maxItems from the frozen failing request (1.276458ms)
+✔ Macro windows overlap without inheriting any full-video transcript answer (0.891333ms)
+✔ Journal prevents repeated submissions, caps reservations and preserves unique redacted artifacts (6.127875ms)
+✔ Explicit quota retry links prior evidence and cannot retry uncertain or duplicate requests (3.250875ms)
+✖ Actual SDK serializes native media settings and does not retry HTTP503 (5.790041ms)
+✖ Actual SDK request is aborted at the connected deadline (1.622084ms)
+✔ Reconstructed shadow prompts match hashes from both actual live runs (1.527333ms)
+✔ Text reservations include input bytes, output/thought allowance, FX and margin (1.070958ms)
+✔ Variable reservations cannot bypass the cumulative campaign cap (3.364416ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 13
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 267.845292
+
+✖ failing tests:
+
+test at sdk.test.ts:39:1
+✖ Actual SDK serializes native media settings and does not retry HTTP503 (5.790041ms)
+  Error: listen EPERM: operation not permitted 127.0.0.1
+      at Server.setupListenHandle [as _listen2] (node:net:1987:21)
+      at listenInCluster (node:net:2066:12)
+      at node:net:2275:7
+      at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    code: 'EPERM',
+    errno: -1,
+    syscall: 'listen',
+    address: '127.0.0.1'
+  }
+
+test at sdk.test.ts:80:1
+✖ Actual SDK request is aborted at the connected deadline (1.622084ms)
+  Error: listen EPERM: operation not permitted 127.0.0.1
+      at Server.setupListenHandle [as _listen2] (node:net:1987:21)
+      at listenInCluster (node:net:2066:12)
+      at node:net:2275:7
+      at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    code: 'EPERM',
+    errno: -1,
+    syscall: 'listen',
+    address: '127.0.0.1'
+  }

@@ -1,0 +1,541 @@
+{
+  "id": "native-google-shadow-comparison-20260915",
+  "at": "2026-09-14T20:25:11.713Z",
+  "shadows": [
+    {
+      "id": "native-google-alpha-v5-shadow-20260915",
+      "status": "shadow_completed_audio_unverified",
+      "sourceAttempt": "4e93d949-2083-43e3-98f5-fea6b133a4ad",
+      "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+      "promptHash": "c99156cf37f0d66ea6fb2b61bc2340328875402bccdbd4277cbc36a4addd499c",
+      "promptVersion": "evidence-first.web.v5",
+      "synthesisModel": "gemini-3.8-flash",
+      "criticModel": "gemini-3.5-flash",
+      "transport": "native_generateContent",
+      "canonicalPromotion": false,
+      "audioVerified": false,
+      "attempts": [
+        "340bb8f5-307d-4b3d-81f4-8a007c36cfed",
+        "444f41bb-b635-43a4-a410-0cf569a71202"
+      ],
+      "error": null,
+      "items": [
+        {
+          "id": "item-1",
+          "kind": "claim",
+          "thesisEnglish": "Existing long positions in the S&P 500 can be held comfortably as Friday's bullish candle provided right-side confirmation of the bounce off the 20-day EMA, though initiating new long positions here is not recommended due to unfavorable risk-reward after an extended rally.",
+          "ticker": "SPY",
+          "instrumentAsSpoken": "大盘SPY",
+          "stance": "hold",
+          "levels": [
+            {
+              "kind": "support",
+              "value_original": "20EMA"
+            }
+          ],
+          "evidenceSegments": [
+            "s00009",
+            "s00036",
+            "s00042",
+            "s00043",
+            "s00044"
+          ],
+          "structuralReasons": [
+            "Quote does not match the retained source.",
+            "Quote does not match the retained source."
+          ],
+          "audit": null,
+          "textAccepted": false
+        },
+        {
+          "id": "item-2",
+          "kind": "claim",
+          "thesisEnglish": "Existing long positions in QQQ and IWM should continue to be held without triggering a right-side exit as long as prices remain above the 1-hour 20EMA.",
+          "ticker": "QQQ",
+          "instrumentAsSpoken": "QQQ跟IWM",
+          "stance": "hold",
+          "levels": [
+            {
+              "kind": "support",
+              "value_original": "小时20EMA"
+            }
+          ],
+          "evidenceSegments": [
+            "s00065",
+            "s00066"
+          ],
+          "structuralReasons": [
+            "Quote does not match the retained source.",
+            "Quote does not match the retained source."
+          ],
+          "audit": null,
+          "textAccepted": false
+        },
+        {
+          "id": "item-3",
+          "kind": "claim",
+          "thesisEnglish": "Place limit buy orders near 106,000 for a left-side long setup, as this level marks a confluence of a three-push pattern and the annual moving average support, offering potential for a solid rebound or trend reversal.",
+          "ticker": null,
+          "instrumentAsSpoken": "比特币",
+          "stance": "long",
+          "levels": [
+            {
+              "kind": "entry",
+              "value_original": "106,000"
+            },
+            {
+              "kind": "support",
+              "value_original": "年线"
+            }
+          ],
+          "evidenceSegments": [
+            "s00074",
+            "s00076",
+            "s00078"
+          ],
+          "structuralReasons": [
+            "Quote does not match the retained source.",
+            "Quote does not match the retained source."
+          ],
+          "audit": null,
+          "textAccepted": false
+        },
+        {
+          "id": "item-4",
+          "kind": "claim",
+          "thesisEnglish": "Do not discard core long positions in Tesla; maintain a base position targeting 500 to 550 this year, as the price is displaying strong upward drift to absorb lower profit-taking selling pressure without deep pullbacks.",
+          "ticker": null,
+          "instrumentAsSpoken": "特斯拉",
+          "stance": "hold",
+          "levels": [
+            {
+              "kind": "support",
+              "value_original": "400 到440"
+            },
+            {
+              "kind": "target",
+              "value_original": "500"
+            },
+            {
+              "kind": "target",
+              "value_original": "550"
+            }
+          ],
+          "evidenceSegments": [
+            "s00081",
+            "s00087",
+            "s00090",
+            "s00091",
+            "s00093"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim accurately reflects the speaker's stance on Tesla. The speaker advises not to discard the base position of Tesla shares (底仓千万不要去丢掉) and to hold part of it to 500 or even above 550 (拿到500甚至550以上) within this year (今年是有机会的). The support level of 400 to 440 is also supported by the quote mentioning the box around 400 to 440.",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        },
+        {
+          "id": "item-5",
+          "kind": "claim",
+          "thesisEnglish": "Pullbacks in Apple stock remain opportunities to open long positions, despite near-term resistance encountered around previous highs.",
+          "ticker": null,
+          "instrumentAsSpoken": "苹果",
+          "stance": "conditional",
+          "levels": [
+            {
+              "kind": "resistance",
+              "value_original": "258到260"
+            }
+          ],
+          "evidenceSegments": [
+            "s00098",
+            "s00099"
+          ],
+          "structuralReasons": [
+            "Quote does not match the retained source.",
+            "Quote does not match the retained source."
+          ],
+          "audit": null,
+          "textAccepted": false
+        },
+        {
+          "id": "item-6",
+          "kind": "claim",
+          "thesisEnglish": "Hold existing long positions in gold as price action remains strong after reaching the measured move target, with a potential breakout eyeing the next resistance zone between 4000 and 4050.",
+          "ticker": null,
+          "instrumentAsSpoken": "黄金",
+          "stance": "hold",
+          "levels": [
+            {
+              "kind": "target",
+              "value_original": "4000到4050"
+            }
+          ],
+          "evidenceSegments": [
+            "s00104",
+            "s00106",
+            "s00107"
+          ],
+          "structuralReasons": [
+            "Quote does not match the retained source."
+          ],
+          "audit": null,
+          "textAccepted": false
+        },
+        {
+          "id": "item-7",
+          "kind": "claim",
+          "thesisEnglish": "Hold existing positions in the Hang Seng Index and Hang Seng Tech Index as prices remain in high-level consolidation without a clear right-side exit signal.",
+          "ticker": null,
+          "instrumentAsSpoken": "恒生 还有恒生科技",
+          "stance": "hold",
+          "levels": [],
+          "evidenceSegments": [
+            "s00108",
+            "s00109"
+          ],
+          "structuralReasons": [
+            "Quote does not match the retained source.",
+            "Quote does not match the retained source."
+          ],
+          "audit": null,
+          "textAccepted": false
+        },
+        {
+          "id": "item-8",
+          "kind": "key_point",
+          "thesisEnglish": "For intraday or multi-day short-term trading, the 1-hour 20EMA serves as an objective trend filter and exit rule: as long as price trades above it, the bullish trend is intact; a break below it warrants taking profit or stepping aside.",
+          "ticker": null,
+          "instrumentAsSpoken": null,
+          "stance": "neutral",
+          "levels": [
+            {
+              "kind": "support",
+              "value_original": "1小时的20EMA"
+            }
+          ],
+          "evidenceSegments": [
+            "s00057",
+            "s00059",
+            "s00062"
+          ],
+          "structuralReasons": [
+            "Quote does not match the retained source."
+          ],
+          "audit": null,
+          "textAccepted": false
+        },
+        {
+          "id": "item-9",
+          "kind": "key_point",
+          "thesisEnglish": "Divergence has emerged among the Magnificent 7 megacaps: former leaders such as Google, Microsoft, and Nvidia have entered lateral consolidation or pullbacks, whereas year-to-date laggards Tesla and Apple are experiencing catch-up rallies.",
+          "ticker": null,
+          "instrumentAsSpoken": null,
+          "stance": "neutral",
+          "levels": [],
+          "evidenceSegments": [
+            "s00094",
+            "s00096"
+          ],
+          "structuralReasons": [
+            "Quote does not match the retained source.",
+            "Quote does not match the retained source."
+          ],
+          "audit": null,
+          "textAccepted": false
+        }
+      ]
+    },
+    {
+      "id": "native-google-alpha-v5-single-segment-shadow-20260915",
+      "status": "shadow_completed_audio_unverified",
+      "sourceAttempt": "4e93d949-2083-43e3-98f5-fea6b133a4ad",
+      "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+      "promptHash": "2576b580ff6cb8c4a4620705e473f4b1ed40911540d22e39ef4bcb6d263d4d4c",
+      "promptVersion": "evidence-first.web.v5+single-segment-quotes.v1",
+      "synthesisModel": "gemini-3.8-flash",
+      "criticModel": "gemini-3.5-flash",
+      "transport": "native_generateContent",
+      "canonicalPromotion": false,
+      "audioVerified": false,
+      "attempts": [
+        "4c3e25b0-64bb-4edc-9d87-fe2e0995651f",
+        "44f9ce21-058a-49ea-a293-47f284936e2b",
+        "37791d63-ceb8-453a-9618-0f78b9fac93f",
+        "fee32449-734b-4a53-99c0-5b46c798e939",
+        "dfc97a2f-cf60-494f-8873-2d3b574ceebc",
+        "5a3b82c7-d6f9-4186-9b07-ff9311fb47cb",
+        "2606ce09-9f10-49be-883d-55df8d747635",
+        "eeb27b5b-d471-4c0e-9a24-b4f50f4b806d",
+        "345609bc-898e-4f8d-9cc7-509488278d6d"
+      ],
+      "error": null,
+      "items": [
+        {
+          "id": "item-1",
+          "kind": "claim",
+          "thesisEnglish": "Existing long positions in the S&P 500 (SPY) can be held comfortably following Friday's confirmation above the daily 20 EMA, but opening new long entries here is not advised due to poor risk-reward after an extended rally. For swing and day traders, stay in the trade as long as price remains above the 1-hour 20 EMA, and exit if it breaks below.",
+          "ticker": "SPY",
+          "instrumentAsSpoken": "大盘SPY",
+          "stance": "hold",
+          "levels": [],
+          "evidenceSegments": [
+            "s00042",
+            "s00043",
+            "s00044",
+            "s00045",
+            "s00062",
+            "s00063"
+          ],
+          "structuralReasons": [
+            "Ticker is not explicit in its evidence."
+          ],
+          "audit": null,
+          "textAccepted": false
+        },
+        {
+          "id": "item-2",
+          "kind": "claim",
+          "thesisEnglish": "Set limit buy orders around 106,000 for Bitcoin as a left-side trade, targeting a strong rebound or potential three-push reversal off the confluence of the third push down and the annual moving average support.",
+          "ticker": null,
+          "instrumentAsSpoken": "比特币",
+          "stance": "conditional",
+          "levels": [
+            {
+              "kind": "entry",
+              "value_original": "106,000"
+            }
+          ],
+          "evidenceSegments": [
+            "s00074",
+            "s00075",
+            "s00076",
+            "s00078",
+            "s00079"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim accurately reflects the speaker's analysis of Bitcoin. The speaker identifies a good buy point around 106,000 (which they refer to as 106,000 in segment s00075), noting it aligns with the third push down and the annual moving average (dual support). They explicitly suggest setting limit orders there as a left-side layout/positioning, targeting a decent bounce or a reversal from the third push. The relative weakness of Bitcoin compared to the broader market is also supported by segment s00073.",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        },
+        {
+          "id": "item-3",
+          "kind": "claim",
+          "thesisEnglish": "Retain core base positions in Tesla, as the stock demonstrates strong upward consolidation digesting selling pressure rather than pulling back, opening up upside potential toward 500 or 550 this year.",
+          "ticker": null,
+          "instrumentAsSpoken": "特斯拉",
+          "stance": "hold",
+          "levels": [
+            {
+              "kind": "support",
+              "value_original": "400"
+            },
+            {
+              "kind": "resistance",
+              "value_original": "440"
+            },
+            {
+              "kind": "target",
+              "value_original": "500"
+            },
+            {
+              "kind": "target",
+              "value_original": "550"
+            }
+          ],
+          "evidenceSegments": [
+            "s00081",
+            "s00088",
+            "s00089",
+            "s00091",
+            "s00093"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim accurately reflects the speaker's analysis of Tesla (TSLA). The speaker notes that the stock is consolidating strongly within the 400 to 440 box, digesting selling pressure rather than pulling back deeply. They advise keeping a core base position ('底仓') to target 500 or 550 this year, while allowing for gradual profit-taking if desired.",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        },
+        {
+          "id": "item-4",
+          "kind": "claim",
+          "thesisEnglish": "Pullbacks in Apple remain buying opportunities despite near-term resistance around previous highs.",
+          "ticker": null,
+          "instrumentAsSpoken": "苹果",
+          "stance": "conditional",
+          "levels": [
+            {
+              "kind": "resistance",
+              "value_original": "258到260"
+            }
+          ],
+          "evidenceSegments": [
+            "s00099",
+            "s00100"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim accurately reflects the speaker's analysis of Apple (苹果). The speaker notes that resistance near previous highs at 258 to 260 is normal, but pullbacks (回踩) remain opportunities to continue going long (继续做多).",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        },
+        {
+          "id": "item-5",
+          "kind": "claim",
+          "thesisEnglish": "Hold existing long positions in Gold as momentum remains strong after brief consolidation at the initial measured move target, with a breakout targeting the 4000 to 4050 zone.",
+          "ticker": null,
+          "instrumentAsSpoken": "黄金",
+          "stance": "hold",
+          "levels": [
+            {
+              "kind": "target",
+              "value_original": "4000到4050"
+            }
+          ],
+          "evidenceSegments": [
+            "s00104",
+            "s00106",
+            "s00107"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim is fully supported by the source text. The speaker states that gold is showing a very strong trend despite resistance at the target level, so existing positions can continue to be held ('继续的去拿住'). If it continues to push up and breaks out, the next target is 4000 to 4050.",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        },
+        {
+          "id": "item-6",
+          "kind": "claim",
+          "thesisEnglish": "Hold positions in the Hang Seng Index and Hang Seng Tech Index as prices remain in high-level consolidation without triggering right-side exit signals.",
+          "ticker": null,
+          "instrumentAsSpoken": "恒生 还有恒生科技",
+          "stance": "hold",
+          "levels": [],
+          "evidenceSegments": [
+            "s00108",
+            "s00109",
+            "s00110"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim accurately reflects the speaker's analysis of the Hang Seng and Hang Seng Tech indices, noting that they are in a high-level consolidation trend without any explicit right-side exit signals, and therefore existing positions can continue to be held.",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        },
+        {
+          "id": "item-7",
+          "kind": "key_point",
+          "thesisEnglish": "A practical simplified framework for managing intraday or multi-day swing trades in a clear bull trend is tracking price relative to the 1-hour 20 EMA: holding long bias as long as price stays above it, and executing an exit when price closes below it.",
+          "ticker": null,
+          "instrumentAsSpoken": null,
+          "stance": "neutral",
+          "levels": [],
+          "evidenceSegments": [
+            "s00057",
+            "s00058",
+            "s00065"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim accurately reflects the speaker's educational framework for short-term or multi-day swing trading during a clear bull trend, which involves using the 1-hour 20 EMA as a guide to hold long positions when price is above it and to exit/wait-and-see when it breaks below.",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        },
+        {
+          "id": "item-8",
+          "kind": "key_point",
+          "thesisEnglish": "Left-side trading involves pre-placing limit orders at predetermined clear technical support levels like the daily 20 EMA, whereas right-side trading requires waiting for a confirmed signal bar before taking action.",
+          "ticker": null,
+          "instrumentAsSpoken": null,
+          "stance": "neutral",
+          "levels": [],
+          "evidenceSegments": [
+            "s00037",
+            "s00038",
+            "s00039",
+            "s00040"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim accurately reflects the speaker's explanation of left-side trading (placing limit orders directly at clear support levels like the daily 20 EMA) and right-side trading (waiting to see a confirmed signal before taking action), as supported by segments s00037 to s00040.",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        },
+        {
+          "id": "item-9",
+          "kind": "key_point",
+          "thesisEnglish": "Within the Magnificent Seven group, earlier leaders like Google, Microsoft, and Nvidia have entered consolidations or declines, while Apple and Tesla, which underperformed earlier in the year, are currently demonstrating catch-up rally behavior.",
+          "ticker": null,
+          "instrumentAsSpoken": null,
+          "stance": "neutral",
+          "levels": [],
+          "evidenceSegments": [
+            "s00094",
+            "s00096",
+            "s00097",
+            "s00098"
+          ],
+          "structuralReasons": [],
+          "audit": {
+            "verdict": "accept",
+            "reason_en": "The claim accurately reflects the speaker's analysis of the Magnificent Seven stocks. The speaker notes that earlier strong performers like Google, Microsoft, and Nvidia are either falling or consolidating sideways, while Apple and Tesla (the worst performers earlier in the year) are experiencing catch-up rallies.",
+            "unsupported_fields": [],
+            "requires_audio_review": false
+          },
+          "textAccepted": true
+        }
+      ]
+    }
+  ],
+  "textReview": [
+    {
+      "candidateId": "native-google-alpha-v5-single-segment-shadow-20260915",
+      "itemId": "item-7",
+      "finding": "Draft adds a closes-below condition; retained source describes breaking below. The model critic accepted it without flagging the added bar-close condition.",
+      "reviewType": "assistant_review_against_retained_text",
+      "audioVerified": false,
+      "status": "requires_semantic_review"
+    },
+    {
+      "candidateId": "native-google-alpha-v5-single-segment-shadow-20260915",
+      "itemId": "item-1",
+      "finding": "SPY claim rejected because the quoted evidence omitted the explicit ticker occurrence. No automatic symbol repair.",
+      "reviewType": "deterministic_validation",
+      "audioVerified": false,
+      "status": "rejected"
+    },
+    {
+      "candidateId": "native-google-alpha-v5-single-segment-shadow-20260915",
+      "finding": "Separate QQQ/IWM holding guidance from baseline is absent as a separate candidate claim. Counts do not establish recall parity.",
+      "reviewType": "draft_to_draft_comparison",
+      "audioVerified": false,
+      "status": "requires_recall_review"
+    }
+  ],
+  "conclusion": "Single-segment guidance reduces quote-boundary failures on one development source. Candidate not promoted; critic acceptance is not final verified accuracy."
+}

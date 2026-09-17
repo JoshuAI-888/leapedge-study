@@ -1,0 +1,53 @@
+{
+  "at": "2026-09-14T21:14:14.268Z",
+  "method": "Resend documented test addresses -> live signed webhook -> Neon -> application reconciliation",
+  "results": [
+    {
+      "id": "completion-event-delivered-20260915",
+      "delivery": {
+        "id": "completion-event-delivered-20260915",
+        "test": true,
+        "status": "delivered",
+        "simulation": true,
+        "providerId": "cbdacf2b-a130-45fc-9e25-48cdeb049f14",
+        "expectedEvent": "email.delivered",
+        "acceptedAt": "2026-09-14T21:13:25.109Z",
+        "eventAt": "2026-09-14T21:13:26.626Z",
+        "lastEvent": "email.delivered"
+      },
+      "events": [
+        {
+          "id": "msg_3JKr4FHQ9qpGm64R5ctzlE26sZz",
+          "type": "email.delivered",
+          "emailId": "cbdacf2b-a130-45fc-9e25-48cdeb049f14",
+          "at": "2026-09-14T21:13:26.626Z"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "completion-event-bounced-20260915",
+      "delivery": {
+        "id": "completion-event-bounced-20260915",
+        "test": true,
+        "status": "bounced",
+        "simulation": true,
+        "providerId": "94ca75a9-de9d-4a12-83a7-c550c29b02ac",
+        "expectedEvent": "email.bounced",
+        "acceptedAt": "2026-09-14T21:13:29.623Z",
+        "eventAt": "2026-09-14T21:13:30.772Z",
+        "lastEvent": "email.bounced"
+      },
+      "events": [
+        {
+          "id": "msg_3JKr4oH9eY2lEPGXG4StlqPo0oZ",
+          "type": "email.bounced",
+          "emailId": "94ca75a9-de9d-4a12-83a7-c550c29b02ac",
+          "at": "2026-09-14T21:13:30.772Z"
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "inboxReceiptProven": false
+}

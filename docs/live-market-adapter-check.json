@@ -1,0 +1,29 @@
+{
+  "testOnly": true,
+  "realCreatorRecommendation": false,
+  "stockRows": 51,
+  "spyRows": 51,
+  "result": {
+    "id": "synthetic-adapter-check",
+    "channel": "SYNTHETIC TEST — not a creator call",
+    "ticker": "AAPL",
+    "stance": "long",
+    "status": "ongoing",
+    "entryDate": "2026-07-01",
+    "exitDate": "2026-09-11",
+    "targetDate": "2026-09-29",
+    "entryPrice": 294.13,
+    "exitPrice": 332.27,
+    "spyEntry": 745.76,
+    "spyExit": 764.29,
+    "stockReturn": 0.12967055383673887,
+    "spyReturn": 0.02484713580776643,
+    "excessReturn": 0.10482341802897244,
+    "win": true,
+    "beatsSpy": true,
+    "provider": "FMP",
+    "adjustment": "dividend-adjusted endpoint",
+    "asOf": "2026-09-11",
+    "mode": "leapedge"
+  }
+}
