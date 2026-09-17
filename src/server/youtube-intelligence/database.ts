@@ -2,6 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { mkdirSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import pg from "pg";
+import type { PGlite } from "@electric-sql/pglite";
 const schema = `
 CREATE TABLE IF NOT EXISTS yi_runs(id TEXT PRIMARY KEY,video_id TEXT,url TEXT,model TEXT,prompt_version TEXT,title TEXT,status TEXT,stage TEXT,created_at TEXT,updated_at TEXT,error TEXT,input TEXT,output TEXT,cost DOUBLE PRECISION DEFAULT 0,lease_until BIGINT DEFAULT 0,lease_token TEXT);
 CREATE TABLE IF NOT EXISTS yi_calls(id TEXT PRIMARY KEY,run_id TEXT,stage TEXT,status TEXT,amount DOUBLE PRECISION,metrics TEXT);
@@ -18,11 +19,36 @@ CREATE INDEX IF NOT EXISTS yi_documents_kind ON yi_documents(kind,created_at);
 CREATE INDEX IF NOT EXISTS yi_discoveries_channel ON yi_discoveries(channel_id,discovered_at);
 `;
 type Row = Record<string, unknown>;
-type Connection = pg.PoolClient | DatabaseSync;
+// PGlite is an in-process, single-connection Postgres used by tests
+// (YTI_DB=pglite). It shares the pg.Pool code path: postgresSQL() rewriting,
+// $n placeholders and the same schema statements.
+type Connection = pg.PoolClient | DatabaseSync | PGlite;
 const context = new AsyncLocalStorage<Connection>();
 let pool: pg.Pool | undefined,
   sqlite: DatabaseSync | undefined,
+  pglite: PGlite | undefined,
   ready: Promise<void> | undefined;
+function isPGlite(c: Connection): c is PGlite {
+  return pglite !== undefined && c === pglite;
+}
+// One statement, no parameters, on either Postgres driver.
+async function simple(c: pg.PoolClient | PGlite, sql: string) {
+  if (isPGlite(c)) await c.query(sql);
+  else await c.query(sql);
+}
+export type DriverName = "pg" | "sqlite" | "pglite";
+export function driverName(): DriverName | undefined {
+  if (pool) return "pg";
+  if (pglite) return "pglite";
+  if (sqlite) return "sqlite";
+  return undefined;
+}
+async function loadPGlite() {
+  // Dev-only dependency: a non-literal specifier keeps it out of the Next
+  // server bundle and out of production module resolution.
+  const specifier = "@electric-sql/pglite";
+  return (await import(specifier)) as typeof import("@electric-sql/pglite");
+}
 let tail = Promise.resolve();
 async function exclusive<T>(fn: () => Promise<T>): Promise<T> {
   const previous = tail;
@@ -56,7 +82,13 @@ export function postgresSQL(sql: string) {
 async function initialize() {
   if (!ready)
     ready = (async () => {
-      if (process.env.DATABASE_URL) {
+      if (process.env.YTI_DB === "pglite") {
+        const { PGlite: Driver } = await loadPGlite();
+        const instance = await Driver.create();
+        // Single connection: no advisory lock is needed (or meaningful) here.
+        await instance.exec(schema);
+        pglite = instance;
+      } else if (process.env.DATABASE_URL) {
         const connectionUrl = new URL(process.env.DATABASE_URL);
         if (connectionUrl.searchParams.get("sslmode") === "require")
           connectionUrl.searchParams.set("sslmode", "verify-full");
@@ -110,12 +142,20 @@ async function execute(
         return { rows: statement.all(...p) as Row[], changes: 0 };
       return { rows: [], changes: Number(statement.run(...p).changes) };
     }
+    if (isPGlite(c)) {
+      const r = await c.query<Row>(
+        postgresSQL(sql),
+        params.map((x) => (x === undefined ? null : x)),
+      );
+      return { rows: r.rows, changes: r.affectedRows ?? 0 };
+    }
     const r = await c.query(postgresSQL(sql), params);
     return { rows: r.rows as Row[], changes: r.rowCount || 0 };
   };
   const c = context.getStore();
   if (c) return run(c);
   if (sqlite) return exclusive(() => run(sqlite!));
+  if (pglite) return exclusive(() => run(pglite!));
   const client = await pool!.connect();
   try {
     return await run(client);
@@ -141,10 +181,15 @@ export const database = {
     await initialize();
     const c = context.getStore();
     if (c instanceof DatabaseSync) c.exec(sql);
+    else if (c && isPGlite(c)) await c.exec(postgresSQL(sql));
     else if (c) await c.query(postgresSQL(sql));
     else if (sqlite)
       await exclusive(async () => {
         sqlite!.exec(sql);
+      });
+    else if (pglite)
+      await exclusive(async () => {
+        await pglite!.exec(postgresSQL(sql));
       });
     else await pool!.query(postgresSQL(sql));
   },
@@ -155,21 +200,26 @@ export const database = {
       context.run(c, async () => {
         if (c instanceof DatabaseSync) c.exec("BEGIN IMMEDIATE");
         else {
-          await c.query("BEGIN");
-          await c.query("SELECT pg_advisory_xact_lock(78941002)");
+          await simple(c, "BEGIN");
+          // PGlite has one connection and transactions are serialized by
+          // exclusive(), so the global advisory lock is skipped there; it
+          // could never contend and would only mask real-Postgres behaviour.
+          if (!isPGlite(c))
+            await c.query("SELECT pg_advisory_xact_lock(78941002)");
         }
         try {
           const result = await fn();
           if (c instanceof DatabaseSync) c.exec("COMMIT");
-          else await c.query("COMMIT");
+          else await simple(c, "COMMIT");
           return result;
         } catch (e) {
           if (c instanceof DatabaseSync) c.exec("ROLLBACK");
-          else await c.query("ROLLBACK");
+          else await simple(c, "ROLLBACK");
           throw e;
         }
       });
     if (sqlite) return exclusive(() => run(sqlite!));
+    if (pglite) return exclusive(() => run(pglite!));
     const c = await pool!.connect();
     try {
       return await run(c);
@@ -178,10 +228,13 @@ export const database = {
     }
   },
   async close() {
+    if (ready) await ready.catch(() => undefined);
     if (pool) await pool.end();
     sqlite?.close();
+    if (pglite) await pglite.close();
     pool = undefined;
     sqlite = undefined;
+    pglite = undefined;
     ready = undefined;
   },
 };
