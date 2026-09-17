@@ -1,0 +1,794 @@
+{
+  "id": "baseline",
+  "asOf": "2026-09-01",
+  "now": "2026-09-01T12:00:00.000Z",
+  "channels": [
+    {
+      "key": "macro-mike",
+      "id": "UCmacroMike0000000000001",
+      "title": "Macro Mike",
+      "handle": "@macromike",
+      "uploads": "UUmacroMike0000000000001",
+      "favorite": true,
+      "autoAnalyze": true,
+      "createdAt": "2026-05-20T09:00:00.000Z"
+    },
+    {
+      "key": "laowang",
+      "id": "UClaowangStocks000000002",
+      "title": "老王聊股",
+      "handle": "@laowangstocks",
+      "uploads": "UUlaowangStocks000000002",
+      "favorite": false,
+      "autoAnalyze": false,
+      "createdAt": "2026-05-22T09:00:00.000Z"
+    }
+  ],
+  "runs": [
+    {
+      "key": "mike-nvda-earnings",
+      "channel": "macro-mike",
+      "videoId": "aB1cD2eF3gH",
+      "title": "NVDA earnings: why I am adding here",
+      "publishedAt": "2026-06-01T15:00:00.000Z",
+      "createdAt": "2026-06-02T03:10:00.000Z",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "language": "en",
+      "segments": [
+        {
+          "id": "s1",
+          "text": "I am adding to Nvidia here after the earnings pullback.",
+          "start": 12,
+          "end": 17
+        },
+        {
+          "id": "s2",
+          "text": "My twelve month target is two hundred and the stop is one thirty.",
+          "start": 17,
+          "end": 23
+        },
+        {
+          "id": "s3",
+          "text": "I am staying long the S and P through the summer, no changes to the index sleeve.",
+          "start": 40,
+          "end": 46
+        }
+      ],
+      "claims": [
+        {
+          "key": "nvda-long",
+          "ticker": "NVDA",
+          "instrument": "Nvidia",
+          "stance": "long",
+          "conviction": "high",
+          "thesis": "Add to Nvidia after the post-earnings pullback with a twelve-month target of 200 and a stop at 130.",
+          "horizon": "twelve months",
+          "levels": [
+            {
+              "kind": "target",
+              "value": "two hundred"
+            },
+            {
+              "kind": "stop",
+              "value": "one thirty"
+            }
+          ],
+          "quotes": [
+            {
+              "segment": "s1",
+              "quote": "I am adding to Nvidia here after the earnings pullback.",
+              "translation": "I am adding to Nvidia here after the earnings pullback."
+            },
+            {
+              "segment": "s2",
+              "quote": "My twelve month target is two hundred and the stop is one thirty.",
+              "translation": "My twelve month target is two hundred and the stop is one thirty."
+            }
+          ],
+          "passed": true
+        },
+        {
+          "key": "spy-hold",
+          "ticker": "SPY",
+          "instrument": "the S and P",
+          "stance": "hold",
+          "conviction": "medium",
+          "thesis": "Keep the existing S&P 500 index position through the summer without changes.",
+          "horizon": "through the summer",
+          "levels": [],
+          "quotes": [
+            {
+              "segment": "s3",
+              "quote": "I am staying long the S and P through the summer, no changes to the index sleeve.",
+              "translation": "I am staying long the S&P through the summer, no changes to the index sleeve."
+            }
+          ],
+          "passed": true,
+          "tickerExplicit": false
+        }
+      ]
+    },
+    {
+      "key": "mike-mid-june",
+      "channel": "macro-mike",
+      "videoId": "hG4fE5dC6bA",
+      "title": "Mid-June check: trimming, not selling",
+      "publishedAt": "2026-06-14T16:00:00.000Z",
+      "createdAt": "2026-06-15T02:40:00.000Z",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "language": "en",
+      "segments": [
+        {
+          "id": "s1",
+          "text": "I would not short Nvidia here even though it looks stretched.",
+          "start": 5,
+          "end": 9
+        },
+        {
+          "id": "s2",
+          "text": "I am buying a starter position in Tesla into the robotaxi event.",
+          "start": 30,
+          "end": 35
+        }
+      ],
+      "claims": [
+        {
+          "key": "nvda-short-low",
+          "ticker": "NVDA",
+          "instrument": "Nvidia",
+          "stance": "short",
+          "conviction": "low",
+          "thesis": "Nvidia looks stretched but shorting it here is not advised.",
+          "horizon": null,
+          "levels": [],
+          "quotes": [
+            {
+              "segment": "s1",
+              "quote": "I would not short Nvidia here even though it looks stretched.",
+              "translation": "I would not short Nvidia here even though it looks stretched."
+            }
+          ],
+          "passed": false,
+          "reasons": [
+            "Critic: the creator declines to short; stance is not a short call."
+          ]
+        },
+        {
+          "key": "tsla-long",
+          "ticker": "TSLA",
+          "instrument": "Tesla",
+          "stance": "long",
+          "conviction": "medium",
+          "thesis": "Buy a starter position in Tesla ahead of the robotaxi event.",
+          "horizon": "into the robotaxi event",
+          "levels": [],
+          "quotes": [
+            {
+              "segment": "s2",
+              "quote": "I am buying a starter position in Tesla into the robotaxi event.",
+              "translation": "I am buying a starter position in Tesla into the robotaxi event."
+            }
+          ],
+          "passed": true
+        }
+      ]
+    },
+    {
+      "key": "laowang-ai-capex",
+      "channel": "laowang",
+      "videoId": "zY9xW8vU7tS",
+      "title": "AI资本开支还能撑多久？英伟达与苹果",
+      "publishedAt": "2026-06-30T12:00:00.000Z",
+      "createdAt": "2026-07-01T01:15:00.000Z",
+      "model": "google/gemini-3.8-flash",
+      "promptVersion": "evidence-first.web.v5",
+      "language": "zh",
+      "segments": [
+        {
+          "id": "s1",
+          "text": "英伟达我会继续持有并在回调时加仓，目标看到年底。",
+          "start": 90,
+          "end": 96
+        },
+        {
+          "id": "s2",
+          "text": "苹果现在我会回避，AI故事还没有落地。",
+          "start": 140,
+          "end": 145
+        }
+      ],
+      "claims": [
+        {
+          "key": "nvda-long-zh",
+          "ticker": "NVDA",
+          "instrument": "英伟达",
+          "stance": "long",
+          "conviction": "medium",
+          "thesis": "Continue holding Nvidia and add on pullbacks, with a horizon to year end.",
+          "horizon": "to year end",
+          "levels": [],
+          "quotes": [
+            {
+              "segment": "s1",
+              "quote": "英伟达我会继续持有并在回调时加仓，目标看到年底。",
+              "translation": "I will keep holding Nvidia and add on pullbacks, looking to year end."
+            }
+          ],
+          "passed": true
+        },
+        {
+          "key": "aapl-avoid",
+          "ticker": "AAPL",
+          "instrument": "苹果",
+          "stance": "avoid",
+          "conviction": "medium",
+          "thesis": "Avoid Apple for now because its AI story has not materialised.",
+          "horizon": null,
+          "levels": [],
+          "quotes": [
+            {
+              "segment": "s2",
+              "quote": "苹果现在我会回避，AI故事还没有落地。",
+              "translation": "I would avoid Apple right now; the AI story has not landed yet."
+            }
+          ],
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "kind": "watchlist",
+      "id": "NVDA",
+      "payload": {
+        "ticker": "NVDA",
+        "enabled": true
+      }
+    }
+  ],
+  "prices": [
+    {
+      "symbol": "NVDA",
+      "from": "2026-06-01",
+      "to": "2026-09-01",
+      "fetchedAt": "2026-09-01T11:00:00.000Z",
+      "exchange": "NASDAQ",
+      "name": "NVIDIA Corporation",
+      "closes": [
+        [
+          "2026-06-01",
+          150
+        ],
+        [
+          "2026-06-02",
+          151.85
+        ],
+        [
+          "2026-06-03",
+          153.53
+        ],
+        [
+          "2026-06-04",
+          154.91
+        ],
+        [
+          "2026-06-05",
+          155.87
+        ],
+        [
+          "2026-06-08",
+          156.35
+        ],
+        [
+          "2026-06-09",
+          156.34
+        ],
+        [
+          "2026-06-10",
+          155.88
+        ],
+        [
+          "2026-06-11",
+          155.06
+        ],
+        [
+          "2026-06-12",
+          154.01
+        ],
+        [
+          "2026-06-15",
+          152.89
+        ],
+        [
+          "2026-06-16",
+          151.87
+        ],
+        [
+          "2026-06-17",
+          151.09
+        ],
+        [
+          "2026-06-18",
+          150.69
+        ],
+        [
+          "2026-06-22",
+          150.75
+        ],
+        [
+          "2026-06-23",
+          151.31
+        ],
+        [
+          "2026-06-24",
+          152.34
+        ],
+        [
+          "2026-06-25",
+          153.77
+        ],
+        [
+          "2026-06-26",
+          155.49
+        ],
+        [
+          "2026-06-29",
+          157.35
+        ],
+        [
+          "2026-06-30",
+          159.18
+        ],
+        [
+          "2026-07-01",
+          160.83
+        ],
+        [
+          "2026-07-02",
+          162.15
+        ],
+        [
+          "2026-07-06",
+          163.05
+        ],
+        [
+          "2026-07-07",
+          163.45
+        ],
+        [
+          "2026-07-08",
+          163.37
+        ],
+        [
+          "2026-07-09",
+          162.84
+        ],
+        [
+          "2026-07-10",
+          161.98
+        ],
+        [
+          "2026-07-13",
+          160.91
+        ],
+        [
+          "2026-07-14",
+          159.8
+        ],
+        [
+          "2026-07-15",
+          158.8
+        ],
+        [
+          "2026-07-16",
+          158.08
+        ],
+        [
+          "2026-07-17",
+          157.74
+        ],
+        [
+          "2026-07-20",
+          157.88
+        ],
+        [
+          "2026-07-21",
+          158.5
+        ],
+        [
+          "2026-07-22",
+          159.6
+        ],
+        [
+          "2026-07-23",
+          161.09
+        ],
+        [
+          "2026-07-24",
+          162.84
+        ],
+        [
+          "2026-07-27",
+          164.7
+        ],
+        [
+          "2026-07-28",
+          166.52
+        ],
+        [
+          "2026-07-29",
+          168.12
+        ],
+        [
+          "2026-07-30",
+          169.39
+        ],
+        [
+          "2026-07-31",
+          170.21
+        ],
+        [
+          "2026-08-03",
+          170.54
+        ],
+        [
+          "2026-08-04",
+          170.38
+        ],
+        [
+          "2026-08-05",
+          169.8
+        ],
+        [
+          "2026-08-06",
+          168.9
+        ],
+        [
+          "2026-08-07",
+          167.81
+        ],
+        [
+          "2026-08-10",
+          166.7
+        ],
+        [
+          "2026-08-11",
+          165.74
+        ],
+        [
+          "2026-08-12",
+          165.07
+        ],
+        [
+          "2026-08-13",
+          164.8
+        ],
+        [
+          "2026-08-14",
+          165.01
+        ],
+        [
+          "2026-08-17",
+          165.71
+        ],
+        [
+          "2026-08-18",
+          166.87
+        ],
+        [
+          "2026-08-19",
+          168.4
+        ],
+        [
+          "2026-08-20",
+          170.18
+        ],
+        [
+          "2026-08-21",
+          172.05
+        ],
+        [
+          "2026-08-24",
+          173.84
+        ],
+        [
+          "2026-08-25",
+          175.41
+        ],
+        [
+          "2026-08-26",
+          176.61
+        ],
+        [
+          "2026-08-27",
+          177.36
+        ],
+        [
+          "2026-08-28",
+          177.61
+        ],
+        [
+          "2026-08-31",
+          177.39
+        ],
+        [
+          "2026-09-01",
+          176.75
+        ]
+      ]
+    },
+    {
+      "symbol": "SPY",
+      "from": "2026-06-01",
+      "to": "2026-09-01",
+      "fetchedAt": "2026-09-01T11:00:00.000Z",
+      "exchange": "NYSEARCA",
+      "name": "SPDR S&P 500 ETF Trust",
+      "closes": [
+        [
+          "2026-06-01",
+          560
+        ],
+        [
+          "2026-06-02",
+          561.83
+        ],
+        [
+          "2026-06-03",
+          563.58
+        ],
+        [
+          "2026-06-04",
+          565.16
+        ],
+        [
+          "2026-06-05",
+          566.5
+        ],
+        [
+          "2026-06-08",
+          567.55
+        ],
+        [
+          "2026-06-09",
+          568.27
+        ],
+        [
+          "2026-06-10",
+          568.65
+        ],
+        [
+          "2026-06-11",
+          568.68
+        ],
+        [
+          "2026-06-12",
+          568.39
+        ],
+        [
+          "2026-06-15",
+          567.83
+        ],
+        [
+          "2026-06-16",
+          567.07
+        ],
+        [
+          "2026-06-17",
+          566.17
+        ],
+        [
+          "2026-06-18",
+          565.22
+        ],
+        [
+          "2026-06-22",
+          564.31
+        ],
+        [
+          "2026-06-23",
+          563.52
+        ],
+        [
+          "2026-06-24",
+          562.93
+        ],
+        [
+          "2026-06-25",
+          562.6
+        ],
+        [
+          "2026-06-26",
+          562.59
+        ],
+        [
+          "2026-06-29",
+          562.92
+        ],
+        [
+          "2026-06-30",
+          563.59
+        ],
+        [
+          "2026-07-01",
+          564.6
+        ],
+        [
+          "2026-07-02",
+          565.9
+        ],
+        [
+          "2026-07-06",
+          567.46
+        ],
+        [
+          "2026-07-07",
+          569.19
+        ],
+        [
+          "2026-07-08",
+          571.01
+        ],
+        [
+          "2026-07-09",
+          572.85
+        ],
+        [
+          "2026-07-10",
+          574.62
+        ],
+        [
+          "2026-07-13",
+          576.22
+        ],
+        [
+          "2026-07-14",
+          577.6
+        ],
+        [
+          "2026-07-15",
+          578.69
+        ],
+        [
+          "2026-07-16",
+          579.46
+        ],
+        [
+          "2026-07-17",
+          579.88
+        ],
+        [
+          "2026-07-20",
+          579.95
+        ],
+        [
+          "2026-07-21",
+          579.7
+        ],
+        [
+          "2026-07-22",
+          579.18
+        ],
+        [
+          "2026-07-23",
+          578.44
+        ],
+        [
+          "2026-07-24",
+          577.55
+        ],
+        [
+          "2026-07-27",
+          576.6
+        ],
+        [
+          "2026-07-28",
+          575.68
+        ],
+        [
+          "2026-07-29",
+          574.87
+        ],
+        [
+          "2026-07-30",
+          574.25
+        ],
+        [
+          "2026-07-31",
+          573.89
+        ],
+        [
+          "2026-08-03",
+          573.83
+        ],
+        [
+          "2026-08-04",
+          574.11
+        ],
+        [
+          "2026-08-05",
+          574.74
+        ],
+        [
+          "2026-08-06",
+          575.71
+        ],
+        [
+          "2026-08-07",
+          576.98
+        ],
+        [
+          "2026-08-10",
+          578.5
+        ],
+        [
+          "2026-08-11",
+          580.21
+        ],
+        [
+          "2026-08-12",
+          582.03
+        ],
+        [
+          "2026-08-13",
+          583.87
+        ],
+        [
+          "2026-08-14",
+          585.65
+        ],
+        [
+          "2026-08-17",
+          587.28
+        ],
+        [
+          "2026-08-18",
+          588.69
+        ],
+        [
+          "2026-08-19",
+          589.83
+        ],
+        [
+          "2026-08-20",
+          590.64
+        ],
+        [
+          "2026-08-21",
+          591.1
+        ],
+        [
+          "2026-08-24",
+          591.22
+        ],
+        [
+          "2026-08-25",
+          591.01
+        ],
+        [
+          "2026-08-26",
+          590.52
+        ],
+        [
+          "2026-08-27",
+          589.8
+        ],
+        [
+          "2026-08-28",
+          588.93
+        ],
+        [
+          "2026-08-31",
+          587.99
+        ],
+        [
+          "2026-09-01",
+          587.06
+        ]
+      ]
+    }
+  ]
+}

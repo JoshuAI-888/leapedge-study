@@ -17,45 +17,53 @@ import {
   captionLanguageMatches,
 } from "../src/server/youtube-intelligence/transcripts.ts";
 import { doc, put } from "../src/server/youtube-intelligence/research-store.ts";
+import { stubFetch, json, type FetchStub } from "./helpers/fetch-stub.ts";
 const payload = (id: string) => ({
   video_id: id,
   language: "en",
   transcript: [{ text: "Do not buy.", start: 0, duration: 8 }],
 });
 test("Managed captions fail over, deduplicate, preserve uncertain charges, poll jobs, and enforce credit caps", async () => {
-  const original = globalThis.fetch;
   process.env.SUPADATA_API_KEY = "fixture";
   process.env.TRANSCRIPTAPI_API_KEY = "fixture";
   process.env.YTI_TRANSCRIPT_CREDIT_BUDGET = "90";
+  let stub: FetchStub | undefined;
+  // Each phase installs its own routes; the previous phase is unwound first.
+  const phase = (routes: Parameters<typeof stubFetch>[0]) => {
+    stub?.restore();
+    stub = stubFetch(routes);
+    return stub;
+  };
   try {
-    let primary = 0,
-      secondary = 0;
-    globalThis.fetch = async (url) => {
-      if (String(url).includes("transcriptapi")) {
-        primary++;
-        return new Response("", { status: 503 });
-      }
-      secondary++;
-      return Response.json({
-        lang: "en",
-        content: [{ text: "Do not buy.", offset: 0, duration: 8000 }],
-      });
-    };
+    const failover = phase([
+      { url: "transcriptapi", respond: () => new Response("", { status: 503 }) },
+      {
+        url: "supadata",
+        respond: () =>
+          json({
+            lang: "en",
+            content: [{ text: "Do not buy.", offset: 0, duration: 8000 }],
+          }),
+      },
+    ]);
     assert.equal(
       (await nativeTranscript("testvideo01"))?.source_kind,
       "native_captions_supadata",
     );
     await nativeTranscript("testvideo01");
-    assert.equal(primary, 1);
-    assert.equal(secondary, 1);
+    assert.equal(failover.calls("transcriptapi").length, 1);
+    assert.equal(failover.calls("supadata").length, 1);
     let resolve!: () => void;
     const wait = new Promise<void>((r) => (resolve = r));
-    let calls = 0;
-    globalThis.fetch = async () => {
-      calls++;
-      await wait;
-      return Response.json(payload("testvideo02"));
-    };
+    const inflight = phase([
+      {
+        url: "transcriptapi",
+        respond: async () => {
+          await wait;
+          return json(payload("testvideo02"));
+        },
+      },
+    ]);
     const pending = managedTranscript("testvideo02", "transcriptapi");
     await new Promise((r) => setTimeout(r, 10));
     await assert.rejects(
@@ -64,10 +72,15 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
     );
     resolve();
     await pending;
-    assert.equal(calls, 1);
-    globalThis.fetch = async () => {
-      throw new Error("secret upstream details");
-    };
+    assert.equal(inflight.log.length, 1);
+    phase([
+      {
+        url: "transcriptapi",
+        respond: () => {
+          throw new Error("secret upstream details");
+        },
+      },
+    ]);
     assert.equal(await managedTranscript("testvideo03", "transcriptapi"), null);
     assert.equal(
       (
@@ -78,26 +91,24 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
       )?.status,
       "uncertain",
     );
-    globalThis.fetch = async () => {
-      throw Error("Should never resubmit");
-    };
+    // No routes: any call is refused by the stub, so a resubmission would fail loudly.
+    const silent = phase([]);
     assert.equal(await managedTranscript("testvideo03", "transcriptapi"), null);
-    let submissions = 0,
-      polls = 0;
-    globalThis.fetch = async (url) => {
-      if (new URL(String(url)).pathname === "/v1/transcript") {
-        submissions++;
-        return Response.json({ jobId: "job-1" }, { status: 202 });
-      }
-      polls++;
-      return Response.json({
-        status: "completed",
-        result: {
-          lang: "zh",
-          content: [{ text: "原文", offset: 0, duration: 10000 }],
-        },
-      });
-    };
+    assert.equal(silent.log.length, 0, "Should never resubmit");
+    const jobs = phase([
+      {
+        url: /\/v1\/transcript\/[\w-]+$/,
+        respond: () =>
+          json({
+            status: "completed",
+            result: {
+              lang: "zh",
+              content: [{ text: "原文", offset: 0, duration: 10000 }],
+            },
+          }),
+      },
+      { url: "/v1/transcript", respond: () => json({ jobId: "job-1" }, 202) },
+    ]);
     await assert.rejects(
       managedTranscript("testvideo04", "supadata", {
         generate: true,
@@ -114,8 +125,8 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
       )?.source_kind,
       "generated_transcript_supadata",
     );
-    assert.equal(submissions, 1);
-    assert.equal(polls, 1);
+    assert.equal(jobs.log.filter((c) => c.route === 1).length, 1, "one submission");
+    assert.equal(jobs.log.filter((c) => c.route === 0).length, 1, "one poll");
     assert.equal(
       (
         await doc<any>(
@@ -125,7 +136,7 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
       )?.credits,
       20,
     );
-    globalThis.fetch = async () => new Response("", { status: 429 });
+    phase([{ url: "supadata", respond: () => new Response("", { status: 429 }) }]);
     assert.equal(await managedTranscript("testvideo06", "supadata"), null);
     const retryId = "supadata:native:testvideo06:original";
     const failed = await doc<any>("managedCaptionAttempt", retryId);
@@ -133,20 +144,30 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
       ...failed,
       at: new Date(Date.now() - 3000).toISOString(),
     });
-    globalThis.fetch = async () =>
-      Response.json({
-        lang: "en",
-        content: [{ text: "Exact words", offset: 0, duration: 5000 }],
-      });
+    phase([
+      {
+        url: "supadata",
+        respond: () =>
+          json({
+            lang: "en",
+            content: [{ text: "Exact words", offset: 0, duration: 5000 }],
+          }),
+      },
+    ]);
     assert.ok(await managedTranscript("testvideo06", "supadata"));
     const recovered = await doc<any>("managedCaptionAttempt", retryId);
     assert.equal(recovered.number, 2);
     assert.equal(recovered.credits, 2);
-    globalThis.fetch = async () =>
-      Response.json({
-        lang: "yue",
-        content: [{ text: "唔好買", offset: 0, duration: 5000 }],
-      });
+    phase([
+      {
+        url: "supadata",
+        respond: () =>
+          json({
+            lang: "yue",
+            content: [{ text: "唔好買", offset: 0, duration: 5000 }],
+          }),
+      },
+    ]);
     assert.equal(
       await managedTranscript("testvideo07", "supadata", { language: "zh-CN" }),
       null,
@@ -196,7 +217,7 @@ test("Managed captions fail over, deduplicate, preserve uncertain charges, poll 
       ),
     );
   } finally {
-    globalThis.fetch = original;
+    stub?.restore();
     delete process.env.SUPADATA_API_KEY;
     delete process.env.TRANSCRIPTAPI_API_KEY;
     delete process.env.YTI_TRANSCRIPT_CREDIT_BUDGET;

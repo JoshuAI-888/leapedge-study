@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { stubFetch, json, type FetchStub } from "./helpers/fetch-stub.ts";
 test("Channel discovery deduplicates uploads; provider failures retain actionable state; native job polling does not resubmit", async () => {
   process.env.YTI_YOUTUBEJS_ENABLED = "false";
   process.env.YTI_DB_PATH = join(
@@ -11,8 +12,12 @@ test("Channel discovery deduplicates uploads; provider failures retain actionabl
   );
   process.env.YOUTUBE_API_KEY = "fixture-only";
   process.env.SUPADATA_API_KEY = "fixture-only";
-  const original = globalThis.fetch;
-  let calls = 0;
+  let stub: FetchStub | undefined;
+  const phase = (routes: Parameters<typeof stubFetch>[0]) => {
+    stub?.restore();
+    stub = stubFetch(routes);
+    return stub;
+  };
   const payloads: unknown[] = [
     {
       items: [
@@ -46,10 +51,13 @@ test("Channel discovery deduplicates uploads; provider failures retain actionabl
       ],
     },
   ];
-  globalThis.fetch = async () => {
-    calls++;
-    return Response.json(payloads.shift());
-  };
+  // One route, three queued responses: channel lookup, then two upload pages.
+  phase([
+    {
+      url: "googleapis.com/youtube/v3",
+      responses: payloads.map((p) => () => json(p)),
+    },
+  ]);
   try {
     const C = await import("../src/server/youtube-intelligence/channels.ts"),
       R = await import("../src/server/youtube-intelligence/research-store.ts");
@@ -77,33 +85,32 @@ test("Channel discovery deduplicates uploads; provider failures retain actionabl
       )?.n,
       0,
     );
-    globalThis.fetch = async () => new Response("denied", { status: 403 });
+    phase([
+      { url: "googleapis.com", respond: () => new Response("denied", { status: 403 }) },
+    ]);
     await assert.rejects(C.pull(c.id), /403/);
     assert.match(String((await R.doc("channel", c.id))?.error), /403/);
     const T = await import("../src/server/youtube-intelligence/transcripts.ts");
-    let submitted = 0,
-      polls = 0;
-    globalThis.fetch = async (url) => {
-      const path = new URL(String(url)).pathname;
-      if (path === "/v1/transcript") {
-        submitted++;
-        return Response.json({ jobId: "job-test" }, { status: 202 });
-      }
-      polls++;
-      return Response.json({
-        status: "completed",
-        content: [{ text: "原文", offset: 0, duration: 1000 }],
-        lang: "zh",
-      });
-    };
+    const jobs = phase([
+      {
+        url: /\/v1\/transcript\/[\w-]+$/,
+        respond: () =>
+          json({
+            status: "completed",
+            content: [{ text: "原文", offset: 0, duration: 1000 }],
+            lang: "zh",
+          }),
+      },
+      { url: "/v1/transcript", respond: () => json({ jobId: "job-test" }, 202) },
+    ]);
     await assert.rejects(T.nativeTranscript("3u24qyWjSVM"), T.SourcePending);
     const source = await T.nativeTranscript("3u24qyWjSVM");
     assert.equal(source?.segments[0].text, "原文");
     await T.nativeTranscript("3u24qyWjSVM");
-    assert.equal(submitted, 1);
-    assert.equal(polls, 1);
+    assert.equal(jobs.log.filter((c) => c.route === 1).length, 1, "submitted once");
+    assert.equal(jobs.log.filter((c) => c.route === 0).length, 1, "polled once");
   } finally {
-    globalThis.fetch = original;
+    stub?.restore();
     delete process.env.YOUTUBE_API_KEY;
     delete process.env.SUPADATA_API_KEY;
   }
