@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createHash } from "node:crypto";
 import { levelQualifierIssues } from "./level-qualifiers.ts";
 import { alignCaptionEvidence } from "./evidence-alignment.ts";
 export const MODELS = [
@@ -37,6 +38,25 @@ export const Source = z
       ids.add(x.id);
     }
   });
+/**
+ * A copied source range. start_id/end_id are retained segment IDs; the seconds
+ * are the bounds those segments carry (null when the source has no times) and
+ * text_hash is sha256 of the copied text, so a later source edit is detectable.
+ */
+export const SourceSpan = z.object({
+  start_id: z.string().min(1),
+  end_id: z.string().min(1),
+  start_seconds: z.number().nonnegative().nullable(),
+  end_seconds: z.number().nonnegative().nullable(),
+  text_hash: z.string().regex(/^[0-9a-f]{64}$/),
+});
+export type SourceSpanData = z.infer<typeof SourceSpan>;
+/** Bounds on a copied range: segments, seconds and characters. */
+export const SPAN_LIMITS = {
+  segments: 100,
+  seconds: 120,
+  characters: 4000,
+} as const;
 const englishOutput = z
   .string()
   .refine(
@@ -74,6 +94,12 @@ export const Claim = z.object({
         end_segment_id: z.string().optional(),
         quote_original: z.string().min(1),
         quote_translation_en: englishOutput,
+        /**
+         * Pointer evidence (spec 4.2): the model named a segment range and the
+         * application copied the text, so quote_original is derived from these
+         * IDs rather than written by the model. Absent on legacy quote claims.
+         */
+        source_span: SourceSpan.optional(),
       }),
     )
     .min(1),
@@ -118,10 +144,76 @@ export function videoId(raw: string) {
   if (!/^[\w-]{11}$/.test(id)) throw Error("Use a valid YouTube video URL.");
   return id;
 }
-export function validateClaim(claim: ClaimData, source: SourceData) {
+/**
+ * Copy one source range (spec 4.2: evidence by pointer). The model supplies
+ * start_id and end_id only; the application copies the retained segment texts
+ * for that inclusive range, joins them exactly as the caption join does, and
+ * derives the quote, its seconds and its hash. quote_original is therefore
+ * never model-written. Unknown, reversed, over-long and over-slow ranges throw:
+ * a bad pointer is a rejected extraction, not a silently truncated quote.
+ */
+export function deriveEvidence(
+  source: SourceData,
+  span: { start_id: string; end_id: string },
+) {
+  const start = source.segments.findIndex((s) => s.id === span.start_id),
+    end = source.segments.findIndex((s) => s.id === span.end_id);
+  if (start < 0 || end < 0 || end < start || end - start >= SPAN_LIMITS.segments)
+    throw Error("Unknown, reversed or excessive source range");
+  const first = source.segments[start],
+    last = source.segments[end];
+  if (
+    first.start_seconds !== null &&
+    last.end_seconds !== null &&
+    last.end_seconds - first.start_seconds > SPAN_LIMITS.seconds
+  )
+    throw Error("Evidence range exceeds two minutes");
+  const quote_original = source.segments
+    .slice(start, end + 1)
+    .map((s) => s.text)
+    .join(source.segment_separator || "");
+  if (quote_original.length > SPAN_LIMITS.characters)
+    throw Error("Evidence range exceeds text limit");
+  return {
+    quote_original,
+    start_seconds: first.start_seconds,
+    end_seconds: last.end_seconds,
+    text_hash: createHash("sha256").update(quote_original).digest("hex"),
+  };
+}
+/**
+ * Structural checks on one claim. With pointer evidence (source_span present)
+ * the application copied the text itself, so the quote-versus-source string
+ * match is an assertion: a mismatch means the retained source changed under a
+ * stored claim, and it is recorded in `warnings` rather than rejecting the
+ * claim. Legacy quote evidence keeps rejecting, unchanged.
+ */
+export function validateClaim(
+  claim: ClaimData,
+  source: SourceData,
+  warnings?: string[],
+) {
   const reasons: string[] = [];
   const quotes: string[] = [];
   for (const e of claim.evidence) {
+    if (e.source_span) {
+      let derived: ReturnType<typeof deriveEvidence> | null = null;
+      try {
+        derived = deriveEvidence(source, e.source_span);
+      } catch {
+        derived = null;
+      }
+      if (
+        !derived ||
+        derived.quote_original !== e.quote_original ||
+        derived.text_hash !== e.source_span.text_hash
+      )
+        warnings?.push(
+          `Pointer evidence ${e.source_span.start_id}..${e.source_span.end_id} no longer matches the retained source text.`,
+        );
+      quotes.push(e.quote_original);
+      continue;
+    }
     const start = source.segments.findIndex((s) => s.id === e.segment_id),
       end = e.end_segment_id
         ? source.segments.findIndex((s) => s.id === e.end_segment_id)

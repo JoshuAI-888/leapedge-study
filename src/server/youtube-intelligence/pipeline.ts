@@ -12,10 +12,17 @@ import {
   coverage,
   validateClaim,
   anchorClaimEvidence,
+  type ClaimData,
   type Run,
   type SourceData,
   type CheckedClaim,
 } from "../../features/youtube-intelligence/contracts.ts";
+import { materializeEvidenceRanges } from "../../features/youtube-intelligence/evidence-selection.ts";
+import {
+  extractionResponseSchema,
+  parsePointerExtraction,
+  POINTER_EVIDENCE_FORMAT,
+} from "./schemas/extraction.ts";
 import { reserve, settle, retainResponse } from "./store.ts";
 import * as P from "./prompts.ts";
 import { nativeTranscript } from "./transcripts.ts";
@@ -56,15 +63,22 @@ export function providerUsage(response: ModelResponseData) {
     cost: response.usage.costUsd,
   };
 }
-/** The payload the synthesis stage sends for one chunk; exported so evaluation scripts send the same shape. */
+/**
+ * The payload the synthesis stage sends for one chunk; exported so evaluation
+ * scripts send the same shape. The shape is fixed: `pointer` only swaps the
+ * evidenceFormat instruction for the pointer-output one (spec 4.2), so a
+ * caller that omits it gets the legacy payload byte for byte.
+ */
 export const extractionPayload = (
   chunk: SourceData["segments"],
   chunkIndex: number,
   totalChunks: number,
+  pointer = false,
 ) => ({
   source: chunk,
-  evidenceFormat:
-    "Use segment_id for the first real cue ID and end_segment_id for the last real cue ID. Never put a range in segment_id. Copy an exact contiguous quote; no ellipses, paraphrases or omitted words. Preserve all numerical comparators and conditions. value_original must include the exact comparator where spoken (for example under $20), not just the number.",
+  evidenceFormat: pointer
+    ? POINTER_EVIDENCE_FORMAT
+    : "Use segment_id for the first real cue ID and end_segment_id for the last real cue ID. Never put a range in segment_id. Copy an exact contiguous quote; no ellipses, paraphrases or omitted words. Preserve all numerical comparators and conditions. value_original must include the exact comparator where spoken (for example under $20), not just the number.",
   chunk: chunkIndex + 1,
   totalChunks,
 });
@@ -81,6 +95,7 @@ export async function modelCall(
   prompt: string,
   payload: unknown,
   video = false,
+  options: { responseSchema?: Record<string, unknown> } = {},
 ) {
   const transport = transportFor(stage);
   const spec = await transport.describe(model);
@@ -130,6 +145,7 @@ export async function modelCall(
     model,
     user,
     ...(video ? { video: { type: "video", url: run.url } } : {}),
+    ...(options.responseSchema ? { responseSchema: options.responseSchema } : {}),
     maxOutputTokens: maxTokens,
     temperature: 0,
     ...(effort ? { reasoningEffort: effort } : {}),
@@ -404,25 +420,46 @@ export async function step(run: Run) {
     const source = run.output.source as SourceData;
     const chunks = sourceChunks(source);
     const chunkIndex = Number(run.output.chunkIndex || 0);
-    const draft = z
-      .object({
-        claims: z.array(Claim).max(40),
-        key_points: z.array(Claim).max(30).default([]),
-      })
-      .parse(
-        await modelCall(
-          run,
-          chunks.length === 1 ? "synthesis" : `synthesis-chunk-${chunkIndex}`,
-          run.model,
-          prompts.synthesis +
-            "\n" +
-            prompts.extraction +
-            (chunks.length > 1
-              ? "\nThis is one chronological excerpt. Extract only claims supported here; retain conditions and do not infer the rest of the video."
-              : ""),
-          extractionPayload(chunks[chunkIndex], chunkIndex, chunks.length),
-        ),
-      );
+    /**
+     * Pointer evidence is a property of the prompt version: only a snapshot
+     * that asks for ranges gets the responseSchema and the copy path. The flag
+     * defaults to false, so every existing version (v5, v6, the legacy
+     * baseline) keeps the quote path and the same request bytes.
+     */
+    const pointer =
+      (prompts as { pointerEvidence?: boolean }).pointerEvidence === true;
+    const raw = await modelCall(
+      run,
+      chunks.length === 1 ? "synthesis" : `synthesis-chunk-${chunkIndex}`,
+      run.model,
+      prompts.synthesis +
+        "\n" +
+        prompts.extraction +
+        (chunks.length > 1
+          ? "\nThis is one chronological excerpt. Extract only claims supported here; retain conditions and do not infer the rest of the video."
+          : ""),
+      extractionPayload(chunks[chunkIndex], chunkIndex, chunks.length, pointer),
+      false,
+      pointer ? { responseSchema: extractionResponseSchema } : {},
+    );
+    const draft = pointer
+      ? (() => {
+          const pointed = parsePointerExtraction(raw);
+          return {
+            claims: pointed.claims.map((c) =>
+              materializeEvidenceRanges(c, source),
+            ),
+            key_points: pointed.key_points.map((c) =>
+              materializeEvidenceRanges(c, source),
+            ),
+          };
+        })()
+      : z
+          .object({
+            claims: z.array(Claim).max(40),
+            key_points: z.array(Claim).max(30).default([]),
+          })
+          .parse(raw);
     const prior = (run.output.chunkDrafts || []) as {
       claims: z.infer<typeof Claim>[];
       key_points: z.infer<typeof Claim>[];
@@ -434,23 +471,27 @@ export async function step(run: Run) {
     if (chunkIndex + 1 < chunks.length) return;
     draft.claims = uniqueClaims(drafts.flatMap((d) => d.claims));
     draft.key_points = uniqueClaims(drafts.flatMap((d) => d.key_points));
-    run.output.validationVersion = "caption-alignment.v2";
-    run.output.claims = draft.claims
-      .map((c) => anchorClaimEvidence(c, source))
-      .map((claim, i) => ({
-        id: `c${i + 1}`,
-        claim,
+    run.output.validationVersion = pointer
+      ? "pointer-evidence.v1"
+      : "caption-alignment.v2";
+    /**
+     * With pointer evidence the quote was copied here, so anchoring has
+     * nothing to search for and the string match is an assertion: a mismatch
+     * is a warning on the run, not a rejected claim.
+     */
+    const warnings = [...((run.output.warnings || []) as string[])];
+    const checked = (claim: ClaimData, prefix: string, i: number) => {
+      const anchored = pointer ? claim : anchorClaimEvidence(claim, source);
+      return {
+        id: `${prefix}${i + 1}`,
+        claim: anchored,
         passed: false,
-        reasons: validateClaim(claim, run.output.source as SourceData),
-      }));
-    run.output.keyPoints = draft.key_points
-      .map((c) => anchorClaimEvidence(c, source))
-      .map((claim, i) => ({
-        id: `k${i + 1}`,
-        claim,
-        passed: false,
-        reasons: validateClaim(claim, run.output.source as SourceData),
-      }));
+        reasons: validateClaim(anchored, source, warnings),
+      };
+    };
+    run.output.claims = draft.claims.map((c, i) => checked(c, "c", i));
+    run.output.keyPoints = draft.key_points.map((c, i) => checked(c, "k", i));
+    if (warnings.length) run.output.warnings = warnings;
     run.output.auditIndex = 0;
     run.stage = "critique";
   } else if (run.stage === "critique") {
