@@ -1,0 +1,21 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-09-17T09:20:00Z" },
+  "title": "YouTube Intelligence v2 target state",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1280, "h": 900, "title": "Today — trusted calls" },
+    "Analysis.dc.html": { "x": 1360, "y": 0, "w": 1280, "h": 1000, "title": "Analysis — decision-first report" },
+    "Phone.dc.html": { "x": 2720, "y": 0, "w": 390, "h": 844, "title": "Today — phone" },
+    "Channels.dc.html": { "x": 0, "y": 1220, "w": 1280, "h": 820, "title": "Channels — creator trust and automation" },
+    "Settings.dc.html": { "x": 1360, "y": 1220, "w": 1280, "h": 1000, "title": "Settings — user-controlled configuration" }
+  },
+  "order": ["Main.dc.html", "Analysis.dc.html", "Phone.dc.html", "Channels.dc.html", "Settings.dc.html"],
+  "notes": {
+    "t1": { "kind": "title1", "x": 0, "y": -300, "text": "YouTube Intelligence v2 — target state in the Finradar theme", "maxW": 3110 },
+    "n1": { "x": 2720, "y": 940, "w": 390, "text": "Trust ladder shown on every claim: Text-checked (deterministic + critic), Audio-agreed (caption and ASR agree on the cited span, anchor within 2s), Human-verified (named reviewer signed). Creator conviction is always a separate chip.", "color": "blue", "size": "s" },
+    "n2": { "x": 2720, "y": 1220, "w": 390, "text": "Four surfaces replace six tabs: Today, Channels, Ideas, Lab. Settings opens from the shell. Processing details are collapsed on every report.", "color": "gray", "size": "s" }
+  },
+  "designSystems": []
+}

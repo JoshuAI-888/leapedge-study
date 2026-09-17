@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; background: #f7f9fc; color: #262626; -webkit-font-smoothing: antialiased; }
+    a { color: #194df4; text-decoration: none; } a:hover { color: #1238b8; }
+    .card { background: #ffffff; border: 1px solid #e5e9f0; border-radius: 14px; }
+    .muted { color: #626b7b; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 16px; white-space: nowrap; }
+    .long { background: #e6f4ec; color: #0b6b37; }
+    .avoid { background: #f1f3f6; color: #4b5563; }
+    .watch { background: #fff4e0; color: #8a5a00; }
+    .t3 { background: #194df4; color: #ffffff; }
+    .t2 { background: #edf3ff; color: #1238b8; border: 1px solid #c9d8ff; }
+    .t1 { background: #ffffff; color: #4b5563; border: 1px solid #d5dbe5; }
+    .conv { background: #ffffff; color: #626b7b; border: 1px dashed #c9cfd9; font-weight: 500; }
+    .claim { padding: 14px 16px; border: 1px solid #e5e9f0; border-radius: 12px; background: #ffffff; display: flex; flex-direction: column; gap: 8px; }
+    .claim.selected { border-color: #194df4; background: #edf3ff; }
+    .lvl { font-size: 12px; } .lvl span { color: #626b7b; }
+    .head { font-size: 11px; font-weight: 600; color: #626b7b; text-transform: uppercase; letter-spacing: 0.06em; }
+    button { font-family: inherit; }
+    .btn { border: 0; background: #194df4; color: #ffffff; font-weight: 600; font-size: 13px; padding: 0 14px; height: 36px; border-radius: 10px; cursor: pointer; }
+    .ghost { border: 1px solid #e5e9f0; background: #ffffff; color: #262626; font-weight: 600; font-size: 13px; padding: 0 14px; height: 36px; border-radius: 10px; cursor: pointer; }
+    .quote { font-size: 15px; line-height: 24px; }
+  </style>
+</helmet>
+<div style="width: 1280px; height: 1000px; box-sizing: border-box; padding: 24px 32px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+  <div style="display: flex; align-items: center; gap: 12px; font-size: 13px;">
+    <a href="Main.dc.html">Today</a><span class="muted">/</span><span class="muted">Analysis</span>
+  </div>
+
+  <header style="display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;">
+    <div style="min-width: 0;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; line-height: 30px;">NVIDIA, Coinbase and why I am not chasing Vistra — weekly review</h1>
+      <div class="muted" style="font-size: 13px; margin-top: 6px;">Jose Najarro Stocks · Published 16 Sep 2026 · 38:35 · English · Analysed in overnight batch</div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button type="button" class="ghost">Save to Ideas</button>
+      <button type="button" class="ghost">Share snapshot</button>
+    </div>
+  </header>
+
+  <section class="card" style="padding: 14px 18px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;">
+    <div><div class="head">Source basis</div><div style="font-size: 14px; font-weight: 600; margin-top: 4px;">Creator captions + audio transcript</div><div class="muted" style="font-size: 12px;">97% agreement across 38 minutes</div></div>
+    <div><div class="head">Claims</div><div style="font-size: 14px; font-weight: 600; margin-top: 4px;">5 calls, 6 key points</div><div class="muted" style="font-size: 12px;">2 rejected by the critic</div></div>
+    <div><div class="head">Trust</div><div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;"><span class="chip t3">1 human</span><span class="chip t2">3 audio</span><span class="chip t1">1 text</span></div></div>
+    <div><div class="head">Reviewer</div><div style="font-size: 14px; font-weight: 600; margin-top: 4px;">1 span signed by J. Fang</div><div class="muted" style="font-size: 12px;">Yesterday 18:40</div></div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: 500px minmax(0, 1fr); gap: 20px; min-height: 0; flex-grow: 1;">
+    <section style="display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: hidden;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 700;">Calls</h2>
+        <span class="muted" style="font-size: 12px;">Ordered by trust, then creator conviction</span>
+      </div>
+
+      <div class="claim selected">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="display: flex; gap: 8px; align-items: center;"><span style="font-weight: 700; font-size: 15px;">NVDA</span><span class="chip long">Long</span></div>
+          <div style="display: flex; gap: 6px;"><span class="chip conv">Conviction: high</span><span class="chip t3">Human-verified</span></div>
+        </div>
+        <div style="font-size: 14px; font-weight: 500; line-height: 20px;">Data-centre demand extends through 2027; adds on any pullback toward support</div>
+        <div class="lvl"><span>Support</span> 118 · <span>Target</span> 165 · <span>Horizon</span> 6–12 months · <span>Condition</span> no capex guidance cut</div>
+      </div>
+
+      <div class="claim">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="display: flex; gap: 8px; align-items: center;"><span style="font-weight: 700; font-size: 15px;">COIN</span><span class="chip watch">Conditional</span></div>
+          <div style="display: flex; gap: 6px;"><span class="chip conv">Conviction: medium</span><span class="chip t2">Audio-agreed</span></div>
+        </div>
+        <div style="font-size: 14px; font-weight: 500; line-height: 20px;">Holds existing position; would cut on a close slightly below 140</div>
+        <div class="lvl"><span>Stop</span> slightly below 140 · <span>Role</span> managing a held position</div>
+      </div>
+
+      <div class="claim">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="display: flex; gap: 8px; align-items: center;"><span style="font-weight: 700; font-size: 15px;">VST</span><span class="chip avoid">Avoid</span></div>
+          <div style="display: flex; gap: 6px;"><span class="chip conv">Conviction: high</span><span class="chip t2">Audio-agreed</span></div>
+        </div>
+        <div style="font-size: 14px; font-weight: 500; line-height: 20px;">Not buying after the run; valuation already prices the power story</div>
+        <div class="lvl"><span>Horizon</span> 3 months · <span>Would revisit</span> under 120</div>
+      </div>
+
+      <div class="claim">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="display: flex; gap: 8px; align-items: center;"><span style="font-weight: 700; font-size: 15px;">US 10-year yield</span><span class="chip avoid">Observation</span></div>
+          <div style="display: flex; gap: 6px;"><span class="chip conv">Conviction: unspecified</span><span class="chip t2">Audio-agreed</span></div>
+        </div>
+        <div style="font-size: 14px; font-weight: 500; line-height: 20px;">Yield near 4.75% is a macro observation, not a level to trade</div>
+        <div class="lvl"><span>Instrument</span> macro, no ticker assigned</div>
+      </div>
+
+      <details style="margin-top: 4px;">
+        <summary style="cursor: pointer; font-size: 13px; font-weight: 600; color: #626b7b;">2 rejected by the critic</summary>
+        <div class="muted" style="font-size: 13px; line-height: 18px; margin-top: 6px;">MELI trillion-dollar target: captions and audio disagree on the number. <a href="#">Review</a><br>MA high-margin characterisation: not supported by the cited span.</div>
+      </details>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px; min-height: 0;">
+      <div class="card" style="overflow: hidden;">
+        <div style="height: 300px; background: #101727; display: flex; align-items: center; justify-content: center; position: relative;">
+          <button type="button" aria-label="Play from 12:41" style="width: 64px; height: 64px; border-radius: 50%; border: 0; background: #194df4; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></button>
+          <div style="position: absolute; left: 16px; bottom: 14px; color: #ffffff; font-size: 12px; font-weight: 600; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 6px;">Playing cited moment 12:41 → 13:02</div>
+        </div>
+        <div style="padding: 14px 18px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="head">Evidence for NVDA long</div>
+            <div style="display: flex; gap: 6px;"><span class="chip t2">Span agreement 99%</span><span class="chip t2">Anchor ±0.4s</span></div>
+          </div>
+          <div>
+            <div class="head" style="margin-bottom: 4px;">What the creator said</div>
+            <div class="quote">"I still think the data-centre build-out runs through twenty twenty-seven, so if we get a pullback toward one-eighteen I'm adding, and my target on this is one-sixty-five unless they cut capex guidance."</div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+            <div><div class="head" style="margin-bottom: 4px;">Captions</div><div class="muted" style="font-size: 13px; line-height: 18px;">…pullback toward one-eighteen I'm adding, and my target on this is one-sixty-five…</div></div>
+            <div><div class="head" style="margin-bottom: 4px;">Audio transcript</div><div class="muted" style="font-size: 13px; line-height: 18px;">…pullback toward one eighteen I'm adding and my target on this is one sixty five…</div></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e9f0; padding-top: 12px;">
+            <div style="font-size: 13px;"><span class="chip t3" style="margin-right: 8px;">Human-verified</span>Signed by J. Fang after listening to 12:41–13:02</div>
+            <div style="display: flex; gap: 8px;"><button type="button" class="ghost">Open at 12:41</button><button type="button" class="btn">Save call</button></div>
+          </div>
+        </div>
+      </div>
+
+      <details class="card" style="padding: 12px 18px;">
+        <summary style="cursor: pointer; font-size: 13px; font-weight: 600; color: #626b7b;">Processing details</summary>
+        <div class="muted" style="font-size: 13px; line-height: 20px; margin-top: 8px;">Captions: TranscriptAPI, en, 1,117 cues · Audio transcript: Gemini 3.8 Flash, 8 windows of 300s, low media resolution · Extraction: Gemini 3.8 Flash (native) · Critic: Claude Sonnet 5 via OpenRouter, batched · Cached transcript reused 2× · Cost US$0.19 · Config hash 7f3a…c1 · Prompt evidence-first.v9</div>
+      </details>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1280,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

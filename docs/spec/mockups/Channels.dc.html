@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; background: #f7f9fc; color: #262626; -webkit-font-smoothing: antialiased; }
+    a { color: #194df4; text-decoration: none; } a:hover { color: #1238b8; }
+    .card { background: #ffffff; border: 1px solid #e5e9f0; border-radius: 14px; }
+    .muted { color: #626b7b; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 16px; white-space: nowrap; }
+    .ok { background: #e6f4ec; color: #0b6b37; }
+    .soft { background: #edf3ff; color: #1238b8; }
+    .grey { background: #f1f3f6; color: #4b5563; }
+    .warn { background: #fff4e0; color: #8a5a00; }
+    .head { font-size: 11px; font-weight: 600; color: #626b7b; text-transform: uppercase; letter-spacing: 0.06em; }
+    .row { display: grid; grid-template-columns: minmax(0, 1.4fr) 110px 150px 170px 140px 150px; gap: 14px; align-items: center; padding: 14px 18px; border-top: 1px solid #e5e9f0; }
+    .bar { display: flex; height: 8px; border-radius: 999px; overflow: hidden; background: #e5e9f0; width: 130px; }
+    button { font-family: inherit; }
+    .btn { border: 0; background: #194df4; color: #ffffff; font-weight: 600; font-size: 13px; padding: 0 14px; height: 36px; border-radius: 10px; cursor: pointer; }
+    .ghost { border: 1px solid #e5e9f0; background: #ffffff; color: #262626; font-weight: 600; font-size: 13px; padding: 0 14px; height: 36px; border-radius: 10px; cursor: pointer; }
+    .toggle { width: 38px; height: 22px; border-radius: 999px; background: #194df4; position: relative; display: inline-block; }
+    .toggle.off { background: #c9cfd9; }
+    .toggle::after { content: ""; position: absolute; top: 3px; left: 19px; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; }
+    .toggle.off::after { left: 3px; }
+  </style>
+</helmet>
+<div style="width: 1280px; height: 820px; box-sizing: border-box; padding: 24px 32px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px;">
+    <div>
+      <div class="muted" style="font-size: 13px; font-weight: 500;">YouTube Intelligence</div>
+      <h1 style="margin: 4px 0 0; font-size: 26px; font-weight: 700; letter-spacing: -0.01em;">Channels</h1>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button type="button" class="ghost">Discover creators</button>
+      <button type="button" class="btn">Follow a channel</button>
+    </div>
+  </div>
+
+  <section class="card" style="padding: 14px 18px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;">
+    <div><div class="head">Followed</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">12 channels</div><div class="muted" style="font-size: 12px;">9 via push notifications, 3 polled hourly</div></div>
+    <div><div class="head">Forward record</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">1,951 settled calls</div><div class="muted" style="font-size: 12px;">Since 1 May 2026, adjusted close vs SPY</div></div>
+    <div><div class="head">Statistically supported</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">4 of 12</div><div class="muted" style="font-size: 12px;">n ≥ 20 and FDR-adjusted q &lt; 0.05</div></div>
+    <div><div class="head">This month</div><div style="font-size: 20px; font-weight: 700; margin-top: 2px;">US$34.60 spent</div><div class="muted" style="font-size: 12px;">23% of the US$150 budget · 61 videos</div></div>
+  </section>
+
+  <section class="card" style="overflow: hidden;">
+    <div class="row head" style="border-top: 0; padding-bottom: 8px;">
+      <div>Creator</div><div>Calls</div><div>Trust of calls</div><div>Excess return vs SPY</div><div>Significance</div><div>Automation</div>
+    </div>
+
+    <div class="row">
+      <div><div style="font-weight: 600; font-size: 14px;">Jose Najarro Stocks</div><div class="muted" style="font-size: 12px;">Last upload 16 Sep · Analysed overnight</div></div>
+      <div style="font-size: 14px; font-weight: 600;">209</div>
+      <div><div class="bar"><div style="width: 30%; background: #194df4;"></div><div style="width: 55%; background: #98b7ff;"></div><div style="width: 15%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">30% human · 55% audio · 15% text</div></div>
+      <div><div style="font-size: 14px; font-weight: 600;">+23.7% median</div><div class="muted" style="font-size: 12px;">win rate 66.5%, 180-day</div></div>
+      <div><span class="chip ok">Supported, q = 0.001</span></div>
+      <div style="display: flex; align-items: center; gap: 10px;"><span class="toggle" aria-hidden="true"></span><span style="font-size: 12px;">Push · batch</span></div>
+    </div>
+
+    <div class="row">
+      <div><div style="font-weight: 600; font-size: 14px;">Bullmarket Lifestyle</div><div class="muted" style="font-size: 12px;">Last upload 15 Sep</div></div>
+      <div style="font-size: 14px; font-weight: 600;">73</div>
+      <div><div class="bar"><div style="width: 10%; background: #194df4;"></div><div style="width: 70%; background: #98b7ff;"></div><div style="width: 20%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">10% human · 70% audio · 20% text</div></div>
+      <div><div style="font-size: 14px; font-weight: 600;">+11.1% median</div><div class="muted" style="font-size: 12px;">win rate 61.6%, only 32% equities</div></div>
+      <div><span class="chip ok">Supported, q = 0.02</span></div>
+      <div style="display: flex; align-items: center; gap: 10px;"><span class="toggle" aria-hidden="true"></span><span style="font-size: 12px;">Push · batch</span></div>
+    </div>
+
+    <div class="row">
+      <div><div style="font-weight: 600; font-size: 14px;">Chit Chat Stocks</div><div class="muted" style="font-size: 12px;">Last upload 14 Sep</div></div>
+      <div style="font-size: 14px; font-weight: 600;">37</div>
+      <div><div class="bar"><div style="width: 5%; background: #194df4;"></div><div style="width: 60%; background: #98b7ff;"></div><div style="width: 35%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">5% human · 60% audio · 35% text</div></div>
+      <div><div style="font-size: 14px; font-weight: 600;">+31.7% median</div><div class="muted" style="font-size: 12px;">win rate 59.5%, small sample</div></div>
+      <div><span class="chip soft">Supported, q = 0.04</span></div>
+      <div style="display: flex; align-items: center; gap: 10px;"><span class="toggle" aria-hidden="true"></span><span style="font-size: 12px;">Push · batch</span></div>
+    </div>
+
+    <div class="row">
+      <div><div style="font-weight: 600; font-size: 14px;">Alpha 週報 (Mandarin)</div><div class="muted" style="font-size: 12px;">Last upload 16 Sep · Captions unavailable, audio route</div></div>
+      <div style="font-size: 14px; font-weight: 600;">28</div>
+      <div><div class="bar"><div style="width: 0%; background: #194df4;"></div><div style="width: 80%; background: #98b7ff;"></div><div style="width: 20%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">0% human · 80% audio · 20% text</div></div>
+      <div><div style="font-size: 14px; font-weight: 600;">+4.2% median</div><div class="muted" style="font-size: 12px;">win rate 50.0%, 90-day</div></div>
+      <div><span class="chip grey">Not yet, n &lt; 20</span></div>
+      <div style="display: flex; align-items: center; gap: 10px;"><span class="toggle" aria-hidden="true"></span><span style="font-size: 12px;">Push · immediate</span></div>
+    </div>
+
+    <div class="row">
+      <div><div style="font-weight: 600; font-size: 14px;">Patrick Boyle</div><div class="muted" style="font-size: 12px;">Last upload 12 Sep · Educational, few calls</div></div>
+      <div style="font-size: 14px; font-weight: 600;">73</div>
+      <div><div class="bar"><div style="width: 8%; background: #194df4;"></div><div style="width: 62%; background: #98b7ff;"></div><div style="width: 30%; background: #d5dbe5;"></div></div><div class="muted" style="font-size: 11px; margin-top: 4px;">8% human · 62% audio · 30% text</div></div>
+      <div><div style="font-size: 14px; font-weight: 600;">−33.3% mean</div><div class="muted" style="font-size: 12px;">context and macro, not trades</div></div>
+      <div><span class="chip warn">Negative, q = 0.03</span></div>
+      <div style="display: flex; align-items: center; gap: 10px;"><span class="toggle off" aria-hidden="true"></span><span style="font-size: 12px;">Poll · manual</span></div>
+    </div>
+
+    <div style="padding: 12px 18px; border-top: 1px solid #e5e9f0; display: flex; justify-content: space-between; align-items: center;">
+      <span class="muted" style="font-size: 13px;">Per-call descriptive statistics on adjusted closes. Not portfolio returns. Historical replay is shown separately from the forward record.</span>
+      <a href="#" style="font-size: 13px; font-weight: 600;">Methodology</a>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1280,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
