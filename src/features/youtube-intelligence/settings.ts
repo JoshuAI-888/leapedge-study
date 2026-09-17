@@ -206,9 +206,8 @@ export const TeamPreferences = z.object({
   // read by scripts/promotion-gate.ts. They decide whether a configuration
   // may be promoted, not how a run is produced, so they are outside the
   // configuration hash. Advisory results (a gold set below its minimum of
-  // verified cases, a VideoConviction score from a fake extraction or a
-  // placeholder fixture) are reported next to the binding ones but never
-  // fail the gate; `advisoryPolicy` fixes that rule at the boundary.
+  // verified cases) are reported next to the binding ones but never fail
+  // the gate; `advisoryPolicy` fixes that rule at the boundary.
   lab: z
     .object({
       gates: GateThresholds,
