@@ -19,6 +19,13 @@ import {
   type AccountPreferencesData,
 } from "../../features/youtube-intelligence/settings.ts";
 import { resolveTeam } from "./env.ts";
+/**
+ * A registry row is immutable, so the schema has to keep whatever a version
+ * declares. `pointerEvidence` is the one behavioural flag a version carries
+ * (spec 4.2): with it the extraction and synthesis prompts cite segment ID
+ * ranges and the pipeline copies the source text itself. It is optional, so
+ * every shipped version stays byte-identical and keeps the quote path.
+ */
 export const PromptVersion = z.object({
   id: z.string().regex(/^[a-zA-Z0-9._-]{3,100}$/),
   rationale: z.string().min(10).max(4000),
@@ -26,6 +33,7 @@ export const PromptVersion = z.object({
   extraction: z.string().min(20).max(30000),
   synthesis: z.string().min(20).max(30000),
   critique: z.string().min(20).max(30000),
+  pointerEvidence: z.boolean().optional(),
 });
 export const Preferences = z.object({
   timezone: z.string().refine((v) => {
@@ -151,7 +159,16 @@ export async function addPrompt(input: unknown) {
   const p = PromptVersion.parse(input),
     hash = createHash("sha256")
       .update(
-        JSON.stringify([p.transcribe, p.extraction, p.synthesis, p.critique]),
+        // The flag joins the digest only when the version declares it, so the
+        // hash of every already-published version is unchanged, while two
+        // versions that differ only in pointer mode never share a hash.
+        JSON.stringify([
+          p.transcribe,
+          p.extraction,
+          p.synthesis,
+          p.critique,
+          ...(p.pointerEvidence === undefined ? [] : [p.pointerEvidence]),
+        ]),
       )
       .digest("hex");
   await (
