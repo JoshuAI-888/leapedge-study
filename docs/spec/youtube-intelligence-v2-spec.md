@@ -31,7 +31,7 @@ Changes, in delivery order:
 | 8 | YouTube push notifications and Batch API for channel automation | Cost, freshness |
 | 9 | Gold set plus the VideoConviction benchmark as promotion gates | Confidence in every later change |
 | 10 | Computed metrics registry: one definition per figure, rendered as hover text, Methodology page and CI test | Trust in every number |
-| 11 | Leaderboard by ticker and by creator, with a user-chosen benchmark, sample-size gates and multiple-comparison control | Parity with LeapEdge, then beyond |
+| 11 | Leaderboard by ticker and by creator, with a user-chosen benchmark, sample-size gates, multiple-comparison control, and a Changes view over a user-chosen window | Parity with LeapEdge, then beyond |
 | 12 | Sentiment engine: every mention graded bullish, neutral or bearish with a cited rationale, persisted per ticker, traceable to video and channel; sentiment shift over a user-chosen comparison period | Decision support |
 | 13 | Context check: dated external evidence from the days around the video, summarised through OpenRouter | Trusted, time-matched context |
 | 14 | Default channel seed of about 80 from LeapEdge, TrueAlphaData and VideoConviction; the team picks which to process (Tier 1 and LeapEdge's top 20 selected by default) under a US$150 budget it can raise; Tier-1 historical replay from January 2026 | A populated product on day one, under budget |
@@ -231,6 +231,16 @@ Market prices from FMP are external but not static: each fetched bar is stored w
 
 **Every column** has a hover from the registry and a sort control; the default sort is stated in the table footer.
 
+**Changes over a period.** A third tab, Changes, shows what moved on either board between two dates. The viewer picks the change window (7, 14, 30, 90 or 180 days, or a custom start date); the default is an account setting with a team default of 30 days. Because settlement rows are append-only and dated, the board "as of" any date is the same computation with a cut-off, and a change is the difference between the two cut-offs; no snapshots are stored. The tab shows:
+
+- rank movement per creator and per ticker, with the number of places moved;
+- the underlying figures then and now: settled calls added, win rate, median excess against the viewer's benchmark;
+- status changes: crossed into or out of "supported" or "negative", reached the n ≥ 20 gate for the first time;
+- new entrants and drop-outs, with the reason (first settled call, benchmark or market filter change);
+- on the ticker side, consensus shifts (for example split → agree long) alongside the sentiment shift.
+
+Each change is a registry metric: the hover reads, for example, "rank as of today minus rank as of 30 days ago, both computed from settlements settled on or before each date". Clicking a change opens the settlement rows that caused it. Changes where n is below 20 on either date are labelled "not yet meaningful" and sorted below the rest, so early forward-record noise is not mistaken for movement.
+
 ### 4.13 Sentiment engine and sentiment shift
 
 **Gap today.** The repository has no sentiment logic. Claims carry a stance (long, short, neutral, avoid, watch, hold, conditional) and nothing else is graded. This section is a build.
@@ -290,7 +300,7 @@ YouTube becomes a fourth source in the existing `briefing-read-v1` contract alon
 
 Team members have their own Finradar accounts, so:
 
-- **Account scope, each with a "Reset to team default" action:** benchmark, sentiment comparison period, market filter, default horizon, Today trust filter. Account-only: saved calls, digest delivery, display language and theme.
+- **Account scope, each with a "Reset to team default" action:** benchmark, sentiment comparison period, change window, market filter, default horizon, Today trust filter. Account-only: saved calls, digest delivery, display language and theme.
 - **Team scope (administrator):** channel selection and automation, monthly budget, providers and models, trust thresholds, context check on or off and its window, team defaults for the account-scope settings, sharing policy.
 - **Reviews** are signed with the account identity; the review table is append-only.
 - **Sharing:** links are indefinite until revoked, matching LeapEdge. Each share is an immutable snapshot with a revoke action and an optional expiry.
@@ -408,7 +418,7 @@ RESEND_API_KEY=            # optional; digest delivery
     "historicalReplay": { "tiers": ["tier1"], "from": "2026-01-01" }
   },
   "accountDefaults": {                   // team defaults; each account may override and reset
-    "benchmark": "SPY", "sentimentPeriodDays": 7, "marketFilter": ["us-stock", "us-etf"], "defaultHorizonDays": 90
+    "benchmark": "SPY", "sentimentPeriodDays": 7, "changeWindowDays": 30, "marketFilter": ["us-stock", "us-etf"], "defaultHorizonDays": 90
   },
   "leaderboard": {
     "markets": ["us-stock", "us-etf", "hk", "cn-a", "other"],   // all extracted; none suppressed
@@ -433,6 +443,7 @@ RESEND_API_KEY=            # optional; digest delivery
 {
   "benchmark": "SPY",                    // SPY | QQQ | IWM | sector-etf | custom:<ticker> | none; null = team default
   "sentiment": { "periodDays": 7, "minimumTrust": "text-checked" },   // 7 | 14 | 30
+  "changeWindowDays": 30,                // 7 | 14 | 30 | 90 | 180 | custom start date; null = team default
   "marketFilter": ["us-stock", "us-etf"],   // default view on ticker boards; any market can be added
   "defaultHorizonDays": 90,              // 90 | 180 | 365
   "todayTrustFilter": "audio-agreed",
@@ -470,6 +481,7 @@ The top navigation is Finradar's and is not changed by this module.
 - **Context check** line under each call on the Analysis page, with the source list and dates on click, and a separately labelled "since then" section after settlement.
 - **Sentiment shift** panel on Today and column on the by-ticker leaderboard, showing the viewer's period.
 - **Benchmark selector** on the Leaderboard and Channels pages, bound to the account setting.
+- **Changes tab** on the Leaderboard with a change-window selector, bound to the account setting.
 - Processing state simplified to four user-facing states: Queued, Analysing, Ready, Needs review. Stage detail moves to a collapsible diagnostics panel.
 - Cost display becomes a monthly meter in Settings and a per-video line in diagnostics; it leaves the report header.
 - Settings screen rebuilt from the schemas in section 6, grouped as Leaderboard and sentiment (account), Sources, Models and transport, Context check, Processing and budget, Channels, Trust, Digest and sharing (team).
@@ -482,7 +494,7 @@ The top navigation is Finradar's and is not changed by this module.
 |---|---|---|
 | **Today** | Ranked trusted calls across followed creators, agreement and disagreement, sentiment shift, items needing review; one URL box to analyse anything now | Runs, stages, providers, cost |
 | **Channels** | Followed creators with call count, trust distribution, excess return against the viewer's benchmark with significance, discovery and processing mode | Playlist cursors, quota, pull history |
-| **Leaderboard** | By ticker (default) and by creator; benchmark, horizon and record selectors; methodology and row export | Settlement mechanics |
+| **Leaderboard** | By ticker (default), by creator, and Changes over a user-chosen window; benchmark, horizon, market and record selectors; methodology and row export | Settlement mechanics |
 | **Saved calls** | The user's saved calls, direction changes, notes, forward observations | Snapshot mechanics |
 | **Lab** | Prompts, experiments, gold set and VideoConviction benchmark, provider diagnostics, cost history, shares | Everything technical |
 | **Settings** | Sections 6.2 and 6.3 | Environment |
@@ -531,7 +543,7 @@ Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#26262
 | 0 | Gold set of 50 verified claims; VideoConviction benchmark harness; `ModelTransport` interface; metrics registry skeleton; settings schemas | Evaluation harness reports precision, recall, expert-label agreement, anchor accuracy and cost per accepted claim for the current v5 configuration |
 | 1 | Native transport for all stages; pointer evidence with `responseSchema`; mentions with sentiment and rationale; batched critique with explicit caching; low media resolution; realistic reservations with retries; Supadata standby with circuit breaker | Gold-set precision and recall not below v5; cost per accepted claim at least 40% lower; zero structural rejections on the gold set; standby engages on an injected vendor error and not on a missing-captions case |
 | 2 | Always-on worker with Postgres queue; Postgres-only with PGlite tests; relational tables and migrations; prices and settlements; default channel seed with selection and cost projection | Four videos processed in parallel end to end; restart during a run resumes without duplicate spend; CI runs on the production dialect; seed produces the deduplicated channel list |
-| 3 | Windowed ASR, agreement scoring and Whisper tie-break; trust ladder; Today, Channels, Leaderboard (by ticker, then by creator), Saved calls, Lab surfaces inside the Finradar shell; hover definitions and sorting on every table; benchmark and period settings; push notifications; batch mode; historical replay from January 2026 | At least 95% of L2 anchors within two seconds on the gold set; a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write |
+| 3 | Windowed ASR, agreement scoring and Whisper tie-break; trust ladder; Today, Channels, Leaderboard (by ticker, then by creator), Saved calls, Lab surfaces inside the Finradar shell; hover definitions and sorting on every table; benchmark and period settings; push notifications; batch mode; historical replay from January 2026 | At least 95% of L2 anchors within two seconds on the gold set; a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write; the Changes tab reproduces a hand-computed diff between two dates on the fixture database |
 | 4 | Context check with dated sources; Finradar `youtube` observation; File Search corpus; sharing with revoke; digest | A context check cites only sources inside its window on 100% of a 50-call sample; a Finradar edition renders a youtube observation with evidence links; a cross-video question returns cited spans |
 
 Rollback: each phase is behind a flag; phase 1 can run alongside the OpenRouter path for a comparison week before the old path is removed.
@@ -679,6 +691,7 @@ No open questions remain from the review round.
 | Leaderboard | Computed from settlement rows on request, benchmark per viewer | Snapshot documents, SPY only | Snapshots cannot be recomputed; users asked for other benchmarks |
 | By-ticker priority | Consensus first, then where calls worked, then reliability per ticker | Creator-first | Confirmed by the team |
 | Sentiment | Per-mention bullish/neutral/bearish with cited rationale, computed aggregates | Aggregate-only score | Must be traceable to video, channel and words |
+| Leaderboard changes | Diff of two as-of computations over a user-chosen window | Stored daily snapshots | Snapshots cannot follow a benchmark or filter change; the diff can |
 | Channel processing | Team-editable selection with cost projection under a raisable US$150 budget | Process all 80 | Budget |
 | Markets | Extract everything, filter boards to US by default | Hard-code US only | Nothing suppressed; filter is a setting |
 | Sentiment | Mentions with trust levels, period per account | Calls only | Calls too sparse to show movement |
