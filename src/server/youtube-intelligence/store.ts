@@ -121,21 +121,41 @@ export async function save(run: Run, token: string) {
     );
   if (!result.changes) throw Error("Stale worker lease.");
 }
-export async function reserve(runId: string, stage: string, amount: number) {
+/** An attempt whose outcome is not yet known; it may already have been billed. */
+export const OPEN_CALL_STATUSES = ["reserved", "unknown"] as const;
+const OPEN = "status IN ('reserved','unknown')";
+/** Released reservations hold no money: they count for neither run nor budget. */
+const COUNTED = "status<>'released'";
+/**
+ * Reserve money for one attempt at one stage, keyed by (run_id, stage, attempt).
+ * A completed, failed or released attempt no longer blocks the next one; an OPEN
+ * attempt does, because a call still running or of unknown outcome may already
+ * have been billed. Spec section 4.4.
+ */
+export async function reserve(
+  runId: string,
+  stage: string,
+  amount: number,
+  attempt = 1,
+) {
   const d = await db();
   return d.transaction(async () => {
     if (
       await d
-        .prepare("SELECT id FROM yi_calls WHERE run_id=? AND stage=?")
+        .prepare(
+          `SELECT id FROM yi_calls WHERE run_id=? AND stage=? AND ${OPEN}`,
+        )
         .get(runId, stage)
     )
       throw Error(
-        "Previous provider call recorded; recovery is uncertain. Review before retrying.",
+        "Previous provider call for this stage is still open; recovery is uncertain. Review before retrying.",
       );
     const used = Number(
       (
         (await d
-          .prepare("SELECT COALESCE(SUM(amount),0) AS total FROM yi_calls")
+          .prepare(
+            `SELECT COALESCE(SUM(amount),0) AS total FROM yi_calls WHERE ${COUNTED}`,
+          )
           .get()) as {
           total: number;
         }
@@ -151,15 +171,22 @@ export async function reserve(runId: string, stage: string, amount: number) {
       throw Error("Local experiment budget limit reached.");
     const id = randomUUID();
     await d
-      .prepare("INSERT INTO yi_calls VALUES(?,?,?,?,?,?)")
-      .run(id, runId, stage, "reserved", amount, "{}");
-    await d
       .prepare(
-        "UPDATE yi_runs SET cost=(SELECT COALESCE(SUM(amount),0) FROM yi_calls WHERE run_id=?) WHERE id=?",
+        "INSERT INTO yi_calls(id,run_id,stage,status,amount,metrics,attempt) VALUES(?,?,?,?,?,?,?)",
       )
-      .run(runId, runId);
+      .run(id, runId, stage, "reserved", amount, "{}", attempt);
+    await recomputeCost(runId);
     return id;
   });
+}
+/** A run's cost is the sum of the rows that still hold or have spent money. */
+async function recomputeCost(runId: string) {
+  const d = await db();
+  await d
+    .prepare(
+      `UPDATE yi_runs SET cost=(SELECT COALESCE(SUM(amount),0) FROM yi_calls WHERE run_id=? AND ${COUNTED}) WHERE id=?`,
+    )
+    .run(runId, runId);
 }
 export async function settle(
   id: string,
@@ -181,8 +208,77 @@ export async function settle(
   await (
     await db()
   ).exec(
-    "UPDATE yi_runs SET cost=(SELECT COALESCE(SUM(amount),0) FROM yi_calls WHERE run_id=yi_runs.id)",
+    `UPDATE yi_runs SET cost=(SELECT COALESCE(SUM(amount),0) FROM yi_calls WHERE run_id=yi_runs.id AND ${COUNTED})`,
   );
+}
+/**
+ * Give a reservation back: the attempt is closed, holds no money, and a further
+ * attempt at that stage may be reserved. The reason is kept beside whatever
+ * metrics the attempt had already recorded.
+ */
+export async function release(id: string, reason: string) {
+  const d = await db();
+  await d.transaction(async () => {
+    const row = (await d
+      .prepare("SELECT run_id, metrics FROM yi_calls WHERE id=?")
+      .get(id)) as { run_id: string; metrics: string } | undefined;
+    if (!row) return;
+    await d
+      .prepare(
+        "UPDATE yi_calls SET status='released',amount=0,metrics=? WHERE id=?",
+      )
+      .run(
+        JSON.stringify({
+          ...parseMetrics(row.metrics),
+          release: { reason, at: new Date().toISOString() },
+        }),
+        id,
+      );
+    await recomputeCost(String(row.run_id));
+  });
+}
+function parseMetrics(value: unknown): Record<string, unknown> {
+  if (typeof value !== "string") return {};
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+/** One ledger row per attempt at a stage, oldest attempt first. */
+export type LedgerAttempt = {
+  id: string;
+  runId: string;
+  stage: string;
+  attempt: number;
+  status: string;
+  amount: number;
+  metrics: Record<string, unknown>;
+  open: boolean;
+};
+export async function listAttempts(
+  runId: string,
+  stage: string,
+): Promise<LedgerAttempt[]> {
+  const d = await db();
+  const rows = (await d
+    .prepare(
+      "SELECT * FROM yi_calls WHERE run_id=? AND stage=? ORDER BY attempt, id",
+    )
+    .all(runId, stage)) as Record<string, unknown>[];
+  return rows.map((r) => ({
+    id: String(r.id),
+    runId: String(r.run_id),
+    stage: String(r.stage),
+    attempt: Number(r.attempt ?? 1),
+    status: String(r.status),
+    amount: Number(r.amount),
+    metrics: parseMetrics(r.metrics),
+    open: (OPEN_CALL_STATUSES as readonly string[]).includes(String(r.status)),
+  }));
 }
 export async function heartbeat() {
   await (
@@ -214,7 +310,9 @@ export async function health() {
       (await (
         await db()
       )
-        .prepare("SELECT COALESCE(SUM(amount),0) AS total FROM yi_calls")
+        .prepare(
+          `SELECT COALESCE(SUM(amount),0) AS total FROM yi_calls WHERE ${COUNTED}`,
+        )
         .get()) as {
         total: number;
       }
