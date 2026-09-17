@@ -56,6 +56,18 @@ export function providerUsage(response: ModelResponseData) {
     cost: response.usage.costUsd,
   };
 }
+/** The payload the synthesis stage sends for one chunk; exported so evaluation scripts send the same shape. */
+export const extractionPayload = (
+  chunk: SourceData["segments"],
+  chunkIndex: number,
+  totalChunks: number,
+) => ({
+  source: chunk,
+  evidenceFormat:
+    "Use segment_id for the first real cue ID and end_segment_id for the last real cue ID. Never put a range in segment_id. Copy an exact contiguous quote; no ellipses, paraphrases or omitted words. Preserve all numerical comparators and conditions. value_original must include the exact comparator where spoken (for example under $20), not just the number.",
+  chunk: chunkIndex + 1,
+  totalChunks,
+});
 /**
  * One model call for a stage. Builds a transport-agnostic ModelRequest and
  * hands it to the stage's transport; the ledger reservation and settlement,
@@ -408,13 +420,7 @@ export async function step(run: Run) {
             (chunks.length > 1
               ? "\nThis is one chronological excerpt. Extract only claims supported here; retain conditions and do not infer the rest of the video."
               : ""),
-          {
-            source: chunks[chunkIndex],
-            evidenceFormat:
-              "Use segment_id for the first real cue ID and end_segment_id for the last real cue ID. Never put a range in segment_id. Copy an exact contiguous quote; no ellipses, paraphrases or omitted words. Preserve all numerical comparators and conditions. value_original must include the exact comparator where spoken (for example under $20), not just the number.",
-            chunk: chunkIndex + 1,
-            totalChunks: chunks.length,
-          },
+          extractionPayload(chunks[chunkIndex], chunkIndex, chunks.length),
         ),
       );
     const prior = (run.output.chunkDrafts || []) as {
