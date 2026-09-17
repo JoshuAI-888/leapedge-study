@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; background: #f7f9fc; color: #262626; -webkit-font-smoothing: antialiased; }
+    a { color: #194df4; text-decoration: none; } a:hover { color: #1238b8; }
+    .top a { color: #262626; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; }
+    .top a.active { color: #194df4; background: #edf3ff; }
+    .side a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; color: #262626; font-size: 14px; font-weight: 500; }
+    .side a.active { background: #edf3ff; color: #194df4; }
+    .card { background: #ffffff; border: 1px solid #e5e9f0; border-radius: 14px; }
+    .muted { color: #626b7b; }
+    .head { font-size: 11px; font-weight: 600; color: #626b7b; text-transform: uppercase; letter-spacing: 0.06em; }
+    .field { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 16px; align-items: center; padding: 11px 0; border-top: 1px solid #e5e9f0; }
+    .field:first-of-type { border-top: 0; }
+    label { font-size: 14px; font-weight: 500; }
+    .hint { display: block; font-size: 12px; color: #626b7b; font-weight: 400; margin-top: 2px; line-height: 16px; }
+    select, input[type="number"] { height: 36px; box-sizing: border-box; padding: 0 12px; border: 1px solid #e5e9f0; border-radius: 10px; font-size: 14px; font-family: inherit; background: #ffffff; color: #262626; }
+    .toggle { width: 38px; height: 22px; border-radius: 999px; background: #194df4; position: relative; display: inline-block; }
+    .toggle.off { background: #c9cfd9; }
+    .toggle::after { content: ""; position: absolute; top: 3px; left: 19px; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; }
+    .toggle.off::after { left: 3px; }
+    .chip { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 16px; }
+    .soft { background: #edf3ff; color: #1238b8; }
+    .grey { background: #f1f3f6; color: #4b5563; }
+    .sub a { display: block; padding: 8px 12px; border-radius: 10px; font-size: 14px; color: #262626; font-weight: 500; }
+    .sub a.active { background: #edf3ff; color: #194df4; }
+    button { font-family: inherit; }
+    .btn { border: 0; background: #194df4; color: #ffffff; font-weight: 600; font-size: 13px; padding: 0 14px; height: 36px; border-radius: 10px; cursor: pointer; }
+  </style>
+</helmet>
+<div style="width: 1280px; height: 1000px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden;">
+  <header class="top" style="height: 56px; box-sizing: border-box; padding: 0 24px; background: #ffffff; border-bottom: 1px solid #e5e9f0; display: flex; align-items: center; gap: 18px;">
+    <div style="display: flex; align-items: center; gap: 10px; margin-right: 10px;"><div style="width: 26px; height: 26px; border-radius: 7px; background: #194df4;"></div><div style="font-weight: 700; font-size: 16px;">Finradar</div></div>
+    <a href="#">Daily briefing</a>
+    <a href="#" class="active">Intelligence<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></a>
+    <a href="#">Research<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"></path></svg></a>
+    <a href="#">Settings</a>
+    <div style="flex-grow: 1;"></div>
+    <a href="#" aria-label="Account" style="width: 32px; height: 32px; border-radius: 50%; background: #edf3ff; padding: 0; justify-content: center;"><span style="font-size: 12px; font-weight: 700; color: #194df4;">JF</span></a>
+  </header>
+
+  <div style="display: flex; flex-grow: 1; min-height: 0;">
+    <nav class="side" style="width: 208px; box-sizing: border-box; padding: 18px 12px; background: #ffffff; border-right: 1px solid #e5e9f0; display: flex; flex-direction: column; gap: 2px;">
+      <div class="head" style="padding: 4px 12px 10px;">YouTube Intelligence</div>
+      <a href="Main.dc.html">Today</a>
+      <a href="Channels.dc.html">Channels</a>
+      <a href="Leaderboard.dc.html">Leaderboard</a>
+      <a href="#">Saved calls</a>
+      <a href="#">Lab</a>
+      <div style="flex-grow: 1;"></div>
+      <a href="#" class="active">Settings</a>
+    </nav>
+
+    <main style="flex-grow: 1; min-width: 0; box-sizing: border-box; padding: 24px 28px; display: flex; flex-direction: column; gap: 14px; overflow: hidden;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+          <h1 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;">Settings</h1>
+          <div class="muted" style="font-size: 13px; margin-top: 2px;">Plain-language controls. Each change creates a new configuration version; past results keep theirs.</div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;"><span class="muted" style="font-size: 12px;">Configuration 7f3a…c1</span><button type="button" class="btn">Save changes</button></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 18px; min-height: 0; flex-grow: 1;">
+        <nav class="sub" style="display: flex; flex-direction: column; gap: 2px;">
+          <a href="#" class="active">Leaderboard and sentiment</a>
+          <a href="#">Sources</a>
+          <a href="#">Models and transport</a>
+          <a href="#">Context check</a>
+          <a href="#">Processing and budget</a>
+          <a href="#">Channels</a>
+          <a href="#">Trust</a>
+          <a href="#">Digest and sharing</a>
+        </nav>
+
+        <div style="display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: hidden;">
+          <section class="card" style="padding: 4px 20px;">
+            <div style="padding: 12px 0 4px;"><div style="font-size: 15px; font-weight: 700;">Leaderboard and sentiment</div><div class="muted" style="font-size: 13px;">Your own view. Every number is recomputed from the settlement rows with these choices; nothing is stored as a result.</div></div>
+            <div class="field"><label for="bm">Compare calls with<span class="hint">Excess return is the call's return minus this benchmark over the same days. "Sector ETF" picks the SPDR fund for each ticker's sector. Team default: SPY.</span></label><div style="display: flex; gap: 10px; align-items: center;"><select id="bm"><option>SPY (S&amp;P 500)</option><option>QQQ (Nasdaq 100)</option><option>IWM (Russell 2000)</option><option>Sector ETF of each ticker</option><option>Custom ticker…</option><option>None (absolute return)</option></select><a href="#" style="font-size: 12px; font-weight: 600;">Reset to team default</a></div></div>
+            <div class="field"><label for="cp">Sentiment comparison period<span class="hint">Mentions in the latest period against the period before it.</span></label><select id="cp"><option>7 days vs prior 7 days</option><option>14 days vs prior 14 days</option><option>30 days vs prior 30 days</option></select></div>
+            <div class="field"><label for="sb">Sentiment counts<span class="hint">Mentions include every stance-tagged reference; calls are only the actionable ones.</span></label><select id="sb"><option>Mentions, text-checked or better</option><option>Calls only</option></select></div>
+            <div class="field"><label for="hz2">Default horizon<span class="hint">Team default: 90 days.</span></label><div style="display: flex; gap: 10px; align-items: center;"><select id="hz2"><option>90 days</option><option>180 days</option><option>365 days</option></select><a href="#" style="font-size: 12px; font-weight: 600;">Reset to team default</a></div></div>
+            <div class="field"><label for="cw">Context window<span class="hint">Days before and after a video's publication whose news, filings and prices count as "at the time".</span></label><div style="display: flex; gap: 10px; align-items: center;"><input id="cw" type="number" value="14" style="width: 70px;"><span class="muted" style="font-size: 13px;">days before</span><input type="number" value="2" aria-label="days after" style="width: 70px;"><span class="muted" style="font-size: 13px;">days after</span><a href="#" style="font-size: 12px; font-weight: 600;">Reset to default</a></div></div>
+          </section>
+
+          <section class="card" style="padding: 4px 20px;">
+            <div style="padding: 12px 0 4px;"><div style="font-size: 15px; font-weight: 700;">Sources</div><div class="muted" style="font-size: 13px;">Where the words come from and how they are cross-checked.</div></div>
+            <div class="field"><label for="cap">Captions<span class="hint">Fast draft, about half a cent per video. Every caption vendor reads the same YouTube track.</span></label><select id="cap"><option>TranscriptAPI</option><option>None</option></select></div>
+            <div class="field"><label for="sby">Standby provider<span class="hint">Used only when the primary vendor errors, or as a third opinion when captions and audio disagree. Never for routine coverage.</span></label><div style="display: flex; flex-direction: column; gap: 6px;"><select id="sby" style="width: 260px;"><option>Supadata, free plan (100 credits a month)</option><option>None</option></select><span style="font-size: 12px; color: #a93226; font-weight: 600;">⚠ Out of credits since 14 Sep 09:12. Caption fallback is off until credits are added.</span></div></div>
+            <div class="field"><label for="asr">Audio transcript<span class="hint">Independent reference from the public YouTube URL, in fixed windows. No download.</span></label><select id="asr"><option>Gemini, 5-minute windows (recommended)</option><option>Off</option></select></div>
+            <div class="field"><label for="pol">When to run it<span class="hint">"On demand" runs it only for calls that reach Today.</span></label><select id="pol"><option>When captions are missing, plus on demand</option><option>Always</option><option>On demand only</option></select></div>
+            <div class="field"><label for="res">Media resolution<span class="hint">Low keeps the audio and drops most frames; transcription does not need frames.</span></label><select id="res"><option>Low (recommended)</option><option>Default</option></select></div>
+            <div class="field"><label for="thr">Agreement needed for "Audio-agreed"<span class="hint">Captions and audio must agree on the cited span at least this much.</span></label><div style="display: flex; align-items: center; gap: 10px;"><input id="thr" type="number" value="92" style="width: 110px;"><span class="muted" style="font-size: 13px;">%</span></div></div>
+          </section>
+
+          <section class="card" style="padding: 4px 20px;">
+            <div style="padding: 12px 0 4px;"><div style="font-size: 15px; font-weight: 700;">Models and transport</div><div class="muted" style="font-size: 13px;">Google directly for the proven stages. OpenRouter when you want a different vendor.</div></div>
+            <div class="field"><label for="ext">Extraction<span class="hint">Reads the whole transcript once and points at evidence by segment.</span></label><div style="display: flex; gap: 8px; align-items: center;"><select id="ext" style="width: 250px;"><option>Gemini 3.8 Flash</option><option>Gemini 3.1 Pro Preview</option></select><span class="chip soft">Google native</span></div></div>
+            <div class="field"><label for="crit">Critic<span class="hint">Checks every call in one pass against the cached transcript.</span></label><div style="display: flex; gap: 8px; align-items: center;"><select id="crit" style="width: 250px;"><option>Claude Sonnet 5</option><option>Gemini 3.5 Flash</option><option>GPT-5</option></select><span class="chip grey">via OpenRouter</span></div></div>
+            <div class="field"><label for="fam">Critic must be a different model family<span class="hint">Two different models are less likely to make the same mistake.</span></label><span class="toggle" aria-hidden="true"></span></div>
+            <div class="field"><label for="fb">Fall back to OpenRouter if Google is down<span class="hint">Off keeps cost predictable; on keeps work moving during an outage.</span></label><span class="toggle off" aria-hidden="true"></span></div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1280,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

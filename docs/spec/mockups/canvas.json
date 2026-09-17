@@ -1,0 +1,106 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-17T09:20:00Z"
+  },
+  "title": "YouTube Intelligence v2 target state",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "ProcessMap.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1400,
+      "h": 870,
+      "title": "End-to-end process map — target design"
+    },
+    "Main.dc.html": {
+      "x": 1480,
+      "y": 0,
+      "w": 1280,
+      "h": 900,
+      "title": "Today — trusted calls (Finradar shell)"
+    },
+    "Analysis.dc.html": {
+      "x": 2840,
+      "y": 0,
+      "w": 1280,
+      "h": 1000,
+      "title": "Analysis — decision-first report"
+    },
+    "Leaderboard.dc.html": {
+      "x": 0,
+      "y": 1120,
+      "w": 1280,
+      "h": 960,
+      "title": "Leaderboard — by ticker first, benchmark selectable, hover definitions"
+    },
+    "Channels.dc.html": {
+      "x": 1360,
+      "y": 1120,
+      "w": 1280,
+      "h": 820,
+      "title": "Channels — pick which of the 80 seeded channels to process, under budget"
+    },
+    "Settings.dc.html": {
+      "x": 2720,
+      "y": 1120,
+      "w": 1280,
+      "h": 1000,
+      "title": "Settings — user-controlled configuration"
+    },
+    "Phone.dc.html": {
+      "x": 0,
+      "y": 2240,
+      "w": 390,
+      "h": 844,
+      "title": "Today — phone"
+    }
+  },
+  "order": [
+    "ProcessMap.dc.html",
+    "Main.dc.html",
+    "Analysis.dc.html",
+    "Leaderboard.dc.html",
+    "Channels.dc.html",
+    "Settings.dc.html",
+    "Phone.dc.html"
+  ],
+  "notes": {
+    "t1": {
+      "kind": "title1",
+      "x": 0,
+      "y": -300,
+      "text": "YouTube Intelligence v2 — end state inside Finradar (top nav: Daily briefing · Intelligence ▾ · Research ▾ · Settings; YouTube intelligence under Intelligence, with its own side panel)",
+      "maxW": 4120
+    },
+    "n1": {
+      "x": 480,
+      "y": 2240,
+      "w": 390,
+      "text": "Trust ladder on every call: Text-checked (deterministic checks + critic), Audio-agreed (captions and audio transcript agree on the cited span, anchor within 2s), Human-verified (named reviewer signed). Creator conviction is always a separate chip and never merged with trust.",
+      "color": "blue",
+      "size": "s"
+    },
+    "n2": {
+      "x": 480,
+      "y": 2560,
+      "w": 390,
+      "text": "Side panel inside the YouTube intelligence page: Today, Channels, Leaderboard, Saved calls, Lab, Settings. Finradar's own top navigation stays untouched. Nothing shown is imported: every figure is computed from stored rows, and every column heading has a hover that states the definition and calculation steps.",
+      "color": "gray",
+      "size": "s"
+    },
+    "n3": {
+      "x": 480,
+      "y": 2880,
+      "w": 390,
+      "text": "Per-account choices: benchmark (SPY default; QQQ, IWM, sector ETF, custom, none), sentiment comparison period (7 vs prior 7 default; 14, 30), market filter (US stocks and ETFs default; HK, A-shares, other selectable), default horizon. Team-wide: channel selection, budget (US$150 default, raisable), trust thresholds, providers.",
+      "color": "gray",
+      "size": "s"
+    }
+  },
+  "designSystems": []
+}
