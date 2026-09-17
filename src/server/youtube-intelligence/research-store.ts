@@ -9,6 +9,16 @@ import {
   type CheckedClaim,
   type Run,
 } from "../../features/youtube-intelligence/contracts.ts";
+import {
+  TeamPreferences,
+  AccountPreferences,
+  teamDefaults,
+  resolveAccount,
+  migrateLegacyPreferences,
+  type TeamPreferencesData,
+  type AccountPreferencesData,
+} from "../../features/youtube-intelligence/settings.ts";
+import { resolveTeam } from "./env.ts";
 export const PromptVersion = z.object({
   id: z.string().regex(/^[a-zA-Z0-9._-]{3,100}$/),
   rationale: z.string().min(10).max(4000),
@@ -166,6 +176,58 @@ export async function savePreferences(input: unknown) {
   const p = Preferences.parse(input);
   await prompt(p.promptVersion);
   return await put("preferences", "default", p);
+}
+// v2 settings (spec 6.2 / 6.3): one team document and one account document
+// per account id. The old flat "preferences" document is migrated into them
+// once, on first read; afterwards the two APIs live independently.
+const TEAM_DOC = "teamPreferences",
+  ACCOUNT_DOC = "accountPreferences",
+  DEFAULT_ACCOUNT = "default";
+async function migrateSettingsIfNeeded() {
+  if (await doc(TEAM_DOC, DEFAULT_ACCOUNT)) return;
+  const legacy = await doc<PreferencesData>("preferences", DEFAULT_ACCOUNT);
+  if (!legacy || process.env.YTI_PREVIEW_READ_ONLY === "true") return;
+  const migrated = migrateLegacyPreferences(legacy);
+  await researchDB().transaction(async () => {
+    if (await doc(TEAM_DOC, DEFAULT_ACCOUNT)) return;
+    await put(TEAM_DOC, DEFAULT_ACCOUNT, migrated.team);
+    if (!(await doc(ACCOUNT_DOC, DEFAULT_ACCOUNT)))
+      await put(ACCOUNT_DOC, DEFAULT_ACCOUNT, migrated.account);
+  });
+}
+/** Team preferences with the YTI_HARD_BUDGET_USD_MONTH ceiling applied. */
+export async function teamPreferences(): Promise<TeamPreferencesData> {
+  await migrateSettingsIfNeeded();
+  const stored = await doc(TEAM_DOC, DEFAULT_ACCOUNT);
+  return resolveTeam(stored ? TeamPreferences.parse(stored) : teamDefaults());
+}
+export async function saveTeamPreferences(input: unknown) {
+  const team = resolveTeam(TeamPreferences.parse(input));
+  await prompt(team.prompts.version);
+  return (await put(TEAM_DOC, DEFAULT_ACCOUNT, team)) as TeamPreferencesData;
+}
+export async function accountPreferences(
+  accountId: string = DEFAULT_ACCOUNT,
+): Promise<AccountPreferencesData> {
+  await migrateSettingsIfNeeded();
+  const stored = await doc(ACCOUNT_DOC, accountId);
+  return AccountPreferences.parse(stored ?? {});
+}
+export async function saveAccountPreferences(
+  input: unknown,
+  accountId: string = DEFAULT_ACCOUNT,
+) {
+  const account = AccountPreferences.parse(input);
+  return (await put(ACCOUNT_DOC, accountId, account)) as AccountPreferencesData;
+}
+/** The viewer's account settings with every null filled from the team. */
+export async function resolvedAccountPreferences(
+  accountId: string = DEFAULT_ACCOUNT,
+) {
+  return resolveAccount(
+    await teamPreferences(),
+    await accountPreferences(accountId),
+  );
 }
 export async function queue(
   videoId: string,
