@@ -289,3 +289,75 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | Gold set needs 50 human-verified claims | Human task from phase 0 day one; the harness accepts partial sets flagged "n < 50, advisory" |
 
 ---
+
+---
+
+## 7. Neon and Vercel topology (amendment, 17 September 2026)
+
+The plan above was written provider-neutral: `DATABASE_URL` and "Postgres". The deployment is Vercel functions in `iad1` against a Neon project, and Neon's pooler, autosuspend and branching change several items. Nothing in phases 0–1 is affected. This section is the binding version wherever it differs from sections 1–6.
+
+### 7.1 What already works and must not be "fixed"
+
+| Concern | Verdict |
+|---|---|
+| TLS | `database.ts` rewrites `sslmode=require` to `verify-full`; `pg-connection-string` 2.14 maps that to `rejectUnauthorized: true` against the system CA, and Neon serves publicly-issued certificates. Correct as written. Neon's `channel_binding` parameter is ignored by `pg` and harmless |
+| Prepared statements | The code never uses named or SQL-level `PREPARE`; node-postgres uses protocol-level prepared statements, which Neon's transaction-mode pooler supports |
+| Schema-init lock | `pg_advisory_xact_lock` is transaction-scoped. Only *session*-level advisory locks are unavailable through the pooler, so this call is safe today. F23 still removes it, for the reason already given |
+| Queue design | `FOR UPDATE SKIP LOCKED` is fully supported through the pooler. The decision to avoid pg-boss and Graphile Worker is now doubly correct: `LISTEN`/`NOTIFY` is not available on a pooled Neon endpoint at all |
+
+### 7.2 Connection topology (new; F23 owns it)
+
+Two connection roles, not one. Neon's own Vercel integration already publishes both names, so we adopt them rather than invent our own.
+
+| Variable | Endpoint | Used by | Why |
+|---|---|---|---|
+| `DATABASE_URL` | pooled (`-pooler` host) | Next.js functions, cron route | Thousands of short-lived serverless clients; a direct endpoint would exhaust `max_connections` |
+| `DATABASE_URL_UNPOOLED` | direct | migration runner, the worker, `scripts/postgres-check.ts`, `scripts/backup.ts` | DDL, session advisory locks, `SET search_path`, temporary tables and `pg_dump` are all unavailable in transaction pooling mode |
+
+Required with it:
+
+- `attachDatabasePool(pool)` from `@vercel/functions` immediately after the pool is constructed. `maxDuration = 800` implies Fluid Compute, where a suspended invocation otherwise keeps idle `pg` clients — and therefore Neon connections — alive. This is the one new runtime dependency phase 2 adds; it is a first-party Vercel package.
+- Pool size derived from `processing.parallelVideos` rather than the hard-coded `max: 3`, with the worker sized separately from the functions.
+- `pool.on("error")` classified rather than logged: Neon suspends idle computes and recycles pooler connections, so a dropped connection is a normal, retryable event. The worker must reconnect and re-poll; a run whose transaction was cut stays leased until `lease_until` expires and is re-claimed, which F27 already guarantees.
+- Region check before the phase-2 gate: functions run in `iad1`, and the Neon project must be in the same region. The pipeline issues many small queries per stage, so a cross-region pairing multiplies every round trip. `docs/finradar-production-plan.md` flagged this and it was never verified.
+
+### 7.3 Migrations on Vercel (amends F22)
+
+F22 said migrations are applied "at worker start, by `scripts/migrate.ts`, and by the test DB helper". That leaves the web deployment unmigrated: Vercel has no release phase, and after F26 the worker may not be on Vercel at all. Corrected:
+
+1. Migrations run in the Vercel **build command** (`npm run migrate && next build`), against `DATABASE_URL_UNPOOLED`, holding a session advisory lock so concurrent builds serialise. This is Neon's own documented pattern for the integration.
+2. Each migration file runs inside one transaction. Any statement that cannot run in a transaction (`CREATE INDEX CONCURRENTLY`) is marked in the file and run outside it; at current data volumes a plain `CREATE INDEX` is acceptable and preferred.
+3. The application **fails fast** instead of self-healing: `initialize()` reads `yi_migrations` and throws if the applied version is behind the version the code expects. No function creates or alters a table. This replaces the `CREATE TABLE IF NOT EXISTS` bootstrap that currently runs on every cold start.
+4. A Neon branch is taken immediately before the first migration against production, as the rollback path; the PITR retention window is recorded in the gate artefact. This is instant and copy-on-write, and supersedes a file export as the pre-migration snapshot.
+5. Preview deployments: enable the Neon integration's per-preview branch (`preview/<git-branch>`, auto-deleted with the git branch), so the build migrates a throwaway copy. Until that is enabled, previews point at production and are protected only by `YTI_PREVIEW_READ_ONLY`, which must then be set on every preview environment. **Open decision.**
+
+### 7.4 Column types (amends F22, F24, F25)
+
+The v1 schema stores timestamps as ISO `TEXT` in five places, money as `DOUBLE PRECISION`, and lease deadlines as epoch `BIGINT`. Phase 2 rewrites every table anyway, so it is the only cheap moment to fix this; after F24 writes real rows a type change costs a rewriting migration.
+
+- `timestamptz` for every instant. The leaderboard windows, the sentiment-shift period comparison and the settlement horizons are all date arithmetic over ranges, which text defeats.
+- `numeric(12,6)` for USD amounts (ledger, reservations, settlements, cost per claim) and `numeric` for prices. Float money in a product whose gate threshold is "cost per accepted claim ≤ US$0.25" is indefensible.
+- `jsonb`, not `TEXT`, for payloads and for `output`, which removes the `payload::jsonb` cast that `postgresSQL()` currently rewrites.
+- `lease_until` becomes `timestamptz`; the epoch-millisecond comparison disappears with it.
+
+### 7.5 Worker hosting (amends F26)
+
+Neon does not resolve this; it only constrains it. Whatever host is chosen, F26 must deliver: the unpooled connection string, connection loss treated as retryable, SIGTERM handling that finishes or releases the leased job, and no filesystem control files — the existing `scripts/worker.ts` signals through `data/worker.pid` and `data/worker.stop`, which does not survive an ephemeral or read-only filesystem. The Vercel cron keeps the health and poll-fallback role. A cron-only deployment cannot honour `parallelVideos` beyond what one 800-second invocation completes. **Open decision.**
+
+### 7.6 Gates (amends F31 and F49)
+
+PGlite is single-connection, so it can prove queue *logic* and nothing about contention or pooled-mode behaviour. Before the phase-2 gate, `scripts/postgres-check.ts` runs against **a Neon branch through the pooled endpoint** — the configuration production actually uses — and is extended to assert the pooled-mode constraints explicitly: a session advisory lock fails, a temporary table fails, `SET search_path` does not persist across transactions, and `SKIP LOCKED` hands each job to exactly one of N concurrent claimants. The phase-3 gate adds an `EXPLAIN` check for each leaderboard and sentiment-shift query against a Neon branch seeded at realistic volume, since those are the queries that will dominate Neon compute time.
+
+### 7.7 Storage and compute cost (amends F29)
+
+F29 projects model spend only. Windowed ASR (F32) stores a transcript and a window row per video, F24 adds a span row per claim evidence item, F25 adds a settlement row per horizon per call, and F50 adds a context check per claim; Neon bills storage and compute-hours on top of the model bill. F29 gains a stored-bytes and row-growth metric alongside the model projection, and the registry entry states plainly that the Neon line is not in the model budget. Related rule for F24 and F32: transcript and ASR-window tables are never selected with `SELECT *` from list queries — projections only — so megabytes of text do not cross the pooler for a table view.
+
+### 7.8 Risk table additions
+
+| Risk | Mitigation |
+|---|---|
+| Pooled and direct endpoints have different capabilities, and one variable cannot serve both | Two variables with defined roles (7.2); `postgres-check.ts` asserts the pooled constraints (7.6) |
+| Fluid Compute suspends invocations holding idle pool clients | `attachDatabasePool` from `@vercel/functions` (7.2) |
+| Vercel has no release phase, so a deploy can run ahead of its schema | Migrations in the build command against the unpooled URL; the app fails fast on a version mismatch rather than creating tables (7.3) |
+| Neon autosuspend drops idle connections under a long-lived worker | Connection loss classified as retryable; lease expiry re-claims the run (7.2, F27) |
+| Neon compute in a different region from `iad1` multiplies per-query latency | Region verified and recorded before the phase-2 gate (7.2) |
