@@ -1,6 +1,6 @@
 # YouTube Intelligence v2 — proposed update specification
 
-**Status:** Proposal for review, revision 2 (17 September 2026). Nothing in this document has been implemented, deployed or promoted. Revision 2 folds in the review of the TrueAlphaData handoff (commit d341270) and the VideoConviction handoff (commit c0a0fb6), the answers received on navigation, benchmarks, providers, replay, sharing, users and languages, and the evaluation of Supadata as a standby provider. There is no separate addendum.
+**Status:** Proposal for review, revision 3 (17 September 2026). Revision 3 removes the VideoConviction benchmark from the design: no product surface uses its labels, so it is no longer a promotion gate, a Lab panel, a seed source or a repository fixture; the gold set is the only evaluation set. Nothing in this document has been implemented, deployed or promoted. Revision 2 folds in the review of the TrueAlphaData handoff (commit d341270) and the VideoConviction handoff (commit c0a0fb6), the answers received on navigation, benchmarks, providers, replay, sharing, users and languages, and the evaluation of Supadata as a standby provider. There is no separate addendum.
 **Scope:** The `feat/youtube-intelligence` codebase in this repository, its hosted lab, and its planned merge into Finradar under Intelligence → YouTube intelligence.
 **Companion:** Target-state mockup canvas (Finradar theme): https://claude.ai/artifact/42c21wSpbiEtPrHJLh7THZ. Artboard sources are kept under `docs/spec/mockups/`.
 
@@ -29,12 +29,12 @@ Changes, in delivery order:
 | 6 | Trust ladder as a first-class data field | Usability for decisions |
 | 7 | Always-on worker, Postgres-only, relational core | Throughput, simplicity, Finradar fit |
 | 8 | YouTube push notifications and Batch API for channel automation | Cost, freshness |
-| 9 | Gold set plus the VideoConviction benchmark as promotion gates | Confidence in every later change |
+| 9 | Gold set as the single promotion gate | Confidence in every later change |
 | 10 | Computed metrics registry: one definition per figure, rendered as hover text, Methodology page and CI test | Trust in every number |
 | 11 | Leaderboard by ticker and by creator, with a user-chosen benchmark, sample-size gates, multiple-comparison control, and a Changes view over a user-chosen window | Parity with LeapEdge, then beyond |
 | 12 | Sentiment engine: every mention graded bullish, neutral or bearish with a cited rationale, persisted per ticker, traceable to video and channel; sentiment shift over a user-chosen comparison period | Decision support |
 | 13 | Context check: dated external evidence from the days around the video, summarised through OpenRouter | Trusted, time-matched context |
-| 14 | Default channel seed of about 80 from LeapEdge, TrueAlphaData and VideoConviction; the team picks which to process (Tier 1 and LeapEdge's top 20 selected by default) under a US$150 budget it can raise; Tier-1 historical replay from January 2026 | A populated product on day one, under budget |
+| 14 | Default channel seed of about 60 from LeapEdge and TrueAlphaData; the team picks which to process (Tier 1 and LeapEdge's top 20 selected by default) under a US$150 budget it can raise; Tier-1 historical replay from January 2026 | A populated product on day one, under budget |
 | 15 | Front-end revamp inside Finradar's shell: module side panel, decision-first surfaces, sortable tables with hover definitions | Usability |
 
 ---
@@ -159,9 +159,9 @@ Creator conviction (high, medium, low, unspecified) is a separate field and is a
 
 ### 4.9 Gold set and promotion gates
 
-**Decision.** Before any prompt, model or transport change is promoted, it must be evaluated against two frozen sets: at least fifty human-verified claims across English and Chinese with audio-checked anchors (ours), and the 760 expert-labelled segments of VideoConviction (ticker, stance, conviction). The evaluation reports claim precision and recall, critic precision and recall, ticker and stance agreement with the expert labels, conviction agreement, anchor accuracy within two seconds, and cost per accepted claim.
+**Decision.** Before any prompt, model or transport change is promoted, it must be evaluated against one frozen set: at least fifty human-verified claims across English and Chinese with audio-checked anchors. The evaluation reports claim precision and recall, critic precision and recall, sentiment agreement, anchor accuracy within two seconds, and cost per accepted claim. The VideoConviction benchmark that earlier revisions paired with the gold set was removed on 17 September 2026: the product never reads its labels, so it was an evaluation-only dependency with a licence question attached, and the gold set already measures ticker, stance and conviction directly.
 
-**Licensing.** VideoConviction is CC BY-NC 4.0 and TrueAlphaData's rows are of unstated licence. Finradar is confirmed as never commercial, so both may be used, with attribution, as evaluation fixtures. Neither ever appears as product data (section 4.11).
+**Licensing.** TrueAlphaData's rows are of unstated licence. Finradar is confirmed as never commercial, so they may be used, with attribution, as an evaluation reference. They never appear as product data (section 4.11). No VideoConviction data is held in the repository.
 
 ### 4.10 Provider decision and the standby provider
 
@@ -207,7 +207,6 @@ Cost per 30-minute video for a Whisper transcript is 60 credits: about US$0.34 o
 | TrueAlphaData "ingest their prediction sheet as a cold-start reference" | Same | Rejected. Cold start is solved by the historical replay (section 4.16), which runs our own pipeline. |
 | TrueAlphaData creator style summary templates | Prose generated from stats | Allowed, because the templates read the same computed rollup; the hover on the summary lists which figures it used. |
 | LeapEdge leaderboard figures | Comparison only | Never imported; cited in this document for parity, not in the product. |
-| VideoConviction labels | Benchmark only | Evaluation fixture in `evaluations/`, never a product table. |
 | Current repo scoreboard snapshots in `yi_documents(kind="scoreboard")` | Frozen JSON that cannot be recomputed for a different benchmark or horizon | Replaced by query-time computation over `settlements` and `prices`. |
 | Mockup figures (209 calls, 66.5%, and so on) | Illustrative | Placeholders in the artboards; in production every one of them is a registry metric. |
 
@@ -255,7 +254,7 @@ Each change is a registry metric: the hover reads, for example, "rank as of toda
 
 **Where it appears.** A panel on Today for the biggest movers, a column on the by-ticker leaderboard, the ticker drill-down, and a `youtube` observation in the Finradar briefing (section 4.17).
 
-**Evaluation.** The gold set gains a sentiment label per mention, and the VideoConviction stance labels double as a check on call-derived sentiment. Sentiment agreement with the labels is a promotion gate like the others.
+**Evaluation.** The gold set gains a sentiment label per mention. Sentiment agreement with the gold labels is a promotion gate like the others.
 
 ### 4.14 Context check: time-matched external evidence
 
@@ -282,7 +281,7 @@ OpenRouter's own web plugin is not used for this: it has no publication-date fil
 
 ### 4.15 Default channel seed
 
-**Decision.** On first run the team's channel list is seeded with, deduplicated by YouTube channel ID: the 47 creators on LeapEdge's public leaderboard, the TrueAlphaData Tier 1 to Tier 3 creators from the handoff (about 20), and the 22 channels behind VideoConviction (three are named on the dataset card: Let's Talk Money with Joseph Hogue, Financial Education, Ryne Williams; the rest are read from the dataset's channel metadata at seed time). Known overlaps include Joseph Hogue, Financial Education, Daniel Pronk, Ticker Symbol: YOU, Invest with Henry, Business With Brian, Stealth Wealth Investing, Everything Money and Joseph Carlson, so the seed is about 75 to 80 channels, roughly a third of them Chinese-language.
+**Decision.** On first run the team's channel list is seeded with, deduplicated by YouTube channel ID: the 47 creators on LeapEdge's public leaderboard and the TrueAlphaData Tier 1 to Tier 3 creators from the handoff (about 20). Known overlaps include Joseph Hogue, Financial Education, Daniel Pronk, Ticker Symbol: YOU, Invest with Henry, Business With Brian, Stealth Wealth Investing, Everything Money and Joseph Carlson, so the seed is about 60 channels, roughly a third of them Chinese-language. Any team member can add channels by URL at any time.
 
 **Selection, as decided.** All seeded channels are listed on the Channels page with a "Process" checkbox. Tier-1 TrueAlphaData channels and LeapEdge's top 20 are selected by default; the rest are followed but not processed. Any user can change the selection and save it; the saved selection is the team's list and is versioned like other configuration. Unselected channels still receive push notifications, and every new upload is listed on the Channels page unanalysed with a one-click "Analyse this one". Using it analyses that video and switches the channel's Process checkbox on, so from then on the channel is analysed and counts against the budget; the page says so on the button. The LeapEdge top-20 default is taken from their public ranking at seed time; once our own forward record has n ≥ 20 for enough creators, the default selection follows our record instead, and the change is versioned like any configuration.
 
@@ -411,7 +410,7 @@ RESEND_API_KEY=            # optional; digest delivery
   "channels": {
     "discovery": "push",                 // push | poll
     "pollIntervalMinutes": 60,
-    "seedDefaults": true,                // LeapEdge + TrueAlphaData + VideoConviction
+    "seedDefaults": true,                // LeapEdge + TrueAlphaData
     "defaultSelection": ["tier1", "leapedge-top20"],
     "selection": [],                     // channel IDs the team chose to process; saved and versioned
     "autoAnalyzeNewChannels": false,
@@ -485,7 +484,7 @@ The top navigation is Finradar's and is not changed by this module.
 - Processing state simplified to four user-facing states: Queued, Analysing, Ready, Needs review. Stage detail moves to a collapsible diagnostics panel.
 - Cost display becomes a monthly meter in Settings and a per-video line in diagnostics; it leaves the report header.
 - Settings screen rebuilt from the schemas in section 6, grouped as Leaderboard and sentiment (account), Sources, Models and transport, Context check, Processing and budget, Channels, Trust, Digest and sharing (team).
-- Lab gains a "Promote" action that is disabled until the gold-set and VideoConviction evaluations pass the configured gates.
+- Lab gains a "Promote" action that is disabled until the gold-set evaluation passes the configured gates.
 - Channel cards show discovery mode, processing mode, tier and the trust distribution of their calls.
 
 ### 7.3 Surfaces
@@ -496,7 +495,7 @@ The top navigation is Finradar's and is not changed by this module.
 | **Channels** | Followed creators with call count, trust distribution, excess return against the viewer's benchmark with significance, discovery and processing mode | Playlist cursors, quota, pull history |
 | **Leaderboard** | By ticker (default), by creator, and Changes over a user-chosen window; benchmark, horizon, market and record selectors; methodology and row export | Settlement mechanics |
 | **Saved calls** | The user's saved calls, direction changes, notes, forward observations | Snapshot mechanics |
-| **Lab** | Prompts, experiments, gold set and VideoConviction benchmark, provider diagnostics, cost history, shares | Everything technical |
+| **Lab** | Prompts, experiments, gold set, provider diagnostics, cost history, shares | Everything technical |
 | **Settings** | Sections 6.2 and 6.3 | Environment |
 
 Mapping from the current UI:
@@ -540,7 +539,7 @@ Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#26262
 
 | Phase | Work | Gate to exit |
 |---|---|---|
-| 0 | Gold set of 50 verified claims; VideoConviction benchmark harness; `ModelTransport` interface; metrics registry skeleton; settings schemas | Evaluation harness reports precision, recall, expert-label agreement, anchor accuracy and cost per accepted claim for the current v5 configuration |
+| 0 | Gold set of 50 verified claims; `ModelTransport` interface; metrics registry skeleton; settings schemas | Evaluation harness reports precision, recall, anchor accuracy and cost per accepted claim for the current v5 configuration |
 | 1 | Native transport for all stages; pointer evidence with `responseSchema`; mentions with sentiment and rationale; batched critique with explicit caching; low media resolution; realistic reservations with retries; Supadata standby with circuit breaker | Gold-set precision and recall not below v5; cost per accepted claim at least 40% lower; zero structural rejections on the gold set; standby engages on an injected vendor error and not on a missing-captions case |
 | 2 | Always-on worker with Postgres queue; Postgres-only with PGlite tests; relational tables and migrations; prices and settlements; default channel seed with selection and cost projection | Four videos processed in parallel end to end; restart during a run resumes without duplicate spend; CI runs on the production dialect; seed produces the deduplicated channel list |
 | 3 | Windowed ASR, agreement scoring and Whisper tie-break; trust ladder; Today, Channels, Leaderboard (by ticker, then by creator), Saved calls, Lab surfaces inside the Finradar shell; hover definitions and sorting on every table; benchmark and period settings; push notifications; batch mode; historical replay from January 2026 | At least 95% of L2 anchors within two seconds on the gold set; a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write; the Changes tab reproduces a hand-computed diff between two dates on the fixture database |
@@ -572,15 +571,17 @@ The feature-level breakdown of these phases, with dependencies, lanes, test plan
 
 ### VideoConviction handoff (`handoff-videocviction.md`, commit c0a0fb6)
 
+Revision 3 decision (17 September 2026): the design does not use the VideoConviction data, so nothing from this handoff is adopted and its benchmark, fixture, scripts and mockups were removed from the repository. The earlier verdicts are kept for the record.
+
 | Proposal | Verdict | Reason |
 |---|---|---|
-| A. Benchmark harness over 760 expert-labelled segments | **Keep, phase 0** | The external ground truth the gold set lacked for ticker, stance and conviction. Cost is cents. Non-commercial use confirmed. |
-| B. Conviction rubric prompt v7 | **Keep, gated** | Conviction decides which calls the leaderboard scores, so inflation biases the leaderboard. Promote only on the benchmark. |
-| C. Video-attached extraction arm | **Lab only, 10 rows, then decide** | Affordable under realistic reservations. Drop unless it beats text by a clear margin. |
+| A. Benchmark harness over 760 expert-labelled segments | **Dropped** | Evaluation-only dependency with a licence question; the gold set measures ticker, stance and conviction directly. |
+| B. Conviction rubric prompt v7 | **Keep, gated on the gold set** | Conviction decides which calls the leaderboard scores, so inflation biases the leaderboard. |
+| C. Video-attached extraction arm | **Drop** | Was a Lab experiment on the benchmark rows. |
 | D. Title-keyword ordering signal | **Drop** | Push notifications plus batch processing make ordering irrelevant. |
 | E. Backtrader oracle | **Drop** | Duplicate of the settlement math with worse hygiene, as the handoff itself says. |
-| Benchmark panel UI in Lab | **Keep** | Matches the Lab surface. |
-| Its 22 channels | **Adopt into the default seed** | Section 4.15. |
+| Benchmark panel UI in Lab | **Dropped** | No benchmark to show. |
+| Its 22 channels | **Dropped from the seed** | The channel list came from the dataset's metadata; teams add channels by URL instead. |
 
 ---
 
@@ -627,7 +628,7 @@ Where we exceed LeapEdge: trust level per call, agreement score against audio, s
 | Store | Relational tables, prices with fetch time | Every served number must be recomputable | No |
 | Settle | Daily sweep writes entry and exit prices per horizon | The forward record | No |
 | Serve | Today, Leaderboard, Finradar briefing, digest, all computed on request | The product | Digest is optional per user |
-| Lab | Gold set plus VideoConviction benchmark gate promotions | Without it no change can be shown to help | No |
+| Lab | Gold set gates promotions | Without it no change can be shown to help | No |
 
 ### What is dropped, and why
 

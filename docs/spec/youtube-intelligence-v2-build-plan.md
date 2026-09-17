@@ -27,8 +27,8 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | F04 | Metrics registry skeleton: `MetricEntry {id,label,definition,steps,inputs,implementation,settingsUsed}`, `renderHover(id)`, `evaluate(id, db, settings)`; `uiColumns.ts` manifest; CI test asserts `uiColumns ⊆ registry.ids` and evaluates every entry on the fixture DB | `src/features/youtube-intelligence/metrics/registry.ts`, `metrics/ui-columns.ts`, `tests/metrics-registry.test.ts` | 4.11, 8 |
 | F05 | Settings schemas: `TeamPreferences`, `AccountPreferences` zod from 6.2/6.3 with defaults and `configHash`; env validation incl. `YTI_HARD_BUDGET_USD_MONTH`; old `Preferences` doc migrated into team + account docs | `src/features/youtube-intelligence/settings.ts`, `research-store.ts` (`Preferences`, `preferences`, `savePreferences`) | 6 |
 | F06 | Gold set: `GoldClaim` schema (extends the `AccuracyCase` reviewer/anchor pattern with ticker, stance, conviction, sentiment, span, verified anchor); 50 cases EN+ZH; offline replay through `FakeModelTransport`; report of claim P/R, critic P/R, anchor ≤2 s, sentiment agreement, cost per accepted claim | `evaluations/gold-set/{schema,report}.ts`, `evaluations/gold-set/cases.json`, `scripts/gold-set.ts`, reuse `evaluations/checks.ts` `gradeRun` | 4.9 |
-| F07 | VideoConviction harness: label mapping, 60-row committed fixture and fetch script, `vcBenchmarkStep`, ticker/stance/conviction agreement and confusion matrix | `src/features/youtube-intelligence/conviction-mapping.ts`, `src/server/youtube-intelligence/vc-benchmark.ts`, `evaluations/vc-benchmark-fixture.json`, `scripts/vc-benchmark-fixture.mjs`, `scripts/vc-benchmark.ts` | 4.9, 10 |
-| F08 | Promotion gate: one command runs F06 and F07 for a config hash and writes a dated gate report; thresholds from settings; baseline for the current v5 config committed | `scripts/promotion-gate.ts`, `docs/gates/phase-0-baseline.json` | 4.9, 9 |
+| F07 | *Removed 17 September 2026.* VideoConviction harness was built in phase 0 and then deleted (commit "Remove the VideoConviction benchmark") because no product surface uses the data | — | — |
+| F08 | Promotion gate: one command runs F06 for a config hash and writes a dated gate report; thresholds from settings; baseline for the current v5 config committed | `scripts/promotion-gate.ts`, `docs/gates/phase-0-baseline.json` | 4.9, 9 |
 
 ### Phase 1 — native transport, pointer evidence, three-call pipeline, retries, standby
 
@@ -45,7 +45,7 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | F18 | Supadata standby: explicit `mode=native|generate`, batch endpoint, per-vendor circuit breaker (TranscriptAPI 5xx/429/timeout → Supadata for `standbyCooldownMinutes`; 206 never trips it), credit-exhausted stored event and banner payload | `transcripts.ts` (`managedTranscript`), `src/server/youtube-intelligence/circuit-breaker.ts`, `research-store.ts` (`event`) | 4.10 |
 | F19 | Prompt v7: pointer output, mentions with sentiment, conviction rubric; seeded into `yi_prompts`; promoted only through F08 | `prompt-versions.json`, `prompts.ts` | 4.2, 10 |
 | F20 | Retire `youtubejs.ts`, `additional-transcript-formats.ts` and their tests; `audio-review.ts` demoted to Lab; `provider.only` pin removed; `transport.default` flag keeps the old path selectable for the comparison week | delete `youtubejs.ts`, `additional-transcript-formats.ts`, `tests/youtubejs.test.ts`, `tests/additional-transcripts.test.ts`; `package.json` (drop `youtubei.js`) | 4.10, 12 |
-| F21 | Phase-1 gate run: v5 vs v7 on gold set and VideoConviction; standby injection test; report | `tests/standby.test.ts`, `docs/gates/phase-1-<date>.json` | 9 |
+| F21 | Phase-1 gate run: v5 vs v7 on the gold set; standby injection test; report | `tests/standby.test.ts`, `docs/gates/phase-1-<date>.json` | 9 |
 
 ### Phase 2 — Postgres-only, relational core, queue, seed
 
@@ -57,7 +57,7 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | F25 | `prices` and `settlements` tables; `prices()` stores bars with `source` and `fetched_at`; settlement sweep writes append-only rows per horizon using `scoreCall`; `record` forward/historical; the `performance` document removed | `migrations/0003_prices_settlements.sql`, `market.ts`, `src/server/youtube-intelligence/settlement.ts`, `performance.ts` | 4.11, 4.12, 8 |
 | F26 | Postgres queue and always-on worker: `jobs` table with `FOR UPDATE SKIP LOCKED`, kinds `analyze`, `settle`, `push-renew`, `batch-poll`, `reconcile`; `parallelVideos` concurrency; lease fencing kept from `claimNext`/`save`; cron route reduced to health and poll fallback | `src/server/youtube-intelligence/queue.ts`, `store.ts`, `runner.ts`, `scripts/worker.ts`, `src/app/api/cron/intelligence/route.ts` | 4.7 |
 | F27 | Restart-safe resume: stage checkpoints plus open-attempt rows; a re-claimed run resumes at the checkpoint and never re-reserves a settled attempt | `pipeline.ts` (`step`), `store.ts`, `tests/resume.test.ts` | 4.4, 9 |
-| F28 | Channel seed: three source lists; `seedChannels()` dedupes by channel ID, sets `tier`, `seed_source[]`, `discovery`, `processing`; default selection Tier 1 + LeapEdge top 20; selection saved as versioned config | `src/server/youtube-intelligence/seed/{leapedge,truealpha,videoconviction}.json`, `seed/index.ts`, `channels.ts`, `settings.ts` | 4.15 |
+| F28 | Channel seed: two source lists (LeapEdge, TrueAlphaData); `seedChannels()` dedupes by channel ID, sets `tier`, `seed_source[]`, `discovery`, `processing`; default selection Tier 1 + LeapEdge top 20; selection saved as versioned config | `src/server/youtube-intelligence/seed/{leapedge,truealpha}.json`, `seed/index.ts`, `channels.ts`, `settings.ts` | 4.15 |
 | F29 | Cost projection and budget meter as registry metrics (uploads per month per channel from the last 90 days × measured cost per video; month-to-date vs `budget.monthlyUsd` vs hard ceiling) | `metrics/cost.ts`, `metrics/registry.ts`, `store.ts` (`health`) | 4.15, 6 |
 | F30 | API restructure: the 29-case switch replaced by a dispatch table `{action: {schema, handler, scope}}` per resource module with owner context; routes under `/api/youtube-intelligence/*`; old action names kept as aliases for one phase | `src/app/api/youtube-intelligence/*/route.ts`, `src/server/youtube-intelligence/actions/*.ts`, `owner.ts`; delete `src/app/api/intelligence/research/route.ts` at phase-3 gate | 4.18 |
 | F31 | Phase-2 gate run: four-video parallel end to end on PGlite with fake transports; kill-and-resume; seed dedupe; CI on the Postgres dialect | `tests/e2e-parallel.test.ts`, `docs/gates/phase-2-<date>.json` | 9 |
@@ -82,7 +82,7 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | F45 | Channels page: seed list with Process checkbox, cost projection before save, "Analyse this one", trust distribution, record vs benchmark | `ui/pages/Channels.tsx`, `actions/channels.ts` | 4.15, 7.2 |
 | F46 | Leaderboard page: by ticker, by creator, Changes; benchmark, horizon, market and record selectors; CSV export with registry ids; Methodology page from the registry | `ui/pages/Leaderboard.tsx`, `ui/pages/Methodology.tsx`, `actions/leaderboard.ts` | 4.12, 7.3 |
 | F47 | Analysis page: trust strip, claim cards by trust then conviction, evidence viewer, play-from, Processing details | `ui/pages/Analysis.tsx`, `SourcePlayer.tsx` | 7.4 |
-| F48 | Saved calls, Lab (prompts, experiments, gold set, VideoConviction panel, cost history, shares, Promote gated), Settings from the schemas with reset-to-team-default | `ui/pages/{Saved,Lab,Settings}.tsx`, `actions/{saved,lab,settings}.ts` | 7.2, 7.3 |
+| F48 | Saved calls, Lab (prompts, experiments, gold set, cost history, shares, Promote gated), Settings from the schemas with reset-to-team-default | `ui/pages/{Saved,Lab,Settings}.tsx`, `actions/{saved,lab,settings}.ts` | 7.2, 7.3 |
 | F49 | Phase-3 gate run: anchor accuracy on gold set; push-to-Today end to end with a fixture hub; registry CI; benchmark change writes nothing; Changes diff equals a hand-computed fixture | `tests/leaderboard.test.ts`, `tests/push.test.ts`, `docs/gates/phase-3-<date>.json` | 9 |
 
 ### Phase 4 — context, Finradar, corpus, sharing, digest
@@ -108,8 +108,8 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | F04 | F02 | | F32 | F10, F24 |
 | F05 | F01 | | F33 | F32 |
 | F06 | F03 | | F34 | F18, F33 |
-| F07 | F03 | | F35 | F33, F24 |
-| F08 | F06, F07 | | F36 | F25, F35, F04 |
+| F07 | — (removed) | | F35 | F33, F24 |
+| F08 | F06 | | F36 | F25, F35, F04 |
 | F10 | F03 | | F37 | F36 |
 | F11 | F05, F10 | | F38 | F13, F24, F04 |
 | F12 | F03 | | F39 | F26 |
@@ -139,8 +139,7 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | 0 | infra (blocking) | F01 → F02 → F03 | Nothing else starts until F03 merges |
 | 0 | registry | F04 | |
 | 0 | settings | F05 | |
-| 0 | gold | F06 → F08 | F08 waits for F07 |
-| 0 | vc | F07 | |
+| 0 | gold | F06 → F08 | |
 | 1 | transport | F10 → F11 → F15 → F20 | |
 | 1 | evidence | F12 → F13 → F14 → F19 | F15 needs F12 |
 | 1 | ledger | F16 → F17 | F17 needs F10 |
@@ -188,7 +187,6 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
    ```
    npm test && npm run typecheck && npm run build
    node --experimental-strip-types scripts/promotion-gate.ts --offline --out docs/gates/phase-N-<date>.json
-   node --experimental-strip-types scripts/vc-benchmark.ts --offline                                   # phases 0–1
    node --experimental-strip-types --test tests/e2e-parallel.test.ts tests/resume.test.ts             # phase 2
    node --experimental-strip-types --test tests/leaderboard.test.ts tests/push.test.ts tests/metrics-registry.test.ts   # phase 3
    node --experimental-strip-types --test tests/context-check.test.ts                                  # phase 4
@@ -211,7 +209,7 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | Fake transport | `transport/fake.ts` | Replays `tests/fixtures/model/<stage>-<hash>.json`; records requests; injects 429/5xx/timeout/unknown |
 | Frozen responses | `tests/fixtures/model/` | Captured once with live keys by the human via `scripts/freeze-responses.ts`; re-captured only on approved prompt changes |
 | Registry CI | `tests/metrics-registry.test.ts` | Every entry evaluates on the fixture DB; `uiColumns ⊆ registry.ids`; hover text and steps non-empty |
-| Gate commands | `scripts/gold-set.ts`, `scripts/vc-benchmark.ts`, `scripts/promotion-gate.ts` | `--offline` needs no keys (CI); `--live` needs keys |
+| Gate commands | `scripts/gold-set.ts`, `scripts/promotion-gate.ts` | `--offline` needs no keys (CI); `--live` needs keys |
 | CI | `.github/workflows/verify.yml` | Add `YTI_DB=pglite`, the registry test and `promotion-gate.ts --offline` |
 
 **Per-feature tests:**
@@ -257,7 +255,7 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | infra | F01–F03 | `database.ts`, `transport/*`, `tests/helpers/*`, `tests/fixtures/*`, `verify.yml` | Add PGlite backend and helpers; extract the OpenRouter HTTP from `modelCall`; add the fake transport; keep every existing test green on PGlite | All tests pass on PGlite in CI; `pipeline.ts` no longer calls `fetch` |
 | registry | F04, F29, F36–F38 | `metrics/*`, `significance.ts`, `leaderboard.ts` | One registry entry per figure; pure functions over rows; CI test | Registry test green; hover text reviewed |
 | settings | F05, F30 | `settings.ts`, `actions/*`, `owner.ts`, new API routes | Schemas from spec 6; dispatch table replaces the switch; owner scoping | Old route deleted; `tests/actions.test.ts` green |
-| eval | F06–F08, F19, F21 | `evaluations/gold-set/*`, `vc-benchmark.ts`, `conviction-mapping.ts`, `scripts/{gold-set,vc-benchmark,promotion-gate}.ts`, `prompt-versions.json` | Two harnesses and the gate command; freeze the v5 baseline | Baseline committed; gate runs offline |
+| eval | F06–F08, F19, F21 | `evaluations/gold-set/*`, `scripts/{gold-set,promotion-gate}.ts`, `prompt-versions.json` | The gold-set harness and the gate command; freeze the v5 baseline | Baseline committed; gate runs offline |
 | pipeline | F10–F15, F20, F32–F35 | `pipeline.ts`, `contracts.ts`, `evidence-selection.ts`, `sentiment.ts`, `agreement.ts`, `trust.ts`, `native-google*.ts`, `schemas/*` | Three-call pipeline with pointer evidence, mentions and batched critique; then windowed ASR and trust | Gold-set P/R ≥ baseline offline; zero structural rejections |
 | ledger | F16, F17, F26, F27 | `store.ts`, `retry.ts`, `reconcile.ts`, `queue.ts`, `runner.ts`, `scripts/worker.ts`, cron route | Idempotent attempts, realistic reservations, SKIP LOCKED queue, resume | Invariants 1 and 8 green; resume test green |
 | sources | F18, F34 adapter, F39–F41 | `transcripts.ts`, `circuit-breaker.ts`, `push.ts`, `replay.ts`, `channels.ts` | Supadata standby, breaker, push hub, batch, replay | Standby and push tests green |
