@@ -548,6 +548,8 @@ Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#26262
 
 Rollback: each phase is behind a flag; phase 1 can run alongside the OpenRouter path for a comparison week before the old path is removed.
 
+The feature-level breakdown of these phases, with dependencies, lanes, test plan and delivery strategy, is in `youtube-intelligence-v2-build-plan.md`.
+
 ---
 
 ## 10. The two handoffs, evaluated
