@@ -10,6 +10,7 @@ import {
   type ModelRequestData,
   type ModelResponseData,
   type ModelTransport,
+  type TextPart,
 } from "./types.ts";
 import { fromOpenRouter } from "./openrouter.ts";
 /**
@@ -22,6 +23,12 @@ import { fromOpenRouter } from "./openrouter.ts";
  * defines, where hash = requestHash(request). Every request is recorded, and
  * failOn(n, kind) makes the Nth call fail with a 429, 5xx, timeout or
  * unknown error so retry policy can be exercised deterministically.
+ *
+ * It also answers createCache/deleteCache as spies: `caches` records every
+ * create in order and `deletedCaches` every delete, so a test can assert that
+ * one cache was created per run, reused and released. `call` ignores
+ * request.cachedContent beyond recording the request, so a test can also
+ * assert that the cached content was not re-sent inline.
  */
 const STAGE = /^[a-z][a-z0-9-]{0,60}$/;
 const HASH = /^[0-9a-f]{16}$/;
@@ -121,6 +128,15 @@ export class FakeModelTransport implements ModelTransport {
   readonly family = "fake" as const;
   /** Every request received, in order, including the ones that failed. */
   readonly requests: ModelRequestData[] = [];
+  /** Every explicit context cache this transport was asked to create, in order. */
+  readonly caches: {
+    name: string;
+    model: string;
+    parts: TextPart[];
+    ttlSeconds: number;
+  }[] = [];
+  /** Every cache name deleteCache was called with, in order. */
+  readonly deletedCaches: string[] = [];
   private queues = new Map<string, FakeReplier[]>();
   private fixed = new Map<string, FakeReplier>();
   private failures = new Map<number, FakeFailure>();
@@ -150,6 +166,24 @@ export class FakeModelTransport implements ModelTransport {
   }
   requestsFor(stage: string) {
     return this.requests.filter((r) => r.stage === stage);
+  }
+  /** Deterministic name: the same content and model yield the same name, so frozen request hashes are stable. */
+  async createCache(model: string, parts: TextPart[], ttlSeconds: number) {
+    if (!parts.length) throw Error("A context cache needs at least one part.");
+    const name = `fake-cache-${requestHash({ model, parts })}`;
+    this.caches.push({ name, model, parts, ttlSeconds });
+    return {
+      name,
+      model,
+      tokens: Math.ceil(
+        Buffer.byteLength(parts.map((p) => p.text).join(""), "utf8") / 4,
+      ),
+    };
+  }
+  async deleteCache(name: string) {
+    if (!this.caches.some((c) => c.name === name))
+      throw Error(`FakeModelTransport: no context cache named "${name}".`);
+    this.deletedCaches.push(name);
   }
   async describe(_model: string): Promise<ModelDescription> {
     return { ...this.description, supportedEfforts: [...this.description.supportedEfforts] };

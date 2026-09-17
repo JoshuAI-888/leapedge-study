@@ -573,7 +573,6 @@ test("The critique stage refuses a same-family critic before it bills a call", a
     error: null,
     input: {},
     output: {
-      auditIndex: 0,
       claims: [{ id: "c1", claim, passed: false, reasons: [] }],
       source: { source_kind: "imported_transcript", segments: [] },
     },

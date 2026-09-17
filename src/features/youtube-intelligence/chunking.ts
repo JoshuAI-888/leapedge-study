@@ -1,4 +1,31 @@
 import type { SourceData, ClaimData } from "./contracts.ts";
+/**
+ * The local token floor: bytes/4. Used wherever the provider's own count is
+ * unavailable (spec 4.3), so a decision that depends on transcript size is
+ * always answerable offline and never blocks on a network call.
+ */
+export function estimateTokens(value: unknown) {
+  const text = typeof value === "string" ? value : JSON.stringify(value ?? "");
+  return Math.ceil(new TextEncoder().encode(text).length / 4);
+}
+/**
+ * Transcript chunks for a model stage (spec 4.3): one chunk — the whole
+ * transcript — unless its token estimate exceeds `maxTokens`, in which case it
+ * is split into windows of that size with the same overlap sourceChunks uses.
+ *
+ * The old fixed 64 KB split multiplied both extraction and critique calls on
+ * transcripts a 1M-token window swallows whole; `processing.chunkAboveTokens`
+ * is the only reason to chunk now, and `tokens` lets a caller pass a provider
+ * count instead of the local floor.
+ */
+export function transcriptChunks(
+  source: SourceData,
+  maxTokens: number,
+  tokens = estimateTokens(source.segments),
+) {
+  if (tokens <= maxTokens) return [source.segments];
+  return sourceChunks(source, Math.max(4000, Math.floor(maxTokens) * 4));
+}
 export function sourceChunks(
   source: SourceData,
   maxBytes = 64000,
@@ -57,22 +84,6 @@ export function uniqueClaims(claims: ClaimData[]) {
     seen.add(key);
     return true;
   });
-}
-export function auditSource(source: SourceData, claim: ClaimData) {
-  if (
-    new TextEncoder().encode(JSON.stringify(source.segments)).length <= 180000
-  )
-    return { scope: "full transcript", segments: source.segments };
-  const indexes = source.segments.flatMap((s, i) =>
-    claim.evidence.some((e) => e.segment_id === s.id) ? [i] : [],
-  );
-  return {
-    scope:
-      "evidence and 12 neighboring segments either side; cross-video context not inferred",
-    segments: source.segments.filter((_, i) =>
-      indexes.some((j) => Math.abs(i - j) <= 12),
-    ),
-  };
 }
 export function missingRanges(source: SourceData, duration: number) {
   const ranges: { start: number; end: number }[] = [];

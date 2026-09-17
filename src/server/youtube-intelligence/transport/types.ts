@@ -25,6 +25,14 @@ export const ModelRequest = z.object({
   video: VideoPart.optional(),
   /** JSON schema the response must satisfy; transports that support it enforce it. */
   responseSchema: z.record(z.string(), z.unknown()).optional(),
+  /**
+   * An explicit context cache to read instead of re-sending its content
+   * (spec 5). The name is the one createCache returned. A transport that
+   * cannot cache ignores the field, so the caller must have inlined the
+   * content itself before setting it: only a transport whose createCache
+   * produced this name may be asked to read it.
+   */
+  cachedContent: z.string().min(1).optional(),
   maxOutputTokens: z.number().int().positive(),
   temperature: z.number().min(0).max(2),
   reasoningEffort: z.string().min(1).optional(),
@@ -56,6 +64,16 @@ export const ModelDescription = z.object({
   supportedEfforts: z.array(z.string()),
 });
 export type ModelDescription = z.infer<typeof ModelDescription>;
+/** An explicit context cache the provider holds; `name` is what a request names. */
+export const CachedContext = z.object({
+  name: z.string().min(1),
+  model: z.string().min(1),
+  /** Provider-reported expiry, when it reported one. */
+  expireTime: z.string().optional(),
+  /** Tokens the cached content consumes, when the provider counted them. */
+  tokens: z.number().nonnegative().optional(),
+});
+export type CachedContextData = z.infer<typeof CachedContext>;
 export type TransportErrorKind = "rate_limited" | "server" | "timeout" | "unknown";
 export class TransportError extends Error {
   kind: TransportErrorKind;
@@ -77,4 +95,25 @@ export interface ModelTransport {
   readonly family: TransportKind;
   describe(model: string): Promise<ModelDescription>;
   call(request: ModelRequestData): Promise<ModelResponseData>;
+  /**
+   * Explicit context caching (spec 5): hold `parts` once for `ttlSeconds` and
+   * return the name a later request sets as cachedContent. Present only on a
+   * transport that supports it, so a caller checks for the method and inlines
+   * the content when it is absent.
+   */
+  createCache?(
+    model: string,
+    parts: TextPart[],
+    ttlSeconds: number,
+  ): Promise<CachedContextData>;
+  /** Release a cache created by createCache. Never called for another transport's name. */
+  deleteCache?(name: string): Promise<void>;
+  /**
+   * Tokens this request's text costs, for a reservation or a chunking
+   * decision. `estimated` is true when the provider could not be asked and a
+   * local floor was used, so a caller can treat the number as a floor.
+   */
+  countTokens?(
+    request: ModelRequestData,
+  ): Promise<{ totalTokens: number; estimated: boolean }>;
 }

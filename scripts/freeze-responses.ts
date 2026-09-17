@@ -104,7 +104,20 @@ export class RecordingTransport implements ModelTransport {
     this.stages = options.stages;
     this.note = options.note;
     this.log = options.log ?? ((line: string) => console.log(line));
+    // Optional capabilities are forwarded only where the wrapped transport has
+    // them, so a capture records the request production would send — a critique
+    // that reads an explicit context cache, not one with the transcript inlined.
+    if (inner.createCache)
+      this.createCache = (model, parts, ttl) =>
+        inner.createCache!(model, parts, ttl);
+    if (inner.deleteCache)
+      this.deleteCache = (name) => inner.deleteCache!(name);
+    if (inner.countTokens)
+      this.countTokens = (request) => inner.countTokens!(request);
   }
+  createCache?: ModelTransport["createCache"];
+  deleteCache?: ModelTransport["deleteCache"];
+  countTokens?: ModelTransport["countTokens"];
   describe(model: string): Promise<ModelDescription> {
     return this.inner.describe(model);
   }

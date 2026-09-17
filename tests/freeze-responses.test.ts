@@ -58,12 +58,16 @@ const keyPoint = {
   stance: "neutral",
   creator_conviction: "unspecified",
 };
+/**
+ * Since F15 the critic is asked once per run and answers by id, so one reply
+ * covers the claim and the key point this fixture extracts.
+ */
 const accept = {
   json: {
-    verdict: "accept",
-    reason_en: "The quoted evidence supports the thesis.",
-    unsupported_fields: [],
-    requires_audio_review: false,
+    verdicts: [
+      { id: "c1", verdict: "accept", reason_en: "The quoted evidence supports the thesis." },
+      { id: "k1", verdict: "accept", reason_en: "The quoted evidence supports the key point." },
+    ],
   },
 };
 const metadata = () =>
@@ -93,8 +97,7 @@ test("RecordingTransport freezes one envelope per model stage, scrubs keys and r
   const fake = new FakeModelTransport({
     responses: {
       synthesis: { json: { claims: [claim], key_points: [keyPoint] } },
-      "critique-0": accept,
-      "critique-1": accept,
+      critique: accept,
     },
   });
   const stub = stubFetch([
@@ -132,7 +135,8 @@ test("RecordingTransport freezes one envelope per model stage, scrubs keys and r
     // Every model stage of the run produced exactly one envelope.
     assert.deepEqual(
       recorded.map((r) => r.stage),
-      ["synthesis", "critique-0", "critique-1"],
+      ["synthesis", "critique"],
+      "one extraction and one batched critique per run",
     );
     assert.ok(recorded.every((r) => r.written));
     assert.deepEqual(
@@ -142,8 +146,7 @@ test("RecordingTransport freezes one envelope per model stage, scrubs keys and r
     const critic = teamDefaults().models.critique.id;
     const EXPECTED_MODEL: Record<string, string> = {
       synthesis: MODEL,
-      "critique-0": critic,
-      "critique-1": critic,
+      critique: critic,
     };
     for (const record of recorded) {
       // The file is named for the hash of the request the transport received.
@@ -154,7 +157,7 @@ test("RecordingTransport freezes one envelope per model stage, scrubs keys and r
       const envelope = loadFrozen(record.stage, record.hash, dir);
       // The envelope records the model the request ran on. Since F11 that is
       // the stage's configured model: this run pins no criticModel, so the
-      // critique stages run the team's configured critic while synthesis runs
+      // critique stage runs the team's configured critic while synthesis runs
       // the run's own extraction model.
       const expected = EXPECTED_MODEL[record.stage];
       assert.equal(request.model, expected, `${record.stage} ran on ${expected}`);
@@ -190,13 +193,13 @@ test("RecordingTransport freezes one envelope per model stage, scrubs keys and r
       recorded.map((r) => r.hash),
     );
     assert.ok(second.records.every((r) => !r.written));
-    assert.equal(lines.filter((l) => l.startsWith("SKIP")).length, 3);
+    assert.equal(lines.filter((l) => l.startsWith("SKIP")).length, 2);
     assert.deepEqual(
       recorded.map((r) => readFileSync(r.file, "utf8")),
       before,
       "an existing envelope is never rewritten",
     );
-    assert.equal(readdirSync(dir).length, 3);
+    assert.equal(readdirSync(dir).length, 2);
   } finally {
     stub.restore();
     restoreFake();

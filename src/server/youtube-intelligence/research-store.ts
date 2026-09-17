@@ -274,7 +274,6 @@ export async function queue(
       experiment: experiment || p.nativeGoogleExperimental,
       pipelineVersion: "research.v5.institutional-candidate",
       inferenceConfig: { critiqueMaxTokens: 6000, reasoningEffort: "low" },
-      sourceRepairEnabled: false,
       transcriptionWindowSeconds: p.windowedTranscription ? 600 : 0,
       nativeGoogleExperimental: p.nativeGoogleExperimental,
     },
@@ -604,6 +603,13 @@ export async function researchSnapshot() {
     })),
   };
 }
+/**
+ * Recovery from a failed critique: drop the first point the critic never
+ * answered and requeue the run. Since F15 the critic is asked once for the
+ * whole run, so there is no per-claim cursor to advance; the dropped point
+ * carries a reason from here, and a reason is what keeps the batched critic
+ * from asking about it again.
+ */
 export async function continueAfterAuditFailure(id: string) {
   const r = await get(id);
   if (!r || !canDropFailedAudit(r))
@@ -612,13 +618,13 @@ export async function continueAfterAuditFailure(id: string) {
       ...((r.output.claims || []) as CheckedClaim[]),
       ...((r.output.keyPoints || []) as CheckedClaim[]),
     ],
-    index = Number(r.output.auditIndex || 0);
-  if (!all[index]) throw Error("No failed point is available to drop.");
+    index = all.findIndex((c) => !c.audit && !c.reasons.length);
+  if (index < 0 || !all[index])
+    throw Error("No failed point is available to drop.");
   all[index].passed = false;
   all[index].reasons.push(
     `Audit could not finish: ${r.error}. Dropped without retrying the paid call.`,
   );
-  r.output.auditIndex = index + 1;
   await (
     await researchDB()
   )

@@ -2,7 +2,10 @@ import {
   GoogleGenAI,
   MediaResolution,
   ThinkingLevel,
+  type CachedContent,
   type CountTokensParameters,
+  type CreateCachedContentParameters,
+  type DeleteCachedContentParameters,
   type GenerateContentParameters,
   type GenerateContentResponse,
 } from "@google/genai";
@@ -10,10 +13,12 @@ import {
   ModelRequest,
   TransportError,
   classifyStatus,
+  type CachedContextData,
   type ModelDescription,
   type ModelRequestData,
   type ModelResponseData,
   type ModelTransport,
+  type TextPart,
   type TransportErrorKind,
 } from "./types.ts";
 import { describeFromPrices, costUsd } from "./prices.ts";
@@ -45,13 +50,21 @@ export type GoogleNativeClient = {
   generateContent(request: GenerateContentParameters): Promise<GenerateContentResponse>;
   countTokens?(request: CountTokensParameters): Promise<{ totalTokens?: number }>;
 };
+/** The slice of ai.caches explicit caching uses; a stub needs no network and no key. */
+export type GoogleNativeCacheClient = {
+  create(params: CreateCachedContentParameters): Promise<CachedContent>;
+  delete(params: DeleteCachedContentParameters): Promise<unknown>;
+};
 export type GoogleNativeOptions = {
   apiKey?: string;
   timeoutMs?: number;
   /** "low" (default) asks for MEDIA_RESOLUTION_LOW whenever the request carries media. */
   mediaResolution?: "low" | "default";
   client?: GoogleNativeClient;
+  caches?: GoogleNativeCacheClient;
 };
+/** Default life of an explicit cache: one run's critique, not a day's worth of storage. */
+export const DEFAULT_CACHE_TTL_SECONDS = 1800;
 export type TokenCount = {
   totalTokens: number;
   /** true when the provider could not be asked and the local bytes/4 floor was used. */
@@ -116,6 +129,7 @@ export class GoogleNativeTransport implements ModelTransport {
   readonly family = "google-native" as const;
   private options: GoogleNativeOptions;
   private sdk: GoogleNativeClient | null = null;
+  private cacheSdk: GoogleNativeCacheClient | null = null;
   constructor(options: GoogleNativeOptions = {}) {
     this.options = options;
   }
@@ -130,6 +144,18 @@ export class GoogleNativeTransport implements ModelTransport {
       }).models;
     }
     return this.sdk;
+  }
+  private cacheClient(): GoogleNativeCacheClient {
+    if (this.options.caches) return this.options.caches;
+    if (!this.cacheSdk) {
+      const key = this.options.apiKey ?? process.env.GEMINI_API_KEY;
+      if (!key) throw Error("GEMINI_API_KEY is not configured.");
+      this.cacheSdk = new GoogleGenAI({
+        apiKey: key,
+        httpOptions: { retryOptions: { attempts: 1 } },
+      }).caches;
+    }
+    return this.cacheSdk;
   }
   /** The parts of one request: media first, so an implicit cache can match the prefix. */
   private parts(request: ModelRequestData) {
@@ -176,6 +202,7 @@ export class GoogleNativeTransport implements ModelTransport {
         temperature: r.temperature,
         responseMimeType: "application/json",
         ...(r.responseSchema ? { responseSchema: r.responseSchema } : {}),
+        ...(r.cachedContent ? { cachedContent: r.cachedContent } : {}),
         ...(lowMedia ? { mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW } : {}),
         ...(level ? { thinkingConfig: { thinkingLevel: level } } : {}),
       },
@@ -215,6 +242,54 @@ export class GoogleNativeTransport implements ModelTransport {
       throw transportError(error, controller.signal.aborted);
     } finally {
       clearTimeout(timer);
+    }
+  }
+  /**
+   * Explicit context caching (spec 5): the transcript is held once per run and
+   * read by the batched critique at the cached rate instead of being re-sent.
+   * One attempt, like every other call here; the caller decides whether a
+   * failure is worth inlining the content for instead.
+   */
+  async createCache(
+    model: string,
+    parts: TextPart[],
+    ttlSeconds = DEFAULT_CACHE_TTL_SECONDS,
+  ): Promise<CachedContextData> {
+    if (!parts.length) throw Error("A context cache needs at least one part.");
+    const client = this.cacheClient();
+    try {
+      const created = await client.create({
+        model,
+        config: {
+          contents: [{ role: "user", parts: parts.map((p) => ({ text: p.text })) }],
+          ttl: `${Math.max(1, Math.round(ttlSeconds))}s`,
+        },
+      });
+      if (!created.name)
+        throw new TransportError(
+          "unknown",
+          "The provider created a context cache without a name.",
+        );
+      const tokens = created.usageMetadata?.totalTokenCount;
+      return {
+        name: created.name,
+        model: created.model ?? model,
+        ...(created.expireTime ? { expireTime: created.expireTime } : {}),
+        ...(typeof tokens === "number" && tokens >= 0 ? { tokens } : {}),
+      };
+    } catch (error) {
+      if (error instanceof TransportError) throw error;
+      throw transportError(error, false);
+    }
+  }
+  /** Release a cache. Storage is billed per hour, so a finished run does not leave one behind. */
+  async deleteCache(name: string): Promise<void> {
+    const client = this.cacheClient();
+    try {
+      await client.delete({ name });
+    } catch (error) {
+      if (error instanceof TransportError) throw error;
+      throw transportError(error, false);
     }
   }
   /**
