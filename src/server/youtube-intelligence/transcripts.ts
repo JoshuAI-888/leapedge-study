@@ -9,9 +9,12 @@ import {
   docs,
   event,
   events,
+  lockedDoc,
   put,
+  putIfAbsent,
   teamPreferences,
 } from "./research-store.ts";
+import { advisoryKey } from "./database.ts";
 import {
   isOpen,
   trip,
@@ -189,9 +192,17 @@ export async function providerAlerts(): Promise<ProviderAlertData[]> {
     });
   return [...latest.values()];
 }
+/**
+ * Space out calls to one provider. The read-modify-write is guarded by a
+ * transaction-scoped advisory lock keyed on the provider, so two callers cannot
+ * claim the same slot and no other writer waits on them.
+ */
 async function pace(provider: CaptionProvider) {
   if (provider !== "supadata") return;
   const delay = await db().transaction(async () => {
+    await db()
+      .prepare("SELECT pg_advisory_xact_lock($1::bigint)")
+      .get(advisoryKey(`yi:captionRate:${provider}`));
     const old = await doc<{ nextAt: number }>("captionRate", provider);
     const at = Math.max(Date.now(), old?.nextAt || 0);
     await put("captionRate", provider, { nextAt: at + 1100 });
@@ -329,7 +340,10 @@ export async function managedTranscript(
   const reserve = generated ? Math.ceil(options.duration! / 60) * 2 : 1;
   const cap = Number(process.env.YTI_TRANSCRIPT_CREDIT_BUDGET || 90);
   const admitted = await db().transaction(async () => {
-    const current = await doc<Attempt>("managedCaptionAttempt", id);
+    // FOR UPDATE on the attempt row. Its id is (provider, mode, video_id, lang),
+    // so the yi_documents primary key is the unique constraint that decides a
+    // first submission; a later one waits on the lock and re-reads.
+    const current = await lockedDoc<Attempt>("managedCaptionAttempt", id);
     if (
       current &&
       (!retry || current.at !== previousAt || current.status !== "failed")
@@ -351,6 +365,7 @@ export async function managedTranscript(
       number: previousNumber + 1,
       runtime: process.env.VERCEL ? "vercel" : "local",
     };
+    if (!current) return putIfAbsent("managedCaptionAttempt", id, prior);
     await put("managedCaptionAttempt", id, prior);
     return true;
   });

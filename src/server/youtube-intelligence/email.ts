@@ -1,6 +1,6 @@
 import { get, db } from "./store.ts";
 import { createHash } from "node:crypto";
-import { doc, docs, put, preferences } from "./research-store.ts";
+import { doc, docs, lockedDoc, put, preferences } from "./research-store.ts";
 import type { Briefing } from "./briefings.ts";
 import { reconcileDeliveryEvents } from "./webhooks.ts";
 export function emailText(b: Briefing, origin: string) {
@@ -57,8 +57,9 @@ export async function sendPreview(id: string) {
       .update(id + to + text)
       .digest("hex");
   await db().transaction(async () => {
+    // FOR UPDATE on the delivery row: two senders cannot both claim the preview.
     if (
-      (await doc<{ status: string }>("delivery", id))?.status !==
+      (await lockedDoc<{ status: string }>("delivery", id))?.status !==
       "preview_ready"
     )
       throw Error("Delivery already claimed.");

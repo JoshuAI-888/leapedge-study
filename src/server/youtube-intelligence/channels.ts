@@ -1,21 +1,22 @@
 import { z } from "zod";
-import { doc, docs, put, researchDB, queue } from "./research-store.ts";
-export type Channel = {
-  id: string;
-  title: string;
-  handle: string;
-  uploads: string;
-  active: boolean;
-  favorite: boolean;
-  autoAnalyze: boolean;
-  createdAt: string;
-  lastPull: string | null;
-  lastAttempt?: string;
-  nextPullAt?: string;
-  nextPageToken?: string | null;
-  historyStarted?: boolean;
-  error: string | null;
-};
+import { doc, put, researchDB, queue } from "./research-store.ts";
+import { json } from "./database.ts";
+import {
+  PROCESSING_AUTOMATIC,
+  PROCESSING_ON_REQUEST,
+  getChannel,
+  listChannels,
+  upsertChannel,
+  type ChannelRow,
+} from "./repos/channels.ts";
+/**
+ * The `channels` table is where a channel lives (F28). Every read and write
+ * below goes through repos/channels.ts, and no `channel` document is written
+ * any more: the only reader the document had left was
+ * scripts/migrate-documents.ts, which moves what an earlier build already
+ * stored and keeps working on exactly that.
+ */
+export type Channel = ChannelRow;
 export function channelQuery(raw: string): Record<string, string> {
   let text = raw.trim();
   if (text.startsWith("http")) {
@@ -57,22 +58,27 @@ export async function follow(raw: string) {
     c = data.items?.[0];
   if (!c?.contentDetails?.relatedPlaylists?.uploads)
     throw Error("Channel not found.");
-  const old = await doc<Channel>("channel", c.id);
-  return (await put("channel", c.id, {
+  const old = await getChannel(c.id);
+  await upsertChannel({
+    ...old,
     id: c.id,
     title: c.snippet.title,
-    handle: c.snippet.customUrl || "",
+    handle: c.snippet.customUrl || old?.handle || "",
     uploads: c.contentDetails.relatedPlaylists.uploads,
     active: true,
     favorite: old?.favorite || false,
+    // Following a channel does not buy anything: automatic analysis stays
+    // whatever it was, which for a channel nobody has chosen is off.
     autoAnalyze: old?.autoAnalyze || false,
     createdAt: old?.createdAt || new Date().toISOString(),
+    // A seeded channel was created when the seed ran, which may be months
+    // before anyone followed it. followed_at is the follow, so it is stamped
+    // here and never derived from created_at.
+    followedAt: old?.followedAt || new Date().toISOString(),
     lastPull: old?.lastPull || null,
-    nextPageToken: old?.nextPageToken,
-    historyStarted: old?.historyStarted,
-    nextPullAt: old?.nextPullAt,
     error: null,
-  })) as Channel;
+  });
+  return (await getChannel(c.id))!;
 }
 export async function updateChannel(input: unknown) {
   const p = z
@@ -83,12 +89,28 @@ export async function updateChannel(input: unknown) {
         autoAnalyze: z.boolean().optional(),
       })
       .parse(input),
-    c = await doc<Channel>("channel", p.id);
+    c = await getChannel(p.id);
   if (!c) throw Error("Channel not found.");
-  return await put("channel", p.id, { ...c, ...p });
+  // autoAnalyze is the spending switch and is changed here one channel at a
+  // time, by a person. Nothing that turns discovery on may set it in bulk.
+  //
+  // processing says the same thing in words, so it moves with it. A row that
+  // read `automatic` while auto_analyze was off stated the opposite of the
+  // truth about spending.
+  await upsertChannel({
+    ...c,
+    ...p,
+    processing:
+      p.autoAnalyze === undefined
+        ? c.processing
+        : p.autoAnalyze
+          ? PROCESSING_AUTOMATIC
+          : PROCESSING_ON_REQUEST,
+  });
+  return (await getChannel(p.id))!;
 }
 export async function pull(id: string, older = false) {
-  const c = await doc<Channel>("channel", id);
+  const c = await getChannel(id);
   if (!c?.active) throw Error("Channel is not followed.");
   if (older && !c.nextPageToken)
     throw Error("No older page is available. Discover latest uploads first.");
@@ -113,11 +135,13 @@ export async function pull(id: string, older = false) {
       const r = await (
         await researchDB()
       )
-        .prepare("INSERT OR IGNORE INTO yi_discoveries VALUES(?,?,?,?,NULL)")
+        .prepare(
+          "INSERT INTO yi_discoveries(video_id,channel_id,payload,discovered_at,run_id) VALUES($1,$2,$3,$4,NULL) ON CONFLICT DO NOTHING",
+        )
         .run(videoId, id, JSON.stringify(payload), new Date().toISOString());
       added += Number(r.changes);
     }
-    await put("channel", id, {
+    await upsertChannel({
       ...c,
       lastPull: new Date().toISOString(),
       lastAttempt: attempt,
@@ -136,7 +160,7 @@ export async function pull(id: string, older = false) {
         : "End of available uploads.",
     };
   } catch (e) {
-    await put("channel", id, {
+    await upsertChannel({
       ...c,
       lastAttempt: attempt,
       nextPullAt: new Date(Date.now() + 3600000).toISOString(),
@@ -148,42 +172,50 @@ export async function pull(id: string, older = false) {
 export async function analyzeDiscovery(id: string) {
   const d = await researchDB(),
     v = await d
-      .prepare("SELECT * FROM yi_discoveries WHERE video_id=?")
+      .prepare("SELECT * FROM yi_discoveries WHERE video_id=$1")
       .get(id);
   if (!v) throw Error("Upload not found.");
   if (v.run_id) return { id: v.run_id };
   const run = await queue(id);
   await d
     .prepare(
-      "UPDATE yi_discoveries SET run_id=? WHERE video_id=? AND run_id IS NULL",
+      "UPDATE yi_discoveries SET run_id=$1 WHERE video_id=$2 AND run_id IS NULL",
     )
     .run(run.id, id);
   return run;
 }
 export async function pullDue() {
-  for (const c of (await docs<Channel>("channel"))
+  for (const c of (await listChannels())
     .filter(
       (c) =>
-        c.active && (!c.nextPullAt || Date.parse(c.nextPullAt) <= Date.now()),
+        // A seeded channel has no uploads playlist until somebody follows it
+        // and the API resolves one, so discovery skips it rather than failing
+        // on it every sweep.
+        c.active &&
+        !!c.uploads &&
+        (!c.nextPullAt || Date.parse(c.nextPullAt) <= Date.now()),
     )
     .slice(0, 3)) {
     if (c.lastPull && Date.now() - Date.parse(c.lastPull) < 3600000) continue;
     try {
       await pull(c.id);
-      if (c.autoAnalyze) {
+      // Both switches have to agree before anything is paid for: a row left
+      // saying `on-request` is not analysed whatever auto_analyze holds.
+      if (c.autoAnalyze && c.processing !== PROCESSING_ON_REQUEST) {
         const v = (
           await (
             await researchDB()
           )
             .prepare(
-              "SELECT * FROM yi_discoveries WHERE channel_id=? AND run_id IS NULL ORDER BY discovered_at DESC",
+              "SELECT * FROM yi_discoveries WHERE channel_id=$1 AND run_id IS NULL ORDER BY discovered_at DESC",
             )
             .all(c.id)
         )
           .filter(
             (v) =>
-              Date.parse(JSON.parse(String(v.payload)).publishedAt) >=
-              Date.parse(c.createdAt),
+              Date.parse(
+                (json(v.payload) as { publishedAt: string }).publishedAt,
+              ) >= Date.parse(c.followedAt ?? c.createdAt ?? ""),
           )
           .slice(0, 3);
         for (const x of v) await analyzeDiscovery(String(x.video_id));
@@ -259,7 +291,7 @@ export async function backfillChannel(input: unknown) {
   let added = 0,
     pages = 0;
   for (let i = 0; i < spec.pages; i++) {
-    const c = await doc<Channel>("channel", spec.id);
+    const c = await getChannel(spec.id);
     if (!c?.active) throw Error("Channel is not followed.");
     if (c.historyStarted && !c.nextPageToken) break;
     const result = await pull(c.id, !!c.historyStarted);

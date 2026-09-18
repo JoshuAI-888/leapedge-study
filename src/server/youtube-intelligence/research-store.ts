@@ -1,7 +1,12 @@
 import { canDropFailedAudit } from "../../features/youtube-intelligence/research-quality.ts";
 import { randomUUID, createHash } from "node:crypto";
 import { z } from "zod";
-import { db, get, list, create } from "./store.ts";
+import { db, get, lease, list, create } from "./store.ts";
+import { iso, json } from "./database.ts";
+import { listChannels } from "./repos/channels.ts";
+import { listClaims } from "./repos/claims.ts";
+import { listMentions } from "./repos/mentions.ts";
+import { insertTranscript } from "./repos/transcripts.ts";
 import * as P from "./prompts.ts";
 import bundledPrompts from "./prompt-versions.json" with { type: "json" };
 import {
@@ -72,10 +77,10 @@ export async function docs<T = Record<string, unknown>>(
       await researchDB()
     )
       .prepare(
-        "SELECT payload FROM yi_documents WHERE kind=? ORDER BY created_at DESC",
+        "SELECT payload FROM yi_documents WHERE kind=$1 ORDER BY created_at DESC",
       )
       .all(kind)
-  ).map((r) => JSON.parse(String(r.payload)));
+  ).map((r) => json(r.payload) as T);
 }
 export async function doc<T = Record<string, unknown>>(
   kind: string,
@@ -84,15 +89,35 @@ export async function doc<T = Record<string, unknown>>(
   const row = await (
     await researchDB()
   )
-    .prepare("SELECT payload FROM yi_documents WHERE kind=? AND id=?")
+    .prepare("SELECT payload FROM yi_documents WHERE kind=$1 AND id=$2")
     .get(kind, id);
-  return row ? JSON.parse(String(row.payload)) : null;
+  return row ? (json(row.payload) as T) : null;
+}
+/**
+ * The same document read with FOR UPDATE, so a read-modify-write on it is
+ * serialised against every other writer of that row instead of relying on a
+ * lock over the whole database. Only meaningful inside a transaction.
+ */
+export async function lockedDoc<T = Record<string, unknown>>(
+  kind: string,
+  id: string,
+): Promise<T | null> {
+  const row = await (
+    await researchDB()
+  )
+    .prepare(
+      "SELECT payload FROM yi_documents WHERE kind=$1 AND id=$2 FOR UPDATE",
+    )
+    .get(kind, id);
+  return row ? (json(row.payload) as T) : null;
 }
 export async function event(kind: string, id: string, payload: unknown) {
   await (
     await researchDB()
   )
-    .prepare("INSERT INTO yi_events VALUES(?,?,?,?,?)")
+    .prepare(
+      "INSERT INTO yi_events(id,kind,entity_id,at,payload) VALUES($1,$2,$3,$4,$5)",
+    )
     .run(
       randomUUID(),
       kind,
@@ -115,7 +140,7 @@ export async function events<T = Record<string, unknown>>(
       await researchDB()
     )
       .prepare(
-        "SELECT id,entity_id,at,payload FROM yi_events WHERE kind=? ORDER BY at DESC,id DESC LIMIT ?",
+        "SELECT id,entity_id,at,payload FROM yi_events WHERE kind=$1 ORDER BY at DESC,id DESC LIMIT $2",
       )
       .all(kind, limit)
   )
@@ -123,9 +148,43 @@ export async function events<T = Record<string, unknown>>(
     .map((r) => ({
       id: String(r.id),
       entityId: String(r.entity_id),
-      at: String(r.at),
-      payload: JSON.parse(String(r.payload)) as T,
+      at: iso(r.at) ?? "",
+      payload: json(r.payload) as T,
     }));
+}
+/**
+ * Mirror a document that now has a table of its own into its row, through the
+ * repository that owns it. This is the migration window, not a second home for
+ * the data: transcripts.ts still writes the document, and
+ * scripts/migrate-documents.ts moves what is already stored, so without the
+ * mirror every caption fetched after the one-off run would be missing from the
+ * rows the surfaces read. It goes when that writer calls the repository
+ * directly, as channels.ts now does (F28): a channel is written straight to
+ * its row, so there is no channel document left to mirror.
+ */
+async function mirrorDocument(kind: string, id: string, payload: unknown) {
+  if (kind !== "managedCaption") return;
+  const caption = payload as {
+    source?: { segments?: unknown; language?: unknown };
+    provider?: unknown;
+    at?: unknown;
+  };
+  if (!caption?.source?.segments) return;
+  await insertTranscript({
+    id,
+    videoId: id.split(":")[2] ?? "",
+    kind: "caption",
+    provider: caption.provider === undefined ? null : String(caption.provider),
+    language:
+      caption.source.language === undefined
+        ? null
+        : String(caption.source.language),
+    hash: createHash("sha256")
+      .update(JSON.stringify(caption.source.segments))
+      .digest("hex"),
+    segments: caption.source.segments,
+    createdAt: iso(caption.at) ?? undefined,
+  });
 }
 export async function put(kind: string, id: string, payload: unknown) {
   const d = await researchDB(),
@@ -133,13 +192,69 @@ export async function put(kind: string, id: string, payload: unknown) {
   return d.transaction(async () => {
     await d
       .prepare(
-        "INSERT INTO yi_documents VALUES(?,?,?,?,?) ON CONFLICT(kind,id) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at",
+        "INSERT INTO yi_documents(kind,id,payload,created_at,updated_at) VALUES($1,$2,$3,$4,$5) ON CONFLICT(kind,id) DO UPDATE SET payload=excluded.payload,updated_at=excluded.updated_at",
       )
       .run(kind, id, JSON.stringify(payload), now, now);
     await d
-      .prepare("INSERT INTO yi_events VALUES(?,?,?,?,?)")
+      .prepare(
+        "INSERT INTO yi_events(id,kind,entity_id,at,payload) VALUES($1,$2,$3,$4,$5)",
+      )
       .run(randomUUID(), kind, id, now, JSON.stringify(payload));
+    await mirrorDocument(kind, id, payload);
     return payload;
+  });
+}
+/**
+ * Write a document only if (kind,id) is free, and report whether this caller is
+ * the one that wrote it. The primary key decides the race, so a record meant as
+ * a freeze can never be overwritten by a later writer.
+ */
+export async function putIfAbsent(kind: string, id: string, payload: unknown) {
+  const d = await researchDB(),
+    now = new Date().toISOString();
+  return d.transaction(async () => {
+    const inserted = await d
+      .prepare(
+        "INSERT INTO yi_documents(kind,id,payload,created_at,updated_at) VALUES($1,$2,$3,$4,$5) ON CONFLICT(kind,id) DO NOTHING",
+      )
+      .run(kind, id, JSON.stringify(payload), now, now);
+    if (!inserted.changes) return false;
+    await d
+      .prepare(
+        "INSERT INTO yi_events(id,kind,entity_id,at,payload) VALUES($1,$2,$3,$4,$5)",
+      )
+      .run(randomUUID(), kind, id, now, JSON.stringify(payload));
+    return true;
+  });
+}
+/**
+ * Claim a lease held in a document's payload as `until`, epoch milliseconds.
+ * Exactly one of any number of concurrent callers wins: the conditional UPDATE
+ * only changes a row whose stored deadline has already passed, and the first
+ * claim of all is an insert-if-absent on the (kind,id) key.
+ */
+export async function claimLease(
+  kind: string,
+  id: string,
+  until: number,
+  now = Date.now(),
+) {
+  const d = await researchDB(),
+    at = new Date(now).toISOString(),
+    payload = JSON.stringify({ until });
+  return d.transaction(async () => {
+    const inserted = await d
+      .prepare(
+        "INSERT INTO yi_documents(kind,id,payload,created_at,updated_at) VALUES($1,$2,$3,$4,$5) ON CONFLICT(kind,id) DO NOTHING",
+      )
+      .run(kind, id, payload, at, at);
+    if (inserted.changes) return true;
+    const taken = await d
+      .prepare(
+        "UPDATE yi_documents SET payload=$1,updated_at=$2 WHERE kind=$3 AND id=$4 AND COALESCE((payload::jsonb->>'until')::bigint,0)<$5",
+      )
+      .run(payload, at, kind, id, now);
+    return taken.changes > 0;
   });
 }
 export async function promptVersions() {
@@ -153,12 +268,17 @@ export async function promptVersions() {
       )
       .all()
   ).map((r) => ({
-    ...JSON.parse(String(r.payload)),
-    hash: r.hash,
-    createdAt: r.created_at,
+    ...(json(r.payload) as z.infer<typeof PromptVersion>),
+    hash: String(r.hash),
+    createdAt: iso(r.created_at),
   }));
 }
-export async function addPrompt(input: unknown) {
+/**
+ * Insert one version if its id and content are both free, and report whether
+ * this caller wrote it. A registry row is immutable, so the insert never
+ * updates: the (id, hash) keys decide, and a loser is told nothing changed.
+ */
+async function insertPrompt(input: unknown) {
   const p = PromptVersion.parse(input),
     hash = createHash("sha256")
       .update(
@@ -175,34 +295,44 @@ export async function addPrompt(input: unknown) {
         ]),
       )
       .digest("hex");
-  await (
+  const inserted = await (
     await researchDB()
   )
-    .prepare("INSERT INTO yi_prompts VALUES(?,?,?,?)")
+    .prepare(
+      "INSERT INTO yi_prompts(id,hash,payload,created_at) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING",
+    )
     .run(p.id, hash, JSON.stringify(p), new Date().toISOString());
-  return p;
+  return { version: p, inserted: inserted.changes > 0 };
 }
+export async function addPrompt(input: unknown) {
+  const { version, inserted } = await insertPrompt(input);
+  if (!inserted)
+    throw Error("A prompt version with this id or this content already exists.");
+  return version;
+}
+/**
+ * Bundled versions are inserted if absent, so two workers seeding at once need
+ * no lock between them and neither can overwrite a published row.
+ */
 async function seed() {
-  if(process.env.YTI_PREVIEW_READ_ONLY === "true")return;
-  await researchDB().transaction(async () => {
-    for (const p of bundledPrompts)
-      if (
-        !(await researchDB()
-          .prepare("SELECT id FROM yi_prompts WHERE id=?")
-          .get(p.id))
-      )
-        await addPrompt(p);
-  });
+  if (process.env.YTI_PREVIEW_READ_ONLY === "true") return;
+  const present = new Set(
+    (
+      await (await researchDB()).prepare("SELECT id FROM yi_prompts").all()
+    ).map((r) => String(r.id)),
+  );
+  for (const p of bundledPrompts)
+    if (!present.has(p.id)) await insertPrompt(p);
 }
 export async function prompt(id: string) {
   await seed();
   const row = await (
     await researchDB()
   )
-    .prepare("SELECT payload FROM yi_prompts WHERE id=?")
+    .prepare("SELECT payload FROM yi_prompts WHERE id=$1")
     .get(id);
   if (!row) throw Error("Unknown prompt version.");
-  return PromptVersion.parse(JSON.parse(String(row.payload)));
+  return PromptVersion.parse(json(row.payload));
 }
 export async function preferences(): Promise<PreferencesData> {
   return Preferences.parse(
@@ -235,12 +365,11 @@ async function migrateSettingsIfNeeded() {
   const legacy = await doc<PreferencesData>("preferences", DEFAULT_ACCOUNT);
   if (!legacy || process.env.YTI_PREVIEW_READ_ONLY === "true") return;
   const migrated = migrateLegacyPreferences(legacy);
-  await researchDB().transaction(async () => {
-    if (await doc(TEAM_DOC, DEFAULT_ACCOUNT)) return;
-    await put(TEAM_DOC, DEFAULT_ACCOUNT, migrated.team);
-    if (!(await doc(ACCOUNT_DOC, DEFAULT_ACCOUNT)))
-      await put(ACCOUNT_DOC, DEFAULT_ACCOUNT, migrated.account);
-  });
+  // Insert-if-absent on both keys: two readers migrating at once write the same
+  // values derived from the same legacy document, and neither overwrites a
+  // document the other already wrote.
+  await putIfAbsent(TEAM_DOC, DEFAULT_ACCOUNT, migrated.team);
+  await putIfAbsent(ACCOUNT_DOC, DEFAULT_ACCOUNT, migrated.account);
 }
 /** Team preferences with the YTI_HARD_BUDGET_USD_MONTH ceiling applied. */
 export async function teamPreferences(): Promise<TeamPreferencesData> {
@@ -329,13 +458,12 @@ export async function canonicalRuns() {
     return true;
   });
   for (const r of process.env.YTI_PREVIEW_READ_ONLY === "true" ? [] : result) {
-    await researchDB().transaction(async () => {
-      if (!(await doc("forwardObservation", r.videoId)))
-        await put("forwardObservation", r.videoId, {
-          videoId: r.videoId,
-          observedAt: new Date().toISOString(),
-          run: r,
-        });
+    // A freeze: written once and never overwritten, so a later read of the same
+    // video cannot rewrite what was first observed.
+    await putIfAbsent("forwardObservation", r.videoId, {
+      videoId: r.videoId,
+      observedAt: new Date().toISOString(),
+      run: r,
     });
   }
   return result;
@@ -481,7 +609,7 @@ export async function researchSnapshot() {
   ): Promise<T[]> {
     return documents
       .filter((r) => r.kind === kind)
-      .map((r) => JSON.parse(String(r.payload)));
+      .map((r) => json(r.payload) as T);
   }
   return {
     references: await readDocs<{
@@ -545,7 +673,11 @@ export async function researchSnapshot() {
     },
     preferences: await preferences(),
     prompts: await promptVersions(),
-    channels: await readDocs("channel"),
+    // Rows, not documents (spec 8): claims, mentions and channels are read
+    // through repos/ so every surface sees the relational record.
+    channels: await listChannels(),
+    claims: await listClaims(),
+    mentions: await listMentions(),
     ideas: await readDocs("idea"),
     watchlist: await readDocs("watchlist"),
     comparisons: await readDocs("comparison"),
@@ -558,19 +690,26 @@ export async function researchSnapshot() {
         import("../../features/youtube-intelligence/entities.ts").EntityData
       >("entity"),
     channelCandidates: await docs("channelCandidate"),
-    shares: await (
-      await researchDB()
-    )
-      .prepare(
-        "SELECT id,created_at,expires_at,revoked_at FROM yi_shares ORDER BY created_at DESC",
+    shares: (
+      await (
+        await researchDB()
       )
-      .all(),
+        .prepare(
+          "SELECT id,created_at,expires_at,revoked_at FROM yi_shares ORDER BY created_at DESC",
+        )
+        .all()
+    ).map((r) => ({
+      id: r.id,
+      created_at: iso(r.created_at),
+      expires_at: iso(r.expires_at),
+      revoked_at: iso(r.revoked_at),
+    })),
     discoveries: (
       await (
         await researchDB()
       )
         .prepare(
-          "SELECT * FROM yi_discoveries ORDER BY json_extract(payload, '$.publishedAt') DESC",
+          "SELECT * FROM yi_discoveries ORDER BY (payload::jsonb->>'publishedAt') DESC",
         )
         .all()
     ).map((r) => ({
@@ -579,7 +718,8 @@ export async function researchSnapshot() {
       video_id: r.video_id,
       channel_id: r.channel_id,
       run_id: r.run_id,
-      payload: JSON.parse(String(r.payload)),
+      discovered_at: iso(r.discovered_at),
+      payload: json(r.payload) as { title?: string; publishedAt?: string },
     })),
     events: (
       await (
@@ -593,7 +733,8 @@ export async function researchSnapshot() {
       video_id: r.video_id,
       channel_id: r.channel_id,
       run_id: r.run_id,
-      payload: JSON.parse(String(r.payload)),
+      at: iso(r.at),
+      payload: json(r.payload) as Record<string, unknown>,
     })),
     calls: (
       await (await researchDB()).prepare("SELECT * FROM yi_calls").all()
@@ -604,7 +745,7 @@ export async function researchSnapshot() {
       stage: r.stage,
       status: r.status,
       amount: r.amount,
-      metrics: JSON.parse(String(r.metrics)),
+      metrics: json(r.metrics) as Record<string, unknown>,
     })),
     evaluationRuns: allRuns
       .filter((r) => r.status === "completed" && !r.input.task)
@@ -646,7 +787,7 @@ export async function continueAfterAuditFailure(id: string) {
     await researchDB()
   )
     .prepare(
-      "UPDATE yi_runs SET output=?,status='queued',error=NULL,lease_until=0,lease_token=NULL WHERE id=? AND status='failed'",
+      `UPDATE yi_runs SET output=$1,status='queued',error=NULL,lease_until=${lease.released},lease_token=NULL WHERE id=$2 AND status='failed'`,
     )
     .run(JSON.stringify(r.output), id);
   await event("audit_recovery", id, {

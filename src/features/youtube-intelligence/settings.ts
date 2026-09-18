@@ -149,6 +149,15 @@ export const TeamPreferences = z.object({
     .object({
       discovery: z.enum(["push", "poll"]).default("push"),
       pollIntervalMinutes: z.number().int().min(5).max(1440).default(60),
+      // Spec 6.2 states these four, and a stored team preferences document may
+      // carry them, so they stay parsed: dropping a key here does not tidy it
+      // away, it makes the next save discard whatever a team had chosen.
+      //
+      // What they are NOT is the rule the seed runs on. seed/channels.ts holds
+      // that, and every selection it puts into force is recorded as a versioned
+      // document, so the history reads as a series of decisions. Until a
+      // Settings surface exists to edit them (phase 3b, F48), these are stored
+      // and round-tripped, and the seed does not read them.
       seedDefaults: z.boolean().default(true),
       defaultSelection: z
         .array(z.string().min(1))

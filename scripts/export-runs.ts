@@ -20,8 +20,7 @@ import { driverName } from "../src/server/youtube-intelligence/database.ts";
  *   node --experimental-strip-types scripts/gold-set.ts --offline --runs data/exports/runs-5.json
  *
  * Runs come from store.list() against whatever database the environment
- * selects: DATABASE_URL (Postgres, add --env-file=.env), else YTI_DB_PATH
- * (SQLite, default data/intelligence.sqlite), or YTI_DB=pglite in tests.
+ * selects: DATABASE_URL (add --env-file=.env), or YTI_DB=pglite in tests.
  * The rows are filtered exactly as gold-set.ts filters them (canonicalRuns):
  * completed, no input.task, input.experiment !== true unless
  * --include-experiments, newest createdAt per video. Nothing inside `output`

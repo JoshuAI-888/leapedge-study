@@ -1,23 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-process.env.YTI_DB_PATH = join(
-  mkdtempSync(join(tmpdir(), "yti-workflows-")),
-  "test.sqlite",
-);
-import { put, doc } from "../src/server/youtube-intelligence/research-store.ts";
+process.env.YTI_DB = "pglite";
+import { doc } from "../src/server/youtube-intelligence/research-store.ts";
 import { db, create } from "../src/server/youtube-intelligence/store.ts";
 import {
   shareSelection,
   readShare,
   revokeShare,
 } from "../src/server/youtube-intelligence/briefings.ts";
+import { pull } from "../src/server/youtube-intelligence/channels.ts";
 import {
-  pull,
-  type Channel,
-} from "../src/server/youtube-intelligence/channels.ts";
+  getChannel,
+  upsertChannel,
+} from "../src/server/youtube-intelligence/repos/channels.ts";
 test("Share snapshot includes only frozen visible IDs when another matching run completes; revoke removes access", async () => {
   const claim = {
     thesis_en: "SoFi research",
@@ -37,7 +32,7 @@ test("Share snapshot includes only frozen visible IDs when another matching run 
   async function ready(video: string) {
     const r = await create(video, "test", {}, "v1");
     await db()
-      .prepare("UPDATE yi_runs SET status='completed',output=? WHERE id=?")
+      .prepare("UPDATE yi_runs SET status='completed',output=$1 WHERE id=$2")
       .run(
         JSON.stringify({
           claims: [{ id: "c1", claim, passed: true, reasons: [] }],
@@ -64,7 +59,7 @@ test("Latest refresh preserves historical cursor, older pages deduplicate and ex
   const oldFetch = globalThis.fetch;
   const oldKey = process.env.YOUTUBE_API_KEY;
   process.env.YOUTUBE_API_KEY = "fixture";
-  const c: Channel = {
+  const c = {
     id: "UCabcdefghijklmnopqrstuv",
     title: "Test",
     handle: "@test",
@@ -76,7 +71,9 @@ test("Latest refresh preserves historical cursor, older pages deduplicate and ex
     lastPull: null,
     error: null,
   };
-  await put("channel", c.id, c);
+  // Since F28 a channel is a row. The cursor this test follows is read back
+  // from the `channels` table, not from a `channel` document.
+  await upsertChannel(c);
   const seen: string[] = [];
   let latest = 0;
   globalThis.fetch = async (input) => {
@@ -102,12 +99,12 @@ test("Latest refresh preserves historical cursor, older pages deduplicate and ex
     await pull(c.id, true);
     await pull(c.id);
     assert.equal(
-      (await doc<Channel>("channel", c.id))?.nextPageToken,
+      (await getChannel(c.id))?.nextPageToken,
       "history-2",
     );
     await pull(c.id, true);
     await pull(c.id);
-    assert.equal((await doc<Channel>("channel", c.id))?.nextPageToken, null);
+    assert.equal((await getChannel(c.id))?.nextPageToken, null);
     assert.equal(seen[3], "history-2");
     await assert.rejects(() => pull(c.id, true));
   } finally {
@@ -123,7 +120,7 @@ test("Bounded history import follows at most three pages and never queues paid a
     oldKey = process.env.YOUTUBE_API_KEY;
   process.env.YOUTUBE_API_KEY = "fixture";
   const id = "UCzyxwvutsrqponmlkjihgfe";
-  await put("channel", id, {
+  await upsertChannel({
     id,
     title: "History",
     uploads: "UUhistory",

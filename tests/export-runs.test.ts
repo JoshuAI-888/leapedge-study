@@ -101,7 +101,7 @@ async function insertRun(
   const r = run(over);
   await d
     .prepare(
-      "INSERT INTO yi_runs(id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,error,input,output,cost,lease_until) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,0)",
+      "INSERT INTO yi_runs(id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,error,input,output,cost,lease_until) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,0)",
     )
     .run(
       r.id,

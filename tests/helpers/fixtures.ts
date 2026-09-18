@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { z } from "zod";
 import { db } from "../../src/server/youtube-intelligence/store.ts";
 import { put } from "../../src/server/youtube-intelligence/research-store.ts";
+import { upsertChannel } from "../../src/server/youtube-intelligence/repos/channels.ts";
 import {
   Claim,
   Source,
@@ -138,7 +139,7 @@ export async function seedFixture(input: string | FixtureSpecData): Promise<Seed
   const d = db();
   await d.transaction(async () => {
     for (const c of spec.channels) {
-      await put("channel", c.id, {
+      const channel = {
         id: c.id,
         title: c.title,
         handle: c.handle,
@@ -153,7 +154,14 @@ export async function seedFixture(input: string | FixtureSpecData): Promise<Seed
         nextPageToken: null,
         historyStarted: true,
         error: null,
-      });
+      };
+      // The row is what every surface reads (F28), so the fixture writes it
+      // through the repository, as channels.ts does. The `channel` document is
+      // written as well and only for the document-migration tests: it is the
+      // pre-migration database those tests start from, and nothing in src/
+      // writes one any more.
+      await upsertChannel(channel);
+      await put("channel", c.id, channel);
       seeded.channels[c.key] = c.id;
     }
     const series = new Map<string, PriceSeries>();
@@ -244,7 +252,7 @@ export async function seedFixture(input: string | FixtureSpecData): Promise<Seed
       };
       await d
         .prepare(
-          "INSERT INTO yi_runs(id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,error,input,output,cost,lease_until) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,0)",
+          "INSERT INTO yi_runs(id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,error,input,output,cost,lease_until) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,0)",
         )
         .run(
           runId,
@@ -263,7 +271,7 @@ export async function seedFixture(input: string | FixtureSpecData): Promise<Seed
           r.cost,
         );
       await d
-        .prepare("INSERT OR IGNORE INTO yi_discoveries VALUES(?,?,?,?,?)")
+        .prepare("INSERT INTO yi_discoveries VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING")
         .run(
           r.videoId,
           channel.id,

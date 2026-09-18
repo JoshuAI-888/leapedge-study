@@ -8,11 +8,13 @@ import {
   accepted,
   preferences,
   put,
+  putIfAbsent,
   docs,
   doc,
   researchDB,
 } from "./research-store.ts";
 import { type ClaimData } from "../../features/youtube-intelligence/contracts.ts";
+import { json } from "./database.ts";
 export function localDay(at: string, timezone: string) {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: timezone,
@@ -117,7 +119,9 @@ export async function shareBriefing(id: string) {
   await (
     await researchDB()
   )
-    .prepare("INSERT INTO yi_shares VALUES(?,?,?,?,?,NULL)")
+    .prepare(
+      "INSERT INTO yi_shares(token_hash,id,snapshot,created_at,expires_at,revoked_at) VALUES($1,$2,$3,$4,$5,NULL)",
+    )
     .run(
       hash,
       shareId,
@@ -137,20 +141,20 @@ export async function readShare(token: string) {
     await researchDB()
   )
     .prepare(
-      "SELECT snapshot FROM yi_shares WHERE token_hash=? AND revoked_at IS NULL AND expires_at>?",
+      "SELECT snapshot FROM yi_shares WHERE token_hash=$1 AND revoked_at IS NULL AND expires_at>$2",
     )
     .get(
       createHash("sha256").update(token).digest("hex"),
       new Date().toISOString(),
     );
-  return row ? (JSON.parse(String(row.snapshot)) as Briefing) : null;
+  return row ? (json(row.snapshot) as Briefing) : null;
 }
 export async function revokeShare(id: string) {
   const r = await (
     await researchDB()
   )
     .prepare(
-      "UPDATE yi_shares SET revoked_at=? WHERE id=? AND revoked_at IS NULL",
+      "UPDATE yi_shares SET revoked_at=$1 WHERE id=$2 AND revoked_at IS NULL",
     )
     .run(new Date().toISOString(), id);
   return { revoked: !!r.changes };
@@ -183,7 +187,18 @@ export async function prepareScheduledDigest() {
   const { queueBriefing } = await import("./briefing-pipeline.ts");
   return researchDB().transaction(async () => {
     const id = `${p.timezone}:${day}`;
-    if (await doc("delivery", id)) return null;
+    // Claim the day's delivery id before building anything: the (kind,id) key
+    // decides, so a second caller stops here rather than queueing a second
+    // briefing for the same day.
+    if (
+      !(await putIfAbsent("delivery", id, {
+        id,
+        date: day,
+        status: "claimed",
+        createdAt: new Date().toISOString(),
+      }))
+    )
+      return null;
     const briefing = await buildBriefing(day);
     const run = briefing.groups.length
       ? await queueBriefing(briefing.id)

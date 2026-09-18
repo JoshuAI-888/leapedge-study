@@ -32,7 +32,7 @@ const server = spawn(
       ...process.env,
       YTI_APP_ORIGIN: origin,
       YTI_ACCESS_TOKEN: code,
-      YTI_DB_PATH: join(directory, "test.sqlite"),
+      YTI_DB: "pglite",
       YTI_PUBLIC_SHARES: "false",
     },
     stdio: "ignore",

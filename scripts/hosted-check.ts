@@ -79,6 +79,11 @@ results.push({
   check: "Saved idea state transitions persist",
   status: "passed",
 });
+// STALE, and not made stale by the dispatch table: shareSelection has taken an
+// array of {runId, claimId} since before the API was restructured, so this
+// object has been refused for longer than this script has been run. Left as it
+// is rather than guessed at — the fix needs a real accepted claim from the
+// deployment under test, which this script does not fetch.
 const shared = await act("shareSelection", {
   query: "",
   direction: "",
