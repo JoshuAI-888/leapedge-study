@@ -27,7 +27,7 @@ Changes, in delivery order:
 | 4 | Idempotent retries and realistic reservations | Reliability, operability |
 | 5 | Two-tier source: TranscriptAPI captions as draft, windowed Gemini transcription as reference, Supadata on standby, agreement as the trust signal | Verifiable accuracy |
 | 6 | Trust ladder as a first-class data field | Usability for decisions |
-| 7 | Always-on worker, Postgres-only, relational core | Throughput, simplicity, Finradar fit |
+| 7 | Cron dispatcher as the worker, Postgres-only, relational core | Throughput, simplicity, Finradar fit |
 | 8 | YouTube push notifications and Batch API for channel automation | Cost, freshness |
 | 9 | Gold set as the single promotion gate | Confidence in every later change |
 | 10 | Computed metrics registry: one definition per figure, rendered as hover text, Methodology page and CI test | Trust in every number |
@@ -145,11 +145,11 @@ Every claim and mention carries one of four levels. The level is computed, store
 
 Creator conviction (high, medium, low, unspecified) is a separate field and is always displayed with the label "creator conviction". Nothing in the UI combines the two into a single score. The VideoConviction finding that high creator conviction did not beat the market is adopted as policy: conviction is shown and used to filter which calls the leaderboard scores, never as a weight.
 
-### 4.7 Always-on worker, Postgres only, relational core
+### 4.7 Cron dispatcher as the worker, Neon Postgres only, relational core
 
-**Decision.** `scripts/worker.ts` becomes the production worker on an always-on host with a Postgres-backed queue (pg-boss or Graphile Worker). Vercel serves the UI and API only. SQLite and the dialect rewriter are removed; tests use PGlite. Claims, mentions, evidence spans, transcripts, reviews, channels, prices, settlements and context checks get their own tables with additive migrations.
+**Decision.** Each per-minute Vercel cron invocation is the worker. It claims analysis jobs from a Postgres `jobs` table up to a global running cap of `processing.parallelVideos` — enforced inside the claim transaction, so overlapping invocations cannot exceed it — and steps the claimed jobs concurrently within its 800-second window. It renews each job's lease before every provider attempt and hands each job an abort signal before the window closes. Stages checkpoint, so an invocation killed mid-run resumes without a second provider call: a request hash replays the retained response instead of calling the provider, and reservations are fenced by the claim token. Vercel serves the UI, the API and the dispatcher. A separate always-on host remains an option behind the same `Queue` interface. pg-boss and Graphile Worker are not used, because both need `LISTEN`/`NOTIFY`, which Neon's pooled endpoint does not serve. Postgres is Neon, with two connection roles: the pooled endpoint for functions, the direct endpoint for migrations, checks and exports. SQLite and the dialect rewriter are removed; tests use PGlite. Claims, mentions, evidence spans, transcripts, reviews, channels, prices, settlements and context checks get their own tables with additive migrations.
 
-**Rationale.** A per-minute cron running one job at a time under a global advisory lock cannot serve eighty auto-analysed channels. The JSON-blob store forces every cross-video feature to scan everything and freezes the leaderboard in a snapshot that cannot be recomputed for a different benchmark. The Finradar handoff already requires reviewed migrations and shared platform tasks; this change is the precondition for the merge.
+**Rationale.** A per-minute cron running one job at a time under a global advisory lock cannot serve eighty auto-analysed channels, and the fix is the `jobs` table, the removal of the global transaction lock and concurrency inside each invocation, not a different host. The JSON-blob store forces every cross-video feature to scan everything and freezes the leaderboard in a snapshot that cannot be recomputed for a different benchmark. The Finradar handoff already requires reviewed migrations and shared platform tasks; this change is the precondition for the merge.
 
 ### 4.8 Channel automation: push and batch
 
@@ -304,6 +304,8 @@ Team members have their own Finradar accounts, so:
 - **Reviews** are signed with the account identity; the review table is append-only.
 - **Sharing:** links are indefinite until revoked, matching LeapEdge. Each share is an immutable snapshot with a revoke action and an optional expiry.
 
+Until Finradar exposes account identity to this module, the workspace is one account: viewer settings persist to the default account document, reviews cannot reach L3, and sharing keeps its current seven-day snapshot behaviour. Owner scoping, L3 signing, indefinite sharing and per-account digest ship with the Finradar merge.
+
 ### 4.19 Languages
 
 Output is always English. Chinese-language videos are supported end to end: caption language preference `zh, zh-Hans, zh-Hant, en`; Gemini transcription in the source language; extraction in the source language with pointer evidence; English translation of each copied span in a separate call; the trust ladder applies unchanged. Chinese company names resolve to tickers through the reviewed entity registry; unresolved names stay as text and never become a ticker without review.
@@ -349,9 +351,13 @@ SUPADATA_API_KEY=          # optional; standby provider
 FMP_API_KEY=               # required; prices, filings, news
 EXA_API_KEY=               # optional; date-bounded web sources for the context check
 DATABASE_URL=              # required; Postgres
+DATABASE_URL_UNPOOLED=     # required; direct Neon endpoint for migrations, checks, exports
 YTI_PUSH_CALLBACK_SECRET=  # required when channels.discovery=push
 YTI_HARD_BUDGET_USD_MONTH= # absolute ceiling the UI cannot raise
 RESEND_API_KEY=            # optional; digest delivery
+YTI_PRODUCTION_DB_HOST=    # host of production DATABASE_URL_UNPOOLED; blocks preview builds from migrating production
+YTI_POOL_MAX=              # optional; connections per function instance, default 4
+YTI_QUEUE_PAUSED=          # optional; true pauses the dispatcher for a type-changing migration
 ```
 
 ### 6.2 Team preferences (schema)
@@ -520,15 +526,17 @@ Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#26262
 
 ## 8. Data contract changes
 
+- Column types: every instant is `timestamptz`; USD amounts are `numeric(12,6)` and are summed in SQL; payloads are `jsonb`.
 - `claims`: id, run_id, video_id, channel_id, instrument, ticker, ticker_explicit, stance, thesis_en, horizon_en, conditions_en[], risks_en[], creator_conviction, trust_level, trust_basis (json), config_hash, published_at, created_at.
 - `mentions`: id, run_id, video_id, channel_id, ticker, stance, is_call, claim_id (nullable), trust_level, span_id, published_at.
 - `evidence_spans`: claim_id, start_id, end_id, start_seconds, end_seconds, text_original, text_hash, translation_en, agreement_score, anchor_error_seconds, tie_break_source (nullable).
 - `transcripts`: video_id, kind (caption | asr-window | whisper | merged), provider, language, hash, segments (jsonb), created_at; immutable.
 - `reviews`: claim_id, reviewer_account_id, verdict, note, listened_span, signed_at; append-only.
 - `prices`: ticker, date, adjusted_close, source, fetched_at; benchmarks are rows here too.
-- `settlements`: claim_id, horizon_days, entry_date, entry_price, exit_date, exit_price, return, status, record (forward | historical); append-only. Excess is never stored; it is computed against the viewer's benchmark.
+- `settlements`: claim_id, horizon_days, entry_date, entry_price, exit_date, exit_price, return, status, record (forward | historical); append-only. Excess is never stored; the scoring function is split into entry/exit selection, which is stored, and benchmark arithmetic, which runs at query time for the viewer's benchmark.
 - `context_checks`: claim_id, window_start, window_end, sources (jsonb: id, kind, date, title, url), summary, kind (at_the_time | since_then), model, config_hash, created_at.
 - `channels`: id, handle, title, tier, seed_source[], discovery, processing, auto_analyze, followed_at.
+- `jobs`: id, kind (analyze | settle | push-renew | batch-poll | reconcile), payload (jsonb), status, run_at, lease_until, lease_token, attempts, last_error, created_at.
 - `metrics_registry` is code, not a table; a CI test asserts UI column ids ⊆ registry ids.
 - `shares`: snapshot_id, created_by, revoked_at (nullable), expires_at (nullable).
 - `briefing_observations`: edition_id, ticker, source = youtube, mentions, prior, change, state, why, evidence_count, claim_ids[].
@@ -541,9 +549,10 @@ Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#26262
 |---|---|---|
 | 0 | Gold set of 50 verified claims; `ModelTransport` interface; metrics registry skeleton; settings schemas | Evaluation harness reports precision, recall, anchor accuracy and cost per accepted claim for the current v5 configuration |
 | 1 | Native transport for all stages; pointer evidence with `responseSchema`; mentions with sentiment and rationale; batched critique with explicit caching; low media resolution; realistic reservations with retries; Supadata standby with circuit breaker | Gold-set precision and recall not below v5; cost per accepted claim at least 40% lower; zero structural rejections on the gold set; standby engages on an injected vendor error and not on a missing-captions case |
-| 2 | Always-on worker with Postgres queue; Postgres-only with PGlite tests; relational tables and migrations; prices and settlements; default channel seed with selection and cost projection | Four videos processed in parallel end to end; restart during a run resumes without duplicate spend; CI runs on the production dialect; seed produces the deduplicated channel list |
-| 3 | Windowed ASR, agreement scoring and Whisper tie-break; trust ladder; Today, Channels, Leaderboard (by ticker, then by creator), Saved calls, Lab surfaces inside the Finradar shell; hover definitions and sorting on every table; benchmark and period settings; push notifications; batch mode; historical replay from January 2026 | At least 95% of L2 anchors within two seconds on the gold set; a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write; the Changes tab reproduces a hand-computed diff between two dates on the fixture database |
-| 4 | Context check with dated sources; Finradar `youtube` observation; File Search corpus; sharing with revoke; digest | A context check cites only sources inside its window on 100% of a 50-call sample; a Finradar edition renders a youtube observation with evidence links; a cross-video question returns cited spans |
+| 2 | Cron dispatcher as worker over a Postgres jobs table with a global concurrency cap; Postgres-only with PGlite tests; relational tables and migrations; prices and settlements; default channel seed with selection and cost projection | Four videos processed in parallel end to end; restart during a run resumes without duplicate spend; a run killed between settlement and save resumes with no second provider call; concurrent claims never exceed the cap on a Neon branch through the pooled endpoint; CI runs on the production dialect; seed produces the deduplicated channel list |
+| 3a | Module shell and side panel; shared components; trust L0–L1 stored per claim; sentiment shift and per-ticker consensus as registry metrics; Today and Analysis pages over text-checked calls | Registry CI passes with every Today and Analysis column mapped; Today renders from the fixture database; the old research route is deleted; a recorded human walk-through |
+| 3b | Windowed ASR, agreement scoring, Whisper tie-break, trust L2; leaderboard by ticker and creator with Changes; push notifications; batch mode; historical replay; Channels, Leaderboard, Saved calls, Lab and Settings pages | At least 95% of L2 anchors within two seconds on the gold set; a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write; the Changes tab reproduces a hand-computed diff between two dates on the fixture database; an `EXPLAIN` check on board queries against a Neon branch at realistic volume |
+| 4 | Context check with dated sources; Finradar `youtube` observation; File Search corpus (sharing rework and per-account digest deferred until Finradar identity) | A context check cites only sources inside its window on 100% of a 50-call sample; a Finradar edition renders a youtube observation with evidence links; a cross-video question returns cited spans |
 
 Rollback: each phase is behind a flag; phase 1 can run alongside the OpenRouter path for a comparison week before the old path is removed.
 
@@ -599,13 +608,13 @@ Revision 3 decision (17 September 2026): the design does not use the VideoConvic
 | Captionless videos | "Works for most" | Experimental flag | Standard route via windowed Gemini, Whisper standby |
 | Long videos | Observed failure on a 38-minute video | Windowed mode, opt-in | Windowed by default |
 | Chinese-language creators | Yes | Partial | Yes, with translated evidence spans |
-| Shared reports | Indefinite until revoked | 7-day expiry | Indefinite until revoked, with optional expiry |
+| Shared reports | Indefinite until revoked | 7-day expiry | 7-day expiry today; indefinite until revoked, with optional expiry, deferred until the Finradar merge |
 | Search | Yes | Yes | Yes, plus cross-video questions with citations |
 | External context per call | No | No | Yes, dated to the video window |
 | Free plan limit | 3 videos a day | n/a | Monthly budget the team sets |
 | Cost per report shown to user | US$0.03 to US$0.10 | US$0.19 to US$0.93 | Target US$0.10 to US$0.25 all-in |
 
-Where we exceed LeapEdge: trust level per call, agreement score against audio, sample-size gates, user-chosen benchmark, by-ticker consensus, sentiment shift, context check, immutable forward record, versioned configuration, visible rejections, hover definitions everywhere. Where we match: everything else above, including indefinite sharing.
+Where we exceed LeapEdge: trust level per call, agreement score against audio, sample-size gates, user-chosen benchmark, by-ticker consensus, sentiment shift, context check, immutable forward record, versioned configuration, visible rejections, hover definitions everywhere. Where we match: everything else above; indefinite sharing is deferred until the Finradar merge.
 
 ---
 
@@ -614,7 +623,7 @@ Where we exceed LeapEdge: trust level per call, agreement score against audio, s
 | Step | What happens | Why it exists | Could it be removed? |
 |---|---|---|---|
 | Arrive | Push notification or pasted link enqueues a job | Free, near real-time; removes hourly polling and quota use | Poll stays as fallback for hub renewal failures only |
-| Queue | Postgres queue, always-on worker, 4 in parallel | Cron ran one job a minute under a global lock | No; it is the throughput fix |
+| Queue | Postgres jobs table; the per-minute cron invocation is the worker, concurrent up to a global cap | Cron ran one job a minute under a global lock | No; the jobs table and the removed global lock are the throughput fix |
 | Metadata | One Data API call | Duration, channel and publication date are needed for windows, settlement and the context window | No |
 | Captions | TranscriptAPI; Supadata on vendor error | Half a cent, fastest, 80% coverage | No |
 | Audio transcript | Gemini native, 5-minute windows, low resolution, batch; Whisper tie-break below threshold | Only route independent of captions; windows bound timestamp error | Runs only when needed, so it removes itself for most videos |
@@ -638,13 +647,13 @@ Where we exceed LeapEdge: trust level per call, agreement score against audio, s
 | Model-written quotes and substring matching as a gate | Caused most false rejections |
 | Per-claim critique with full transcript | Cost linear in claims, no measured benefit |
 | Same-family critic as default | Correlated errors let three real mistakes through |
-| Cron dispatcher, global advisory lock, JSON-blob store, scoreboard snapshots | Serial, unqueryable, untestable on the production dialect, and frozen |
+| Global advisory lock on every transaction, one job a minute, JSON-blob store, scoreboard snapshots | Serialised every write, unqueryable, untestable on the production dialect, and frozen. The cron dispatcher itself is kept: it becomes the worker, claiming jobs concurrently up to a global cap. |
 | Never-retry ledger with context-window reservations | Locked the budget at 60× real cost |
 | Source-repair stage | Superseded by windowed reference transcription |
 | LLM audio review as a trust input | Another model opinion, not evidence; kept in Lab only |
 | Title-keyword ordering, backtrader oracle, correlation matrix, cold-start sheet ingestion | No user value, or violates "computed, never copied" |
 | OpenRouter web plugin and Google Search grounding for context | No publication-date bound |
-| Six-tab research app, 7-day share expiry | Replaced by the module side panel and indefinite links |
+| Six-tab research app | Replaced by the module side panel |
 
 ---
 
@@ -674,6 +683,10 @@ Decisions taken from the review round (recorded so they are not reopened):
 - Benchmark, period, market filter and horizon: team default with per-account override and a "Reset to team default" action.
 - LeapEdge top-20 default: their public ranking at seed time, our own forward record once it exists.
 - Unselected channels list every new upload; "Analyse this one" analyses the video and switches the channel on, with its cost stated.
+- Vercel cron is the worker: each per-minute invocation claims jobs from the `jobs` table up to a global running cap of `processing.parallelVideos` and steps them concurrently; no separate always-on host is introduced, and one stays an option behind the same `Queue` interface.
+- One Neon branch per preview deployment through the Neon–Vercel integration; the build command migrates that branch, and no preview build can migrate production.
+- Account identity waits for Finradar: the workspace is one account until the merge, and owner scoping, L3 signing, the sharing rework and the per-account digest are deferred.
+- Phase 3 is delivered as a thin vertical slice (3a: shell, shared components, trust L0–L1, Today and Analysis over text-checked calls) before the rest (3b).
 
 No open questions remain from the review round.
 
@@ -686,8 +699,9 @@ No open questions remain from the review round.
 | Transport | Native Gemini in production, OpenRouter for critic, context and flexibility | OpenRouter everywhere | Loses batch, caching, media resolution, schema, agentic mode |
 | Evidence | Pointer with app-side copy | Model-written quotes with substring match | Formatting rejections dominated failures |
 | Critique | One batched call, different family, cached transcript | One call per claim | Cost linear in claims; correlated errors |
-| Queue | Always-on worker with Postgres queue | Per-minute cron | Serial, lock-bound, no parallelism |
+| Queue | Cron dispatcher over a Postgres jobs table with SKIP LOCKED and a global cap | Separate always-on host with pg-boss or Graphile Worker; Vercel Queues | Needs no second host; pg-boss/Graphile need LISTEN/NOTIFY, unavailable on Neon's pooled endpoint; Vercel Queues is beta, push-callback at-least-once, and not testable on PGlite |
 | Storage | Postgres only, relational | SQLite plus Postgres via rewriting | Production dialect untested; blobs unqueryable |
+| Preview databases | Neon branch per preview via the integration, migrated by the build | Previews read-only against production | Previews can exercise schema changes; production is never touched by a preview build |
 | Timestamps | Windowed Gemini ASR, agreement score | Full-video ASR | 97-second drift observed |
 | Captions | TranscriptAPI, Supadata on standby | Five-provider fallback chain | Same track; correlated failures; standby needs distinct roles |
 | Audio fallback | Supadata Whisper as tie-break and outage fallback | Whisper as primary reference | Cannot be windowed; long videos need polling |
@@ -704,4 +718,5 @@ No open questions remain from the review round.
 | Cross-video | File Search | Self-hosted vector DB | Managed, cited, no infrastructure |
 | NotebookLM | Analyst surface only | Pipeline component | No API, caption-only, 72-hour delay |
 | Channel discovery | Push hub, batch analysis | Hourly polling, immediate analysis | Free, faster, half the model cost |
-| Sharing | Indefinite until revoked | 7-day expiry | Matches LeapEdge; confirmed by the team |
+| Sharing | Indefinite until revoked, deferred until the Finradar merge | 7-day expiry | Matches LeapEdge; confirmed by the team; the seven-day snapshot stays until account identity exists |
+| Identity | Single workspace account until Finradar exposes identity | Build owner scoping now | No identity source exists; L3 would be as trustworthy as a shared token |
