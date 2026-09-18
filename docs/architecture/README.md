@@ -2,7 +2,7 @@
 
 **15 September 2026 · Proposed target, not a deployment record.**
 
-[16:9 PNG](youtube-intelligence-target-architecture.png) · [Editable SVG](youtube-intelligence-target-architecture.svg) · [Reproduction script](render_target.py) · [Detailed findings white paper](../native-google-findings-white-paper.md)
+[16:9 PNG](youtube-intelligence-target-architecture.png) · [Editable SVG](youtube-intelligence-target-architecture.svg) · [Reproduction script](render_target.py) · [Detailed findings white paper](../archive/native-google-findings-white-paper.md)
 
 The diagram is 2560 × 1440. Reproduce it with `python3 docs/architecture/render_target.py` from the project root; Pillow and the macOS Arial fonts are required. The renderer makes no network requests. No routing, subscription or production configuration was changed to create these artifacts.
 
@@ -28,7 +28,7 @@ The diagram is 2560 × 1440. Reproduce it with `python3 docs/architecture/render
 
 ## What the tests mean
 
-The [provider campaign](../three-provider-repeat-results.json) had 54 requests: six videos × three repetitions × three providers. All three retrieved four videos. These timings are historical client-to-cloud measurements, not a simultaneous comparison with native Google or a Vercel SLA.
+The [provider campaign](../archive/three-provider-repeat-results.json) had 54 requests: six videos × three repetitions × three providers. All three retrieved four videos. These timings are historical client-to-cloud measurements, not a simultaneous comparison with native Google or a Vercel SLA.
 
 Native Google produced a structurally valid transcript for the 12:59 Alpha video where earlier routes could not retrieve captions. The 40:23 test also passed structure. The 31:59 macro result contained an out-of-bounds timestamp and was rejected; two overlapping 90-second follow-up windows passed. Those windows motivate localized repair experiments; they do not demonstrate an accurate repaired full transcript.
 
@@ -59,6 +59,6 @@ The retained Alpha report showed four ideas and nine key points, with one entry 
 - [Google video understanding](https://ai.google.dev/gemini-api/docs/generate-content/video-understanding): structured YouTube media input and clipping; support does not guarantee exhaustive transcription.
 - [Google structured outputs](https://ai.google.dev/gemini-api/docs/structured-output): schema support and application validation boundaries.
 - [YouTube captions.download](https://developers.google.com/youtube/v3/docs/captions/download): permission requirements.
-- [Research source register](../native-google-research-sources.json): official references and related issue reports used in the white paper.
+- [Research source register](../archive/native-google-research-sources.json): official references and related issue reports used in the white paper.
 
 This diagram uses those retained research findings; it does not represent a new live provider benchmark.

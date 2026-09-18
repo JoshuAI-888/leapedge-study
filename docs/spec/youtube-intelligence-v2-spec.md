@@ -163,6 +163,8 @@ Creator conviction (high, medium, low, unspecified) is a separate field and is a
 
 **Licensing.** TrueAlphaData's rows are of unstated licence. Finradar is confirmed as never commercial, so they may be used, with attribution, as an evaluation reference. They never appear as product data (section 4.11). No VideoConviction data is held in the repository.
 
+**Status, 18 September 2026.** The set holds five cases and none is verified, so this gate has never bound a promotion. The fifty-case requirement stands; what changed is that the project now says so out loud rather than reporting `pass` over an empty measurement. See section 9's amendment and `docs/gates/gate-debt.md`.
+
 ### 4.10 Provider decision and the standby provider
 
 **Decision.** TranscriptAPI for captions, Gemini native for the audio transcript, Supadata on standby behind a circuit breaker. Nothing else in the production path.
@@ -544,6 +546,8 @@ Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#26262
 | 2 | Always-on worker with Postgres queue; Postgres-only with PGlite tests; relational tables and migrations; prices and settlements; default channel seed with selection and cost projection | Four videos processed in parallel end to end; restart during a run resumes without duplicate spend; CI runs on the production dialect; seed produces the deduplicated channel list |
 | 3 | Windowed ASR, agreement scoring and Whisper tie-break; trust ladder; Today, Channels, Leaderboard (by ticker, then by creator), Saved calls, Lab surfaces inside the Finradar shell; hover definitions and sorting on every table; benchmark and period settings; push notifications; batch mode; historical replay from January 2026 | At least 95% of L2 anchors within two seconds on the gold set; a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write; the Changes tab reproduces a hand-computed diff between two dates on the fixture database |
 | 4 | Context check with dated sources; Finradar `youtube` observation; File Search corpus; sharing with revoke; digest | A context check cites only sources inside its window on 100% of a 50-call sample; a Finradar edition renders a youtube observation with evidence links; a cross-video question returns cited spans |
+
+**Amendment, 18 September 2026 — the gates in this table are advisory.** The gold set holds five pending cases against the fifty section 4.9 requires, so the promotion gate reports `verdict: advisory-only` with `binding: {total: 0}` and every metric `null`. Three of the four phase-1 exit criteria, the phase-3 anchor-accuracy criterion and the phase-4 context-window criterion cannot be measured until that input exists. The thresholds are unchanged and were deliberately not lowered. Until they can bind, a phase closes on build evidence — lane items merged, tests, typecheck, build, the offline gate and `npm audit` green, plus a written conformance report that states per criterion whether it was met or deferred. The deferred criteria are tracked in `docs/gates/gate-debt.md` and the inputs that clear them in `docs/handoff/phase-0-human-inputs.md`. No gate artifact may report `pass` while nothing was measured.
 
 Rollback: each phase is behind a flag; phase 1 can run alongside the OpenRouter path for a comparison week before the old path is removed.
 
