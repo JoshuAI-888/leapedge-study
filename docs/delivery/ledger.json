@@ -543,19 +543,23 @@
       "lane": "prices",
       "title": "prices and settlements tables; settlement sweep; the performance document removed",
       "spec": "4.11, 4.12, 8",
-      "status": "todo",
+      "status": "merged",
       "prereqs": [
         "F23"
       ],
       "files": [
         "src/server/youtube-intelligence/migrations/0004_prices_settlements.sql",
+        "src/server/youtube-intelligence/repos/prices.ts",
+        "src/server/youtube-intelligence/repos/settlements.ts",
         "src/server/youtube-intelligence/settlement.ts",
         "src/server/youtube-intelligence/market.ts"
       ],
       "tests": [
-        "tests/repos.test.ts"
+        "tests/repos.test.ts",
+        "tests/invariants.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "note": "Settlement rows carry the call's own entry and exit only: spec 4.12 computes excess against the viewer's benchmark at query time, so scoreCall's SPY coupling is not carried over. market.performance() no longer freezes a scoreboard document; the v1 Performance tab still reads the documents written before this, and is replaced at F46. Invariant 5 (append-only) is now enforced by a database trigger."
     },
     {
       "id": "F26",

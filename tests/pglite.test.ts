@@ -11,8 +11,9 @@ test("PGlite driver applies the schema and reports the Postgres dialect", async 
       "SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name",
     )
     .all()) as { table_name: string }[];
-  // 0003 added the relational core (spec 8) beside the document tables, so the
-  // list this asserts is both halves: the new tables first, alphabetically.
+  // 0003 added the relational core (spec 8) beside the document tables and 0004
+  // added prices and settlements, so the list this asserts is both halves: the
+  // new tables first, alphabetically.
   assert.deepEqual(
     tables.map((t) => t.table_name),
     [
@@ -22,7 +23,9 @@ test("PGlite driver applies the schema and reports the Postgres dialect", async 
       "instruments",
       "jobs",
       "mentions",
+      "prices",
       "reviews",
+      "settlements",
       "transcripts",
       "yi_calls",
       "yi_discoveries",

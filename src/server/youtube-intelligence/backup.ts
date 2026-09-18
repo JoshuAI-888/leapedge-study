@@ -38,6 +38,8 @@ export const BACKUP_TABLES = [
   "reviews",
   "instruments",
   "jobs",
+  "prices",
+  "settlements",
 ];
 /**
  * The tables a version-1 backup carries. Such a file was written before the

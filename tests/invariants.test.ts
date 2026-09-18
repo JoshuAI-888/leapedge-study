@@ -10,6 +10,12 @@ import {
   Source,
 } from "../src/features/youtube-intelligence/contracts.ts";
 import { createHash } from "node:crypto";
+import { savePrices } from "../src/server/youtube-intelligence/repos/prices.ts";
+import {
+  appendSettlement,
+  settlementsFor,
+} from "../src/server/youtube-intelligence/repos/settlements.ts";
+import { settleCall } from "../src/server/youtube-intelligence/settlement.ts";
 
 /**
  * The system invariants from build plan section 4, as seeded property tests
@@ -21,7 +27,7 @@ import { createHash } from "node:crypto";
  * with no verified gold set (docs/gates/gate-debt.md), tests are the only thing
  * standing between a change and the truth.
  *
- * Four of the eight invariants need tables phase 2 introduces. They are not
+ * Three of the eight invariants still need tables later phases introduce. They are not
  * quietly absent: the last test asserts they are still unreachable, and fails
  * the moment the feature lands without its invariant being written.
  */
@@ -212,6 +218,58 @@ test("Invariant 7: every evidence pointer resolves to text the source really con
   }
 });
 
+// --- Invariant 5 ------------------------------------------------------------
+
+test("Invariant 5: settlements and reviews are append-only, whatever the caller does", async () => {
+  // A leaderboard as of a past date is computed by reading the rows that
+  // existed then, and an L3 trust level is exactly the claim somebody signed a
+  // review for. An UPDATE to either rewrites a figure that has already been
+  // reported, so the guarantee is in the database (migration 0004), not in the
+  // care taken by the repository modules.
+  const db = await freshDatabase();
+  for (const seed of SEEDS) {
+    const random = rng(seed);
+    const call = {
+      claimId: `claim-${seed}`,
+      ticker: "NVDA",
+      stance: random() < 0.5 ? "long" : "short",
+      creatorConviction: "high",
+      callDate: "2026-01-05",
+      record: (random() < 0.5 ? "forward" : "historical") as
+        | "forward"
+        | "historical",
+    };
+    const bars = Array.from({ length: 140 }, (_, i) => ({
+      ticker: "NVDA",
+      date: new Date(Date.parse("2026-01-05T00:00:00Z") + i * 86400000)
+        .toISOString()
+        .slice(0, 10),
+      adjustedClose: 100 + Math.round(random() * 50),
+      source: "test",
+      fetchedAt: "2026-09-18T00:00:00.000Z",
+    }));
+    await savePrices(bars);
+    const written = await appendSettlement(
+      settleCall(call, bars, 90, "2026-12-31"),
+    );
+
+    for (const statement of [
+      "UPDATE settlements SET return_pct=0 WHERE id=$1",
+      "UPDATE settlements SET status='settled' WHERE id=$1",
+      "DELETE FROM settlements WHERE id=$1",
+    ])
+      await assert.rejects(
+        () => db.prepare(statement).run(written.id),
+        /append-only/i,
+        `seed ${seed}: "${statement}" was allowed`,
+      );
+
+    const after = await settlementsFor(call.claimId);
+    assert.equal(after.length, 1, `seed ${seed}: the row count changed`);
+    assert.deepEqual(after[0], written, `seed ${seed}: the row changed`);
+  }
+});
+
 // --- The four that phase 2 unlocks -----------------------------------------
 
 /**
@@ -227,11 +285,6 @@ const PENDING: { invariant: string; feature: string; unlockedBy: string }[] = [
     unlockedBy: "src/features/youtube-intelligence/trust.ts",
   },
   {
-    invariant: "5: settlements, reviews and transcripts are append-only",
-    feature: "F25",
-    unlockedBy: "src/server/youtube-intelligence/settlement.ts",
-  },
-  {
     invariant: "6: every context_checks source date lies inside its window",
     feature: "F50",
     unlockedBy: "src/server/youtube-intelligence/context-check.ts",
@@ -243,7 +296,7 @@ const PENDING: { invariant: string; feature: string; unlockedBy: string }[] = [
   },
 ];
 
-test("The invariants phase 2 and 3 unlock are written the moment they can be", () => {
+test("The invariants later phases unlock are written the moment they can be", () => {
   const arrived = PENDING.filter((p) => existsSync(p.unlockedBy));
   assert.deepEqual(
     arrived,

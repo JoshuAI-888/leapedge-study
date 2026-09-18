@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { savePrices } from "./repos/prices.ts";
 import { doc, docs, put, canonicalRuns, accepted } from "./research-store.ts";
 import {
   scoreCall,
@@ -105,6 +106,23 @@ export async function prices(
     createHash("sha256").update(JSON.stringify(value)).digest("hex"),
     value,
   );
+  /**
+   * F25: the same bars as rows. The document cache above answers "this exact
+   * window, fetched recently"; the table answers "what did this ticker close at
+   * on this day", which is the question a settlement asks and the only one a
+   * board can be recomputed from. Each row carries the provider and the fetch
+   * time, which is what spec 4.11 requires of an external price before a figure
+   * derived from it may be displayed.
+   */
+  await savePrices(
+    value.prices.map((p) => ({
+      ticker: symbol,
+      date: p.date,
+      adjustedClose: p.close,
+      source: `${value.provider} ${value.adjustment}`,
+      fetchedAt: value.fetchedAt,
+    })),
+  );
   return value;
 }
 export async function performance(
@@ -204,6 +222,16 @@ export async function performance(
         : "Selected collection analysis per video; versioned retrospective comparison, not portfolio return.",
     ],
   };
-  await put("performance", result.id, result);
+  /**
+   * F25 stopped storing this result. Spec 4.11 rules out a figure that cannot
+   * be recomputed for a different benchmark or horizon, and a frozen scoreboard
+   * is exactly that: the excess returns inside it are against SPY, permanently,
+   * whatever the viewer later chooses. The rows this is computed from are in
+   * `prices` and `settlements` now, so the same answer is available on request.
+   *
+   * Documents written before this change are still read by the v1 Performance
+   * tab's history list, which keeps working; nothing new is frozen. The tab
+   * itself is replaced by the Leaderboard at F46.
+   */
   return result;
 }
