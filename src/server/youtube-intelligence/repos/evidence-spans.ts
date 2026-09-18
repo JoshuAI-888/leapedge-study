@@ -100,3 +100,18 @@ export async function countEvidenceSpans(): Promise<number> {
     .get()) as { n: unknown };
   return Number(r.n);
 }
+/** Drop every span of claims that have left the record. */
+export async function deleteSpansForClaims(claimIds: string[]) {
+  if (!claimIds.length) return 0;
+  const result = await database
+    .prepare("DELETE FROM evidence_spans WHERE claim_id = ANY($1)")
+    .run(claimIds);
+  return result.changes;
+}
+/** Drop the trailing spans of a claim that now cites fewer ranges than before. */
+export async function deleteSpansBeyond(claimId: string, ordinals: number) {
+  const result = await database
+    .prepare("DELETE FROM evidence_spans WHERE claim_id=$1 AND ordinal>=$2")
+    .run(claimId, ordinals);
+  return result.changes;
+}

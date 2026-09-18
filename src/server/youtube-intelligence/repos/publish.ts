@@ -5,9 +5,19 @@ import type {
   Run,
   SourceData,
 } from "../../../features/youtube-intelligence/contracts.ts";
-import { upsertClaim, type ClaimInput } from "./claims.ts";
-import { upsertMention, type MentionRow } from "./mentions.ts";
 import {
+  deleteClaimsForRunExcept,
+  upsertClaim,
+  type ClaimInput,
+} from "./claims.ts";
+import {
+  deleteMentionsForRunExcept,
+  upsertMention,
+  type MentionRow,
+} from "./mentions.ts";
+import {
+  deleteSpansBeyond,
+  deleteSpansForClaims,
   upsertEvidenceSpan,
   type EvidenceSpanRow,
 } from "./evidence-spans.ts";
@@ -22,6 +32,7 @@ import {
  * rows rather than adding a second set.
  */
 export type RunRows = {
+  runId: string;
   claims: ClaimInput[];
   spans: EvidenceSpanRow[];
   mentions: MentionRow[];
@@ -88,9 +99,10 @@ function spansOf(
 }
 /**
  * The rows one completed run produces. Only accepted claims become claim rows —
- * a rejected one keeps its reasons on the run and never enters the record —
- * while every kept mention becomes a mention row, because the sentiment count
- * is over references, not over calls.
+ * a rejected one keeps its reasons on the run and stays out of the record, and
+ * writeRunRows() takes back the row of one that was accepted on an earlier
+ * pass — while every kept mention becomes a mention row, because the sentiment
+ * count is over references, not over calls.
  */
 export function rowsForRun(run: Run): RunRows {
   const metadata = (run.output.metadata ?? {}) as Metadata;
@@ -138,7 +150,9 @@ export function rowsForRun(run: Run): RunRows {
   const mentions: MentionRow[] = (
     (run.output.mentions || []) as MentionData[]
   ).map((mention, index) => ({
-    id: `${run.id}:m${index + 1}`,
+    // The index is padded because the id is also the sort key: `m10` has to
+    // follow `m9`, and the table keeps no ordinal of its own.
+    id: `${run.id}:m${String(index + 1).padStart(4, "0")}`,
     runId: run.id,
     videoId: run.videoId,
     channelId,
@@ -154,17 +168,36 @@ export function rowsForRun(run: Run): RunRows {
     spanId: mention.source_span?.start_id ?? null,
     publishedAt,
   }));
-  return { claims, spans, mentions };
+  return { runId: run.id, claims, spans, mentions };
 }
 /**
  * Write one run's rows. Claims first, then their spans, then the mentions that
  * point at them, so an interrupted write never leaves a mention referring to a
  * claim row that is not there yet.
+ *
+ * The rows the run no longer produces are then taken back, because the record
+ * has to be what the run says now rather than the union of every pass it has
+ * made: a claim accepted once and rejected on a re-critique would otherwise
+ * stay in the table the leaderboard reads. Reconciling is still one statement
+ * per row and holds no lock, so the resume path is unchanged — a second pass
+ * over the same output writes the same rows and deletes nothing.
  */
 export async function writeRunRows(rows: RunRows) {
   for (const claim of rows.claims) await upsertClaim(claim);
   for (const span of rows.spans) await upsertEvidenceSpan(span);
   for (const mention of rows.mentions) await upsertMention(mention);
+  const kept = rows.claims.map((c) => c.id);
+  await deleteSpansForClaims(await deleteClaimsForRunExcept(rows.runId, kept));
+  const cited = new Map<string, number>();
+  for (const span of rows.spans)
+    cited.set(span.claimId, (cited.get(span.claimId) ?? 0) + 1);
+  // A claim that survives but cites fewer ranges than it did leaves the spans
+  // past its new last ordinal behind, since those keys are never overwritten.
+  for (const id of kept) await deleteSpansBeyond(id, cited.get(id) ?? 0);
+  await deleteMentionsForRunExcept(
+    rows.runId,
+    rows.mentions.map((m) => m.id),
+  );
   return {
     claims: rows.claims.length,
     spans: rows.spans.length,

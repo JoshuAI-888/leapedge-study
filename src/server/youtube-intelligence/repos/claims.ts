@@ -130,3 +130,21 @@ export async function countClaims(): Promise<number> {
     .get()) as { n: unknown };
   return Number(r.n);
 }
+/**
+ * Drop the run's claim rows that a pass did not produce, returning their ids so
+ * their spans can go with them. A claim accepted once and rejected by a later
+ * critique has to leave the record: `claims` is what the leaderboard reads, so
+ * a republished run is authoritative rather than cumulative.
+ */
+export async function deleteClaimsForRunExcept(
+  runId: string,
+  keep: string[],
+): Promise<string[]> {
+  return (
+    (await database
+      .prepare(
+        "DELETE FROM claims WHERE run_id=$1 AND id <> ALL($2) RETURNING id",
+      )
+      .all(runId, keep)) as Record<string, unknown>[]
+  ).map((r) => String(r.id));
+}

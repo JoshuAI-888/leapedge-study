@@ -25,6 +25,10 @@ import {
 } from "../src/server/youtube-intelligence/repos/transcripts.ts";
 import { countChannels, listChannels } from "../src/server/youtube-intelligence/repos/channels.ts";
 import {
+  getInstrument,
+  upsertInstrument,
+} from "../src/server/youtube-intelligence/repos/instruments.ts";
+import {
   exitCodeFor,
   formatReport,
   migrateDocuments,
@@ -157,13 +161,68 @@ test("Publish maps mentions onto rows and links only the claims it published", a
   const mentions = await mentionsForRun(runId);
   assert.equal(mentions.length, 2);
   const [call, aside] = mentions;
-  assert.equal(call.id, `${runId}:m1`);
+  // The positional index is zero-padded: the id is also the sort key, and the
+  // table keeps no ordinal, so `m10` has to follow `m9` rather than `m1`.
+  assert.equal(call.id, `${runId}:m0001`);
+  assert.equal(aside.id, `${runId}:m0002`);
   assert.equal(call.sentiment, "bullish");
   assert.equal(call.isCall, true);
   assert.equal(call.claimId, `${runId}:c1`, "a call points at its claim row");
   assert.equal(call.spanId, "s1");
   assert.equal(aside.claimId, null);
   assert.equal(aside.sentiment, "neutral");
+});
+
+test("A republished run takes back the rows its new pass no longer produces", async () => {
+  await freshDatabase();
+  const seeded = await seedFixture("baseline");
+  const runId = seeded.runs["mike-nvda-earnings"];
+  const run = (await store.get(runId))!;
+  const mention = {
+    instrument_as_spoken: "Nvidia",
+    market: "us-stock",
+    stance: "long",
+    sentiment: "bullish",
+    rationale_en: "The creator is adding to the position.",
+    is_call: false,
+    claim_id: null,
+  };
+  run.output.mentions = [
+    { ...mention, ticker: "NVDA" },
+    { ...mention, ticker: "AMD" },
+  ];
+  await clearRows();
+  run.stage = "publish";
+  run.status = "running";
+  await step(run);
+  assert.deepEqual(
+    (await claimsForRun(runId)).map((c) => c.ticker).sort(),
+    ["NVDA", "SPY"],
+  );
+  const spy = (await claimsForRun(runId)).find((c) => c.ticker === "SPY")!;
+  assert.ok((await spansForClaim(spy.id)).length > 0);
+  // A re-critique rejects the SPY claim and the run keeps one mention fewer.
+  // The record is what the run says now, not the union of both passes.
+  const claims = run.output.claims as {
+    passed: boolean;
+    claim: { ticker: string | null };
+  }[];
+  claims.find((c) => c.claim.ticker === "SPY")!.passed = false;
+  run.output.mentions = [{ ...mention, ticker: "NVDA" }];
+  run.stage = "publish";
+  run.status = "running";
+  await step(run);
+  assert.deepEqual(
+    (await claimsForRun(runId)).map((c) => c.ticker),
+    ["NVDA"],
+    "the rejected claim's row is gone",
+  );
+  assert.deepEqual(await spansForClaim(spy.id), [], "and so are its spans");
+  assert.deepEqual(
+    (await mentionsForRun(runId)).map((m) => m.ticker),
+    ["NVDA"],
+    "the dropped mention's row is gone",
+  );
 });
 
 test("researchSnapshot reads claims, mentions and channels from rows", async () => {
@@ -344,4 +403,23 @@ test("A resumed migration finishes what an interrupted one left, and --verify ca
   assert.equal(exitCodeFor(missing), 1);
   assert.ok(missing.mismatches.some((m) => m.startsWith("channel:")));
   assert.equal((await listChannels()).length, 0);
+});
+
+test("An instrument refresh keeps the verification it already has", async () => {
+  await freshDatabase();
+  const nvda = {
+    symbol: "NVDA",
+    name: "NVIDIA Corporation",
+    currency: "USD",
+    exchange: "NASDAQ",
+    market: "us-stock",
+    verifiedAt: "2026-06-01T00:00:00.000Z",
+  };
+  await upsertInstrument(nvda);
+  // A later lookup that resolves the symbol without verifying it must not
+  // erase the timestamp, the same way it must not erase the market.
+  await upsertInstrument({ ...nvda, market: null, verifiedAt: null });
+  const row = (await getInstrument("NVDA"))!;
+  assert.equal(row.verifiedAt, "2026-06-01T00:00:00.000Z");
+  assert.equal(row.market, "us-stock");
 });

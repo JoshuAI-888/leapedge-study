@@ -31,7 +31,7 @@ export async function upsertInstrument(instrument: InstrumentRow) {
          currency=excluded.currency,
          exchange=excluded.exchange,
          market=COALESCE(excluded.market,instruments.market),
-         verified_at=excluded.verified_at`,
+         verified_at=COALESCE(excluded.verified_at,instruments.verified_at)`,
     )
     .run(
       instrument.symbol,

@@ -94,3 +94,10 @@ export async function countMentions(): Promise<number> {
     .get()) as { n: unknown };
   return Number(r.n);
 }
+/** The mention half of the same reconciliation claims.ts performs. */
+export async function deleteMentionsForRunExcept(runId: string, keep: string[]) {
+  const result = await database
+    .prepare("DELETE FROM mentions WHERE run_id=$1 AND id <> ALL($2)")
+    .run(runId, keep);
+  return result.changes;
+}
