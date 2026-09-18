@@ -40,7 +40,15 @@ export const ModelRequest = z.object({
 export type ModelRequestData = z.infer<typeof ModelRequest>;
 export const ModelUsage = z.object({
   inputTokens: z.number().nonnegative(),
+  /**
+   * Every token billed at the output rate, reasoning included. OpenRouter's
+   * `completion_tokens` already counts reasoning this way; the native transport
+   * adds `thoughtsTokenCount` to match, so a figure derived from tokens agrees
+   * with `costUsd` instead of under-reporting whatever the model thought with.
+   */
   outputTokens: z.number().nonnegative(),
+  /** The reasoning share of outputTokens, when the provider separates it. */
+  reasoningTokens: z.number().nonnegative().optional(),
   /** Provider-reported cost in USD, or null when the provider did not report one. */
   costUsd: z.number().nonnegative().nullable(),
 });

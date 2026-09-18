@@ -97,7 +97,11 @@ export function usageOf(
   const textTokens = Math.max(0, prompt - cached - audioTokens);
   return {
     inputTokens: prompt,
-    outputTokens: candidates,
+    // Billed output is what the model produced plus what it thought with, which
+    // is what costUsd below is computed from. Reporting `candidates` alone here
+    // left every token-derived figure lower than the cost it is meant to explain.
+    outputTokens: candidates + thoughts,
+    ...(thoughts ? { reasoningTokens: thoughts } : {}),
     costUsd: costUsd(model, {
       inputTokens: textTokens,
       cachedTokens: cached,

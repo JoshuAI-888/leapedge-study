@@ -2,6 +2,8 @@
 
 Updated 14 September 2026. Product scope is the standalone personal **YouTube Intelligence** lab, prepared for Finradar integration. Account, subscription, credits and billing management are excluded. Provider cost controls are included.
 
+> **Superseded in one row, 18 September 2026.** This is the v1 acceptance record and is kept as it was written. One row has since changed: v2 feature F20 retired the free YouTube.js adapter and the Tapline/BibiGPT adapters, so "Source acquisition" below no longer describes the code. The current chain is TranscriptAPI native captions as the draft, Supadata on standby behind a per-vendor circuit breaker, then the Gemini video fallback. Everything else in this table stands as the record of what was verified on 14–16 September.
+
 | Feature | Delivered behavior | Evidence / difference from LeapEdge |
 |---|---|---|
 | Video analysis and library | Durable queue, stage/status history, source import/fallback, reports, JSON export, reopen by ID | Live English/Chinese runs; invalid/incomplete source fails closed. Universal source success is not established. |

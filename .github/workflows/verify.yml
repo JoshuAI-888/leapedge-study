@@ -17,6 +17,10 @@ jobs:
           YTI_DB: pglite
       - run: npm run typecheck
       - run: npm run build
+      # Build plan section 3: the offline gate runs in CI. It needs no keys and
+      # exits 0 today, so it costs nothing until a prompt, schema or transport
+      # change breaks the harness that measures them — which is the point.
+      - run: node --experimental-strip-types scripts/promotion-gate.ts --offline
       - run: npm audit --omit=dev --audit-level=high
 
   native-google-evaluation:

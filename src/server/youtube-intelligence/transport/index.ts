@@ -111,7 +111,16 @@ export function assertCriticIndependent(settings?: unknown): void {
   const critique = parsed.models?.critique;
   const extraction = parsed.models?.extraction;
   if (critique?.requireDifferentFamily !== true) return;
-  if (!critique.id || !extraction?.id) return;
+  // The rule was asked for, so an id we cannot read is a configuration error
+  // too: passing silently here would bill the correlated audit the rule exists
+  // to prevent, and do it without saying so.
+  if (!critique.id || !extraction?.id)
+    throw Error(
+      "Settings require a critic from a different family than the extractor, but " +
+        `${!critique.id ? "models.critique.id" : "models.extraction.id"} is not set, ` +
+        "so the families cannot be compared. Name both models, or turn off " +
+        "models.critique.requireDifferentFamily.",
+    );
   const criticFamily = modelFamily(critique.id);
   if (criticFamily !== modelFamily(extraction.id)) return;
   throw Error(

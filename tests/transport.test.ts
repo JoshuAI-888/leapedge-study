@@ -541,6 +541,31 @@ test("A critic from the extraction model's family is refused by the settings che
   allowed.models.critique.id = "google/gemini-3.5-flash";
   allowed.models.critique.requireDifferentFamily = false;
   assert.doesNotThrow(() => assertCriticIndependent(allowed));
+  // A settings document that asks for the rule but names no model cannot have
+  // the rule applied to it. Passing silently would bill exactly the correlated
+  // audit the rule exists to prevent, so the unreadable case fails loudly.
+  assert.throws(
+    () =>
+      assertCriticIndependent({
+        models: {
+          critique: { requireDifferentFamily: true },
+          extraction: { id: "google/gemini-3.8-flash" },
+        },
+      }),
+    /models\.critique\.id is not set/,
+  );
+  assert.throws(
+    () =>
+      assertCriticIndependent({
+        models: {
+          critique: { id: "anthropic/claude-sonnet-5", requireDifferentFamily: true },
+          extraction: {},
+        },
+      }),
+    /models\.extraction\.id is not set/,
+  );
+  // Without the flag there is nothing to apply, so a bare document still passes.
+  assert.doesNotThrow(() => assertCriticIndependent({ models: { critique: {} } }));
 });
 test("A migrated legacy team may audit itself: the family requirement is off when it cannot be met", async () => {
   // Every id the old document could name is a Google one, so a migration that
@@ -1000,9 +1025,12 @@ test("GoogleNativeTransport reports usage and a price-table cost from usageMetad
     assert.equal(response.raw, nativeReply);
     // 200 text @0.75 + 200 cached @0.075 + 600 audio @0.75 + (300+100) output @3.75,
     // all per million: 150 + 15 + 450 + 1500 = 2115 millionths of a dollar.
+    // outputTokens is everything billed at the output rate, so the 100 thought
+    // tokens costUsd charges for are counted here too and reported separately.
     assert.deepEqual(response.usage, {
       inputTokens: 1000,
-      outputTokens: 300,
+      outputTokens: 400,
+      reasoningTokens: 100,
       costUsd: 0.002115,
     });
     assert.equal(stub.generate.length, 1);
@@ -1023,6 +1051,45 @@ test("GoogleNativeTransport reports usage and a price-table cost from usageMetad
   } finally {
     fetchStub.restore();
   }
+});
+test("Reported tokens explain the reported cost: reasoning is billed and counted, on both transports", async () => {
+  // The ledger settles on costUsd, but the stored token counts are what a cost
+  // projection or a per-token comparison reads. If output tokens leave reasoning
+  // out while the cost includes it, every such figure is quietly low.
+  const stub = stubClient(() => nativeReply);
+  const fetchStub = stubFetch([]);
+  try {
+    const { usage } = await new GoogleNativeTransport({ client: stub.client }).call(
+      nativeVideoRequest,
+    );
+    const price = priceTable["gemini-3.8-flash"];
+    assert.ok(price, "the model under test is in the static table");
+    const cachedTokens = 200;
+    const audioTokens = 600;
+    const textTokens = usage.inputTokens - cachedTokens - audioTokens;
+    const fromTokens =
+      (textTokens * price.inputPerMillion +
+        cachedTokens * price.cachedInputPerMillion +
+        audioTokens * price.audioPerMillion +
+        usage.outputTokens * price.outputPerMillion) /
+      1e6;
+    assert.equal(fromTokens, usage.costUsd, "tokens times rate reproduces the cost");
+    assert.equal(usage.reasoningTokens, 100);
+    assert.ok(
+      usage.outputTokens > (usage.reasoningTokens ?? 0),
+      "reasoning is a share of the output, not the whole of it",
+    );
+  } finally {
+    fetchStub.restore();
+  }
+  // OpenRouter's completion_tokens already counts reasoning the same way, so
+  // the two transports report the same thing under the same name.
+  const openrouter = fromOpenRouter({
+    choices: [{ message: { content: "{}" }, finish_reason: "stop" }],
+    usage: { prompt_tokens: 10, completion_tokens: 40, cost: 0.5 },
+  });
+  assert.equal(openrouter.usage.outputTokens, 40);
+  assert.equal(openrouter.usage.reasoningTokens, undefined);
 });
 test("GoogleNativeTransport classifies provider failures as TransportError kinds", async () => {
   const fail = (error: unknown) =>

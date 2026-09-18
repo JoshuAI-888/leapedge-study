@@ -8,7 +8,7 @@ The historical GitHub repository name, `leapedge-study`, is not the product name
 ## What works
 
 - Durable video-analysis jobs with multilingual source text, English synthesis, original quotes, timestamp links, deterministic evidence checks and separate model critique.
-- Free YouTube.js caption retrieval, optional Supadata native-caption adapter, timed transcript import and Gemini video fallback. Incomplete or invalid sources stop for review.
+- TranscriptAPI native captions as the draft source, Supadata on standby behind a per-vendor circuit breaker, timed transcript import and Gemini video fallback. A video with no captions at either vendor returns nothing rather than spending standby credits. Incomplete or invalid sources stop for review.
 - Channel follow/favourite, latest/older upload discovery, opt-in automatic analysis, per-channel research and trends.
 - Saved ideas and notes, search facets, dated direction changes, daily evidence synthesis, timezone scheduling, Resend delivery and expiring/revocable public snapshots.
 - Adjusted-price FMP/SPY comparisons, separate historical replay and immutable forward observations. Missing and stale prices are excluded explicitly.
