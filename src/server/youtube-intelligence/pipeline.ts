@@ -52,6 +52,7 @@ import {
   settle,
   retainResponse,
 } from "./store.ts";
+import { priceTableVersion } from "./transport/prices.ts";
 import { isRetryableTransportError, withRetry } from "./retry.ts";
 import * as P from "./prompts.ts";
 import { nativeTranscript } from "./transcripts.ts";
@@ -187,6 +188,18 @@ function unknownOutcome(error: unknown) {
   return typeof status !== "number";
 }
 /**
+ * Which rate table priced a reservation. Recorded on the settled call so a past
+ * cost can still be explained once the table has moved on: only the native
+ * transport prices from the static, versioned table in transport/prices.ts, and
+ * any other reads its rates from a catalogue fetched for that one call, which
+ * names no version, so the transport that answered describe() is named instead.
+ */
+function priceTableVersionFor(transport: ModelTransport) {
+  return transport.family === "google-native"
+    ? priceTableVersion
+    : `${transport.name}:describe`;
+}
+/**
  * One model call for a stage. Builds a transport-agnostic ModelRequest and
  * hands it to the stage's transport; the ledger reservation and settlement,
  * the retained raw response and the run metrics all happen here, above the
@@ -293,6 +306,7 @@ export async function modelCall(
     counted.tokens * spec.inputRate +
     mediaTokens * spec.audioRate +
     maxTokens * spec.outputRate;
+  const pricedBy = priceTableVersionFor(transport);
   // Wall time over every attempt, including the waits between them.
   const start = Date.now();
   /**
@@ -323,6 +337,7 @@ export async function modelCall(
             maxTokens,
             attempt,
             reservedUsd: amount,
+            priceTableVersion: pricedBy,
             inputTokens: counted.tokens,
             error: reason,
           });
@@ -348,6 +363,8 @@ export async function modelCall(
     tokens: response.usage,
     /** What was held before the provider reported, and how it was counted. */
     reservedUsd: amount,
+    /** The rate table those rates came from, so the hold can be explained later. */
+    priceTableVersion: pricedBy,
     inputTokens: counted.tokens,
     inputTokensCounted: !counted.estimated,
     ...(mediaTokens ? { mediaTokens } : {}),
@@ -369,6 +386,17 @@ export async function modelCall(
   return value;
 }
 /**
+ * A mention that never reached the sentiment set, with the stage that refused
+ * it: extraction could not resolve its pointer, or the critic rejected it. The
+ * two say different things about the model, so a reader must be able to tell
+ * them apart.
+ */
+type RejectedMention = {
+  mention: unknown;
+  reason: string;
+  kind: "extraction" | "critic";
+};
+/**
  * Mentions for a pointer-evidence extraction (spec 4.13). Every stance-tagged
  * reference is graded, not only the actionable calls, and each one is held to
  * the same standard as a claim: the span is copied here with deriveEvidence,
@@ -389,7 +417,7 @@ function materializeMentions(
   source: SourceData,
 ) {
   const claims = run.output.claims as CheckedClaim[];
-  const rejected: { mention: unknown; reason: string }[] = [];
+  const rejected: RejectedMention[] = [];
   const mentions: MentionData[] = [];
   const seen = new Set<string>();
   for (const draft of drafts.flatMap((d) => d.mentions || [])) {
@@ -431,6 +459,7 @@ function materializeMentions(
       rejected.push({
         mention: draft,
         reason: error instanceof Error ? error.message : String(error),
+        kind: "extraction",
       });
     }
   }
@@ -1077,19 +1106,22 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
        * reason beside the ones extraction already rejected.
        */
       const kept: MentionData[] = [];
-      const rejected = [
-        ...((run.output.rejectedMentions || []) as {
-          mention: unknown;
-          reason: string;
-        }[]),
-      ];
+      // Anything already recorded came from extraction, so a run stored before
+      // the field existed is read back with the kind it must have had.
+      const rejected: RejectedMention[] = (
+        (run.output.rejectedMentions || []) as Partial<RejectedMention>[]
+      ).map((r) => ({
+        mention: r.mention,
+        reason: String(r.reason ?? ""),
+        kind: r.kind === "critic" ? "critic" : "extraction",
+      }));
       for (const { id, mention } of mentions) {
         const verdict = answered.get(id);
         if (!verdict) missing.push(id);
         if (verdict?.cross_claim_notes)
           notes.push({ id, note: verdict.cross_claim_notes });
         if (verdict?.verdict === "reject")
-          rejected.push({ mention, reason: verdict.reason_en });
+          rejected.push({ mention, reason: verdict.reason_en, kind: "critic" });
         else kept.push(mention);
       }
       run.output.mentions = kept;

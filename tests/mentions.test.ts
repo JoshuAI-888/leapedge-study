@@ -321,8 +321,14 @@ test("a mention whose span does not resolve is rejected and recorded, never stor
   const rejected = run.output.rejectedMentions as {
     mention: { rationale_en: string };
     reason: string;
+    kind: string;
   }[];
   assert.equal(rejected.length, 3);
+  assert.deepEqual(
+    rejected.map((r) => r.kind),
+    ["extraction", "extraction", "extraction"],
+    "extraction's own rejections say so, so the critic's are tellable apart",
+  );
   assert.deepEqual(
     rejected.map((r) => r.mention.rationale_en),
     [unknownRange.rationale_en, reversed.rationale_en, noRange.rationale_en],

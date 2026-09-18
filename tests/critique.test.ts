@@ -237,6 +237,15 @@ test("verdict ids map back to claims, key points and mentions", async () => {
   const keyPoints = [item("k1", 3)];
   const mentions = [mention(4), mention(5)];
   const run = await critiqueRun({ claims, keyPoints, mentions });
+  // A rejection extraction already recorded: the two kinds share one list, so a
+  // reader must be able to tell which stage refused which mention.
+  run.output.rejectedMentions = [
+    {
+      mention: mention(9),
+      reason: "Mention cites no source range.",
+      kind: "extraction",
+    },
+  ];
   const fake = new FakeModelTransport({
     responses: {
       critique: critic({ reject: ["c2", "m1"], omit: ["k1"], extra: ["c9"] }),
@@ -275,10 +284,18 @@ test("verdict ids map back to claims, key points and mentions", async () => {
     ["N5"],
   );
   assert.deepEqual(
-    (run.output.rejectedMentions as { mention: MentionData; reason: string }[]).map(
-      (r) => [r.mention.ticker, r.reason],
-    ),
-    [["N4", "The source does not support m1."]],
+    (
+      run.output.rejectedMentions as {
+        mention: MentionData;
+        reason: string;
+        kind: string;
+      }[]
+    ).map((r) => [r.mention.ticker, r.reason, r.kind]),
+    [
+      ["N9", "Mention cites no source range.", "extraction"],
+      ["N4", "The source does not support m1.", "critic"],
+    ],
+    "each rejection names the stage that refused it",
   );
   const summary = run.output.critique as {
     calls: number;

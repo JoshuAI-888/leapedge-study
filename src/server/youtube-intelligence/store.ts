@@ -384,6 +384,15 @@ function parseMetrics(value: unknown): Record<string, unknown> {
     ? (parsed as Record<string, unknown>)
     : {};
 }
+/**
+ * A settled call's own string field, read out of the metrics JSON. A row
+ * written before the field existed, or one that recorded something other than a
+ * string, reads as null rather than as a fabricated value.
+ */
+function metricsText(metrics: Record<string, unknown>, key: string) {
+  const value = metrics[key];
+  return typeof value === "string" && value ? value : null;
+}
 /** One ledger row per attempt at a stage, oldest attempt first. */
 export type LedgerAttempt = {
   id: string;
@@ -393,6 +402,12 @@ export type LedgerAttempt = {
   status: string;
   amount: number;
   metrics: Record<string, unknown>;
+  /**
+   * The rate table that priced this attempt's reservation, so a cost recorded
+   * months ago can be explained against the rates that produced it; null for a
+   * row that recorded none.
+   */
+  priceTableVersion: string | null;
   open: boolean;
 };
 export async function listAttempts(
@@ -405,16 +420,20 @@ export async function listAttempts(
       "SELECT * FROM yi_calls WHERE run_id=$1 AND stage=$2 ORDER BY attempt, id",
     )
     .all(runId, stage)) as Record<string, unknown>[];
-  return rows.map((r) => ({
-    id: String(r.id),
-    runId: String(r.run_id),
-    stage: String(r.stage),
-    attempt: Number(r.attempt ?? 1),
-    status: String(r.status),
-    amount: Number(r.amount),
-    metrics: parseMetrics(r.metrics),
-    open: (OPEN_CALL_STATUSES as readonly string[]).includes(String(r.status)),
-  }));
+  return rows.map((r) => {
+    const metrics = parseMetrics(r.metrics);
+    return {
+      id: String(r.id),
+      runId: String(r.run_id),
+      stage: String(r.stage),
+      attempt: Number(r.attempt ?? 1),
+      status: String(r.status),
+      amount: Number(r.amount),
+      metrics,
+      priceTableVersion: metricsText(metrics, "priceTableVersion"),
+      open: (OPEN_CALL_STATUSES as readonly string[]).includes(String(r.status)),
+    };
+  });
 }
 export async function heartbeat() {
   await (

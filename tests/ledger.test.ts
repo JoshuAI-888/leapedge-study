@@ -8,7 +8,11 @@ import {
 } from "../src/server/youtube-intelligence/retry.ts";
 import { TransportError } from "../src/server/youtube-intelligence/transport/types.ts";
 import { FakeModelTransport } from "../src/server/youtube-intelligence/transport/fake.ts";
-import { injectTransport } from "../src/server/youtube-intelligence/transport/index.ts";
+import {
+  injectTransport,
+  type ModelTransport,
+} from "../src/server/youtube-intelligence/transport/index.ts";
+import { priceTableVersion } from "../src/server/youtube-intelligence/transport/prices.ts";
 import { teamDefaults } from "../src/features/youtube-intelligence/settings.ts";
 import { estimateTokens } from "../src/features/youtube-intelligence/chunking.ts";
 import * as store from "../src/server/youtube-intelligence/store.ts";
@@ -360,7 +364,7 @@ async function ledgerRun(videoId: string) {
   const { create } = await import("../src/server/youtube-intelligence/store.ts");
   return create(videoId, MODEL, {}, "v1");
 }
-async function withFake<T>(fake: FakeModelTransport, body: () => Promise<T>) {
+async function withFake<T>(fake: ModelTransport, body: () => Promise<T>) {
   const restore = injectTransport(fake);
   const previous = process.env.YTI_BUDGET_USD;
   process.env.YTI_BUDGET_USD = "50";
@@ -747,4 +751,99 @@ test("The worker sweep processes the reconciliation queue", async () => {
     (await store.listAttempts(run.id, "synthesis"))[0]!.status,
     "released",
   );
+});
+
+/* ------------------------------------------------------------------ *
+ * F17b: what a settled call records about the money — the provider's
+ * own reported cost, and the rate table its reservation was priced
+ * from, without which a cost recorded months ago cannot be explained.
+ * ------------------------------------------------------------------ */
+
+/** The fake answering as the native transport, whose rates come from prices.ts. */
+function asNative(fake: FakeModelTransport): ModelTransport {
+  return {
+    name: "google-native",
+    family: "google-native",
+    describe: (model: string) => fake.describe(model),
+    call: (request) => fake.call(request),
+  };
+}
+
+test("A settled call keeps the provider's reported cost and the rate table that priced its reservation", async () => {
+  await freshDatabase();
+  const { modelCall } = await import(
+    "../src/server/youtube-intelligence/pipeline.ts"
+  );
+  const fake = new FakeModelTransport({
+    describe: RATES,
+    responses: {
+      synthesis: { json: { claims: [] }, usage: { costUsd: 0.0123 } },
+    },
+  });
+  const run = await ledgerRun("ledger-settled-cost");
+  await withFake(fake, () =>
+    modelCall(run, "synthesis", MODEL, "PROMPT", { a: 1 }, false, {
+      settings: preferences(),
+      retry: noWait,
+    }),
+  );
+  const attempt = (await store.listAttempts(run.id, "synthesis"))[0]!;
+  assert.notEqual(
+    attempt.metrics.reservedUsd,
+    0.0123,
+    "the reservation and the bill are different numbers",
+  );
+  assert.equal(
+    attempt.amount,
+    0.0123,
+    "the settled amount is the cost the provider reported, not the hold",
+  );
+  assert.equal(Number((await store.get(run.id))!.cost), 0.0123);
+  assert.equal(
+    attempt.priceTableVersion,
+    "fake:describe",
+    "a transport that prices each call from a live catalogue names itself",
+  );
+  // The native transport prices from the static table, which names a version.
+  const nativeRun = await ledgerRun("ledger-settled-native");
+  await withFake(asNative(fake), () =>
+    modelCall(nativeRun, "synthesis", MODEL, "PROMPT", { a: 1 }, false, {
+      settings: preferences(),
+      retry: noWait,
+    }),
+  );
+  assert.equal(
+    (await store.listAttempts(nativeRun.id, "synthesis"))[0]!.priceTableVersion,
+    priceTableVersion,
+  );
+});
+
+test("A held reservation of unknown outcome records the rate table too", async () => {
+  await freshDatabase();
+  const { modelCall } = await import(
+    "../src/server/youtube-intelligence/pipeline.ts"
+  );
+  const fake = new FakeModelTransport({ describe: RATES });
+  // A timeout after response bytes arrived: the reservation stays held, so what
+  // priced it is exactly what reconcile.ts later needs to explain the hold.
+  fake.respond(
+    "synthesis",
+    thrower(
+      transportError("timeout", "Provider request timed out.", undefined, 4096),
+    ),
+  );
+  const run = await ledgerRun("ledger-unknown-priced");
+  await withFake(asNative(fake), () =>
+    assert.rejects(
+      () =>
+        modelCall(run, "synthesis", MODEL, "PROMPT", { a: 1 }, false, {
+          settings: preferences({ retries: 3, hold: 60 }),
+          retry: noWait,
+        }),
+      /timed out/,
+    ),
+  );
+  const held = (await store.listAttempts(run.id, "synthesis"))[0]!;
+  assert.equal(held.status, "unknown");
+  assert.equal(held.priceTableVersion, priceTableVersion);
 });
