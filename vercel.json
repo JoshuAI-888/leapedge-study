@@ -6,5 +6,6 @@
       "schedule": "* * * * *"
     }
   ],
-  "installCommand": "npm ci --ignore-scripts"
+  "installCommand": "npm ci --ignore-scripts",
+  "buildCommand": "npm run migrate && next build"
 }
