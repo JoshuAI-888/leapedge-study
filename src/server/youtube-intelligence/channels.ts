@@ -2,6 +2,8 @@ import { z } from "zod";
 import { doc, put, researchDB, queue } from "./research-store.ts";
 import { json } from "./database.ts";
 import {
+  PROCESSING_AUTOMATIC,
+  PROCESSING_ON_REQUEST,
   getChannel,
   listChannels,
   upsertChannel,
@@ -69,6 +71,10 @@ export async function follow(raw: string) {
     // whatever it was, which for a channel nobody has chosen is off.
     autoAnalyze: old?.autoAnalyze || false,
     createdAt: old?.createdAt || new Date().toISOString(),
+    // A seeded channel was created when the seed ran, which may be months
+    // before anyone followed it. followed_at is the follow, so it is stamped
+    // here and never derived from created_at.
+    followedAt: old?.followedAt || new Date().toISOString(),
     lastPull: old?.lastPull || null,
     error: null,
   });
@@ -87,7 +93,20 @@ export async function updateChannel(input: unknown) {
   if (!c) throw Error("Channel not found.");
   // autoAnalyze is the spending switch and is changed here one channel at a
   // time, by a person. Nothing that turns discovery on may set it in bulk.
-  await upsertChannel({ ...c, ...p });
+  //
+  // processing says the same thing in words, so it moves with it. A row that
+  // read `automatic` while auto_analyze was off stated the opposite of the
+  // truth about spending.
+  await upsertChannel({
+    ...c,
+    ...p,
+    processing:
+      p.autoAnalyze === undefined
+        ? c.processing
+        : p.autoAnalyze
+          ? PROCESSING_AUTOMATIC
+          : PROCESSING_ON_REQUEST,
+  });
   return (await getChannel(p.id))!;
 }
 export async function pull(id: string, older = false) {
@@ -180,7 +199,9 @@ export async function pullDue() {
     if (c.lastPull && Date.now() - Date.parse(c.lastPull) < 3600000) continue;
     try {
       await pull(c.id);
-      if (c.autoAnalyze) {
+      // Both switches have to agree before anything is paid for: a row left
+      // saying `on-request` is not analysed whatever auto_analyze holds.
+      if (c.autoAnalyze && c.processing !== PROCESSING_ON_REQUEST) {
         const v = (
           await (
             await researchDB()

@@ -74,10 +74,21 @@ test("Team and account defaults parse from an empty object and match spec 6.2 / 
   });
   assert.equal(team.channels.discovery, "push");
   assert.equal(team.channels.pollIntervalMinutes, 60);
-  assert.equal(team.channels.seedDefaults, true);
-  assert.deepEqual(team.channels.defaultSelection, ["tier1", "leapedge-top20"]);
-  assert.deepEqual(team.channels.selection, []);
-  assert.equal(team.channels.autoAnalyzeNewChannels, false);
+  // F28: the channel selection is stated once, in seed/channels.ts, and every
+  // selection put into force is a versioned document. The Settings keys that
+  // repeated the rule and were read by nothing are gone, so the schema must not
+  // grow them back.
+  for (const dead of [
+    "seedDefaults",
+    "defaultSelection",
+    "selection",
+    "autoAnalyzeNewChannels",
+  ])
+    assert.equal(
+      dead in team.channels,
+      false,
+      `${dead} is not a second home for the selection rule`,
+    );
   assert.deepEqual(team.channels.historicalReplay, {
     tiers: ["tier1"],
     from: "2026-01-01",
@@ -244,7 +255,7 @@ test("configHash is stable across key order and irrelevant keys, and changes whe
     configHash({
       ...team,
       budget: { ...team.budget, monthlyUsd: 10 },
-      channels: { ...team.channels, selection: ["UC1"] },
+      channels: { ...team.channels, pollIntervalMinutes: 5 },
       accountDefaults: { ...team.accountDefaults, benchmark: "QQQ" },
     }),
     base,

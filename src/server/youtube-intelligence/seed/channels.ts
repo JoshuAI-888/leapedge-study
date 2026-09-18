@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import { docs, putIfAbsent } from "../research-store.ts";
 import {
+  DISCOVERY_SCHEDULED,
+  PROCESSING_AUTOMATIC,
+  PROCESSING_ON_REQUEST,
   listSeededChannels,
   seedChannel,
   setAutomaticAnalysis,
@@ -11,23 +14,23 @@ import {
   type SeedListData,
 } from "./lists.ts";
 /**
- * Two switches, and they are not the same switch.
- *
- * `discovery` says how a channel's uploads are found: `scheduled` is the free
- * metadata poll, `manual` is only when somebody asks. `processing` says what
- * happens to an upload once it is found: `automatic` spends money on the
- * analysis pipeline without asking, `on-request` waits for a person.
- *
- * Seeding arms the first and leaves the second off. Eighty channels on
+ * Seeding arms discovery and leaves processing off. Eighty channels on
  * scheduled discovery is a quota question; eighty channels on automatic
  * analysis is a bill nobody agreed to, so the paid switch is turned on only by
  * the recorded selection below, or one channel at a time from the Channels
- * surface.
+ * surface. The two switches themselves are defined beside the columns they
+ * write, in repos/channels.ts, and re-exported here for the seed's readers.
  */
-export const DISCOVERY_SCHEDULED = "scheduled";
-export const PROCESSING_AUTOMATIC = "automatic";
-export const PROCESSING_ON_REQUEST = "on-request";
-/** Tier 1 is selected outright; the LeapEdge list contributes its top 20. */
+export {
+  DISCOVERY_SCHEDULED,
+  PROCESSING_AUTOMATIC,
+  PROCESSING_ON_REQUEST,
+} from "../repos/channels.ts";
+/**
+ * Tier 1 is selected outright; the LeapEdge list contributes its top 20. This
+ * is the only statement of the rule: the Settings keys that used to repeat it
+ * were removed rather than left as a copy a person could edit with no effect.
+ */
 export const AUTOMATIC_TIER = 1;
 export const LEAPEDGE_SELECTED = 20;
 export const SELECTION_KIND = "channelSelection";
@@ -50,7 +53,6 @@ export type SelectionData = {
   at: string;
   reason: string;
   channelIds: string[];
-  candidates: number;
 };
 /**
  * Fold the lists into one channel per id. A channel on both lists is one
@@ -110,7 +112,6 @@ export function defaultSelection(resolved: ResolvedSeed[]): string[] {
  */
 export function selectionRecord(
   channelIds: string[],
-  candidates: number,
   at = new Date().toISOString(),
 ): SelectionData {
   const digest = createHash("sha256")
@@ -124,13 +125,17 @@ export function selectionRecord(
     at,
     reason: `Tier ${AUTOMATIC_TIER} channels and the top ${LEAPEDGE_SELECTED} of the ${LEAPEDGE} list are analysed automatically; every other seeded channel is discovered only.`,
     channelIds,
-    candidates,
   };
 }
-/** Every recorded selection, newest first. */
+/**
+ * Every recorded selection, newest first. Two recorded in the same millisecond
+ * keep the order the store returns them in, which is by the row's own
+ * created_at: a digest is not a clock, so it never decides which selection is
+ * in force.
+ */
 export async function selectionHistory(): Promise<SelectionData[]> {
   return (await docs<SelectionData>(SELECTION_KIND)).sort((a, b) =>
-    a.at === b.at ? b.id.localeCompare(a.id) : b.at < a.at ? -1 : 1,
+    a.at === b.at ? 0 : b.at < a.at ? -1 : 1,
   );
 }
 /** The selection in force, or null before anything has been seeded. */
@@ -145,6 +150,12 @@ export async function currentSelection(): Promise<SelectionData | null> {
  * insert-if-absent, so the second run neither writes a second version nor
  * re-projects the first over whatever a person has since chosen. A selection
  * is projected onto the rows exactly once, when it is first recorded.
+ *
+ * Growing a list with channels the rule does not select leaves the selection
+ * unchanged, so nothing is re-projected and the new rows keep what seedChannel
+ * inserted them with: discovery on, paid analysis off. That default is the
+ * whole protection for those rows, so it is asserted directly rather than
+ * through the projection.
  */
 export async function seedChannels(lists: SeedListData[] = seedLists()) {
   const resolved = resolveSeeds(lists);
@@ -158,7 +169,7 @@ export async function seedChannels(lists: SeedListData[] = seedLists()) {
       discovery: DISCOVERY_SCHEDULED,
       processing: PROCESSING_ON_REQUEST,
     });
-  const selection = selectionRecord(defaultSelection(resolved), resolved.length);
+  const selection = selectionRecord(defaultSelection(resolved));
   const recorded = await putIfAbsent(SELECTION_KIND, selection.id, selection);
   if (recorded)
     await setAutomaticAnalysis(

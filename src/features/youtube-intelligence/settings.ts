@@ -149,12 +149,12 @@ export const TeamPreferences = z.object({
     .object({
       discovery: z.enum(["push", "poll"]).default("push"),
       pollIntervalMinutes: z.number().int().min(5).max(1440).default(60),
-      seedDefaults: z.boolean().default(true),
-      defaultSelection: z
-        .array(z.string().min(1))
-        .default(["tier1", "leapedge-top20"]),
-      selection: z.array(z.string().min(1)).default([]),
-      autoAnalyzeNewChannels: z.boolean().default(false),
+      // The seed's default selection is NOT stated here. It used to be, as
+      // `seedDefaults`, `defaultSelection`, `selection` and
+      // `autoAnalyzeNewChannels`, and nothing read any of them: the rule was
+      // written twice and the copy a person could edit had no effect.
+      // seed/channels.ts holds the rule, and each selection it puts into force
+      // is recorded as a versioned document.
       historicalReplay: z
         .object({
           tiers: z.array(z.string().min(1)).default(["tier1"]),

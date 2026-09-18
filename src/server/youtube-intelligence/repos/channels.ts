@@ -7,6 +7,22 @@ import { database, iso, json } from "../database.ts";
  * two workers upserting the same channel agree on the row the second one
  * leaves behind, and neither waits for the other.
  */
+/**
+ * Two switches on a channel row, and they are not the same switch.
+ *
+ * `discovery` says how a channel's uploads are found: `scheduled` is the free
+ * metadata poll, `manual` is only when somebody asks. `processing` says what
+ * happens to an upload once it is found: `automatic` spends money on the
+ * analysis pipeline without asking, `on-request` waits for a person.
+ *
+ * `processing` is the readable statement of the same decision `auto_analyze`
+ * gates on, so every writer of one writes the other, and pullDue refuses to
+ * spend when they disagree. They live here rather than in seed/ because they
+ * are values of these columns, and channels.ts writes them too.
+ */
+export const DISCOVERY_SCHEDULED = "scheduled";
+export const PROCESSING_AUTOMATIC = "automatic";
+export const PROCESSING_ON_REQUEST = "on-request";
 export type ChannelRow = {
   id: string;
   handle: string;
@@ -42,6 +58,7 @@ export type ChannelFields = {
   favorite?: unknown;
   autoAnalyze?: unknown;
   createdAt?: unknown;
+  followedAt?: unknown;
   lastPull?: unknown;
   lastAttempt?: unknown;
   nextPullAt?: unknown;
@@ -91,6 +108,11 @@ export async function upsertChannel(payload: ChannelFields) {
   const id = text(payload.id);
   if (!id) throw Error("A channel row needs an id.");
   const createdAt = iso(payload.createdAt) ?? new Date().toISOString();
+  // followed_at is the moment somebody followed the channel, and pullDue uses
+  // it as the cut-off for which uploads automatic analysis pays for. A seeded
+  // row was created long before anyone followed it, so it must not fall back to
+  // created_at: that would buy the whole back catalogue since the seed run.
+  const followedAt = iso(payload.followedAt);
   const seed = Array.isArray(payload.seedSource)
     ? payload.seedSource.map((s) => String(s))
     : [];
@@ -125,7 +147,7 @@ export async function upsertChannel(payload: ChannelFields) {
       text(payload.discovery),
       text(payload.processing),
       payload.autoAnalyze === true,
-      createdAt,
+      followedAt,
       text(payload.uploads) ?? "",
       payload.active !== false,
       payload.favorite === true,
