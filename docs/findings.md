@@ -74,6 +74,70 @@ longer shows follows and pulls. Nothing reads events by the `channel` kind
 (only `providerAlert` is read that way), so nothing breaks — but the feed is
 quietly less complete than it was.
 
+### 12. The `jobs` table and `repos/jobs.ts` are dead code
+**Owner:** F26 · **Severity:** low in itself, but it means the queue is unstarted
+
+`grep -rn 'enqueueJob|repos/jobs' src tests scripts` excluding the file itself
+returns zero hits. `0003_relational.sql` created the table and F24 wrote the
+repository; nothing — not even a test — calls `enqueueJob`, `listJobs` or
+`countJobs`. The cron route still calls the in-memory `sweep()` and
+`processWindow()` from `runner.ts` and never touches the table.
+
+### 13. `YTI_QUEUE_PAUSED` is read by nothing, so the documented drain does nothing
+**Owner:** F26 · **Severity:** high, because a runbook step silently no-ops
+
+`env.ts:35` declares it. The only reads anywhere are three assertions in
+`tests/connection.test.ts`. The dispatcher never consults it.
+
+`deploy.md` step 4.7 tells an operator to set it and redeploy before a
+type-changing migration, then wait for the queue to drain. Today that sets a
+variable nothing reads, and the worker keeps claiming. The instruction is worse
+than no instruction, because it produces confidence.
+
+### 14. `int8` comes back from node-postgres as a string
+**Owner:** F29, F24b · **Severity:** medium, and offline tests cannot catch it
+
+`database.ts:66-71` registers type parsers for `numeric` (1700) and `timestamptz`
+(1184) only. `int8` is left to node-postgres, which returns it as a **string**.
+`COUNT(*)` and `pg_total_relation_size()` are both `int8`.
+
+PGlite returns them as numbers, so `after.bytes - before.bytes` is arithmetic in
+every test and string subtraction in production. Existing call sites that wrap
+in `Number(...)` are safe; new ones doing arithmetic directly are not.
+
+### 15. `summarizeScores` reports 0 rather than absent for the fields F25 must not store
+**Owner:** F25 · **Severity:** medium
+
+`registry.ts:115` feeds settlements through `summarizeScores`. Run against rows
+that lack `spy`, `excess` and `beatsSpy`, it returns `meanSpy`, `meanExcess` and
+`beatsSpyRate` as **0** — a plausible-looking number, not a missing value. So
+F25 can satisfy "do not store excess return" and still surface zeros that read
+as real.
+
+### 16. `settlement` is a document kind and `settlements` will be a table
+**Owner:** F25 · **Severity:** low
+
+A fourth name collision beyond the three F24's audit found:
+`metrics/context.ts:57` reads `docs<unknown>("settlement")`, and F25's migration
+creates a `settlements` table.
+
+### 17. A `date` column round-trips differently under PGlite and node-postgres
+**Owner:** F25 · **Severity:** medium, and it is invisible offline
+
+Under PGlite a `date` returns as a `Date` at UTC midnight and reads back
+correctly. Under node-postgres — the production path — pg-types builds the Date
+in **local** time, so a session date can shift a day either side of midnight
+depending on where the function runs. Session dates should be stored as text
+with a `CHECK`, not as `date`.
+
+### 18. `tests/backup.test.ts` fails in both directions
+**Owner:** whoever adds the next table · **Severity:** low, a sequencing trap
+
+The test asserts both that every created table is covered and that every covered
+table exists. So adding a name to `BACKUP_TABLES` **before** the migration that
+creates it fails the phantom check. Add the migration and the list entry in the
+same commit.
+
 ---
 
 ## Open — documentation
