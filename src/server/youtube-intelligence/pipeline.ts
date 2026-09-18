@@ -53,6 +53,7 @@ import {
   retainResponse,
 } from "./store.ts";
 import { priceTableVersion } from "./transport/prices.ts";
+import { rowsForRun, writeRunRows } from "./repos/publish.ts";
 import { isRetryableTransportError, withRetry } from "./retry.ts";
 import * as P from "./prompts.ts";
 import { nativeTranscript } from "./transcripts.ts";
@@ -1184,5 +1185,13 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           ]
         : []),
     ];
+    /**
+     * The relational record (spec 8). Accepted claims, their evidence spans
+     * and every kept mention are written through repos/, which is the only
+     * door to those tables. Ids derive from the run, so a run that re-enters
+     * publish after a resume rewrites its own rows rather than adding a
+     * second set, and no lock is held across the write.
+     */
+    await writeRunRows(rowsForRun(run));
   } else throw Error("Unknown processing stage.");
 }

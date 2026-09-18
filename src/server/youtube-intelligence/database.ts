@@ -181,7 +181,7 @@ export function poolMax(
  * highest version loadMigrations() finds on disk, so adding 0003_*.sql without
  * raising this number fails `npm test`.
  */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 /**
  * Fail fast in one direction only. BEHIND means the database has not got the
  * tables or columns this code queries, so every statement is a guess: refuse

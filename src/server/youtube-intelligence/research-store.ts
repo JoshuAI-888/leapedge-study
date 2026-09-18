@@ -3,6 +3,14 @@ import { randomUUID, createHash } from "node:crypto";
 import { z } from "zod";
 import { db, get, lease, list, create } from "./store.ts";
 import { iso, json } from "./database.ts";
+import {
+  listChannels,
+  upsertFromDocument as upsertChannelRow,
+  type ChannelDocument,
+} from "./repos/channels.ts";
+import { listClaims } from "./repos/claims.ts";
+import { listMentions } from "./repos/mentions.ts";
+import { insertTranscript } from "./repos/transcripts.ts";
 import * as P from "./prompts.ts";
 import bundledPrompts from "./prompt-versions.json" with { type: "json" };
 import {
@@ -148,6 +156,43 @@ export async function events<T = Record<string, unknown>>(
       payload: json(r.payload) as T,
     }));
 }
+/**
+ * Mirror a document that now has a table of its own into its row, through the
+ * repository that owns it. This is the migration window, not a second home for
+ * the data: the writers of these documents (channels.ts, transcripts.ts) still
+ * write the document, and scripts/migrate-documents.ts moves what is already
+ * stored, so without the mirror every channel followed or caption fetched
+ * after the one-off run would be missing from the rows the surfaces read.
+ * It goes when those writers call the repositories directly.
+ */
+async function mirrorDocument(kind: string, id: string, payload: unknown) {
+  if (kind === "channel") {
+    await upsertChannelRow(payload as ChannelDocument);
+    return;
+  }
+  if (kind !== "managedCaption") return;
+  const caption = payload as {
+    source?: { segments?: unknown; language?: unknown };
+    provider?: unknown;
+    at?: unknown;
+  };
+  if (!caption?.source?.segments) return;
+  await insertTranscript({
+    id,
+    videoId: id.split(":")[2] ?? "",
+    kind: "caption",
+    provider: caption.provider === undefined ? null : String(caption.provider),
+    language:
+      caption.source.language === undefined
+        ? null
+        : String(caption.source.language),
+    hash: createHash("sha256")
+      .update(JSON.stringify(caption.source.segments))
+      .digest("hex"),
+    segments: caption.source.segments,
+    createdAt: iso(caption.at) ?? undefined,
+  });
+}
 export async function put(kind: string, id: string, payload: unknown) {
   const d = await researchDB(),
     now = new Date().toISOString();
@@ -162,6 +207,7 @@ export async function put(kind: string, id: string, payload: unknown) {
         "INSERT INTO yi_events(id,kind,entity_id,at,payload) VALUES($1,$2,$3,$4,$5)",
       )
       .run(randomUUID(), kind, id, now, JSON.stringify(payload));
+    await mirrorDocument(kind, id, payload);
     return payload;
   });
 }
@@ -634,7 +680,11 @@ export async function researchSnapshot() {
     },
     preferences: await preferences(),
     prompts: await promptVersions(),
-    channels: await readDocs("channel"),
+    // Rows, not documents (spec 8): claims, mentions and channels are read
+    // through repos/ so every surface sees the relational record.
+    channels: await listChannels(),
+    claims: await listClaims(),
+    mentions: await listMentions(),
     ideas: await readDocs("idea"),
     watchlist: await readDocs("watchlist"),
     comparisons: await readDocs("comparison"),

@@ -81,6 +81,19 @@ An additive migration — a new table, a new nullable column, a new index — ne
 5. Deploy the bundle that expects the new shape.
 6. Unset `YTI_QUEUE_PAUSED`.
 
+### Moving the lab documents into the relational tables
+
+`0003_relational.sql` adds the tables of spec 8 — `channels`, `claims`, `mentions`, `evidence_spans`, `transcripts`, `reviews`, `instruments`, `jobs` — and changes nothing that already exists, so it is an additive migration and needs no pause. Filling them from the documents already stored is a separate, one-off step, and the live database holds real research, so it is rehearsed before it is run:
+
+1. **Branch.** Create a Neon branch of production and point `DATABASE_URL` and `DATABASE_URL_UNPOOLED` at it. Set `YTI_ISOLATED_DB=true` and `YTI_PRODUCTION_DB_HOST` to the production host; the script refuses to run without both, exactly as `npm run db:check` does.
+2. **Migrate the branch's schema.** `npm run migrate`.
+3. **Dry run against the branch.** `node --env-file=.env --experimental-strip-types scripts/migrate-documents.ts --dry-run`. It writes nothing and prints, per document kind, how many documents it would read and how many rows it would write. Read the numbers before going further.
+4. **Migrate the branch.** The same command without `--dry-run`. It is idempotent and resumable: every row id derives from the document or run it came from, so an interrupted run is finished by running it again and a completed one writes nothing the second time.
+5. **Verify the branch.** `... scripts/migrate-documents.ts --verify` compares document counts against row counts and exits non-zero on any mismatch, naming the kind. A non-zero exit here stops the rehearsal.
+6. **Then production.** Deploy so the schema is migrated, then run the same three commands against production with `--production` in place of `YTI_ISOLATED_DB=true`: dry run, migrate, verify.
+
+The migration never deletes a source document. `yi_documents` keeps every row it read, so `npm run research:export` remains a complete restore point and a mistake in the row shape is repaired by fixing the script and running it again. Deleting the migrated documents is a later step, taken once the rows have been read from in production and trusted.
+
 ### Previews
 
 One database branch per preview. A preview that shares the production database will migrate it out from under production during its build, and the schema check will then refuse to start the older production bundle. Vercel's Neon integration creates a branch per preview deployment; enable it, and keep `YTI_PREVIEW_READ_ONLY=true` where a preview should not dispatch at all.
