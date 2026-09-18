@@ -230,6 +230,17 @@ export function assertPreviewIsNotProduction(
  * unset YTI_PRODUCTION_DB_HOST both refuse: neither rules production out.
  * Names only; no value is ever printed.
  */
+/**
+ * `ep-x-pooler.region…` and `ep-x.region…` are the two endpoints of one
+ * database. Every comparison between a connection host and a configured host
+ * goes through this, because the two variables name different endpoints of the
+ * same cluster: `DATABASE_URL` is pooled and `YTI_PRODUCTION_DB_HOST` is the
+ * direct host. Comparing them raw never matches, which silently disarms any
+ * guard built on it.
+ */
+export function cluster(host: string) {
+  return host.replace("-pooler", "");
+}
 export function assertIsolatedDatabase(
   what = "this script",
   env: Record<string, string | undefined> = process.env,
@@ -239,17 +250,20 @@ export function assertIsolatedDatabase(
   if (env.YTI_ISOLATED_DB !== "true")
     throw refuse("set YTI_ISOLATED_DB=true to confirm the target is disposable");
   if (env.YTI_DB === "pglite") return;
-  const url = env.DATABASE_URL?.trim();
-  if (!url) throw refuse("neither YTI_DB=pglite nor DATABASE_URL is set");
+  const url = env.DATABASE_URL?.trim() ?? env.DATABASE_URL_UNPOOLED?.trim();
+  if (!url)
+    throw refuse(
+      "none of YTI_DB=pglite, DATABASE_URL or DATABASE_URL_UNPOOLED is set",
+    );
   const host = hostOf(url);
-  if (!host) throw refuse("the host of DATABASE_URL cannot be read");
+  if (!host) throw refuse("the connection host cannot be read");
   const production = env.YTI_PRODUCTION_DB_HOST?.trim().toLowerCase();
   if (!production)
     throw refuse(
       "YTI_PRODUCTION_DB_HOST is unset, so the production host cannot be ruled out",
     );
-  if (host === production)
-    throw refuse("DATABASE_URL points at the production host");
+  if (cluster(host) === cluster(production))
+    throw refuse("the connection points at the production database");
 }
 /** The direct (unpooled) endpoint; the pooled one cannot hold a session lock. */
 export function directConnectionString(

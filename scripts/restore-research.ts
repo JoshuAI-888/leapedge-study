@@ -1,12 +1,18 @@
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { useDirectConnection } from "../src/server/youtube-intelligence/database.ts";
+import { assertIsolatedDatabase } from "../src/server/youtube-intelligence/migrations/run.ts";
 import { db } from "../src/server/youtube-intelligence/store.ts";
 // The DIRECT (unpooled) endpoint, chosen here and not by the npm alias, so that
 // running this file straight with node opens the same connection. See
 // useDirectConnection(): a transaction-mode pooler discards session-scoped work
 // and mostly does so without erroring.
 useDirectConnection();
+// A restore only ever goes into a new, empty database: the runbook says restore,
+// verify, then point the app at it. The empty-table check below catches a
+// populated target, but not an empty production branch, so the target is ruled
+// out by host as well.
+assertIsolatedDatabase("restore-research");
 const input = JSON.parse(readFileSync(process.argv[2], "utf8"));
 if (
   input.version !== 1 ||

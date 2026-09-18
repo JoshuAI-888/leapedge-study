@@ -28,8 +28,14 @@ export type TranscriptInput = Omit<TranscriptRow, "createdAt"> & {
   segments: unknown;
   createdAt?: string;
 };
-/** Everything but `segments`. A table view must not drag the text across the pooler. */
-const PROJECTION = "id,video_id,kind,provider,language,hash,created_at";
+/**
+ * Everything but `segments`. A table view must not drag the text across the
+ * pooler. Exported so a test can assert on the column list itself: the row
+ * converter below builds a fixed object, so a listing would look identical
+ * whether or not the query selected the text, and asserting on the result
+ * cannot catch `segments` being added back here.
+ */
+export const PROJECTION = "id,video_id,kind,provider,language,hash,created_at";
 function convert(r: Record<string, unknown>): TranscriptRow {
   const kind = String(r.kind);
   return {

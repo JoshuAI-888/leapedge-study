@@ -11,7 +11,7 @@ try {
       "scripts/prepare-institutional-fixtures.ts",
       "scripts/replay-institutional-evidence.ts",
       "scripts/smoke-entity-classification.ts",
-      "scripts/audit-institutional-chinese.ts",
+      "scripts/audit-institutional-chinese.ts (removed after the campaign; its per-claim critique is superseded)",
       "scripts/save-institutional-research.ts",
     ],
   });

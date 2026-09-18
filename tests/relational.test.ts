@@ -22,6 +22,7 @@ import {
   listTranscripts,
   segmentsFor,
   countTranscripts,
+  PROJECTION,
 } from "../src/server/youtube-intelligence/repos/transcripts.ts";
 import { countChannels, listChannels } from "../src/server/youtube-intelligence/repos/channels.ts";
 import {
@@ -223,6 +224,26 @@ test("A republished run takes back the rows its new pass no longer produces", as
     ["NVDA"],
     "the dropped mention's row is gone",
   );
+  // A claim that survives but cites fewer ranges than before. Its spans are
+  // keyed by ordinal, so the ones past the new last ordinal are never
+  // overwritten and have to be deleted outright. Without this pass, every
+  // assertion above still holds: the whole-claim delete covers a claim that
+  // disappears, not one that keeps its row and sheds evidence.
+  const nvda = (await claimsForRun(runId)).find((c) => c.ticker === "NVDA")!;
+  const before = (await spansForClaim(nvda.id)).map((s) => s.ordinal);
+  assert.ok(before.length > 1, "the fixture claim cites more than one range");
+  const kept = claims.find((c) => c.claim.ticker === "NVDA")!.claim as unknown as {
+    evidence: unknown[];
+  };
+  kept.evidence = kept.evidence.slice(0, before.length - 1);
+  run.stage = "publish";
+  run.status = "running";
+  await step(run);
+  assert.deepEqual(
+    (await spansForClaim(nvda.id)).map((s) => s.ordinal),
+    before.slice(0, -1),
+    "the span past the new last ordinal is deleted, not left behind",
+  );
 });
 
 test("researchSnapshot reads claims, mentions and channels from rows", async () => {
@@ -276,6 +297,15 @@ test("A list query over transcripts never selects the text column", async () => 
     hash: "c".repeat(64),
     segments,
   });
+  // Assert on the column list itself. The converter below builds a fixed
+  // object, so a listing looks the same whether or not the query selected the
+  // text: without this line, putting `segments` back into PROJECTION leaves
+  // every assertion in this test green.
+  assert.equal(
+    PROJECTION.split(",").includes("segments"),
+    false,
+    "the list projection must not name the text column",
+  );
   const rows = await listTranscripts();
   assert.equal(rows.length, 1);
   assert.equal("segments" in rows[0], false, "the projection leaves the text out");

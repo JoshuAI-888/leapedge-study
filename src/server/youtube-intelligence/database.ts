@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import pg from "pg";
 import type { PGlite } from "@electric-sql/pglite";
 import {
+  cluster,
   directConnectionString,
   migrate,
   pgliteClient,
@@ -125,10 +126,6 @@ function hostOf(url: string | undefined) {
     return undefined;
   }
 }
-/** ep-x-pooler.region… and ep-x.region… are the two endpoints of one cluster. */
-function cluster(host: string) {
-  return host.replace("-pooler", "");
-}
 function connectionString(
   env: Record<string, string | undefined> = process.env,
 ) {
@@ -138,9 +135,25 @@ function connectionString(
     // DATABASE_URL_UNPOOLED pointing somewhere else would slip past them and be
     // written to. Neon issues the pair together and they differ only by
     // -pooler; anything else is a hand-edited mistake. Names only, no values.
+    //
+    // DATABASE_URL is required here even though this branch does not use it:
+    // before the two roles existed, every script needed it and could not run
+    // without it, and skipping the comparison when it is absent would hand that
+    // invariant back — `restore-research.ts` would write to whatever the direct
+    // endpoint named, with nothing having checked it.
     const pooled = hostOf(env.DATABASE_URL),
       unpooled = hostOf(direct);
-    if (pooled && unpooled && cluster(pooled) !== cluster(unpooled))
+    if (!pooled)
+      throw Error(
+        "DATABASE_URL must be set alongside DATABASE_URL_UNPOOLED, so the direct endpoint can be checked against it.",
+      );
+    if (!unpooled)
+      throw Error("The host of DATABASE_URL_UNPOOLED cannot be read.");
+    if (unpooled.includes("-pooler"))
+      throw Error(
+        "DATABASE_URL_UNPOOLED names a pooled endpoint: session locks and DDL would be discarded without erroring. Use the direct endpoint.",
+      );
+    if (cluster(pooled) !== cluster(unpooled))
       throw Error(
         "DATABASE_URL and DATABASE_URL_UNPOOLED are not the two endpoints of one database: point both at the same branch.",
       );

@@ -215,16 +215,18 @@ test("readEnv() accepts the new hosted keys and still reports only key names", (
     YTI_PREVIEW_READ_ONLY: "true",
     RESEND_WEBHOOK_SECRET: "whsec_test",
   });
-  assert.equal(env.YTI_POOL_MAX, 6);
+  assert.equal(env.YTI_POOL_MAX, "6");
   assert.equal(env.YTI_QUEUE_PAUSED, "true");
   assert.equal(env.YTI_BUDGET_USD, 15);
   assert.equal(env.YTI_TRANSCRIPT_CREDIT_BUDGET, 90);
-  assert.throws(
-    () => readEnv({ YTI_POOL_MAX: "sixteen" }),
-    (e: unknown) => {
-      assert.match((e as Error).message, /YTI_POOL_MAX/);
-      assert.doesNotMatch((e as Error).message, /sixteen/);
-      return true;
-    },
-  );
+  // YTI_POOL_MAX is carried as a string on purpose. readEnv() runs on every
+  // serving request, so a typo in it must not stop an instance starting: it is
+  // poolMax() that parses the value and falls back. This assertion replaces one
+  // that required readEnv() to throw on "sixteen" — the opposite contract.
+  assert.equal(readEnv({ YTI_POOL_MAX: "sixteen" }).YTI_POOL_MAX, "sixteen");
+  assert.equal(poolMax({ YTI_POOL_MAX: "sixteen" }), 4);
+  assert.equal(poolMax({ YTI_POOL_MAX: "0" }), 4);
+  assert.equal(poolMax({ YTI_POOL_MAX: "9001" }), 4);
+  assert.equal(poolMax({ YTI_POOL_MAX: "2.5" }), 4);
+  assert.equal(poolMax({ YTI_POOL_MAX: "6" }), 6);
 });

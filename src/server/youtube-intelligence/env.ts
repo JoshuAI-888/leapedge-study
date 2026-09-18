@@ -28,10 +28,10 @@ export const Env = z.object({
   DATABASE_URL: secret, // required; the POOLED Postgres endpoint
   DATABASE_URL_UNPOOLED: secret, // required when hosted; the DIRECT endpoint
   YTI_PRODUCTION_DB_HOST: secret, // required when hosted; both database guards
-  YTI_POOL_MAX: z.preprocess(
-    (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-    z.coerce.number().int().min(1).max(64).optional(),
-  ), // clients per serving instance; database.ts owns the default
+  // A plain string, not a number: readEnv() runs on every serving request, and
+  // a typo here must not stop an instance starting. database.ts's poolMax()
+  // parses it and falls back to the default on anything it cannot use.
+  YTI_POOL_MAX: secret, // clients per serving instance
   YTI_QUEUE_PAUSED: secret, // "true" drains the queue before a migration
   YTI_PUSH_CALLBACK_SECRET: secret, // required when channels.discovery=push
   YTI_HARD_BUDGET_USD_MONTH: amount, // absolute ceiling the UI cannot raise
