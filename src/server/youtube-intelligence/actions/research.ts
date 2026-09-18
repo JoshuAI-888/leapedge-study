@@ -2,6 +2,7 @@ import { z } from "zod";
 import * as R from "../research-store.ts";
 import { countClaims } from "../repos/claims.ts";
 import { countMentions } from "../repos/mentions.ts";
+import type { performance } from "../market.ts";
 import { reads, writes, nothing, type ActionTable } from "./types.ts";
 /**
  * The snapshot reads claims and mentions under a repo row limit, so it reports
@@ -16,7 +17,8 @@ async function snapshot() {
   ]);
   return {
     ...s,
-    performances: await R.docs("performance"),
+    performances:
+      await R.docs<Awaited<ReturnType<typeof performance>>>("performance"),
     counts: {
       claims: {
         returned: s.claims.length,
@@ -31,6 +33,8 @@ async function snapshot() {
     },
   };
 }
+/** What the research front end reads, including the truncation counts. */
+export type ResearchSnapshot = Awaited<ReturnType<typeof snapshot>>;
 export const research: ActionTable = {
   snapshot: reads(nothing, snapshot),
   saveIdea: writes(

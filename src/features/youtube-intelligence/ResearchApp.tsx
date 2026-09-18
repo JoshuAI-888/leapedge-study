@@ -13,8 +13,7 @@ import {
   ChartNoAxesCombined,
   Sun,
 } from "lucide-react";
-import type { researchSnapshot } from "../../server/youtube-intelligence/research-store";
-import type { performance } from "../../server/youtube-intelligence/market";
+import type { ResearchSnapshot } from "../../server/youtube-intelligence/actions/research";
 import type { Channel } from "../../server/youtube-intelligence/channels";
 import type { Briefing } from "../../server/youtube-intelligence/briefings";
 import {
@@ -27,9 +26,7 @@ import { CorpusPanel } from "./CorpusPanel";
 import { displayEntity, englishText } from "./entities";
 import { TrendsPanel } from "./TrendsPanel";
 import { localDate } from "./research-utils";
-type Snapshot = Awaited<ReturnType<typeof researchSnapshot>> & {
-  performances: Awaited<ReturnType<typeof performance>>[];
-};
+type Snapshot = ResearchSnapshot;
 const tabs = [
   ["today", "Today", Sun],
   ["channels", "Channels", Users],

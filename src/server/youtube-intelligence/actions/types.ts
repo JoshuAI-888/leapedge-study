@@ -2,8 +2,9 @@ import { z } from "zod";
 /**
  * One row of a resource's dispatch table. `schema` is the action's own input,
  * so nothing an action does not declare can reach its handler, and `mutating`
- * says whether running it writes — which is what lets the read-only preview
- * refuse a write without anyone maintaining a list of action names.
+ * says whether running it writes — which is what splits the methods on the
+ * route, a read on GET and a write on POST, and refuses a write inside a
+ * read-only preview behind the guard that already refuses one at the edge.
  */
 export type ActionEntry = {
   schema: z.ZodType;

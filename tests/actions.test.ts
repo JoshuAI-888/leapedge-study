@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { z } from "zod";
 import { freshDatabase } from "./helpers/db.ts";
 import {
   RESOURCES,
@@ -10,6 +11,7 @@ import {
 import * as dispatchRoute from "../src/app/api/youtube-intelligence/[resource]/[action]/route.ts";
 import * as legacyRoute from "../src/app/api/intelligence/research/route.ts";
 import { upsertClaim } from "../src/server/youtube-intelligence/repos/claims.ts";
+import { promptVersions } from "../src/server/youtube-intelligence/research-store.ts";
 /** The actions the pre-F30 switch in the research route handled. */
 const LEGACY_ACTIONS = [
   "captionProbe",
@@ -125,6 +127,69 @@ test("An action refuses a field it does not declare", async () => {
     false,
   );
 });
+/**
+ * The same refusal, asserted over the whole table rather than one action. A
+ * plain `z.object` still rejects `{__undeclared__: true}` because the required
+ * fields are missing, so the assertion is on the `unrecognized_keys` issue
+ * itself: only a strict object raises it.
+ */
+test("Every object-shaped action schema refuses an undeclared field", () => {
+  const shapes = entries.flatMap(({ resource, action, entry }) => {
+    const schema = (
+      entry.schema instanceof z.ZodArray
+        ? entry.schema.def.element
+        : entry.schema
+    ) as z.ZodType;
+    return schema instanceof z.ZodObject ? [{ resource, action, schema }] : [];
+  });
+  assert.ok(shapes.length >= 15, `only ${shapes.length} object schemas found`);
+  for (const { resource, action, schema } of shapes) {
+    const result = schema.safeParse({ __undeclared__: true });
+    assert.equal(result.success, false, `${resource}/${action}`);
+    assert.ok(
+      result.error?.issues.some((i) => i.code === "unrecognized_keys"),
+      `${resource}/${action} accepts a key it does not declare`,
+    );
+  }
+});
+/**
+ * The research app's "Use as new version" button prefills the prompt textarea
+ * with a snapshot version, which carries the registry's `hash` and
+ * `createdAt`. The action has to take that paste, and store neither column.
+ */
+test("The prompt action takes a version copied out of the snapshot", async () => {
+  await freshDatabase();
+  const [existing] = await promptVersions();
+  assert.ok(existing.hash && existing.createdAt);
+  const pasted = {
+    ...existing,
+    id: existing.id + ".next",
+    rationale: "Describe the intended measurable improvement.",
+  };
+  const post = async (body: unknown) =>
+    await dispatchRoute.POST(
+      new Request(url("settings", "prompt"), {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+      params("settings", "prompt"),
+    );
+  // Verbatim, the paste duplicates the content it was copied from, so it is
+  // refused for that and never for the two keys it carries.
+  const duplicate = await post(pasted);
+  assert.match((await duplicate.json()).error, /already exists/);
+  const edited = await post({
+    ...pasted,
+    extraction: `${pasted.extraction}\n\nAlso report the speaker's conviction.`,
+  });
+  assert.equal(edited.status, 200);
+  const saved = (await edited.json()).result as Record<string, unknown>;
+  assert.equal(saved.id, pasted.id);
+  assert.equal("hash" in saved, false);
+  assert.equal("createdAt" in saved, false);
+  const stored = (await promptVersions()).find((v) => v.id === pasted.id);
+  assert.ok(stored);
+});
 test("A read answers GET and a write answers POST, never the other way round", async () => {
   await freshDatabase();
   const read = await dispatchRoute.POST(
@@ -185,12 +250,30 @@ test("The old route still answers identically for a representative action", asyn
     }),
   );
   assert.equal((await unknown.json()).error, "Unknown research action.");
+  // Both GET branches are compared against the handler they delegate to. The
+  // snapshot also carries a `preferences` key, so asserting one truthy field
+  // could not tell the preferences document from the whole snapshot.
+  const json = async (v: unknown) => JSON.parse(JSON.stringify(await v));
   const preferences = await legacyRoute.GET(
     new Request(
       "http://127.0.0.1:3000/api/intelligence/research?view=preferences",
     ),
   );
-  assert.ok((await preferences.json()).preferences.timezone);
+  const asPreferences = await preferences.json();
+  assert.deepEqual(Object.keys(asPreferences), ["preferences"]);
+  assert.deepEqual(
+    asPreferences,
+    await json(dispatch("settings", "current", undefined)),
+  );
+  const snapshot = await legacyRoute.GET(
+    new Request("http://127.0.0.1:3000/api/intelligence/research"),
+  );
+  const asSnapshot = await snapshot.json();
+  assert.ok(Array.isArray(asSnapshot.performances));
+  assert.deepEqual(
+    asSnapshot,
+    await json(dispatch("research", "snapshot", undefined)),
+  );
 });
 test("The snapshot reports the claim and mention rows it left behind", async () => {
   await freshDatabase();
