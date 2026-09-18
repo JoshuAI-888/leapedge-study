@@ -10,6 +10,7 @@
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1",
+    "migrate": "node --env-file-if-exists=.env --experimental-strip-types scripts/migrate.ts",
     "worker": "node --env-file=.env --experimental-strip-types scripts/worker.ts",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "typecheck": "next typegen && tsc --noEmit",

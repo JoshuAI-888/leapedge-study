@@ -3,6 +3,9 @@ import { mkdirSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import pg from "pg";
 import type { PGlite } from "@electric-sql/pglite";
+import { migrate, pgliteClient } from "./migrations/run.ts";
+// The SQLite schema only. Every Postgres database, PGlite included, is built by
+// the numbered files under migrations/, which are the single source of truth.
 const schema = `
 CREATE TABLE IF NOT EXISTS yi_runs(id TEXT PRIMARY KEY,video_id TEXT,url TEXT,model TEXT,prompt_version TEXT,title TEXT,status TEXT,stage TEXT,created_at TEXT,updated_at TEXT,error TEXT,input TEXT,output TEXT,cost DOUBLE PRECISION DEFAULT 0,lease_until BIGINT DEFAULT 0,lease_token TEXT);
 CREATE TABLE IF NOT EXISTS yi_calls(id TEXT PRIMARY KEY,run_id TEXT,stage TEXT,status TEXT,amount DOUBLE PRECISION,metrics TEXT,attempt INTEGER DEFAULT 1);
@@ -21,9 +24,8 @@ CREATE INDEX IF NOT EXISTS yi_discoveries_channel ON yi_discoveries(channel_id,d
 type Row = Record<string, unknown>;
 /**
  * A database created before attempts were keyed (spec section 4.4) has no
- * yi_calls.attempt column. The schema above covers a fresh database; these add
- * the column to an existing one and then the index over it. SQLite has no
- * ADD COLUMN IF NOT EXISTS, so its column list is inspected first.
+ * yi_calls.attempt column. SQLite has no ADD COLUMN IF NOT EXISTS, so its
+ * column list is inspected first; the Postgres form is in 0001_baseline.sql.
  */
 const attemptIndex =
   "CREATE INDEX IF NOT EXISTS yi_calls_run_stage_attempt ON yi_calls(run_id,stage,attempt)";
@@ -33,16 +35,9 @@ function sqliteMigrate(c: DatabaseSync) {
     c.exec("ALTER TABLE yi_calls ADD COLUMN attempt INTEGER DEFAULT 1");
   c.exec(attemptIndex);
 }
-async function postgresMigrate(c: pg.PoolClient | PGlite) {
-  await simple(
-    c,
-    "ALTER TABLE yi_calls ADD COLUMN IF NOT EXISTS attempt INTEGER DEFAULT 1",
-  );
-  await simple(c, attemptIndex);
-}
 // PGlite is an in-process, single-connection Postgres used by tests
 // (YTI_DB=pglite). It shares the pg.Pool code path: postgresSQL() rewriting,
-// $n placeholders and the same schema statements.
+// $n placeholders and the same migrations.
 type Connection = pg.PoolClient | DatabaseSync | PGlite;
 const context = new AsyncLocalStorage<Connection>();
 let pool: pg.Pool | undefined,
@@ -107,9 +102,8 @@ async function initialize() {
         const { PGlite: Driver } = await loadPGlite();
         const instance = await Driver.create();
         // Single connection: no advisory lock is needed (or meaningful) here.
-        await instance.exec(schema);
+        await migrate(pgliteClient(instance));
         pglite = instance;
-        await postgresMigrate(instance);
       } else if (process.env.DATABASE_URL) {
         const connectionUrl = new URL(process.env.DATABASE_URL);
         if (connectionUrl.searchParams.get("sslmode") === "require")
@@ -121,19 +115,9 @@ async function initialize() {
           idleTimeoutMillis: 10000,
         });
         pool.on("error", () => console.error("Database pool connection error"));
-        const c = await pool.connect();
-        try {
-          await c.query("BEGIN");
-          await c.query("SELECT pg_advisory_xact_lock(78941001)");
-          await c.query(schema);
-          await postgresMigrate(c);
-          await c.query("COMMIT");
-        } catch (e) {
-          await c.query("ROLLBACK");
-          throw e;
-        } finally {
-          c.release();
-        }
+        // No schema work here: the deployment migrates with `npm run migrate`
+        // on the direct endpoint, never from a serving instance on the pooled
+        // one. migrations/README.md says why.
       } else {
         if (process.env.VERCEL)
           throw Error("DATABASE_URL is required on Vercel.");

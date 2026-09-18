@@ -22,6 +22,7 @@ test("PGlite driver applies the schema and reports the Postgres dialect", async 
       "yi_documents",
       "yi_events",
       "yi_heartbeat",
+      "yi_migrations",
       "yi_prompts",
       "yi_responses",
       "yi_runs",
