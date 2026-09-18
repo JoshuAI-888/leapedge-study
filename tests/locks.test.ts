@@ -32,8 +32,10 @@ async function sources() {
 /** The SQL string literals in one file, quoted SQL strings stripped out. */
 function sqlLiterals(text: string) {
   const found: string[] = [];
-  for (const m of text.matchAll(/"((?:[^"\\\n]|\\.)*)"|`([^`]*)`/g)) {
-    const body = m[1] ?? m[2] ?? "";
+  for (const m of text.matchAll(
+    /"((?:[^"\\\n]|\\.)*)"|`([^`]*)`|'((?:''|[^'\n])*)'/g,
+  )) {
+    const body = m[1] ?? m[2] ?? m[3] ?? "";
     if (SQL_KEYWORD.test(body)) found.push(body.replace(/'(?:''|[^'])*'/g, ""));
   }
   return found;
@@ -46,7 +48,7 @@ test("No SQLite, no dialect rewriter, no global lock and no raw row readers rema
     [/78941002/, "the global transaction lock key"],
     [/JSON\.parse\(String\(/, "a raw row-JSON read instead of json()"],
     [
-      /String\([A-Za-z_$][\w$]*\.\w*_at\)/,
+      /String\((?:[A-Za-z_$][\w$]*\.)+\w*_at\)/,
       "String() on a timestamp column instead of iso()",
     ],
   ];
@@ -150,13 +152,23 @@ test("Concurrent create() of the same input yields one row, and the index reject
   const again = await store.create("wkAqHlYL7bQ", "model", input, "v1");
   assert.notEqual(again.id, made[0].id);
 });
-test("Two concurrent claimNext() calls never hand out the same run", async () => {
+test("claimNext() hands a run to one caller and asks Postgres to keep it that way", async () => {
   await freshDatabase();
   const run = await store.create("wkAqHlYL7bQ", "model", {}, "v1");
   const claims = await Promise.all([store.claimNext(), store.claimNext()]);
   const won = claims.filter((c) => c !== null);
   assert.equal(won.length, 1);
   assert.equal(won[0]!.run.id, run.id);
+  // PGlite has one connection, so the two calls above serialise and the
+  // assertions hold even with the row lock removed. The guard is therefore
+  // asserted in the source as well: contention is proved only by
+  // scripts/postgres-check.ts against a real branch through the pooler.
+  const source = await readFile("src/server/youtube-intelligence/store.ts", "utf8");
+  const claim = source
+    .split("\n")
+    .find((l) => /SELECT \* FROM yi_runs WHERE .*claimable/.test(l));
+  assert.ok(claim, "the claim statement moved; update this assertion");
+  assert.match(claim!, /FOR UPDATE SKIP LOCKED/);
 });
 test("A second open reservation for the same run and stage is rejected", async () => {
   const d = await freshDatabase();

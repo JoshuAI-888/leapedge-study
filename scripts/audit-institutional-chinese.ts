@@ -9,6 +9,7 @@ import {
 import { create, db } from "../src/server/youtube-intelligence/store.ts";
 import { modelCall } from "../src/server/youtube-intelligence/pipeline.ts";
 import { z } from "zod";
+import { assertIsolatedDatabase } from "../src/server/youtube-intelligence/migrations/run.ts";
 const file = "data/institutional-20260916/chinese-semantic-audit.json";
 const baseline = JSON.parse(
   readFileSync(
@@ -36,8 +37,7 @@ if (!process.argv.includes("--execute")) {
   );
   process.exit(0);
 }
-if (process.env.YTI_ISOLATED_DB !== "true")
-  throw Error("Use isolated test database");
+assertIsolatedDatabase("audit-institutional-chinese");
 if (existsSync(file))
   throw Error(
     "Audit checkpoint exists; inspect it instead of repeating paid calls",

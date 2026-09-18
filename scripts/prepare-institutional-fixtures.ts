@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { db } from "../src/server/youtube-intelligence/store.ts";
-if (process.env.YTI_ISOLATED_DB !== "true")
-  throw Error("Use isolated local test database");
+import { assertIsolatedDatabase } from "../src/server/youtube-intelligence/migrations/run.ts";
+assertIsolatedDatabase("prepare-institutional-fixtures");
 try {
   for (const id of [
     "d557f5b6-a0c6-46ff-a847-49a414094228",
