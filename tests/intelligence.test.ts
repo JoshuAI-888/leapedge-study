@@ -1,8 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import {
   videoId,
   coverage,
@@ -107,8 +104,7 @@ test("Local endpoint guard blocks cross-origin paid requests and public hosts", 
   assert.throws(() => guard(new Request("https://public.test/api")));
 });
 test("Persisted jobs deduplicate, fence stale workers and preserve uncertain spend", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "yti-test-"));
-  process.env.YTI_DB_PATH = join(dir, "test.sqlite");
+  process.env.YTI_DB = "pglite";
   process.env.YTI_BUDGET_USD = "2";
   const store = await import("../src/server/youtube-intelligence/store.ts");
   try {
@@ -118,7 +114,7 @@ test("Persisted jobs deduplicate, fence stale workers and preserve uncertain spe
     const first = (await store.claimNext())!;
     assert.equal(await store.claimNext(), null);
     await (await store.db())
-      .prepare("UPDATE yi_runs SET lease_until=0 WHERE id=?")
+      .prepare("UPDATE yi_runs SET lease_until=0 WHERE id=$1")
       .run(a.id);
     const second = (await store.claimNext())!;
     await assert.rejects(
@@ -142,7 +138,6 @@ test("Persisted jobs deduplicate, fence stale workers and preserve uncertain spe
     assert.equal((await store.health()).spentOrReservedUsd, 0.1);
   } finally {
     await (await store.db()).close();
-    rmSync(dir, { recursive: true, force: true });
   }
 });
 test("Incomplete imported source is held for review before any paid synthesis", async () => {

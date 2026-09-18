@@ -1,8 +1,5 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import {
   scoreCall,
   summarizeScores,
@@ -104,10 +101,7 @@ test("Digest scheduling uses local timezone, does not repeat a day, and respects
   assert.equal(digestDue(new Date(), { ...p, digestEnabled: false }, []), null);
 });
 test("Immutable prompt registry, snapshot comparisons, append-only reviews and share revocation persist", async () => {
-  process.env.YTI_DB_PATH = join(
-    mkdtempSync(join(tmpdir(), "yti-research-")),
-    "test.sqlite",
-  );
+  process.env.YTI_DB = "pglite";
   const R =
     await import("../src/server/youtube-intelligence/research-store.ts");
   const S = await import("../src/server/youtube-intelligence/store.ts");

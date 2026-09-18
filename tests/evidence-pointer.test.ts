@@ -1,13 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-process.env.YTI_DB_PATH = join(
-  mkdtempSync(join(tmpdir(), "yti-pointer-")),
-  "test.sqlite",
-);
+process.env.YTI_DB = "pglite";
 delete process.env.DATABASE_URL;
 process.env.OPENROUTER_API_KEY = "fixture";
 process.env.YTI_BUDGET_USD = "10";

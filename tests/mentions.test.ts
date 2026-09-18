@@ -1,13 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-process.env.YTI_DB_PATH = join(
-  mkdtempSync(join(tmpdir(), "yti-mentions-")),
-  "test.sqlite",
-);
+process.env.YTI_DB = "pglite";
 delete process.env.DATABASE_URL;
 process.env.OPENROUTER_API_KEY = "fixture";
 process.env.YTI_BUDGET_USD = "10";
@@ -327,8 +321,14 @@ test("a mention whose span does not resolve is rejected and recorded, never stor
   const rejected = run.output.rejectedMentions as {
     mention: { rationale_en: string };
     reason: string;
+    kind: string;
   }[];
   assert.equal(rejected.length, 3);
+  assert.deepEqual(
+    rejected.map((r) => r.kind),
+    ["extraction", "extraction", "extraction"],
+    "extraction's own rejections say so, so the critic's are tellable apart",
+  );
   assert.deepEqual(
     rejected.map((r) => r.mention.rationale_en),
     [unknownRange.rationale_en, reversed.rationale_en, noRange.rationale_en],

@@ -78,6 +78,15 @@ test("Team and account defaults parse from an empty object and match spec 6.2 / 
   assert.deepEqual(team.channels.defaultSelection, ["tier1", "leapedge-top20"]);
   assert.deepEqual(team.channels.selection, []);
   assert.equal(team.channels.autoAnalyzeNewChannels, false);
+  // A team that has chosen channels has them in its stored document, and the
+  // schema is what decides whether the next save keeps them: zod strips what it
+  // does not declare, so deleting one of these keys silently discards the
+  // choice on the following write rather than failing anywhere visible.
+  const chosen = TeamPreferences.parse({
+    channels: { selection: ["UC1"], autoAnalyzeNewChannels: true },
+  });
+  assert.deepEqual(chosen.channels.selection, ["UC1"]);
+  assert.equal(chosen.channels.autoAnalyzeNewChannels, true);
   assert.deepEqual(team.channels.historicalReplay, {
     tiers: ["tier1"],
     from: "2026-01-01",
