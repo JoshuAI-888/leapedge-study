@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { useDirectConnection } from "../src/server/youtube-intelligence/database.ts";
 import {
   db,
   create,
@@ -15,6 +16,11 @@ import {
   claimLease,
   putIfAbsent,
 } from "../src/server/youtube-intelligence/research-store.ts";
+// The DIRECT (unpooled) endpoint, chosen here and not by the npm alias, so that
+// running this file straight with node opens the same connection. See
+// useDirectConnection(): a transaction-mode pooler discards session-scoped work
+// and mostly does so without erroring.
+useDirectConnection();
 if (!process.env.DATABASE_URL || process.env.YTI_ISOLATED_DB !== "true")
   throw Error("Use a dedicated isolated database and YTI_ISOLATED_DB=true.");
 const r = await create(

@@ -1,6 +1,12 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { useDirectConnection } from "../src/server/youtube-intelligence/database.ts";
 import { db } from "../src/server/youtube-intelligence/store.ts";
+// The DIRECT (unpooled) endpoint, chosen here and not by the npm alias, so that
+// running this file straight with node opens the same connection. See
+// useDirectConnection(): a transaction-mode pooler discards session-scoped work
+// and mostly does so without erroring.
+useDirectConnection();
 const tables = [
   "yi_runs",
   "yi_calls",

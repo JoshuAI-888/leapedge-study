@@ -1,6 +1,12 @@
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { useDirectConnection } from "../src/server/youtube-intelligence/database.ts";
 import { db } from "../src/server/youtube-intelligence/store.ts";
+// The DIRECT (unpooled) endpoint, chosen here and not by the npm alias, so that
+// running this file straight with node opens the same connection. See
+// useDirectConnection(): a transaction-mode pooler discards session-scoped work
+// and mostly does so without erroring.
+useDirectConnection();
 const input = JSON.parse(readFileSync(process.argv[2], "utf8"));
 if (
   input.version !== 1 ||

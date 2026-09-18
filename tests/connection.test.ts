@@ -1,7 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import {
   SCHEMA_VERSION,
+  appliedSchemaVersion,
   assertSchemaVersion,
   classifyDatabaseError,
   connectionRole,
@@ -21,9 +23,11 @@ import { teamDefaults } from "../src/features/youtube-intelligence/settings.ts";
  * suite still runs with no keys, no network and no Postgres.
  */
 test("The schema check refuses a database that is behind and accepts one that is ahead", () => {
+  // The message is the brief's literal, with nothing after "applied", so that a
+  // build log grepped for it matches the whole line rather than a prefix.
   assert.throws(
     () => assertSchemaVersion(1, 2),
-    /^Error: Schema version 2 required, 1 applied\.$/,
+    /^Error: Schema version 2 required, 1 applied$/,
   );
   // A database with no yi_migrations at all reads as version 0.
   assert.throws(
@@ -36,6 +40,71 @@ test("The schema check refuses a database that is behind and accepts one that is
   assert.doesNotThrow(() => assertSchemaVersion(2, 2));
   assert.doesNotThrow(() => assertSchemaVersion(3, 2));
   assert.doesNotThrow(() => assertSchemaVersion(99, 2));
+});
+test("Only a missing yi_migrations reads as nothing applied", async () => {
+  const failing = (error: unknown) => async () => {
+    throw error;
+  };
+  assert.equal(await appliedSchemaVersion(async () => [{ version: 2 }]), 2);
+  assert.equal(await appliedSchemaVersion(async () => []), 0);
+  assert.equal(
+    await appliedSchemaVersion(
+      failing(
+        Object.assign(Error('relation "yi_migrations" does not exist'), {
+          code: "42P01",
+        }),
+      ),
+    ),
+    0,
+  );
+  // A lost connection is not an empty schema. Swallowing it would turn a
+  // routine blip on a correctly migrated database into a schema-skew refusal.
+  for (const error of [
+    Object.assign(Error("Connection terminated unexpectedly"), {
+      code: "ECONNRESET",
+    }),
+    Object.assign(
+      Error("terminating connection due to administrator command"),
+      {
+        code: "57P01",
+      },
+    ),
+    Object.assign(Error("password authentication failed"), { code: "28P01" }),
+  ])
+    await assert.rejects(() => appliedSchemaVersion(failing(error)), {
+      message: (error as Error).message,
+    });
+});
+test("The maintenance scripts take the direct endpoint themselves", async () => {
+  // A guarantee that lives in an npm alias evaporates the first time someone
+  // runs the file the way every other script in scripts/ is run, and a
+  // transaction-mode pooler discards session-scoped work without erroring.
+  for (const file of [
+    "scripts/postgres-check.ts",
+    "scripts/export-research.ts",
+    "scripts/restore-research.ts",
+  ]) {
+    const text = await readFile(file, "utf8");
+    const call = text.indexOf("useDirectConnection();");
+    assert.ok(call > 0, `${file} must call useDirectConnection()`);
+    assert.ok(
+      call < text.indexOf("await "),
+      `${file} must call useDirectConnection() before its first query`,
+    );
+  }
+});
+test(".env.example names the database variables and none that were deleted", async () => {
+  const text = await readFile(".env.example", "utf8");
+  for (const key of [
+    "DATABASE_URL=",
+    "DATABASE_URL_UNPOOLED=",
+    "YTI_PRODUCTION_DB_HOST=",
+    "YTI_POOL_MAX=",
+    "YTI_QUEUE_PAUSED=",
+  ])
+    assert.ok(text.includes(key), `.env.example must name ${key}`);
+  for (const gone of ["YTI_DB_PATH", "SQLite", "sqlite"])
+    assert.ok(!text.includes(gone), `.env.example still mentions ${gone}`);
 });
 test("SCHEMA_VERSION is the newest migration in this checkout", async () => {
   const files = await loadMigrations();

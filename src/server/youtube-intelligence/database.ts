@@ -81,7 +81,7 @@ export type ConnectionRole = "pooled" | "direct";
  * Which of the two endpoints this process opens. A Next.js function and the
  * cron route take the POOLED one (DATABASE_URL, whose host carries -pooler):
  * many short-lived instances, a handful of clients each. A maintenance script
- * sets YTI_DB_ROLE=direct and gets the DIRECT one through
+ * calls useDirectConnection() and gets the DIRECT one through
  * directConnectionString(), so no script reads DATABASE_URL_UNPOOLED itself.
  *
  * The direct endpoint is not a preference. DDL, session-level advisory locks
@@ -94,6 +94,28 @@ export function connectionRole(
   env: Record<string, string | undefined> = process.env,
 ): ConnectionRole {
   return env.YTI_DB_ROLE === "direct" ? "direct" : "pooled";
+}
+let directRequested = false;
+/**
+ * Opt this process into the DIRECT endpoint. A maintenance script calls this
+ * before its first query, so the choice lives in the script rather than in the
+ * shell line that starts it: `node scripts/postgres-check.ts` and
+ * `npm run db:check` then open the same endpoint. YTI_DB_ROLE=direct does the
+ * same thing from outside and the npm aliases still set it, but a script that
+ * needs the direct endpoint must not depend on being started a particular way.
+ *
+ * DDL, session-level advisory locks (pg_advisory_lock), SET, temporary tables
+ * and pg_dump are all unavailable through a transaction-mode pooler, and the
+ * dangerous half of that list does not error: the statement succeeds against a
+ * session the pooler then hands to another client, and the effect is silently
+ * discarded.
+ */
+export function useDirectConnection() {
+  if (ready)
+    throw Error(
+      "useDirectConnection() must be called before the first query: the role picks the connection string.",
+    );
+  directRequested = true;
 }
 function hostOf(url: string | undefined) {
   if (!url) return undefined;
@@ -110,7 +132,7 @@ function cluster(host: string) {
 function connectionString(
   env: Record<string, string | undefined> = process.env,
 ) {
-  if (connectionRole(env) === "direct") {
+  if (directRequested || connectionRole(env) === "direct") {
     const direct = directConnectionString(env);
     // The guards a maintenance script runs first inspect DATABASE_URL, so a
     // DATABASE_URL_UNPOOLED pointing somewhere else would slip past them and be
@@ -173,9 +195,12 @@ export function assertSchemaVersion(
   required: number = SCHEMA_VERSION,
 ) {
   if (applied < required)
-    throw Error(`Schema version ${required} required, ${applied} applied.`);
+    throw Error(`Schema version ${required} required, ${applied} applied`);
 }
-async function appliedSchemaVersion(
+/** undefined_table: no yi_migrations, so nothing has been applied. */
+const UNDEFINED_TABLE = "42P01";
+/** Exported for the test that pins which failures may read as "0 applied". */
+export async function appliedSchemaVersion(
   query: (sql: string) => Promise<Row[]>,
 ): Promise<number> {
   try {
@@ -183,8 +208,13 @@ async function appliedSchemaVersion(
       "SELECT COALESCE(MAX(version),0) AS version FROM yi_migrations",
     );
     return Number(rows[0]?.version ?? 0);
-  } catch {
-    // No yi_migrations table at all, so nothing has been applied.
+  } catch (e) {
+    // Only a missing table means nothing is applied. A dropped connection, a
+    // suspending compute or a refused login must stay what they are: read as
+    // "0 applied" they would surface on a correctly migrated database as a
+    // schema-skew refusal, which is both false and the opposite of the rule
+    // that a lost connection is ordinary.
+    if ((e as { code?: unknown })?.code !== UNDEFINED_TABLE) throw e;
     return 0;
   }
 }
@@ -233,6 +263,22 @@ export function classifyDatabaseError(error: unknown): DatabaseErrorClass {
 }
 export function isRetryableDatabaseError(error: unknown) {
   return classifyDatabaseError(error) === "retryable";
+}
+/**
+ * Runs a read once more when the first attempt failed on a dropped connection.
+ * The statement this guards is a SELECT, so repeating it is free of
+ * consequence, and the first statement after a cold start is the likely one to
+ * meet a compute that has just suspended. Nothing that writes is retried
+ * anywhere: a run whose transaction was cut stays leased until its lease
+ * expires and is re-claimed.
+ */
+async function readOnceMore<T>(read: () => Promise<T>): Promise<T> {
+  try {
+    return await read();
+  } catch (e) {
+    if (!isRetryableDatabaseError(e)) throw e;
+    return read();
+  }
 }
 // PGlite is an in-process, single-connection Postgres used by tests
 // (YTI_DB=pglite). It shares the pg.Pool code path: the same $n placeholders,
@@ -315,10 +361,13 @@ async function initialize() {
         instance.on("error", (error) =>
           // A client can fail while idle, which pg reports here rather than to a
           // caller. It has already discarded that client, so the next connect()
-          // opens a fresh one and nothing needs retrying from here: a run whose
-          // transaction was cut stays leased until its lease expires and is
-          // re-claimed. The class is logged so a suspended compute is not read
-          // as a defect.
+          // opens a fresh one. The classification here is diagnostic only —
+          // nothing is retried from this handler, and "retryable" means a
+          // suspended compute or a recycled pooler connection rather than a
+          // defect to investigate. Recovery is pg discarding the client plus
+          // lease expiry: a run whose transaction was cut stays leased until it
+          // expires and is re-claimed. readOnceMore() is where the same
+          // classification does decide something.
           console.error(
             `Database pool connection error (${classifyDatabaseError(error)})`,
           ),
@@ -332,8 +381,10 @@ async function initialize() {
         // no connections behind for the retry initialize() allows.
         try {
           assertSchemaVersion(
-            await appliedSchemaVersion(
-              async (sql) => (await instance.query(sql)).rows as Row[],
+            await readOnceMore(() =>
+              appliedSchemaVersion(
+                async (sql) => (await instance.query(sql)).rows as Row[],
+              ),
             ),
           );
         } catch (e) {
