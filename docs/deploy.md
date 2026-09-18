@@ -248,6 +248,12 @@ When A–D are in, I run the gate and report. Your decision is one of three, in 
 
 ## Part 4 — Phase 2: Neon and Vercel
 
+> **Just setting Vercel up for the first time?** Read
+> [`vercel-setup.md`](./vercel-setup.md) instead — the same ten steps, short,
+> with no phase-2 sequencing or rollback detail. Come back here for steps 4.6
+> to 4.8 and for Part 7's operations.
+
+
 This is the part with real consequences. Phase 2 moves the database from "whatever was there" to a properly migrated, Postgres-only, relational schema, and turns the every-minute cron into the real worker. Several of these steps must happen **before the code that needs them merges**, or every deployment breaks.
 
 ### 4.1 Link the Vercel project to GitHub, with `main` as production
