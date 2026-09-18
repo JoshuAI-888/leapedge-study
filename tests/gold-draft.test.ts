@@ -175,7 +175,9 @@ test("claims and mentions are copied from the run output, nothing invented", () 
   const result = draft([runRow()]);
   const [c] = result.cases;
   assert.equal(c.videoId, "aaaaaaaaaaa");
-  assert.equal(c.source, "run run-1 (fixture-model, fixture.v1)");
+  // Run id and prompt version only: a drafted case is committed, so it names
+  // no model.
+  assert.equal(c.source, "run run-1 (fixture.v1)");
   assert.deepEqual(c.expectedClaims, [
     {
       id: "c1",
@@ -276,7 +278,7 @@ test("a claim with no pointer evidence keeps a null span and says so", () => {
   parseGoldSet(JSON.parse(JSON.stringify(result.set)));
 });
 
-test("the sentiment of a call comes from the run's own mention", () => {
+test("a call's sentiment is read the way the evaluator reads it, not from the mention", () => {
   const result = draft([
     runRow({
       output: {
@@ -286,9 +288,35 @@ test("the sentiment of a call comes from the run's own mention", () => {
       },
     }),
   ]);
-  assert.equal(result.cases[0].expectedClaims[0].sentiment, "bearish");
-  // A call mention is the claim; only non-calls become expected rejections.
+  // evaluations/gold-set/report.ts reads a claim's own sentiment, else the stance
+  // table — it never consults the linked mention. The drafter must agree, or every
+  // drafted expectation disagrees with the run it came from. Here the claim
+  // carries no sentiment, so "conditional" resolves through the stance table and
+  // the mention's "bearish" is deliberately ignored.
+  assert.equal(result.cases[0].expectedClaims[0].sentiment, "neutral");
+  // A call mention whose claim was drafted is already covered by that claim.
   assert.deepEqual(result.cases[0].expectedRejections, []);
+});
+
+test("a call whose claim the critique rejected is kept as an expected rejection", () => {
+  const result = draft([
+    runRow({
+      output: {
+        source: { source_kind: "imported_transcript", language: "en", segments: [] },
+        claims: [checkedClaim({ passed: false }, { stance: "long", ticker: "AAPL" })],
+        mentions: [mention({ ticker: "AAPL", instrument_as_spoken: "Apple", stance: "long", sentiment: "bullish", is_call: true, claim_id: "c1" })],
+      },
+    }),
+  ]);
+  // The claim did not pass, so it is not an expectation; the mention must not
+  // vanish with it, or the case silently omits something the run recorded.
+  assert.deepEqual(result.cases[0].expectedClaims, []);
+  assert.equal(result.cases[0].expectedRejections.length, 1);
+  assert.equal(result.cases[0].expectedRejections[0].ticker, "AAPL");
+  assert.match(
+    result.cases[0].expectedRejections[0].reason,
+    /did not accept as a claim/,
+  );
 });
 
 test("sentiment falls back to the stance table when no mention links the claim", () => {

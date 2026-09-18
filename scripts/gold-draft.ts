@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { SourceSpan } from "../src/features/youtube-intelligence/contracts.ts";
@@ -294,9 +294,6 @@ export function draftCase(
         : "no language in output.source or output.metadata",
     );
 
-  const mentionSentiment = new Map(
-    mentions.data.flatMap((m) => (m.claim_id ? [[m.claim_id, m.sentiment] as const] : [])),
-  );
   const expectedClaims: GoldClaimData[] = [];
   const byKey = new Map<string, string>();
   for (const candidate of claims.data.filter((c) => c.passed)) {
@@ -314,32 +311,43 @@ export function draftCase(
         `claims ${clash} and ${candidate.id} share ticker ${ticker} and stance ${candidate.claim.stance}`,
       );
     byKey.set(key, candidate.id);
+    // The same reading evaluations/gold-set/report.ts:83-86 takes of an observed
+    // claim: its own sentiment, else the stance. Never the linked mention's —
+    // the evaluator does not look there, so preferring it would draft an
+    // expectation that disagrees with the run it was drafted from.
     const own = Sentiment.safeParse(candidate.claim.sentiment);
     expectedClaims.push({
       id: candidate.id,
       ticker,
       stance: candidate.claim.stance,
       creator_conviction: candidate.claim.creator_conviction,
-      sentiment:
-        mentionSentiment.get(candidate.id) ??
-        (own.success ? own.data : sentimentFromStance(candidate.claim.stance)),
+      sentiment: own.success
+        ? own.data
+        : sentimentFromStance(candidate.claim.stance),
       span: claimSpan(candidate.claim),
       anchorVerified: false,
       reviewer: "",
       reviewedAt: "",
     });
   }
-  const expectedRejections: GoldRejectionData[] = mentions.data.flatMap((m, i) =>
-    m.is_call
-      ? []
-      : [
-          {
-            id: `m${i + 1}`,
-            ticker: m.ticker?.trim() ? m.ticker.trim() : null,
-            reason: `${m.instrument_as_spoken} is a ${m.sentiment} mention (stance ${m.stance}) the run did not extract as a call: ${m.rationale_en}`,
-          },
-        ],
-  );
+  // Every mention the run recorded must appear somewhere. A call whose claim is
+  // in expectedClaims is already covered; a call whose claim the critique
+  // rejected is not, and dropping it silently would hide it from the reviewer.
+  const draftedClaimIds = new Set(expectedClaims.map((c) => c.id));
+  const expectedRejections: GoldRejectionData[] = mentions.data.flatMap((m, i) => {
+    const covered = m.is_call && m.claim_id !== null && draftedClaimIds.has(m.claim_id);
+    if (covered) return [];
+    const reason = m.is_call
+      ? `${m.instrument_as_spoken} is a ${m.sentiment} call (stance ${m.stance}) the run recorded but did not accept as a claim: ${m.rationale_en}`
+      : `${m.instrument_as_spoken} is a ${m.sentiment} mention (stance ${m.stance}) the run did not extract as a call: ${m.rationale_en}`;
+    return [
+      {
+        id: `m${i + 1}`,
+        ticker: m.ticker?.trim() ? m.ticker.trim() : null,
+        reason,
+      },
+    ];
+  });
   if (!expectedClaims.length && !expectedRejections.length)
     return skip("output has no accepted claim and no mention to draft");
   const ids = [...expectedClaims, ...expectedRejections].map((x) => x.id);
@@ -364,7 +372,9 @@ export function draftCase(
     split: options.split,
     status: "pending",
     review: null,
-    source: `run ${row.id} (${row.model}, ${row.promptVersion})`,
+    // Run id and prompt version only. A drafted case is committed, and the run
+    // export the id points at already records which model produced it.
+    source: `run ${row.id} (${row.promptVersion})`,
     notes,
     expectedClaims,
     expectedRejections,
@@ -424,7 +434,7 @@ export function draftGoldSet(
     version: GOLD_SET_VERSION,
     attribution: [
       `Drafted by scripts/gold-draft.ts (${GOLD_DRAFT_VERSION}) from ${
-        runsPath ?? "exported runs"
+        runsPath ? basename(runsPath) : "exported runs"
       }: one case per completed run, every expectation copied from the stored run output.`,
       "Every case is pending and every anchorVerified is false: nothing here is ground truth. Reviewers check each span against the audio, fill in the reviewer and review date, and flip status to verified.",
     ],
