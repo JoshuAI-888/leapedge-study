@@ -46,6 +46,9 @@ function Json({ value }: { value: unknown }) {
 function fields(form: HTMLFormElement) {
   return Object.fromEntries(new FormData(form));
 }
+function field(form: HTMLFormElement, name: string) {
+  return String(new FormData(form).get(name) ?? "");
+}
 export function ResearchApp() {
   const [data, setData] = useState<Snapshot | null>(null),
     [tab, setTab] = useState("today"),
@@ -1756,7 +1759,7 @@ export function ResearchApp() {
                   try {
                     act(
                       "prompt",
-                      JSON.parse(String(fields(e.currentTarget).prompt)),
+                      JSON.parse(field(e.currentTarget, "prompt")),
                     );
                   } catch {
                     setError("Enter valid prompt JSON.");
@@ -1825,7 +1828,7 @@ export function ResearchApp() {
                 <div className="research-row" key={String(s.id)}>
                   <span>
                     {String(s.id).slice(0, 8)} · expires{" "}
-                    {String(s.expires_at).slice(0, 50)} ·{" "}
+                    {(s.expires_at ?? "").slice(0, 50)} ·{" "}
                     {s.revoked_at ? "revoked" : "active"}
                   </span>
                   <button

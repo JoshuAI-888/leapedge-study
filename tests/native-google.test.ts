@@ -1,8 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import {
   nativeGoogleStep,
   recoveryWindows,
@@ -11,9 +8,8 @@ import { execute } from "../src/server/youtube-intelligence/native-google-core.t
 import { create, db } from "../src/server/youtube-intelligence/store.ts";
 
 test("Native adapter retains full failure and bounded recovery without replacing original evidence; rollback sends nothing", async () => {
-  const directory = mkdtempSync(join(tmpdir(), "yti-native-"));
   delete process.env.DATABASE_URL;
-  process.env.YTI_DB_PATH = join(directory, "test.sqlite");
+  process.env.YTI_DB = "pglite";
   process.env.YTI_BUDGET_USD = "10";
   process.env.GEMINI_API_KEY = "fixture-key";
   process.env.YTI_NATIVE_GOOGLE_ENABLED = "true";
@@ -89,7 +85,6 @@ test("Native adapter retains full failure and bounded recovery without replacing
     assert.match(r.error!, /disabled/);
   } finally {
     await db().close();
-    rmSync(directory, { recursive: true, force: true });
   }
 });
 test("Recovery windows are <=90 seconds, within duration, and cannot recover inaccessible media", () => {

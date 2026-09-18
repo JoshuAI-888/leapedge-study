@@ -2,10 +2,24 @@ import {
   Entity,
   aliasKey,
 } from "../../features/youtube-intelligence/entities.ts";
-import { docs, put, researchDB } from "./research-store.ts";
+import { docs, lockedDoc, put, researchDB } from "./research-store.ts";
+import { advisoryKey } from "./database.ts";
+/**
+ * Alias uniqueness spans every entity document, so it cannot be expressed as an
+ * index on one row. A transaction-scoped advisory lock covers the read and the
+ * write that follows it, and is taken before any row lock so the two writers
+ * here always take their locks in the same order.
+ */
+const ALIAS_LOCK = advisoryKey("yi:entity:alias");
+async function lockAliases() {
+  await researchDB()
+    .prepare("SELECT pg_advisory_xact_lock($1::bigint)")
+    .get(ALIAS_LOCK);
+}
 export async function saveEntity(input: unknown) {
   const e = Entity.parse(input);
   return researchDB().transaction(async () => {
+    await lockAliases();
     const all = await docs<ReturnType<typeof Entity.parse>>("entity");
     const aliases = new Set([e.name, ...e.aliases].map(aliasKey));
     if (
@@ -121,7 +135,6 @@ export async function entityStep(
 
 export async function mergeEntities(input: unknown) {
   const { z } = await import("zod");
-  const { doc } = await import("./research-store.ts");
   const p = z
     .object({
       sourceId: z.string(),
@@ -131,11 +144,17 @@ export async function mergeEntities(input: unknown) {
     .parse(input);
   if (p.sourceId === p.targetId) throw Error("Choose distinct entities");
   return researchDB().transaction(async () => {
-    const source = await doc<ReturnType<typeof Entity.parse>>(
+    await lockAliases();
+    // FOR UPDATE on both entity rows, so a concurrent merge or save of either
+    // side waits instead of reading what this transaction is about to replace.
+    const source = await lockedDoc<ReturnType<typeof Entity.parse>>(
         "entity",
         p.sourceId,
       ),
-      target = await doc<ReturnType<typeof Entity.parse>>("entity", p.targetId);
+      target = await lockedDoc<ReturnType<typeof Entity.parse>>(
+        "entity",
+        p.targetId,
+      );
     if (!source || !target)
       throw Error("Entity no longer exists; refresh first");
     if (
@@ -165,7 +184,7 @@ export async function mergeEntities(input: unknown) {
       reason: p.reason,
     });
     await researchDB()
-      .prepare("DELETE FROM yi_documents WHERE kind=? AND id=?")
+      .prepare("DELETE FROM yi_documents WHERE kind=$1 AND id=$2")
       .run("entity", source.id);
     return saveEntity(merged);
   });

@@ -1,12 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-process.env.YTI_DB_PATH = join(
-  mkdtempSync(join(tmpdir(), "managed-caption-")),
-  "test.sqlite",
-);
+process.env.YTI_DB = "pglite";
 delete process.env.DATABASE_URL;
 import {
   managedTranscript,

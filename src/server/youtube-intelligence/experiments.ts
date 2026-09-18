@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { randomUUID, createHash } from "node:crypto";
-import { doc, docs, put, prompt, queue, comparison } from "./research-store.ts";
+import {
+  lockedDoc,
+  docs,
+  put,
+  prompt,
+  queue,
+  comparison,
+} from "./research-store.ts";
 import { get, db } from "./store.ts";
 import {
   MODELS,
@@ -70,7 +77,9 @@ export async function finishExperiments() {
     )
       continue;
     await db().transaction(async () => {
-      if ((await doc("experiment", e.id))?.status !== "running") return;
+      // FOR UPDATE on the experiment row: a second caller that reaches the same
+      // experiment waits here and then sees it is no longer running.
+      if ((await lockedDoc("experiment", e.id))?.status !== "running") return;
       const rows = runs.map((r) => ({
         runId: r!.id,
         videoId: r!.videoId,

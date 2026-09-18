@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { doc, docs, put, researchDB, queue } from "./research-store.ts";
+import { json } from "./database.ts";
 export type Channel = {
   id: string;
   title: string;
@@ -113,7 +114,9 @@ export async function pull(id: string, older = false) {
       const r = await (
         await researchDB()
       )
-        .prepare("INSERT OR IGNORE INTO yi_discoveries VALUES(?,?,?,?,NULL)")
+        .prepare(
+          "INSERT INTO yi_discoveries(video_id,channel_id,payload,discovered_at,run_id) VALUES($1,$2,$3,$4,NULL) ON CONFLICT DO NOTHING",
+        )
         .run(videoId, id, JSON.stringify(payload), new Date().toISOString());
       added += Number(r.changes);
     }
@@ -148,14 +151,14 @@ export async function pull(id: string, older = false) {
 export async function analyzeDiscovery(id: string) {
   const d = await researchDB(),
     v = await d
-      .prepare("SELECT * FROM yi_discoveries WHERE video_id=?")
+      .prepare("SELECT * FROM yi_discoveries WHERE video_id=$1")
       .get(id);
   if (!v) throw Error("Upload not found.");
   if (v.run_id) return { id: v.run_id };
   const run = await queue(id);
   await d
     .prepare(
-      "UPDATE yi_discoveries SET run_id=? WHERE video_id=? AND run_id IS NULL",
+      "UPDATE yi_discoveries SET run_id=$1 WHERE video_id=$2 AND run_id IS NULL",
     )
     .run(run.id, id);
   return run;
@@ -176,13 +179,15 @@ export async function pullDue() {
             await researchDB()
           )
             .prepare(
-              "SELECT * FROM yi_discoveries WHERE channel_id=? AND run_id IS NULL ORDER BY discovered_at DESC",
+              "SELECT * FROM yi_discoveries WHERE channel_id=$1 AND run_id IS NULL ORDER BY discovered_at DESC",
             )
             .all(c.id)
         )
           .filter(
             (v) =>
-              Date.parse(JSON.parse(String(v.payload)).publishedAt) >=
+              Date.parse(
+                (json(v.payload) as { publishedAt: string }).publishedAt,
+              ) >=
               Date.parse(c.createdAt),
           )
           .slice(0, 3);

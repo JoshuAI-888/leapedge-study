@@ -1,7 +1,8 @@
 import { createHmac } from "node:crypto";
 import { constantEqual } from "./access.ts";
 import { db } from "./store.ts";
-import { doc, docs, put } from "./research-store.ts";
+import { docs, lockedDoc, put, putIfAbsent } from "./research-store.ts";
+import { iso } from "./database.ts";
 const EVENT_STATUS: Record<string, string> = {
   "email.delivered": "delivered",
   "email.bounced": "bounced",
@@ -11,7 +12,9 @@ const EVENT_STATUS: Record<string, string> = {
 };
 export async function reconcileDeliveryEvents(id: string) {
   return db().transaction(async () => {
-    const delivery = await doc<{
+    // FOR UPDATE on the delivery row, so a concurrent webhook cannot settle a
+    // newer outcome between this read and the write below.
+    const delivery = await lockedDoc<{
       id: string;
       providerId?: string;
       eventAt?: string;
@@ -79,7 +82,6 @@ export async function receiveEmailWebhook(body: string, headers: Headers) {
     process.env.RESEND_WEBHOOK_SECRET || "",
   );
   return db().transaction(async () => {
-    if (await doc("emailEvent", id)) return { duplicate: true };
     const type = String(payload.type),
       emailId = String(payload.data?.email_id || "");
     const status = (
@@ -91,28 +93,31 @@ export async function receiveEmailWebhook(body: string, headers: Headers) {
         "email.delivery_delayed": "delayed",
       } as Record<string, string>
     )[type];
-    const delivery = (
-      await docs<{ id: string; providerId?: string; eventAt?: string }>(
-        "delivery",
-      )
+    const at = iso(payload.created_at) ?? new Date().toISOString();
+    const matched = (
+      await docs<{ id: string; providerId?: string }>("delivery")
     ).find((d) => d.providerId === emailId);
-    await put("emailEvent", id, {
-      id,
-      type,
-      emailId,
-      at: payload.created_at || new Date().toISOString(),
-    });
+    // The event id is the dedupe key: an insert-if-absent decides which of two
+    // concurrent deliveries of the same webhook is the one that counts.
     if (
-      delivery &&
-      status &&
-      (!delivery.eventAt || String(payload.created_at) >= delivery.eventAt)
+      !(await putIfAbsent("emailEvent", id, { id, type, emailId, at }))
     )
-      await put("delivery", delivery.id, {
+      return { duplicate: true };
+    // Re-read the delivery under FOR UPDATE and ignore an event older than the
+    // outcome already stored, so a late arrival cannot regress the status.
+    const delivery = matched
+      ? await lockedDoc<{ id: string; eventAt?: string }>(
+          "delivery",
+          matched.id,
+        )
+      : null;
+    if (delivery && status && (!delivery.eventAt || at >= delivery.eventAt))
+      await put("delivery", matched!.id, {
         ...delivery,
         status,
-        eventAt: payload.created_at,
+        eventAt: at,
         lastEvent: type,
       });
-    return { received: true, matched: !!delivery };
+    return { received: true, matched: !!matched };
   });
 }

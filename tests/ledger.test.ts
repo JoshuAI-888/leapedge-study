@@ -225,7 +225,7 @@ test("The ledger admits a second attempt only once the previous one is closed", 
     assert.notEqual(second, first);
     await store.release(second, "timeout before any bytes");
     const released = (await d
-      .prepare("SELECT status, amount, metrics FROM yi_calls WHERE id=?")
+      .prepare("SELECT status, amount, metrics FROM yi_calls WHERE id=$1")
       .get(second)) as { status: string; amount: number; metrics: string };
     assert.equal(released.status, "released");
     assert.equal(
@@ -259,7 +259,7 @@ test("The ledger admits a second attempt only once the previous one is closed", 
       "settle keeps its signature and its metrics payload",
     );
     // A released row is ignored by the run cost even if it still carried money.
-    await d.prepare("UPDATE yi_calls SET amount=? WHERE id=?").run(9, second);
+    await d.prepare("UPDATE yi_calls SET amount=$1 WHERE id=$2").run(9, second);
     await store.settle(third, 0.02, {});
     assert.equal(
       Number((await store.get(run.id))!.cost),
@@ -287,13 +287,13 @@ test("The attempt column is indexed and defaults to the first attempt", async ()
   const run = await store.create("ledger-index", "model", {}, "v1");
   const id = await store.reserve(run.id, "synthesis", 0.1);
   const row = (await d
-    .prepare("SELECT attempt FROM yi_calls WHERE id=?")
+    .prepare("SELECT attempt FROM yi_calls WHERE id=$1")
     .get(id)) as {
     attempt: number;
   };
   assert.equal(Number(row.attempt), 1, "reserve() defaults to attempt 1");
   const index = await d
-    .prepare("SELECT indexname FROM pg_indexes WHERE indexname=?")
+    .prepare("SELECT indexname FROM pg_indexes WHERE indexname=$1")
     .get("yi_calls_run_stage_attempt");
   assert.ok(index, "an index covers (run_id, stage, attempt)");
 });

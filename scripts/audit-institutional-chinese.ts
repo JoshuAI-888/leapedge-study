@@ -36,10 +36,7 @@ if (!process.argv.includes("--execute")) {
   );
   process.exit(0);
 }
-if (
-  process.env.DATABASE_URL ||
-  !process.env.YTI_DB_PATH?.includes("institutional-20260916")
-)
+if (process.env.YTI_ISOLATED_DB !== "true")
   throw Error("Use isolated test database");
 if (existsSync(file))
   throw Error(
@@ -60,7 +57,7 @@ try {
     );
     await db()
       .prepare(
-        "UPDATE yi_runs SET status='held',stage='external-audit' WHERE id=?",
+        "UPDATE yi_runs SET status='held',stage='external-audit' WHERE id=$1",
       )
       .run(r.id);
     try {
@@ -96,7 +93,9 @@ try {
       throw e;
     } finally {
       await db()
-        .prepare("UPDATE yi_runs SET status=?,output=?,error=? WHERE id=?")
+        .prepare(
+          "UPDATE yi_runs SET status=$1,output=$2,error=$3 WHERE id=$4",
+        )
         .run(r.status, JSON.stringify(r.output), r.error, r.id);
       writeFileSync(
         file,

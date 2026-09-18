@@ -698,7 +698,7 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
     assert.equal(request.temperature, 0);
     assert.equal(request.reasoningEffort, undefined);
     const call = (await d
-      .prepare("SELECT status, amount, metrics FROM yi_calls WHERE run_id=? AND stage=?")
+      .prepare("SELECT status, amount, metrics FROM yi_calls WHERE run_id=$1 AND stage=$2")
       .get(run.id, "synthesis")) as { status: string; amount: number; metrics: string };
     assert.equal(call.status, "completed");
     assert.equal(Number(call.amount), 0.02);
@@ -714,7 +714,7 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
     );
     assert.deepEqual(metrics.tokens, { inputTokens: 10, outputTokens: 4, costUsd: 0.02 });
     const retained = (await d
-      .prepare("SELECT payload FROM yi_responses WHERE run_id=? AND stage=?")
+      .prepare("SELECT payload FROM yi_responses WHERE run_id=$1 AND stage=$2")
       .get(run.id, "synthesis")) as { payload: string };
     assert.equal(JSON.parse(retained.payload).choices[0].message.content, '{"claims":[]}');
     assert.deepEqual(
@@ -730,7 +730,7 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
     assert.equal(review.maxOutputTokens, 2500);
     assert.equal(review.reasoningEffort, "low");
     const settled = (await d
-      .prepare("SELECT status FROM yi_calls WHERE run_id=? AND stage=?")
+      .prepare("SELECT status FROM yi_calls WHERE run_id=$1 AND stage=$2")
       .get(run.id, "audio-review")) as { status: string };
     assert.equal(settled.status, "reserved");
     assert.deepEqual(
@@ -742,7 +742,7 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
     assert.equal(critique.maxOutputTokens, 2500);
     assert.equal(critique.reasoningEffort, "low");
     const critiqueCall = (await d
-      .prepare("SELECT metrics FROM yi_calls WHERE run_id=? AND stage=?")
+      .prepare("SELECT metrics FROM yi_calls WHERE run_id=$1 AND stage=$2")
       .get(run.id, "critique-0")) as { metrics: string };
     assert.deepEqual(
       JSON.parse(critiqueCall.metrics).usage,
@@ -750,7 +750,7 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
       "a shorthand fake reply still stores provider-shaped usage",
     );
     const stored = (await d
-      .prepare("SELECT metrics FROM yi_calls WHERE run_id=?")
+      .prepare("SELECT metrics FROM yi_calls WHERE run_id=$1")
       .all(run.id)) as { metrics: string }[];
     const sums = stored
       .map((c) => JSON.parse(c.metrics))

@@ -33,7 +33,7 @@ await db().transaction(async () => {
       if (keys.some((k) => !/^\w+$/.test(k))) throw Error("Invalid column");
       await db()
         .prepare(
-          `INSERT INTO ${table}(${keys.join(",")}) VALUES(${keys.map(() => "?").join(",")})`,
+          `INSERT INTO ${table}(${keys.join(",")}) VALUES(${keys.map((_, i) => `$${i + 1}`).join(",")})`,
         )
         .run(...keys.map((k) => row[k]));
     }

@@ -1,9 +1,6 @@
 import { readFileSync } from "node:fs";
 import { db } from "../src/server/youtube-intelligence/store.ts";
-if (
-  process.env.DATABASE_URL ||
-  !process.env.YTI_DB_PATH?.includes("institutional-20260916")
-)
+if (process.env.YTI_ISOLATED_DB !== "true")
   throw Error("Use isolated local test database");
 try {
   for (const id of [
@@ -16,7 +13,7 @@ try {
     ).run;
     await db()
       .prepare(
-        "INSERT OR IGNORE INTO yi_runs(id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,input,output,cost) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO yi_runs(id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,input,output,cost) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ON CONFLICT DO NOTHING",
       )
       .run(
         r.id,

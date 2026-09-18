@@ -1,12 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-process.env.YTI_DB_PATH = join(
-  mkdtempSync(join(tmpdir(), "yti-prompts-")),
-  "test.sqlite",
-);
+process.env.YTI_DB = "pglite";
 delete process.env.DATABASE_URL;
 const R = await import("../src/server/youtube-intelligence/research-store.ts");
 const S = await import("../src/server/youtube-intelligence/store.ts");
@@ -72,7 +66,7 @@ test("Seeding the bundled versions is idempotent and promotion stays with the ga
   await R.promptVersions();
   await R.prompt("evidence-first.web.v7");
   const rows = await (await S.db())
-    .prepare("SELECT id FROM yi_prompts WHERE id=?")
+    .prepare("SELECT id FROM yi_prompts WHERE id=$1")
     .all("evidence-first.web.v7");
   assert.equal(rows.length, 1);
   const all = await R.promptVersions();

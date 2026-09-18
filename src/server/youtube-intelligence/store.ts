@@ -1,9 +1,24 @@
-import { database } from "./database.ts";
+import { advisoryKey, database, iso, json } from "./database.ts";
 import { randomUUID } from "node:crypto";
 import type { Run } from "../../features/youtube-intelligence/contracts.ts";
 export function db() {
   return database;
 }
+const LEASE_MS = 600000;
+/**
+ * The queue lease, kept in one place because yi_runs.lease_until is still epoch
+ * milliseconds in a BIGINT column: F24b flips it to timestamptz with the queue
+ * paused, and this is the only site that then changes. `released` is a lease no
+ * worker holds; `claimable` takes the placeholder that carries `now`.
+ */
+export const lease = {
+  released: 0,
+  window: (now = Date.now()) => ({ now, until: now + LEASE_MS }),
+  claimable: (now: string) =>
+    `status='queued' OR (status='running' AND lease_until<${now})`,
+};
+/** The all-runs budget check in reserve(), held for the length of one sum. */
+const BUDGET_LOCK = advisoryKey("yi:reserve:budget");
 function convert(r: Record<string, unknown>): Run {
   return {
     id: String(r.id),
@@ -14,11 +29,11 @@ function convert(r: Record<string, unknown>): Run {
     title: String(r.title),
     status: String(r.status),
     stage: String(r.stage),
-    createdAt: String(r.created_at),
-    updatedAt: String(r.updated_at),
+    createdAt: iso(r.created_at) ?? "",
+    updatedAt: iso(r.updated_at) ?? "",
     error: r.error as string | null,
-    input: JSON.parse(String(r.input)),
-    output: JSON.parse(String(r.output)),
+    input: (json(r.input) ?? {}) as Record<string, unknown>,
+    output: (json(r.output) ?? {}) as Record<string, unknown>,
     cost: Number(r.cost),
   };
 }
@@ -35,10 +50,16 @@ export async function get(id: string) {
   const r = (await (
     await db()
   )
-    .prepare("SELECT * FROM yi_runs WHERE id=?")
+    .prepare("SELECT * FROM yi_runs WHERE id=$1")
     .get(id)) as Record<string, unknown> | undefined;
   return r ? convert(r) : null;
 }
+/**
+ * Queue one run, at most one open run per (video, model, prompt version, input).
+ * The insert is an insert-if-absent against the yi_runs_open_dedupe partial
+ * unique index: a concurrent duplicate loses the insert and is answered with the
+ * row that won, so no lock is held across the dedupe.
+ */
 export async function create(
   video: string,
   model: string,
@@ -46,59 +67,67 @@ export async function create(
   version: string,
 ) {
   const d = await db();
+  const payload = JSON.stringify(input);
+  const existing = async () =>
+    (await d
+      .prepare(
+        "SELECT id FROM yi_runs WHERE video_id=$1 AND model=$2 AND prompt_version=$3 AND md5(input::text)=md5($4::text) AND status IN ('queued','running')",
+      )
+      .get(video, model, version, payload)) as { id: string } | undefined;
   return d.transaction(async () => {
-    const old = (await d
-      .prepare(
-        "SELECT id FROM yi_runs WHERE video_id=? AND model=? AND input=? AND prompt_version=? AND status IN ('queued','running')",
-      )
-      .get(video, model, JSON.stringify(input), version)) as
-      | {
-          id: string;
-        }
-      | undefined;
-    if (old) {
-      return (await get(old.id))!;
+    // A conflicting row that finished between the insert and the re-select
+    // matches neither, so the insert is offered once more.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const id = randomUUID(),
+        now = new Date().toISOString();
+      const inserted = await d
+        .prepare(
+          "INSERT INTO yi_runs(id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,input,output) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) ON CONFLICT DO NOTHING",
+        )
+        .run(
+          id,
+          video,
+          `https://www.youtube.com/watch?v=${video}`,
+          model,
+          version,
+          video,
+          "queued",
+          "metadata",
+          now,
+          now,
+          payload,
+          "{}",
+        );
+      if (inserted.changes) return (await get(id))!;
+      const old = await existing();
+      if (old) return (await get(String(old.id)))!;
     }
-    const id = randomUUID(),
-      now = new Date().toISOString();
-    await d
-      .prepare(
-        "INSERT INTO yi_runs(id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,input,output) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-      )
-      .run(
-        id,
-        video,
-        `https://www.youtube.com/watch?v=${video}`,
-        model,
-        version,
-        video,
-        "queued",
-        "metadata",
-        now,
-        now,
-        JSON.stringify(input),
-        "{}",
-      );
-    return (await get(id))!;
+    throw Error("Could not queue this analysis; try again.");
   });
 }
+/**
+ * Take the oldest claimable run. FOR UPDATE SKIP LOCKED is what keeps two
+ * workers from claiming the same row: the loser steps over the locked row
+ * instead of waiting behind it.
+ */
 export async function claimNext() {
   const d = await db();
   return d.transaction(async () => {
+    const { now, until } = lease.window();
     const r = (await d
       .prepare(
-        "SELECT * FROM yi_runs WHERE status='queued' OR (status='running' AND lease_until<?) ORDER BY created_at LIMIT 1",
+        `SELECT * FROM yi_runs WHERE ${lease.claimable("$1")} ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED`,
       )
-      .get(Date.now())) as Record<string, unknown> | undefined;
+      .get(now)) as Record<string, unknown> | undefined;
     if (!r) {
       return null;
     }
     const token = randomUUID();
     await d
       .prepare(
-        "UPDATE yi_runs SET status='running',lease_until=?,lease_token=?,updated_at=? WHERE id=?",
+        "UPDATE yi_runs SET status='running',lease_until=$1,lease_token=$2,updated_at=$3 WHERE id=$4",
       )
-      .run(Date.now() + 600000, token, new Date().toISOString(), String(r.id));
+      .run(until, token, new Date().toISOString(), String(r.id));
     return { run: (await get(String(r.id)))!, token };
   });
 }
@@ -107,7 +136,7 @@ export async function save(run: Run, token: string) {
     await db()
   )
     .prepare(
-      "UPDATE yi_runs SET title=?,status=?,stage=?,updated_at=?,error=?,output=?,lease_until=0 WHERE id=? AND lease_token=?",
+      `UPDATE yi_runs SET title=$1,status=$2,stage=$3,updated_at=$4,error=$5,output=$6,lease_until=${lease.released} WHERE id=$7 AND lease_token=$8`,
     )
     .run(
       run.title,
@@ -126,6 +155,13 @@ export const OPEN_CALL_STATUSES = ["reserved", "unknown"] as const;
 const OPEN = "status IN ('reserved','unknown')";
 /** Released reservations hold no money: they count for neither run nor budget. */
 const COUNTED = "status<>'released'";
+const OPEN_ATTEMPT_MESSAGE =
+  "Previous provider call for this stage is still open; recovery is uncertain. Review before retrying.";
+function isOpenAttemptConflict(e: unknown) {
+  const code = (e as { code?: unknown } | null)?.code;
+  const message = e instanceof Error ? e.message : "";
+  return code === "23505" || message.includes("yi_calls_open_attempt");
+}
 /**
  * Reserve money for one attempt at one stage, keyed by (run_id, stage, attempt).
  * A completed, failed or released attempt no longer blocks the next one; an OPEN
@@ -135,6 +171,12 @@ const COUNTED = "status<>'released'";
  * `perVideoCapUsd` is budget.perVideoMaxUsd (spec 6.2): the run's own settled
  * and still-open cost plus this reservation may not pass it, so one video can
  * never spend the month's budget on retries. A cap of 0 or less is no cap.
+ *
+ * Three narrow guards replace the lock this used to inherit: the
+ * yi_calls_open_attempt partial unique index rejects a second open attempt for
+ * the stage, FOR UPDATE on the run row serialises reservations against the
+ * per-run cap, and a transaction-scoped advisory lock covers the all-runs sum
+ * for the length of that one query.
  */
 export async function reserve(
   runId: string,
@@ -148,13 +190,12 @@ export async function reserve(
     if (
       await d
         .prepare(
-          `SELECT id FROM yi_calls WHERE run_id=? AND stage=? AND ${OPEN}`,
+          `SELECT id FROM yi_calls WHERE run_id=$1 AND stage=$2 AND ${OPEN}`,
         )
         .get(runId, stage)
     )
-      throw Error(
-        "Previous provider call for this stage is still open; recovery is uncertain. Review before retrying.",
-      );
+      throw Error(OPEN_ATTEMPT_MESSAGE);
+    await d.prepare("SELECT id FROM yi_runs WHERE id=$1 FOR UPDATE").get(runId);
     if (
       perVideoCapUsd !== undefined &&
       Number.isFinite(perVideoCapUsd) &&
@@ -164,7 +205,7 @@ export async function reserve(
         (
           (await d
             .prepare(
-              `SELECT COALESCE(SUM(amount),0) AS total FROM yi_calls WHERE run_id=? AND ${COUNTED}`,
+              `SELECT COALESCE(SUM(amount),0) AS total FROM yi_calls WHERE run_id=$1 AND ${COUNTED}`,
             )
             .get(runId)) as { total: number }
         ).total,
@@ -174,6 +215,9 @@ export async function reserve(
           `This run has reached its per-video cost limit: US$${spent.toFixed(4)} is already spent or reserved and the "${stage}" call needs US$${amount.toFixed(4)}, above the US$${perVideoCapUsd.toFixed(2)} allowed by budget.perVideoMaxUsd.`,
         );
     }
+    await d
+      .prepare("SELECT pg_advisory_xact_lock($1::bigint)")
+      .get(BUDGET_LOCK);
     const used = Number(
       (
         (await d
@@ -194,11 +238,16 @@ export async function reserve(
     )
       throw Error("Local experiment budget limit reached.");
     const id = randomUUID();
-    await d
-      .prepare(
-        "INSERT INTO yi_calls(id,run_id,stage,status,amount,metrics,attempt) VALUES(?,?,?,?,?,?,?)",
-      )
-      .run(id, runId, stage, "reserved", amount, "{}", attempt);
+    try {
+      await d
+        .prepare(
+          "INSERT INTO yi_calls(id,run_id,stage,status,amount,metrics,attempt) VALUES($1,$2,$3,$4,$5,$6,$7)",
+        )
+        .run(id, runId, stage, "reserved", amount, "{}", attempt);
+    } catch (e) {
+      if (isOpenAttemptConflict(e)) throw Error(OPEN_ATTEMPT_MESSAGE);
+      throw e;
+    }
     await recomputeCost(runId);
     return id;
   });
@@ -208,7 +257,7 @@ async function recomputeCost(runId: string) {
   const d = await db();
   await d
     .prepare(
-      `UPDATE yi_runs SET cost=(SELECT COALESCE(SUM(amount),0) FROM yi_calls WHERE run_id=? AND ${COUNTED}) WHERE id=?`,
+      `UPDATE yi_runs SET cost=(SELECT COALESCE(SUM(amount),0) FROM yi_calls WHERE run_id=$1 AND ${COUNTED}) WHERE id=$2`,
     )
     .run(runId, runId);
 }
@@ -217,23 +266,20 @@ export async function settle(
   amount: number | null,
   metrics: unknown,
 ) {
-  await (
-    await db()
-  )
-    .prepare(
-      "UPDATE yi_calls SET status=?,amount=COALESCE(?,amount),metrics=? WHERE id=?",
-    )
-    .run(
-      amount === null ? "reserved" : "completed",
-      amount,
-      JSON.stringify(metrics),
-      id,
-    );
-  await (
-    await db()
-  ).exec(
-    `UPDATE yi_runs SET cost=(SELECT COALESCE(SUM(amount),0) FROM yi_calls WHERE run_id=yi_runs.id AND ${COUNTED})`,
-  );
+  const d = await db();
+  await d.transaction(async () => {
+    const row = (await d
+      .prepare(
+        "UPDATE yi_calls SET status=$1,amount=COALESCE($2,amount),metrics=$3 WHERE id=$4 RETURNING run_id",
+      )
+      .get(
+        amount === null ? "reserved" : "completed",
+        amount,
+        JSON.stringify(metrics),
+        id,
+      )) as { run_id: string } | undefined;
+    if (row) await recomputeCost(String(row.run_id));
+  });
 }
 /**
  * The outcome of this attempt is not known: the provider may or may not have
@@ -250,11 +296,11 @@ export async function markUnknown(
   const d = await db();
   await d.transaction(async () => {
     const row = (await d
-      .prepare("SELECT run_id, metrics FROM yi_calls WHERE id=?")
+      .prepare("SELECT run_id, metrics FROM yi_calls WHERE id=$1 FOR UPDATE")
       .get(id)) as { run_id: string; metrics: string } | undefined;
     if (!row) return;
     await d
-      .prepare("UPDATE yi_calls SET status='unknown',metrics=? WHERE id=?")
+      .prepare("UPDATE yi_calls SET status='unknown',metrics=$1 WHERE id=$2")
       .run(
         JSON.stringify({
           ...parseMetrics(row.metrics),
@@ -280,8 +326,8 @@ export type UnknownCall = {
 /**
  * The reconciliation queue: attempts whose outcome became unknown at or before
  * `before` (an ISO timestamp). The timestamp lives inside the metrics JSON, so
- * the window is applied here rather than in SQL, which keeps one query shape
- * across SQLite and Postgres; the queue is a handful of rows at most.
+ * the window is applied here rather than in SQL; the queue is a handful of rows
+ * at most.
  */
 export async function unknownCalls(before: string): Promise<UnknownCall[]> {
   const rows = (await (
@@ -315,12 +361,12 @@ export async function release(id: string, reason: string) {
   const d = await db();
   await d.transaction(async () => {
     const row = (await d
-      .prepare("SELECT run_id, metrics FROM yi_calls WHERE id=?")
+      .prepare("SELECT run_id, metrics FROM yi_calls WHERE id=$1 FOR UPDATE")
       .get(id)) as { run_id: string; metrics: string } | undefined;
     if (!row) return;
     await d
       .prepare(
-        "UPDATE yi_calls SET status='released',amount=0,metrics=? WHERE id=?",
+        "UPDATE yi_calls SET status='released',amount=0,metrics=$1 WHERE id=$2",
       )
       .run(
         JSON.stringify({
@@ -333,15 +379,10 @@ export async function release(id: string, reason: string) {
   });
 }
 function parseMetrics(value: unknown): Record<string, unknown> {
-  if (typeof value !== "string") return {};
-  try {
-    const parsed = JSON.parse(value);
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-      ? (parsed as Record<string, unknown>)
-      : {};
-  } catch {
-    return {};
-  }
+  const parsed = json(value);
+  return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+    ? (parsed as Record<string, unknown>)
+    : {};
 }
 /** One ledger row per attempt at a stage, oldest attempt first. */
 export type LedgerAttempt = {
@@ -361,7 +402,7 @@ export async function listAttempts(
   const d = await db();
   const rows = (await d
     .prepare(
-      "SELECT * FROM yi_calls WHERE run_id=? AND stage=? ORDER BY attempt, id",
+      "SELECT * FROM yi_calls WHERE run_id=$1 AND stage=$2 ORDER BY attempt, id",
     )
     .all(runId, stage)) as Record<string, unknown>[];
   return rows.map((r) => ({
@@ -379,7 +420,9 @@ export async function heartbeat() {
   await (
     await db()
   )
-    .prepare("INSERT OR REPLACE INTO yi_heartbeat VALUES(1,?)")
+    .prepare(
+      "INSERT INTO yi_heartbeat(id,at) VALUES(1,$1) ON CONFLICT(id) DO UPDATE SET at=excluded.at",
+    )
     .run(Date.now());
 }
 export async function health() {
@@ -423,14 +466,9 @@ export async function retainedResponse(id: string): Promise<unknown> {
   const row = (await (
     await db()
   )
-    .prepare("SELECT payload FROM yi_responses WHERE id=?")
-    .get(id)) as { payload: string } | undefined;
-  if (!row) return undefined;
-  try {
-    return JSON.parse(String(row.payload));
-  } catch {
-    return undefined;
-  }
+    .prepare("SELECT payload FROM yi_responses WHERE id=$1")
+    .get(id)) as { payload: unknown } | undefined;
+  return row ? (json(row.payload) ?? undefined) : undefined;
 }
 export async function retainResponse(
   id: string,
@@ -441,6 +479,8 @@ export async function retainResponse(
   await (
     await db()
   )
-    .prepare("INSERT OR IGNORE INTO yi_responses VALUES(?,?,?,?,?)")
+    .prepare(
+      "INSERT INTO yi_responses(id,run_id,stage,payload,created_at) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING",
+    )
     .run(id, runId, stage, JSON.stringify(payload), new Date().toISOString());
 }

@@ -12,7 +12,6 @@ import {
   type ResearchCall,
 } from "../src/features/youtube-intelligence/trends.ts";
 import { scoreCall } from "../src/features/youtube-intelligence/performance.ts";
-import { postgresSQL } from "../src/server/youtube-intelligence/database.ts";
 test("Deduplication never erases different risks, conviction or evidence boundaries", () => {
   const c: ClaimData = {
     thesis_en: "Creator holds the company",
@@ -112,16 +111,6 @@ test("Stale exit prices do not become completed 90-day returns", () => {
       "2026-09-14",
     ).status,
     "stale",
-  );
-});
-test("Postgres SQL preserves literal question marks and parameterizes values", () => {
-  assert.equal(
-    postgresSQL("SELECT '?' WHERE id=? AND kind=?"),
-    "SELECT '?' WHERE id=$1 AND kind=$2",
-  );
-  assert.match(
-    postgresSQL("INSERT OR IGNORE INTO yi_responses VALUES(?)"),
-    /ON CONFLICT DO NOTHING/,
   );
 });
 import { createHmac } from "node:crypto";

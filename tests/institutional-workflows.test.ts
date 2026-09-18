@@ -1,12 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-process.env.YTI_DB_PATH = join(
-  mkdtempSync(join(tmpdir(), "yti-workflows-")),
-  "test.sqlite",
-);
+process.env.YTI_DB = "pglite";
 import { put, doc } from "../src/server/youtube-intelligence/research-store.ts";
 import { db, create } from "../src/server/youtube-intelligence/store.ts";
 import {
@@ -37,7 +31,7 @@ test("Share snapshot includes only frozen visible IDs when another matching run 
   async function ready(video: string) {
     const r = await create(video, "test", {}, "v1");
     await db()
-      .prepare("UPDATE yi_runs SET status='completed',output=? WHERE id=?")
+      .prepare("UPDATE yi_runs SET status='completed',output=$1 WHERE id=$2")
       .run(
         JSON.stringify({
           claims: [{ id: "c1", claim, passed: true, reasons: [] }],

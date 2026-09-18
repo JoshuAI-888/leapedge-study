@@ -3,10 +3,7 @@ import { existsSync, writeFileSync } from "node:fs";
 import { create, db } from "../src/server/youtube-intelligence/store.ts";
 import { entityStep } from "../src/server/youtube-intelligence/entities.ts";
 const path = "data/institutional-20260916/classification-synthetic.json";
-if (
-  process.env.DATABASE_URL ||
-  !process.env.YTI_DB_PATH?.includes("institutional-20260916")
-)
+if (process.env.YTI_ISOLATED_DB !== "true")
   throw Error("Use isolated fixture database");
 if (existsSync(path))
   throw Error("Result already exists; inspect it rather than resubmitting");
@@ -35,7 +32,7 @@ try {
   } finally {
     await db()
       .prepare(
-        "UPDATE yi_runs SET status=?,stage=?,output=?,error=? WHERE id=?",
+        "UPDATE yi_runs SET status=$1,stage=$2,output=$3,error=$4 WHERE id=$5",
       )
       .run(r.status, r.stage, JSON.stringify(r.output), r.error, r.id);
     writeFileSync(

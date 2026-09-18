@@ -1,8 +1,8 @@
 import { finishExperiments } from "./experiments.ts";
-import { claimNext, save, heartbeat, db } from "./store.ts";
+import { claimNext, save, heartbeat } from "./store.ts";
 import { step } from "./pipeline.ts";
 import { SourcePending } from "./transcripts.ts";
-import { preferences, doc, put } from "./research-store.ts";
+import { preferences, claimLease, put } from "./research-store.ts";
 import { pullDue } from "./channels.ts";
 import { prepareScheduledDigest } from "./briefings.ts";
 import { deliverDue } from "./email.ts";
@@ -23,14 +23,15 @@ export async function processNext() {
   await finishExperiments();
   return { id: run.id, stage: run.stage, status: run.status };
 }
+/**
+ * One sweep at a time. The lease is claimed by a conditional UPDATE that only
+ * changes a row whose deadline has passed, so exactly one of any number of
+ * concurrent callers gets it without a lock over the database. F26 replaces this
+ * with a singleton job.
+ */
 export async function sweep() {
-  const acquired = await db().transaction(async () => {
-    const old = await doc<{ until: number }>("scheduler", "lease");
-    if (old && old.until > Date.now()) return false;
-    await put("scheduler", "lease", { until: Date.now() + 300000 });
-    return true;
-  });
-  if (!acquired) return { skipped: true };
+  if (!(await claimLease("scheduler", "lease", Date.now() + 300000)))
+    return { skipped: true };
   try {
     if ((await preferences()).autoPullEnabled) await pullDue();
     await prepareScheduledDigest();

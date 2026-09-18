@@ -1,14 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { stubFetch, json, type FetchStub } from "./helpers/fetch-stub.ts";
 test("Channel discovery deduplicates uploads; provider failures retain actionable state; native job polling does not resubmit", async () => {
-  process.env.YTI_DB_PATH = join(
-    mkdtempSync(join(tmpdir(), "yti-providers-")),
-    "test.sqlite",
-  );
+  process.env.YTI_DB = "pglite";
   process.env.YOUTUBE_API_KEY = "fixture-only";
   process.env.SUPADATA_API_KEY = "fixture-only";
   let stub: FetchStub | undefined;
@@ -122,7 +116,7 @@ test("Changing a collection version cannot rewrite its first forward observation
   await (
     await S.db()
   )
-    .prepare("UPDATE yi_runs SET status='completed' WHERE id=?")
+    .prepare("UPDATE yi_runs SET status='completed' WHERE id=$1")
     .run(a.id);
   await R.publishRun(a.id);
   await R.canonicalRuns();
@@ -136,7 +130,7 @@ test("Changing a collection version cannot rewrite its first forward observation
   await (
     await S.db()
   )
-    .prepare("UPDATE yi_runs SET status='completed' WHERE id=?")
+    .prepare("UPDATE yi_runs SET status='completed' WHERE id=$1")
     .run(b.id);
   await R.publishRun(b.id);
   assert.equal(
