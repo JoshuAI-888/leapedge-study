@@ -29,10 +29,11 @@ export type ChannelRow = {
   createdAt: string | null;
 };
 /**
- * The shape channels.ts still writes as a `channel` document. It is read here
- * and nowhere else, so the one place that knows both shapes is this module.
+ * The field names a channel carries into this repository. channels.ts passes
+ * them directly (F28); scripts/migrate-documents.ts passes a stored `channel`
+ * document, whose payload uses the same names, so one upsert serves both.
  */
-export type ChannelDocument = {
+export type ChannelFields = {
   id?: unknown;
   title?: unknown;
   handle?: unknown;
@@ -82,11 +83,11 @@ function convert(r: Record<string, unknown>): ChannelRow {
   };
 }
 /**
- * Upsert one channel from the document channels.ts still writes. Fields the
- * document does not carry — tier, seed source, discovery and processing mode,
- * which the seed item fills — are never overwritten with a null.
+ * Upsert one channel. Fields the caller does not carry — tier, seed source,
+ * discovery and processing mode, which the seed fills — are never overwritten
+ * with a null.
  */
-export async function upsertFromDocument(payload: ChannelDocument) {
+export async function upsertChannel(payload: ChannelFields) {
   const id = text(payload.id);
   if (!id) throw Error("A channel row needs an id.");
   const createdAt = iso(payload.createdAt) ?? new Date().toISOString();
@@ -156,4 +157,94 @@ export async function countChannels(): Promise<number> {
     .prepare("SELECT COUNT(*) AS n FROM channels")
     .get()) as { n: unknown };
   return Number(r.n);
+}
+/**
+ * The names the one-off document migration imports. A stored `channel`
+ * document carries exactly these fields, so it upserts through the same
+ * statement as a live write.
+ */
+export type ChannelDocument = ChannelFields;
+export const upsertFromDocument = upsertChannel;
+/** What the seed lists know about a channel before anyone has followed it. */
+export type ChannelSeed = {
+  id: string;
+  handle: string;
+  title: string;
+  tier: string;
+  seedSource: string[];
+  discovery: string;
+  processing: string;
+};
+/**
+ * Seed one channel, or fold another list's entry into the one already there.
+ *
+ * A re-seed must leave everything a person or a later stage decided alone, so
+ * the conflict branch only ever adds: the seed sources union, the tier follows
+ * the lists because that is what they are for, a title or handle is filled in
+ * when it is still empty, and discovery, processing, active, favorite,
+ * auto_analyze, the polling cursor and created_at keep whatever they hold.
+ * Seeding twice therefore leaves the same rows the first run did.
+ *
+ * A seeded row starts inactive and with automatic analysis off. It names a
+ * channel worth watching, not one that is being polled or paid for.
+ */
+export async function seedChannel(seed: ChannelSeed) {
+  await database
+    .prepare(
+      `INSERT INTO channels(id,handle,title,tier,seed_source,discovery,processing,auto_analyze,active)
+       VALUES($1,$2,$3,$4,$5,$6,$7,false,false)
+       ON CONFLICT(id) DO UPDATE SET
+         handle=CASE WHEN COALESCE(channels.handle,'')='' THEN excluded.handle ELSE channels.handle END,
+         title=CASE WHEN COALESCE(channels.title,'')='' THEN excluded.title ELSE channels.title END,
+         tier=excluded.tier,
+         seed_source=(
+           SELECT COALESCE(array_agg(DISTINCT s ORDER BY s),'{}')
+           FROM unnest(channels.seed_source || excluded.seed_source) AS s
+         ),
+         discovery=COALESCE(channels.discovery,excluded.discovery),
+         processing=COALESCE(channels.processing,excluded.processing)`,
+    )
+    .run(
+      seed.id,
+      seed.handle,
+      seed.title,
+      seed.tier,
+      seed.seedSource,
+      seed.discovery,
+      seed.processing,
+    );
+}
+/**
+ * Project a selection onto the seeded rows: the named channels are marked for
+ * automatic analysis and every other seeded channel is not. The selection
+ * itself lives in versioned configuration, so this is a derived state that a
+ * later version overwrites, never the record of the decision.
+ *
+ * Only rows a seed list named are touched. A channel somebody followed by hand
+ * is theirs, and a selection must not switch paid analysis on or off under it.
+ */
+export async function setAutomaticAnalysis(
+  selected: string[],
+  automatic: string,
+  onRequest: string,
+) {
+  const result = await database
+    .prepare(
+      `UPDATE channels
+          SET auto_analyze=(id=ANY($1::text[])),
+              processing=CASE WHEN id=ANY($1::text[]) THEN $2 ELSE $3 END
+        WHERE cardinality(seed_source)>0`,
+    )
+    .run(selected, automatic, onRequest);
+  return result.changes;
+}
+/** The seeded channels, whatever their tier, oldest first. */
+export async function listSeededChannels(): Promise<ChannelRow[]> {
+  return (
+    (await database
+      .prepare(
+        `SELECT ${COLUMNS} FROM channels WHERE cardinality(seed_source)>0 ORDER BY created_at,id`,
+      )
+      .all()) as Record<string, unknown>[]
+  ).map(convert);
 }

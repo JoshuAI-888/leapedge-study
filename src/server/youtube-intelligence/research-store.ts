@@ -3,11 +3,7 @@ import { randomUUID, createHash } from "node:crypto";
 import { z } from "zod";
 import { db, get, lease, list, create } from "./store.ts";
 import { iso, json } from "./database.ts";
-import {
-  listChannels,
-  upsertFromDocument as upsertChannelRow,
-  type ChannelDocument,
-} from "./repos/channels.ts";
+import { listChannels } from "./repos/channels.ts";
 import { listClaims } from "./repos/claims.ts";
 import { listMentions } from "./repos/mentions.ts";
 import { insertTranscript } from "./repos/transcripts.ts";
@@ -159,17 +155,14 @@ export async function events<T = Record<string, unknown>>(
 /**
  * Mirror a document that now has a table of its own into its row, through the
  * repository that owns it. This is the migration window, not a second home for
- * the data: the writers of these documents (channels.ts, transcripts.ts) still
- * write the document, and scripts/migrate-documents.ts moves what is already
- * stored, so without the mirror every channel followed or caption fetched
- * after the one-off run would be missing from the rows the surfaces read.
- * It goes when those writers call the repositories directly.
+ * the data: transcripts.ts still writes the document, and
+ * scripts/migrate-documents.ts moves what is already stored, so without the
+ * mirror every caption fetched after the one-off run would be missing from the
+ * rows the surfaces read. It goes when that writer calls the repository
+ * directly, as channels.ts now does (F28): a channel is written straight to
+ * its row, so there is no channel document left to mirror.
  */
 async function mirrorDocument(kind: string, id: string, payload: unknown) {
-  if (kind === "channel") {
-    await upsertChannelRow(payload as ChannelDocument);
-    return;
-  }
   if (kind !== "managedCaption") return;
   const caption = payload as {
     source?: { segments?: unknown; language?: unknown };

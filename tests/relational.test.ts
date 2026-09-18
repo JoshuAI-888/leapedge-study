@@ -48,9 +48,9 @@ async function publish(id: string) {
 }
 /**
  * Empty the relational tables, so a fixture-seeded database looks like one that
- * has not been migrated yet. seedFixture() writes through put(), which mirrors
- * a channel document into its row, so a migration test has to take the rows
- * back out first.
+ * has not been migrated yet. seedFixture() writes each channel row through the
+ * repository as well as the document it keeps for these tests, so a migration
+ * test has to take the rows back out first.
  */
 async function clearRows(
   tables = ["claims", "mentions", "evidence_spans", "transcripts", "channels"],

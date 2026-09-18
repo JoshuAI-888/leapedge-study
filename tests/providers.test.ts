@@ -82,7 +82,12 @@ test("Channel discovery deduplicates uploads; provider failures retain actionabl
       { url: "googleapis.com", respond: () => new Response("denied", { status: 403 }) },
     ]);
     await assert.rejects(C.pull(c.id), /403/);
-    assert.match(String((await R.doc("channel", c.id))?.error), /403/);
+    // The failure is kept on the channel row, which is the channel's home
+    // since F28, rather than on a document beside it.
+    const CH = await import(
+      "../src/server/youtube-intelligence/repos/channels.ts"
+    );
+    assert.match(String((await CH.getChannel(c.id))?.error), /403/);
     const T = await import("../src/server/youtube-intelligence/transcripts.ts");
     const jobs = phase([
       {
