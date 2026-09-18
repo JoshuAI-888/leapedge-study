@@ -111,6 +111,34 @@ test("The maintenance scripts take the direct endpoint themselves", async () => 
       );
   }
 });
+/**
+ * The function region is load-bearing and invisible when wrong.
+ *
+ * One analysis issues hundreds of small queries, each paying the round trip
+ * twice: about a millisecond co-located with the database, about two hundred
+ * across the Pacific. Our Neon project is in ap-southeast-2, so vercel.json
+ * pins syd1. Delete that key and Vercel silently falls back to its iad1
+ * default, which is a change with no symptom other than everything being slow.
+ *
+ * The VALUE is deliberately not asserted: the right region is whichever one the
+ * Neon project is in, which no test can know. What is asserted is that somebody
+ * chose one.
+ */
+test("vercel.json pins a function region rather than taking the default", async () => {
+  const config = JSON.parse(await readFile("vercel.json", "utf8")) as {
+    regions?: unknown;
+  };
+  assert.ok(
+    Array.isArray(config.regions) && config.regions.length > 0,
+    "vercel.json must pin `regions`: the default is iad1, and the database is not there",
+  );
+  for (const region of config.regions)
+    assert.match(
+      String(region),
+      /^[a-z]{3}\d$/,
+      "a Vercel region identifier looks like syd1 or iad1",
+    );
+});
 test(".env.example names the database variables and none that were deleted", async () => {
   const text = await readFile(".env.example", "utf8");
   for (const key of [
