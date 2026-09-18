@@ -5,14 +5,12 @@ work
 .git
 node_modules
 .next
-leapstudy
 .venv
 __pycache__
 *.sqlite*
 
-evaluations/tooling/
+# Retired v1 research surface and one-off evidence scripts. Kept in the
+# repository under scripts/archive, never built and never deployed.
+scripts/archive
 
 docs/audit/*.png
-
-# Keep native evaluation source: research persistence scripts import its frozen prompts.
-# Dependencies remain excluded by node_modules above; private results live in data/.

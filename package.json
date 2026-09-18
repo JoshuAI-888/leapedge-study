@@ -13,7 +13,6 @@
     "worker": "node --env-file=.env --experimental-strip-types scripts/worker.ts",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "typecheck": "next typegen && tsc --noEmit",
-    "eval:replay": "node --experimental-strip-types scripts/evaluate.ts",
     "eval:transcripts": "node --experimental-strip-types scripts/transcript-accuracy.ts"
   },
   "dependencies": {

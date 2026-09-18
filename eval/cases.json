@@ -1,9 +1,0 @@
-{
-  "purpose": "Pilot cases, not a statistically sufficient model ranking",
-  "output_language": "English",
-  "cases": [
-    {"id":"nana-20260731", "url":"https://www.youtube.com/watch?v=3u24qyWjSVM", "language":"Chinese", "checks":["Conditional COIN position management must not become a fresh buy recommendation", "Do not infer entry from stop", "Keep original Chinese evidence", "Distinguish Nasdaq from QQQ instrument mapping", "Verify timestamps against audio"]},
-    {"id":"pronk-20260604", "url":"https://www.youtube.com/watch?v=wkAqHlYL7bQ", "language":"English", "checks":["Separate holdings from recommendations", "Preserve company-specific evidence", "Verify numerical valuation claims"]},
-    {"id":"plainbagel-research", "url":"https://www.youtube.com/watch?v=kXYvRR7gV2E", "language":"English", "checks":["Educational research process must not generate invented trade setups", "Separate example companies from recommendations", "No trade ideas is an acceptable result"]}
-  ]
-}
