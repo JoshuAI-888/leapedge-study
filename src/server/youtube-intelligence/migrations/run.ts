@@ -33,7 +33,7 @@ export type MigrateOptions = {
 };
 const LOCK_KEY = 78941003;
 const BASELINE_TABLE = "yi_runs";
-const FILENAME = /^(\d{4})_([a-z0-9-]+)\.sql$/;
+const FILENAME = /^(\d{4})_([a-z0-9_-]+)\.sql$/;
 // This module's own directory. Only a Node process reads the files (the
 // migrate script, the worker, tests); a bundled server never migrates.
 export const migrationsDirectory = dirname(fileURLToPath(import.meta.url));
@@ -68,7 +68,10 @@ export async function loadMigrations(
     n.endsWith(".sql"),
   )) {
     const parsed = FILENAME.exec(file);
-    if (!parsed) throw Error(`Migration ${file} is not named NNNN_name.sql.`);
+    if (!parsed)
+      throw Error(
+        `Migration ${file} is not named NNNN_name.sql: four digits, an underscore, then a lower-case name of letters, digits, underscores and dashes.`,
+      );
     const sql = await readFile(join(directory, file), "utf8");
     files.push({
       version: Number(parsed[1]),
@@ -133,6 +136,11 @@ async function apply(
         `Migration version ${f.version} was edited after it was applied: ${f.file} no longer matches the recorded checksum.`,
       );
   }
+  for (const version of recorded.keys())
+    if (!files.some((f) => f.version === version))
+      throw Error(
+        `Migration version ${version} is recorded as applied but has no file on disk: restore it instead of deleting or renaming an applied migration.`,
+      );
   const applied: number[] = [];
   for (const f of files) {
     if (recorded.has(f.version)) continue;

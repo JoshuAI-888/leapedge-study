@@ -1,9 +1,10 @@
 # Migrations
 
-Numbered SQL files, `NNNN_name.sql`, applied in version order by `run.ts`. The
-runner records each file in `yi_migrations` (`version`, `name`, `applied_at`,
-`checksum`) inside the same transaction that applies it, so a failed file leaves
-nothing behind and the next run retries exactly that file. An applied file that
+Numbered SQL files, `NNNN_name.sql` — four digits, an underscore, then a
+lower-case name of letters, digits, underscores and dashes — applied in version
+order by `run.ts`. The runner records each file in `yi_migrations` (`version`,
+`name`, `applied_at`, `checksum`) inside the same transaction that applies it, so
+a failed file leaves nothing behind and the next run retries exactly that file. An applied file that
 is edited afterwards fails the checksum check by version: add a new migration
 instead of changing an old one.
 
@@ -11,8 +12,20 @@ Apply them with `npm run migrate`, which connects through
 `DATABASE_URL_UNPOOLED`, the direct Neon endpoint, because it holds a
 session-level advisory lock for the whole run. Tests apply the same files
 through PGlite, so every migration is exercised offline before it reaches
-Postgres. A database that already carries the baseline schema but no
-`yi_migrations` row is stamped at version 1 rather than re-running `0001`.
+Postgres.
+
+Nothing migrates on boot or on deploy: neither `next build`, nor a serving
+instance, nor `scripts/worker.ts`, nor `scripts/postgres-check.ts` creates a
+table. A new database — a fresh Neon project, a restored backup, a new branch —
+has to be migrated with `npm run migrate` against its direct endpoint before any
+of them can use it, and every later migration has to be applied the same way.
+
+A database that already carries the baseline schema but no `yi_migrations` row is
+stamped at version 1 rather than re-running `0001`. The stamp trusts the presence
+of `yi_runs` alone, so a database built by an older deployment that is missing
+something `0001` declares keeps missing it, version 1 now being recorded as
+applied: check a database restored or branched from an older schema against
+`0001_baseline.sql` before migrating it.
 
 A preview deployment refuses to migrate the production database: with
 `VERCEL_ENV=preview` the runner compares the host of `DATABASE_URL_UNPOOLED`

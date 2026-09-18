@@ -1,6 +1,6 @@
-import { test } from "node:test";
+import { after, test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PGlite } from "@electric-sql/pglite";
@@ -42,11 +42,16 @@ async function versions(instance: PGlite) {
   ).rows;
   return rows;
 }
+const temporary: string[] = [];
 async function directory(sql: string) {
   const dir = await mkdtemp(join(tmpdir(), "yi-migrations-"));
+  temporary.push(dir);
   await writeFile(join(dir, "0001_baseline.sql"), sql);
   return dir;
 }
+after(async () => {
+  for (const dir of temporary) await rm(dir, { recursive: true, force: true });
+});
 test("Migrations apply the baseline once and do nothing on the second run", async () => {
   const { instance, client } = await blank();
   try {
@@ -189,4 +194,43 @@ test("The migrator names DATABASE_URL_UNPOOLED when it is unset", () => {
     }),
     "postgres://role@branch.db.invalid/main",
   );
+});
+test("A migration named with underscores is accepted", async () => {
+  const dir = await directory(
+    "CREATE TABLE IF NOT EXISTS yi_probe(id TEXT PRIMARY KEY);\n",
+  );
+  await writeFile(
+    join(dir, "0002_add_share_expiry.sql"),
+    "ALTER TABLE yi_probe ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;\n",
+  );
+  assert.deepEqual(
+    (await loadMigrations(dir)).map((m) => m.name),
+    ["baseline", "add_share_expiry"],
+  );
+  const { instance, client } = await blank();
+  try {
+    assert.deepEqual((await migrate(client, { directory: dir })).applied, [
+      1, 2,
+    ]);
+  } finally {
+    await instance.close();
+  }
+  await writeFile(join(dir, "0003_AddMore.sql"), "SELECT 1;\n");
+  await assert.rejects(() => loadMigrations(dir), /is not named NNNN_name.sql/);
+});
+test("A recorded migration whose file is gone is rejected", async () => {
+  const dir = await directory(
+    "CREATE TABLE IF NOT EXISTS yi_probe(id TEXT PRIMARY KEY);\n",
+  );
+  const { instance, client } = await blank();
+  try {
+    assert.deepEqual((await migrate(client, { directory: dir })).applied, [1]);
+    await rm(join(dir, "0001_baseline.sql"));
+    await assert.rejects(
+      () => migrate(client, { directory: dir }),
+      /version 1 is recorded as applied but has no file on disk/,
+    );
+  } finally {
+    await instance.close();
+  }
 });
