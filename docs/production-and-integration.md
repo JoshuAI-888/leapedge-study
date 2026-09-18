@@ -52,7 +52,7 @@ For code rollback, promote the previous Vercel deployment. For data recovery, re
 
 `npm test`, type checking, production build, production dependency audit, isolated Postgres concurrency checks and hosted API tests have been run. Hosted tests cover private access, persisted settings and idea state, frozen sharing/revocation, cron authentication and cross-origin rejection. See the completion report for current evidence and remaining external constraints.
 
-The local worker uses the same dispatcher as hosted Cron. Promptfoo lives in `evaluations/tooling`, which is excluded from Vercel deployment. Python research scripts are historical development tools, not runtime dependencies.
+The local worker uses the same dispatcher as hosted Cron. Retired v1 research code, including the Python experiments, lives under `scripts/archive`, which is excluded from the typecheck and from the Vercel bundle and is never a runtime dependency.
 
 ## Managed caption providers (14 September 2026)
 

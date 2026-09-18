@@ -1,0 +1,1254 @@
+{
+  "version": "delivery-ledger.v1",
+  "updated": "2026-09-18",
+  "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
+  "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
+  "statusMeaning": {
+    "merged": "On main. Every path in files and tests must exist and every prerequisite must also be merged.",
+    "in-review": "Complete on a branch with an open pull request; pr names it. Paths are not checked on this branch.",
+    "todo": "Not started. Paths are the plan's intent, not a promise about names.",
+    "removed": "Withdrawn from the design; the reason is in note."
+  },
+  "features": [
+    {
+      "id": "F01",
+      "phase": 0,
+      "lane": "infra",
+      "title": "PGlite test backend selected by YTI_DB=pglite",
+      "spec": "4.7, 9",
+      "status": "merged",
+      "prereqs": [],
+      "files": [
+        "src/server/youtube-intelligence/database.ts",
+        "tests/helpers/db.ts",
+        "package.json"
+      ],
+      "tests": [
+        "tests/pglite.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F02",
+      "phase": 0,
+      "lane": "infra",
+      "title": "Test helpers: route-matched fetch stub, fixture DB builder, frozen-response loader",
+      "spec": "9",
+      "status": "merged",
+      "prereqs": [
+        "F01"
+      ],
+      "files": [
+        "tests/helpers/fetch-stub.ts",
+        "tests/helpers/fixtures.ts",
+        "tests/helpers/frozen.ts",
+        "tests/fixtures/db/baseline.json"
+      ],
+      "tests": [
+        "tests/helpers.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F03",
+      "phase": 0,
+      "lane": "infra",
+      "title": "ModelTransport interface; OpenRouter and Fake transports; transport-agnostic modelCall",
+      "spec": "4.1",
+      "status": "merged",
+      "prereqs": [
+        "F02"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/types.ts",
+        "src/server/youtube-intelligence/transport/openrouter.ts",
+        "src/server/youtube-intelligence/transport/fake.ts",
+        "src/server/youtube-intelligence/transport/index.ts",
+        "src/server/youtube-intelligence/pipeline.ts"
+      ],
+      "tests": [
+        "tests/transport.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F04",
+      "phase": 0,
+      "lane": "registry",
+      "title": "Metrics registry skeleton, UI column manifest, Methodology renderer",
+      "spec": "4.11, 8",
+      "status": "merged",
+      "prereqs": [
+        "F02"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/registry.ts",
+        "src/features/youtube-intelligence/metrics/ui-columns.ts",
+        "src/features/youtube-intelligence/metrics/methodology.ts",
+        "src/features/youtube-intelligence/metrics/context.ts"
+      ],
+      "tests": [
+        "tests/metrics-registry.test.ts"
+      ],
+      "pr": 2,
+      "note": "Built but consumed only by its CI test; no product surface reads the registry until F43/F46.",
+      "planned": true
+    },
+    {
+      "id": "F05",
+      "phase": 0,
+      "lane": "settings",
+      "title": "TeamPreferences and AccountPreferences schemas, env validation, preferences migration",
+      "spec": "6",
+      "status": "merged",
+      "prereqs": [
+        "F01"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/settings.ts",
+        "src/server/youtube-intelligence/research-store.ts",
+        "src/server/youtube-intelligence/env.ts"
+      ],
+      "tests": [
+        "tests/settings.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F06",
+      "phase": 0,
+      "lane": "eval",
+      "title": "Gold set schema, seeded pending cases, offline report and script",
+      "spec": "4.9",
+      "status": "merged",
+      "prereqs": [
+        "F03"
+      ],
+      "files": [
+        "evaluations/gold-set/schema.ts",
+        "evaluations/gold-set/report.ts",
+        "evaluations/gold-set/cases.json",
+        "scripts/gold-set.ts"
+      ],
+      "tests": [
+        "tests/gold-set.test.ts",
+        "tests/gold-validate.test.ts"
+      ],
+      "pr": 2,
+      "note": "Holds 5 pending cases against the 50 spec 4.9 requires. See docs/gates/gate-debt.md.",
+      "planned": true
+    },
+    {
+      "id": "F06a",
+      "phase": 0,
+      "lane": "eval",
+      "title": "Draft gold cases from exported runs",
+      "spec": "4.9",
+      "status": "in-review",
+      "prereqs": [
+        "F06"
+      ],
+      "files": [
+        "scripts/gold-draft.ts"
+      ],
+      "tests": [
+        "tests/gold-draft.test.ts"
+      ],
+      "pr": 4,
+      "note": "Not in the build plan; added to cut the manual effort of handoff A.",
+      "planned": false
+    },
+    {
+      "id": "F07",
+      "phase": 0,
+      "lane": "eval",
+      "title": "VideoConviction benchmark harness",
+      "spec": "-",
+      "status": "removed",
+      "prereqs": [],
+      "files": [],
+      "tests": [],
+      "note": "Removed 17 September 2026 by spec revision 3: no product surface reads its labels.",
+      "planned": true
+    },
+    {
+      "id": "F08",
+      "phase": 0,
+      "lane": "eval",
+      "title": "Promotion gate command with lab.gates thresholds and the phase-0 baseline",
+      "spec": "4.9, 9",
+      "status": "merged",
+      "prereqs": [
+        "F06"
+      ],
+      "files": [
+        "scripts/promotion-gate.ts",
+        "docs/gates/phase-0-baseline.json"
+      ],
+      "tests": [
+        "tests/promotion-gate.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F10",
+      "phase": 1,
+      "lane": "transport",
+      "title": "GoogleNativeTransport with responseSchema, LOW media resolution, countTokens, cached price table",
+      "spec": "4.1, 5",
+      "status": "merged",
+      "prereqs": [
+        "F03"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/google-native.ts",
+        "src/server/youtube-intelligence/transport/prices.ts",
+        "src/server/youtube-intelligence/native-google-core.ts"
+      ],
+      "tests": [
+        "tests/transport.test.ts",
+        "tests/native-google.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F11",
+      "phase": 1,
+      "lane": "transport",
+      "title": "Stage routing from settings, OpenRouter fallback, different-family critic rule",
+      "spec": "4.1, 6.2",
+      "status": "merged",
+      "prereqs": [
+        "F05",
+        "F10"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/index.ts",
+        "src/server/youtube-intelligence/transport/openrouter.ts",
+        "src/features/youtube-intelligence/model-family.ts"
+      ],
+      "tests": [
+        "tests/transport.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F12",
+      "phase": 1,
+      "lane": "evidence",
+      "title": "Pointer evidence: source_span, extraction responseSchema returns ranges, app copies the text",
+      "spec": "4.2",
+      "status": "merged",
+      "prereqs": [
+        "F03"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/contracts.ts",
+        "src/features/youtube-intelligence/evidence-selection.ts",
+        "src/server/youtube-intelligence/schemas/extraction.ts"
+      ],
+      "tests": [
+        "tests/evidence-pointer.test.ts",
+        "tests/evidence-selection.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F13",
+      "phase": 1,
+      "lane": "evidence",
+      "title": "Mentions with sentiment, cited rationale and a resolvable span",
+      "spec": "4.3, 4.13",
+      "status": "merged",
+      "prereqs": [
+        "F12"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/sentiment.ts",
+        "src/features/youtube-intelligence/contracts.ts"
+      ],
+      "tests": [
+        "tests/mentions.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F14",
+      "phase": 1,
+      "lane": "evidence",
+      "title": "Translation stage over copied spans; text_original hash asserted unchanged",
+      "spec": "4.2, 4.19",
+      "status": "merged",
+      "prereqs": [
+        "F12"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/schemas/translation.ts"
+      ],
+      "tests": [
+        "tests/evidence-pointer.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F15",
+      "phase": 1,
+      "lane": "transport",
+      "title": "Batched critique with an explicit context cache; per-claim loop and source-repair removed",
+      "spec": "4.3, 5",
+      "status": "merged",
+      "prereqs": [
+        "F10",
+        "F12"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/pipeline.ts",
+        "src/features/youtube-intelligence/chunking.ts"
+      ],
+      "tests": [
+        "tests/critique.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F16",
+      "phase": 1,
+      "lane": "ledger",
+      "title": "Retry policy keyed by attempt; reserve refuses a second open attempt",
+      "spec": "4.4",
+      "status": "merged",
+      "prereqs": [
+        "F03"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/retry.ts",
+        "src/server/youtube-intelligence/store.ts"
+      ],
+      "tests": [
+        "tests/ledger.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F17",
+      "phase": 1,
+      "lane": "ledger",
+      "title": "Realistic reservations, reconciliation from usage, unknown-outcome hold",
+      "spec": "4.4, 6.2",
+      "status": "merged",
+      "prereqs": [
+        "F16",
+        "F10"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/store.ts",
+        "src/server/youtube-intelligence/reconcile.ts",
+        "src/server/youtube-intelligence/runner.ts"
+      ],
+      "tests": [
+        "tests/ledger.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F17b",
+      "phase": 1,
+      "lane": "ledger",
+      "title": "Record what priced a call, and which stage rejected a mention",
+      "spec": "4.4",
+      "status": "in-review",
+      "prereqs": [
+        "F17"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/prices.ts"
+      ],
+      "tests": [
+        "tests/ledger.test.ts"
+      ],
+      "pr": 4,
+      "note": "Not in the build plan; closes two open items from the phase-1 conformance report.",
+      "planned": false
+    },
+    {
+      "id": "F18",
+      "phase": 1,
+      "lane": "standby",
+      "title": "Supadata standby with explicit modes, batch endpoint, per-vendor circuit breaker",
+      "spec": "4.10",
+      "status": "merged",
+      "prereqs": [
+        "F02"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transcripts.ts",
+        "src/server/youtube-intelligence/circuit-breaker.ts"
+      ],
+      "tests": [
+        "tests/standby.test.ts",
+        "tests/managed-captions.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F19",
+      "phase": 1,
+      "lane": "evidence",
+      "title": "Prompt v7: pointer output, mentions with sentiment, conviction rubric",
+      "spec": "4.2, 10",
+      "status": "merged",
+      "prereqs": [
+        "F12",
+        "F13"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/prompt-versions.json",
+        "src/server/youtube-intelligence/prompts.ts"
+      ],
+      "tests": [
+        "tests/prompts.test.ts"
+      ],
+      "pr": 2,
+      "note": "Candidate only; promoted through F08, which cannot bind yet.",
+      "planned": true
+    },
+    {
+      "id": "F20",
+      "phase": 1,
+      "lane": "transport",
+      "title": "Retire YouTube.js and the Tapline/BibiGPT adapters; audio review demoted to Lab",
+      "spec": "4.10, 12",
+      "status": "merged",
+      "prereqs": [
+        "F11",
+        "F15"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/audio-review.ts"
+      ],
+      "tests": [
+        "tests/transport.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F21",
+      "phase": 1,
+      "lane": "gate",
+      "title": "Phase-1 gate run (offline, advisory) for v5 and v7",
+      "spec": "9",
+      "status": "merged",
+      "prereqs": [
+        "F08",
+        "F11",
+        "F12",
+        "F13",
+        "F14",
+        "F15",
+        "F16",
+        "F17",
+        "F18",
+        "F19"
+      ],
+      "files": [
+        "docs/gates/phase-1-v5.json",
+        "docs/gates/phase-1-v7.json",
+        "docs/gates/phase-1-summary.md",
+        "docs/gates/phase-1-conformance.md"
+      ],
+      "tests": [
+        "tests/standby.test.ts"
+      ],
+      "pr": 2,
+      "note": "Advisory only: three of four exit criteria are not measurable. See docs/gates/gate-debt.md.",
+      "planned": true
+    },
+    {
+      "id": "F22",
+      "phase": 2,
+      "lane": "data",
+      "title": "Migration runner: numbered SQL, yi_migrations, applied at worker start",
+      "spec": "4.7",
+      "status": "in-review",
+      "prereqs": [
+        "F01"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/migrations/run.ts",
+        "src/server/youtube-intelligence/migrations/0001_baseline.sql",
+        "scripts/migrate.ts"
+      ],
+      "tests": [
+        "tests/migrations.test.ts"
+      ],
+      "pr": 4,
+      "planned": true
+    },
+    {
+      "id": "F23",
+      "phase": 2,
+      "lane": "data",
+      "title": "Postgres-only database.ts: node:sqlite gone, $n placeholders, row locks",
+      "spec": "4.7",
+      "status": "in-review",
+      "prereqs": [
+        "F22"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/database.ts"
+      ],
+      "tests": [
+        "tests/connection.test.ts",
+        "tests/locks.test.ts"
+      ],
+      "pr": 4,
+      "planned": true
+    },
+    {
+      "id": "F24",
+      "phase": 2,
+      "lane": "data",
+      "title": "Relational tables and repositories; publish writes rows",
+      "spec": "8",
+      "status": "in-review",
+      "prereqs": [
+        "F23",
+        "F12",
+        "F13"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/migrations/0003_relational.sql",
+        "src/server/youtube-intelligence/repos/claims.ts",
+        "src/server/youtube-intelligence/repos/mentions.ts"
+      ],
+      "tests": [
+        "tests/relational.test.ts"
+      ],
+      "pr": 4,
+      "planned": true
+    },
+    {
+      "id": "F25",
+      "phase": 2,
+      "lane": "prices",
+      "title": "prices and settlements tables; settlement sweep; the performance document removed",
+      "spec": "4.11, 4.12, 8",
+      "status": "todo",
+      "prereqs": [
+        "F23"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/migrations/0004_prices_settlements.sql",
+        "src/server/youtube-intelligence/settlement.ts",
+        "src/server/youtube-intelligence/market.ts"
+      ],
+      "tests": [
+        "tests/repos.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F26",
+      "phase": 2,
+      "lane": "queue",
+      "title": "Postgres queue and always-on worker: jobs table with FOR UPDATE SKIP LOCKED",
+      "spec": "4.7",
+      "status": "todo",
+      "prereqs": [
+        "F23"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/queue.ts",
+        "src/server/youtube-intelligence/runner.ts",
+        "scripts/worker.ts"
+      ],
+      "tests": [
+        "tests/queue.test.ts"
+      ],
+      "note": "PGlite is single-connection, so SKIP LOCKED cannot be proven in CI. Run scripts/postgres-check.ts against real Postgres before the phase-2 gate.",
+      "planned": true
+    },
+    {
+      "id": "F27",
+      "phase": 2,
+      "lane": "queue",
+      "title": "Restart-safe resume from stage checkpoints and open-attempt rows",
+      "spec": "4.4, 9",
+      "status": "todo",
+      "prereqs": [
+        "F26",
+        "F16"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/pipeline.ts",
+        "src/server/youtube-intelligence/store.ts"
+      ],
+      "tests": [
+        "tests/resume.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F28",
+      "phase": 2,
+      "lane": "seed",
+      "title": "Channel seed: two source lists, dedupe by channel id, default selection",
+      "spec": "4.15",
+      "status": "in-review",
+      "prereqs": [
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/seed/lists.ts",
+        "src/server/youtube-intelligence/seed/leapedge.json",
+        "src/server/youtube-intelligence/seed/truealpha.json"
+      ],
+      "tests": [
+        "tests/channel-seed.test.ts"
+      ],
+      "pr": 4,
+      "planned": true
+    },
+    {
+      "id": "F29",
+      "phase": 2,
+      "lane": "seed",
+      "title": "Cost projection and budget meter as registry metrics",
+      "spec": "4.15, 6",
+      "status": "todo",
+      "prereqs": [
+        "F04",
+        "F25",
+        "F28"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/cost.ts"
+      ],
+      "tests": [
+        "tests/seed.test.ts"
+      ],
+      "note": "Reads token counts. Depends on the D2 fix (reasoning tokens) already merged on the review branch.",
+      "planned": true
+    },
+    {
+      "id": "F30",
+      "phase": 2,
+      "lane": "api",
+      "title": "API restructure: dispatch table per resource, routes under /api/youtube-intelligence",
+      "spec": "4.18",
+      "status": "in-review",
+      "prereqs": [
+        "F05",
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/actions/index.ts",
+        "src/app/api/youtube-intelligence/[resource]/[action]/route.ts"
+      ],
+      "tests": [
+        "tests/actions.test.ts"
+      ],
+      "pr": 4,
+      "planned": true
+    },
+    {
+      "id": "F31",
+      "phase": 2,
+      "lane": "gate",
+      "title": "Phase-2 gate run: four-video parallel end to end, kill-and-resume, seed dedupe",
+      "spec": "9",
+      "status": "todo",
+      "prereqs": [
+        "F26",
+        "F27",
+        "F28"
+      ],
+      "files": [
+        "docs/gates/phase-2-baseline.json"
+      ],
+      "tests": [
+        "tests/e2e-parallel.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F32",
+      "phase": 3,
+      "lane": "asr",
+      "title": "Windowed ASR with videoMetadata offsets at LOW resolution",
+      "spec": "4.5, 5",
+      "status": "todo",
+      "prereqs": [
+        "F10",
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/native-google.ts",
+        "src/server/youtube-intelligence/repos/transcripts.ts"
+      ],
+      "tests": [
+        "tests/asr-agreement.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F33",
+      "phase": 3,
+      "lane": "asr",
+      "title": "Agreement scoring: edit-distance core moved into agreement.ts, per-span scores",
+      "spec": "4.5",
+      "status": "todo",
+      "prereqs": [
+        "F32"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/agreement.ts",
+        "evaluations/transcript-accuracy.ts"
+      ],
+      "tests": [
+        "tests/asr-agreement.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F34",
+      "phase": 3,
+      "lane": "asr",
+      "title": "Whisper tie-break: one Supadata generate below threshold, two-of-three rule",
+      "spec": "4.10",
+      "status": "todo",
+      "prereqs": [
+        "F18",
+        "F33"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transcripts.ts"
+      ],
+      "tests": [
+        "tests/asr-agreement.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F35",
+      "phase": 3,
+      "lane": "asr",
+      "title": "Trust ladder L0-L3 with trust_basis; append-only reviews sign L3",
+      "spec": "4.6, 4.18",
+      "status": "todo",
+      "prereqs": [
+        "F33",
+        "F24"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/trust.ts",
+        "src/server/youtube-intelligence/repos/reviews.ts"
+      ],
+      "tests": [
+        "tests/asr-agreement.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F36",
+      "phase": 3,
+      "lane": "board",
+      "title": "Leaderboard statistics: Wilson, t, p, BH q, gates; boards by creator and by ticker",
+      "spec": "4.12",
+      "status": "todo",
+      "prereqs": [
+        "F25",
+        "F35",
+        "F04"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/significance.ts",
+        "src/features/youtube-intelligence/leaderboard.ts",
+        "src/features/youtube-intelligence/metrics/leaderboard.ts"
+      ],
+      "tests": [
+        "tests/significance.test.ts",
+        "tests/leaderboard.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F37",
+      "phase": 3,
+      "lane": "board",
+      "title": "Changes tab: boardAsOf and diffBoards over a user-selected window",
+      "spec": "4.12",
+      "status": "todo",
+      "prereqs": [
+        "F36"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/changes.ts"
+      ],
+      "tests": [
+        "tests/leaderboard.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F38",
+      "phase": 3,
+      "lane": "board",
+      "title": "Sentiment shift for period P against the prior P, with trust filter",
+      "spec": "4.13",
+      "status": "todo",
+      "prereqs": [
+        "F13",
+        "F24",
+        "F04"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/sentiment-shift.ts",
+        "src/server/youtube-intelligence/repos/mentions.ts"
+      ],
+      "tests": [
+        "tests/mentions.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F39",
+      "phase": 3,
+      "lane": "automation",
+      "title": "Push notifications: PubSubHubbub verify and notify with HMAC, subscribe/renew job",
+      "spec": "4.8",
+      "status": "todo",
+      "prereqs": [
+        "F26"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/push.ts",
+        "src/app/api/youtube-intelligence/push/route.ts"
+      ],
+      "tests": [
+        "tests/push.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F40",
+      "phase": 3,
+      "lane": "automation",
+      "title": "Batch mode: Google Batch API submit and poll; ledger settles on completion",
+      "spec": "4.8, 5",
+      "status": "todo",
+      "prereqs": [
+        "F10",
+        "F26"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/google-native.ts",
+        "src/server/youtube-intelligence/queue.ts"
+      ],
+      "tests": [
+        "tests/batch.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F41",
+      "phase": 3,
+      "lane": "automation",
+      "title": "Historical replay of Tier-1 uploads from January 2026; Shorts skipped",
+      "spec": "4.16",
+      "status": "todo",
+      "prereqs": [
+        "F40",
+        "F28"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/replay.ts",
+        "scripts/replay.ts"
+      ],
+      "tests": [
+        "tests/replay.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F42",
+      "phase": 3,
+      "lane": "ui-shell",
+      "title": "UI shell: module layout with side panel; ResearchApp split into page components",
+      "spec": "7.1, 7.3",
+      "status": "todo",
+      "prereqs": [
+        "F30"
+      ],
+      "files": [
+        "src/app/youtube-intelligence/layout.tsx",
+        "src/features/youtube-intelligence/ui/SidePanel.tsx"
+      ],
+      "tests": [
+        "tests/metrics-registry.test.ts"
+      ],
+      "note": "Replaces IntelligenceApp.tsx and ResearchApp.tsx, 2768 lines deleted at the phase-3 gate.",
+      "planned": true
+    },
+    {
+      "id": "F43",
+      "phase": 3,
+      "lane": "ui-shell",
+      "title": "Shared components: TrustBadge, ConvictionChip, MetricHeader, DataTable, selectors",
+      "spec": "7.2, 7.5",
+      "status": "todo",
+      "prereqs": [
+        "F04",
+        "F42"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/TrustBadge.tsx",
+        "src/features/youtube-intelligence/ui/DataTable.tsx"
+      ],
+      "tests": [
+        "tests/metrics-registry.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F44",
+      "phase": 3,
+      "lane": "ui-today",
+      "title": "Today page",
+      "spec": "7.3",
+      "status": "todo",
+      "prereqs": [
+        "F43",
+        "F35",
+        "F38"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Today.tsx"
+      ],
+      "tests": [
+        "tests/metrics-registry.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F45",
+      "phase": 3,
+      "lane": "ui-channels",
+      "title": "Channels page: seed list, cost projection before save, trust distribution",
+      "spec": "4.15, 7.2",
+      "status": "todo",
+      "prereqs": [
+        "F43",
+        "F29"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Channels.tsx"
+      ],
+      "tests": [
+        "tests/metrics-registry.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F46",
+      "phase": 3,
+      "lane": "ui-leaderboard",
+      "title": "Leaderboard page with Changes, selectors, CSV export and Methodology",
+      "spec": "4.12, 7.3",
+      "status": "todo",
+      "prereqs": [
+        "F43",
+        "F36",
+        "F37"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Leaderboard.tsx",
+        "src/features/youtube-intelligence/ui/pages/Methodology.tsx"
+      ],
+      "tests": [
+        "tests/leaderboard.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F47",
+      "phase": 3,
+      "lane": "ui-analysis",
+      "title": "Analysis page: trust strip, claim cards, evidence viewer, play-from",
+      "spec": "7.4",
+      "status": "todo",
+      "prereqs": [
+        "F43",
+        "F35"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Analysis.tsx",
+        "src/features/youtube-intelligence/SourcePlayer.tsx"
+      ],
+      "tests": [
+        "tests/metrics-registry.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F48",
+      "phase": 3,
+      "lane": "ui-lab-settings",
+      "title": "Saved calls, Lab and Settings pages with reset-to-team-default",
+      "spec": "7.2, 7.3",
+      "status": "todo",
+      "prereqs": [
+        "F43",
+        "F08"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Settings.tsx"
+      ],
+      "tests": [
+        "tests/settings.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F49",
+      "phase": 3,
+      "lane": "gate",
+      "title": "Phase-3 gate run: anchor accuracy, push end to end, registry CI, Changes diff",
+      "spec": "9",
+      "status": "todo",
+      "prereqs": [
+        "F32",
+        "F33",
+        "F34",
+        "F35",
+        "F36",
+        "F37",
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43",
+        "F44",
+        "F45",
+        "F46",
+        "F47",
+        "F48"
+      ],
+      "files": [
+        "docs/gates/phase-3-baseline.json"
+      ],
+      "tests": [
+        "tests/leaderboard.test.ts",
+        "tests/push.test.ts"
+      ],
+      "note": "Anchor accuracy needs handoff A. Deferred in docs/gates/gate-debt.md until then.",
+      "planned": true
+    },
+    {
+      "id": "F50",
+      "phase": 4,
+      "lane": "context",
+      "title": "Context check: dated sources, citation validation, context_checks rows",
+      "spec": "4.14",
+      "status": "todo",
+      "prereqs": [
+        "F25",
+        "F11"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/context-check.ts",
+        "src/server/youtube-intelligence/migrations/0005_context_checks.sql"
+      ],
+      "tests": [
+        "tests/context-check.test.ts"
+      ],
+      "note": "The 50-call window criterion is deferred in docs/gates/gate-debt.md.",
+      "planned": true
+    },
+    {
+      "id": "F51",
+      "phase": 4,
+      "lane": "finradar",
+      "title": "Finradar youtube observation and the briefing-read-v1 adapter",
+      "spec": "4.17",
+      "status": "todo",
+      "prereqs": [
+        "F38",
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/briefing-observation.ts"
+      ],
+      "tests": [
+        "tests/briefing-observation.test.ts"
+      ],
+      "note": "Blocked: starts only after the human supplies the current briefing-read-v1 contract file.",
+      "planned": true
+    },
+    {
+      "id": "F52",
+      "phase": 4,
+      "lane": "corpus",
+      "title": "File Search corpus: transcripts uploaded on publish, cross-video question with cited spans",
+      "spec": "5",
+      "status": "todo",
+      "prereqs": [
+        "F10",
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/corpus.ts"
+      ],
+      "tests": [
+        "tests/corpus.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F53",
+      "phase": 4,
+      "lane": "sharing",
+      "title": "Sharing: indefinite until revoked, optional expiry, immutable snapshot",
+      "spec": "4.18",
+      "status": "todo",
+      "prereqs": [
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/repos/shares.ts",
+        "src/app/share/[token]/page.tsx"
+      ],
+      "tests": [
+        "tests/sharing.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F54",
+      "phase": 4,
+      "lane": "sharing",
+      "title": "Digest per account: Finradar briefing and/or email",
+      "spec": "6.3",
+      "status": "todo",
+      "prereqs": [
+        "F05",
+        "F53"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/briefings.ts",
+        "src/server/youtube-intelligence/email.ts"
+      ],
+      "tests": [
+        "tests/digest.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F55",
+      "phase": 4,
+      "lane": "gate",
+      "title": "Phase-4 gate run: context sample inside window, edition renders, corpus cites spans",
+      "spec": "9",
+      "status": "todo",
+      "prereqs": [
+        "F50",
+        "F51",
+        "F52",
+        "F53",
+        "F54"
+      ],
+      "files": [
+        "docs/gates/phase-4-baseline.json"
+      ],
+      "tests": [
+        "tests/context-check.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "G01",
+      "lane": "conventions",
+      "title": "Repository conventions and drift guards",
+      "spec": "-",
+      "status": "merged",
+      "prereqs": [],
+      "files": [
+        "tests/conventions.test.ts"
+      ],
+      "tests": [
+        "tests/conventions.test.ts"
+      ],
+      "phase": null,
+      "planned": false
+    },
+    {
+      "id": "G02",
+      "lane": "invariants",
+      "title": "The eight system invariants",
+      "spec": "-",
+      "status": "merged",
+      "prereqs": [],
+      "files": [
+        "tests/invariants.test.ts"
+      ],
+      "tests": [
+        "tests/invariants.test.ts"
+      ],
+      "phase": null,
+      "planned": false
+    },
+    {
+      "id": "G03",
+      "lane": "ledger",
+      "title": "This ledger and the test that keeps it honest",
+      "spec": "-",
+      "status": "merged",
+      "prereqs": [],
+      "files": [
+        "docs/delivery/ledger.json"
+      ],
+      "tests": [
+        "tests/delivery-ledger.test.ts"
+      ],
+      "phase": null,
+      "planned": false
+    },
+    {
+      "id": "G04",
+      "phase": null,
+      "lane": "harness",
+      "title": "Session boot context and the build-loop skills",
+      "spec": "build plan section 3",
+      "status": "merged",
+      "planned": false,
+      "prereqs": [
+        "G03"
+      ],
+      "files": [
+        "AGENTS.md",
+        ".claude/settings.json",
+        ".claude/hooks/session-start.sh",
+        ".claude/skills/build-feature/SKILL.md",
+        ".claude/skills/phase-gate/SKILL.md"
+      ],
+      "tests": [],
+      "note": "What a fresh session reads before it touches anything."
+    }
+  ]
+}

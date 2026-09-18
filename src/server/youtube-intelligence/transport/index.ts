@@ -77,8 +77,9 @@ export type TransportFactory = (
 /**
  * The settings key a pipeline stage is configured by. Stage names carry an
  * index (`critique-3`, `synthesis-chunk-1`, `transcribe-window-0`), so the
- * match is by prefix. A stage with no key — `source-repair`, an experiment —
- * falls back to `transport.default` and to the extraction model.
+ * match is by prefix. A stage with no key of its own — an experiment, or a
+ * one-off script's stage name — falls back to `transport.default` and to the
+ * extraction model.
  */
 export function stageKey(stage: string): ModelStageKey | undefined {
   if (stage.startsWith("synthesis") || stage === "extraction")
