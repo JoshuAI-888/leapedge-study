@@ -205,6 +205,19 @@ test("Only listed adapters call fetch, and the list says what each one talks to"
 test("Every module under src has something that imports it", () => {
   // Next owns src/app and src/proxy.ts by convention; everything else earns
   // its place by being used.
+  //
+  // The one exception is groundwork: a module a feature that has not been
+  // built yet names in its ledger entry. repos/jobs.ts is the live example —
+  // it defines the jobs table F24 created, and F26 is what will import it.
+  // The ledger entry is the escape hatch, so the intent is written down where
+  // the next session reads it rather than inferred from an empty file.
+  const ledger = JSON.parse(readFileSync("docs/delivery/ledger.json", "utf8")) as {
+    features: { id: string; status: string; files: string[]; note?: string }[];
+  };
+  const groundwork = new Map<string, string>();
+  for (const feature of ledger.features)
+    if (feature.status === "todo")
+      for (const file of feature.files) groundwork.set(file, feature.id);
   const modules = liveCode.filter(
     (p) =>
       (p.startsWith("src/features/") || p.startsWith("src/server/")) &&
@@ -223,10 +236,18 @@ test("Every module under src has something that imports it", () => {
           i.source.includes(`/${stem}"`) ||
           i.source.includes(`/${stem}'`)),
     );
+    const planned = groundwork.get(path);
     assert.ok(
-      used,
-      `${path} is imported by nothing. Delete it, or if it is about to be used, say so in docs/delivery/ledger.json.`,
+      used || planned,
+      `${path} is imported by nothing. Delete it, or if it is about to be used, name it in the files of the feature that will use it in docs/delivery/ledger.json.`,
     );
+    if (!used && planned) {
+      const feature = ledger.features.find((f) => f.id === planned)!;
+      assert.ok(
+        feature.note,
+        `${path} is unused groundwork for ${planned}, so ${planned} must carry a note saying what it is waiting for`,
+      );
+    }
   }
 });
 

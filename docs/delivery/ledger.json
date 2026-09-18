@@ -148,7 +148,7 @@
       "lane": "eval",
       "title": "Draft gold cases from exported runs",
       "spec": "4.9",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F06"
       ],
@@ -158,7 +158,6 @@
       "tests": [
         "tests/gold-draft.test.ts"
       ],
-      "pr": 4,
       "note": "Not in the build plan; added to cut the manual effort of handoff A.",
       "planned": false
     },
@@ -369,7 +368,7 @@
       "lane": "ledger",
       "title": "Record what priced a call, and which stage rejected a mention",
       "spec": "4.4",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F17"
       ],
@@ -379,7 +378,6 @@
       "tests": [
         "tests/ledger.test.ts"
       ],
-      "pr": 4,
       "note": "Not in the build plan; closes two open items from the phase-1 conformance report.",
       "planned": false
     },
@@ -484,7 +482,7 @@
       "lane": "data",
       "title": "Migration runner: numbered SQL, yi_migrations, applied at worker start",
       "spec": "4.7",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F01"
       ],
@@ -496,7 +494,6 @@
       "tests": [
         "tests/migrations.test.ts"
       ],
-      "pr": 4,
       "planned": true
     },
     {
@@ -505,7 +502,7 @@
       "lane": "data",
       "title": "Postgres-only database.ts: node:sqlite gone, $n placeholders, row locks",
       "spec": "4.7",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F22"
       ],
@@ -516,7 +513,6 @@
         "tests/connection.test.ts",
         "tests/locks.test.ts"
       ],
-      "pr": 4,
       "planned": true
     },
     {
@@ -525,7 +521,7 @@
       "lane": "data",
       "title": "Relational tables and repositories; publish writes rows",
       "spec": "8",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F23",
         "F12",
@@ -539,7 +535,6 @@
       "tests": [
         "tests/relational.test.ts"
       ],
-      "pr": 4,
       "planned": true
     },
     {
@@ -574,13 +569,14 @@
       ],
       "files": [
         "src/server/youtube-intelligence/queue.ts",
+        "src/server/youtube-intelligence/repos/jobs.ts",
         "src/server/youtube-intelligence/runner.ts",
         "scripts/worker.ts"
       ],
       "tests": [
         "tests/queue.test.ts"
       ],
-      "note": "PGlite is single-connection, so SKIP LOCKED cannot be proven in CI. Run scripts/postgres-check.ts against real Postgres before the phase-2 gate.",
+      "note": "repos/jobs.ts landed with F24 and defines the jobs table, but defers FOR UPDATE SKIP LOCKED, lease fencing and the concurrency limit to this feature, so nothing imports it yet. PGlite is single-connection, so run scripts/postgres-check.ts against a real Postgres before the phase-2 gate.",
       "planned": true
     },
     {
@@ -609,7 +605,7 @@
       "lane": "seed",
       "title": "Channel seed: two source lists, dedupe by channel id, default selection",
       "spec": "4.15",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F24"
       ],
@@ -621,7 +617,6 @@
       "tests": [
         "tests/channel-seed.test.ts"
       ],
-      "pr": 4,
       "planned": true
     },
     {
@@ -651,7 +646,7 @@
       "lane": "api",
       "title": "API restructure: dispatch table per resource, routes under /api/youtube-intelligence",
       "spec": "4.18",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F05",
         "F24"
@@ -663,7 +658,6 @@
       "tests": [
         "tests/actions.test.ts"
       ],
-      "pr": 4,
       "planned": true
     },
     {
@@ -762,7 +756,8 @@
       "tests": [
         "tests/asr-agreement.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "note": "repos/reviews.ts landed with F24 as the append-only reviews table, but nothing imports it until the trust ladder exists: only a signed review reaches L3, and computeTrustLevel is what reads one."
     },
     {
       "id": "F36",
