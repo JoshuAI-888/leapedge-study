@@ -314,7 +314,7 @@ Starts after F24, F24b and F30 merge. Every call on these pages is text-checked;
 
 ## 7. Neon and Vercel topology (amendment, 17 September 2026; corrected 18 September 2026)
 
-The plan above was written provider-neutral: `DATABASE_URL` and "Postgres". The deployment is Vercel functions in `iad1` against a Neon project, and Neon's pooler, autosuspend and branching change several items. Nothing in phases 0–1 is affected. This section is the binding version wherever it differs from sections 1–6.
+The plan above was written provider-neutral: `DATABASE_URL` and "Postgres". The deployment is Vercel functions against a Neon project in the same region — `syd1` and `ap-southeast-2` as configured — and Neon's pooler, autosuspend and branching change several items. Nothing in phases 0–1 is affected. This section is the binding version wherever it differs from sections 1–6.
 
 ### 7.1 What already works and must not be "fixed"
 
@@ -343,7 +343,7 @@ Required with it:
 - One `json(value)` reader and one `iso(value)` reader at the row boundary, with the repositories the only readers of row JSON.
 - Type parsers on **both** drivers: `pg.types.setTypeParser(1700)` → number and 1184 → ISO string; PGlite `parsers: {1700, 1184}`. PGlite's default number parser covers OIDs 21, 23, 26, 700, 701 only, so `numeric` arrives as a string there too.
 - `pool.on("error")` classified rather than logged: Neon suspends idle computes and recycles pooler connections, so a dropped connection is a normal, retryable event. The worker must reconnect and re-poll; a run whose transaction was cut stays leased until `lease_until` expires and is re-claimed, which F27 already guarantees.
-- Region check before the phase-2 gate: functions run in `iad1`, and the Neon project must be in the same region. The pipeline issues many small queries per stage, so a cross-region pairing multiplies every round trip. `docs/finradar-production-plan.md` flagged this and it was never verified. Recorded beside it, the **Postgres major version**: the branch used for checks and the production project must match the major that PGlite ships, since PGlite 0.5 ships Postgres 17 and the tests prove the dialect only if the two agree.
+- Region check before the phase-2 gate: the functions and the Neon project must be in the same region. `vercel.json` pins the function region, so the check is that the pinned value matches the Neon project's. The pipeline issues many small queries per stage, so a cross-region pairing multiplies every round trip. `docs/finradar-production-plan.md` flagged this and it was never verified. Recorded beside it, the **Postgres major version**: the branch used for checks and the production project must match the major that PGlite ships, since PGlite 0.5 ships Postgres 17 and the tests prove the dialect only if the two agree.
 
 ### 7.3 Migrations on Vercel (amends F22)
 
@@ -398,7 +398,7 @@ F29 projects model spend only. Windowed ASR (F32) stores a transcript and a wind
 | Fluid Compute suspends invocations holding idle pool clients | `attachDatabasePool` from `@vercel/functions` (7.2) |
 | Vercel has no release phase, so a deploy can run ahead of its schema | Migrations in the build command against the unpooled URL; the app fails fast on a version mismatch rather than creating tables (7.3) |
 | Neon autosuspend drops idle connections under a long-lived worker | Connection loss classified as retryable; lease expiry re-claims the run (7.2, F27) |
-| Neon compute in a different region from `iad1` multiplies per-query latency | Region and Postgres major version verified and recorded before the phase-2 gate (7.2) |
+| Neon compute in a different region from the functions multiplies per-query latency | `vercel.json` pins `regions`, a test asserts it stays pinned, and the pairing plus the Postgres major version are verified and recorded before the phase-2 gate (7.2) |
 | An attempt settles and the invocation dies before `save`, so a re-claim pays the provider twice | Request-hash replay from the retained response, token-fenced `reserve`/`settle`, takeover to `unknown`; F27 kills between `settle` and `save` and asserts one settled amount (7.5) |
 | Vercel does not suppress overlapping cron invocations, so a per-invocation cap multiplies by the number of live ticks | The running cap is global and enforced inside the claim transaction; an invocation that claims nothing exits at once (7.5) |
 | A type change to an existing column lands while the previous deployment is still serving requests | Type flips ship alone in `0005`, applied with `YTI_QUEUE_PAUSED=true` and zero running runs, `migrate.ts` refusing otherwise; fail-fast is one-directional so schema-ahead-of-code is safe (7.3, 7.4) |
@@ -532,6 +532,6 @@ Serial: F50 → F51 → F52 → F55. F51 starts only once the current `briefing-
 
 Nothing in phases 2–4 waits on A–D; gates 0 and 1 stay advisory until they arrive.
 
-One-time, **before F22a merges**: enable the Neon integration on the `youtube-intelligence` Vercel project with per-preview branches; set `DATABASE_URL_UNPOOLED` (from the integration) and `YTI_PRODUCTION_DB_HOST` in all environments; confirm the Neon region is `iad1` and record the Postgres major version; link the Vercel project to GitHub with production branch `main`.
+One-time, **before F22a merges**: enable the Neon integration on the `youtube-intelligence` Vercel project with per-preview branches; set `DATABASE_URL_UNPOOLED` (from the integration) and `YTI_PRODUCTION_DB_HOST` in all environments; confirm the Neon region matches the region pinned in `vercel.json` and record the Postgres major version; link the Vercel project to GitHub with production branch `main`.
 
 Before the phase-2 production deploy, in order: take a Neon branch; set `YTI_QUEUE_PAUSED=true`; wait for zero `running` runs; deploy; unpause.

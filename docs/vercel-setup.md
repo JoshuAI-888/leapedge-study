@@ -78,22 +78,47 @@ Each preview gets its own, migrates it, and deletes it. Without this, every
 preview build migrates **production** — a half-finished schema change from
 somebody's branch, landing in the live database, unreviewed.
 
+### What to put in the install dialog
+
+| Field | Set it to | Why |
+|---|---|---|
+| Custom Prefix | **`DATABASE`** — leave it | the code reads `DATABASE_URL` and `DATABASE_URL_UNPOOLED` and no other names. A prefix makes `NEON_URL`, which nothing reads |
+| Environments | Production, Preview | local work uses `.env` |
+| Create database branch for deployment | **Preview only** | untick Production. Production must use the project's own primary branch — the one the research accumulates in |
+| Sensitive | on | see step 6 |
+
+**If it refuses with "already has an existing environment variable with name
+`DATABASE_URL`":** that variable is currently the only pointer to your data. In
+this order — find which Neon project it names (the Neon console lists the
+connection string if Vercel will not show you the value), connect the
+integration to **that same project**, then delete the old variable and retry.
+Connecting a different or newly created project succeeds, deploys cleanly, and
+serves an empty database while the research sits in the old one. Nothing errors.
+
+The Production branch checkbox is Neon's setting and Vercel's documentation does
+not describe it. The advice above follows from what per-deployment branching
+means; confirm it against Neon's docs before ticking it.
+
 ---
 
 ## 5. Check the Neon region
 
-In the Neon console, read the project's **region**. It must be
-**`AWS us-east-1`** (Vercel calls it `iad1`).
+In the Neon console, read the project's **region**. It must be the **same
+region the Vercel functions run in** — that is the whole requirement; no
+particular region is special.
 
-**Why:** one analysis makes hundreds of small database queries. Same region, a
-round trip is about a millisecond; different continents, over a hundred. That
-multiplies out into far fewer videos per run.
+**Why:** one analysis makes hundreds of small database queries, and pays the
+round trip twice on each. Co-located that is about a millisecond. Across an
+ocean it is over a hundred, which multiplies out into far fewer videos per run
+and an invocation that stops before it finishes one.
 
-**If it is wrong, tell me — do not move it.** It means creating a new project and
-copying the data, not flipping a setting.
+**Ours:** the database is in `ap-southeast-2` (Sydney), so `vercel.json` pins
+`"regions": ["syd1"]`. Moving the functions is a config line; moving the
+database is a migration of live data. **If you ever move the Neon project,
+change that key in the same commit.**
 
-While you are there, run `SELECT version();` and send me the major version.
-Neither of these is a secret.
+While you are there, run `SELECT version();` and send me the major version. The
+region and the version are both worth knowing and neither is a secret.
 
 ---
 
@@ -101,7 +126,10 @@ Neither of these is a secret.
 
 1. Open the **production** `DATABASE_URL_UNPOOLED` and copy only the **host** —
    the part between `@` and the next `/`. It looks like
-   `ep-something-123456.us-east-1.aws.neon.tech` and has **no** `-pooler` in it.
+   `ep-something-123456.ap-southeast-2.aws.neon.tech` and has **no** `-pooler`
+   in it. If Vercel will not show you the value because it is Sensitive, take
+   the same host from the **Neon console** instead — no need to expose a URL
+   carrying the password.
 2. Add an environment variable `YTI_PRODUCTION_DB_HOST` with that host, ticked
    for **all three** environments: Production, Preview *and* Development.
 

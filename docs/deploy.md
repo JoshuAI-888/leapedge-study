@@ -292,7 +292,7 @@ The pooled endpoint runs in "transaction mode", and the trap is that the forbidd
 
 **Do this:**
 
-1. In the Neon console, open the project and read its **region**. It must be the same region as the Vercel functions: **`iad1`** — which Neon calls `AWS us-east-1`.
+1. In the Neon console, open the project and read its **region**. It must be the same region the Vercel functions run in. Ours is `ap-southeast-2` (Sydney), and `vercel.json` pins `"regions": ["syd1"]` to match it. No region is special; only the pairing is.
 2. Connect to the database and run `SELECT version();`. Write down the major version.
 3. Tell me both. Neither is a secret.
 
@@ -308,7 +308,7 @@ The pooled endpoint runs in "transaction mode", and the trap is that the forbidd
 
 **Do this:**
 
-1. Find the value of the **production** `DATABASE_URL_UNPOOLED`. Take only the **host** out of it — the part between `@` and the next `/`. It will look like `ep-something-123456.us-east-1.aws.neon.tech`, with **no** `-pooler` in it.
+1. Find the value of the **production** `DATABASE_URL_UNPOOLED`. Take only the **host** out of it — the part between `@` and the next `/`. It will look like `ep-something-123456.ap-southeast-2.aws.neon.tech`, with **no** `-pooler` in it. A Sensitive variable cannot be read back out of Vercel, so take the host from the Neon console instead.
 2. In **Vercel → Settings → Environment Variables**, add `YTI_PRODUCTION_DB_HOST` with that host as its value, and tick **all three** environments: Production, Preview **and** Development.
 
 **Why all three, including the ones that must never touch production:** because this variable is how the code *recognises* production. The migration script refuses to run when it sees that it is a preview deployment **and** the database it is about to migrate has this host. A preview that does not know production's host cannot tell that it is about to migrate it.
@@ -527,7 +527,7 @@ Exports carry a SHA-256 integrity hash and every table row. The restore script r
 - [ ] Neon integration added, with a branch per preview deployment
 - [ ] `DATABASE_URL` and `DATABASE_URL_UNPOOLED` both present in Vercel
 - [ ] `YTI_PRODUCTION_DB_HOST` set in Production **and** Preview **and** Development
-- [ ] Neon region confirmed as `iad1`, Postgres major version recorded
+- [ ] Function and database regions confirmed to match, Postgres major version recorded
 - [ ] `CRON_SECRET` set, at least 32 characters
 - [ ] `YTI_PREVIEW_READ_ONLY=true` on Preview only
 - [ ] `YTI_ACCESS_TOKEN`, `YTI_APP_ORIGIN`, provider keys, budget ceilings all set
