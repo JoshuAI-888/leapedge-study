@@ -2,7 +2,11 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 import pg from "pg";
 import type { PGlite } from "@electric-sql/pglite";
-import { migrate, pgliteClient } from "./migrations/run.ts";
+import {
+  directConnectionString,
+  migrate,
+  pgliteClient,
+} from "./migrations/run.ts";
 /**
  * Postgres only. Every database reached from here — Neon in deployment, PGlite
  * in tests — is built by the numbered files under migrations/, which are the
@@ -72,6 +76,164 @@ pg.types.setTypeParser(TIMESTAMPTZ_OID, parsers[TIMESTAMPTZ_OID]);
 export function advisoryKey(name: string) {
   return createHash("sha256").update(name).digest().readInt32BE(0);
 }
+export type ConnectionRole = "pooled" | "direct";
+/**
+ * Which of the two endpoints this process opens. A Next.js function and the
+ * cron route take the POOLED one (DATABASE_URL, whose host carries -pooler):
+ * many short-lived instances, a handful of clients each. A maintenance script
+ * sets YTI_DB_ROLE=direct and gets the DIRECT one through
+ * directConnectionString(), so no script reads DATABASE_URL_UNPOOLED itself.
+ *
+ * The direct endpoint is not a preference. DDL, session-level advisory locks
+ * (pg_advisory_lock), SET, temporary tables and pg_dump are all unavailable
+ * through a transaction-mode pooler, and the dangerous half of that list does
+ * not error: the statement succeeds against a session the pooler then hands to
+ * another client, and the effect is silently discarded.
+ */
+export function connectionRole(
+  env: Record<string, string | undefined> = process.env,
+): ConnectionRole {
+  return env.YTI_DB_ROLE === "direct" ? "direct" : "pooled";
+}
+function hostOf(url: string | undefined) {
+  if (!url) return undefined;
+  try {
+    return new URL(url).hostname.toLowerCase() || undefined;
+  } catch {
+    return undefined;
+  }
+}
+/** ep-x-pooler.region… and ep-x.region… are the two endpoints of one cluster. */
+function cluster(host: string) {
+  return host.replace("-pooler", "");
+}
+function connectionString(
+  env: Record<string, string | undefined> = process.env,
+) {
+  if (connectionRole(env) === "direct") {
+    const direct = directConnectionString(env);
+    // The guards a maintenance script runs first inspect DATABASE_URL, so a
+    // DATABASE_URL_UNPOOLED pointing somewhere else would slip past them and be
+    // written to. Neon issues the pair together and they differ only by
+    // -pooler; anything else is a hand-edited mistake. Names only, no values.
+    const pooled = hostOf(env.DATABASE_URL),
+      unpooled = hostOf(direct);
+    if (pooled && unpooled && cluster(pooled) !== cluster(unpooled))
+      throw Error(
+        "DATABASE_URL and DATABASE_URL_UNPOOLED are not the two endpoints of one database: point both at the same branch.",
+      );
+    return direct;
+  }
+  const value = env.DATABASE_URL?.trim();
+  if (!value)
+    throw Error(
+      "DATABASE_URL is required: the store is Postgres only. Set YTI_DB=pglite for an in-process database.",
+    );
+  return value;
+}
+const DEFAULT_POOL_MAX = 4;
+/**
+ * Clients this instance may hold. Deliberately NOT derived from
+ * processing.parallelVideos: that number lives in a team-preferences document
+ * which is read *through* this pool, so it cannot size the pool that fetches
+ * it. Neon's pooler multiplexes many instances onto few Postgres backends, so
+ * the ceiling that matters is per instance, and an unreadable value falls back
+ * rather than failing a serving instance.
+ */
+export function poolMax(
+  env: Record<string, string | undefined> = process.env,
+): number {
+  const raw = env.YTI_POOL_MAX?.trim();
+  if (!raw) return DEFAULT_POOL_MAX;
+  const value = Number(raw);
+  return Number.isInteger(value) && value >= 1 && value <= 64
+    ? value
+    : DEFAULT_POOL_MAX;
+}
+/**
+ * The newest migration this checkout carries, and therefore the schema every
+ * query in src/ is written against. It is a literal because a bundled Next
+ * server cannot read migrations/*.sql — migrationsDirectory() resolves from
+ * import.meta.url, which a bundle rewrites — so it cannot be derived at
+ * runtime. It cannot drift silently either: a test asserts it equals the
+ * highest version loadMigrations() finds on disk, so adding 0003_*.sql without
+ * raising this number fails `npm test`.
+ */
+export const SCHEMA_VERSION = 2;
+/**
+ * Fail fast in one direction only. BEHIND means the database has not got the
+ * tables or columns this code queries, so every statement is a guess: refuse
+ * before serving anything. AHEAD is normal and must pass — a deploy migrates
+ * on the direct endpoint before the new bundle serves, and a rollback leaves
+ * the newer schema in place with an older bundle on top. No caller here
+ * creates or alters a table; migrations are the only source of schema.
+ */
+export function assertSchemaVersion(
+  applied: number,
+  required: number = SCHEMA_VERSION,
+) {
+  if (applied < required)
+    throw Error(`Schema version ${required} required, ${applied} applied.`);
+}
+async function appliedSchemaVersion(
+  query: (sql: string) => Promise<Row[]>,
+): Promise<number> {
+  try {
+    const rows = await query(
+      "SELECT COALESCE(MAX(version),0) AS version FROM yi_migrations",
+    );
+    return Number(rows[0]?.version ?? 0);
+  } catch {
+    // No yi_migrations table at all, so nothing has been applied.
+    return 0;
+  }
+}
+export type DatabaseErrorClass = "retryable" | "fatal";
+// Connection-level SQLSTATEs (class 08) plus the shutdown, cannot-connect-now
+// and too-many-connections ones Neon raises when it suspends or recycles.
+const RETRYABLE_SQLSTATE = new Set([
+  "08000",
+  "08001",
+  "08003",
+  "08004",
+  "08006",
+  "08007",
+  "53300",
+  "57P01",
+  "57P02",
+  "57P03",
+]);
+const RETRYABLE_ERRNO = new Set([
+  "ECONNRESET",
+  "ECONNREFUSED",
+  "EPIPE",
+  "ETIMEDOUT",
+  "ENETUNREACH",
+  "EAI_AGAIN",
+]);
+const RETRYABLE_TEXT =
+  /connection terminated|terminating connection|not queryable|socket hang up|server closed the connection|connection closed/i;
+/**
+ * Is this database failure worth another attempt? Neon suspends an idle compute
+ * and the pooler recycles connections, so a dropped connection is an ordinary
+ * event rather than a defect: classify it retryable and let the caller open a
+ * new one. A constraint violation, a syntax error or a missing relation is
+ * fatal — repeating it repeats the same answer.
+ */
+export function classifyDatabaseError(error: unknown): DatabaseErrorClass {
+  if (!error || typeof error !== "object") return "fatal";
+  const e = error as { code?: unknown; errno?: unknown; message?: unknown };
+  const code = typeof e.code === "string" ? e.code : "";
+  if (RETRYABLE_SQLSTATE.has(code) || RETRYABLE_ERRNO.has(code))
+    return "retryable";
+  const errno = typeof e.errno === "string" ? e.errno : "";
+  if (RETRYABLE_ERRNO.has(errno)) return "retryable";
+  const message = typeof e.message === "string" ? e.message : "";
+  return RETRYABLE_TEXT.test(message) ? "retryable" : "fatal";
+}
+export function isRetryableDatabaseError(error: unknown) {
+  return classifyDatabaseError(error) === "retryable";
+}
 // PGlite is an in-process, single-connection Postgres used by tests
 // (YTI_DB=pglite). It shares the pg.Pool code path: the same $n placeholders,
 // the same migrations and the same type parsers.
@@ -100,6 +262,21 @@ async function loadPGlite() {
   const specifier = "@electric-sql/pglite";
   return (await import(specifier)) as typeof import("@electric-sql/pglite");
 }
+async function attachPool(instance: pg.Pool) {
+  // maxDuration = 800 on the cron route implies Fluid Compute, where an
+  // invocation can be suspended with clients still checked out; an idle client
+  // is an idle Neon connection held open for nothing. attachDatabasePool()
+  // closes the pool when the instance suspends or shuts down. The specifier is
+  // a literal so Next bundles and traces it — the opposite of loadPGlite(),
+  // which hides a dev-only package behind a variable. A failure here must not
+  // stop a local run or the PGlite test path, which never reach this function.
+  try {
+    const { attachDatabasePool } = await import("@vercel/functions");
+    attachDatabasePool(instance);
+  } catch {
+    console.error("attachDatabasePool is unavailable; the pool is not attached");
+  }
+}
 let tail = Promise.resolve();
 async function exclusive<T>(fn: () => Promise<T>): Promise<T> {
   const previous = tail;
@@ -119,25 +296,52 @@ async function initialize() {
         const { PGlite: Driver } = await loadPGlite();
         const instance = await Driver.create({ parsers });
         await migrate(pgliteClient(instance));
+        assertSchemaVersion(
+          await appliedSchemaVersion(
+            async (sql) => (await instance.query<Row>(sql)).rows,
+          ),
+        );
         pglite = instance;
-      } else if (process.env.DATABASE_URL) {
-        const connectionUrl = new URL(process.env.DATABASE_URL);
+      } else {
+        const connectionUrl = new URL(connectionString());
         if (connectionUrl.searchParams.get("sslmode") === "require")
           connectionUrl.searchParams.set("sslmode", "verify-full");
-        pool = new pg.Pool({
+        const instance = new pg.Pool({
           connectionString: connectionUrl.toString(),
-          max: 3,
+          max: poolMax(),
           connectionTimeoutMillis: 15000,
           idleTimeoutMillis: 10000,
         });
-        pool.on("error", () => console.error("Database pool connection error"));
+        instance.on("error", (error) =>
+          // A client can fail while idle, which pg reports here rather than to a
+          // caller. It has already discarded that client, so the next connect()
+          // opens a fresh one and nothing needs retrying from here: a run whose
+          // transaction was cut stays leased until its lease expires and is
+          // re-claimed. The class is logged so a suspended compute is not read
+          // as a defect.
+          console.error(
+            `Database pool connection error (${classifyDatabaseError(error)})`,
+          ),
+        );
+        await attachPool(instance);
         // No schema work here: the deployment migrates with `npm run migrate`
         // on the direct endpoint, never from a serving instance on the pooled
-        // one. migrations/README.md says why.
-      } else
-        throw Error(
-          "DATABASE_URL is required: the store is Postgres only. Set YTI_DB=pglite for an in-process database.",
-        );
+        // one. migrations/README.md says why. It is still checked, because a
+        // bundle older than the schema is fine and a bundle newer than it is
+        // not. The pool is published only once it passes, so a refusal leaves
+        // no connections behind for the retry initialize() allows.
+        try {
+          assertSchemaVersion(
+            await appliedSchemaVersion(
+              async (sql) => (await instance.query(sql)).rows as Row[],
+            ),
+          );
+        } catch (e) {
+          await instance.end().catch(() => undefined);
+          throw e;
+        }
+        pool = instance;
+      }
     })().catch((e) => {
       ready = undefined;
       throw e;

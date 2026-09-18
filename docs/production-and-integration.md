@@ -1,6 +1,6 @@
 # Production deployment and operations
 
-Updated 14 September 2026. This replaces the earlier local/Docker deployment proposal.
+Updated 18 September 2026. This replaces the earlier local/Docker deployment proposal.
 
 ## Deployed architecture
 
@@ -24,7 +24,11 @@ The app stores sources, reports, prompt snapshots, comparisons, reviews, deliver
 
 ## Configuration
 
-Use `.env.example` for variable names. Hosted configuration includes `DATABASE_URL`, `YTI_APP_ORIGIN`, a strong `YTI_ACCESS_TOKEN`, `CRON_SECRET`, provider credentials, recipient/sender and delivery enablement. Credentials stay in encrypted Vercel variables and ignored local environment files. Never expose them through `NEXT_PUBLIC_*`.
+Use `.env.example` for variable names and `src/server/youtube-intelligence/env.ts` for the authoritative schema. Hosted configuration includes `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `YTI_PRODUCTION_DB_HOST`, `YTI_APP_ORIGIN`, a strong `YTI_ACCESS_TOKEN`, `CRON_SECRET`, provider credentials, recipient/sender and delivery enablement. `missingRequiredHosted()` lists whichever of those hosted keys is unset, by name. Credentials stay in encrypted Vercel variables and ignored local environment files. Never expose them through `NEXT_PUBLIC_*`.
+
+Optional operational variables: `YTI_POOL_MAX` (clients per serving instance, default 4), `YTI_QUEUE_PAUSED` (declared for the drain sequence below; the dispatcher's own check on it is not wired yet), `YTI_PREVIEW_READ_ONLY`, `YTI_BUDGET_USD`, `YTI_TRANSCRIPT_CREDIT_BUDGET`, `RESEND_WEBHOOK_SECRET`.
+
+Errors and reports name keys, never values. Keep it that way: a message that quotes a connection string ends up in a build log.
 
 The configured canonical origin must exactly match the deployment alias; signed sessions and cross-origin checks depend on it. The workspace passcode is stored locally in ignored `.env.hosted`. A session expires after twelve hours. Public reports require an unguessable capability URL and expire after seven days; revocation is immediate.
 
@@ -32,21 +36,73 @@ Channel automatic analysis and daily delivery remain opt-in in Settings. Enablin
 
 Resend test submission succeeded. Mailbox receipt and live delivery-event verification are separate acceptance steps. Configure `/api/email/webhook` in Resend and store its signing secret as `RESEND_WEBHOOK_SECRET` for authenticated delivery/bounce events. The supplied sending-only key cannot inspect domains or delivery status. Webhook signature, timestamp and deduplication behavior is tested locally.
 
+## Database connections
+
+Two variables, two endpoints, one Neon branch.
+
+| Variable | Endpoint | Used by |
+| --- | --- | --- |
+| `DATABASE_URL` | pooled — its host carries `-pooler` | every Next.js function, including the cron route |
+| `DATABASE_URL_UNPOOLED` | direct | `npm run migrate`, `npm run db:check`, `npm run research:export`, `npm run research:restore` |
+
+Vercel's Neon integration sets both. The split is not a preference. DDL, session-level advisory locks (`pg_advisory_lock`), `SET`, temporary tables and `pg_dump` are all unavailable through a transaction-mode pooler, and the dangerous half of that list does not error: the statement succeeds against a session the pooler then hands to another client, and the effect is silently discarded. Nothing on a request path uses any of them, so a serving instance wants the pooled endpoint and only the pooled endpoint.
+
+No script reads `DATABASE_URL_UNPOOLED` itself. `scripts/migrate.ts` calls `directConnectionString()` directly; the three maintenance scripts reach the same function because their npm alias sets `YTI_DB_ROLE=direct`, which is what the pool in `database.ts` switches on. Run them through the alias — `npm run db:check`, not `node scripts/postgres-check.ts` — or they open the pooled endpoint instead. The pool refuses to start when the two variables name different clusters, because the isolation guards in `migrations/run.ts` inspect `DATABASE_URL` only and a mismatched direct endpoint would slip past them.
+
+`YTI_POOL_MAX` caps clients per instance, default 4. It is deliberately not derived from `processing.parallelVideos`: that number lives in a team-preferences document read *through* the pool, so it cannot size the pool that fetches it. Neon's pooler multiplexes many instances onto few backends, so the per-instance ceiling is the one that matters.
+
+Each pool is handed to `attachDatabasePool()` from `@vercel/functions` as it is built. `maxDuration = 800` on the cron route implies Fluid Compute, where an invocation can be suspended with clients still checked out; an idle client is an idle Neon connection held open for nothing.
+
+A dropped connection is routine — Neon suspends an idle compute and the pooler recycles connections — so `pool.on("error")` classifies it as retryable rather than treating it as a defect. `pg` has already discarded the client and the next `connect()` opens a fresh one. Work is not retried from there: a run whose transaction was cut stays leased until its lease expires and is re-claimed.
+
+The app refuses to serve a schema older than the code. `initialize()` reads `yi_migrations` and throws `Schema version N required, M applied` when the applied version is behind `SCHEMA_VERSION`, which tracks the newest file under `migrations/` (a test fails if the two drift). A schema *newer* than the code is allowed and does not throw: it is the normal state between the migrate step and the new bundle serving, and it is what a rollback leaves behind. Write every migration so the bundle still serving survives it. No function creates or alters a table; migrations are the only source of schema.
+
+## Migrations in the build
+
+`vercel.json` sets `"buildCommand": "npm run migrate && next build"`, so a deployment that cannot migrate never serves. The consequence is deliberate: while `DATABASE_URL_UNPOOLED` is unset, every deploy fails. Enable the Neon integration and set the variable before that line reaches the default branch.
+
+Before each production migration:
+
+1. **Branch first.** Create a Neon branch of production. It is a copy-on-write snapshot taken in seconds and it is the restore point — cheaper and faster than the export, and it keeps the original rows byte for byte.
+2. **Migrate the branch.** Point both variables at the branch and run `npm run migrate`, then `npm run db:check`. The check writes fixture rows, so it insists on `YTI_ISOLATED_DB=true`; never aim it at production. Pointing only one of the two variables at the branch is caught — the pool refuses a mismatched pair.
+3. **Check region and version.** In the Neon console, confirm the project region matches the Vercel project's region — a cross-region hop costs tens of milliseconds on every statement — and record the Postgres major version (`SELECT version()` in the Neon SQL editor). A major-version difference between the branch you rehearsed on and production invalidates the rehearsal.
+4. **Then production.** Deploy. The build migrates on the direct endpoint.
+
+`assertPreviewIsNotProduction()` refuses to migrate when `VERCEL_ENV=preview` and the direct host is the production one, and it refuses just as firmly when `YTI_PRODUCTION_DB_HOST` is unset, because then it cannot rule production out. Set it.
+
+### Pause and drain, for a type-changing migration
+
+An additive migration — a new table, a new nullable column, a new index — needs none of this; the serving bundle simply ignores what it does not know. A migration that changes or drops a type or column does, because the bundle in flight is still writing the old shape.
+
+1. Stop the dispatcher claiming new work. Set `YTI_QUEUE_PAUSED=true` and redeploy; the variable is declared but nothing reads it yet, so until that lands, pause by disabling the cron job in the Vercel dashboard (or removing the `crons` entry from `vercel.json`) and redeploying.
+2. Drain. Leases are ten minutes, so wait out the longest in-flight run; `/api/intelligence/status` reports whether the worker is still active.
+3. `npm run research:export` — a second restore point that is readable off-host.
+4. Branch, migrate, verify as above.
+5. Deploy the bundle that expects the new shape.
+6. Unset `YTI_QUEUE_PAUSED`.
+
+### Previews
+
+One database branch per preview. A preview that shares the production database will migrate it out from under production during its build, and the schema check will then refuse to start the older production bundle. Vercel's Neon integration creates a branch per preview deployment; enable it, and keep `YTI_PREVIEW_READ_ONLY=true` where a preview should not dispatch at all.
+
 ## Budget
 
 The task budget is NZ$500/month. The current research ledger is capped at US$15 cumulatively for this test campaign, including conservative unknown-call reservations. It does not implement monthly rollover. The OpenRouter account balance, Vercel plan, Neon usage and Resend quotas are separate. Reuse Finradar's monthly budget service when integrating. Prefer retained transcripts and text-only A/B variants to repeat video ingestion.
 
 ## Backup and recovery
 
+Export plus restore is the backup path. A Neon branch is the fast restore point; the export is the off-host one.
+
 ```sh
-node --env-file=.env --experimental-strip-types scripts/export-research.ts
-# Restore only into an empty, isolated destination configured through DATABASE_URL or YTI_DB_PATH:
-node --experimental-strip-types scripts/restore-research.ts PATH_TO_BACKUP.json
+npm run research:export
+# Restore only into an empty, isolated destination: point DATABASE_URL and
+# DATABASE_URL_UNPOOLED at it and set YTI_ISOLATED_DB=true.
+npm run research:restore -- PATH_TO_BACKUP.json
 ```
 
-Exports include SHA-256 integrity and all table rows. Restore refuses nonempty destinations and verifies counts inside a transaction. A real Neon export was restored successfully to both isolated SQLite and Postgres on 14 September. Keep exports private: they contain research, provider responses and share snapshots. Schedule encrypted off-host exports in the eventual Finradar operations system; do not assume a specific managed-backup retention period without checking the chosen Neon plan.
+Both aliases take the direct endpoint. Exports include SHA-256 integrity and all table rows. Restore refuses nonempty destinations and verifies counts inside a transaction. A real Neon export was restored successfully to an isolated Postgres database on 14 September. Keep exports private: they contain research, provider responses and share snapshots. Schedule encrypted off-host exports in the eventual Finradar operations system; do not assume a specific managed-backup retention period without checking the chosen Neon plan.
 
-For code rollback, promote the previous Vercel deployment. For data recovery, restore to a new database, verify, then change the app connection. Never blindly overwrite the live database. SQLite-to-Postgres migration is implemented in `scripts/migrate-sqlite.ts` and was verified with row counts.
+For code rollback, promote the previous Vercel deployment; the schema it finds will be newer than it expects, which is allowed. For data recovery, restore to a new database or promote a Neon branch, verify, then change the app connection. Never blindly overwrite the live database. There is no other store to migrate from: Postgres is the only one, Neon in deployment and PGlite in tests, and the former embedded driver, its path variable and its conversion script have all been deleted.
 
 ## Delivery checks
 
