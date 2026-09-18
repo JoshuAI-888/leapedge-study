@@ -804,6 +804,11 @@ test("A settled call keeps the provider's reported cost and the rate table that 
     "fake:describe",
     "a transport that prices each call from a live catalogue names itself",
   );
+  assert.deepEqual(
+    attempt.reservationRates,
+    { input: RATES.inputRate, audio: RATES.audioRate, output: RATES.outputRate },
+    "and its rates are kept, since no table version can be looked up for them",
+  );
   // The native transport prices from the static table, which names a version.
   const nativeRun = await ledgerRun("ledger-settled-native");
   await withFake(asNative(fake), () =>
@@ -846,4 +851,9 @@ test("A held reservation of unknown outcome records the rate table too", async (
   const held = (await store.listAttempts(run.id, "synthesis"))[0]!;
   assert.equal(held.status, "unknown");
   assert.equal(held.priceTableVersion, priceTableVersion);
+  assert.deepEqual(held.reservationRates, {
+    input: RATES.inputRate,
+    audio: RATES.audioRate,
+    output: RATES.outputRate,
+  });
 });

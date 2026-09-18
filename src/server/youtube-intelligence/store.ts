@@ -393,6 +393,21 @@ function metricsText(metrics: Record<string, unknown>, key: string) {
   const value = metrics[key];
   return typeof value === "string" && value ? value : null;
 }
+/**
+ * The three rates a reservation was priced at, read out of the metrics JSON.
+ * Anything other than three numbers reads as null rather than as a fabricated
+ * table.
+ */
+function metricsRates(metrics: Record<string, unknown>) {
+  const value = metrics.rates;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const { input, audio, output } = value as Record<string, unknown>;
+  return typeof input === "number" &&
+    typeof audio === "number" &&
+    typeof output === "number"
+    ? { input, audio, output }
+    : null;
+}
 /** One ledger row per attempt at a stage, oldest attempt first. */
 export type LedgerAttempt = {
   id: string;
@@ -408,6 +423,13 @@ export type LedgerAttempt = {
    * row that recorded none.
    */
   priceTableVersion: string | null;
+  /**
+   * The input, audio and output rates that priced it. A transport pricing from
+   * a catalogue it fetched for that one call names no table version, so these
+   * are the only record of what the hold was arithmetic over; null for a row
+   * that recorded none.
+   */
+  reservationRates: { input: number; audio: number; output: number } | null;
   open: boolean;
 };
 export async function listAttempts(
@@ -431,6 +453,7 @@ export async function listAttempts(
       amount: Number(r.amount),
       metrics,
       priceTableVersion: metricsText(metrics, "priceTableVersion"),
+      reservationRates: metricsRates(metrics),
       open: (OPEN_CALL_STATUSES as readonly string[]).includes(String(r.status)),
     };
   });

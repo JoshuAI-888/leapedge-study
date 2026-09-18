@@ -238,13 +238,11 @@ test("verdict ids map back to claims, key points and mentions", async () => {
   const mentions = [mention(4), mention(5)];
   const run = await critiqueRun({ claims, keyPoints, mentions });
   // A rejection extraction already recorded: the two kinds share one list, so a
-  // reader must be able to tell which stage refused which mention.
+  // reader must be able to tell which stage refused which mention. It carries no
+  // kind, which is what a run stored before the field existed looks like, and it
+  // must read back as an extraction rejection rather than as a critic one.
   run.output.rejectedMentions = [
-    {
-      mention: mention(9),
-      reason: "Mention cites no source range.",
-      kind: "extraction",
-    },
+    { mention: mention(9), reason: "Mention cites no source range." },
   ];
   const fake = new FakeModelTransport({
     responses: {

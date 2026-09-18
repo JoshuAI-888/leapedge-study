@@ -38,6 +38,7 @@ import {
   priceTableVersion,
   defaultPrice,
   isPriced,
+  describeFromPrices,
 } from "../src/server/youtube-intelligence/transport/prices.ts";
 import {
   TeamPreferences,
@@ -1082,6 +1083,9 @@ test("the static price table covers every native model the defaults name and nee
       assert.ok(isPriced(id), `${id} is a default native model but has no price`);
     const transport = new GoogleNativeTransport();
     const flash = await transport.describe(NATIVE_MODEL);
+    // The ledger records priceTableVersion for this family because describe()
+    // reads that table; assert the two halves of that claim stay tied.
+    assert.deepEqual(flash, describeFromPrices(NATIVE_MODEL));
     assert.deepEqual(flash, {
       contextLength: 1048576,
       inputRate: 0.00000075,

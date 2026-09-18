@@ -307,6 +307,16 @@ export async function modelCall(
     mediaTokens * spec.audioRate +
     maxTokens * spec.outputRate;
   const pricedBy = priceTableVersionFor(transport);
+  /**
+   * The three rates that produced `amount`. A transport that priced them from a
+   * catalogue fetched for this one call names no version, so the rates
+   * themselves are all that can explain the hold afterwards.
+   */
+  const rates = {
+    input: spec.inputRate,
+    audio: spec.audioRate,
+    output: spec.outputRate,
+  };
   // Wall time over every attempt, including the waits between them.
   const start = Date.now();
   /**
@@ -338,6 +348,7 @@ export async function modelCall(
             attempt,
             reservedUsd: amount,
             priceTableVersion: pricedBy,
+            rates,
             inputTokens: counted.tokens,
             error: reason,
           });
@@ -365,6 +376,8 @@ export async function modelCall(
     reservedUsd: amount,
     /** The rate table those rates came from, so the hold can be explained later. */
     priceTableVersion: pricedBy,
+    /** And the rates themselves, which a per-call catalogue keeps nowhere else. */
+    rates,
     inputTokens: counted.tokens,
     inputTokensCounted: !counted.estimated,
     ...(mediaTokens ? { mediaTokens } : {}),
