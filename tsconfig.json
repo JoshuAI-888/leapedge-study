@@ -34,7 +34,6 @@
   "exclude": [
     "node_modules",
     "work",
-    "evaluations/tooling",
-    "evaluations/native-google"
+    "scripts/archive"
   ]
 }

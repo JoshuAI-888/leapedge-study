@@ -1,0 +1,446 @@
+# Delivery review — YouTube Intelligence v2
+
+**Date:** 18 September 2026
+**Reviewed:** `main` @ `147ce70`, `origin/feat/yti-v2` @ `5b9e2bb`
+**Against:** `docs/spec/youtube-intelligence-v2-spec.md` (revision 3) and
+`docs/spec/youtube-intelligence-v2-build-plan.md` (approved, 17 September 2026)
+**Method:** every claim below was reproduced locally before it was written. Nothing is
+taken from a committed log.
+
+---
+
+## 1. Verdict
+
+The code that exists is good and it is honest. The build plan is being followed
+item by item, the tests are real, and the gate reports refuse to overstate what
+they measured. Three things are wrong with the *delivery*, and none of them are
+code-quality problems:
+
+1. **45% of the spec is built, 36% is merged.** 24 of 53 active features exist;
+   19 are on `main`. Phase 3 — the leaderboard, the trust ladder, the whole UI —
+   is 18 features and has not started.
+2. **Twenty-one commits of finished, green phase-2 work are sitting unmerged** on
+   `feat/yti-v2` with no open pull request. They also contain fixes for three of
+   the four open items the phase-1 conformance report carried forward.
+3. **No phase gate has actually been passed.** Both the phase-0 and phase-1 gate
+   reports are `verdict: advisory-only` with `binding: {total: 0}`. The build
+   plan says the next phase opens only after a human approves the gate. Phase 2
+   opened anyway. The cause is a single missing human input, not a build failure.
+
+---
+
+## 2. What was verified
+
+| Command | `main` | `feat/yti-v2` |
+|---|---|---|
+| `npm ci --ignore-scripts` | clean | clean |
+| `npm test` (SQLite driver) | **197 pass / 0 fail** | **285 pass / 0 fail** |
+| `YTI_DB=pglite npm test` | **197 pass / 0 fail** | not re-run (CI covers it) |
+| `npm run typecheck` | clean | clean |
+| `npm run build` | clean, 13 routes | clean, 14 routes |
+| `npm audit --omit=dev` | **0 vulnerabilities** | 0 vulnerabilities |
+| `scripts/promotion-gate.ts --offline` | exit 0, `advisory-only` | — |
+
+Run on Node 22.22.2 (`package.json` asks for 24.x; CI uses 24). Everything passed
+on 22, which matches the note in the phase-0 handoff.
+
+The phase-1 conformance report's headline numbers are accurate: 197/197 on both
+drivers, typecheck and build clean, `youtubei.js` absent from `package.json` and
+the lockfile, no `json_object` or `provider.only` under `src/`, no per-claim
+critique stage. All independently confirmed.
+
+The offline gate reproduces exactly what is committed: four checks, all
+`value: null`, `binding.total: 0`.
+
+---
+
+## 3. Delivery against the build plan
+
+53 active features (F01–F55, less F07 removed and F09 unused).
+
+### Merged to `main` — 19 features
+
+| Phase | Features | State |
+|---|---|---|
+| 0 | F01 F02 F03 F04 F05 F06 F08 | complete |
+| 1 | F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 F20 F21 | complete |
+
+### Built on `feat/yti-v2`, not merged — 5 planned + 3 unplanned
+
+| ID | Feature | Evidence |
+|---|---|---|
+| F22 / F22a | Migration runner, numbered SQL, two connection roles | `migrations/run.ts`, `0001`–`0003`, `tests/migrations.test.ts` |
+| F23 | Postgres-only data layer, `node:sqlite` gone, global lock replaced | `tests/connection.test.ts`, `tests/locks.test.ts` |
+| F24 | Relational `claims`/`mentions`/`evidence_spans`/`transcripts`/`reviews` + repos | `repos/*.ts`, `tests/relational.test.ts` |
+| F28 | Channel seed from LeapEdge + TrueAlphaData lists | `seed/*`, `tests/channel-seed.test.ts` |
+| F30 | Dispatch table per resource, `/api/youtube-intelligence/[resource]/[action]` | `actions/*.ts`, `tests/actions.test.ts` |
+| F06a | Draft gold cases from exported runs | `scripts/gold-draft.ts`, `tests/gold-draft.test.ts` |
+| F17b | Record `priceTableVersion` per call; `RejectedMention.kind` | `pipeline.ts:310,351`, `store.ts:425` |
+| — | Backup covering the new tables | `tests/backup.test.ts` |
+
+F06a and F17b are not in the plan. F17b closes two of the four open items the
+phase-1 conformance report carried into phase 2, and the deletion of
+`scripts/audit-institutional-chinese.ts` closes a third. **Merging this branch is
+the single highest-value action available.**
+
+### Not started — 29 features
+
+| Phase | Missing | Size |
+|---|---|---|
+| 2 | F25 prices/settlements tables, F26 Postgres queue + always-on worker, F27 restart-safe resume, F29 cost projection, F31 phase-2 gate | 5 — medium |
+| 3 | F32–F49: windowed ASR, agreement, tie-break, trust ladder, significance, leaderboard by ticker and creator, Changes tab, sentiment shift, push, batch, historical replay, UI shell, shared components, five pages, gate | **18 — the bulk of the remaining work** |
+| 4 | F50 context check, F51 Finradar observation, F52 corpus, F53 sharing, F54 digest, F55 gate | 6 — medium |
+
+`repos/jobs.ts` defines the `jobs` table and enqueue/list helpers but explicitly
+defers `FOR UPDATE SKIP LOCKED`, lease fencing and concurrency to F26. The queue
+is a table, not yet a queue.
+
+---
+
+## 4. The gate problem
+
+This is the most important finding and it is not a code defect.
+
+`evaluations/gold-set/cases.json` holds **5 cases, all `status: "pending"`**.
+Spec 4.9 requires 50 human-verified cases. Consequently:
+
+- `goldPrecision`, `goldRecall`, `anchorWithin2s`, `costPerAcceptedClaim` all
+  report `value: null`, `advisory: true`, `blocking: false`.
+- `docs/gates/phase-0-baseline.json` and `docs/gates/phase-1-v5.json` are
+  identical apart from their timestamps — the phase-1 v5 report measured
+  nothing the phase-0 baseline had not already not-measured.
+- `docs/gates/phase-1-v7.json` differs from v5 only in `id`, `at`,
+  `configHash` and `prompts.version`. It is a correctly-hashed empty
+  measurement, as its own summary says.
+- Three of the four phase-1 exit criteria are unmeasurable. The fourth (standby)
+  is genuinely met by `tests/standby.test.ts`.
+
+**Nothing in phases 0–4 can be validated until `docs/handoff/phase-0-human-inputs.md`
+deliverables A (50 verified cases), B (one v5 run per gold video) and C (frozen
+responses) exist.** Every later gate — anchor accuracy at phase 3, the context
+window sample at phase 4 — inherits the same blockage. Estimated cost of B:
+US$0.20–0.95 per video across ~50 videos, twice (v5 and v7) for the phase-1
+comparison.
+
+This is a project-schedule risk, not an engineering one, and it has been open
+since 17 September.
+
+---
+
+## 5. Defects found
+
+Severity is against the spec's own intent, not against a generic checklist.
+
+### D1 — NUL byte in a test source file *(low, trivial fix, both branches)*
+
+`tests/metrics-registry.test.ts:58` builds a composite key from a literal NUL
+byte embedded in the template literal between `c.surface` and `c.column`.
+
+`file(1)` reports the file as `data`. Git therefore treats it as binary: it
+shows `Bin` instead of a diff, so the file cannot be reviewed on GitHub and
+`git diff` is useless on it. Replace the raw byte with the escape sequence
+`\u0000`, or use a separator that cannot occur in a column name.
+
+### D2 — Reasoning tokens counted in cost but not in reported output tokens *(medium, still open on both branches)*
+
+`transport/google-native.ts` `usageOf()` returns `outputTokens: candidates`,
+which excludes `thoughtsTokenCount`, while the `costUsd` it returns is computed
+from `candidates + thoughts`.
+
+The ledger is correct, because `pipeline.ts:356` settles on
+`response.usage.costUsd`. But `yi_calls.metrics.tokens.outputTokens` and the run's
+`completion_tokens` under-report, so **any figure derived from tokens rather than
+from the settled cost will be wrong** — including F29's cost projection, which is
+the next feature to consume it. Either report `candidates + thoughts` as output
+tokens, or add a separate `reasoningTokens` field and make every consumer read it.
+This was flagged in the phase-1 conformance report and is not yet fixed.
+
+### D3 — A fallback call is reserved at the primary's prices *(low, off by default)*
+
+`pipeline.ts:293` computes the reservation from `spec`, the transport's
+`describe()`. For a `withOpenRouterFallback` wrapper that is the **primary's**
+static price table (`transport/index.ts` forwards `describe` to the primary).
+If the fallback fires and OpenRouter's rate is higher, the hold under-estimates.
+Settlement corrects the ledger afterwards, but `budget.perVideoMaxUsd` is checked
+against the under-estimate, so a run can exceed its per-video cap by the
+difference. `fallbackToOpenRouter` is off by default, so this is latent.
+
+### D4 — `assertCriticIndependent` passes silently on a missing model id *(low)*
+
+The check returns early when either the critic's or the extractor's model id is
+absent. A settings document with `requireDifferentFamily: true` but no explicit
+critic id therefore skips the independence check entirely rather than failing
+loudly. Given the rule exists so a correlated audit is never billed, the
+absent-id case should throw.
+
+### D5 — CI does not run the offline promotion gate *(low, process)*
+
+Build plan §3 and §4 require `.github/workflows/verify.yml` to run
+`promotion-gate.ts --offline` alongside `YTI_DB=pglite` and the registry test.
+`YTI_DB=pglite` is there and the registry test runs via the `tests/*.test.ts`
+glob; the gate command is absent. It exits 0 offline today, so adding it is free
+and stops a schema or prompt change from silently breaking the harness.
+
+### D6 — No phase flags *(low, process)*
+
+Spec §9 says "each phase is behind a flag" and build plan §3 says "rollback is
+the phase flag in `settings.ts`". `settings.ts` contains no occurrence of
+"phase". There is no rollback mechanism for a phase that misbehaves in
+production.
+
+### D7 — `README.md` describes retired behaviour *(low, but it is the front door)*
+
+`README.md:11` still advertises "Free YouTube.js caption retrieval". F20 deleted
+`youtubejs.ts`, its tests and the `youtubei.js` dependency. The same stale claim
+appears in `docs/production-and-integration.md:61` and
+`docs/implementation-checklist.md:9`. Anyone reading the repo's "What works"
+section is told about a provider that no longer exists.
+
+---
+
+## 6. Dead code
+
+Confirmed by import-graph analysis, not by inspection.
+
+| Item | Size | Status |
+|---|---|---|
+| `chunking.auditSource` | 1 function | No product caller. F15 removed the per-claim critique that used it; commit `c0570ee` **restored it specifically for `evaluations/native-google`**. Product code kept alive by a research harness. |
+| `evidence-boundaries.splitExactBoundaryQuotes` | 1 module | Same: called only by its own test and `evaluations/native-google/boundary-replay.ts`. Superseded by F12 pointer evidence. |
+| `evaluations/native-google/` | 2,418 LOC, own `package.json`, own lockfile, **its own CI job** | A v1 research harness superseded by F10's `GoogleNativeTransport`. It reaches into `src/` and is the sole reason the two entries above still exist. |
+| `evaluations/tooling/` | 484 KB lockfile (largest non-image file in the repo) | Pins `promptfoo@0.123.0` for a replay path. Spec revision 3: "the gold set is the only evaluation set." Documented as carrying advisories. |
+| `leapstudy/` | 473 LOC Python | Never deployed (`.vercelignore`), never run by CI. |
+| `scripts/*.py` (8 files) | 235 LOC | Same. |
+| `tests/test_evidence.py` | 78 LOC | Sits in the JS test directory, invisible to `npm test`'s `tests/*.test.ts` glob, and pytest is not a declared dependency. It has never run in CI. |
+| ~30 of 47 `scripts/*` | — | v1 one-off recorders (`save-*-research`, `completion-*`, `institutional-*`, `browser-parity*`, `*-blind-review`, `selection-report`, `seed-evaluation`, `run-window`…). Zero references from the v2 spec, build plan, README, `src/`, `tests/` or CI. Several read gitignored `data/` paths, so they cannot run for anyone else. |
+| `IntelligenceApp.tsx` + `ResearchApp.tsx` | 2,768 LOC | Two parallel v1 UIs. F42 replaces both; the plan already schedules their deletion at the phase-3 gate. Not dead yet — flagged so it is not forgotten. |
+| `metrics/registry.ts`, `ui-columns.ts`, `context.ts`, `methodology.ts` | 302 LOC + 3 modules | Built at F04, consumed only by `tests/metrics-registry.test.ts`. No product surface reads the registry until F43/F46. Intentional, but it means the hover/Methodology contract is unverified against a real table. |
+
+**Only `scripts/audit-institutional-chinese.ts` has been cleaned up so far** — and
+only on the unmerged branch.
+
+---
+
+## 7. Repository and documentation
+
+`docs/` is 124 tracked files, 1.6 MB.
+
+| Category | Count | Size |
+|---|---|---|
+| Dated one-off artifacts (`*-2026MMDD.*`) | 50 | 336 KB |
+| Raw `.log` files (test/typecheck/build console output) | 25 | 112 KB |
+| Files with **zero** inbound references from any file in the repo | 44 | — |
+| `architecture/*.png` | 1 | 374 KB |
+
+Specific items:
+
+- **Exact duplicate.** `docs/spec/phase-0-human-inputs.md` and
+  `docs/handoff/phase-0-human-inputs.md` are identical (md5
+  `b2e1d051aa1f32f66ba719e038307b72`), committed twice as `2c57d94` and `c3d5cd4`,
+  both with the message "docs: phase-0 human inputs handoff". Two copies will
+  drift; the phase-1 summary cites the `handoff/` path.
+- **Near-duplicate gate artifacts.** `phase-0-baseline.json` and `phase-1-v5.json`
+  differ only in the `at` timestamp.
+- **Committed console logs.** 25 `.log` files are raw stdout of `npm test`,
+  `tsc` and `next build` runs from 15–16 September. They are evidence of v1
+  acceptance, not documentation, and nothing links to most of them.
+- **Orphaned v1 narrative docs** with no inbound reference:
+  `leapedge-study.md`, `web-pilot-status.md`, `promptfoo-isolation.md`,
+  `youtubejs-and-promptfoo.md`, `youtube-api-options.md`,
+  `transcript-provider-support-draft.md`, `prompt-and-context-design.md`,
+  `managed-caption-integration.md`, `finradar-production-plan.md`,
+  `free-caption-benchmark.md`, `human-review-findings-20260915.md`.
+- **Root-level handoffs.** `handoff.md` (44 KB) and `handoff-videocviction.md`
+  (52 KB) sit at the repo root. Both have been *evaluated and dispositioned* in
+  spec §10; the VideoConviction one describes a benchmark revision 3 explicitly
+  removed. They are inputs that have been consumed.
+
+Nothing here should be deleted outright — it is the project's evidence trail and
+git history alone is a poor place for it. The recommendation is `docs/archive/`
+with a one-page index stating what each artifact proved and on what date, leaving
+`docs/` holding only what is live.
+
+---
+
+## 8. Plan to complete
+
+### Step 0 — unblock the gates *(human, not engineering; start now, runs in parallel with everything below)*
+
+Produce `docs/handoff/phase-0-human-inputs.md` deliverables A, B and C. Until
+these exist, no gate in any phase can return a binding number, and the project
+cannot demonstrate that it is better than v5 on any axis. `scripts/gold-draft.ts`
+on `feat/yti-v2` was built to reduce the manual effort of A — merge it first and
+use it.
+
+This is the critical path for *confidence*, though not for *code*.
+
+### Step 1 — merge `feat/yti-v2` *(days)*
+
+21 commits, 285 tests green, typecheck and build clean, verified locally today.
+It carries five planned phase-2 features and closes three of the four open items
+from phase 1. Open the PR, review it, merge it. Every day it waits, the
+divergence from `main` grows and the merge gets more expensive.
+
+### Step 2 — housekeeping *(one PR, low risk, do it while phase 2 finishes)*
+
+1. Fix D1 (NUL byte), D2 (reasoning tokens), D4 (critic id), D5 (CI gate), D7
+   (README and two docs).
+2. Move v1 evidence to `docs/archive/` with an index; delete the 25 raw `.log`
+   files or archive them as one tarball; remove the duplicate
+   `docs/spec/phase-0-human-inputs.md`.
+3. Retire the v1 script surface (~30 scripts) and the Python surface
+   (`leapstudy/`, `scripts/*.py`, `tests/test_evidence.py`) — subject to the
+   decisions in §9.
+4. Decide `evaluations/native-google/` and `evaluations/tooling/`. Retiring the
+   first also removes `chunking.auditSource`, `evidence-boundaries.ts` and a CI
+   job; retiring the second removes the repo's largest file and a documented
+   advisory tree.
+
+### Step 3 — finish phase 2 *(5 features)*
+
+F25 prices and settlements → F26 queue and always-on worker → F27 resume →
+F29 cost projection → F31 gate. F26 is the one with real risk: PGlite is
+single-connection, so `FOR UPDATE SKIP LOCKED` and lease fencing cannot be proven
+in CI. The build plan already names the mitigation — run `scripts/postgres-check.ts`
+against a real Postgres before the gate. Do not skip that.
+
+### Step 4 — phase 3 *(18 features — this is the project)*
+
+Two-thirds of the remaining work and everything the investment team actually sees.
+The plan's lane structure holds: `asr` (F32–F35) and `board` (F36–F38) can run
+alongside `ui-shell` (F42–F43) the moment F30 is merged, then five page agents in
+parallel (F44–F48). F49 needs deliverable A to measure anchor accuracy.
+
+### Step 5 — phase 4 *(6 features)*
+
+F51 is blocked on the human supplying the `briefing-read-v1` contract file; the
+plan already records this. The other four are independent.
+
+### Step 6 — the v1 deletion
+
+`IntelligenceApp.tsx` and `ResearchApp.tsx` (2,768 LOC) and the old
+`/api/intelligence/research` route go at the phase-3 gate, as planned. Hold the
+line on this — leaving both UIs alive is how a codebase acquires two sources of
+truth.
+
+---
+
+## 9. Decisions taken, 18 September 2026
+
+| # | Question | Decision |
+|---|---|---|
+| 1 | `feat/yti-v2` — merge now or hold for a gate? | **Open the PR now.** Opened as [#4](https://github.com/JoshuAI-888/leapedge-study/pull/4). |
+| 2 | Gold set — when do the 50 verified cases arrive? | **Not soon.** Restate the gates as advisory rather than carry a gate that cannot run. |
+| 3 | v1 evidence trail — archive or delete? | **Archive with an index.** The evidence supports external parity and accuracy claims. |
+| 4 | v1 research surface — retire now or at phase 3? | **Retire both evaluation trees now**, with the two dead product functions they pinned. |
+
+## 10. What was done in response
+
+Four commits on `claude/project-delivery-review-jlolrx`, each verified before it
+was made.
+
+**Decision 1 — PR #4** opens `feat/yti-v2` into `main`: 21 commits, 8 features,
+285 tests green. Nothing was merged without review.
+
+**Decision 2 — the gates are now stated as advisory.** `docs/gates/gate-debt.md`
+records each check's status, which phase exit criteria are therefore deferred
+(three of four in phase 1, one in phase 3, one in phase 4), how a phase closes
+in the meantime, and what clears the debt. Spec §4.9 and §9 carry the amendment.
+**The thresholds were not lowered** — lowering them was considered and rejected,
+because a weaker bar that is met tells you less than a strong bar honestly marked
+unmet.
+
+**Decision 3 — 98 docs, plus the two root handoffs, moved to `docs/archive/`**
+with an index saying what each group proves and when. `docs/` now holds 27 live
+files. The duplicate `docs/spec/phase-0-human-inputs.md` is gone; the `handoff/`
+copy, which the phase-1 summary cites, remains. Nothing was deleted.
+
+**Decision 4 — `evaluations/native-google/` and `evaluations/tooling/` deleted**,
+with `scripts/evaluate.ts`, `eval/cases.json`, the `eval:replay` npm script and
+the native-google CI job. That freed `chunking.auditSource` and
+`evidence-boundaries.ts`, both removed. `evaluations/checks.ts` stays —
+`gradeRun` is imported by `experiments.ts`, which is product code — as do
+`evaluations/gold-set/` and `evaluations/transcript-accuracy.ts`. Twenty-seven
+one-off scripts, the `leapstudy` Python package and `tests/test_evidence.py`
+moved to `scripts/archive/`, which is excluded from the typecheck and the Vercel
+bundle so archived code cannot break the build.
+
+**Defects.** D1, D2, D4, D5 and D7 are fixed, with tests for D2 and D4. D3
+(fallback reserved at the primary's prices) is left open deliberately: the fix
+belongs in `pipeline.ts`, which `feat/yti-v2` also changes, so it is queued
+behind PR #4 rather than creating a conflict. D6 (phase flags) is a design
+decision for whoever opens phase 3.
+
+**Also deferred behind PR #4**, to avoid delete-versus-modify conflicts: ten v1
+scripts that branch modifies, and `docs/production-and-integration.md` beyond the
+one-line source-chain correction.
+
+### State after these commits
+
+| | Before | After |
+|---|---|---|
+| `npm test` | 197 pass | **197 pass** (one added for D2/D4, one file of 2 removed with `evidence-boundaries`) |
+| typecheck / build / offline gate / `npm audit` | clean | **clean** |
+| Tracked repository size | 3.8 MB | **3.2 MB** |
+| Files in `docs/` | 124 | **27 live**, 101 archived |
+| Dead product functions | 2 | **0** |
+| CI jobs | 2 | **1**, now including the offline gate |
+
+---
+
+## 11. Making the plan check itself
+
+Every defect in §5 and every gap in §1 was a **documented rule that nothing
+enforced**. The build plan is good; it was not executable. Five artifacts fix
+that, and they need no gold set, no keys and no money.
+
+| Artifact | What it stops |
+|---|---|
+| `docs/delivery/ledger.json` + `tests/delivery-ledger.test.ts` | Delivery position living in a conversation. 59 entries; the test refuses a `merged` feature whose files are absent, a feature merged ahead of its prerequisites, a test path outside the `tests/*.test.ts` glob, a `todo` whose work already landed, and any drift between the ledger and the build plan. |
+| `tests/conventions.test.ts` | Retired things coming back, strip-types constructs, control characters in sources, unlisted `fetch` call sites, unimported modules, broken documentation links, duplicate files, and CI silently dropping a command the plan requires. |
+| `tests/invariants.test.ts` | Four of the plan's eight system invariants, as seeded property tests. The other four name the file that unlocks them and fail the moment it appears, so they cannot be forgotten. |
+| `AGENTS.md` project section | A fresh session guessing. It names what to read, in order, and warns that `pass: true` from the gate means nothing was measured. |
+| `.claude/skills/{build-feature,phase-gate}` and the SessionStart hook | The loop living in someone's head. The hook prints the ledger position at session start; the skills carry the per-feature and per-phase loops. |
+
+### What the guards found on their first run
+
+Writing them was not bookkeeping. Before they went green they surfaced five
+things this review had missed:
+
+1. **A second NUL byte**, in `tests/helpers/fixtures.ts:112` — same class as D1,
+   in a file nobody had looked at. Fixed with the escape, so the hash is
+   unchanged.
+2. **A third NUL byte — in this document**, at §5's description of D1. The guard
+   caught its own review.
+3. **`docs/finradar-module-handoff.md`** still said "Promptfoo stays an isolated
+   development tool". False since the tree was deleted.
+4. **`docs/production-and-integration.md`** still described `evaluations/tooling`
+   and the Python scripts as live.
+5. **A stale comment** in `transport/index.ts` naming `source-repair`, a stage
+   F15 removed.
+
+### The guards were mutation-tested
+
+A guard that cannot fail is theatre, so each was verified by breaking something
+on purpose and confirming it caught it, then reverting:
+
+| Mutation | Caught |
+|---|---|
+| Reintroduce `auditSource` into `chunking.ts` | yes |
+| Point a README link at a missing file | yes |
+| Mark F26 `merged` while its files do not exist | yes |
+| Disable `reserve()`'s open-attempt guard | yes |
+
+### State after this pass
+
+| | Before the review | Now |
+|---|---|---|
+| `npm test` (both drivers) | 197 | **221** |
+| Guard tests | 0 | **24** |
+| Plan-named test files never written | `conventions`, `invariants` | **both written** |
+| Delivery position recorded anywhere | nowhere | `docs/delivery/ledger.json` |
+| Repository-level agent instructions | none | `AGENTS.md`, two skills, a boot hook |
+
+---
+
+*Every measurement in this document was reproduced on 18 September 2026 before it
+was written. Commands and raw output are in §2.*

@@ -14,7 +14,7 @@ Inspected Finradar commit: `2747859c087dc1626e43b2b6fdb5871ede784247`. Re-check 
 | Private workspace cookie | Replace with existing Finradar authenticated owner context; scope every document, share, queue and query by owner. Do not introduce a second account system. |
 | `market.ts` | Reuse Finradar's issuer/listing resolution and FMP transport/cache. Keep adjusted prices, matching SPY sessions and explicit eligibility. |
 | Resend sender/scheduler | Use the existing email transport and delivery events. Do not duplicate email credentials or subscription billing. |
-| Evaluation checks and artifacts | Keep prompt snapshots, source hashes, request limits, model/token/cost history and improvement outcomes. Promptfoo stays an isolated development tool. |
+| Evaluation checks and artifacts | Keep prompt snapshots, source hashes, request limits, model/token/cost history and improvement outcomes. The gold set in `evaluations/gold-set` is the only evaluation set (spec revision 3); the promotion gate in `scripts/promotion-gate.ts` is the only promotion check. |
 
 ## Routes to add through the integration owner
 

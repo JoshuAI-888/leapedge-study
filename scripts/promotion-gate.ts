@@ -344,6 +344,20 @@ async function main() {
     );
     process.exit(2);
   }
+  /**
+   * Offline means no external anything: no key, no model call, and no database
+   * server either. F23 made the store Postgres-only, so without this the gate
+   * could no longer run on a machine that has no DATABASE_URL — which is CI,
+   * and which is the one place it has to run. A configured DATABASE_URL still
+   * wins, because gating against the runs actually stored is the point of
+   * leaving the runs file off.
+   */
+  if (!process.env.DATABASE_URL && !process.env.YTI_DB) {
+    process.env.YTI_DB = "pglite";
+    console.error(
+      "scripts/promotion-gate.ts: no DATABASE_URL, so reading stored runs from an empty in-process PGlite database.",
+    );
+  }
 
   const configPath = option("config");
   const team = configPath

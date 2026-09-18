@@ -285,3 +285,38 @@ test("the command runs offline without keys and writes the report to --out", asy
   assert.equal(summary.pass, true);
   assert.equal(summary.configHash, configHash(team));
 });
+
+test("The offline gate runs with no DATABASE_URL and no YTI_DB, which is how CI invokes it", async () => {
+  // F23 made the store Postgres-only, and the gate stopped being runnable
+  // without a database server. Nothing caught it: the end-to-end test above
+  // sets YTI_DB=pglite, so it exercised a configuration CI never uses.
+  // "Offline" has to mean no external anything, a database server included.
+  const script = fileURLToPath(
+    new URL("../scripts/promotion-gate.ts", import.meta.url),
+  );
+  const out = join(mkdtempSync(join(tmpdir(), "yti-gate-keyless-")), "gate.json");
+  const env = { ...process.env };
+  for (const key of [
+    "DATABASE_URL",
+    "DATABASE_URL_UNPOOLED",
+    "YTI_DB",
+    "YTI_DB_PATH",
+    "OPENROUTER_API_KEY",
+    "GOOGLE_API_KEY",
+    "GEMINI_API_KEY",
+  ])
+    delete env[key];
+
+  const { stdout } = await run(
+    process.execPath,
+    ["--experimental-strip-types", script, "--offline", "--out", out],
+    { env },
+  );
+
+  const report = GateReport.parse(JSON.parse(readFileSync(out, "utf8")));
+  assert.equal(report.mode, "offline");
+  assert.equal(report.verdict, "advisory-only");
+  assert.equal(report.sources.goldSet.runs, 0, "an empty database has no runs to replay");
+  const summary = JSON.parse(stdout.trim().split("\n").at(-1)!);
+  assert.equal(summary.pass, true);
+});
