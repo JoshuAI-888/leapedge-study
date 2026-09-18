@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { useDirectConnection } from "../src/server/youtube-intelligence/database.ts";
 import { assertIsolatedDatabase } from "../src/server/youtube-intelligence/migrations/run.ts";
 import { db } from "../src/server/youtube-intelligence/store.ts";
+import { tablesFor } from "../src/server/youtube-intelligence/backup.ts";
 // The DIRECT (unpooled) endpoint, chosen here and not by the npm alias, so that
 // running this file straight with node opens the same connection. See
 // useDirectConnection(): a transaction-mode pooler discards session-scoped work
@@ -15,22 +16,15 @@ useDirectConnection();
 assertIsolatedDatabase("restore-research");
 const input = JSON.parse(readFileSync(process.argv[2], "utf8"));
 if (
-  input.version !== 1 ||
   createHash("sha256").update(JSON.stringify(input.data)).digest("hex") !==
-    input.sha256
+  input.sha256
 )
   throw Error("Backup integrity check failed.");
-const tables = [
-  "yi_runs",
-  "yi_calls",
-  "yi_responses",
-  "yi_heartbeat",
-  "yi_documents",
-  "yi_events",
-  "yi_prompts",
-  "yi_discoveries",
-  "yi_shares",
-];
+// A version-1 file was written before the relational tables existed, so it
+// carries only the nine document-era ones and the rest stay empty. tablesFor
+// refuses any other version rather than restoring part of a file this build
+// does not understand.
+const tables = tablesFor(Number(input.version));
 await db().transaction(async () => {
   for (const table of tables) {
     const existing = await db()
@@ -56,5 +50,7 @@ await db().transaction(async () => {
       throw Error("Restore count mismatch");
   }
 });
-console.log("Backup checksum and all restored table counts verified.");
+console.log(
+  `Backup checksum and all ${tables.length} restored table counts verified (backup version ${input.version}).`,
+);
 await db().close();

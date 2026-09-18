@@ -2,9 +2,13 @@ import { z } from "zod";
 /**
  * One row of a resource's dispatch table. `schema` is the action's own input,
  * so nothing an action does not declare can reach its handler, and `mutating`
- * says whether running it writes — which is what splits the methods on the
- * route, a read on GET and a write on POST, and refuses a write inside a
- * read-only preview behind the guard that already refuses one at the edge.
+ * marks an action that changes the record on the caller's behalf — which is
+ * what splits the methods on the route, a read on GET and a write on POST, and
+ * refuses a write inside a read-only preview behind the guard that already
+ * refuses one at the edge. A read may still heal its own seed rows on the way
+ * past (research/snapshot reads prompt versions, which inserts the bundled ones
+ * when they are absent); that is guarded separately, by the preview's own
+ * read-only flag, and is not what this flag is about.
  */
 export type ActionEntry = {
   schema: z.ZodType;

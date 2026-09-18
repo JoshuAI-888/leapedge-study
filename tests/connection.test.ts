@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import {
   SCHEMA_VERSION,
   appliedSchemaVersion,
@@ -79,18 +79,36 @@ test("The maintenance scripts take the direct endpoint themselves", async () => 
   // A guarantee that lives in an npm alias evaporates the first time someone
   // runs the file the way every other script in scripts/ is run, and a
   // transaction-mode pooler discards session-scoped work without erroring.
-  for (const file of [
-    "scripts/postgres-check.ts",
-    "scripts/export-research.ts",
-    "scripts/restore-research.ts",
-  ]) {
-    const text = await readFile(file, "utf8");
+  // Derived rather than listed: two scripts that take the direct endpoint were
+  // added after this test was written (migrate-documents.ts, seed-channels.ts)
+  // and a hand-kept list would not have covered either.
+  const scripts = (await readdir("scripts"))
+    .filter((n) => n.endsWith(".ts"))
+    .map((n) => `scripts/${n}`);
+  const texts = new Map<string, string>();
+  for (const file of scripts) texts.set(file, await readFile(file, "utf8"));
+  const direct = scripts.filter((f) =>
+    texts.get(f)!.includes("useDirectConnection"),
+  );
+  assert.ok(
+    direct.length >= 5,
+    `expected the direct-endpoint scripts to be found, got ${direct.join(", ")}`,
+  );
+  for (const file of direct) {
+    const text = texts.get(file)!;
     const call = text.indexOf("useDirectConnection();");
     assert.ok(call > 0, `${file} must call useDirectConnection()`);
-    assert.ok(
-      call < text.indexOf("await "),
-      `${file} must call useDirectConnection() before its first query`,
-    );
+    // What this can check statically is module scope: a query awaited at the
+    // top level of the file runs on whatever endpoint the pool was opened with,
+    // so the call has to come first. A script that does its work inside main()
+    // has no top-level query and passes here; the call being the first thing
+    // main() does after parsing its flags is a reading matter.
+    const topLevelAwait = /^await /m.exec(text);
+    if (topLevelAwait)
+      assert.ok(
+        call < topLevelAwait.index,
+        `${file} must call useDirectConnection() before its first top-level query`,
+      );
   }
 });
 test(".env.example names the database variables and none that were deleted", async () => {

@@ -3,8 +3,13 @@ import assert from "node:assert/strict";
 import { freshDatabase } from "./helpers/db.ts";
 import { stubFetch, json } from "./helpers/fetch-stub.ts";
 import { database } from "../src/server/youtube-intelligence/database.ts";
-import { doc, docs } from "../src/server/youtube-intelligence/research-store.ts";
 import {
+  doc,
+  docs,
+  researchDB,
+} from "../src/server/youtube-intelligence/research-store.ts";
+import {
+  COLUMNS,
   getChannel,
   listChannels,
   listSeededChannels,
@@ -12,6 +17,7 @@ import {
 } from "../src/server/youtube-intelligence/repos/channels.ts";
 import {
   follow,
+  pullDue,
   updateChannel,
 } from "../src/server/youtube-intelligence/channels.ts";
 import {
@@ -62,11 +68,15 @@ function list(
     channels: [...overrides, ...channels],
   });
 }
+/**
+ * Every column of the table, not a chosen few: a re-seed that quietly wiped a
+ * polling cursor or a follow time would pass a snapshot that did not read them.
+ * The list is asserted against the repository's own COLUMNS below, so a column
+ * added later is compared here without anyone remembering to add it.
+ */
 const rowsSnapshot = async () =>
   (await database
-    .prepare(
-      "SELECT id,handle,title,tier,seed_source,discovery,processing,auto_analyze,active,favorite,created_at FROM channels ORDER BY id",
-    )
+    .prepare(`SELECT ${COLUMNS} FROM channels ORDER BY id`)
     .all()) as Record<string, unknown>[];
 
 test("The shipped seed lists parse, and say plainly that they are placeholders", () => {
@@ -103,6 +113,29 @@ test("A channel on both lists is one row, and it names both sources", async () =
   assert.equal(both.title, "On both lists");
 });
 
+test("A channel that joins a second list later gains a source, and stays one row", async () => {
+  await freshDatabase();
+  const shared = {
+    id: channelId("joins", 1),
+    handle: "@joins-1",
+    title: "Joins the second list later",
+  };
+  await seedChannels([list("leapedge", 2, 3, [shared])]);
+  assert.deepEqual((await getChannel(shared.id))!.seedSource, ["leapedge"]);
+  // The in-memory fold in resolveSeeds cannot reach this case: the second list
+  // did not exist when the row was written, so the union has to happen in the
+  // conflict branch of the INSERT. Every other test here seeds both lists at
+  // once and so passes through the INSERT path only.
+  await seedChannels([list("leapedge", 2, 3, [shared]), list("truealpha", 1, 2, [shared])]);
+  const row = (await getChannel(shared.id))!;
+  assert.deepEqual(row.seedSource, ["leapedge", "truealpha"]);
+  assert.equal(row.tier, "1", "and it takes the stronger tier the new list gives it");
+  assert.equal(
+    (await listSeededChannels()).filter((c) => c.id === shared.id).length,
+    1,
+  );
+});
+
 test("Seeding twice leaves the same rows and the same single selection", async () => {
   await freshDatabase();
   const lists = [list("leapedge", 2, 25), list("truealpha", 1, 4)];
@@ -116,6 +149,23 @@ test("Seeding twice leaves the same rows and the same single selection", async (
   await updateChannel({ id: channelId("leapedge", 25), favorite: true });
   const chosen = channelId("leapedge", 1);
   await updateChannel({ id: chosen, autoAnalyze: false });
+  // One row carried past the seed into the state a follow and a pull leave
+  // behind. These are the columns a careless conflict branch resets, and the
+  // ones that cost the most: followed_at is the cut-off deciding which uploads
+  // automatic analysis pays for, and next_page_token is where a backfill had
+  // got to. The snapshot is taken after this, so nothing below is masked out.
+  const followed = channelId("leapedge", 3);
+  await upsertChannel({
+    ...(await getChannel(followed))!,
+    uploads: "UU-followed",
+    active: true,
+    followedAt: "2026-06-01T00:00:00.000Z",
+    lastPull: "2026-06-02T00:00:00.000Z",
+    lastAttempt: "2026-06-02T00:00:00.000Z",
+    nextPullAt: "2026-06-02T01:00:00.000Z",
+    nextPageToken: "page-2",
+    historyStarted: true,
+  });
   const before = await rowsSnapshot();
   const second = await seedChannels(lists);
   assert.equal(second.recorded, false, "the same selection is recorded once");
@@ -135,6 +185,11 @@ test("Seeding twice leaves the same rows and the same single selection", async (
   );
   assert.equal(kept.processing, PROCESSING_ON_REQUEST);
   assert.equal((await getChannel(channelId("leapedge", 25)))!.favorite, true);
+  const stillFollowed = (await getChannel(followed))!;
+  assert.equal(stillFollowed.followedAt, "2026-06-01T00:00:00.000Z");
+  assert.equal(stillFollowed.nextPageToken, "page-2");
+  assert.equal(stillFollowed.uploads, "UU-followed");
+  assert.equal(stillFollowed.historyStarted, true);
   assert.equal((await selectionHistory()).length, 1);
   assert.equal((await docs(SELECTION_KIND)).length, 1);
 });
@@ -181,9 +236,10 @@ test("An unselected channel is seeded and discovered, but never analysed automat
   const unselected = (await getChannel(leapedge.channels[20].id))!;
   assert.equal(unselected.tier, "2");
   assert.deepEqual(unselected.seedSource, ["leapedge"]);
-  // R5: discovery and spending are two switches. The channel is watched for new
-  // uploads; nothing pays to analyse one until a person or a new selection says
-  // so.
+  // R5: discovery and spending are two switches. The row is recorded as one to
+  // discover on a schedule — it is not polled until somebody follows it and an
+  // uploads playlist is resolved — and nothing pays to analyse an upload until a
+  // person or a new selection says so.
   assert.equal(unselected.discovery, DISCOVERY_SCHEDULED);
   assert.equal(unselected.processing, PROCESSING_ON_REQUEST);
   assert.equal(unselected.autoAnalyze, false);
@@ -342,4 +398,120 @@ test("A new selection is a new version beside the old one, not an edited state",
   assert.deepEqual(history[0].channelIds, second.selection.channelIds);
   assert.deepEqual(history[1].channelIds, first.selection.channelIds);
   assert.equal((await getChannel(channelId("promoted", 1)))!.autoAnalyze, true);
+});
+
+test("A new selection re-projects the rows, but never overrules a person", async () => {
+  await freshDatabase();
+  const leapedge = list("leapedge", 2, 25);
+  const first = await seedChannels([leapedge, list("truealpha", 1, 4)]);
+  assert.equal(first.recorded, true);
+  // Two deliberate decisions, one in each direction, on rows a seed list named.
+  const off = channelId("leapedge", 1); // the rule selected it; switched off
+  const on = channelId("leapedge", 25); // the rule did not; switched on
+  await updateChannel({ id: off, autoAnalyze: false });
+  await updateChannel({ id: on, autoAnalyze: true });
+  // Growing a list with a Tier-1 channel DOES change the selection, so it is
+  // recorded and projected onto the rows. That projection is the hazard: it
+  // sweeps every seeded row, including the two just set by hand. Curating a
+  // list is not a decision to spend money on channels nobody chose.
+  const second = await seedChannels([leapedge, list("truealpha", 1, 5)]);
+  assert.equal(second.recorded, true, "the selection really did change");
+  assert.notEqual(second.selection.id, first.selection.id);
+  const kept = (await getChannel(off))!;
+  assert.equal(
+    kept.autoAnalyze,
+    false,
+    "growing a list does not start paying for a channel somebody switched off",
+  );
+  assert.equal(kept.processing, PROCESSING_ON_REQUEST);
+  const held = (await getChannel(on))!;
+  assert.equal(
+    held.autoAnalyze,
+    true,
+    "nor stop paying for one somebody switched on",
+  );
+  assert.equal(held.processing, PROCESSING_AUTOMATIC);
+  // The projection still does its job on every row nobody has touched: the new
+  // Tier-1 entry is selected, and this run is what switches it on.
+  const added = (await getChannel(channelId("truealpha", 5)))!;
+  assert.equal(added.autoAnalyze, true);
+  assert.equal(added.processing, PROCESSING_AUTOMATIC);
+  // And a row the earlier selection already had stays where it was.
+  assert.equal((await getChannel(channelId("leapedge", 2)))!.autoAnalyze, true);
+});
+
+test("pullDue discovers freely and spends only where both switches agree", async () => {
+  await freshDatabase();
+  // followed_at sits between the two uploads, so the older one is back
+  // catalogue and the newer one is why the channel was followed.
+  const followedAt = "2026-06-01T00:00:00.000Z";
+  const before = "2026-05-01T00:00:00.000Z";
+  const after = "2026-06-02T00:00:00.000Z";
+  const onRequest = channelId("gateoff", 1);
+  const automatic = channelId("gateon", 1);
+  for (const [id, processing] of [
+    [onRequest, PROCESSING_ON_REQUEST],
+    [automatic, PROCESSING_AUTOMATIC],
+  ] as const)
+    await upsertChannel({
+      id,
+      handle: `@${id}`,
+      title: id,
+      uploads: `UU-${id}`,
+      active: true,
+      // Both rows say to analyse automatically. What separates them is
+      // `processing`, and a row that says `on-request` is not paid for
+      // whatever auto_analyze holds.
+      autoAnalyze: true,
+      processing,
+      followedAt,
+      createdAt: "2026-01-01T00:00:00.000Z",
+    });
+  const video = (n: string, publishedAt: string) => ({
+    contentDetails: { videoId: n, videoPublishedAt: publishedAt },
+    snippet: { title: n, publishedAt },
+  });
+  const oldKey = process.env.YOUTUBE_API_KEY;
+  process.env.YOUTUBE_API_KEY = "fixture-only";
+  const stub = stubFetch([
+    {
+      url: "googleapis.com/youtube/v3/playlistItems",
+      respond: (call) => {
+        const playlist = new URL(call.url).searchParams.get("playlistId")!;
+        // Two channels, two distinct pairs of uploads: the same video id under
+        // both would be deduplicated by the discoveries primary key and the
+        // second channel would look as though it had never been polled.
+        const tag = playlist.endsWith(onRequest) ? "gateoff1" : "gateon01";
+        return json({
+          items: [video(`${tag}old`, before), video(`${tag}new`, after)],
+        });
+      },
+    },
+  ]);
+  try {
+    await pullDue();
+  } finally {
+    stub.restore();
+    if (oldKey) process.env.YOUTUBE_API_KEY = oldKey;
+    else delete process.env.YOUTUBE_API_KEY;
+  }
+  const rows = (await (await researchDB())
+    .prepare("SELECT video_id,channel_id,run_id FROM yi_discoveries ORDER BY video_id")
+    .all()) as { video_id: string; channel_id: string; run_id: string | null }[];
+  // Discovery is the free half and runs for both channels: four uploads found.
+  assert.equal(rows.length, 4, "both channels were polled");
+  const queued = rows.filter((r) => r.run_id).map((r) => r.video_id);
+  // Exactly one analysis was paid for: the upload published after the follow,
+  // on the channel whose two switches agree.
+  assert.deepEqual(queued, ["gateon01new"], JSON.stringify(rows));
+  assert.equal(
+    rows.filter((r) => r.channel_id === onRequest && r.run_id).length,
+    0,
+    "a row saying on-request buys nothing, whatever auto_analyze holds",
+  );
+  assert.equal(
+    rows.find((r) => r.video_id === "gateon01old")!.run_id,
+    null,
+    "following a channel does not buy its back catalogue",
+  );
 });

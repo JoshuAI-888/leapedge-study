@@ -11,8 +11,10 @@ import { database, iso, json } from "../database.ts";
  * Two switches on a channel row, and they are not the same switch.
  *
  * `discovery` says how a channel's uploads are found: `scheduled` is the free
- * metadata poll, `manual` is only when somebody asks. `processing` says what
- * happens to an upload once it is found: `automatic` spends money on the
+ * metadata poll, `manual` is only when somebody asks. It is recorded and not
+ * yet read: pullDue polls every followed channel that has an uploads playlist,
+ * and a seeded row has neither until somebody follows it. `processing` says
+ * what happens to an upload once it is found: `automatic` spends money on the
  * analysis pipeline without asking, `on-request` waits for a person.
  *
  * `processing` is the readable statement of the same decision `auto_analyze`
@@ -70,7 +72,11 @@ export type ChannelFields = {
   discovery?: unknown;
   processing?: unknown;
 };
-const COLUMNS =
+/**
+ * Every column of the table, in order. Exported so a test can compare a whole
+ * row rather than the handful of columns whoever wrote it thought to list.
+ */
+export const COLUMNS =
   "id,handle,title,tier,seed_source,discovery,processing,auto_analyze,followed_at,uploads,active,favorite,last_pull,last_attempt,next_pull_at,next_page_token,history_started,error,created_at";
 function text(value: unknown): string | null {
   return value === null || value === undefined ? null : String(value);
@@ -242,22 +248,33 @@ export async function seedChannel(seed: ChannelSeed) {
  * itself lives in versioned configuration, so this is a derived state that a
  * later version overwrites, never the record of the decision.
  *
- * Only rows a seed list named are touched. A channel somebody followed by hand
- * is theirs, and a selection must not switch paid analysis on or off under it.
+ * Two rows are never touched. A channel no seed list named is somebody's own,
+ * and a selection must not switch paid analysis on or off under it. And a
+ * seeded row whose switch no longer holds what the PREVIOUS selection left
+ * there is a row a person has since set by hand, so `previous` is passed in
+ * and the update moves only the rows that still agree with it.
+ *
+ * Without that second guard, curating a list spends money: adding one Tier-1
+ * channel changes the selection, and the projection that follows would sweep
+ * every seeded row and switch analysis back on for channels somebody had
+ * deliberately switched off. Growing a list is a statement about the list, not
+ * a decision to pay for channels nobody chose.
  */
 export async function setAutomaticAnalysis(
   selected: string[],
   automatic: string,
   onRequest: string,
+  previous: string[],
 ) {
   const result = await database
     .prepare(
       `UPDATE channels
           SET auto_analyze=(id=ANY($1::text[])),
               processing=CASE WHEN id=ANY($1::text[]) THEN $2 ELSE $3 END
-        WHERE cardinality(seed_source)>0`,
+        WHERE cardinality(seed_source)>0
+          AND auto_analyze=(id=ANY($4::text[]))`,
     )
-    .run(selected, automatic, onRequest);
+    .run(selected, automatic, onRequest, previous);
   return result.changes;
 }
 /** The seeded channels, whatever their tier, oldest first. */

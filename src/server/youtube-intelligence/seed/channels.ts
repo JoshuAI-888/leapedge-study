@@ -14,12 +14,18 @@ import {
   type SeedListData,
 } from "./lists.ts";
 /**
- * Seeding arms discovery and leaves processing off. Eighty channels on
- * scheduled discovery is a quota question; eighty channels on automatic
- * analysis is a bill nobody agreed to, so the paid switch is turned on only by
- * the recorded selection below, or one channel at a time from the Channels
- * surface. The two switches themselves are defined beside the columns they
- * write, in repos/channels.ts, and re-exported here for the seed's readers.
+ * Seeding records a channel as worth watching. It does not start polling it:
+ * a seeded row has no uploads playlist, because resolving one costs a YouTube
+ * API call, so `discovery` is a statement about the channel rather than a
+ * schedule anything reads. pullDue polls what somebody has followed, and a
+ * seeded channel joins that set when it is followed.
+ *
+ * Processing is the half that spends. Eighty channels on scheduled discovery is
+ * a quota question; eighty channels on automatic analysis is a bill nobody
+ * agreed to, so the paid switch is turned on only by the recorded selection
+ * below, or one channel at a time from the Channels surface. The two switches
+ * themselves are defined beside the columns they write, in repos/channels.ts,
+ * and re-exported here for the seed's readers.
  */
 export {
   DISCOVERY_SCHEDULED,
@@ -156,6 +162,13 @@ export async function currentSelection(): Promise<SelectionData | null> {
  * inserted them with: discovery on, paid analysis off. That default is the
  * whole protection for those rows, so it is asserted directly rather than
  * through the projection.
+ *
+ * Growing it with a channel the rule DOES select is a new selection, and that
+ * one is projected. The selection in force before it is read first and handed
+ * to the projection, which then moves only the rows still holding what it left
+ * there — so a switch a person has set since is not swept away by somebody
+ * curating a list. Reading it before the write is what makes this true: after
+ * putIfAbsent the new selection is the one in force.
  */
 export async function seedChannels(lists: SeedListData[] = seedLists()) {
   const resolved = resolveSeeds(lists);
@@ -169,6 +182,7 @@ export async function seedChannels(lists: SeedListData[] = seedLists()) {
       discovery: DISCOVERY_SCHEDULED,
       processing: PROCESSING_ON_REQUEST,
     });
+  const previous = await currentSelection();
   const selection = selectionRecord(defaultSelection(resolved));
   const recorded = await putIfAbsent(SELECTION_KIND, selection.id, selection);
   if (recorded)
@@ -176,6 +190,10 @@ export async function seedChannels(lists: SeedListData[] = seedLists()) {
       selection.channelIds,
       PROCESSING_AUTOMATIC,
       PROCESSING_ON_REQUEST,
+      // Before the first selection every seeded row was inserted with the paid
+      // switch off, so an empty previous selection is the literal truth about
+      // what the rows held: any row already on was turned on by a person.
+      previous?.channelIds ?? [],
     );
   return {
     channels: resolved.length,

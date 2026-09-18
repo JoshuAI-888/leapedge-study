@@ -135,14 +135,33 @@ test("An action refuses a field it does not declare", async () => {
  */
 test("Every object-shaped action schema refuses an undeclared field", () => {
   const shapes = entries.flatMap(({ resource, action, entry }) => {
-    const schema = (
-      entry.schema instanceof z.ZodArray
-        ? entry.schema.def.element
-        : entry.schema
-    ) as z.ZodType;
-    return schema instanceof z.ZodObject ? [{ resource, action, schema }] : [];
+    const found: { resource: string; action: string; schema: z.ZodObject }[] =
+      [];
+    const collect = (schema: z.ZodType, where: string) => {
+      const inner = (
+        schema instanceof z.ZodArray ? schema.def.element : schema
+      ) as z.ZodType;
+      if (inner instanceof z.ZodObject)
+        found.push({ resource, action: where, schema: inner });
+      return inner;
+    };
+    const top = collect(entry.schema, action);
+    // One level into a declared array field. An undeclared key inside, say, an
+    // experiment's `variants[]` is as much a field the action never declared as
+    // one at the top, and a plain z.object there strips it in silence.
+    if (top instanceof z.ZodObject)
+      for (const [key, field] of Object.entries(top.shape))
+        if (field instanceof z.ZodArray)
+          collect(field as z.ZodType, `${action}.${key}[]`);
+    return found;
   });
-  assert.ok(shapes.length >= 15, `only ${shapes.length} object schemas found`);
+  // Exact, not a floor: a floor lets one action be deleted or loosened into a
+  // non-object and still pass, which is the degradation it exists to catch.
+  assert.equal(
+    shapes.length,
+    17,
+    `object schemas found: ${shapes.map((s) => `${s.resource}/${s.action}`).join(", ")}`,
+  );
   for (const { resource, action, schema } of shapes) {
     const result = schema.safeParse({ __undeclared__: true });
     assert.equal(result.success, false, `${resource}/${action}`);
@@ -151,6 +170,25 @@ test("Every object-shaped action schema refuses an undeclared field", () => {
       `${resource}/${action} accepts a key it does not declare`,
     );
   }
+});
+/**
+ * The walk above reaches the object-shaped schemas; this one reaches all of
+ * them. Half the table declares a string, an enum, an array or `nothing`, and
+ * those were covered only by a loop asserting the request comes back 400 —
+ * which it does anyway when the handler throws for an unrelated reason, so
+ * loosening `nothing` to `z.any()` changed nothing that any test could see.
+ */
+test("No action schema accepts an object of keys it never declared", () => {
+  for (const { resource, action, entry } of entries)
+    assert.equal(
+      entry.schema.safeParse({ __undeclared__: true }).success,
+      false,
+      `${resource}/${action} parses an input it does not declare`,
+    );
+  // The three that declare no input at all take exactly undefined and null.
+  for (const schema of [RESOURCES.entities.suggestEntities.schema])
+    for (const accepted of [undefined, null])
+      assert.equal(schema.safeParse(accepted).success, true);
 });
 /**
  * The research app's "Use as new version" button prefills the prompt textarea
@@ -185,6 +223,20 @@ test("The prompt action takes a version copied out of the snapshot", async () =>
   assert.equal(edited.status, 200);
   const saved = (await edited.json()).result as Record<string, unknown>;
   assert.equal(saved.id, pasted.id);
+  // What this action must do with the paste is ACCEPT it: the two registry keys
+  // are declared for that reason, and a schema that refused them would reject
+  // the button's own prefill. That is the half asserted here.
+  const parsed = RESOURCES.settings.prompt.schema.parse(pasted) as Record<
+    string,
+    unknown
+  >;
+  assert.equal(parsed.hash, existing.hash);
+  assert.equal(parsed.createdAt, existing.createdAt);
+  // The other half — the handler dropping them before the store sees them —
+  // cannot be observed from out here: PromptVersion is a plain z.object and
+  // strips both whether or not the handler does. So these two assert the shape
+  // of the response, not the discard, and the 200 above is what pins the
+  // action working at all.
   assert.equal("hash" in saved, false);
   assert.equal("createdAt" in saved, false);
   const stored = (await promptVersions()).find((v) => v.id === pasted.id);
