@@ -136,11 +136,23 @@ async function apply(
         `Migration version ${f.version} was edited after it was applied: ${f.file} no longer matches the recorded checksum.`,
       );
   }
-  for (const version of recorded.keys())
-    if (!files.some((f) => f.version === version))
+  // An applied version with no file is one of two things, and the gap tells
+  // them apart. If a file on disk has a HIGHER version, the missing one was
+  // deleted or renamed after it was applied: refuse. If nothing on disk is
+  // higher, this checkout simply predates it — the schema-ahead-of-code state
+  // the README calls legal, and what a rollback to an older commit looks like.
+  // Report it and carry on, so `npm run migrate` still works during a rollback.
+  const newest = files.reduce((n, f) => (f.version > n ? f.version : n), 0);
+  for (const version of recorded.keys()) {
+    if (files.some((f) => f.version === version)) continue;
+    if (version < newest)
       throw Error(
-        `Migration version ${version} is recorded as applied but has no file on disk: restore it instead of deleting or renaming an applied migration.`,
+        `Migration version ${version} is recorded as applied but has no file on disk, and version ${newest} is present: restore it instead of deleting or renaming an applied migration.`,
       );
+    log(
+      `Database is ahead of this checkout: version ${version} is applied and has no file here. Nothing to do for it.`,
+    );
+  }
   const applied: number[] = [];
   for (const f of files) {
     if (recorded.has(f.version)) continue;
@@ -208,6 +220,36 @@ export function assertPreviewIsNotProduction(
   const host = hostOf(env.DATABASE_URL_UNPOOLED);
   if (!host) throw refuse("the host of DATABASE_URL_UNPOOLED cannot be read");
   if (host === production) throw refuse("the two hosts are the same");
+}
+/**
+ * A script that spends money or writes fixtures must never touch production.
+ * Two conditions, because either alone is too weak: the operator opts in with
+ * YTI_ISOLATED_DB, and the target must not be the production host. Before the
+ * SQLite path was removed the second condition was "DATABASE_URL is unset",
+ * which a Postgres-only codebase can no longer use. An unreadable host and an
+ * unset YTI_PRODUCTION_DB_HOST both refuse: neither rules production out.
+ * Names only; no value is ever printed.
+ */
+export function assertIsolatedDatabase(
+  what = "this script",
+  env: Record<string, string | undefined> = process.env,
+) {
+  const refuse = (why: string) =>
+    Error(`${what} needs an isolated database: ${why}.`);
+  if (env.YTI_ISOLATED_DB !== "true")
+    throw refuse("set YTI_ISOLATED_DB=true to confirm the target is disposable");
+  if (env.YTI_DB === "pglite") return;
+  const url = env.DATABASE_URL?.trim();
+  if (!url) throw refuse("neither YTI_DB=pglite nor DATABASE_URL is set");
+  const host = hostOf(url);
+  if (!host) throw refuse("the host of DATABASE_URL cannot be read");
+  const production = env.YTI_PRODUCTION_DB_HOST?.trim().toLowerCase();
+  if (!production)
+    throw refuse(
+      "YTI_PRODUCTION_DB_HOST is unset, so the production host cannot be ruled out",
+    );
+  if (host === production)
+    throw refuse("DATABASE_URL points at the production host");
 }
 /** The direct (unpooled) endpoint; the pooled one cannot hold a session lock. */
 export function directConnectionString(

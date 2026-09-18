@@ -222,17 +222,38 @@ test("A migration named with underscores is accepted", async () => {
   await writeFile(join(dir, "0003_AddMore.sql"), "SELECT 1;\n");
   await assert.rejects(() => loadMigrations(dir), /is not named NNNN_name.sql/);
 });
-test("A recorded migration whose file is gone is rejected", async () => {
+test("A gap in the applied versions is rejected, a trailing one is not", async () => {
   const dir = await directory(
     "CREATE TABLE IF NOT EXISTS yi_probe(id TEXT PRIMARY KEY);\n",
   );
+  await writeFile(
+    join(dir, "0002_add_probe_note.sql"),
+    "ALTER TABLE yi_probe ADD COLUMN IF NOT EXISTS note TEXT;\n",
+  );
   const { instance, client } = await blank();
   try {
-    assert.deepEqual((await migrate(client, { directory: dir })).applied, [1]);
+    assert.deepEqual((await migrate(client, { directory: dir })).applied, [
+      1, 2,
+    ]);
+    // A file deleted from the middle: 0002 is still here, so 0001 is missing
+    // rather than unknown, and the runner must refuse.
     await rm(join(dir, "0001_baseline.sql"));
     await assert.rejects(
       () => migrate(client, { directory: dir }),
-      /version 1 is recorded as applied but has no file on disk/,
+      /version 1 is recorded as applied but has no file on disk, and version 2 is present/,
+    );
+    // A rollback to a checkout that predates 0002: nothing on disk is higher
+    // than the unknown version, so the database is simply ahead and migrate
+    // stays usable. This is the recovery path, so it must not throw.
+    await rm(join(dir, "0002_add_probe_note.sql"));
+    await writeFile(
+      join(dir, "0001_baseline.sql"),
+      "CREATE TABLE IF NOT EXISTS yi_probe(id TEXT PRIMARY KEY);\n",
+    );
+    assert.deepEqual((await migrate(client, { directory: dir })).applied, []);
+    assert.deepEqual(
+      (await versions(instance)).map((v) => v.version),
+      [1, 2],
     );
   } finally {
     await instance.close();
