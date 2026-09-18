@@ -1232,7 +1232,7 @@
       "id": "G04",
       "phase": null,
       "lane": "harness",
-      "title": "Session boot context and the build-loop skills",
+      "title": "Session boot context, the build-loop skills and the slash commands that drive them",
       "spec": "build plan section 3",
       "status": "merged",
       "planned": false,
@@ -1244,7 +1244,10 @@
         ".claude/settings.json",
         ".claude/hooks/session-start.sh",
         ".claude/skills/build-feature/SKILL.md",
-        ".claude/skills/phase-gate/SKILL.md"
+        ".claude/skills/phase-gate/SKILL.md",
+        ".claude/commands/build.md",
+        ".claude/commands/status.md",
+        ".claude/commands/gate.md"
       ],
       "tests": [],
       "note": "What a fresh session reads before it touches anything."

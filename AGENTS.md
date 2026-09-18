@@ -71,11 +71,14 @@ Node 24 (`package.json` engines); Node 22 also runs it.
 
 ## Working loop
 
-Use the `build-feature` skill for a feature and the `phase-gate` skill for a
-gate. Both are in `.claude/skills/`. The short version: read the spec section,
-write the failing test first, implement, run the five commands above, update the
-ledger, push. Open the pull request when the lane *starts*, as a draft — work
-nobody can see is work that gets built twice.
+Type `/build` for one feature, `/gate` to close a phase, `/status` to see where
+delivery stands. They live in `.claude/commands/` and drive the `build-feature`
+and `phase-gate` skills in `.claude/skills/`.
+
+The short version: read the spec section, write the failing test first,
+implement, run the five commands above, update the ledger in the same commit,
+push. Open the pull request when the lane *starts*, as a draft — work nobody can
+see is work that gets built twice.
 
 ## Archives
 
