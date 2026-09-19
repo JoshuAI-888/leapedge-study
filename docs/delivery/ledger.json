@@ -1311,13 +1311,23 @@
     "hostedFollowUp": "Access code creation explicitly approved and completed. Production login 303, authenticated status/runs 200, browser login successful. Hosted database has zero runs and no worker/model credentials; local comparison/Mac runtime remain separate. See research review for operational follow-up."
   },
   "researchReview": {
-    "status": "proposed",
+    "status": "in-progress",
     "report": "docs/reviews/investment-research-review-20260920.md",
     "scope": "20 retained cases, 19 usable LeapEdge references; no new LeapEdge calls; proposal only",
     "preferences": {
       "horizons": "equal tactical and fundamental",
       "timeContext": "video-date plus separate current update",
       "ranking": "general cross-company material developments"
+    },
+    "implementation": {
+      "branch": "codex/evidence-led-research",
+      "scope": "User approved the complete research review on 20 September: temporal context, attributed evidence, whole-video briefs, dated external verification, novelty/materiality UI and retained-case verification. This explicitly extends standalone research beyond the earlier phase scope, but excludes Finradar integration.",
+      "stages": [
+        "temporal-and-evidence-contracts",
+        "synthesis-and-verification",
+        "research-ui",
+        "retained-case-and-browser-acceptance"
+      ]
     }
   }
 }
