@@ -1292,7 +1292,7 @@
   ],
   "executionScope": "docs/delivery/standalone-scope.json",
   "recovery": {
-    "status": "in-review",
+    "status": "complete",
     "pr": 8,
     "baseline": "docs/delivery/live-comparison-20-20260920.md",
     "scope": "Recover the seven failed/review cases; no new LeapEdge calls; retain baseline and separate retry costs.",
@@ -1304,8 +1304,9 @@
       "tests/ui-viewmodel.test.ts",
       "tests/runs-api.test.ts"
     ],
-    "note": "Seven stopped runs and four quality checks completed; long podcast has no uncovered interval over three seconds. No new LeapEdge calls. Additional API usage $2.75417070. Both full suites: 417 pass, one existing skip, zero failures; typecheck/build pass, offline gate advisory-only. Desktop/mobile browser checks passed, including zero unresolved dashboard runs and retained recovered history. PR #8 records merge/deployment; Mac runtime update preserves its database and paused queue.",
+    "note": "Seven stopped runs and four quality checks completed; long podcast has no uncovered interval over three seconds. No new LeapEdge calls. Additional API usage $2.75417070. Both full suites: 417 pass, one existing skip, zero failures; typecheck/build pass, offline gate advisory-only. Desktop/mobile browser checks passed, including zero unresolved dashboard runs and retained recovered history. PR #8 records merge/deployment; Mac runtime update preserves its database and paused queue. PR #8 merged after both GitHub verify jobs and Vercel preview passed. Installed Mac worker/web updated and healthy; queue remains paused.",
     "report": "docs/delivery/recovery-20260920.md",
-    "results": "docs/delivery/recovery-20260920.json"
+    "results": "docs/delivery/recovery-20260920.json",
+    "mergeCommit": "b27c9034ff1f2c143106cc91513a4e9a1f9fd2a2"
   }
 }
