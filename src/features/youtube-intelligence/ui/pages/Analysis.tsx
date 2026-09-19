@@ -78,6 +78,11 @@ export function Analysis({ id }: { id: string }) {
   const checked = (
     Array.isArray(run.output.claims) ? run.output.claims : []
   ) as CheckedClaim[];
+  const context = (
+    (Array.isArray(run.output.keyPoints)
+      ? run.output.keyPoints
+      : []) as CheckedClaim[]
+  ).filter((point) => point.passed && point.reasons.length === 0);
   const original = checked.find(
     (c) => c.id === (current ? localClaimId(current.id, id) : ""),
   );
@@ -329,9 +334,70 @@ export function Analysis({ id }: { id: string }) {
           }
         >
           {run.status === "completed"
-            ? "An analysis can finish without finding an actionable call. Inspect processing details for rejected or unsupported extractions."
+            ? "An analysis can finish without finding an actionable call. Any accepted background analysis appears in Research context below. Processing details retain rejected extractions."
             : "Progress refreshes automatically. You can leave this page and return later."}
         </Empty>
+      )}
+      {context.length > 0 && (
+        <section className="yi-panel" aria-label="Research context">
+          <h2>Research context · {context.length} points</h2>
+          <p className="yi-muted">
+            Background, risks and scenarios from the video, with supporting
+            evidence.
+          </p>
+          {context.map((point) => (
+            <Collapsible key={point.id} title={point.claim.thesis_en}>
+              {point.claim.horizon_en && (
+                <p>
+                  <strong>Timeframe:</strong> {point.claim.horizon_en}
+                </p>
+              )}
+              {point.claim.conditions_en.length > 0 && (
+                <p>
+                  <strong>Conditions:</strong>{" "}
+                  {point.claim.conditions_en.join(" · ")}
+                </p>
+              )}
+              {point.claim.risks_en.length > 0 && (
+                <p>
+                  <strong>Risks:</strong> {point.claim.risks_en.join(" · ")}
+                </p>
+              )}
+              {point.claim.levels.length > 0 && (
+                <dl className="yi-levels">
+                  {point.claim.levels.map((level, index) => (
+                    <div key={index}>
+                      <dt>{level.kind}</dt>
+                      <dd>{level.value_original}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {point.claim.evidence.map((e, index) => {
+                const start = e.source_span?.start_seconds;
+                return (
+                  <div key={`${point.id}-${index}`}>
+                    <blockquote>{e.quote_original}</blockquote>
+                    {e.quote_translation_en &&
+                      e.quote_translation_en !== e.quote_original && (
+                        <p>{e.quote_translation_en}</p>
+                      )}
+                    {start != null && (
+                      <a
+                        href={`https://www.youtube.com/watch?v=${encodeURIComponent(run.videoId)}&t=${Math.floor(start)}s`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Open source at {Math.floor(start / 60)}:
+                        {String(Math.floor(start % 60)).padStart(2, "0")}
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
+            </Collapsible>
+          ))}
+        </section>
       )}
       <Collapsible title="Processing details">
         <dl>
@@ -351,6 +417,7 @@ export function Analysis({ id }: { id: string }) {
               audioTrust: audio,
               transcriptionCompleteness: run.output.transcriptionCompleteness,
               rejectedEvidence: run.output.rejectedEvidence,
+              tickerProposals: run.output.tickerProposals,
               rejected: checked.filter((c) => !c.passed),
             },
             null,

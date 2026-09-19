@@ -1292,15 +1292,19 @@
   ],
   "executionScope": "docs/delivery/standalone-scope.json",
   "recovery": {
-    "status": "in-progress",
+    "status": "in-review",
     "pr": 8,
     "baseline": "docs/delivery/live-comparison-20-20260920.md",
     "scope": "Recover the seven failed/review cases; no new LeapEdge calls; retain baseline and separate retry costs.",
     "tests": [
       "tests/recovery.test.ts",
       "tests/windowed-asr.test.ts",
-      "tests/evidence-pointer.test.ts"
+      "tests/evidence-pointer.test.ts",
+      "tests/resume.test.ts",
+      "tests/ui-viewmodel.test.ts"
     ],
-    "note": "Output-aware extraction, bounded ASR subdivision and gap checks, exact evidence-range subdivision, financial semantics, sourced listing identity, price correction and selected-evidence synchronization implemented; full checks and live retries in progress."
+    "note": "Seven stopped runs completed; four retained-transcript quality checks completed. Long podcast residual gap recovered; no new LeapEdge calls. Additional model usage $2.75417070. Final checks and browser acceptance in progress.",
+    "report": "docs/delivery/recovery-20260920.md",
+    "results": "docs/delivery/recovery-20260920.json"
   }
 }

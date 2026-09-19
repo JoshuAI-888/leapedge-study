@@ -5,24 +5,26 @@ process.env.YTI_DB = "pglite";
 delete process.env.DATABASE_URL;
 process.env.OPENROUTER_API_KEY = "fixture";
 process.env.YTI_BUDGET_USD = "10";
-const {
-  deriveEvidence,
-  validateClaim,
-  Claim,
-  Source,
-} = await import("../src/features/youtube-intelligence/contracts.ts");
-const { materializeEvidenceRanges } =
-  await import("../src/features/youtube-intelligence/evidence-selection.ts");
+const { deriveEvidence, validateClaim, Claim, Source } = await import(
+  "../src/features/youtube-intelligence/contracts.ts"
+);
+const { materializeEvidenceRanges } = await import(
+  "../src/features/youtube-intelligence/evidence-selection.ts"
+);
 const { extractionResponseSchema, PointerExtraction, parsePointerExtraction } =
   await import("../src/server/youtube-intelligence/schemas/extraction.ts");
-const { FakeModelTransport } =
-  await import("../src/server/youtube-intelligence/transport/fake.ts");
-const { injectTransport } =
-  await import("../src/server/youtube-intelligence/transport/index.ts");
-const { create, db } =
-  await import("../src/server/youtube-intelligence/store.ts");
-const { step, extractionPayload } =
-  await import("../src/server/youtube-intelligence/pipeline.ts");
+const { FakeModelTransport } = await import(
+  "../src/server/youtube-intelligence/transport/fake.ts"
+);
+const { injectTransport } = await import(
+  "../src/server/youtube-intelligence/transport/index.ts"
+);
+const { create, db } = await import(
+  "../src/server/youtube-intelligence/store.ts"
+);
+const { step, extractionPayload } = await import(
+  "../src/server/youtube-intelligence/pipeline.ts"
+);
 
 const source = Source.parse({
   source_kind: "imported_transcript",
@@ -34,8 +36,18 @@ const source = Source.parse({
       start_seconds: 1,
       end_seconds: 5,
     },
-    { id: "b", text: "Do not wait for a close.", start_seconds: 5, end_seconds: 9 },
-    { id: "c", text: "QQQ is only a watch.", start_seconds: 9, end_seconds: 12 },
+    {
+      id: "b",
+      text: "Do not wait for a close.",
+      start_seconds: 5,
+      end_seconds: 9,
+    },
+    {
+      id: "c",
+      text: "QQQ is only a watch.",
+      start_seconds: 9,
+      end_seconds: 12,
+    },
   ],
 });
 const pointerClaim = {
@@ -64,7 +76,10 @@ test("deriveEvidence copies the exact source span and hashes it stably", () => {
     derived.text_hash,
     createHash("sha256").update(derived.quote_original).digest("hex"),
   );
-  assert.deepEqual(deriveEvidence(source, { start_id: "a", end_id: "b" }), derived);
+  assert.deepEqual(
+    deriveEvidence(source, { start_id: "a", end_id: "b" }),
+    derived,
+  );
   const single = deriveEvidence(source, { start_id: "c", end_id: "c" });
   assert.equal(single.quote_original, "QQQ is only a watch.");
 });
@@ -86,7 +101,9 @@ test("deriveEvidence rejects unknown, reversed and over-long ranges", () => {
     })),
   });
   assert.throws(() => deriveEvidence(long, { start_id: "s0", end_id: "s120" }));
-  assert.ok(deriveEvidence(long, { start_id: "s0", end_id: "s99" }).quote_original);
+  assert.ok(
+    deriveEvidence(long, { start_id: "s0", end_id: "s99" }).quote_original,
+  );
   const slow = Source.parse({
     source_kind: "imported_transcript",
     segments: [
@@ -111,9 +128,7 @@ test("materializeEvidenceRanges records source_span with the derived quote", () 
   );
   assert.equal(
     span.text_hash,
-    createHash("sha256")
-      .update(claim.evidence[0].quote_original)
-      .digest("hex"),
+    createHash("sha256").update(claim.evidence[0].quote_original).digest("hex"),
   );
   assert.deepEqual(validateClaim(claim, source), []);
 });
@@ -141,7 +156,10 @@ test("the extraction response schema and its parser accept ranges and reject a c
   ])
     assert.ok(field in claims.properties, `${field} missing from the schema`);
   assert.ok(!("evidence" in claims.properties));
-  assert.equal(JSON.stringify(extractionResponseSchema).includes("quote_original"), false);
+  assert.equal(
+    JSON.stringify(extractionResponseSchema).includes("quote_original"),
+    false,
+  );
   const parsed = parsePointerExtraction({ claims: [pointerClaim] });
   assert.equal(parsed.claims[0].evidence_ranges[0].end_id, "b");
   assert.deepEqual(parsed.key_points, []);
@@ -152,7 +170,10 @@ test("the extraction response schema and its parser accept ranges and reject a c
       claims: [{ ...pointerClaim, evidence_ranges: [] }],
     }),
   );
-  assert.equal(PointerExtraction.safeParse({ claims: [pointerClaim] }).success, true);
+  assert.equal(
+    PointerExtraction.safeParse({ claims: [pointerClaim] }).success,
+    true,
+  );
 });
 
 test("validateClaim records a stale pointer span as a warning, never a rejection", () => {
@@ -162,7 +183,8 @@ test("validateClaim records a stale pointer span as a warning, never a rejection
     evidence: [
       {
         ...materialized.evidence[0],
-        quote_original: "If SPY breaks below 500, exit. Do not wait for a close.",
+        quote_original:
+          "If SPY breaks below 500, exit. Do not wait for a close.",
         source_span: {
           ...materialized.evidence[0].source_span!,
           text_hash: "0".repeat(64),
@@ -233,7 +255,12 @@ test("a pointer-evidence synthesis step copies spans and never rejects on a stri
   const request = fake.requestsFor("synthesis")[0];
   assert.deepEqual(request.responseSchema, extractionResponseSchema);
   const claims = run.output.claims as {
-    claim: { evidence: { quote_original: string; source_span?: { start_id: string } }[] };
+    claim: {
+      evidence: {
+        quote_original: string;
+        source_span?: { start_id: string };
+      }[];
+    };
     reasons: string[];
   }[];
   assert.equal(claims.length, 1);
@@ -319,7 +346,12 @@ const chineseSource = Source.parse({
       end_seconds: 5,
     },
     { id: "zh2", text: "不要等待收盘。", start_seconds: 5, end_seconds: 9 },
-    { id: "zh3", text: "腾讯只是观察名单。", start_seconds: 9, end_seconds: 12 },
+    {
+      id: "zh3",
+      text: "腾讯只是观察名单。",
+      start_seconds: 9,
+      end_seconds: 12,
+    },
   ],
 });
 const chineseQuote = "如果 SPY 跌破 500，就退出。不要等待收盘。";
@@ -384,14 +416,21 @@ async function runThroughTranslation(
     critique: "Audit the supplied claim against the source fixture.",
     pointerEvidence: true,
   };
-  const run = await create(name, "google/gemini-3.8-flash", { promptSnapshot: snapshot }, snapshot.id);
+  const run = await create(
+    name,
+    "google/gemini-3.8-flash",
+    { promptSnapshot: snapshot },
+    snapshot.id,
+  );
   run.stage = "synthesis";
   run.output.metadata = { duration: 12 };
   run.output.source = src;
   const fake = new FakeModelTransport({
     responses: {
       synthesis: { json: reply },
-      ...(translateReply === undefined ? {} : { translate: { json: translateReply } }),
+      ...(translateReply === undefined
+        ? {}
+        : { translate: { json: translateReply } }),
     },
   });
   const restore = injectTransport(fake);
@@ -460,7 +499,10 @@ test("Chinese spans are translated in one call and their hashes still hold", asy
   assert.equal(evidence.source_span?.text_hash, sha256(chineseQuote));
   const mention = (run.output.mentions as StoredMention[])[0];
   assert.equal(mention.instrument_as_spoken, "腾讯");
-  assert.equal(mention.source_span.translation_en, "Tencent is only on the watch list.");
+  assert.equal(
+    mention.source_span.translation_en,
+    "Tencent is only on the watch list.",
+  );
   assert.equal(mention.source_span.text_hash, sha256("腾讯只是观察名单。"));
   assert.deepEqual(run.output.translation, { spans: 2, language: "zh" });
   assert.equal(run.stage, "critique");
@@ -533,19 +575,69 @@ test("a span whose retained source changed under it fails the hash assertion", a
   await db().close();
 });
 
-test('One invalid claim pointer is retained as a rejection without discarding valid calls', async () => {
-  const {run}=await runSynthesis(true,{claims:[pointerClaim,{...pointerClaim,evidence_ranges:[{start_id:'missing',end_id:'b'}]}],key_points:[]});
-  assert.equal((run.output.claims as unknown[]).length,1);
-  assert.equal((run.output.rejectedEvidence as unknown[]).length,1);
-  assert.equal(run.stage,'critique');
+test("One invalid claim pointer is retained as a rejection without discarding valid calls", async () => {
+  const { run } = await runSynthesis(true, {
+    claims: [
+      pointerClaim,
+      {
+        ...pointerClaim,
+        evidence_ranges: [{ start_id: "missing", end_id: "b" }],
+      },
+    ],
+    key_points: [],
+  });
+  assert.equal((run.output.claims as unknown[]).length, 1);
+  assert.equal((run.output.rejectedEvidence as unknown[]).length, 1);
+  assert.equal(run.stage, "critique");
 });
 
-test('A truncated extraction subdivides its checkpoint and uses fresh stage keys',async()=>{
- const snapshot={id:'fixture-recovery',transcribe:'transcribe',synthesis:'synthesize',extraction:'extract',critique:'critique',pointerEvidence:true};
- const run=await create('truncated-test','fixture',{promptSnapshot:snapshot},snapshot.id);
- run.stage='synthesis';
- run.output.source=Source.parse({source_kind:'native_captions',segments:Array.from({length:16},(_,i)=>({id:`s${i}`,text:'A short source cue.',start_seconds:i*5,end_seconds:i*5+5}))});
- const fake=new FakeModelTransport({responses:{synthesis:{json:{claims:[]},finishReason:'length'},'synthesis-chunk-0-repair-1':{json:{claims:[],key_points:[],mentions:[]}},'synthesis-chunk-1-repair-1':{json:{claims:[],key_points:[],mentions:[]}}}});
- const restore=injectTransport(fake);
- try {await step(run);assert.equal(run.output.extractionRepairs,1);assert.equal(run.output.chunkIndex,undefined);await step(run);assert.equal(run.output.chunkIndex,1);await step(run);assert.equal(run.stage,'critique');assert.equal(fake.requests.length,3);}finally{restore();}
+test("A truncated extraction subdivides its checkpoint and uses fresh stage keys", async () => {
+  const snapshot = {
+    id: "fixture-recovery",
+    transcribe: "transcribe",
+    synthesis: "synthesize",
+    extraction: "extract",
+    critique: "critique",
+    pointerEvidence: true,
+  };
+  const run = await create(
+    "truncated-test",
+    "fixture",
+    { promptSnapshot: snapshot },
+    snapshot.id,
+  );
+  run.stage = "synthesis";
+  run.output.source = Source.parse({
+    source_kind: "native_captions",
+    segments: Array.from({ length: 16 }, (_, i) => ({
+      id: `s${i}`,
+      text: "A short source cue.",
+      start_seconds: i * 5,
+      end_seconds: i * 5 + 5,
+    })),
+  });
+  const fake = new FakeModelTransport({
+    responses: {
+      synthesis: { json: { claims: [] }, finishReason: "length" },
+      "synthesis-chunk-0-repair-1": {
+        json: { claims: [], key_points: [], mentions: [] },
+      },
+      "synthesis-chunk-1-repair-1": {
+        json: { claims: [], key_points: [], mentions: [] },
+      },
+    },
+  });
+  const restore = injectTransport(fake);
+  try {
+    await step(run);
+    assert.equal(run.output.extractionRepairs, 1);
+    assert.equal(run.output.chunkIndex, undefined);
+    await step(run);
+    assert.equal(run.output.chunkIndex, 1);
+    await step(run);
+    assert.equal(run.stage, "critique");
+    assert.equal(fake.requests.length, 3);
+  } finally {
+    restore();
+  }
 });

@@ -278,3 +278,102 @@ test("Explicitly inspected silence is recorded without claiming speech covered t
   );
   assert.ok(run.output.asrGapChecks);
 });
+
+test("A malformed gap check subdivides without resubmitting the surrounding good audio", async () => {
+  await freshDatabase();
+  const run: Run = {
+    id: "gap-repair",
+    videoId: "abcdefghijk",
+    url: "https://youtube.com/watch?v=abcdefghijk",
+    model: "fixture",
+    promptVersion: "fixture",
+    title: "Gap",
+    status: "running",
+    stage: "asr-source",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    error: null,
+    input: {},
+    output: {
+      metadata: { duration: 300 },
+      asrPlan: [{ startSeconds: 0, endSeconds: 300 }],
+      asrWindows: [
+        {
+          startSeconds: 0,
+          endSeconds: 300,
+          transcriptId: "retained",
+          segments: [
+            { id: "s1", text: "Before", start_seconds: 0, end_seconds: 100 },
+            { id: "s2", text: "After", start_seconds: 160, end_seconds: 300 },
+          ],
+        },
+      ],
+    },
+    cost: 0,
+  };
+  await windowedAsrStep(run, teamDefaults(), true, async () => ({
+    segments: [
+      { text: "Bad time units", start_seconds: 100000, end_seconds: 105000 },
+    ],
+  }));
+  assert.deepEqual(run.output.asrGapPlan, [
+    { startSeconds: 100, endSeconds: 130 },
+    { startSeconds: 130, endSeconds: 160 },
+  ]);
+  assert.equal((run.output.asrWindows as unknown[]).length, 1);
+});
+
+test("A partially filled gap is checked again until remaining silence is explicit", async () => {
+  await freshDatabase();
+  const run: Run = {
+    id: "partial-gap",
+    videoId: "abcdefghijk",
+    url: "https://youtube.com/watch?v=abcdefghijk",
+    model: "fixture",
+    promptVersion: "fixture",
+    title: "Gap",
+    status: "running",
+    stage: "asr-source",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    error: null,
+    input: {},
+    output: {
+      metadata: { duration: 300 },
+      asrPlan: [{ startSeconds: 0, endSeconds: 300 }],
+      asrWindows: [
+        {
+          startSeconds: 0,
+          endSeconds: 300,
+          transcriptId: "retained",
+          segments: [
+            { id: "s1", text: "Before", start_seconds: 0, end_seconds: 100 },
+            { id: "s2", text: "After", start_seconds: 160, end_seconds: 300 },
+          ],
+        },
+      ],
+    },
+    cost: 0,
+  };
+  const calls: unknown[] = [];
+  const call = async (...args: unknown[]) => {
+    calls.push(args[4]);
+    return calls.length === 1
+      ? {
+          audio_status: "complete",
+          segments: [
+            { text: "Recovered part", start_seconds: 100, end_seconds: 120 },
+          ],
+        }
+      : { audio_status: "complete", segments: [] };
+  };
+  await windowedAsrStep(run, teamDefaults(), true, call);
+  await windowedAsrStep(run, teamDefaults(), true, call);
+  assert.equal(calls.length, 2);
+  assert.deepEqual(calls[1], {
+    window_start_seconds: 120,
+    window_end_seconds: 160,
+  });
+  await windowedAsrStep(run, teamDefaults(), true, call);
+  assert.equal(run.stage, "synthesis");
+});

@@ -81,3 +81,41 @@ test("Listing resolution preserves the caption ticker and never converts a group
   assert.equal(resolveListing("Nvidia, Meta and Credo", null), null);
   assert.equal(resolveListing(null, "NOW"), null);
 });
+
+test("An unsupported ticker proposal is separated from an otherwise grounded company claim", async () => {
+  const { normalizeReferences } = await import(
+    "../src/features/youtube-intelligence/claim-references.ts"
+  );
+  const s = Source.parse({
+    source_kind: "native_captions",
+    segments: [
+      {
+        id: "a",
+        text: "Lumenum ticker symbol LIT makes lasers.",
+        start_seconds: 0,
+        end_seconds: 5,
+      },
+    ],
+  });
+  const claim = recoverEvidenceRanges(
+    {
+      thesis_en: "Lumenum makes lasers",
+      instrument_as_spoken: "Lumenum",
+      ticker: "LITE",
+      ticker_explicit: true,
+      stance: "neutral",
+      horizon_en: null,
+      conditions_en: [],
+      risks_en: [],
+      creator_conviction: "unspecified",
+      levels: [],
+      evidence_ranges: [{ start_id: "a", end_id: "a" }],
+    },
+    s,
+  );
+  const normalized = normalizeReferences(claim, s);
+  assert.equal(normalized.claim.ticker, null);
+  assert.equal(normalized.tickerProposal, "LITE");
+  assert.equal(claim.ticker, "LITE");
+  assert.deepEqual(normalized.claim.evidence, claim.evidence);
+});

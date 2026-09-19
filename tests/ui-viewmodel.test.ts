@@ -57,8 +57,9 @@ test("saved call action strips only the exact run prefix", () => {
 });
 
 test("ticker columns sort sentiment, creator counts and reliable creators with unknowns last", async () => {
-  const { sortTickerRows } =
-    await import("../src/features/youtube-intelligence/ui/viewmodel.ts");
+  const { sortTickerRows } = await import(
+    "../src/features/youtube-intelligence/ui/viewmodel.ts"
+  );
   const rows = [
     {
       id: "A",
@@ -116,8 +117,9 @@ test("ticker columns sort sentiment, creator counts and reliable creators with u
 });
 
 test("creator stance summary counts each known creator once and uses their latest dated stance", async () => {
-  const { creatorStances } =
-    await import("../src/features/youtube-intelligence/ui/viewmodel.ts");
+  const { creatorStances } = await import(
+    "../src/features/youtube-intelligence/ui/viewmodel.ts"
+  );
   const base = {
     ticker: "NVDA",
     trustBasis: {},
@@ -146,4 +148,18 @@ test("creator stance summary counts each known creator once and uses their lates
     { ticker: "NVDA", creators: 2, stances: { short: 1, long: 1 } },
   ]);
   assert.deepEqual(creatorStances([...rows].reverse()), creatorStances(rows));
+});
+
+test("A sourced listing alias is searchable without rewriting the source ticker", () => {
+  const row = {
+    id: "a",
+    trustLevel: "L1",
+    creatorConviction: "medium",
+    instrument: "Credo",
+    ticker: null,
+    thesisEn: "Conditional valuation opportunity",
+  };
+  assert.equal(visibleClaims([row], "CRDO", "L0").length, 1);
+  assert.equal(row.ticker, null);
+  assert.equal(visibleClaims([row], "QQQ", "L0").length, 0);
 });

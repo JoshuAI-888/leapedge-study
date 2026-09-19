@@ -21,6 +21,7 @@ import {
   type SourceData,
   type CheckedClaim,
 } from "../../features/youtube-intelligence/contracts.ts";
+import { normalizeReferences } from "../../features/youtube-intelligence/claim-references.ts";
 import { resolveListing } from "../../features/youtube-intelligence/identity.ts";
 import { recoverEvidenceRanges } from "../../features/youtube-intelligence/evidence-selection.ts";
 import { sentimentFromStance } from "../../features/youtube-intelligence/sentiment.ts";
@@ -300,7 +301,9 @@ export async function modelCall(
     responseSchema: options.responseSchema ?? null,
     maxOutputTokens: options.maxOutputTokens ?? null,
     inferenceConfig: run.input.inferenceConfig ?? null,
-    ...(options.reasoningEffort ? { reasoningEffort: options.reasoningEffort } : {}),
+    ...(options.reasoningEffort
+      ? { reasoningEffort: options.reasoningEffort }
+      : {}),
     source: run.output.sourceHash ?? run.output.source ?? null,
     models: settings.models,
     transport: settings.transport,
@@ -375,13 +378,13 @@ export async function modelCall(
     stage.startsWith("critique") ||
     stage === "audio-review" ||
     stage.startsWith("transcribe-window");
-  const effort =
+  const requestedEffort =
     options.reasoningEffort ??
-    (isCritique &&
-    config?.reasoningEffort &&
-    spec.supportedEfforts.includes(config.reasoningEffort)
-      ? config.reasoningEffort
-      : undefined);
+    (isCritique ? config?.reasoningEffort : undefined);
+  const effort =
+    requestedEffort && spec.supportedEfforts.includes(requestedEffort)
+      ? requestedEffort
+      : undefined;
   const maxTokens =
     options.maxOutputTokens ??
     (stage.startsWith("transcribe-window")
@@ -1104,7 +1107,8 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       if (
         error instanceof Error &&
         /response was incomplete/.test(error.message) &&
-        chunks[chunkIndex].length > 8 && Number(run.output.extractionRepairs ?? 0) < 8
+        chunks[chunkIndex].length > 8 &&
+        Number(run.output.extractionRepairs ?? 0) < 8
       ) {
         const chunk = chunks[chunkIndex],
           middle = Math.ceil(chunk.length / 2);
@@ -1181,7 +1185,23 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
      */
     const warnings = [...((run.output.warnings || []) as string[])];
     const checked = (claim: ClaimData, prefix: string, i: number) => {
-      const anchored = pointer ? claim : anchorClaimEvidence(claim, source);
+      const references = pointer
+        ? normalizeReferences(claim, source)
+        : { claim, tickerProposal: null };
+      if (references.tickerProposal) {
+        run.output.tickerProposals = [
+          ...((run.output.tickerProposals ?? []) as unknown[]),
+          {
+            id: `${prefix}${i + 1}`,
+            proposedTicker: references.tickerProposal,
+            reason:
+              "Not explicit in copied evidence; retained separately from the source ticker.",
+          },
+        ];
+      }
+      const anchored = pointer
+        ? references.claim
+        : anchorClaimEvidence(claim, source);
       return {
         id: `${prefix}${i + 1}`,
         claim: anchored,
@@ -1189,13 +1209,13 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         reasons: validateClaim(anchored, source, warnings),
       };
     };
+    run.output.claims = draft.claims.map((c, i) => checked(c, "c", i));
     run.output.listingIdentities = Object.fromEntries(
-      draft.claims.flatMap((c, i) => {
+      (run.output.claims as CheckedClaim[]).flatMap(({ claim: c }, i) => {
         const identity = resolveListing(c.instrument_as_spoken, c.ticker);
         return identity ? [[`c${i + 1}`, identity]] : [];
       }),
     );
-    run.output.claims = draft.claims.map((c, i) => checked(c, "c", i));
     run.output.keyPoints = draft.key_points.map((c, i) => checked(c, "k", i));
     if (warnings.length) run.output.warnings = warnings;
     if (pointer) materializeMentions(run, drafts, source);

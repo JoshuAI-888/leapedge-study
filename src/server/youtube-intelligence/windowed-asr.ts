@@ -150,14 +150,14 @@ export async function windowedAsrStep(
   // than three seconds once, recording actual silence separately from speech.
   const checks = z.array(StoredWindow).parse(run.output.asrGapChecks ?? []);
   let gapCheck = false;
+  let gapPlan = z.array(Window).parse(run.output.asrGapPlan ?? []);
   if (!next && sourceMode) {
     const source = Source.parse({
       source_kind: "google_windowed_asr",
       segments: [...done, ...checks].flatMap((w) => w.segments),
     });
-    const gaps = missingRanges(source, duration);
-    next = gaps
-      .flatMap((g) => {
+    if (!run.output.asrGapPlan) {
+      gapPlan = missingRanges(source, duration).flatMap((g) => {
         const parts: Window[] = [];
         for (let start = g.start; start < g.end; start += 300)
           parts.push({
@@ -165,14 +165,16 @@ export async function windowedAsrStep(
             endSeconds: Math.min(g.end, start + 300),
           });
         return parts;
-      })
-      .find(
-        (g) =>
-          !checks.some(
-            (c) =>
-              c.startSeconds <= g.startSeconds && c.endSeconds >= g.endSeconds,
-          ),
-      );
+      });
+      run.output.asrGapPlan = gapPlan;
+    }
+    next = gapPlan.find(
+      (g) =>
+        !checks.some(
+          (c) =>
+            c.startSeconds === g.startSeconds && c.endSeconds === g.endSeconds,
+        ),
+    );
     gapCheck = !!next;
   }
   if (next) {
@@ -240,7 +242,6 @@ export async function windowedAsrStep(
       }
     } catch (error) {
       if (
-        !gapCheck &&
         error instanceof Error &&
         /invalid absolute window timestamps|response was incomplete|not valid JSON/.test(
           error.message,
@@ -248,13 +249,15 @@ export async function windowedAsrStep(
         next.endSeconds - next.startSeconds > 30
       ) {
         const midpoint = (next.startSeconds + next.endSeconds) / 2;
-        windows.splice(
-          index,
+        const plan = gapCheck ? gapPlan : windows;
+        plan.splice(
+          plan.indexOf(next),
           1,
           { ...next, endSeconds: midpoint },
           { ...next, startSeconds: midpoint },
         );
-        run.output.asrPlan = windows;
+        if (gapCheck) run.output.asrGapPlan = plan;
+        else run.output.asrPlan = plan;
         run.output.asrRecovery = [
           ...((run.output.asrRecovery ?? []) as unknown[]),
           { window: next, reason: error.message },
@@ -279,6 +282,45 @@ export async function windowedAsrStep(
     if (gapCheck) {
       checks.push({ ...next, ...parsed, transcriptId });
       run.output.asrGapChecks = checks;
+      if (parsed.segments.length) {
+        const remaining = missingRanges(
+          Source.parse({
+            source_kind: "google_windowed_asr",
+            segments: parsed.segments,
+          }),
+          next.endSeconds,
+        )
+          .map((g) => ({
+            startSeconds: Math.max(next.startSeconds, g.start),
+            endSeconds: g.end,
+          }))
+          .filter((g) => g.endSeconds - g.startSeconds > 3);
+        const depths = z
+          .record(z.string(), z.number().int().nonnegative())
+          .parse(run.output.asrGapDepths ?? {});
+        const depth = depths[`${next.startSeconds}:${next.endSeconds}`] ?? 0;
+        if (remaining.length && (depth >= 3 || checks.length >= 64)) {
+          run.output.asrUnresolvedGaps = remaining;
+          run.status = "needs_review";
+          run.error =
+            "Speech gaps remain after bounded audio recovery; inspect retained clips.";
+          return;
+        }
+        for (const gap of remaining) {
+          if (
+            !gapPlan.some(
+              (g) =>
+                g.startSeconds === gap.startSeconds &&
+                g.endSeconds === gap.endSeconds,
+            )
+          ) {
+            gapPlan.push(gap);
+            depths[`${gap.startSeconds}:${gap.endSeconds}`] = depth + 1;
+          }
+        }
+        run.output.asrGapPlan = gapPlan;
+        run.output.asrGapDepths = depths;
+      }
     } else {
       done.push({ ...next, ...parsed, transcriptId });
       run.output.asrWindows = done;
@@ -316,6 +358,12 @@ export async function windowedAsrStep(
       status: "windows_processed_gaps_checked",
       windowCount: done.length,
       gapCheckCount: checks.length,
+      silenceIntervals: checks
+        .filter((w) => !w.segments.length && w.audioStatus === "complete")
+        .map((w) => ({
+          startSeconds: w.startSeconds,
+          endSeconds: w.endSeconds,
+        })),
       speechCoverage: coverage(source, duration),
       note: "All planned clips processed; gaps over three seconds re-listened. Model transcription, not human or independent-source verification.",
     };

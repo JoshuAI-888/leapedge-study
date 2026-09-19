@@ -36,7 +36,7 @@ const listings = [
     "Lumentum",
     "LITE",
     "NASDAQ",
-    ["Lumentum", "Lumentum Holdings"],
+    ["Lumentum", "Lumentum Holdings", "Lumenum"],
     "https://investor.lumentum.com/resources/investor-faqs/default.aspx",
   ],
   [

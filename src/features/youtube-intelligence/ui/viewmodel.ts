@@ -1,3 +1,4 @@
+import { resolveListing } from "../identity.ts";
 export const trustNames: Record<string, string> = {
   L0: "Extracted",
   L1: "Text-checked",
@@ -20,6 +21,7 @@ export function visibleClaims<
     trustLevel: string;
     creatorConviction: string;
     ticker: string | null;
+    instrument?: string | null;
     thesisEn: string;
   },
 >(rows: T[], search = "", minimum = "L2"): T[] {
@@ -34,7 +36,7 @@ export function visibleClaims<
     .filter(
       (c) =>
         rank(c.trustLevel) >= rank(minimum) &&
-        `${c.ticker ?? ""} ${c.thesisEn}`
+        `${c.ticker ?? ""} ${c.instrument ?? ""} ${resolveListing(c.instrument ?? null, c.ticker)?.ticker ?? ""} ${c.thesisEn}`
           .toLowerCase()
           .includes(search.trim().toLowerCase()),
     )

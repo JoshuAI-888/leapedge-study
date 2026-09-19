@@ -136,7 +136,8 @@ export function ClaimCard({
         <p className="yi-muted">
           Listing match: {listing.name} · {listing.exchange}. Source
           name/ticker: {claim.instrument}
-          {claim.ticker ? ` / ${claim.ticker}` : " (ticker not stated)"}.{" "}
+          {claim.ticker ? ` / ${claim.ticker}` : " (source ticker unconfirmed)"}
+          .{" "}
           <a href={listing.sourceUrl} target="_blank" rel="noreferrer">
             Identity source
           </a>
