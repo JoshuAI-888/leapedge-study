@@ -1,4 +1,5 @@
 "use client";
+import { resolveListing } from "../identity.ts";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import type { ClaimRow } from "../../../server/youtube-intelligence/repos/claims.ts";
@@ -116,17 +117,32 @@ export function ClaimCard({
   selected?: boolean;
   onSelect?: () => void;
 }) {
+  const listing = resolveListing(claim.instrument, claim.ticker);
   return (
     <article className={`yi-claim ${selected ? "yi-selected" : ""}`}>
       <div className="yi-row">
         <span className="yi-ticker">
-          {claim.ticker ?? claim.instrument ?? "Unresolved instrument"}
+          {listing?.ticker ??
+            claim.ticker ??
+            claim.instrument ??
+            "Unresolved instrument"}
         </span>
         <span className={`yi-chip yi-stance-${claim.stance}`}>
           {claim.stance}
         </span>
         <TrustBadge level={claim.trustLevel} basis={claim.trustBasis} />
       </div>
+      {listing && listing.ticker !== claim.ticker && (
+        <p className="yi-muted">
+          Listing match: {listing.name} · {listing.exchange}. Source
+          name/ticker: {claim.instrument}
+          {claim.ticker ? ` / ${claim.ticker}` : " (source ticker unconfirmed)"}
+          .{" "}
+          <a href={listing.sourceUrl} target="_blank" rel="noreferrer">
+            Identity source
+          </a>
+        </p>
+      )}
       <h3>{claim.thesisEn}</h3>
       <div className="yi-row">
         <ConvictionChip value={claim.creatorConviction} />

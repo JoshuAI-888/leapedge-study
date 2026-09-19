@@ -131,3 +131,23 @@ test("recovery replays identical requests but a changed claim payload receives i
     await db.close();
   }
 });
+
+test("Output recovery does not send reasoning controls to a model that does not support them", async () => {
+  const db = await freshDatabase();
+  const fake = new FakeModelTransport({
+    describe: { supportedEfforts: [] },
+    responses: { synthesis: { json: { claims: [] } } },
+  });
+  const restore = injectTransport(fake);
+  try {
+    const run = await store.create("no-reasoning", "fixture", {}, "v1");
+    await modelCall(run, "synthesis", "fixture", "prompt", {}, false, {
+      settings: teamDefaults(),
+      reasoningEffort: "low",
+    });
+    assert.equal(fake.requests[0].reasoningEffort, undefined);
+  } finally {
+    restore();
+    await db.close();
+  }
+});

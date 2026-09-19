@@ -2,6 +2,7 @@ import { ModelResponse } from "./transport/types.ts";
 import {
   estimateTokens,
   transcriptChunks,
+  extractionChunks,
   uniqueClaims,
 } from "../../features/youtube-intelligence/chunking.ts";
 import { z } from "zod";
@@ -20,13 +21,16 @@ import {
   type SourceData,
   type CheckedClaim,
 } from "../../features/youtube-intelligence/contracts.ts";
-import { materializeEvidenceRanges } from "../../features/youtube-intelligence/evidence-selection.ts";
+import { normalizeReferences } from "../../features/youtube-intelligence/claim-references.ts";
+import { resolveListing } from "../../features/youtube-intelligence/identity.ts";
+import { recoverEvidenceRanges } from "../../features/youtube-intelligence/evidence-selection.ts";
 import { sentimentFromStance } from "../../features/youtube-intelligence/sentiment.ts";
 import {
   extractionResponseSchema,
   parsePointerExtraction,
   MENTION_OUTPUT_FORMAT,
   POINTER_EVIDENCE_FORMAT,
+  FINANCIAL_SEMANTICS,
   type MentionExtractionData,
 } from "./schemas/extraction.ts";
 import {
@@ -260,6 +264,7 @@ export async function modelCall(
     cachedContent?: string;
     /** Output cap for a stage whose answer grows with its input, e.g. one verdict per id. */
     maxOutputTokens?: number;
+    reasoningEffort?: string;
     /** withRetry's clock, injected by tests so a backoff is asserted, never waited on. */
     retry?: {
       sleep?: (ms: number) => Promise<void>;
@@ -296,6 +301,9 @@ export async function modelCall(
     responseSchema: options.responseSchema ?? null,
     maxOutputTokens: options.maxOutputTokens ?? null,
     inferenceConfig: run.input.inferenceConfig ?? null,
+    ...(options.reasoningEffort
+      ? { reasoningEffort: options.reasoningEffort }
+      : {}),
     source: run.output.sourceHash ?? run.output.source ?? null,
     models: settings.models,
     transport: settings.transport,
@@ -364,16 +372,18 @@ export async function modelCall(
     },
   ];
   const config = run.input.inferenceConfig as
-    { critiqueMaxTokens?: number; reasoningEffort?: string } | undefined;
+    | { critiqueMaxTokens?: number; reasoningEffort?: string }
+    | undefined;
   const isCritique =
     stage.startsWith("critique") ||
     stage === "audio-review" ||
     stage.startsWith("transcribe-window");
+  const requestedEffort =
+    options.reasoningEffort ??
+    (isCritique ? config?.reasoningEffort : undefined);
   const effort =
-    isCritique &&
-    config?.reasoningEffort &&
-    spec.supportedEfforts.includes(config.reasoningEffort)
-      ? config.reasoningEffort
+    requestedEffort && spec.supportedEfforts.includes(requestedEffort)
+      ? requestedEffort
       : undefined;
   const maxTokens =
     options.maxOutputTokens ??
@@ -1045,20 +1055,11 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
   } else if (run.stage === "synthesis") {
     const source = run.output.source as SourceData;
     const team = await prefs();
-    /**
-     * One extraction over the whole transcript (spec 4.3). The old fixed 64 KB
-     * split multiplied the calls on transcripts a million-token window swallows
-     * whole; `processing.chunkAboveTokens` is now the only reason to chunk.
-     */
-    const chunks = transcriptChunks(
-      source,
-      team.processing.chunkAboveTokens,
-      await transcriptTokens(
-        transportFor("synthesis", team),
-        run.model || modelIdFor("synthesis", team),
-        source,
-      ),
-    );
+    // Output-aware batches are checkpointed independently, including repaired splits.
+    const chunks = run.output.extractionPlan
+      ? z.array(Source.shape.segments).parse(run.output.extractionPlan)
+      : extractionChunks(source, team.processing.chunkAboveTokens);
+    run.output.extractionPlan = chunks;
     const chunkIndex = Number(run.output.chunkIndex || 0);
     /**
      * Pointer evidence is a property of the prompt version: only a snapshot
@@ -1068,25 +1069,62 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
      */
     const pointer =
       (prompts as { pointerEvidence?: boolean }).pointerEvidence === true;
-    const raw = await modelCall(
-      run,
-      chunks.length === 1 ? "synthesis" : `synthesis-chunk-${chunkIndex}`,
-      // The run records the extraction model it was created with; the stages
-      // it names no model for take theirs from the settings.
-      run.model,
-      prompts.synthesis +
-        "\n" +
-        prompts.extraction +
-        (chunks.length > 1
-          ? "\nThis is one chronological excerpt. Extract only claims supported here; retain conditions and do not infer the rest of the video."
-          : ""),
-      extractionPayload(chunks[chunkIndex], chunkIndex, chunks.length, pointer),
-      false,
-      {
-        settings: team,
-        ...(pointer ? { responseSchema: extractionResponseSchema } : {}),
-      },
-    );
+    let raw: unknown;
+    try {
+      raw = await modelCall(
+        run,
+        chunks.length === 1
+          ? "synthesis"
+          : `synthesis-chunk-${chunkIndex}${run.output.extractionRepairs ? `-repair-${run.output.extractionRepairs}` : ""}`,
+        // The run records the extraction model it was created with; the stages
+        // it names no model for take theirs from the settings.
+        run.model,
+        prompts.synthesis +
+          "\n" +
+          prompts.extraction +
+          "\n" +
+          FINANCIAL_SEMANTICS +
+          (chunks.length > 1
+            ? "\nThis is one chronological excerpt. Extract only claims supported here; retain conditions and do not infer the rest of the video."
+            : ""),
+        extractionPayload(
+          chunks[chunkIndex],
+          chunkIndex,
+          chunks.length,
+          pointer,
+        ),
+        false,
+        {
+          settings: team,
+          reasoningEffort: "low",
+          maxOutputTokens: 24000,
+          ...(pointer ? { responseSchema: extractionResponseSchema } : {}),
+        },
+      );
+    } catch (error) {
+      // A truncated response is already settled. Split only this batch, using
+      // a fresh stage key; never repeat a successful extraction checkpoint.
+      if (
+        error instanceof Error &&
+        /response was incomplete/.test(error.message) &&
+        chunks[chunkIndex].length > 8 &&
+        Number(run.output.extractionRepairs ?? 0) < 8
+      ) {
+        const chunk = chunks[chunkIndex],
+          middle = Math.ceil(chunk.length / 2);
+        chunks.splice(
+          chunkIndex,
+          1,
+          chunk.slice(0, middle),
+          chunk.slice(middle),
+        );
+        run.output.extractionPlan = chunks;
+        run.output.extractionRepairs =
+          Number(run.output.extractionRepairs ?? 0) + 1;
+        return;
+      }
+      throw error;
+    }
     const draft: {
       claims: ClaimData[];
       key_points: ClaimData[];
@@ -1094,13 +1132,28 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
     } = pointer
       ? (() => {
           const pointed = parsePointerExtraction(raw);
+          const copy = (items: typeof pointed.claims, kind: string) =>
+            items.flatMap((c, index) => {
+              try {
+                return [recoverEvidenceRanges(c, source)];
+              } catch (error) {
+                const rejected = (run.output.rejectedEvidence ??
+                  []) as unknown[];
+                rejected.push({
+                  chunkIndex,
+                  kind,
+                  index,
+                  draft: c,
+                  reason:
+                    error instanceof Error ? error.message : String(error),
+                });
+                run.output.rejectedEvidence = rejected;
+                return [];
+              }
+            });
           return {
-            claims: pointed.claims.map((c) =>
-              materializeEvidenceRanges(c, source),
-            ),
-            key_points: pointed.key_points.map((c) =>
-              materializeEvidenceRanges(c, source),
-            ),
+            claims: copy(pointed.claims, "claim"),
+            key_points: copy(pointed.key_points, "key_point"),
             mentions: pointed.mentions,
           };
         })()
@@ -1132,7 +1185,23 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
      */
     const warnings = [...((run.output.warnings || []) as string[])];
     const checked = (claim: ClaimData, prefix: string, i: number) => {
-      const anchored = pointer ? claim : anchorClaimEvidence(claim, source);
+      const references = pointer
+        ? normalizeReferences(claim, source)
+        : { claim, tickerProposal: null };
+      if (references.tickerProposal) {
+        run.output.tickerProposals = [
+          ...((run.output.tickerProposals ?? []) as unknown[]),
+          {
+            id: `${prefix}${i + 1}`,
+            proposedTicker: references.tickerProposal,
+            reason:
+              "Not explicit in copied evidence; retained separately from the source ticker.",
+          },
+        ];
+      }
+      const anchored = pointer
+        ? references.claim
+        : anchorClaimEvidence(claim, source);
       return {
         id: `${prefix}${i + 1}`,
         claim: anchored,
@@ -1141,6 +1210,12 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       };
     };
     run.output.claims = draft.claims.map((c, i) => checked(c, "c", i));
+    run.output.listingIdentities = Object.fromEntries(
+      (run.output.claims as CheckedClaim[]).flatMap(({ claim: c }, i) => {
+        const identity = resolveListing(c.instrument_as_spoken, c.ticker);
+        return identity ? [[`c${i + 1}`, identity]] : [];
+      }),
+    );
     run.output.keyPoints = draft.key_points.map((c, i) => checked(c, "k", i));
     if (warnings.length) run.output.warnings = warnings;
     if (pointer) materializeMentions(run, drafts, source);
@@ -1255,7 +1330,8 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       }),
     );
     const config = run.input.inferenceConfig as
-      { critiqueMaxTokens?: number } | undefined;
+      | { critiqueMaxTokens?: number }
+      | undefined;
     const answered = new Map<string, CritiqueVerdictData>();
     const unexpected: string[] = [];
     const missing: string[] = [];

@@ -14,7 +14,7 @@ import type { ModelDescription } from "./types.ts";
  * the provider reports, and an unknown model falls back to the deliberately
  * expensive default below so a reservation is never an under-estimate.
  */
-export const priceTableVersion = "google-native-prices-2026-09-01";
+export const priceTableVersion = "google-native-prices-2026-09-20";
 export const ModelPrice = z.object({
   contextLength: z.number().positive(),
   inputPerMillion: z.number().nonnegative(),
@@ -38,10 +38,10 @@ export const priceTable: Record<string, ModelPriceData> = {
   },
   "gemini-3.1-flash-lite": {
     contextLength: 1048576,
-    inputPerMillion: 0.1,
-    audioPerMillion: 0.3,
-    outputPerMillion: 0.4,
-    cachedInputPerMillion: 0.01,
+    inputPerMillion: 0.25,
+    audioPerMillion: 0.5,
+    outputPerMillion: 1.5,
+    cachedInputPerMillion: 0.025,
     supportedEfforts: EFFORTS,
   },
   "gemini-3.1-pro-preview": {
@@ -64,7 +64,10 @@ export const defaultPrice: ModelPriceData = {
 };
 /** "google/gemini-3.8-flash" and "models/gemini-3.8-flash" name the same model. */
 export function normaliseModel(model: string) {
-  return model.trim().toLowerCase().replace(/^(google|models)\//, "");
+  return model
+    .trim()
+    .toLowerCase()
+    .replace(/^(google|models)\//, "");
 }
 export function priceFor(model: string): ModelPriceData {
   return priceTable[normaliseModel(model)] ?? defaultPrice;

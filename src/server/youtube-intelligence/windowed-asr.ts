@@ -15,6 +15,7 @@ import {
 } from "../../features/youtube-intelligence/agreement.ts";
 import type { TeamPreferencesData } from "../../features/youtube-intelligence/settings.ts";
 import type { modelCall } from "./pipeline.ts";
+import { missingRanges } from "../../features/youtube-intelligence/chunking.ts";
 import { insertTranscript } from "./repos/transcripts.ts";
 import { managedTranscript } from "./transcripts.ts";
 
@@ -45,6 +46,7 @@ export function planWindows(
     : all;
 }
 const WindowResponse = z.object({
+  audio_status: z.enum(["complete", "inaccessible"]).optional(),
   language: z.string().optional(),
   segments: z
     .array(
@@ -72,6 +74,7 @@ export function parseWindow(value: unknown, window: Window, index: number) {
     priorStart = s.start_seconds;
   }
   return {
+    audioStatus: result.audio_status,
     language: result.language,
     segments: result.segments.map((s, i) => ({
       ...s,
@@ -91,6 +94,7 @@ const StoredWindow = z.object({
   ),
   language: z.string().optional(),
   transcriptId: z.string(),
+  audioStatus: z.enum(["complete", "inaccessible"]).optional(),
 });
 function evidenceSpans(run: Run): TimedText[] {
   return ((run.output.claims ?? []) as CheckedClaim[])
@@ -104,7 +108,7 @@ function evidenceSpans(run: Run): TimedText[] {
     );
 }
 const PROMPT =
-  "Listen independently to ONLY the supplied video window. Transcribe verbatim in the spoken language; do not translate, infer missing speech, or summarize. Return JSON {language:string,segments:[{text:string,start_seconds:number,end_seconds:number}]}. Use ABSOLUTE seconds from the beginning of the original video within the requested bounds. Use short speech cues with accurate start and end times. Return an empty segments array for silence or inaccessible audio; never invent speech.";
+  "Listen independently to ONLY the supplied video window. Transcribe verbatim in the spoken language; do not translate, infer missing speech, or summarize. Return JSON {language:string,segments:[{text:string,start_seconds:number,end_seconds:number}]}. Use ABSOLUTE SECONDS (never milliseconds) from the beginning of the original video within the requested bounds. For example a clip starting at 1200 seconds uses 1200.5, NOT 1200500 or 0.5. Use short speech cues with accurate start and end times. Set audio_status to complete only when the entire supplied clip was accessible and transcribed, including silence; use inaccessible when audio could not be accessed. Return empty segments for genuine silence with complete status. Never invent speech.";
 
 /** One paid window per checkpoint; the transport ledger replays retained responses after a crash. */
 export async function windowedAsrStep(
@@ -135,15 +139,48 @@ export async function windowedAsrStep(
       );
   run.output.asrPlan = windows;
   const done = z.array(StoredWindow).parse(run.output.asrWindows ?? []);
-  const next = windows.find(
+  let next = windows.find(
     (w) =>
       !done.some(
         (d) =>
           d.startSeconds === w.startSeconds && d.endSeconds === w.endSeconds,
       ),
   );
+  // Speech occupancy is not transcript completeness. Re-listen to gaps longer
+  // than three seconds once, recording actual silence separately from speech.
+  const checks = z.array(StoredWindow).parse(run.output.asrGapChecks ?? []);
+  let gapCheck = false;
+  let gapPlan = z.array(Window).parse(run.output.asrGapPlan ?? []);
+  if (!next && sourceMode) {
+    const source = Source.parse({
+      source_kind: "google_windowed_asr",
+      segments: [...done, ...checks].flatMap((w) => w.segments),
+    });
+    if (!run.output.asrGapPlan) {
+      gapPlan = missingRanges(source, duration).flatMap((g) => {
+        const parts: Window[] = [];
+        for (let start = g.start; start < g.end; start += 300)
+          parts.push({
+            startSeconds: start,
+            endSeconds: Math.min(g.end, start + 300),
+          });
+        return parts;
+      });
+      run.output.asrGapPlan = gapPlan;
+    }
+    next = gapPlan.find(
+      (g) =>
+        !checks.some(
+          (c) =>
+            c.startSeconds === g.startSeconds && c.endSeconds === g.endSeconds,
+        ),
+    );
+    gapCheck = !!next;
+  }
   if (next) {
-    const index = windows.indexOf(next);
+    const index = gapCheck
+      ? windows.length + checks.length
+      : windows.indexOf(next);
     const native = {
       ...settings,
       sources: { ...settings.sources, mediaResolution: "low" as const },
@@ -156,23 +193,79 @@ export async function windowedAsrStep(
         },
       },
     };
-    const raw = await call(
-      run,
-      `transcribe-asr-${next.startSeconds}-${next.endSeconds}`,
-      undefined,
-      PROMPT,
-      {
-        window_start_seconds: next.startSeconds,
-        window_end_seconds: next.endSeconds,
-      },
-      true,
-      {
-        settings: native,
-        responseSchema: z.toJSONSchema(WindowResponse),
-        maxOutputTokens: 12000,
-      },
-    );
-    const parsed = parseWindow(raw, next, index);
+    let parsed: ReturnType<typeof parseWindow>;
+    try {
+      const raw = await call(
+        run,
+        `transcribe-asr-${next.startSeconds}-${next.endSeconds}${gapCheck ? "-gap" : ""}`,
+        undefined,
+        PROMPT,
+        {
+          window_start_seconds: next.startSeconds,
+          window_end_seconds: next.endSeconds,
+        },
+        true,
+        {
+          settings: native,
+          responseSchema: z.toJSONSchema(
+            WindowResponse.extend({
+              segments: z
+                .array(
+                  z.object({
+                    text: z.string().trim().min(1),
+                    start_seconds: z
+                      .number()
+                      .min(next.startSeconds)
+                      .max(next.endSeconds),
+                    end_seconds: z
+                      .number()
+                      .min(next.startSeconds)
+                      .max(next.endSeconds),
+                  }),
+                )
+                .max(3000),
+            }),
+          ),
+          maxOutputTokens: 12000,
+          reasoningEffort: "low",
+        },
+      );
+      parsed = parseWindow(raw, next, index);
+      if (
+        parsed.audioStatus === "inaccessible" ||
+        (!parsed.segments.length && parsed.audioStatus !== "complete")
+      ) {
+        run.status = "needs_review";
+        run.error =
+          "Audio window was inaccessible or silence was not explicitly confirmed.";
+        return;
+      }
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        /invalid absolute window timestamps|response was incomplete|not valid JSON/.test(
+          error.message,
+        ) &&
+        next.endSeconds - next.startSeconds > 30
+      ) {
+        const midpoint = (next.startSeconds + next.endSeconds) / 2;
+        const plan = gapCheck ? gapPlan : windows;
+        plan.splice(
+          plan.indexOf(next),
+          1,
+          { ...next, endSeconds: midpoint },
+          { ...next, startSeconds: midpoint },
+        );
+        if (gapCheck) run.output.asrGapPlan = plan;
+        else run.output.asrPlan = plan;
+        run.output.asrRecovery = [
+          ...((run.output.asrRecovery ?? []) as unknown[]),
+          { window: next, reason: error.message },
+        ];
+        return;
+      }
+      throw error;
+    }
     const hash = createHash("sha256")
       .update(JSON.stringify(parsed.segments))
       .digest("hex");
@@ -186,14 +279,63 @@ export async function windowedAsrStep(
       hash,
       segments: parsed.segments,
     });
-    done.push({ ...next, ...parsed, transcriptId });
-    run.output.asrWindows = done;
-    if (done.length < windows.length) return;
+    if (gapCheck) {
+      checks.push({ ...next, ...parsed, transcriptId });
+      run.output.asrGapChecks = checks;
+      if (parsed.segments.length) {
+        const remaining = missingRanges(
+          Source.parse({
+            source_kind: "google_windowed_asr",
+            segments: parsed.segments,
+          }),
+          next.endSeconds,
+        )
+          .map((g) => ({
+            startSeconds: Math.max(next.startSeconds, g.start),
+            endSeconds: g.end,
+          }))
+          .filter((g) => g.endSeconds - g.startSeconds > 3);
+        const depths = z
+          .record(z.string(), z.number().int().nonnegative())
+          .parse(run.output.asrGapDepths ?? {});
+        const depth = depths[`${next.startSeconds}:${next.endSeconds}`] ?? 0;
+        if (remaining.length && (depth >= 3 || checks.length >= 64)) {
+          run.output.asrUnresolvedGaps = remaining;
+          run.status = "needs_review";
+          run.error =
+            "Speech gaps remain after bounded audio recovery; inspect retained clips.";
+          return;
+        }
+        for (const gap of remaining) {
+          if (
+            !gapPlan.some(
+              (g) =>
+                g.startSeconds === gap.startSeconds &&
+                g.endSeconds === gap.endSeconds,
+            )
+          ) {
+            gapPlan.push(gap);
+            depths[`${gap.startSeconds}:${gap.endSeconds}`] = depth + 1;
+          }
+        }
+        run.output.asrGapPlan = gapPlan;
+        run.output.asrGapDepths = depths;
+      }
+    } else {
+      done.push({ ...next, ...parsed, transcriptId });
+      run.output.asrWindows = done;
+    }
+    if (done.length < windows.length || gapCheck) return;
+    const merged = Source.parse({
+      source_kind: "google_windowed_asr",
+      segments: done.flatMap((w) => w.segments),
+    });
+    if (sourceMode && missingRanges(merged, duration).length) return;
   }
   if (sourceMode) {
-    const segments = done
-      .sort((a, b) => a.startSeconds - b.startSeconds)
-      .flatMap((w) => w.segments);
+    const segments = [...done, ...checks]
+      .flatMap((w) => w.segments)
+      .sort((a, b) => a.start_seconds - b.start_seconds);
     if (!segments.length) {
       run.status = "needs_review";
       run.error = "No speech was returned by windowed ASR.";
@@ -212,12 +354,19 @@ export async function windowedAsrStep(
       .digest("hex");
     run.output.coverage = coverage(source, duration);
     run.output.audioTrustProcessed = true; // A source cannot independently verify itself.
-    if (coverage(source, duration).status === "incomplete_or_unknown") {
-      run.status = "needs_review";
-      run.error =
-        "ASR returned insufficient timed speech coverage; review the retained windows.";
-      return;
-    }
+    run.output.transcriptionCompleteness = {
+      status: "windows_processed_gaps_checked",
+      windowCount: done.length,
+      gapCheckCount: checks.length,
+      silenceIntervals: checks
+        .filter((w) => !w.segments.length && w.audioStatus === "complete")
+        .map((w) => ({
+          startSeconds: w.startSeconds,
+          endSeconds: w.endSeconds,
+        })),
+      speechCoverage: coverage(source, duration),
+      note: "All planned clips processed; gaps over three seconds re-listened. Model transcription, not human or independent-source verification.",
+    };
     run.stage = "synthesis";
   } else run.stage = "agree";
 }

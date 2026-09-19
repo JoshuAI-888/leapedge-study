@@ -1,3 +1,4 @@
+import { resolveListing } from "../identity.ts";
 export const trustNames: Record<string, string> = {
   L0: "Extracted",
   L1: "Text-checked",
@@ -20,6 +21,7 @@ export function visibleClaims<
     trustLevel: string;
     creatorConviction: string;
     ticker: string | null;
+    instrument?: string | null;
     thesisEn: string;
   },
 >(rows: T[], search = "", minimum = "L2"): T[] {
@@ -34,7 +36,7 @@ export function visibleClaims<
     .filter(
       (c) =>
         rank(c.trustLevel) >= rank(minimum) &&
-        `${c.ticker ?? ""} ${c.thesisEn}`
+        `${c.ticker ?? ""} ${c.instrument ?? ""} ${resolveListing(c.instrument ?? null, c.ticker)?.ticker ?? ""} ${c.thesisEn}`
           .toLowerCase()
           .includes(search.trim().toLowerCase()),
     )
@@ -164,4 +166,31 @@ export function creatorStances(
   return [...tickers.values()].sort(
     (a, b) => b.creators - a.creators || a.ticker.localeCompare(b.ticker),
   );
+}
+
+/** A completed, explicitly linked recovery resolves attention for its failed
+ * ancestors. Historical run records and unrelated attempts remain untouched. */
+export function recoveredRuns<
+  T extends {
+    id: string;
+    videoId: string;
+    status: string;
+    input?: Record<string, unknown>;
+  },
+>(runs: T[]) {
+  const byId = new Map(runs.map((r) => [r.id, r]));
+  const recovered = new Set<string>();
+  for (const run of runs.filter((r) => r.status === "completed")) {
+    let parent = run.input?.recoveryOf;
+    const seen = new Set<string>();
+    while (typeof parent === "string" && !seen.has(parent)) {
+      seen.add(parent);
+      const prior = byId.get(parent);
+      if (!prior || prior.videoId !== run.videoId) break;
+      if (["failed", "needs_review"].includes(prior.status))
+        recovered.add(prior.id);
+      parent = prior.input?.recoveryOf;
+    }
+  }
+  return recovered;
 }

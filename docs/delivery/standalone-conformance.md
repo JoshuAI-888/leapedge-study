@@ -1,5 +1,7 @@
 # Standalone build conformance
 
+> 20 September 2026 update: the user removed the old US$25 cap for a bounded 20-video comparison. That comparison is complete with findings; see [the report](live-comparison-20-20260920.md). Historical budget/status statements below describe the earlier pilot. Finradar integration remains excluded.
+
 Scope: complete Phase 2 and Phase 3, with no Finradar integration (F50–F55).
 The fifty human-verified cases were removed from scope by the user. They are
 not a hidden release gate. Product comparison means output agreement and

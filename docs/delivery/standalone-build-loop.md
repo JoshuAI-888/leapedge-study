@@ -1,5 +1,7 @@
 # Standalone completion loop — 19 September 2026
 
+> 20 September 2026 update: the user removed the old US$25 cap for a bounded 20-video comparison. That comparison is complete with findings; see [the report](live-comparison-20-20260920.md). Historical budget/status statements below describe the earlier pilot. Finradar integration remains excluded.
+
 ## Scope and authority
 
 The user requested completing Phase 2 (6/10 → 10/10) and Phase 3 (0/18 → 18/18), then stopping before Finradar integration. `standalone-scope.json` is the machine-readable boundary. Phase 4 F50–F55 remains outside this execution, including its standalone-adjacent corpus, context, sharing and digest extensions. Existing working features remain supported.

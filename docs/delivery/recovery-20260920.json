@@ -1,0 +1,770 @@
+{
+  "version": "recovery.2026-09-20",
+  "at": "2026-09-19T21:44:03.529Z",
+  "baselineImmutable": true,
+  "newLeapEdgeAnalyses": 0,
+  "newTranscriptAPICredits": 0,
+  "stoppedRunsRecovered": 7,
+  "qualityChecks": 4,
+  "incrementalUsd": 2.7541707,
+  "stoppedRunRecoveryUsd": 1.9635004499999997,
+  "qualityChecksUsd": 0.7906702500000002,
+  "providers": {
+    "google-native": 1.1276707000000006,
+    "Claude Platform on AWS": 1.6264999999999996
+  },
+  "baselineCorrectedRateUsd": 2.176206,
+  "combinedCorrectedRateUsd": 4.9303767,
+  "costNote": "Native Google: estimate from reported token usage and versioned rates. OpenRouter: provider-reported usage cost. Includes failed and repeated recovery attempts; not an invoice or fresh-run cost forecast.",
+  "calls": 96,
+  "openReservations": 0,
+  "rows": [
+    {
+      "case": 1,
+      "videoId": "SPIRV9UjNYU",
+      "title": "大多头突然改口！我为什么还敢拿着AI股？｜雅德尼下调目标",
+      "runId": "ddf09184-f988-44f5-bd3e-8608e5576c47",
+      "group": "stopped-run-recovery",
+      "status": "completed",
+      "acceptedClaims": 1,
+      "acceptedContext": 7,
+      "incrementalUsd": 0.08800975,
+      "referenceStatus": "ready",
+      "referenceClaims": 1,
+      "claims": [
+        {
+          "instrument": "AI",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": "long term",
+          "levels": [],
+          "thesis": "The creator remains bullish long term on the AI theme, viewing short-term pullbacks as holding opportunities as long as company orders, profits, and underlying business fundamentals have not deteriorated."
+        }
+      ],
+      "audioWindows": 3,
+      "gapChecks": 2,
+      "uncoveredIntervalsOver3Seconds": [],
+      "extractionBatches": 2
+    },
+    {
+      "case": 2,
+      "videoId": "J_VpfkM74Wk",
+      "title": "Anthropic突然出大问题了",
+      "runId": "6165acf1-8c67-482b-9591-6959ee3ae2a2",
+      "group": "stopped-run-recovery",
+      "status": "completed",
+      "acceptedClaims": 0,
+      "acceptedContext": 7,
+      "incrementalUsd": 0.14347775000000001,
+      "referenceStatus": "ready",
+      "referenceClaims": 0,
+      "claims": [],
+      "audioWindows": 4,
+      "gapChecks": 1,
+      "uncoveredIntervalsOver3Seconds": [],
+      "extractionBatches": 2
+    },
+    {
+      "case": 3,
+      "videoId": "9nb3fp76Rz0",
+      "title": "美股：基本上定了。【2026-09-11】",
+      "runId": "1ac54e42-bb2a-4910-805c-152b98493541",
+      "group": "stopped-run-recovery",
+      "status": "completed",
+      "acceptedClaims": 0,
+      "acceptedContext": 7,
+      "incrementalUsd": 0.1089375,
+      "referenceStatus": "ready",
+      "referenceClaims": 3,
+      "claims": [],
+      "audioWindows": 3,
+      "gapChecks": 0,
+      "uncoveredIntervalsOver3Seconds": [],
+      "extractionBatches": 2
+    },
+    {
+      "case": 7,
+      "videoId": "U32FPvvBaNI",
+      "title": "AMD Stock Is Entering a New Cycle‼️Listen Up",
+      "runId": "709bb1ef-45f0-4737-bba4-afcfb0aab1e7",
+      "group": "stopped-run-recovery",
+      "status": "completed",
+      "acceptedClaims": 8,
+      "acceptedContext": 7,
+      "incrementalUsd": 0.1467455,
+      "referenceStatus": "ready",
+      "referenceClaims": 4,
+      "claims": [
+        {
+          "instrument": "AMD",
+          "tickerAsExtracted": "AMD",
+          "listingMatch": null,
+          "stance": "hold",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [
+            {
+              "kind": "target",
+              "value_original": "700 plus"
+            }
+          ],
+          "thesis": "Hold AMD and do not consider selling any shares until the stock reaches at least 700 or higher."
+        },
+        {
+          "instrument": "win resorts",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "conditional",
+          "conviction": "medium",
+          "horizon": "fourth quarter",
+          "levels": [
+            {
+              "kind": "target",
+              "value_original": "120"
+            }
+          ],
+          "thesis": "Position into Wynn Resorts before its Middle East property opens, as it will experience a major rally once oil and interest rates peak."
+        },
+        {
+          "instrument": "American Express",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "conditional",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [
+            {
+              "kind": "target",
+              "value_original": "400 plus"
+            }
+          ],
+          "thesis": "American Express will rally toward 400 plus once oil prices and interest rates peak."
+        },
+        {
+          "instrument": "RH",
+          "tickerAsExtracted": "RH",
+          "listingMatch": null,
+          "stance": "conditional",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [
+            {
+              "kind": "target",
+              "value_original": "200"
+            }
+          ],
+          "thesis": "RH will experience a severe upward rally toward 200 once oil prices and interest rates officially peak."
+        },
+        {
+          "instrument": "Winning Resorts",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "high",
+          "horizon": "the next few months",
+          "levels": [],
+          "thesis": "Purchased $8,400 of Wynn Resorts shares today and plans to accumulate more over the next few months, viewing the stock as excessively beaten down despite strong underlying property performance in Las Vegas, Macau, Boston, and an upcoming Middle East development."
+        },
+        {
+          "instrument": "Nike",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Bought shares of Nike today as the stock has been devastated and is trading in a depressed valuation range around the $30s."
+        },
+        {
+          "instrument": "Celsius Holdings",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Purchased $11,000 of Celsius Holdings shares today."
+        },
+        {
+          "instrument": "RH",
+          "tickerAsExtracted": "RH",
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "high",
+          "horizon": "next few years",
+          "levels": [],
+          "thesis": "Added nearly $20,000 to RH today, bringing recent purchases to roughly $170,000, and plans to build out the position to a total of $250,000 to $400,000 across portfolios, targeting substantial upside over the coming years as interest rates ease and the company enters a margin-expansion harvesting cycle."
+        }
+      ],
+      "audioWindows": 0,
+      "gapChecks": 0,
+      "uncoveredIntervalsOver3Seconds": null,
+      "extractionBatches": 3
+    },
+    {
+      "case": 10,
+      "videoId": "zYeJZu1hkdM",
+      "title": "These Stocks Will Make Millionaires By 2029",
+      "runId": "43aeea43-37ee-4014-a28d-070432d60309",
+      "group": "quality-regression",
+      "status": "completed",
+      "acceptedClaims": 2,
+      "acceptedContext": 8,
+      "incrementalUsd": 0.20666025000000002,
+      "referenceStatus": "ready",
+      "referenceClaims": 2,
+      "claims": [
+        {
+          "instrument": "Coherent",
+          "tickerAsExtracted": null,
+          "listingMatch": {
+            "name": "Coherent",
+            "ticker": "COHR",
+            "exchange": "NYSE",
+            "sourceUrl": "https://ir.coherent.com/news-events/financial-releases",
+            "asOf": "2026-09-20",
+            "method": "company_alias",
+            "captionTicker": null
+          },
+          "stance": "long",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "The speaker is currently buying Coherent shares, favoring its vertical integration and expansion of 6-inch indium phosphide wafer capacity despite high capex spending."
+        },
+        {
+          "instrument": "Lumenum",
+          "tickerAsExtracted": null,
+          "listingMatch": {
+            "name": "Lumentum",
+            "ticker": "LITE",
+            "exchange": "NASDAQ",
+            "sourceUrl": "https://investor.lumentum.com/resources/investor-faqs/default.aspx",
+            "asOf": "2026-09-20",
+            "method": "company_alias",
+            "captionTicker": null
+          },
+          "stance": "long",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "The speaker is currently buying Lumentum shares, citing rapid revenue growth, expanding gross margins, and lower capex intensity relative to cash flow."
+        }
+      ],
+      "audioWindows": 0,
+      "gapChecks": 0,
+      "uncoveredIntervalsOver3Seconds": null,
+      "extractionBatches": 3
+    },
+    {
+      "case": 11,
+      "videoId": "ZfOQoh82JTo",
+      "title": "Nu Bank's Territorial Expansion; LVMH + Stocks At Cheapest Valuations Ever; Fed Hikes Interest Rates",
+      "runId": "18a0425d-38ab-4b27-92d3-624e1ea7faba",
+      "group": "stopped-run-recovery",
+      "status": "completed",
+      "acceptedClaims": 5,
+      "acceptedContext": 19,
+      "incrementalUsd": 1.0485071999999998,
+      "referenceStatus": "stopped",
+      "referenceClaims": 0,
+      "claims": [
+        {
+          "instrument": "longer-term bonds",
+          "tickerAsExtracted": "TLT",
+          "listingMatch": null,
+          "stance": "hold",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "The speaker holds long-term Treasury bonds (such as TLT or 20-plus year Treasuries) as an inverse correlation hedge against their portfolio, expecting them to rise in a deflationary downturn while offering a yield above 5%."
+        },
+        {
+          "instrument": "LVMH",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "conditional",
+          "conviction": "low",
+          "horizon": "long-term",
+          "levels": [
+            {
+              "kind": "entry",
+              "value_original": "19"
+            },
+            {
+              "kind": "entry",
+              "value_original": "17"
+            },
+            {
+              "kind": "entry",
+              "value_original": "9.3"
+            }
+          ],
+          "thesis": "LVMH forward returns could be solid at current valuation levels (19 TTM P/E, 17 forward P/E, 9.3 EV/EBITDA) if investors still trust the management team, potentially supplemented by buybacks and dividends despite modest recent growth."
+        },
+        {
+          "instrument": "LVMH",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "avoid",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "LVMH belongs in the too-hard pile because a significant portion of its business is apparel and physical retail footprint, which can become operational baggage."
+        },
+        {
+          "instrument": "Hermès",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [
+            {
+              "kind": "entry",
+              "value_original": "30"
+            }
+          ],
+          "thesis": "Hermès at 30 times earnings is preferable to LVMH at 15 to 19 times earnings due to high predictability and confidence in achieving expected returns."
+        },
+        {
+          "instrument": "Opendoor",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "conditional",
+          "conviction": "medium",
+          "horizon": "going into the IPO",
+          "levels": [],
+          "thesis": "Short positions in Opendoor should be covered going into an OpenAI IPO due to the ticker-confusion run-up thesis."
+        }
+      ],
+      "audioWindows": 16,
+      "gapChecks": 7,
+      "uncoveredIntervalsOver3Seconds": [],
+      "extractionBatches": 8
+    },
+    {
+      "case": 12,
+      "videoId": "iBMZc7zs_Ew",
+      "title": "Ian Bezek Returns to Discuss Why Brazilian Bank INTER Is Undervalued + Much More [PODCAST]",
+      "runId": "c4268e6a-91cf-4d3d-a55d-297926b3073a",
+      "group": "stopped-run-recovery",
+      "status": "completed",
+      "acceptedClaims": 11,
+      "acceptedContext": 16,
+      "incrementalUsd": 0.33423349999999996,
+      "referenceStatus": "ready",
+      "referenceClaims": 1,
+      "claims": [
+        {
+          "instrument": "new",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "hold",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Holds a long position in Nu Bank (Nu Holdings), recognizing its impressive scale, management quality, and international expansion despite its larger valuation compared to Inter."
+        },
+        {
+          "instrument": "Mexican fixed income",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Hold a long stance on Mexican fixed income and Mexican peso government bonds due to attractive real yields and strong fundamentals."
+        },
+        {
+          "instrument": "Brazil",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "neutral",
+          "conviction": "medium",
+          "horizon": "ahead of the election",
+          "levels": [],
+          "thesis": "Hold a cautious stance on Brazilian government bonds ahead of elections, preferring Mexican bonds despite high nominal and real yields in Brazil."
+        },
+        {
+          "instrument": "Jets, JETS",
+          "tickerAsExtracted": "JETS",
+          "listingMatch": null,
+          "stance": "short",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Hold a short position in the JETS ETF as airlines face dropping profitability from elevated jet fuel prices, tapped-out consumers, and declining passenger traffic."
+        },
+        {
+          "instrument": "airlines",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "short",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Short airlines due to high unavoidable fixed costs such as pilot and flight attendant union labor and unbreakable plane leases, coupled with severe economic sensitivity to oil prices."
+        },
+        {
+          "instrument": "airports",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [
+            {
+              "kind": "target",
+              "value_original": "30%"
+            }
+          ],
+          "thesis": "Go long airport operators, as their low ongoing maintenance costs and resilience contrast with airlines, while their valuations have dropped more despite lower oil sensitivity."
+        },
+        {
+          "instrument": "Marcato Libre",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "hold",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Holding a long position in MercadoLibre after buying the dip, supported by resilient lending operations where short loan durations mitigate credit risks."
+        },
+        {
+          "instrument": "airport stock there",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "hold",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Maintain a cautious hold on Argentine airport stock without selling, as election and macroeconomic risks have elevated caution."
+        },
+        {
+          "instrument": "Columbia stocks",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "high",
+          "horizon": "over the next few years",
+          "levels": [],
+          "thesis": "The speaker remains bullish on Colombian equities, has not taken money off the table, and views the political setup and macroeconomic tailwinds as strong investment opportunities."
+        },
+        {
+          "instrument": "Technoglass",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "The speaker particularly likes Tecnoglass due to the removal of tariffs on exports to the US, improving margins, and an attractive valuation differential compared to other Colombian assets."
+        },
+        {
+          "instrument": "Colombian banks",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "The speaker maintains a positive stance on Colombian banks due to increasing activity, positive migration, and expected building demand."
+        }
+      ],
+      "audioWindows": 0,
+      "gapChecks": 0,
+      "uncoveredIntervalsOver3Seconds": null,
+      "extractionBatches": 7
+    },
+    {
+      "case": 16,
+      "videoId": "IjYr5acuBT4",
+      "title": "7 Stocks to Buy Heavy Before the Market Takes Off",
+      "runId": "32b8e6cd-b47a-44a6-87e4-cbcbd397df82",
+      "group": "quality-regression",
+      "status": "completed",
+      "acceptedClaims": 9,
+      "acceptedContext": 8,
+      "incrementalUsd": 0.18715800000000002,
+      "referenceStatus": "ready",
+      "referenceClaims": 6,
+      "claims": [
+        {
+          "instrument": "cyber security stocks",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "The creator owns the group of five cybersecurity stocks (Zscaler, CrowdStrike, Fortinet, Okta, and Palo Alto Networks), viewing cybersecurity IT spending as essential and expected to keep heading higher amid AI spending growth."
+        },
+        {
+          "instrument": "energy stocks",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": "at least until early November",
+          "levels": [],
+          "thesis": "Energy stocks are poised to continue performing well at least through early November, supported by tight geopolitical conditions around the Strait of Hormuz."
+        },
+        {
+          "instrument": "insurers",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Investors should focus on insurance companies within financials because higher interest rates and bond yields boost their earnings on held premium cash flows without immediate payout burdens."
+        },
+        {
+          "instrument": "Real estate, consumer staples, and utilities",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "avoid",
+          "conviction": "medium",
+          "horizon": "next few months",
+          "levels": [],
+          "thesis": "Avoid real estate, consumer staples, and utilities sectors, as higher interest rates increase their debt burden and pull dividend-seeking investors away toward higher-yielding risk-free Treasury bonds."
+        },
+        {
+          "instrument": "Service Now",
+          "tickerAsExtracted": null,
+          "listingMatch": {
+            "name": "ServiceNow",
+            "ticker": "NOW",
+            "exchange": "NYSE",
+            "sourceUrl": "https://investor.servicenow.com/",
+            "asOf": "2026-09-20",
+            "method": "company_alias",
+            "captionTicker": null
+          },
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "ServiceNow presents a favorable buy-the-dip opportunity following its pullback, supported by its role in AI agent orchestration and an attractive forward PEG valuation relative to peers."
+        },
+        {
+          "instrument": "Service Now",
+          "tickerAsExtracted": "N",
+          "listingMatch": {
+            "name": "ServiceNow",
+            "ticker": "NOW",
+            "exchange": "NYSE",
+            "sourceUrl": "https://investor.servicenow.com/",
+            "asOf": "2026-09-20",
+            "method": "company_alias",
+            "captionTicker": "N"
+          },
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Stick with ServiceNow as the market is wrong about it despite AI software concerns."
+        },
+        {
+          "instrument": "Palunteer",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "watch",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Consider taking another look at Palantir as it enters value territory relative to peers."
+        },
+        {
+          "instrument": "Apploven",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "conditional",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "AppLovin represents great value at 63 times price to earnings adjusted for growth if it can survive AI software fears."
+        },
+        {
+          "instrument": "consumer related space with travel or retail stocks",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "avoid",
+          "conviction": "medium",
+          "horizon": "over the next month",
+          "levels": [],
+          "thesis": "Avoid buying dips in consumer-related travel or retail stocks until either compelling prices appear or consumer spending strength returns."
+        }
+      ],
+      "audioWindows": 0,
+      "gapChecks": 0,
+      "uncoveredIntervalsOver3Seconds": null,
+      "extractionBatches": 3
+    },
+    {
+      "case": 18,
+      "videoId": "1WNowIoNgtg",
+      "title": "Generate $3,000 Weekly Passive Income with this Options Strategy",
+      "runId": "86a6cbf0-38a5-4759-b0ac-a29a6f8bb7e7",
+      "group": "quality-regression",
+      "status": "completed",
+      "acceptedClaims": 2,
+      "acceptedContext": 13,
+      "incrementalUsd": 0.235298,
+      "referenceStatus": "ready",
+      "referenceClaims": 1,
+      "claims": [
+        {
+          "instrument": "Palanteer",
+          "tickerAsExtracted": "PLTR",
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Selling put options on Palantir is a favored strategy because it is viewed as a great company."
+        },
+        {
+          "instrument": "Google",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Following put assignment on Google shares, plan to run the wheel strategy by selling covered calls to generate income."
+        }
+      ],
+      "audioWindows": 0,
+      "gapChecks": 0,
+      "uncoveredIntervalsOver3Seconds": null,
+      "extractionBatches": 5
+    },
+    {
+      "case": 19,
+      "videoId": "vrTbCxUzRw4",
+      "title": "Why I Buy the Strongest Mining Stocks First — Not the Cheapest",
+      "runId": "8605534e-6096-474d-8412-324816fb7b98",
+      "group": "quality-regression",
+      "status": "completed",
+      "acceptedClaims": 6,
+      "acceptedContext": 6,
+      "incrementalUsd": 0.161554,
+      "referenceStatus": "ready",
+      "referenceClaims": 4,
+      "claims": [
+        {
+          "instrument": "Banyan",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "watch",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Wait on buying Banyan Gold at current extended levels and look for a shallow pullback or correction instead of chasing the breakout."
+        },
+        {
+          "instrument": "Cabral Gold",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "watch",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Do not buy Cabral Gold right now after its rally because it looks extended or near a top, but wait to add or buy on a pullback where upside potential improves."
+        },
+        {
+          "instrument": "New Pacific Metals",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [
+            {
+              "kind": "target",
+              "value_original": "20%"
+            }
+          ],
+          "thesis": "New Pacific Metals offers a very clean technical setup with substantial upside to retest previous highs after bouncing off its 50-day moving average and breaking its downtrend."
+        },
+        {
+          "instrument": "1911 Gold",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "long",
+          "conviction": "high",
+          "horizon": null,
+          "levels": [],
+          "thesis": "The speaker bought and added to a position in 1911 Gold as a strategic purchase at the lower end of its support zone and holding the 50-day moving average, despite technical weakness relative to stronger names."
+        },
+        {
+          "instrument": "McEwen Mining",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "avoid",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Avoid purchasing McEwen Mining right now because it displays technical weakness below its 50-day and 200-day moving averages, offering better risk-reward to wait for lower prices in a market pullback."
+        },
+        {
+          "instrument": "Lundin Mining",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "avoid",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Hold off on buying Lundin Mining because it remains technically weak below the 50-day and 200-day moving averages and is struggling at the lower end of its sideways range."
+        }
+      ],
+      "audioWindows": 0,
+      "gapChecks": 0,
+      "uncoveredIntervalsOver3Seconds": null,
+      "extractionBatches": 3
+    },
+    {
+      "case": 20,
+      "videoId": "Dy_0RtmAt1U",
+      "title": "Silver Is at Triple Support — If It Breaks, $54 Is in Play",
+      "runId": "f3d3972a-7985-434c-b4d3-65605caf8d7c",
+      "group": "stopped-run-recovery",
+      "status": "completed",
+      "acceptedClaims": 2,
+      "acceptedContext": 5,
+      "incrementalUsd": 0.09358925,
+      "referenceStatus": "ready",
+      "referenceClaims": 1,
+      "claims": [
+        {
+          "instrument": "silver",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "hold",
+          "conviction": "medium",
+          "horizon": "medium to long term",
+          "levels": [],
+          "thesis": "Hold existing positions in silver and mining stocks despite near-term volatility and potential downside pressure from the bond market."
+        },
+        {
+          "instrument": "miners",
+          "tickerAsExtracted": null,
+          "listingMatch": null,
+          "stance": "hold",
+          "conviction": "medium",
+          "horizon": null,
+          "levels": [],
+          "thesis": "Hold mining stocks as part of the precious metals strategy rather than attempting to sell out ahead of expected market weakness."
+        }
+      ],
+      "audioWindows": 0,
+      "gapChecks": 0,
+      "uncoveredIntervalsOver3Seconds": null,
+      "extractionBatches": 2
+    }
+  ]
+}

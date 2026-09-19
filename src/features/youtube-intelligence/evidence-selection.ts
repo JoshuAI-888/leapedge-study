@@ -45,7 +45,8 @@ export function materializeEvidenceRanges(raw: unknown, source: SourceData) {
     const derived = deriveEvidence(source, range);
     return {
       segment_id: range.start_id,
-      end_segment_id: range.end_id === range.start_id ? undefined : range.end_id,
+      end_segment_id:
+        range.end_id === range.start_id ? undefined : range.end_id,
       quote_original: derived.quote_original,
       quote_translation_en: "",
       source_span: {
@@ -58,4 +59,40 @@ export function materializeEvidenceRanges(raw: unknown, source: SourceData) {
     };
   });
   return Claim.parse({ ...fields, evidence });
+}
+
+/** Split an overlong pointer at real cue boundaries. No text is rewritten or
+ * omitted. Invalid/missing/reversed pointers still fail at the claim boundary. */
+export function recoverEvidenceRanges(raw: unknown, source: SourceData) {
+  const selected = RangeSelectedClaim.parse(raw);
+  const ranges: { start_id: string; end_id: string }[] = [];
+  for (const range of selected.evidence_ranges) {
+    const start = source.segments.findIndex((s) => s.id === range.start_id);
+    const end = source.segments.findIndex((s) => s.id === range.end_id);
+    if (start < 0 || end < start)
+      throw Error("Unknown or reversed evidence pointer");
+    let from = start;
+    for (let i = start; i <= end; i++) {
+      const first = source.segments[from],
+        last = source.segments[i];
+      if (
+        i > from &&
+        (i - from >= 100 ||
+          (first.start_seconds !== null &&
+            last.end_seconds !== null &&
+            last.end_seconds - first.start_seconds > 120))
+      ) {
+        ranges.push({ start_id: first.id, end_id: source.segments[i - 1].id });
+        from = i;
+      }
+    }
+    ranges.push({
+      start_id: source.segments[from].id,
+      end_id: source.segments[end].id,
+    });
+  }
+  return materializeEvidenceRanges(
+    { ...selected, evidence_ranges: ranges },
+    source,
+  );
 }
