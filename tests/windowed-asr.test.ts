@@ -181,3 +181,100 @@ test("Disagreeing spans use a single independent tie-break and publish measured 
   });
   assert.equal(rowsForRun(self).claims[0].trustLevel, "L1");
 });
+
+test("Bad window timestamps subdivide only that window and preserve earlier paid work", async () => {
+  await freshDatabase();
+  const run: Run = {
+    id: "recover-asr",
+    videoId: "abcdefghijk",
+    url: "https://youtube.com/watch?v=abcdefghijk",
+    model: "fixture",
+    promptVersion: "fixture",
+    title: "Recovery",
+    status: "running",
+    stage: "asr-source",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    error: null,
+    input: {},
+    output: {
+      metadata: { duration: 600 },
+      asrWindows: [
+        {
+          startSeconds: 0,
+          endSeconds: 300,
+          transcriptId: "retained",
+          segments: [
+            {
+              id: "retained",
+              text: "Retained speech",
+              start_seconds: 0,
+              end_seconds: 300,
+            },
+          ],
+        },
+      ],
+    },
+    cost: 0,
+  };
+  await windowedAsrStep(run, teamDefaults(), true, async () => ({
+    segments: [
+      { text: "Invalid relative timestamp", start_seconds: 0, end_seconds: 3 },
+    ],
+  }));
+  assert.equal(run.status, "running");
+  assert.deepEqual(run.output.asrPlan, [
+    { startSeconds: 0, endSeconds: 300 },
+    { startSeconds: 300, endSeconds: 450 },
+    { startSeconds: 450, endSeconds: 600 },
+  ]);
+  assert.equal((run.output.asrWindows as unknown[]).length, 1);
+});
+
+test("Explicitly inspected silence is recorded without claiming speech covered the whole video", async () => {
+  await freshDatabase();
+  const run: Run = {
+    id: "silence-asr",
+    videoId: "abcdefghijk",
+    url: "https://youtube.com/watch?v=abcdefghijk",
+    model: "fixture",
+    promptVersion: "fixture",
+    title: "Pauses",
+    status: "running",
+    stage: "asr-source",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    error: null,
+    input: {},
+    output: {
+      metadata: { duration: 300 },
+      asrPlan: [{ startSeconds: 0, endSeconds: 300 }],
+      asrWindows: [
+        {
+          startSeconds: 0,
+          endSeconds: 300,
+          transcriptId: "retained",
+          segments: [
+            { id: "s1", text: "Opening", start_seconds: 0, end_seconds: 100 },
+            { id: "s2", text: "Closing", start_seconds: 160, end_seconds: 300 },
+          ],
+        },
+      ],
+    },
+    cost: 0,
+  };
+  let calls = 0;
+  const call = async () => {
+    calls++;
+    return { audio_status: "complete", segments: [] };
+  };
+  await windowedAsrStep(run, teamDefaults(), true, call);
+  await windowedAsrStep(run, teamDefaults(), true, call);
+  assert.equal(calls, 1);
+  assert.equal(run.stage, "synthesis");
+  assert.equal(
+    (run.output.coverage as { status: string }).status,
+    "incomplete_or_unknown",
+  );
+  assert.ok(run.output.asrGapChecks);
+});

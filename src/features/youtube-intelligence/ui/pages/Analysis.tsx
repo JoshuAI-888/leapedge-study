@@ -49,12 +49,16 @@ export function Analysis({ id }: { id: string }) {
         setStoredClaims(x.claims ?? []);
         setReviewerConfigured(x.reviewerConfigured);
         const hash = decodeURIComponent(window.location.hash.slice(1));
-        if (hash && (!run || run.id !== id)) setSelected(hash);
-        const firstSpan = x.evidenceSpans?.find(
-          (s) => s.claimId === (hash || x.claims?.[0]?.id),
-        );
-        if (firstSpan?.startSeconds != null && (!run || run.id !== id))
-          setSeconds(firstSpan.startSeconds);
+        if (!run || run.id !== id) {
+          const ordered = visibleClaims(x.claims ?? [], "", "L0");
+          const initial = ordered.find((c) => c.id === hash) ?? ordered[0];
+          setSelected(initial?.id ?? "");
+          const starts = (x.evidenceSpans ?? [])
+            .filter((s) => s.claimId === initial?.id && s.startSeconds !== null)
+            .map((s) => s.startSeconds!);
+          setSeconds(starts.length ? Math.min(...starts) : 0);
+          setListened(false);
+        }
         setError("");
       })
       .catch((e) => {
@@ -109,7 +113,8 @@ export function Analysis({ id }: { id: string }) {
     ...evidence.map((e) => e.source_span?.end_seconds ?? 0),
   );
   const audio = run.output.audioTrust as
-    { windows?: unknown[]; agreement?: unknown } | undefined;
+    | { windows?: unknown[]; agreement?: unknown }
+    | undefined;
   return (
     <>
       <PageTitle
@@ -344,6 +349,8 @@ export function Analysis({ id }: { id: string }) {
             {
               coverage: run.output.coverage,
               audioTrust: audio,
+              transcriptionCompleteness: run.output.transcriptionCompleteness,
+              rejectedEvidence: run.output.rejectedEvidence,
               rejected: checked.filter((c) => !c.passed),
             },
             null,

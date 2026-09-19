@@ -83,7 +83,14 @@ export const Claim = z.object({
   risks_en: z.array(englishOutput),
   levels: z.array(
     z.object({
-      kind: z.enum(["entry", "target", "stop", "support", "resistance"]),
+      kind: z.enum([
+        "entry",
+        "target",
+        "stop",
+        "support",
+        "resistance",
+        "strike",
+      ]),
       value_original: z.string(),
     }),
   ),
@@ -199,7 +206,12 @@ export function deriveEvidence(
 ) {
   const start = source.segments.findIndex((s) => s.id === span.start_id),
     end = source.segments.findIndex((s) => s.id === span.end_id);
-  if (start < 0 || end < 0 || end < start || end - start >= SPAN_LIMITS.segments)
+  if (
+    start < 0 ||
+    end < 0 ||
+    end < start ||
+    end - start >= SPAN_LIMITS.segments
+  )
     throw Error("Unknown, reversed or excessive source range");
   const first = source.segments[start],
     last = source.segments[end];

@@ -108,6 +108,8 @@ Why this is the right decision for that user:
 
 ### 4.3 Three-call pipeline, plus an optional context check
 
+**20 September 2026 reliability amendment.** The live 52-minute captioned case exhausted 16k output tokens (including 11k reasoning) despite fitting the input context. Extraction now additionally bounds each batch to 12k estimated input tokens and ten minutes, uses low reasoning and a 24k output allowance, checkpoints each batch and splits a truncated batch before retrying. Input context alone is not a sufficient batching policy. Oversized evidence ranges are divided at existing cue boundaries without changing or dropping text; unrepairable pointers are rejected individually and retained in diagnostics.
+
 **Decision.** Per video: one extraction over the full transcript; one batched critique over all claims with the transcript supplied from an explicit context cache; one optional repair or translation pass. Chunking applies only above a configurable token threshold. A fourth, optional call produces the context check (section 4.14) for each call that names a ticker; it runs after the critic so it only spends on accepted claims.
 
 **Extraction also records mentions.** Alongside actionable calls, extraction emits every stance-tagged reference to an instrument (bullish, bearish, neutral) with its segment pointer and a flag `is_call`. Mentions feed the sentiment shift (section 4.13); calls feed the leaderboard. Both carry trust levels.

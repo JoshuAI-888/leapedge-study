@@ -532,3 +532,20 @@ test("a span whose retained source changed under it fails the hash assertion", a
   );
   await db().close();
 });
+
+test('One invalid claim pointer is retained as a rejection without discarding valid calls', async () => {
+  const {run}=await runSynthesis(true,{claims:[pointerClaim,{...pointerClaim,evidence_ranges:[{start_id:'missing',end_id:'b'}]}],key_points:[]});
+  assert.equal((run.output.claims as unknown[]).length,1);
+  assert.equal((run.output.rejectedEvidence as unknown[]).length,1);
+  assert.equal(run.stage,'critique');
+});
+
+test('A truncated extraction subdivides its checkpoint and uses fresh stage keys',async()=>{
+ const snapshot={id:'fixture-recovery',transcribe:'transcribe',synthesis:'synthesize',extraction:'extract',critique:'critique',pointerEvidence:true};
+ const run=await create('truncated-test','fixture',{promptSnapshot:snapshot},snapshot.id);
+ run.stage='synthesis';
+ run.output.source=Source.parse({source_kind:'native_captions',segments:Array.from({length:16},(_,i)=>({id:`s${i}`,text:'A short source cue.',start_seconds:i*5,end_seconds:i*5+5}))});
+ const fake=new FakeModelTransport({responses:{synthesis:{json:{claims:[]},finishReason:'length'},'synthesis-chunk-0-repair-1':{json:{claims:[],key_points:[],mentions:[]}},'synthesis-chunk-1-repair-1':{json:{claims:[],key_points:[],mentions:[]}}}});
+ const restore=injectTransport(fake);
+ try {await step(run);assert.equal(run.output.extractionRepairs,1);assert.equal(run.output.chunkIndex,undefined);await step(run);assert.equal(run.output.chunkIndex,1);await step(run);assert.equal(run.stage,'critique');assert.equal(fake.requests.length,3);}finally{restore();}
+});

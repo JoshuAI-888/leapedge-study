@@ -1290,5 +1290,17 @@
       "note": "What a fresh session reads before it touches anything."
     }
   ],
-  "executionScope": "docs/delivery/standalone-scope.json"
+  "executionScope": "docs/delivery/standalone-scope.json",
+  "recovery": {
+    "status": "in-progress",
+    "pr": 8,
+    "baseline": "docs/delivery/live-comparison-20-20260920.md",
+    "scope": "Recover the seven failed/review cases; no new LeapEdge calls; retain baseline and separate retry costs.",
+    "tests": [
+      "tests/recovery.test.ts",
+      "tests/windowed-asr.test.ts",
+      "tests/evidence-pointer.test.ts"
+    ],
+    "note": "Output-aware extraction, bounded ASR subdivision and gap checks, exact evidence-range subdivision, financial semantics, sourced listing identity, price correction and selected-evidence synchronization implemented; full checks and live retries in progress."
+  }
 }

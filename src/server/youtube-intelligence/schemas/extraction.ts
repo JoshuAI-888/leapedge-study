@@ -65,7 +65,14 @@ const claimSchema = {
         properties: {
           kind: {
             type: "string",
-            enum: ["entry", "target", "stop", "support", "resistance"],
+            enum: [
+              "entry",
+              "target",
+              "stop",
+              "support",
+              "resistance",
+              "strike",
+            ],
           },
           value_original: { type: "string" },
         },
@@ -108,7 +115,12 @@ const mentionSchema = {
     stance: { type: "string", enum: [...Mention.shape.stance.options] },
     sentiment: { type: "string", enum: [...SENTIMENTS] },
     rationale_en: { type: "string", minLength: 1 },
-    ranges: { type: "array", minItems: 1, maxItems: 20, items: rangeItemSchema },
+    ranges: {
+      type: "array",
+      minItems: 1,
+      maxItems: 20,
+      items: rangeItemSchema,
+    },
   },
   required: [
     "ticker",
@@ -162,3 +174,7 @@ export const POINTER_EVIDENCE_FORMAT =
 /** Said alongside the pointer instruction; the sentiment rules the prompt version elaborates. */
 export const MENTION_OUTPUT_FORMAT =
   "Also return mentions: every stance-tagged reference to an instrument, including the ones that are already claims, each with {ticker, instrument_as_spoken, market, stance, sentiment, rationale_en, ranges}. rationale_en is one English sentence that quotes or paraphrases the span you cite. Cite the span the same way, with ranges of segment IDs; a mention without a range is discarded. market is unknown unless the creator made it clear. For a reference that is also an actionable call the application overrides your sentiment with the value its stance table gives, so grade the stance honestly rather than the outcome you expect.";
+
+/** Semantics applied independently of the historical prompt snapshot. */
+export const FINANCIAL_SEMANTICS =
+  "Keep actionable creator instructions in claims; put hypothetical returns, educational scenarios and descriptive commentary in key_points unless the creator expresses an actual position or action. A conditional action must retain every trigger. Extract separate claims for separately named companies ONLY when the same cited instruction truly applies to each; never substitute tickers or ETFs for a sector, theme, index or vague group. Preserve options mechanics explicitly: put/call, buy/sell, strike as levels.kind=strike (not entry), expiry exactly as spoken in horizon_en, and the underlying support separately. Do not infer an expiry year. Preserve percentage upside/downside targets as target levels with their exact original strings. Do not omit conditions, expiry or price-role labels to shorten output. Use multiple short supporting ranges when needed. A company name can remain unresolved: ticker is only the literal ticker in the source, not a guess from the name.";

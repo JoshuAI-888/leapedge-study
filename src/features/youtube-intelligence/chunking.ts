@@ -99,3 +99,34 @@ export function missingRanges(source: SourceData, duration: number) {
   if (end < duration - 3) ranges.push({ start: end, end: duration });
   return ranges.filter((r) => r.end > r.start);
 }
+
+/** Extraction output grows with speech duration and entity density, not just context size.
+ * Bound both input and duration; retain a three-cue overlap for boundary conditions. */
+export function extractionChunks(source: SourceData, maxTokens: number) {
+  const bounded = sourceChunks(source, Math.min(maxTokens, 12000) * 4);
+  return bounded.flatMap((segments) => {
+    const chunks: SourceData["segments"][] = [];
+    let current: SourceData["segments"] = [];
+    for (const segment of segments) {
+      if (
+        current.length &&
+        segment.end_seconds !== null &&
+        current[0].start_seconds !== null &&
+        segment.end_seconds - current[0].start_seconds > 600
+      ) {
+        chunks.push(current);
+        current = current.slice(-Math.min(3, current.length - 1));
+        while (
+          current.length &&
+          segment.end_seconds -
+            (current[0].start_seconds ?? segment.end_seconds) >
+            600
+        )
+          current.shift();
+      }
+      current.push(segment);
+    }
+    if (current.length) chunks.push(current);
+    return chunks;
+  });
+}

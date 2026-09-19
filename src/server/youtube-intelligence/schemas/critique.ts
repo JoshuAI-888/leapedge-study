@@ -1,3 +1,4 @@
+import { resolveListing } from "../../../features/youtube-intelligence/identity.ts";
 import { z } from "zod";
 import type {
   ClaimData,
@@ -79,7 +80,7 @@ export const critiqueResponseSchema: Record<string, unknown> = {
  * here and overrides the older sentence explicitly.
  */
 export const CRITIQUE_BATCH_FORMAT =
-  'This is one batched audit over every item in SOURCE DATA. Each item carries an id. Return {"verdicts":[{"id":str,"verdict":"accept|reject","reason_en":str,"cross_claim_notes":str}]} with exactly one entry for every supplied id and no id that was not supplied; ignore any earlier instruction to return a single verdict object for one claim. reason_en is one English sentence. Use cross_claim_notes only where another supplied item contradicts or qualifies this one, naming that id. An id beginning with k is a contextual key point: it need not recommend a trade, so audit evidence, attribution and meaning and do not reject it solely for the absence of an action. An id beginning with m is a mention: audit the instrument identity, the stance and the sentiment against its cited span only. Judge every item independently against the source; a verdict on one id must not be inferred from another. The transcript may be supplied from a context cache instead of in SOURCE DATA: audit against whichever is present and never answer from memory.';
+  'This is one batched audit over every item in SOURCE DATA. Each item carries an id. Return {"verdicts":[{"id":str,"verdict":"accept|reject","reason_en":str,"cross_claim_notes":str}]} with exactly one entry for every supplied id and no id that was not supplied; ignore any earlier instruction to return a single verdict object for one claim. reason_en is one English sentence. Use cross_claim_notes only where another supplied item contradicts or qualifies this one, naming that id. An id beginning with k is a contextual key point: it need not recommend a trade, so audit evidence, attribution and meaning and do not reject it solely for the absence of an action. An id beginning with m is a mention: audit the instrument identity, the stance and the sentiment against its cited span only. Judge every item independently against the source; a verdict on one id must not be inferred from another. The transcript may be supplied from a context cache instead of in SOURCE DATA: audit against whichever is present and never answer from memory. listingIdentity, when present, is a separately sourced company-to-listing mapping. The claim ticker and copied quotes preserve the literal caption spelling; do not reject an otherwise supported company thesis solely because that literal spelling differs from listingIdentity.ticker. Still reject ambiguous company identity, unsupported actions or financial semantics. Options strikes are not stock entries; expiry and conditional triggers must survive. Hypothetical returns alone are contextual key points, not actionable calls.';
 /** What the request says in place of the transcript when the transcript is in the cache. */
 export const CACHED_SOURCE_NOTE =
   "The full transcript is supplied to this call from the explicit context cache. Audit against it; it is the same retained source the ids below cite.";
@@ -118,6 +119,10 @@ export function critiquePayload(input: {
       id: item.id,
       kind: item.kind,
       claim: item.claim,
+      listingIdentity: resolveListing(
+        item.claim.instrument_as_spoken,
+        item.claim.ticker,
+      ),
     })),
     mentions: input.mentions.map((item) => ({
       id: item.id,
