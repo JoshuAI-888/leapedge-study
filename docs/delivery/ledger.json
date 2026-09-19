@@ -1301,9 +1301,10 @@
       "tests/windowed-asr.test.ts",
       "tests/evidence-pointer.test.ts",
       "tests/resume.test.ts",
-      "tests/ui-viewmodel.test.ts"
+      "tests/ui-viewmodel.test.ts",
+      "tests/runs-api.test.ts"
     ],
-    "note": "Seven stopped runs and four retained-transcript quality checks completed. Long podcast residual gap recovered; no new LeapEdge calls. Additional model usage $2.75417070. Dashboard now distinguishes recovered history from active review; final checks and browser acceptance in progress.",
+    "note": "Seven stopped runs and four retained-transcript quality checks completed. Long podcast residual gap recovered; no new LeapEdge calls. Additional model usage $2.75417070. Dashboard now distinguishes recovered history from active review; final checks and browser acceptance in progress. Runs API exposes only validated recovery IDs so the browser can resolve recovered history without leaking private inputs.",
     "report": "docs/delivery/recovery-20260920.md",
     "results": "docs/delivery/recovery-20260920.json"
   }

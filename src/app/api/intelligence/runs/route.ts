@@ -20,7 +20,9 @@ export async function GET(r: Request) {
         .filter((r) => !r.input.task)
         .map((r) => ({
           ...r,
-          input: {},
+          input: z.uuid().safeParse(r.input.recoveryOf).success
+            ? { recoveryOf: r.input.recoveryOf }
+            : {},
           output: {
             metadata: r.output.metadata,
             sourceHash: r.output.sourceHash,
