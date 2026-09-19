@@ -1,6 +1,8 @@
 # YouTube Intelligence v2 — build plan
 
-**Status:** Approved build plan, 17 September 2026. Companion to `youtube-intelligence-v2-spec.md` (revision 2). This document lists every feature needed to deliver the spec, which features are serial and which parallel, the loop each build agent follows, the backend test plan, and the multi-agent delivery strategy.
+**Status:** Original approved feature plan, amended 19 September 2026. Companion to `youtube-intelligence-v2-spec.md` (revision 2). This document lists every feature needed to deliver the spec, which features are serial and which parallel, the loop each build agent follows, the backend test plan, and the multi-agent delivery strategy.
+
+**Execution override, 19 September 2026:** follow `../delivery/standalone-build-loop.md` and `standalone-scope.json`. Complete Phase 2 and Phase 3 and stop before F50. Remove the fifty human-verified cases from current acceptance; later LeapEdge comparison uses available valid video/channel links. Historical feature rows retain the original implementation trail, not a renewed annotation requirement. Browser workflows, visual review and real Postgres tests are required. The user has authorized the two-phase build; old human approvals at every intermediate phase/implementation change do not pause this execution.
 
 **Decisions this plan rests on:** all phases 0–4 in scope; Claude agents build with human review at every phase gate; tests reach Postgres through PGlite in-process; delivery runs as a multi-agent Workflow, one phase per spec phase.
 

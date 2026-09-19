@@ -1,6 +1,6 @@
 # YouTube Intelligence v2 — proposed update specification
 
-**Status:** Proposal for review, revision 3 (17 September 2026). Revision 3 removes the VideoConviction benchmark from the design: no product surface uses its labels, so it is no longer a promotion gate, a Lab panel, a seed source or a repository fixture; the gold set is the only evaluation set. Nothing in this document has been implemented, deployed or promoted. Revision 2 folds in the review of the TrueAlphaData handoff (commit d341270) and the VideoConviction handoff (commit c0a0fb6), the answers received on navigation, benchmarks, providers, replay, sharing, users and languages, and the evaluation of Supadata as a standby provider. There is no separate addendum.
+**Status:** Revision 4, 19 September 2026. Scope is standalone Phase 2 and Phase 3 completion. Phase 4 is outside the current build. The fifty human-verified cases are removed; LeapEdge comparison follows implementation. Feature delivery status lives in `../delivery/ledger.json`, not this design document.
 **Scope:** The `feat/youtube-intelligence` codebase in this repository, its hosted lab, and its planned merge into Finradar under Intelligence → YouTube intelligence.
 **Companion:** Target-state mockup canvas (Finradar theme): https://claude.ai/artifact/42c21wSpbiEtPrHJLh7THZ. Artboard sources are kept under `docs/spec/mockups/`.
 
@@ -130,7 +130,7 @@ Why this is the right decision for that user:
 
 **Policy setting.** ASR runs always, only when captions are missing, or only when a claim's cited span is needed for a trust upgrade. Default: when captions are missing, plus on demand for any claim promoted to Today.
 
-**Audio download is now permitted.** That opens two options that the design keeps in the Lab until the gold set shows they win: Speech-to-Text v2 with Chirp 3 for word-level timestamps at about US$0.003 per minute in batch, and uploading the audio file to Gemini through the Files API, which removes the YouTube-URL fetch path and its daily limits. Neither is the default; downloading adds an extraction step that breaks whenever YouTube changes, and windowed Gemini already meets the two-second anchor gate.
+**Audio download is now permitted.** That opens two options that the design keeps in the Lab until later source-backed comparisons justify them: Speech-to-Text v2 with Chirp 3 for word-level timestamps at about US$0.003 per minute in batch, and uploading the audio file to Gemini through the Files API, which removes the YouTube-URL fetch path and its daily limits. Neither is the default; downloading adds an extraction step that breaks whenever YouTube changes, and windowed Gemini already meets the two-second anchor gate.
 
 ### 4.6 Trust ladder
 
@@ -157,13 +157,13 @@ Creator conviction (high, medium, low, unspecified) is a separate field and is a
 
 **Rationale.** Push is free, near real-time and uses no Data API quota. The Batch API is half price with higher rate limits and a turnaround well under a day, which matches an overnight digest.
 
-### 4.9 Gold set and promotion gates
+### 4.9 Build verification and later LeapEdge comparison
 
-**Decision.** Before any prompt, model or transport change is promoted, it must be evaluated against one frozen set: at least fifty human-verified claims across English and Chinese with audio-checked anchors. The evaluation reports claim precision and recall, critic precision and recall, sentiment agreement, anchor accuracy within two seconds, and cost per accepted claim. The VideoConviction benchmark that earlier revisions paired with the gold set was removed on 17 September 2026: the product never reads its labels, so it was an evaluation-only dependency with a licence question attached, and the gold set already measures ticker, stance and conviction directly.
+**Decision, 19 September 2026.** The user removed the fifty human-verified cases from scope because of annotation effort. They are not a release blocker or deferred obligation. Complete the standalone build with deterministic evidence/schema/trust tests, real Postgres concurrency/restart checks, and browser/visual acceptance. Preserve the legacy evaluation artifacts and regression tests without treating their sample threshold as current policy.
 
-**Licensing.** TrueAlphaData's rows are of unstated licence. Finradar is confirmed as never commercial, so they may be used, with attribution, as an evaluation reference. They never appear as product data (section 4.11). No VideoConviction data is held in the repository.
+After the build, compare outputs against LeapEdge for the same valid video URLs, drawing from archived links and TrueAlphaData/LeapEdge channels. Fifty videos is a comparison target if a usable list and credits are available, not a minimum required to finish the build. Freeze source URLs and capture dates, both outputs/configurations, tickers, stance, conditions, numerical levels, quote provenance, timestamps, omissions, contradictions, latency and cost. Report agreement/disagreement and useful differences; LeapEdge output is a reference, not independent truth. Paid comparison runs require an explicit budget.
 
-**Status, 18 September 2026.** The set holds five cases and none is verified, so this gate has never bound a promotion. The fifty-case requirement stands; what changed is that the project now says so out loud rather than reporting `pass` over an empty measurement. See section 9's amendment and `docs/gates/gate-debt.md`.
+See `../delivery/standalone-build-loop.md` for the acceptance matrix. Optional human L3 reviews remain a product feature; their provenance cannot be faked by a model or inferred from comparator agreement.
 
 ### 4.10 Provider decision and the standby provider
 
@@ -256,7 +256,7 @@ Each change is a registry metric: the hover reads, for example, "rank as of toda
 
 **Where it appears.** A panel on Today for the biggest movers, a column on the by-ticker leaderboard, the ticker drill-down, and a `youtube` observation in the Finradar briefing (section 4.17).
 
-**Evaluation.** The gold set gains a sentiment label per mention. Sentiment agreement with the gold labels is a promotion gate like the others.
+**Evaluation.** Deterministic sentiment rules have fixture coverage. Later LeapEdge comparisons record sentiment disagreements without claiming human-verified accuracy.
 
 ### 4.14 Context check: time-matched external evidence
 
@@ -486,7 +486,7 @@ The top navigation is Finradar's and is not changed by this module.
 - Processing state simplified to four user-facing states: Queued, Analysing, Ready, Needs review. Stage detail moves to a collapsible diagnostics panel.
 - Cost display becomes a monthly meter in Settings and a per-video line in diagnostics; it leaves the report header.
 - Settings screen rebuilt from the schemas in section 6, grouped as Leaderboard and sentiment (account), Sources, Models and transport, Context check, Processing and budget, Channels, Trust, Digest and sharing (team).
-- Lab gains a "Promote" action that is disabled until the gold-set evaluation passes the configured gates.
+- Lab distinguishes build checks, optional legacy diagnostics and later LeapEdge comparison. Promotion must not be disabled solely for lack of the removed human gold set; existing budget, evidence and configuration guards still apply.
 - Channel cards show discovery mode, processing mode, tier and the trust distribution of their calls.
 
 ### 7.3 Surfaces
@@ -497,7 +497,7 @@ The top navigation is Finradar's and is not changed by this module.
 | **Channels** | Followed creators with call count, trust distribution, excess return against the viewer's benchmark with significance, discovery and processing mode | Playlist cursors, quota, pull history |
 | **Leaderboard** | By ticker (default), by creator, and Changes over a user-chosen window; benchmark, horizon, market and record selectors; methodology and row export | Settlement mechanics |
 | **Saved calls** | The user's saved calls, direction changes, notes, forward observations | Snapshot mechanics |
-| **Lab** | Prompts, experiments, gold set, provider diagnostics, cost history, shares | Everything technical |
+| **Lab** | Prompts, experiments, LeapEdge comparisons, provider diagnostics, cost history, shares | Everything technical |
 | **Settings** | Sections 6.2 and 6.3 | Environment |
 
 Mapping from the current UI:
@@ -544,10 +544,10 @@ Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#26262
 | 0 | Gold set of 50 verified claims; `ModelTransport` interface; metrics registry skeleton; settings schemas | Evaluation harness reports precision, recall, anchor accuracy and cost per accepted claim for the current v5 configuration |
 | 1 | Native transport for all stages; pointer evidence with `responseSchema`; mentions with sentiment and rationale; batched critique with explicit caching; low media resolution; realistic reservations with retries; Supadata standby with circuit breaker | Gold-set precision and recall not below v5; cost per accepted claim at least 40% lower; zero structural rejections on the gold set; standby engages on an injected vendor error and not on a missing-captions case |
 | 2 | Always-on worker with Postgres queue; Postgres-only with PGlite tests; relational tables and migrations; prices and settlements; default channel seed with selection and cost projection | Four videos processed in parallel end to end; restart during a run resumes without duplicate spend; CI runs on the production dialect; seed produces the deduplicated channel list |
-| 3 | Windowed ASR, agreement scoring and Whisper tie-break; trust ladder; Today, Channels, Leaderboard (by ticker, then by creator), Saved calls, Lab surfaces inside the Finradar shell; hover definitions and sorting on every table; benchmark and period settings; push notifications; batch mode; historical replay from January 2026 | At least 95% of L2 anchors within two seconds on the gold set; a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write; the Changes tab reproduces a hand-computed diff between two dates on the fixture database |
+| 3 | Windowed ASR, agreement scoring and Whisper tie-break; trust ladder; Today, Channels, Leaderboard (by ticker, then by creator), Saved calls, Lab surfaces inside the Finradar shell; hover definitions and sorting on every table; benchmark and period settings; push notifications; batch mode; historical replay from January 2026 | Trust and anchor behaviour proven with deterministic fixtures and browser playback checks (no population accuracy claim); a new upload appears on Today within the batch window without manual action; registry CI test passes with every column mapped; the leaderboard recomputes for a benchmark change without a write; the Changes tab reproduces a hand-computed diff between two dates on the fixture database |
 | 4 | Context check with dated sources; Finradar `youtube` observation; File Search corpus; sharing with revoke; digest | A context check cites only sources inside its window on 100% of a 50-call sample; a Finradar edition renders a youtube observation with evidence links; a cross-video question returns cited spans |
 
-**Amendment, 18 September 2026 — the gates in this table are advisory.** The gold set holds five pending cases against the fifty section 4.9 requires, so the promotion gate reports `verdict: advisory-only` with `binding: {total: 0}` and every metric `null`. Three of the four phase-1 exit criteria, the phase-3 anchor-accuracy criterion and the phase-4 context-window criterion cannot be measured until that input exists. The thresholds are unchanged and were deliberately not lowered. Until they can bind, a phase closes on build evidence — lane items merged, tests, typecheck, build, the offline gate and `npm audit` green, plus a written conformance report that states per criterion whether it was met or deferred. The deferred criteria are tracked in `docs/gates/gate-debt.md` and the inputs that clear them in `docs/handoff/phase-0-human-inputs.md`. No gate artifact may report `pass` while nothing was measured.
+**Amendment, 19 September 2026.** The human gold requirement and dependent population accuracy/cost-comparison exit criteria above are superseded by section 4.9; historical phase-0/1 rows describe the original plan only. They are removed requirements, not deferred debt. Current phase 2/3 closure requires feature conformance, passing code/build checks, real Postgres queue/restart verification and the browser/visual matrix. Live-provider evidence and later LeapEdge comparison are reported separately. Never report an unmeasured quality metric as passed. Phase 4 is excluded from this execution.
 
 Rollback: each phase is behind a flag; phase 1 can run alongside the OpenRouter path for a comparison week before the old path is removed.
 
@@ -657,7 +657,7 @@ Where we exceed LeapEdge: trust level per call, agreement score against audio, s
 Risks:
 
 - **Budget versus seed size.** Eighty channels in batch is US$150 to US$250 a month before context checks. The cap protects spend but will leave videos unanalysed at month end unless the budget is raised or channels are tiered.
-- **Supadata Whisper on Chinese audio.** Quality is unmeasured; the tie-break must be evaluated on the gold set's Chinese items before it can raise a claim to L2.
+- **Supadata Whisper on Chinese audio.** Quality is unmeasured; the tie-break must enforce the specified independent agreement rules with Chinese fixtures; live quality remains unmeasured until evaluated.
 - **FMP news coverage.** Thin for small caps and non-US names; the context check must say "no dated sources found" rather than reach outside the window.
 - **Push hub renewals.** Subscriptions expire and must be renewed by the worker; poll remains as fallback.
 - **Finradar contract drift.** The handoff pins a commit that has moved; the `youtube` observation shape must be re-checked against the current contract before phase 4.

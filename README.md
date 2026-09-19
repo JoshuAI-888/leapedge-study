@@ -26,7 +26,7 @@ npm run dev -- --port 3101
 npm run worker
 ```
 
-Local development uses SQLite unless `DATABASE_URL` is set. The hosted deployment uses **Next.js + Vercel Functions/Cron + Neon Postgres + OpenRouter + YouTube Data API + FMP + Resend**. No Python hosting is required. Retired v1 research code — the Python experiments and the one-off evidence scripts — is kept under `scripts/archive/`, excluded from the typecheck and never deployed.
+Local development requires an isolated Postgres database configured through `DATABASE_URL` and `DATABASE_URL_UNPOOLED`. `YTI_DB=pglite` is an in-process test database; separate web and worker processes do not share it. The hosted deployment uses **Next.js + Vercel Functions/Cron + Neon Postgres + OpenRouter + YouTube Data API + FMP + Resend**. No Python hosting is required. Retired v1 research code — the Python experiments and the one-off evidence scripts — is kept under `scripts/archive/`, excluded from the typecheck and never deployed.
 
 The Vercel cron advances leased, checkpointed stages. Closing the browser does not stop research. Paid requests are bounded and conservatively reserved; uncertain outcomes remain reserved and are not automatically retried. `YTI_BUDGET_USD` is a cumulative USD ledger ceiling, not a monthly rollover or account billing feature.
 
@@ -44,11 +44,18 @@ All five run without credentials and are what CI runs. The offline promotion
 gate replays stored runs against the gold set; it makes no model calls and
 costs nothing.
 
-The gold set is the only evaluation set (spec revision 3). It currently holds
-five pending cases against a required fifty, so every gate metric reports
-`null` and the gate verdict is `advisory-only`. What would make it binding is
-in [the phase-0 handoff](docs/handoff/phase-0-human-inputs.md) and
-[the gate-debt register](docs/gates/gate-debt.md).
+## Current completion scope
+
+Complete Phase 2 and Phase 3, then stop before Phase 4 / Finradar integration.
+See [the standalone build loop](docs/delivery/standalone-build-loop.md) and
+[its scope manifest](docs/delivery/standalone-scope.json).
+
+The user removed the fifty human-verified gold cases from scope on 19 September
+2026. Build verification uses tests, real Postgres concurrency and browser/visual
+evidence. LeapEdge output comparison follows the build using available video
+links and TrueAlphaData/LeapEdge channels. The legacy gold command above is a
+regression diagnostic only; its advisory result neither blocks delivery nor
+establishes quality. Agreement with LeapEdge is not independent ground truth.
 
 ## Evidence and deployment
 

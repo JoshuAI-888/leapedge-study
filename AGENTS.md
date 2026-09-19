@@ -26,13 +26,16 @@ GitHub repository name, `leapedge-study`, is not the product name.
 4. **`docs/gates/gate-debt.md`** — why every gate currently reports
    `advisory-only`, and what would change that.
 
-## The thing most likely to mislead you
+## Current scope override — 19 September 2026
 
-The promotion gate exits 0 and says `pass: true`. **That means nothing was
-measured.** The gold set holds five pending cases against the fifty spec 4.9
-requires, so all four gate metrics are `null`. Until that changes, **tests are
-the quality floor** — `tests/invariants.test.ts` and `tests/conventions.test.ts`
-in particular. Do not describe a gate as passed.
+Read `docs/delivery/standalone-scope.json` and `standalone-build-loop.md` before
+choosing work. Complete phases 2 and 3; stop before phase 4. The user removed the
+fifty human-verified cases from scope. The old gold harness and its artifacts are
+historical diagnostics, not a delivery prerequisite. Build checks and browser
+acceptance remain mandatory; LeapEdge comparison follows the build. Never label
+comparison agreement as verified accuracy or fabricate a human-reviewed badge.
+The current instruction authorizes continuing through both build phases; old
+per-phase permission text is superseded for implementation within this scope.
 
 ## Verify
 
@@ -46,7 +49,7 @@ npm run build
 node --experimental-strip-types scripts/promotion-gate.ts --offline
 ```
 
-Node 24 (`package.json` engines); Node 22 also runs it.
+Node 24 (`package.json` engines); Use Node 24 for this build loop.
 
 ## Conventions
 

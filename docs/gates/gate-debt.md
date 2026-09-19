@@ -1,5 +1,8 @@
 # Gate debt register
 
+> Superseded on 19 September 2026: the user removed the fifty human-verified cases from scope. This document is historical, not an outstanding request. Follow [the standalone loop](../delivery/standalone-build-loop.md); LeapEdge comparison follows the build.
+
+
 **Opened:** 18 September 2026, by `docs/review/delivery-review-20260918.md`.
 **Decision recorded:** the human inputs that make the promotion gate binding are
 not expected soon, so the project stops presenting these thresholds as gates it
