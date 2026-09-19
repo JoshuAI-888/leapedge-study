@@ -2,8 +2,8 @@
   "version": "standalone-conformance.v1",
   "phase": 2,
   "date": "2026-09-19",
-  "implementationStatus": "in-review",
-  "overallStatus": "implementation-and-command-checks-passed-in-review",
+  "implementationStatus": "merged",
+  "overallStatus": "implementation-and-command-checks-passed",
   "evidence": {
     "realPostgres": {
       "database": "isolated localhost yti_queue",

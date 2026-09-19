@@ -104,5 +104,16 @@ running from Application Support; worker heartbeat is current and queue
 admission remains paused. The status API returned HTTP 200.
 
 The gate stays open for the listed browser/mobile checks and live batch/push
-evidence. The PR remains draft and the delivery ledger retains honest in-review
-states rather than marking unmerged code complete.
+evidence. PR #6 merged on 19 September 2026 UTC after both GitHub verification runs
+passed. The ledger now records code on main; the remaining acceptance gaps
+are still open. Merged code does not mean final visual acceptance passed.
+
+
+## Merge verification
+
+PR #6 merged as `a74efb76152d995a646462a3c763e619928008c0` after both
+GitHub verification runs passed. The Vercel preview failed before compilation
+because its migration guard could not establish database isolation:
+`YTI_PRODUCTION_DB_HOST` is unset. No guard was bypassed and no deployment
+database environment was changed. Configure an isolated preview database
+before retrying preview deployment. This does not change the local Mac runtime.

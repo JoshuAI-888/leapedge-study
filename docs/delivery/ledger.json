@@ -567,7 +567,7 @@
       "lane": "queue",
       "title": "Postgres queue and always-on worker: jobs table with FOR UPDATE SKIP LOCKED",
       "spec": "4.7",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F23"
       ],
@@ -591,7 +591,7 @@
       "lane": "queue",
       "title": "Restart-safe resume from stage checkpoints and open-attempt rows",
       "spec": "4.4, 9",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F26",
         "F16"
@@ -633,7 +633,7 @@
       "lane": "seed",
       "title": "Cost projection and budget meter as registry metrics",
       "spec": "4.15, 6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F04",
         "F25",
@@ -676,7 +676,7 @@
       "lane": "gate",
       "title": "Phase-2 gate run: four-video parallel end to end, kill-and-resume, seed dedupe",
       "spec": "9",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F26",
         "F27",
@@ -698,7 +698,7 @@
       "lane": "asr",
       "title": "Windowed ASR with videoMetadata offsets at LOW resolution",
       "spec": "4.5, 5",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F10",
         "F24"
@@ -719,7 +719,7 @@
       "lane": "asr",
       "title": "Agreement scoring: edit-distance core moved into agreement.ts, per-span scores",
       "spec": "4.5",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F32"
       ],
@@ -740,7 +740,7 @@
       "lane": "asr",
       "title": "Whisper tie-break: one Supadata generate below threshold, two-of-three rule",
       "spec": "4.10",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F18",
         "F33"
@@ -761,7 +761,7 @@
       "lane": "asr",
       "title": "Trust ladder L0-L3 with trust_basis; append-only reviews sign L3",
       "spec": "4.6, 4.18",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F33",
         "F24"
@@ -783,7 +783,7 @@
       "lane": "board",
       "title": "Leaderboard statistics: Wilson, t, p, BH q, gates; boards by creator and by ticker",
       "spec": "4.12",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F25",
         "F35",
@@ -809,7 +809,7 @@
       "lane": "board",
       "title": "Changes tab: boardAsOf and diffBoards over a user-selected window",
       "spec": "4.12",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F36"
       ],
@@ -830,7 +830,7 @@
       "lane": "board",
       "title": "Sentiment shift for period P against the prior P, with trust filter",
       "spec": "4.13",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F13",
         "F24",
@@ -852,7 +852,7 @@
       "lane": "automation",
       "title": "Push notifications: PubSubHubbub verify and notify with HMAC, subscribe/renew job",
       "spec": "4.8",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F26"
       ],
@@ -873,7 +873,7 @@
       "lane": "automation",
       "title": "Batch mode: Google Batch API submit and poll; ledger settles on completion",
       "spec": "4.8, 5",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F10",
         "F26"
@@ -894,7 +894,7 @@
       "lane": "automation",
       "title": "Historical replay of Tier-1 uploads from January 2026; Shorts skipped",
       "spec": "4.16",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F40",
         "F28"
@@ -916,7 +916,7 @@
       "lane": "ui-shell",
       "title": "UI shell: module layout with side panel; ResearchApp split into page components",
       "spec": "7.1, 7.3",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F30"
       ],
@@ -938,7 +938,7 @@
       "lane": "ui-shell",
       "title": "Shared components: TrustBadge, ConvictionChip, MetricHeader, DataTable, selectors",
       "spec": "7.2, 7.5",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F04",
         "F42"
@@ -959,7 +959,7 @@
       "lane": "ui-today",
       "title": "Today page",
       "spec": "7.3",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F43",
         "F35",
@@ -981,7 +981,7 @@
       "lane": "ui-channels",
       "title": "Channels page: seed list, cost projection before save, trust distribution",
       "spec": "4.15, 7.2",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F43",
         "F29"
@@ -1002,7 +1002,7 @@
       "lane": "ui-leaderboard",
       "title": "Leaderboard page with Changes, selectors, CSV export and Methodology",
       "spec": "4.12, 7.3",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F43",
         "F36",
@@ -1024,7 +1024,7 @@
       "lane": "ui-analysis",
       "title": "Analysis page: trust strip, claim cards, evidence viewer, play-from",
       "spec": "7.4",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F43",
         "F35"
@@ -1045,7 +1045,7 @@
       "lane": "ui-lab-settings",
       "title": "Saved calls, Lab and Settings pages with reset-to-team-default",
       "spec": "7.2, 7.3",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F43",
         "F08"
@@ -1066,7 +1066,7 @@
       "lane": "gate",
       "title": "Phase-3 gate run: anchor accuracy, push end to end, registry CI, Changes diff",
       "spec": "9",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F32",
         "F33",
