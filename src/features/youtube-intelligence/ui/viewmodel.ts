@@ -123,3 +123,45 @@ export function sortTickerRows<
     );
   });
 }
+
+/** Latest dated stance per known creator and ticker, never a count of repeated claims. */
+export function creatorStances(
+  rows: {
+    id: string;
+    ticker: string | null;
+    channelId: string | null;
+    stance: string;
+    publishedAt: string | null;
+    trustBasis: unknown;
+  }[],
+) {
+  const latest = new Map<string, (typeof rows)[number]>();
+  for (const row of [...rows].sort(
+    (a, b) =>
+      (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "") ||
+      a.id.localeCompare(b.id),
+  )) {
+    const rejected =
+      row.trustBasis &&
+      typeof row.trustBasis === "object" &&
+      "latestReviewVerdict" in row.trustBasis &&
+      row.trustBasis.latestReviewVerdict === "rejected";
+    if (!row.channelId || !row.ticker || !row.publishedAt || rejected) continue;
+    const key = JSON.stringify([row.ticker, row.channelId]);
+    if (!latest.has(key)) latest.set(key, row);
+  }
+  const tickers = new Map<
+    string,
+    { ticker: string; creators: number; stances: Record<string, number> }
+  >();
+  for (const row of latest.values()) {
+    const ticker = row.ticker!;
+    const summary = tickers.get(ticker) ?? { ticker, creators: 0, stances: {} };
+    summary.creators++;
+    summary.stances[row.stance] = (summary.stances[row.stance] ?? 0) + 1;
+    tickers.set(ticker, summary);
+  }
+  return [...tickers.values()].sort(
+    (a, b) => b.creators - a.creators || a.ticker.localeCompare(b.ticker),
+  );
+}

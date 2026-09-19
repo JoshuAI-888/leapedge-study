@@ -12,6 +12,19 @@ export type UiColumn = {
   metricId: string;
 };
 export const uiColumns: UiColumn[] = [
+  { surface: "today.calls", column: "Creators", metricId: "today.creators" },
+  {
+    surface: "today.calls",
+    column: "Instrument",
+    metricId: "today.instrument",
+  },
+  { surface: "today.calls", column: "Stance", metricId: "today.stance" },
+  {
+    surface: "today.calls",
+    column: "Thesis & conditions",
+    metricId: "today.thesis",
+  },
+  { surface: "today.calls", column: "Trust", metricId: "today.trust" },
   { surface: "standalone.ticker", column: "Ticker", metricId: "ticker.symbol" },
   {
     surface: "standalone.ticker",

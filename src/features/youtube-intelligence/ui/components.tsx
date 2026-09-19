@@ -116,9 +116,6 @@ export function ClaimCard({
   selected?: boolean;
   onSelect?: () => void;
 }) {
-  const { data, perform, busy } = useWorkspace();
-  const existing = data?.snapshot.ideas.find((i) => i.id === claim.id);
-  const saved = existing && existing.status !== "dismissed";
   return (
     <article className={`yi-claim ${selected ? "yi-selected" : ""}`}>
       <div className="yi-row">
@@ -149,28 +146,7 @@ export function ClaimCard({
         >
           Inspect evidence ↗
         </Link>
-        <button
-          className="yi-text-button"
-          disabled={busy}
-          onClick={() =>
-            void perform(
-              () =>
-                existing
-                  ? action("research", "idea", {
-                      id: claim.id,
-                      status: saved ? "dismissed" : "open",
-                      note: String(existing.note ?? ""),
-                    })
-                  : action("research", "saveIdea", {
-                      runId: claim.runId,
-                      claimId: localClaimId(claim.id, claim.runId),
-                    }),
-              saved ? "Call removed from Saved." : "Call saved.",
-            )
-          }
-        >
-          {saved ? "✓ Saved · remove" : "+ Save call"}
-        </button>
+        <SaveCallButton claim={claim} />
       </footer>
     </article>
   );
@@ -296,5 +272,35 @@ export function NoteEditor({
       </button>
       <span className="yi-muted"> {note.length}/4,000</span>
     </form>
+  );
+}
+
+export function SaveCallButton({ claim }: { claim: ClaimRow }) {
+  const { data, perform, busy } = useWorkspace();
+  const existing = data?.snapshot.ideas.find((i) => i.id === claim.id);
+  const saved = existing && existing.status !== "dismissed";
+  return (
+    <button
+      className="yi-text-button"
+      disabled={busy}
+      onClick={() =>
+        void perform(
+          () =>
+            existing
+              ? action("research", "idea", {
+                  id: claim.id,
+                  status: saved ? "dismissed" : "open",
+                  note: String(existing.note ?? ""),
+                })
+              : action("research", "saveIdea", {
+                  runId: claim.runId,
+                  claimId: localClaimId(claim.id, claim.runId),
+                }),
+          saved ? "Call removed from Saved." : "Call saved.",
+        )
+      }
+    >
+      {saved ? "✓ Saved · remove" : "+ Save call"}
+    </button>
   );
 }

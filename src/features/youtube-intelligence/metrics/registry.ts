@@ -317,6 +317,60 @@ export const registry: MetricEntry[] = [
   ...(
     [
       [
+        "creators",
+        "Creators",
+        "Distinct known creators with a dated, non-rejected call on this ticker among search and trust filtered calls.",
+        "channel_id",
+      ],
+      [
+        "instrument",
+        "Instrument",
+        "The resolved ticker or source instrument named in this call.",
+        "ticker",
+      ],
+      [
+        "stance",
+        "Stance",
+        "The creator's stated position, without inferring a recommendation from a price level.",
+        "stance",
+      ],
+      [
+        "thesis",
+        "Thesis & conditions",
+        "The stored English thesis, horizon, conditions and creator conviction for this call.",
+        "thesis_en",
+      ],
+      [
+        "trust",
+        "Trust",
+        "The stored evidence trust level, with any signed rejection shown explicitly.",
+        "trust_level",
+      ],
+    ] as const
+  ).map(([key, label, definition, column]): MetricEntry => ({
+    id: `today.${key}`,
+    label,
+    definition,
+    steps: [
+      "Select claims from canonical runs matching the viewer's search, trust and stance filters.",
+      "Read the stored claim field; sort by the displayed field when its heading is selected.",
+    ],
+    inputs: [{ table: "claims", columns: [column] }],
+    settingsUsed: ["todayTrustFilter"],
+    implementation: (ctx) =>
+      ctx.claims.map((c) =>
+        key === "instrument"
+          ? c.ticker
+          : key === "stance"
+            ? c.stance
+            : key === "trust"
+              ? c.trust
+              : null,
+      ),
+  })),
+  ...(
+    [
+      [
         "symbol",
         "Ticker",
         "The resolved instrument symbol whose eligible calls are grouped in this row.",
