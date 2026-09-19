@@ -1,5 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import { ResearchBrief } from "../ResearchBrief.tsx";
+import type { ResearchBriefData } from "../../research-brief.ts";
+import type { SourceData } from "../../contracts.ts";
 import { request, action } from "../api.ts";
 import type { EvidenceSpanRow } from "../../../../server/youtube-intelligence/repos/evidence-spans.ts";
 import type { ClaimRow } from "../../../../server/youtube-intelligence/repos/claims.ts";
@@ -22,6 +25,8 @@ import {
 } from "../viewmodel.ts";
 export function Analysis({ id }: { id: string }) {
   const { data, perform, busy } = useWorkspace();
+  const [briefs, setBriefs] = useState<ResearchBriefData[]>([]);
+  const [researchSeek, setResearchSeek] = useState(false);
   const [run, setRun] = useState<Run | null>(null),
     [error, setError] = useState(""),
     [selected, setSelected] = useState(""),
@@ -35,6 +40,7 @@ export function Analysis({ id }: { id: string }) {
     const controller = new AbortController();
     request<{
       run: Run;
+      researchBriefs: ResearchBriefData[];
       evidenceSpans: EvidenceSpanRow[];
       claims: ClaimRow[];
       reviewerConfigured: boolean;
@@ -45,6 +51,7 @@ export function Analysis({ id }: { id: string }) {
     )
       .then((x) => {
         setRun(x.run);
+        setBriefs(x.researchBriefs ?? []);
         setSpans(x.evidenceSpans ?? []);
         setStoredClaims(x.claims ?? []);
         setReviewerConfigured(x.reviewerConfigured);
@@ -58,6 +65,7 @@ export function Analysis({ id }: { id: string }) {
             .map((s) => s.startSeconds!);
           setSeconds(starts.length ? Math.min(...starts) : 0);
           setListened(false);
+          setResearchSeek(false);
         }
         setError("");
       })
@@ -124,7 +132,32 @@ export function Analysis({ id }: { id: string }) {
     <>
       <PageTitle
         title={run.title || "Video analysis"}
-        description="Inspect the call, then listen to the words behind it."
+        description="Read the research brief, inspect its evidence, and listen to the original source."
+      />
+      {(run.output.coverage as { status?: string } | undefined)?.status ===
+        "incomplete_or_unknown" && (
+        <p className="yi-warning">
+          Timed transcript cues cover{" "}
+          {(
+            ((run.output.coverage as { ratio?: number }).ratio ?? 0) * 100
+          ).toFixed(1)}
+          % of the video duration. Short gaps may be pauses; speech completeness
+          has not been independently verified. Inspect the transcript and source
+          before relying on omitted details.
+        </p>
+      )}
+      <ResearchBrief
+        key={id}
+        sourceRunId={briefs[0]?.sourceRunId ?? id}
+        briefs={briefs}
+        source={run.output.source as SourceData | undefined}
+        onSeek={(seconds) => {
+          setSeconds(seconds);
+          setResearchSeek(true);
+          setListened(false);
+          setReviewNote("");
+        }}
+        completed={run.status === "completed"}
       />
       <div className="yi-trust-strip">
         <span className="yi-chip">{processingState(run.status)}</span>
@@ -156,6 +189,7 @@ export function Analysis({ id }: { id: string }) {
                 key={c.id}
                 onClick={() => {
                   setSelected(c.id);
+                  setResearchSeek(false);
                   setListened(false);
                   setReviewNote("");
                   const matched = checked.find(
@@ -179,7 +213,17 @@ export function Analysis({ id }: { id: string }) {
           </section>
           <aside className="yi-evidence yi-panel">
             <h2>Evidence · {current?.ticker || current?.instrument}</h2>
-            <SourcePlayer videoId={run.videoId} seconds={seconds} />
+            <div id="source-player">
+              {researchSeek && (
+                <p className="yi-warning">
+                  Playing the research-brief reference at{" "}
+                  {Math.floor(seconds / 60)}:
+                  {String(Math.floor(seconds % 60)).padStart(2, "0")}. The call
+                  details below refer to the selected creator call.
+                </p>
+              )}
+              <SourcePlayer videoId={run.videoId} seconds={seconds} />
+            </div>
             {evidence.length ? (
               evidence.map((e, i) => (
                 <div className="yi-evidence-pair" key={i}>

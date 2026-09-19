@@ -43,6 +43,7 @@ export const PromptVersion = z.object({
   // one and falls back to the pipeline's built-in prompt otherwise.
   translation: z.string().min(20).max(30000).optional(),
   pointerEvidence: z.boolean().optional(),
+  temporalResearch: z.boolean().optional(),
 });
 export const Preferences = z.object({
   timezone: z.string().refine((v) => {
@@ -74,9 +75,7 @@ export async function docs<T = Record<string, unknown>>(
   kind: string,
 ): Promise<T[]> {
   return (
-    await (
-      await researchDB()
-    )
+    await (await researchDB())
       .prepare(
         "SELECT payload FROM yi_documents WHERE kind=$1 ORDER BY created_at DESC",
       )
@@ -87,9 +86,7 @@ export async function doc<T = Record<string, unknown>>(
   kind: string,
   id: string,
 ): Promise<T | null> {
-  const row = await (
-    await researchDB()
-  )
+  const row = await (await researchDB())
     .prepare("SELECT payload FROM yi_documents WHERE kind=$1 AND id=$2")
     .get(kind, id);
   return row ? (json(row.payload) as T) : null;
@@ -103,9 +100,7 @@ export async function lockedDoc<T = Record<string, unknown>>(
   kind: string,
   id: string,
 ): Promise<T | null> {
-  const row = await (
-    await researchDB()
-  )
+  const row = await (await researchDB())
     .prepare(
       "SELECT payload FROM yi_documents WHERE kind=$1 AND id=$2 FOR UPDATE",
     )
@@ -113,9 +108,7 @@ export async function lockedDoc<T = Record<string, unknown>>(
   return row ? (json(row.payload) as T) : null;
 }
 export async function event(kind: string, id: string, payload: unknown) {
-  await (
-    await researchDB()
-  )
+  await (await researchDB())
     .prepare(
       "INSERT INTO yi_events(id,kind,entity_id,at,payload) VALUES($1,$2,$3,$4,$5)",
     )
@@ -137,9 +130,7 @@ export async function events<T = Record<string, unknown>>(
   limit = 500,
 ): Promise<{ id: string; entityId: string; at: string; payload: T }[]> {
   return (
-    await (
-      await researchDB()
-    )
+    await (await researchDB())
       .prepare(
         "SELECT id,entity_id,at,payload FROM yi_events WHERE kind=$1 ORDER BY at DESC,id DESC LIMIT $2",
       )
@@ -261,9 +252,7 @@ export async function claimLease(
 export async function promptVersions() {
   await seed();
   return (
-    await (
-      await researchDB()
-    )
+    await (await researchDB())
       .prepare(
         "SELECT payload,hash,created_at FROM yi_prompts ORDER BY created_at DESC",
       )
@@ -293,12 +282,11 @@ async function insertPrompt(input: unknown) {
           p.critique,
           ...(p.pointerEvidence === undefined ? [] : [p.pointerEvidence]),
           ...(p.translation === undefined ? [] : [p.translation]),
+          ...(p.temporalResearch === undefined ? [] : [p.temporalResearch]),
         ]),
       )
       .digest("hex");
-  const inserted = await (
-    await researchDB()
-  )
+  const inserted = await (await researchDB())
     .prepare(
       "INSERT INTO yi_prompts(id,hash,payload,created_at) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING",
     )
@@ -328,9 +316,7 @@ async function seed() {
 }
 export async function prompt(id: string) {
   await seed();
-  const row = await (
-    await researchDB()
-  )
+  const row = await (await researchDB())
     .prepare("SELECT payload FROM yi_prompts WHERE id=$1")
     .get(id);
   if (!row) throw Error("Unknown prompt version.");
@@ -721,6 +707,10 @@ export async function researchSnapshot() {
       .filter((r) => r.input.task)
       .map((r) => ({
         id: r.id,
+        task: String(r.input.task),
+        sourceRunId:
+          (r.input.snapshot as { sourceRunId?: string } | undefined)
+            ?.sourceRunId ?? null,
         title: r.title,
         status: r.status,
         stage: r.stage,
@@ -763,9 +753,7 @@ export async function researchSnapshot() {
       >("entity"),
     channelCandidates: await docs("channelCandidate"),
     shares: (
-      await (
-        await researchDB()
-      )
+      await (await researchDB())
         .prepare(
           "SELECT id,created_at,expires_at,revoked_at FROM yi_shares ORDER BY created_at DESC",
         )
@@ -777,9 +765,7 @@ export async function researchSnapshot() {
       revoked_at: iso(r.revoked_at),
     })),
     discoveries: (
-      await (
-        await researchDB()
-      )
+      await (await researchDB())
         .prepare(
           "SELECT * FROM yi_discoveries ORDER BY (payload::jsonb->>'publishedAt') DESC",
         )
@@ -794,9 +780,7 @@ export async function researchSnapshot() {
       payload: json(r.payload) as { title?: string; publishedAt?: string },
     })),
     events: (
-      await (
-        await researchDB()
-      )
+      await (await researchDB())
         .prepare("SELECT * FROM yi_events ORDER BY at DESC LIMIT 100")
         .all()
     ).map((r) => ({
@@ -855,9 +839,7 @@ export async function continueAfterAuditFailure(id: string) {
   all[index].reasons.push(
     `Audit could not finish: ${r.error}. Dropped without retrying the paid call.`,
   );
-  await (
-    await researchDB()
-  )
+  await (await researchDB())
     .prepare(
       `UPDATE yi_runs SET output=$1,status='queued',error=NULL,lease_until=${lease.released},lease_token=NULL WHERE id=$2 AND status='failed'`,
     )

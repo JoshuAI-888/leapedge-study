@@ -1,3 +1,4 @@
+import { researchBriefs } from "../../../../../server/youtube-intelligence/research-pipeline.ts";
 import { claimsForRun } from "../../../../../server/youtube-intelligence/repos/claims.ts";
 import { spansForClaims } from "../../../../../server/youtube-intelligence/repos/evidence-spans.ts";
 import { docs } from "../../../../../server/youtube-intelligence/research-store.ts";
@@ -25,11 +26,24 @@ export async function GET(
     return run
       ? Response.json({
           claims,
+          researchBriefs: (await researchBriefs()).filter(
+            (b) => b.sourceRunId === run.id || b.runId === run.id,
+          ),
           evidenceSpans: await spansForClaims(claims.map((c) => c.id)),
           reviewerConfigured: Boolean(process.env.YTI_REVIEWER_ACCOUNT_ID),
           run: {
             ...run,
-            output: { ...run.output, entityRegistry: await docs("entity") },
+            output: {
+              ...run.output,
+              entityRegistry: await docs("entity"),
+              ...(run.input.task === "research-brief"
+                ? {
+                    researchRequests: (
+                      await docs<{ runId: string }>("researchRequest")
+                    ).filter((t) => t.runId === run.id),
+                  }
+                : {}),
+            },
           },
         })
       : Response.json({ error: "Run not found." }, { status: 404 });

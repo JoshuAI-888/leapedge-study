@@ -236,7 +236,7 @@ export const TeamPreferences = z.object({
       version: z
         .string()
         .regex(/^[a-zA-Z0-9._-]{3,100}$/)
-        .default("evidence-first.web.v7"),
+        .default("evidence-first.web.v8"),
     })
     .prefault({}),
 });

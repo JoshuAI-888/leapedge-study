@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { ResearchOverview } from "../ResearchBrief.tsx";
 import { SentimentPanel } from "../SentimentPanel.tsx";
 import { useState } from "react";
 import { useWorkspace } from "../workspace.tsx";
@@ -114,6 +115,7 @@ export function Today() {
           </div>
         </form>
       </PageTitle>
+      <ResearchOverview />
       <div className="yi-today-layout">
         <div className="yi-today-primary">
           <section className="yi-panel yi-calls-panel">
@@ -182,6 +184,24 @@ export function Today() {
                 Reset sort
               </button>
             </Filters>
+            {minimum !== "L1" &&
+              (minimum || defaultTrust) !== "L0" &&
+              visibleClaims(
+                data.snapshot.claims.filter((c) => canonical.has(c.runId)),
+                search,
+                "L1",
+              ).length > eligible.length && (
+                <p className="yi-muted">
+                  Some text-checked calls are hidden by the current trust
+                  filter.{" "}
+                  <button
+                    className="yi-text-button"
+                    onClick={() => setMinimum("L1")}
+                  >
+                    Show text-checked calls
+                  </button>
+                </p>
+              )}
             {data.snapshot.counts.claims.truncated && (
               <p className="yi-warning">
                 Showing {data.snapshot.counts.claims.returned} of{" "}
@@ -338,7 +358,7 @@ export function Today() {
                       <Link href={`/youtube-intelligence/analysis/${r.id}`}>
                         {r.title || `YouTube · ${r.videoId}`}
                       </Link>
-                      <small>{dateLabel(r.createdAt)}</small>
+                      <small>Processed {dateLabel(r.createdAt)}</small>
                     </div>
                     <span
                       className="yi-chip"
