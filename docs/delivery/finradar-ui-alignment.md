@@ -6,7 +6,7 @@ Today now has a sortable calls table, retained card view, search/trust/stance fi
 
 The header links only to working standalone routes. Finradar's Briefing, Adanos, Research and account actions are not fabricated in this app; those belong to the later integration. Existing Light/Dark/System preferences remain available. The light-on-dark-system badge bug was corrected, and explicit Dark now gets the same component styling as system dark.
 
-Pull request: https://github.com/JoshuAI-888/leapedge-study/pull/7 (implementation published; merge tracked separately).
+Pull request: https://github.com/JoshuAI-888/leapedge-study/pull/7 (merged at 2026-09-19T20:25:38Z; commit `3c8c2f3c9c9eb7fba8491b98865a4dd5870267bb`). Both GitHub verify jobs passed (2m58s and 3m38s), as did Vercel Preview.
 
 ## Verification
 
