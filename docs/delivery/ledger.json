@@ -1361,7 +1361,8 @@
         "tests/research-brief.test.ts",
         "tests/research-pipeline.test.ts",
         "tests/research-sources.test.ts"
-      ]
+      ],
+      "operations": "docs/delivery/worker-operations.md"
     }
   }
 }
