@@ -1,3 +1,4 @@
+import { queueResearchBrief, researchBriefs } from "../research-pipeline.ts";
 import { z } from "zod";
 import { seedLists } from "../seed/lists.ts";
 import * as R from "../research-store.ts";
@@ -18,6 +19,22 @@ async function snapshot() {
   ]);
   return {
     ...s,
+    researchBriefs: (await researchBriefs()).map(
+      ({ evidence, external, retrievalNotes, baseline, ...brief }) => ({
+        ...brief,
+        latestExternalPublishedAt:
+          external
+            .filter((e) =>
+              brief.sentences.some(
+                (s) => s.timeMode === "current" && s.externalIds.includes(e.id),
+              ),
+            )
+            .map((e) => e.publishedAt)
+            .filter((date): date is string => !!date)
+            .sort()
+            .at(-1) ?? null,
+      }),
+    ),
     seedSources: seedLists().map((list) => ({
       source: list.source,
       placeholder: list.placeholder,
@@ -47,6 +64,10 @@ async function snapshot() {
 export type ResearchSnapshot = Awaited<ReturnType<typeof snapshot>>;
 export const research: ActionTable = {
   snapshot: reads(nothing, snapshot),
+  generateResearchBrief: writes(
+    z.strictObject({ sourceRunId: z.string().min(1) }),
+    (v) => queueResearchBrief(v.sourceRunId),
+  ),
   saveIdea: writes(
     z.strictObject({ runId: z.string(), claimId: z.string() }),
     (v) => R.saveIdea(v.runId, v.claimId),

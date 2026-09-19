@@ -184,6 +184,7 @@ test("No source file contains a control character", () => {
  * it talks to, so a new call site is a decision somebody makes on purpose.
  */
 const MAY_FETCH: Record<string, string> = {
+  "src/server/youtube-intelligence/research-sources.ts": "Exa search with retained evidence and provider-reported costs",
   "src/server/youtube-intelligence/replay.ts":
     "YouTube metadata duration and channel verification for bounded historical replay",
   "src/server/youtube-intelligence/push.ts":

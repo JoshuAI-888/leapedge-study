@@ -20,7 +20,7 @@ export async function POST(r: Request) {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: `${origin}/research`,
+      Location: `${origin}/youtube-intelligence/today`,
       "Set-Cookie": `yti_session=${sessionToken()}; Path=/; HttpOnly; SameSite=Strict; Max-Age=43200${origin.startsWith("https:") ? "; Secure" : ""}`,
       "Cache-Control": "no-store",
     },

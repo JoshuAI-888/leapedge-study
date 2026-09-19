@@ -234,7 +234,7 @@ test("gateReport carries configHash, thresholds, results, advisory and pass, and
   assert.match(report.date, /^\d{4}-\d{2}-\d{2}$/);
   assert.deepEqual(report.thresholds, team.lab.gates);
   assert.equal(report.configuration.models.extraction.id, "gemini-3.8-pro");
-  assert.equal(report.configuration.prompts.version, "evidence-first.web.v7");
+  assert.equal(report.configuration.prompts.version, "evidence-first.web.v8");
   assert.equal(report.pass, true);
   assert.equal(report.verdict, "pass");
   assert.deepEqual(report.advisory, []);

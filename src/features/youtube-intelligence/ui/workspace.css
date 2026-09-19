@@ -1479,12 +1479,174 @@
 .yi-workspace .yi-show-more {
   margin: 0 20px 14px;
 }
-.yi-call-table th:nth-child(1) { width: 14%; }
-.yi-call-table th:nth-child(2) { width: 13%; }
-.yi-call-table th:nth-child(3) { width: 40%; }
-.yi-call-table th:nth-child(4) { width: 19%; }
-.yi-call-table th:nth-child(5) { width: 14%; }
-.yi-workspace[data-theme] .yi-text-button { background: none; color: var(--yi-primary); }
-.yi-workspace[data-theme] .yi-view-switch button { background: var(--yi-surface); color: var(--yi-muted); }
-.yi-workspace[data-theme] .yi-view-switch button[aria-pressed="true"] { background: var(--yi-selected); color: var(--yi-primary); }
-.yi-workspace[data-theme] .yi-menu { background: transparent; color: white; }
+.yi-call-table th:nth-child(1) {
+  width: 14%;
+}
+.yi-call-table th:nth-child(2) {
+  width: 13%;
+}
+.yi-call-table th:nth-child(3) {
+  width: 40%;
+}
+.yi-call-table th:nth-child(4) {
+  width: 19%;
+}
+.yi-call-table th:nth-child(5) {
+  width: 14%;
+}
+.yi-workspace[data-theme] .yi-text-button {
+  background: none;
+  color: var(--yi-primary);
+}
+.yi-workspace[data-theme] .yi-view-switch button {
+  background: var(--yi-surface);
+  color: var(--yi-muted);
+}
+.yi-workspace[data-theme] .yi-view-switch button[aria-pressed="true"] {
+  background: var(--yi-selected);
+  color: var(--yi-primary);
+}
+.yi-workspace[data-theme] .yi-menu {
+  background: transparent;
+  color: white;
+}
+
+/* Research hierarchy preserves the existing Finradar palette and call tools. */
+.yi-research-overview {
+  margin-bottom: 24px;
+}
+.yi-brief-feed {
+  display: grid;
+  gap: 18px;
+}
+.yi-brief-feed > article {
+  border-top: 1px solid var(--yi-line);
+  padding-top: 16px;
+}
+.yi-horizon-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+.yi-research-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  font-size: 12px;
+  margin: 16px 0;
+}
+.yi-research-dates strong {
+  display: block;
+}
+.yi-research-point {
+  padding: 16px 0;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-research-point p {
+  line-height: 1.65;
+}
+.yi-research-point small {
+  display: block;
+  color: var(--yi-muted);
+}
+.yi-confidence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+  font-size: 11px;
+}
+.yi-confidence span {
+  background: var(--yi-selected);
+  color: var(--yi-ink);
+  padding: 4px 7px;
+  border-radius: 4px;
+}
+.yi-current-update {
+  margin: 20px 0;
+  border-top: 2px solid var(--yi-line);
+  padding-top: 16px;
+}
+.yi-research-evidence {
+  background: var(--yi-selected);
+  border: 1px solid var(--yi-line);
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+}
+.yi-research-brief details {
+  margin: 12px 0;
+}
+.yi-research-brief summary,
+.yi-research-overview summary {
+  cursor: pointer;
+}
+.yi-research-brief pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 400px;
+  overflow: auto;
+}
+.yi-research-brief code {
+  overflow-wrap: anywhere;
+}
+.yi-research-brief blockquote {
+  border-left: 3px solid var(--yi-primary);
+  padding-left: 14px;
+  margin: 16px 0;
+  line-height: 1.7;
+}
+@media (max-width: 760px) {
+  .yi-horizon-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .yi-research-dates {
+    display: grid;
+  }
+  .yi-research-evidence {
+    padding: 12px;
+  }
+}
+
+.yi-research-evidence {
+  position: fixed;
+  z-index: 60;
+  top: 82px;
+  right: 20px;
+  bottom: 16px;
+  width: min(620px, calc(100vw - 32px));
+  overflow: auto;
+  margin: 0;
+  background: var(--yi-surface);
+  box-shadow: 0 12px 48px #0006;
+}
+.yi-cited-cue {
+  background: var(--yi-selected);
+  padding: 8px;
+  border-left: 3px solid var(--yi-primary);
+}
+@media (max-width: 760px) {
+  .yi-research-evidence {
+    top: 72px;
+    right: 8px;
+    bottom: 8px;
+    width: calc(100vw - 16px);
+  }
+}
+
+.yi-research-brief {
+  scroll-margin-top: 90px;
+}
+.yi-single-horizon {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.yi-research-overview > .yi-view-switch,
+.yi-research-brief > .yi-view-switch {
+  position: static;
+  width: fit-content;
+  max-width: 100%;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}

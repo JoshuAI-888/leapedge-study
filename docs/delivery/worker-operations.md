@@ -134,3 +134,26 @@ To allow jobs after acceptance, set `YTI_QUEUE_PAUSED=false` in the runtime's
 `.env.live` and restart its worker. This has not been enabled by the build.
 The repo's `.env` remains fixture-only; its `.env.live` connects to the same live
 localhost cluster for controlled operational commands.
+
+### Research briefs (v8)
+
+The new default prompt for new workspaces is `evidence-first.web.v8`. Existing
+saved team preferences are preserved; select v8 in Settings to enable automatic
+research briefs for future analyses. Completed older analyses can generate a
+brief from their retained accepted evidence. Each refresh creates an auditable
+revision rather than replacing history.
+
+External verification additionally needs `EXA_API_KEY` in the **worker's** secret
+environment. For this Mac installation that is the protected runtime
+`.env.live` above; repository `.env.live` is used only by explicitly launched
+repository processes. Restart the worker after adding the key. Keep the queue
+paused until ready to admit work. Create a bounded new research-brief revision
+and inspect its retrieval records, date eligibility, factual badges and cost
+ledger before enabling automatic intake. The initial research build tested
+these paths with fixtures; live external corroboration is still unverified.
+
+On a hosted persistent worker, provide the same key through the host secret
+store alongside the database/model credentials. The web service does not need
+the search key merely to display retained briefs. Search timeouts/unknown
+charges do not automatically rebill; inspect the retained record before
+requesting a new revision.

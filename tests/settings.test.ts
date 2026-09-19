@@ -112,7 +112,7 @@ test("Team and account defaults parse from an empty object and match spec 6.2 / 
   });
   assert.deepEqual(team.sharing, { expiry: "never", allowRevoke: true });
   assert.deepEqual(team.corpus, { fileSearch: true, retentionDays: 365 });
-  assert.equal(team.prompts.version, "evidence-first.web.v7");
+  assert.equal(team.prompts.version, "evidence-first.web.v8");
   // Parsing the defaults again is a no-op.
   assert.deepEqual(TeamPreferences.parse(team), team);
 

@@ -77,7 +77,7 @@ test("Seeding the bundled versions is idempotent and new teams use pointer evide
     "a bundled version was seeded twice",
   );
   // Standalone completion defaults new teams to the pointer-evidence prompt.
-  assert.equal(teamDefaults().prompts.version, "evidence-first.web.v7");
+  assert.equal(teamDefaults().prompts.version, "evidence-first.web.v8");
   // The compatibility preferences document keeps its historical default.
   assert.equal((await R.preferences()).promptVersion, "evidence-first.web.v5");
 });
