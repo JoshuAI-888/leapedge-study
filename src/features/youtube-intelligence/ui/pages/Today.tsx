@@ -6,6 +6,7 @@ import { useWorkspace } from "../workspace.tsx";
 import { action } from "../api.ts";
 import {
   visibleClaims,
+  recoveredRuns,
   processingState,
   dateLabel,
   creatorStances,
@@ -56,12 +57,12 @@ export function Today() {
         sort === "creators"
           ? String(creatorCounts.get(c.ticker ?? "") ?? 0).padStart(10, "0")
           : sort === "instrument"
-          ? (c.ticker ?? c.instrument ?? "")
-          : sort === "stance"
-            ? c.stance
-            : sort === "thesis"
-              ? c.thesisEn
-              : c.trustLevel;
+            ? (c.ticker ?? c.instrument ?? "")
+            : sort === "stance"
+              ? c.stance
+              : sort === "thesis"
+                ? c.thesisEn
+                : c.trustLevel;
       return (
         (descending ? -1 : 1) * value(a).localeCompare(value(b)) ||
         a.id.localeCompare(b.id)
@@ -69,15 +70,18 @@ export function Today() {
     });
   const across = allCreators.slice(0, 6);
   const shown = claims.slice(0, limit);
+  const recovered = recoveredRuns(data.runs);
+  const activityState = (r: (typeof data.runs)[number]) =>
+    recovered.has(r.id) ? "Recovered" : processingState(r.status);
   const needsReview = data.runs.filter(
-    (r) => processingState(r.status) === "Needs review",
+    (r) => activityState(r) === "Needs review",
   );
   function sortBy(key: string) {
     setSort(key);
     setDescending(sort === key ? !descending : false);
   }
   const runs = data.runs.filter(
-    (r) => status === "all" || processingState(r.status) === status,
+    (r) => status === "all" || activityState(r) === status,
   );
   return (
     <>
@@ -194,22 +198,26 @@ export function Today() {
                       </caption>
                       <thead>
                         <tr>
-                          {["instrument", "stance", "thesis", "trust", "creators"].map(
-                            (key) => (
-                              <MetricHeading
-                                key={key}
-                                id={`today.${key}`}
-                                onSort={() => sortBy(key)}
-                                direction={
-                                  sort === key
-                                    ? descending
-                                      ? "desc"
-                                      : "asc"
-                                    : undefined
-                                }
-                              />
-                            ),
-                          )}
+                          {[
+                            "instrument",
+                            "stance",
+                            "thesis",
+                            "trust",
+                            "creators",
+                          ].map((key) => (
+                            <MetricHeading
+                              key={key}
+                              id={`today.${key}`}
+                              onSort={() => sortBy(key)}
+                              direction={
+                                sort === key
+                                  ? descending
+                                    ? "desc"
+                                    : "asc"
+                                  : undefined
+                              }
+                            />
+                          ))}
                         </tr>
                       </thead>
                       <tbody>
@@ -258,7 +266,12 @@ export function Today() {
                                 basis={c.trustBasis}
                               />
                             </td>
-                            <td><strong>{creatorCounts.get(c.ticker ?? "") ?? 0}</strong><small>Dated creators</small></td>
+                            <td>
+                              <strong>
+                                {creatorCounts.get(c.ticker ?? "") ?? 0}
+                              </strong>
+                              <small>Dated creators</small>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -302,13 +315,18 @@ export function Today() {
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  {["all", "Queued", "Analysing", "Ready", "Needs review"].map(
-                    (s) => (
-                      <option key={s} value={s}>
-                        {s === "all" ? "All activity" : s}
-                      </option>
-                    ),
-                  )}
+                  {[
+                    "all",
+                    "Queued",
+                    "Analysing",
+                    "Ready",
+                    "Needs review",
+                    "Recovered",
+                  ].map((s) => (
+                    <option key={s} value={s}>
+                      {s === "all" ? "All activity" : s}
+                    </option>
+                  ))}
                 </select>
               </label>
             </div>
@@ -322,7 +340,16 @@ export function Today() {
                       </Link>
                       <small>{dateLabel(r.createdAt)}</small>
                     </div>
-                    <span className="yi-chip">{processingState(r.status)}</span>
+                    <span
+                      className="yi-chip"
+                      title={
+                        recovered.has(r.id)
+                          ? "Earlier attempt; a linked recovery completed. Original details remain available."
+                          : undefined
+                      }
+                    >
+                      {activityState(r)}
+                    </span>
                   </li>
                 ))}
               </ul>

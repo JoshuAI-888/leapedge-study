@@ -377,10 +377,16 @@ export function Analysis({ id }: { id: string }) {
                 const start = e.source_span?.start_seconds;
                 return (
                   <div key={`${point.id}-${index}`}>
+                    <p>
+                      <strong>Original evidence</strong>
+                    </p>
                     <blockquote>{e.quote_original}</blockquote>
                     {e.quote_translation_en &&
                       e.quote_translation_en !== e.quote_original && (
-                        <p>{e.quote_translation_en}</p>
+                        <p>
+                          <strong>English translation:</strong>{" "}
+                          {e.quote_translation_en}
+                        </p>
                       )}
                     {start != null && (
                       <a

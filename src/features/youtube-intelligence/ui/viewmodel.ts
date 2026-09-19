@@ -167,3 +167,30 @@ export function creatorStances(
     (a, b) => b.creators - a.creators || a.ticker.localeCompare(b.ticker),
   );
 }
+
+/** A completed, explicitly linked recovery resolves attention for its failed
+ * ancestors. Historical run records and unrelated attempts remain untouched. */
+export function recoveredRuns<
+  T extends {
+    id: string;
+    videoId: string;
+    status: string;
+    input?: Record<string, unknown>;
+  },
+>(runs: T[]) {
+  const byId = new Map(runs.map((r) => [r.id, r]));
+  const recovered = new Set<string>();
+  for (const run of runs.filter((r) => r.status === "completed")) {
+    let parent = run.input?.recoveryOf;
+    const seen = new Set<string>();
+    while (typeof parent === "string" && !seen.has(parent)) {
+      seen.add(parent);
+      const prior = byId.get(parent);
+      if (!prior || prior.videoId !== run.videoId) break;
+      if (["failed", "needs_review"].includes(prior.status))
+        recovered.add(prior.id);
+      parent = prior.input?.recoveryOf;
+    }
+  }
+  return recovered;
+}

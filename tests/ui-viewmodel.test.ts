@@ -163,3 +163,39 @@ test("A sourced listing alias is searchable without rewriting the source ticker"
   assert.equal(row.ticker, null);
   assert.equal(visibleClaims([row], "QQQ", "L0").length, 0);
 });
+
+test("Completed linked recoveries clear attention without hiding unrelated or still-running failures", async () => {
+  const { recoveredRuns } = await import(
+    "../src/features/youtube-intelligence/ui/viewmodel.ts"
+  );
+  const rows = [
+    { id: "failed", videoId: "v", status: "failed", input: {} },
+    { id: "other", videoId: "v", status: "failed", input: {} },
+    {
+      id: "retry",
+      videoId: "v",
+      status: "completed",
+      input: { recoveryOf: "failed" },
+    },
+    {
+      id: "pending",
+      videoId: "v",
+      status: "queued",
+      input: { recoveryOf: "other" },
+    },
+  ];
+  assert.deepEqual([...recoveredRuns(rows)], ["failed"]);
+  assert.equal(rows[0].status, "failed");
+  assert.equal(
+    recoveredRuns([
+      {
+        id: "wrong-video",
+        videoId: "x",
+        status: "completed",
+        input: { recoveryOf: "other" },
+      },
+      ...rows.slice(0, 2),
+    ]).size,
+    0,
+  );
+});
