@@ -3,7 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import {
-  Radio,
+  Radar,
+  ChevronDown,
   Sun,
   Users,
   BarChart3,
@@ -39,11 +40,21 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
       <header className="yi-top">
         <Link className="yi-brand" href="/youtube-intelligence/today">
           <span>
-            <Radio size={19} />
+            <Radar size={27} />
           </span>
-          YouTube Intelligence
+          finradar
         </Link>
-        <span className="yi-top-label">Independent research workspace</span>
+        <nav className="yi-global-nav" aria-label="Workspace navigation">
+          <details className="yi-module-menu">
+            <summary>
+              Intelligence <ChevronDown size={14} />
+            </summary>
+            <Link href="/youtube-intelligence/today">YouTube intelligence</Link>
+          </details>
+          <Link href="/youtube-intelligence/saved">Saved calls</Link>
+          <Link href="/youtube-intelligence/settings">Settings</Link>
+        </nav>
+        <span className="yi-top-label">YouTube · standalone</span>
         <button
           className="yi-menu"
           aria-expanded={open}
@@ -54,12 +65,32 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </header>
+      <nav className="yi-mobile-nav" aria-label="Quick navigation">
+        {navigation.slice(0, 3).map(([route, label]) => (
+          <Link
+            key={route}
+            href={`/youtube-intelligence/${route}`}
+            aria-current={path.includes(`/${route}`) ? "page" : undefined}
+            onClick={() => setOpen(false)}
+          >
+            {label}
+          </Link>
+        ))}
+        <button
+          className="yi-text-button"
+          aria-expanded={open}
+          aria-controls="yi-navigation"
+          onClick={() => setOpen(!open)}
+        >
+          More <Menu size={15} />
+        </button>
+      </nav>
       <div className="yi-frame">
         <aside
           className={`yi-sidebar ${open ? "yi-open" : ""}`}
           id="yi-navigation"
         >
-          <p className="yi-eyebrow">WORKSPACE</p>
+          <p className="yi-eyebrow">YOUTUBE INTELLIGENCE</p>
           <nav aria-label="Research navigation">
             {navigation.map(([route, label, Icon]) => (
               <Link

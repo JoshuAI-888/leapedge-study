@@ -861,7 +861,7 @@
   }
 }
 @media (prefers-color-scheme: dark) {
-  .yi-workspace {
+  .yi-workspace:not([data-theme="light"]) {
     --yi-page: #111722;
     --yi-surface: #192231;
     --yi-ink: #edf1f7;
@@ -870,50 +870,104 @@
     --yi-primary: #83a4ff;
     --yi-selected: #233450;
   }
-  .yi-workspace button {
+  .yi-workspace:not([data-theme="light"]) button {
     background: #194df4;
     color: white;
   }
-  .yi-workspace .yi-secondary {
+  .yi-workspace:not([data-theme="light"]) .yi-secondary {
     background: var(--yi-surface);
   }
-  .yi-chip {
+  .yi-workspace:not([data-theme="light"]) .yi-chip {
     background: #303d50;
     color: #d1d8e3;
   }
-  .yi-trust-L2 {
+  .yi-workspace:not([data-theme="light"]) .yi-trust-L2 {
     background: #233450;
     color: #bad0ff;
     border-color: #425b8f;
   }
-  .yi-trust-L3 {
+  .yi-workspace:not([data-theme="light"]) .yi-trust-L3 {
     background: #194df4;
   }
-  .yi-stance-long {
+  .yi-workspace:not([data-theme="light"]) .yi-stance-long {
     background: #153e2b;
     color: #8bd5a8;
   }
-  .yi-stance-short,
-  .yi-stance-avoid {
+  .yi-workspace:not([data-theme="light"]) .yi-stance-short,
+  .yi-workspace:not([data-theme="light"]) .yi-stance-avoid {
     background: #452925;
     color: #f4aaa2;
   }
-  .yi-stance-watch,
-  .yi-stance-conditional {
+  .yi-workspace:not([data-theme="light"]) .yi-stance-watch,
+  .yi-workspace:not([data-theme="light"]) .yi-stance-conditional {
     background: #453b22;
     color: #e3c686;
   }
-  .yi-warning {
+  .yi-workspace:not([data-theme="light"]) .yi-warning {
     background: #382f1c;
     color: #ecd097;
     border-color: #675431;
   }
-  .yi-notice {
+  .yi-workspace:not([data-theme="light"]) .yi-notice {
     background: #163325;
     color: #b2e0bd;
     border-color: #315842;
   }
 }
+
+.yi-workspace[data-theme="dark"] {
+  --yi-page: #111722;
+  --yi-surface: #192231;
+  --yi-ink: #edf1f7;
+  --yi-muted: #adb8c9;
+  --yi-line: #303d50;
+  --yi-primary: #83a4ff;
+  --yi-selected: #233450;
+}
+.yi-workspace[data-theme="dark"] button {
+  background: #194df4;
+  color: white;
+}
+.yi-workspace[data-theme="dark"] .yi-secondary {
+  background: var(--yi-surface);
+}
+.yi-workspace[data-theme="dark"] .yi-chip {
+  background: #303d50;
+  color: #d1d8e3;
+}
+.yi-workspace[data-theme="dark"] .yi-trust-L2 {
+  background: #233450;
+  color: #bad0ff;
+  border-color: #425b8f;
+}
+.yi-workspace[data-theme="dark"] .yi-trust-L3 {
+  background: #194df4;
+}
+.yi-workspace[data-theme="dark"] .yi-stance-long {
+  background: #153e2b;
+  color: #8bd5a8;
+}
+.yi-workspace[data-theme="dark"] .yi-stance-short,
+.yi-workspace[data-theme="dark"] .yi-stance-avoid {
+  background: #452925;
+  color: #f4aaa2;
+}
+.yi-workspace[data-theme="dark"] .yi-stance-watch,
+.yi-workspace[data-theme="dark"] .yi-stance-conditional {
+  background: #453b22;
+  color: #e3c686;
+}
+.yi-workspace[data-theme="dark"] .yi-warning {
+  background: #382f1c;
+  color: #ecd097;
+  border-color: #675431;
+}
+.yi-workspace[data-theme="dark"] .yi-notice {
+  background: #163325;
+  color: #b2e0bd;
+  border-color: #315842;
+}
+
 .yi-workspace[data-theme="dark"] {
   --yi-page: #111722;
   --yi-surface: #192231;
@@ -975,3 +1029,462 @@
   color: #a93226;
   border: 1px solid #efc9c4;
 }
+
+/* Approved Finradar visual alignment, September 2026. Shared theme for every page. */
+.yi-top {
+  height: 60px;
+  background: #194df4;
+  border: 0;
+  padding: 0 24px;
+  gap: 24px;
+}
+.yi-workspace .yi-brand {
+  color: #fff !important;
+  font-size: 23px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  gap: 7px;
+}
+.yi-brand > span {
+  background: transparent;
+  width: 29px;
+  height: 29px;
+}
+.yi-global-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: auto;
+  font-size: 13px;
+}
+.yi-workspace .yi-global-nav > a {
+  color: white;
+  font-weight: 550;
+}
+.yi-module-menu {
+  position: relative;
+}
+.yi-module-menu summary {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  cursor: pointer;
+  list-style: none;
+  background: white;
+  color: #194df4;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+.yi-module-menu summary::-webkit-details-marker {
+  display: none;
+}
+.yi-module-menu > a {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  width: 205px;
+  padding: 15px;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  background: var(--yi-surface);
+  box-shadow: 0 6px 18px #17204420;
+}
+.yi-top-label {
+  color: #e7edff;
+  border: 0;
+  padding: 0;
+  font-size: 11px;
+}
+.yi-workspace .yi-menu {
+  color: #fff;
+  background: transparent;
+}
+.yi-frame {
+  grid-template-columns: 194px minmax(0, 1fr);
+}
+.yi-sidebar {
+  top: 60px;
+  height: calc(100vh - 60px);
+  padding: 24px 12px;
+}
+.yi-sidebar .yi-eyebrow {
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 16px !important;
+}
+.yi-sidebar a {
+  font-size: 13px;
+  padding: 10px 12px;
+}
+.yi-main {
+  padding: 28px 28px 60px;
+  max-width: none;
+}
+.yi-workspace h1 {
+  font-size: 27px;
+}
+.yi-page-title {
+  align-items: center;
+  margin-bottom: 24px;
+}
+.yi-panel {
+  padding: 20px;
+}
+.yi-today-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  gap: 20px;
+  align-items: start;
+}
+.yi-today-primary,
+.yi-today-rail {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+}
+.yi-today-rail .yi-panel {
+  padding: 18px;
+}
+.yi-today-rail h2 {
+  font-size: 15px;
+}
+.yi-today-rail p,
+.yi-today-rail a {
+  font-size: 12px;
+}
+.yi-today-rail .yi-list li {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.yi-today-rail .yi-list .yi-row {
+  gap: 5px;
+}
+.yi-today-rail .yi-section-title {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.yi-today-rail .yi-empty {
+  padding: 20px 4px;
+}
+.yi-quick-analyse {
+  width: min(400px, 42%);
+  flex-shrink: 0;
+}
+.yi-quick-analyse label {
+  font-size: 11px;
+  color: var(--yi-muted);
+  margin-bottom: 5px;
+}
+.yi-quick-analyse .yi-row {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+.yi-quick-analyse input {
+  min-width: 0;
+  flex: 1;
+  font-size: 12px;
+}
+.yi-quick-analyse button {
+  white-space: nowrap;
+  padding: 9px 12px;
+  font-size: 12px;
+}
+.yi-calls-panel {
+  position: relative;
+  padding: 20px 0 0;
+  overflow: hidden;
+}
+.yi-calls-panel > .yi-section-title {
+  padding: 0 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding-right: 145px;
+}
+.yi-calls-panel > .yi-section-title > span {
+  font-size: 11px;
+}
+.yi-calls-panel .yi-filters {
+  padding: 0 20px;
+  gap: 10px;
+  align-items: end;
+  margin: 18px 0;
+}
+.yi-calls-panel .yi-filters label {
+  font-size: 11px;
+  min-width: 110px;
+  flex: 1;
+}
+.yi-calls-panel .yi-filters input,
+.yi-calls-panel .yi-filters select {
+  font-size: 12px;
+  min-height: 38px;
+}
+.yi-view-switch {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  display: flex;
+  border: 1px solid var(--yi-line);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.yi-workspace .yi-view-switch button {
+  border: 0;
+  border-radius: 0;
+  min-height: 34px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background: var(--yi-surface);
+  color: var(--yi-muted);
+}
+.yi-workspace .yi-view-switch button[aria-pressed="true"] {
+  background: var(--yi-selected);
+  color: var(--yi-primary);
+}
+.yi-call-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.yi-call-table th {
+  width: 15%;
+  background: var(--yi-page);
+  text-align: left;
+  border-block: 1px solid var(--yi-line);
+}
+.yi-call-table th:nth-child(3) {
+  width: 49%;
+}
+.yi-call-table th:nth-child(4) {
+  width: 21%;
+}
+.yi-call-table th,
+.yi-call-table td {
+  padding: 16px 12px;
+  vertical-align: top;
+  white-space: normal;
+  border-bottom: 1px solid var(--yi-line);
+}
+.yi-workspace .yi-call-table th button {
+  background: none;
+  color: var(--yi-muted);
+  padding: 0;
+  min-height: 28px;
+  text-align: left;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.yi-call-table th:first-child,
+.yi-call-table td:first-child {
+  padding-left: 20px;
+}
+.yi-call-table td {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.yi-call-table td small {
+  display: block;
+  color: var(--yi-muted);
+  margin-top: 6px;
+}
+.yi-call-thesis {
+  display: block;
+  font-weight: 550;
+  line-height: 1.6;
+}
+.yi-call-table p,
+.yi-call-table .yi-muted {
+  font-size: 11px;
+}
+.yi-call-table p {
+  margin: 6px 0;
+}
+.yi-call-table .yi-chip {
+  font-size: 10px;
+  padding: 3px 7px;
+  white-space: normal;
+}
+.yi-call-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.yi-call-actions a,
+.yi-call-actions button {
+  font-size: 11px;
+  font-weight: 600;
+}
+.yi-calls-panel > .yi-card-grid {
+  padding: 0 20px 20px;
+}
+.yi-mobile-calls,
+.yi-mobile-nav {
+  display: none !important;
+}
+.yi-calls-footnote {
+  padding: 12px 20px;
+  font-size: 11px;
+  color: var(--yi-muted);
+  margin: 0 !important;
+}
+.yi-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 1250px) {
+  .yi-today-layout {
+    grid-template-columns: minmax(0, 1fr) 230px;
+    gap: 16px;
+  }
+  .yi-main {
+    padding: 24px 20px 50px;
+  }
+  .yi-calls-panel .yi-filters {
+    flex-wrap: wrap;
+  }
+  .yi-quick-analyse {
+    width: 320px;
+  }
+}
+@media (max-width: 1050px) {
+  .yi-today-layout {
+    grid-template-columns: 1fr;
+  }
+  .yi-today-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .yi-page-title {
+    flex-wrap: wrap;
+  }
+  .yi-quick-analyse {
+    width: 100%;
+  }
+  .yi-top-label {
+    display: none;
+  }
+}
+@media (max-width: 720px) {
+  .yi-top {
+    height: 56px;
+    padding: 0 16px;
+  }
+  .yi-workspace .yi-brand {
+    font-size: 22px;
+  }
+  .yi-global-nav {
+    display: none;
+  }
+  .yi-frame {
+    display: block;
+  }
+  .yi-mobile-nav {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--yi-surface);
+    border-bottom: 1px solid var(--yi-line);
+    padding: 0 16px;
+  }
+  .yi-mobile-nav a {
+    font-size: 12px;
+    padding: 12px 0;
+    color: var(--yi-muted);
+  }
+  .yi-mobile-nav a[aria-current="page"] {
+    color: var(--yi-primary);
+    border-bottom: 2px solid var(--yi-primary);
+  }
+  .yi-mobile-nav button {
+    font-size: 12px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .yi-sidebar {
+    top: 56px;
+    height: auto;
+    max-height: calc(100dvh - 56px);
+    padding: 20px;
+  }
+  .yi-main {
+    padding: 20px 16px 50px;
+  }
+  .yi-page-title {
+    gap: 16px;
+    align-items: stretch;
+  }
+  .yi-workspace h1 {
+    font-size: 25px;
+  }
+  .yi-page-title > div > p:last-child {
+    font-size: 12px;
+  }
+  .yi-today-rail {
+    grid-template-columns: 1fr;
+  }
+  .yi-call-table {
+    display: none;
+  }
+  .yi-mobile-calls {
+    display: grid !important;
+  }
+  .yi-calls-panel > .yi-section-title {
+    padding: 0 14px;
+  }
+  .yi-view-switch {
+    position: static;
+    margin: 12px 14px 0;
+    width: fit-content;
+  }
+  .yi-calls-panel .yi-filters {
+    padding: 0 14px;
+  }
+  .yi-calls-panel .yi-filters label:first-child {
+    flex-basis: 100%;
+  }
+  .yi-calls-panel > .yi-card-grid {
+    padding: 0;
+    gap: 0;
+  }
+  .yi-calls-panel .yi-claim {
+    border: 0;
+    border-top: 1px solid var(--yi-line);
+    border-radius: 0;
+    padding: 18px 14px;
+  }
+  .yi-calls-panel .yi-claim h3 {
+    font-size: 13px;
+  }
+  .yi-calls-panel .yi-claim p,
+  .yi-calls-panel .yi-claim .yi-muted {
+    font-size: 12px;
+  }
+  .yi-calls-panel .yi-claim footer {
+    margin-top: 12px;
+  }
+}
+.yi-workspace .yi-show-more {
+  margin: 0 20px 14px;
+}
+.yi-call-table th:nth-child(1) { width: 14%; }
+.yi-call-table th:nth-child(2) { width: 13%; }
+.yi-call-table th:nth-child(3) { width: 40%; }
+.yi-call-table th:nth-child(4) { width: 19%; }
+.yi-call-table th:nth-child(5) { width: 14%; }
+.yi-workspace[data-theme] .yi-text-button { background: none; color: var(--yi-primary); }
+.yi-workspace[data-theme] .yi-view-switch button { background: var(--yi-surface); color: var(--yi-muted); }
+.yi-workspace[data-theme] .yi-view-switch button[aria-pressed="true"] { background: var(--yi-selected); color: var(--yi-primary); }
+.yi-workspace[data-theme] .yi-menu { background: transparent; color: white; }

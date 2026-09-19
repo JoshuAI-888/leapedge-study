@@ -114,3 +114,36 @@ test("ticker columns sort sentiment, creator counts and reliable creators with u
     ["A", "B", "C"],
   );
 });
+
+test("creator stance summary counts each known creator once and uses their latest dated stance", async () => {
+  const { creatorStances } =
+    await import("../src/features/youtube-intelligence/ui/viewmodel.ts");
+  const base = {
+    ticker: "NVDA",
+    trustBasis: {},
+    stance: "long",
+    publishedAt: "2026-09-01",
+  };
+  const rows = [
+    { ...base, id: "a", channelId: "one" },
+    {
+      ...base,
+      id: "b",
+      channelId: "one",
+      stance: "short",
+      publishedAt: "2026-09-02",
+    },
+    { ...base, id: "c", channelId: "two" },
+    { ...base, id: "d", channelId: null },
+    {
+      ...base,
+      id: "e",
+      channelId: "three",
+      trustBasis: { latestReviewVerdict: "rejected" },
+    },
+  ];
+  assert.deepEqual(creatorStances(rows), [
+    { ticker: "NVDA", creators: 2, stances: { short: 1, long: 1 } },
+  ]);
+  assert.deepEqual(creatorStances([...rows].reverse()), creatorStances(rows));
+});

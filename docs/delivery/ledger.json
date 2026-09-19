@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-09-19",
+  "updated": "2026-09-20",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -928,7 +928,7 @@
       "tests": [
         "tests/ui-viewmodel.test.ts"
       ],
-      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged.",
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged. Approved Finradar UI alignment follow-up is implemented on codex/finradar-ui-alignment; see docs/delivery/finradar-ui-alignment.md. Original merged status describes the prior implementation, not this unmerged follow-up.",
       "planned": true,
       "pr": 6
     },
@@ -951,7 +951,7 @@
       ],
       "planned": true,
       "pr": 6,
-      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged. Approved Finradar UI alignment follow-up is implemented on codex/finradar-ui-alignment; see docs/delivery/finradar-ui-alignment.md. Original merged status describes the prior implementation, not this unmerged follow-up."
     },
     {
       "id": "F44",
@@ -973,7 +973,7 @@
       ],
       "planned": true,
       "pr": 6,
-      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged. Approved Finradar UI alignment follow-up is implemented on codex/finradar-ui-alignment; see docs/delivery/finradar-ui-alignment.md. Original merged status describes the prior implementation, not this unmerged follow-up."
     },
     {
       "id": "F45",
@@ -1093,7 +1093,7 @@
         "tests/leaderboard.test.ts",
         "tests/push.test.ts"
       ],
-      "note": "Implementation and full command checks pass; one live caption-first pilot completed and compared with a retained LeapEdge report (US$0.12925415 total allocated spend, zero new LeapEdge analyses). Gate remains open: native Chrome screen/accessibility unavailable before final mobile/visual/UX pass; completed live Batch API and reachable HTTPS push evidence still absent. Fifty human-verified cases removed from scope. See docs/gates/browser-acceptance.json and docs/delivery/standalone-conformance.md.",
+      "note": "Implementation and full command checks pass; one live caption-first pilot completed and compared with a retained LeapEdge report (US$0.12925415 total allocated spend, zero new LeapEdge analyses). Gate remains open: native Chrome screen/accessibility unavailable before final mobile/visual/UX pass; completed live Batch API and reachable HTTPS push evidence still absent. Fifty human-verified cases removed from scope. See docs/gates/browser-acceptance.json and docs/delivery/standalone-conformance.md. Approved Finradar UI alignment follow-up is implemented on codex/finradar-ui-alignment; see docs/delivery/finradar-ui-alignment.md. Original merged status describes the prior implementation, not this unmerged follow-up.",
       "planned": false,
       "pr": 6
     },
