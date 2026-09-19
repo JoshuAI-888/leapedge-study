@@ -1,3 +1,4 @@
+import { ModelResponse } from "./transport/types.ts";
 import {
   estimateTokens,
   transcriptChunks,
@@ -46,6 +47,9 @@ import {
   type TranslatedMention,
 } from "./schemas/translation.ts";
 import {
+  listAttempts,
+  retainedResponse,
+  db,
   markUnknown,
   release,
   reserve,
@@ -56,8 +60,12 @@ import { priceTableVersion } from "./transport/prices.ts";
 import { rowsForRun, writeRunRows } from "./repos/publish.ts";
 import { isRetryableTransportError, withRetry } from "./retry.ts";
 import * as P from "./prompts.ts";
-import { nativeTranscript } from "./transcripts.ts";
-import { prompt as getPrompt, teamPreferences } from "./research-store.ts";
+import { standbyTranscript } from "./transcripts.ts";
+import {
+  prompt as getPrompt,
+  runTeamPreferences,
+  runAudioTrustPreferences,
+} from "./research-store.ts";
 import type { TeamPreferencesData } from "../../features/youtube-intelligence/settings.ts";
 import {
   transportFor,
@@ -223,6 +231,21 @@ function priceTableVersionFor(transport: ModelTransport) {
  * billed keeps any money. processing.maxRetriesPerStage caps the attempts and
  * budget.perVideoMaxUsd caps what one run may hold.
  */
+export function modelCallFingerprint(input: unknown): string {
+  const stable = (value: unknown): unknown =>
+    Array.isArray(value)
+      ? value.map(stable)
+      : value && typeof value === "object"
+        ? Object.fromEntries(
+            Object.entries(value as Record<string, unknown>)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([key, item]) => [key, stable(item)]),
+          )
+        : value;
+  return createHash("sha256")
+    .update(JSON.stringify(stable(input)))
+    .digest("hex");
+}
 export async function modelCall(
   run: Run,
   stage: string,
@@ -244,9 +267,94 @@ export async function modelCall(
     };
   } = {},
 ) {
-  const settings = options.settings ?? (await teamPreferences());
+  const frozenSettings = await (stage.startsWith("transcribe-asr-")
+    ? runAudioTrustPreferences(run, options.settings)
+    : runTeamPreferences(run, options.settings));
+  // Windowed ASR is always native: fallback transports cannot enforce offsets.
+  const settings = stage.startsWith("transcribe-asr-")
+    ? {
+        ...frozenSettings,
+        sources: { ...frozenSettings.sources, mediaResolution: "low" as const },
+        transport: { ...frozenSettings.transport, fallbackToOpenRouter: false },
+        models: {
+          ...frozenSettings.models,
+          transcription: {
+            ...frozenSettings.models.transcription,
+            transport: "google-native" as const,
+          },
+        },
+      }
+    : frozenSettings;
   const modelId = model || modelIdFor(stage, settings);
   if (!modelId) throw Error(`No model is configured for the "${stage}" stage.`);
+  const requestFingerprint = modelCallFingerprint({
+    stage,
+    model: modelId,
+    prompt,
+    payload,
+    video: video ? run.url : null,
+    responseSchema: options.responseSchema ?? null,
+    maxOutputTokens: options.maxOutputTokens ?? null,
+    inferenceConfig: run.input.inferenceConfig ?? null,
+    source: run.output.sourceHash ?? run.output.source ?? null,
+    models: settings.models,
+    transport: settings.transport,
+  });
+  // A stage checkpoint may lag a durably received response after process death.
+  // Replay the exact normalized response, never call the provider a second time.
+  const allAttempts = await listAttempts(run.id, stage);
+  const attemptOffset = Math.max(0, ...allAttempts.map((row) => row.attempt));
+  const prior = allAttempts.filter((row) => row.status !== "released");
+  for (const call of prior.reverse()) {
+    const retained = await retainedResponse(`${call.id}:normalized`);
+    if (retained !== undefined) {
+      const fingerprint =
+        (retained as Record<string, unknown>).requestFingerprint ??
+        call.metrics.requestFingerprint;
+      if (fingerprint === undefined)
+        throw Error(
+          "Retained stage has no request fingerprint; review before replaying.",
+        );
+      if (fingerprint !== requestFingerprint) continue;
+      const recovered = ModelResponse.parse(retained);
+      if (call.status !== "completed")
+        await settle(call.id, recovered.usage.costUsd, {
+          ...call.metrics,
+          recovered: true,
+        });
+      // Older native responses retained the SDK's uppercase STOP. Recover the
+      // already-paid complete response; never treat other reasons as complete.
+      if (
+        recovered.finishReason !== "stop" &&
+        !(
+          recovered.provider === "google-native" &&
+          recovered.finishReason === "STOP"
+        )
+      )
+        throw Error("Model response was incomplete; refusing partial output.");
+      let value;
+      try {
+        value = JSON.parse(recovered.text);
+      } catch {
+        throw Error("Provider response was not valid JSON.");
+      }
+      if (value.error)
+        throw Error("Source could not be processed by the provider.");
+      const history = (run.output.metrics || []) as Array<
+        Record<string, unknown>
+      >;
+      if (!history.some((row) => row.stage === stage))
+        run.output.metrics = [
+          ...history,
+          { stage, ...call.metrics, recovered: true },
+        ];
+      return value;
+    }
+    if (call.status === "completed")
+      throw Error(
+        "Settled stage has no replayable response; review retained provider data before retrying.",
+      );
+  }
   const transport = transportFor(stage, settings);
   const spec = await transport.describe(modelId);
   const user: TextPart[] = [
@@ -270,20 +378,35 @@ export async function modelCall(
   const maxTokens =
     options.maxOutputTokens ??
     (stage.startsWith("transcribe-window")
-    ? 12000
-    : stage === "audio-review"
-      ? config?.critiqueMaxTokens || 6000
-      : video
-        ? 28000
-        : stage.startsWith("critique")
-          ? config?.critiqueMaxTokens || 3000
-          : 16000);
+      ? 12000
+      : stage === "audio-review"
+        ? config?.critiqueMaxTokens || 6000
+        : video
+          ? 28000
+          : stage.startsWith("critique")
+            ? config?.critiqueMaxTokens || 3000
+            : 16000);
   const request = ModelRequest.parse({
     stage,
     model: modelId,
     user,
-    ...(video ? { video: { type: "video", url: run.url } } : {}),
-    ...(options.responseSchema ? { responseSchema: options.responseSchema } : {}),
+    ...(video
+      ? {
+          video: {
+            type: "video",
+            url: run.url,
+            ...(MediaWindow.safeParse(payload).success
+              ? {
+                  startSeconds: MediaWindow.parse(payload).window_start_seconds,
+                  endSeconds: MediaWindow.parse(payload).window_end_seconds,
+                }
+              : {}),
+          },
+        }
+      : {}),
+    ...(options.responseSchema
+      ? { responseSchema: options.responseSchema }
+      : {}),
     ...(options.cachedContent ? { cachedContent: options.cachedContent } : {}),
     maxOutputTokens: maxTokens,
     temperature: 0,
@@ -318,6 +441,40 @@ export async function modelCall(
     audio: spec.audioRate,
     output: spec.outputRate,
   };
+  if (
+    run.input.processingMode === "batch" &&
+    transport.family === "google-native"
+  ) {
+    const { submitBatchStage } = await import("./batch.ts");
+    const response = await submitBatchStage(
+      run,
+      request,
+      amount,
+      settings.budget.perVideoMaxUsd,
+      requestFingerprint,
+    );
+    if (response.finishReason !== "stop")
+      throw Error("Model response was incomplete; refusing partial output.");
+    let value;
+    try {
+      value = JSON.parse(response.text);
+    } catch {
+      throw Error("Provider response was not valid JSON.");
+    }
+    if (value.error)
+      throw Error("Source could not be processed by the provider.");
+    run.output.metrics = [
+      ...((run.output.metrics || []) as unknown[]),
+      {
+        stage,
+        processingMode: "batch",
+        provider: response.provider,
+        tokens: response.usage,
+        priceTableVersion: pricedBy,
+      },
+    ];
+    return value;
+  }
   // Wall time over every attempt, including the waits between them.
   const start = Date.now();
   /**
@@ -335,7 +492,7 @@ export async function modelCall(
         run.id,
         stage,
         amount,
-        attempt,
+        attemptOffset + attempt,
         settings.budget.perVideoMaxUsd,
       );
       try {
@@ -364,12 +521,20 @@ export async function modelCall(
       ...(options.retry ?? {}),
     },
   );
-  await retainResponse(id, run.id, stage, response.raw);
+  await db().transaction(async () => {
+    await retainResponse(id, run.id, stage, response.raw);
+    await retainResponse(`${id}:normalized`, run.id, stage, {
+      ...response,
+      requestFingerprint,
+    });
+  });
   const metrics = {
+    requestFingerprint,
     model: response.model,
     maxTokens,
     reasoningEffort: effort || "provider default",
     provider: response.provider,
+    processingMode: "immediate",
     seconds: (Date.now() - start) / 1000,
     usage: providerUsage(response),
     tokens: response.usage,
@@ -443,7 +608,8 @@ function materializeMentions(
       const derived = deriveEvidence(source, range);
       const call = draft.ticker
         ? claims.find(
-            (c) => c.claim.ticker?.toLowerCase() === draft.ticker!.toLowerCase(),
+            (c) =>
+              c.claim.ticker?.toLowerCase() === draft.ticker!.toLowerCase(),
           )
         : undefined;
       const stance = call ? call.claim.stance : draft.stance;
@@ -545,7 +711,11 @@ async function ensureContextCache(
   tokens: number,
   settings: TeamPreferencesData,
 ): Promise<ContextCacheRecord | null> {
-  if (!settings.processing.contextCaching) return null;
+  if (
+    run.input.processingMode === "batch" ||
+    !settings.processing.contextCaching
+  )
+    return null;
   if (!model || typeof transport.createCache !== "function") return null;
   const held = run.output.contextCache as ContextCacheRecord | undefined;
   if (
@@ -606,7 +776,10 @@ async function releaseContextCache(run: Run, settings: TeamPreferencesData) {
       return;
     }
     await transport.deleteCache(record.name);
-    run.output.contextCache = { ...record, deletedAt: new Date().toISOString() };
+    run.output.contextCache = {
+      ...record,
+      deletedAt: new Date().toISOString(),
+    };
   } catch (error) {
     warn(
       run,
@@ -643,8 +816,9 @@ function pendingTranslations(run: Run) {
  * supply the document — tests route a stage that way without writing one.
  */
 export async function step(run: Run, settings?: TeamPreferencesData) {
-  let loaded = settings;
-  const prefs = async () => (loaded ??= await teamPreferences());
+  let loaded: TeamPreferencesData | undefined;
+  const prefs = async () =>
+    (loaded ??= await runTeamPreferences(run, settings));
   run.output.pipelineRevision = "institutional.v1";
   if (run.input.task === "entity-classification") {
     const { entityStep } = await import("./entities.ts");
@@ -661,6 +835,19 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
   if (run.input.task === "briefing") {
     const { briefingStep } = await import("./briefing-pipeline.ts");
     return await briefingStep(run);
+  }
+  if (run.stage === "asr-source" || run.stage === "asr-evidence") {
+    const { windowedAsrStep } = await import("./windowed-asr.ts");
+    return windowedAsrStep(
+      run,
+      await runAudioTrustPreferences(run, settings),
+      run.stage === "asr-source",
+      modelCall,
+    );
+  }
+  if (run.stage === "agree") {
+    const { agreeRun } = await import("./windowed-asr.ts");
+    return agreeRun(run, await runAudioTrustPreferences(run, settings));
   }
   const prompts = run.input.promptSnapshot
     ? (run.input.promptSnapshot as Awaited<ReturnType<typeof getPrompt>>)
@@ -700,17 +887,39 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       description: v.snippet.description,
       language: v.snippet.defaultAudioLanguage,
     };
-    run.stage = "source";
+    run.stage =
+      run.input.audioTrustRequested === true && run.input.audioTrustConfig
+        ? "asr-source"
+        : "source";
   } else if (run.stage === "source") {
     const supplied = run.input.source
       ? Source.parse(run.input.source)
-      : await nativeTranscript(run.videoId, {
+      : await standbyTranscript(run.videoId, {
           ...(run.output.metadata as { duration: number; language?: string }),
-          managedCaptionsOnly: run.input.nativeGoogleExperimental === true,
+          settings: await prefs(),
         });
     const duration = (run.output.metadata as { duration: number }).duration;
     if (!supplied && run.input.nativeGoogleExperimental === true) {
       run.stage = "native-source";
+      return;
+    }
+    if (!supplied && (await prefs()).sources.asr === "gemini-windowed") {
+      if (
+        (await prefs()).sources.asrPolicy === "on-demand" &&
+        run.input.audioTrustRequested !== true
+      ) {
+        run.status = "needs_review";
+        run.error =
+          "Captions unavailable. ASR is on demand; request audio transcription or import a timed transcript.";
+        return;
+      }
+      run.stage = "asr-source";
+      return;
+    }
+    if (!supplied && (await prefs()).sources.asr === "off") {
+      run.status = "needs_review";
+      run.error =
+        "Captions unavailable and ASR is disabled. Import a timed transcript or enable windowed ASR.";
       return;
     }
     if (!supplied && run.input.transcriptionWindowSeconds && duration > 1800) {
@@ -1008,10 +1217,20 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
     const team = await prefs();
     // Spec 4.1: a critic from the extractor's family fails the same way the
     // extractor did, so a misconfiguration stops the run before it is billed.
-    assertCriticIndependent(team);
     const model = run.input.criticModel
       ? String(run.input.criticModel)
       : modelIdFor("critique", team);
+    assertCriticIndependent({
+      ...team,
+      models: {
+        ...team.models,
+        extraction: {
+          ...team.models.extraction,
+          id: run.model || team.models.extraction.id,
+        },
+        critique: { ...team.models.critique, id: model },
+      },
+    });
     const transport = transportFor("critique", team);
     const tokens = await transcriptTokens(transport, model, source);
     const chunks = transcriptChunks(
@@ -1036,8 +1255,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       }),
     );
     const config = run.input.inferenceConfig as
-      | { critiqueMaxTokens?: number }
-      | undefined;
+      { critiqueMaxTokens?: number } | undefined;
     const answered = new Map<string, CritiqueVerdictData>();
     const unexpected: string[] = [];
     const missing: string[] = [];
@@ -1046,7 +1264,8 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
     for (const [index, segments] of chunks.entries()) {
       const batchClaims = pending.filter(
         ({ item }) =>
-          (chunkOf.get(item.claim.evidence[0]?.segment_id ?? "") ?? 0) === index,
+          (chunkOf.get(item.claim.evidence[0]?.segment_id ?? "") ?? 0) ===
+          index,
       );
       const batchMentions = mentions.filter(
         ({ mention }) =>
@@ -1120,6 +1339,10 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
        * reason beside the ones extraction already rejected.
        */
       const kept: MentionData[] = [];
+      const mentionChecks = (run.output.mentionChecks ?? {}) as Record<
+        string,
+        boolean
+      >;
       // Anything already recorded came from extraction, so a run stored before
       // the field existed is read back with the kind it must have had.
       const rejected: RejectedMention[] = (
@@ -1131,6 +1354,9 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       }));
       for (const { id, mention } of mentions) {
         const verdict = answered.get(id);
+        mentionChecks[
+          `${mention.ticker ?? mention.instrument_as_spoken}:${mention.source_span.start_id}:${mention.source_span.end_id}`
+        ] = verdict?.verdict === "accept";
         if (!verdict) missing.push(id);
         if (verdict?.cross_claim_notes)
           notes.push({ id, note: verdict.cross_claim_notes });
@@ -1139,6 +1365,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         else kept.push(mention);
       }
       run.output.mentions = kept;
+      run.output.mentionChecks = mentionChecks;
       if (rejected.length) run.output.rejectedMentions = rejected;
     }
     /**
@@ -1165,21 +1392,37 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       items: (earlier.items ?? 0) + pending.length,
       mentions: mentions.length,
       missingVerdicts: [...(earlier.missingVerdicts ?? []), ...missing],
-      unexpectedVerdicts: [...(earlier.unexpectedVerdicts ?? []), ...unexpected],
+      unexpectedVerdicts: [
+        ...(earlier.unexpectedVerdicts ?? []),
+        ...unexpected,
+      ],
       ...(crossClaimNotes.length ? { crossClaimNotes } : {}),
     };
     run.stage = "publish";
   } else if (run.stage === "publish") {
+    const settings = await prefs();
+    if (
+      !run.output.audioTrustProcessed &&
+      settings.sources.asr === "gemini-windowed" &&
+      (settings.sources.asrPolicy === "always" ||
+        run.input.audioTrustRequested === true)
+    ) {
+      run.stage = "asr-evidence";
+      return;
+    }
     // The cache is released here, at the one point every completed run passes
     // through; a run that never held one reads no settings to find out.
     if (run.output.contextCache) await releaseContextCache(run, await prefs());
     run.status = "completed";
     run.stage = "complete";
     run.output.limitations = [
-      "Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+      run.output.spanAgreement
+        ? "Audio agreement is measured per cited span; disagreement and unmeasured spans remain below audio-agreed trust. This is not a population accuracy estimate."
+        : "Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
       "Model critique is not human verification.",
       ...(Number(run.output.chunkCount) > 1 ||
-      Number((run.output.critique as { chunks?: number } | undefined)?.chunks) > 1
+      Number((run.output.critique as { chunks?: number } | undefined)?.chunks) >
+        1
         ? [
             "This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications.",
           ]

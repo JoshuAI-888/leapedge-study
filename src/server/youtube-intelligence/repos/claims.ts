@@ -1,4 +1,8 @@
 import { database, iso, json } from "../database.ts";
+import { createHash } from "node:crypto";
+import { spansForClaim, type EvidenceSpanRow } from "./evidence-spans.ts";
+import { SignedReview } from "../../../features/youtube-intelligence/trust.ts";
+import { reviewsForClaim } from "./reviews.ts";
 /**
  * The only door to the `claims` table (spec 8). The row id is
  * `<run id>:<claim id within the run>`, so re-publishing a run rewrites the
@@ -59,12 +63,88 @@ function convert(r: Record<string, unknown>): ClaimRow {
     createdAt: iso(r.created_at),
   };
 }
-/**
- * Write one claim. The trust level is never lowered by a rewrite: 4.6 says a
- * recompute may raise it and a human review signs the top of the ladder, so a
- * republished run must not undo either.
- */
-export async function upsertClaim(claim: ClaimInput) {
+/** Reviews bind semantic content and the exact cited source, never only a stable row id. */
+export function claimContentDigest(
+  claim: ClaimInput | ClaimRow,
+  spans: EvidenceSpanRow[],
+) {
+  return createHash("sha256")
+    .update(
+      JSON.stringify([
+        claim.runId,
+        claim.videoId,
+        claim.channelId,
+        claim.instrument,
+        claim.ticker,
+        claim.tickerExplicit,
+        claim.stance,
+        claim.thesisEn,
+        claim.horizonEn,
+        claim.conditionsEn,
+        claim.risksEn,
+        claim.creatorConviction,
+        claim.configHash,
+        claim.publishedAt,
+        [...spans]
+          .sort((a, b) => a.ordinal - b.ordinal)
+          .map((s) => [
+            s.ordinal,
+            s.startId,
+            s.endId,
+            s.startSeconds,
+            s.endSeconds,
+            s.textOriginal,
+            s.textHash,
+            s.translationEn,
+          ]),
+      ]),
+    )
+    .digest("hex");
+}
+/** Preserve earned trust only for unchanged content; an explicit rejection revokes L3. */
+export async function upsertClaim(
+  claim: ClaimInput,
+  evidence?: EvidenceSpanRow[],
+) {
+  return database.transaction(async () => {
+    await database
+      .prepare("SELECT id FROM claims WHERE id=$1 FOR UPDATE")
+      .get(claim.id);
+    return writeClaim(claim, evidence);
+  });
+}
+async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
+  const spans = evidence ?? (await spansForClaim(claim.id));
+  const contentDigest = claimContentDigest(claim, spans);
+  const matching = (await reviewsForClaim(claim.id))
+    .flatMap((r) => {
+      const parsed = SignedReview.safeParse(r);
+      return parsed.success &&
+        parsed.data.listenedSpan.contentDigest === contentDigest
+        ? [parsed.data]
+        : [];
+    })
+    .sort(
+      (a, b) =>
+        a.signedAt.localeCompare(b.signedAt) ||
+        (a.verdict === "rejected" ? 1 : -1),
+    );
+  const latestReviewVerdict = matching.at(-1)?.verdict ?? null;
+  if (claim.trustLevel === "L3" && latestReviewVerdict !== "verified")
+    throw Error(
+      "L3 requires an appended signed human review of this exact content and evidence.",
+    );
+  const trustBasis = {
+    ...(claim.trustBasis && typeof claim.trustBasis === "object"
+      ? claim.trustBasis
+      : {}),
+    contentDigest,
+    latestReviewVerdict,
+    humanReviewReason:
+      latestReviewVerdict === "rejected"
+        ? "Human reviewer rejected this exact claim and evidence; excluded from scoring."
+        : null,
+  };
   const result = await database
     .prepare(
       `INSERT INTO claims(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16,$17,$18)
@@ -81,8 +161,14 @@ export async function upsertClaim(claim: ClaimInput) {
          conditions_en=excluded.conditions_en,
          risks_en=excluded.risks_en,
          creator_conviction=excluded.creator_conviction,
-         trust_level=GREATEST(claims.trust_level,excluded.trust_level),
-         trust_basis=excluded.trust_basis,
+         trust_level=CASE WHEN claims.trust_basis->>'contentDigest'=excluded.trust_basis->>'contentDigest'
+           AND excluded.trust_basis->>'latestReviewVerdict' IS DISTINCT FROM 'rejected'
+           AND (claims.trust_level <> 'L3' OR excluded.trust_basis->>'latestReviewVerdict'='verified')
+           THEN GREATEST(claims.trust_level,excluded.trust_level) ELSE excluded.trust_level END,
+         trust_basis=CASE WHEN claims.trust_basis->>'contentDigest'=excluded.trust_basis->>'contentDigest'
+           AND excluded.trust_basis->>'latestReviewVerdict' IS DISTINCT FROM 'rejected'
+           AND (claims.trust_level <> 'L3' OR excluded.trust_basis->>'latestReviewVerdict'='verified')
+           AND excluded.trust_level < claims.trust_level THEN claims.trust_basis ELSE excluded.trust_basis END,
          config_hash=excluded.config_hash,
          published_at=excluded.published_at`,
     )
@@ -100,8 +186,8 @@ export async function upsertClaim(claim: ClaimInput) {
       claim.conditionsEn,
       claim.risksEn,
       claim.creatorConviction,
-      claim.trustLevel,
-      JSON.stringify(claim.trustBasis ?? {}),
+      latestReviewVerdict === "rejected" ? "L0" : claim.trustLevel,
+      JSON.stringify(trustBasis),
       claim.configHash,
       claim.publishedAt,
       claim.createdAt ?? new Date().toISOString(),

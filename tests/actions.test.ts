@@ -54,7 +54,27 @@ const params = (resource: string, action: string) => ({
 });
 test("Every action resolves in exactly one resource table and the legacy set is complete", () => {
   const mutating = entries.filter((e) => e.entry.mutating).map((e) => e.action);
-  assert.deepEqual([...mutating].sort(), [...LEGACY_ACTIONS].sort());
+  for (const action of LEGACY_ACTIONS)
+    assert.ok(
+      mutating.includes(action),
+      `Legacy action ${action} remains reachable`,
+    );
+  const additions = [
+    "signClaimReview",
+    "requestAudioTrust",
+    "saveTeam",
+    "saveAccount",
+    "analyse",
+    "replayHistorical",
+    "refreshBoardData",
+    "saveSelection",
+    "seedCatalog",
+  ];
+  for (const action of mutating)
+    assert.ok(
+      LEGACY_ACTIONS.includes(action) || additions.includes(action),
+      `Declare new action ${action} in the contract test`,
+    );
   assert.equal(new Set(entries.map((e) => e.action)).size, entries.length);
   for (const { resource, action } of entries)
     assert.equal(resourceOf(action), resource);
@@ -159,7 +179,7 @@ test("Every object-shaped action schema refuses an undeclared field", () => {
   // non-object and still pass, which is the degradation it exists to catch.
   assert.equal(
     shapes.length,
-    17,
+    25,
     `object schemas found: ${shapes.map((s) => `${s.resource}/${s.action}`).join(", ")}`,
   );
   for (const { resource, action, schema } of shapes) {

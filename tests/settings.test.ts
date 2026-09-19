@@ -112,7 +112,7 @@ test("Team and account defaults parse from an empty object and match spec 6.2 / 
   });
   assert.deepEqual(team.sharing, { expiry: "never", allowRevoke: true });
   assert.deepEqual(team.corpus, { fileSearch: true, retentionDays: 365 });
-  assert.equal(team.prompts.version, "evidence-first.web.v5");
+  assert.equal(team.prompts.version, "evidence-first.web.v7");
   // Parsing the defaults again is a no-op.
   assert.deepEqual(TeamPreferences.parse(team), team);
 
@@ -217,7 +217,9 @@ test("readEnv validates lazily and reports key names, never values", () => {
     ...team,
     channels: { ...team.channels, discovery: "poll" },
   });
-  assert.ok(!missingRequired(readEnv({}), polled).includes("YTI_PUSH_CALLBACK_SECRET"));
+  assert.ok(
+    !missingRequired(readEnv({}), polled).includes("YTI_PUSH_CALLBACK_SECRET"),
+  );
   assert.deepEqual(
     missingRequired(
       readEnv({
@@ -238,9 +240,7 @@ test("readEnv validates lazily and reports key names, never values", () => {
 test("configHash is stable across key order and irrelevant keys, and changes when a model changes", () => {
   const team = teamDefaults();
   const reordered = JSON.parse(
-    JSON.stringify(
-      Object.fromEntries(Object.entries(team).reverse()),
-    ),
+    JSON.stringify(Object.fromEntries(Object.entries(team).reverse())),
   ) as typeof team;
   reordered.models = Object.fromEntries(
     Object.entries(team.models).reverse(),
@@ -363,7 +363,8 @@ test("migrateLegacyPreferences maps the old flat document into team and account 
 
 test("Store: team and account documents migrate once from the old preferences doc, then live on their own", async () => {
   await freshDatabase();
-  const R = await import("../src/server/youtube-intelligence/research-store.ts");
+  const R =
+    await import("../src/server/youtube-intelligence/research-store.ts");
   await R.savePreferences({
     timezone: "Asia/Tokyo",
     model: "google/gemini-3.1-pro-preview",
@@ -404,16 +405,16 @@ test("Store: team and account documents migrate once from the old preferences do
       },
     });
     assert.equal(saved.budget.monthlyUsd, 50);
-    assert.equal((await R.teamPreferences()).models.critique.id, "anthropic/claude-sonnet-5");
+    assert.equal(
+      (await R.teamPreferences()).models.critique.id,
+      "anthropic/claude-sonnet-5",
+    );
     assert.equal((await R.teamPreferences()).budget.monthlyUsd, 50);
   } finally {
     if (previous === undefined) delete process.env.YTI_HARD_BUDGET_USD_MONTH;
     else process.env.YTI_HARD_BUDGET_USD_MONTH = previous;
   }
-  await R.saveAccountPreferences(
-    { ...account, benchmark: "IWM" },
-    "alice",
-  );
+  await R.saveAccountPreferences({ ...account, benchmark: "IWM" }, "alice");
   assert.equal((await R.accountPreferences("alice")).benchmark, "IWM");
   assert.equal((await R.accountPreferences()).benchmark, null);
   await assert.rejects(R.saveTeamPreferences({ transport: { default: "x" } }));
@@ -421,7 +422,8 @@ test("Store: team and account documents migrate once from the old preferences do
 
 test("Store: with no old document the team and account documents start from the spec defaults", async () => {
   await freshDatabase();
-  const R = await import("../src/server/youtube-intelligence/research-store.ts");
+  const R =
+    await import("../src/server/youtube-intelligence/research-store.ts");
   assert.deepEqual(await R.teamPreferences(), teamDefaults());
   assert.deepEqual(await R.accountPreferences(), AccountPreferences.parse({}));
   const resolved = await R.resolvedAccountPreferences();

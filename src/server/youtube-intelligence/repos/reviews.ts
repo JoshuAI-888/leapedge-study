@@ -3,9 +3,8 @@ import { database, iso, json } from "../database.ts";
  * The only door to the `reviews` table (spec 8). Append-only: a verdict is
  * signed once and never edited, so there is no update here at all.
  *
- * Nothing writes a row yet. Signing an L3 needs the reviewer's account, which
- * arrives with the multi-user work in 4.18; until then this is the read side
- * the trust ladder will consult.
+ * actions/trust.ts validates listened coverage and the server-identified
+ * reviewer before appending a signature; model critique never enters here.
  */
 export type ReviewRow = {
   id: string;

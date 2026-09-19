@@ -1,6 +1,9 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 import pg from "pg";
+// DATE is a calendar label, not a local-midnight instant. Auckland midnight
+// converted to UTC otherwise shifts every price and settlement back a day.
+pg.types.setTypeParser(pg.types.builtins.DATE, (value: string) => value);
 import type { PGlite } from "@electric-sql/pglite";
 import {
   cluster,
@@ -194,7 +197,7 @@ export function poolMax(
  * highest version loadMigrations() finds on disk, so adding 0003_*.sql without
  * raising this number fails `npm test`.
  */
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 6;
 /**
  * Fail fast in one direction only. BEHIND means the database has not got the
  * tables or columns this code queries, so every statement is a guess: refuse
@@ -333,7 +336,9 @@ async function attachPool(instance: pg.Pool) {
     const { attachDatabasePool } = await import("@vercel/functions");
     attachDatabasePool(instance);
   } catch {
-    console.error("attachDatabasePool is unavailable; the pool is not attached");
+    console.error(
+      "attachDatabasePool is unavailable; the pool is not attached",
+    );
   }
 }
 let tail = Promise.resolve();

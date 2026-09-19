@@ -23,6 +23,7 @@ test("PGlite driver applies the schema and reports the Postgres dialect", async 
       "instruments",
       "jobs",
       "mentions",
+      "price_history",
       "prices",
       "reviews",
       "settlements",
@@ -50,7 +51,13 @@ test("Insert and select round-trip on $n placeholders, with change counts", asyn
     .prepare(
       "INSERT INTO yi_documents(kind,id,payload,created_at,updated_at) VALUES($1,$2,$3,$4,$5)",
     )
-    .run("note", "n1", JSON.stringify({ a: 1, q: "?" }), "2026-01-01", "2026-01-01");
+    .run(
+      "note",
+      "n1",
+      JSON.stringify({ a: 1, q: "?" }),
+      "2026-01-01",
+      "2026-01-01",
+    );
   assert.equal(inserted.changes, 1);
   const row = (await d
     .prepare("SELECT * FROM yi_documents WHERE kind=$1 AND id=$2")
@@ -73,7 +80,9 @@ test("Insert and select round-trip on $n placeholders, with change counts", asyn
     "INSERT INTO yi_heartbeat VALUES(1,$1) ON CONFLICT(id) DO UPDATE SET at=excluded.at";
   await d.prepare(beatSQL).run(5);
   await d.prepare(beatSQL).run(9);
-  const beat = (await d.prepare("SELECT at FROM yi_heartbeat WHERE id=1").get()) as {
+  const beat = (await d
+    .prepare("SELECT at FROM yi_heartbeat WHERE id=1")
+    .get()) as {
     at: unknown;
   };
   assert.equal(Number(beat.at), 9);

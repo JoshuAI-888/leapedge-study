@@ -31,6 +31,8 @@ export const Env = z.object({
   // A plain string, not a number: readEnv() runs on every serving request, and
   // a typo here must not stop an instance starting. database.ts's poolMax()
   // parses it and falls back to the default on anything it cannot use.
+  YTI_REVIEWER_ACCOUNT_ID: secret, // authenticated standalone reviewer identity
+  YTI_FIXTURE_MODE: secret, // visible synthetic-data banner
   YTI_POOL_MAX: secret, // clients per serving instance
   YTI_QUEUE_PAUSED: secret, // "true" drains the queue before a migration
   YTI_PUSH_CALLBACK_SECRET: secret, // required when channels.discovery=push

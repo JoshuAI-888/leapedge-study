@@ -1,4 +1,14 @@
 import { createHash } from "node:crypto";
+import {
+  deriveEvidence,
+  validateClaim,
+} from "../../../features/youtube-intelligence/contracts.ts";
+import { Agreement } from "../../../features/youtube-intelligence/agreement.ts";
+import {
+  computeTrustLevel,
+  TrustChecks,
+} from "../../../features/youtube-intelligence/trust.ts";
+import { reviewsForClaim } from "./reviews.ts";
 import type {
   CheckedClaim,
   MentionData,
@@ -8,6 +18,7 @@ import type {
 import {
   deleteClaimsForRunExcept,
   upsertClaim,
+  claimContentDigest,
   type ClaimInput,
 } from "./claims.ts";
 import {
@@ -71,6 +82,7 @@ function spansOf(
   claimId: string,
   claim: CheckedClaim,
   source: SourceData | null,
+  agreements: ReturnType<typeof Agreement.parse>[] = [],
 ): EvidenceSpanRow[] {
   return claim.claim.evidence.map((e, ordinal) => {
     const startId = e.source_span?.start_id ?? e.segment_id;
@@ -88,12 +100,10 @@ function spansOf(
         e.source_span?.text_hash ??
         createHash("sha256").update(e.quote_original).digest("hex"),
       translationEn: e.quote_translation_en || null,
-      // The agreement score, the anchor error and the tie-break source are
-      // written by the windowed-ASR work; publish leaves them unset rather
-      // than inventing a value.
-      agreementScore: null,
-      anchorErrorSeconds: null,
-      tieBreakSource: null,
+      // Only independently acquired per-span measurements are persisted.
+      agreementScore: agreements[ordinal]?.agreementScore ?? null,
+      anchorErrorSeconds: agreements[ordinal]?.anchorErrorSeconds ?? null,
+      tieBreakSource: agreements[ordinal]?.tieBreakSource ?? null,
     };
   });
 }
@@ -117,6 +127,40 @@ export function rowsForRun(run: Run): RunRows {
     if (!item.passed) continue;
     const id = `${run.id}:${item.id}`;
     published.add(item.id);
+    const rawAgreement = (
+      run.output.spanAgreement as Record<string, unknown> | undefined
+    )?.[item.id];
+    const parsedAgreement = Agreement.array().safeParse(rawAgreement ?? []);
+    const agreements =
+      parsedAgreement.success &&
+      parsedAgreement.data.length === item.claim.evidence.length
+        ? parsedAgreement.data
+        : [];
+    const pointerEvidence =
+      !!source &&
+      item.claim.evidence.length > 0 &&
+      item.claim.evidence.every((e) => {
+        if (!e.source_span) return false;
+        try {
+          const derived = deriveEvidence(source, e.source_span);
+          return (
+            derived.text_hash === e.source_span.text_hash &&
+            derived.quote_original === e.quote_original
+          );
+        } catch {
+          return false;
+        }
+      });
+    const trust = computeTrustLevel(
+      {
+        structural: item.passed && item.reasons.length === 0,
+        pointerEvidence,
+        priceTicker: !!source && validateClaim(item.claim, source).length === 0,
+        criticAccepted: item.audit?.verdict === "accept",
+      },
+      agreements,
+      [],
+    );
     claims.push({
       id,
       runId: run.id,
@@ -131,21 +175,14 @@ export function rowsForRun(run: Run): RunRows {
       conditionsEn: item.claim.conditions_en,
       risksEn: item.claim.risks_en,
       creatorConviction: item.claim.creator_conviction,
-      // L0 is what publish can honestly assert: the structural checks and the
-      // critique. Raising it is the trust ladder's job, and upsertClaim()
-      // never lowers a level a later pass has already granted.
-      trustLevel: "L0",
-      trustBasis: {
-        structural: true,
-        critique: item.audit?.verdict ?? null,
-        pointerEvidence: item.claim.evidence.every((e) => !!e.source_span),
-        evidenceCount: item.claim.evidence.length,
-      },
+      // Pointer integrity, deterministic financial checks and independent
+      // span agreement determine trust; human signatures are loaded on write.
+      ...trust,
       configHash: hash,
       publishedAt,
       createdAt: run.createdAt,
     });
-    spans.push(...spansOf(id, item, source));
+    spans.push(...spansOf(id, item, source, agreements));
   }
   const mentions: MentionRow[] = (
     (run.output.mentions || []) as MentionData[]
@@ -164,7 +201,13 @@ export function rowsForRun(run: Run): RunRows {
       mention.claim_id && published.has(mention.claim_id)
         ? `${run.id}:${mention.claim_id}`
         : null,
-    trustLevel: "L0",
+    trustLevel:
+      !!mention.source_span &&
+      ((run.output.mentionChecks ?? {}) as Record<string, boolean>)[
+        `${mention.ticker ?? mention.instrument_as_spoken}:${mention.source_span.start_id}:${mention.source_span.end_id}`
+      ]
+        ? "L1"
+        : "L0",
     spanId: mention.source_span?.start_id ?? null,
     publishedAt,
   }));
@@ -183,9 +226,60 @@ export function rowsForRun(run: Run): RunRows {
  * over the same output writes the same rows and deletes nothing.
  */
 export async function writeRunRows(rows: RunRows) {
-  for (const claim of rows.claims) await upsertClaim(claim);
+  for (const claim of rows.claims) {
+    const basis = TrustChecks.safeParse(claim.trustBasis);
+    if (basis.success) {
+      const agreements = Agreement.array().parse(
+        (claim.trustBasis as { agreement?: unknown }).agreement ?? [],
+      );
+      const spans = rows.spans.filter((s) => s.claimId === claim.id);
+      const reviews = (await reviewsForClaim(claim.id)).filter((r) => {
+        const listened = r.listenedSpan as {
+          startSeconds?: number;
+          endSeconds?: number;
+        } | null;
+        return (
+          !!listened &&
+          spans.length > 0 &&
+          spans.every(
+            (s) =>
+              s.startSeconds !== null &&
+              s.endSeconds !== null &&
+              typeof listened.startSeconds === "number" &&
+              typeof listened.endSeconds === "number" &&
+              listened.startSeconds <= s.startSeconds &&
+              listened.endSeconds >= s.endSeconds,
+          )
+        );
+      });
+      Object.assign(
+        claim,
+        computeTrustLevel(
+          basis.data,
+          agreements,
+          reviews,
+          claimContentDigest(claim, spans),
+        ),
+      );
+    }
+    await upsertClaim(
+      claim,
+      rows.spans.filter((s) => s.claimId === claim.id),
+    );
+  }
   for (const span of rows.spans) await upsertEvidenceSpan(span);
-  for (const mention of rows.mentions) await upsertMention(mention);
+  for (const mention of rows.mentions) {
+    if (
+      mention.claimId &&
+      rows.spans.some(
+        (s) => s.claimId === mention.claimId && s.startId === mention.spanId,
+      )
+    )
+      mention.trustLevel =
+        rows.claims.find((c) => c.id === mention.claimId)?.trustLevel ??
+        mention.trustLevel;
+    await upsertMention(mention);
+  }
   const kept = rows.claims.map((c) => c.id);
   await deleteSpansForClaims(await deleteClaimsForRunExcept(rows.runId, kept));
   const cited = new Map<string, number>();

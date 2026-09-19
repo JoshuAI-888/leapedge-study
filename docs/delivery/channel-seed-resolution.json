@@ -1,0 +1,105 @@
+{
+  "asOf": "2026-09-19T11:49:14.189Z",
+  "sourceArchive": "docs/archive/handoff-truealphadata.md",
+  "sourceSection": "6 / Tier 1",
+  "classification": "Archived research-priority Tier 1, not a current performance ranking",
+  "provider": "YouTube Data API v3 channels.list",
+  "lookups": [
+    {
+      "requestedHandle": "@JoseNajarroStocks",
+      "requestUrl": "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails&forHandle=%40JoseNajarroStocks",
+      "channels": [
+        {
+          "id": "UC5cEHfCr6WOE1R1zcohd1IA",
+          "title": "Jose Najarro Stocks",
+          "handle": "@josenajarrostocks",
+          "uploads": "UU5cEHfCr6WOE1R1zcohd1IA"
+        }
+      ]
+    },
+    {
+      "requestedHandle": "@jeremylefebvre-clips",
+      "requestUrl": "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails&forHandle=%40jeremylefebvre-clips",
+      "channels": [
+        {
+          "id": "UC_xMKlHYdRNXLX9XzuOLjsg",
+          "title": "Jeremy Lefebvre Clips ",
+          "handle": "@jeremylefebvre-clips",
+          "uploads": "UU_xMKlHYdRNXLX9XzuOLjsg"
+        }
+      ]
+    },
+    {
+      "requestedHandle": "@TickerSymbolYOU",
+      "requestUrl": "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails&forHandle=%40TickerSymbolYOU",
+      "channels": [
+        {
+          "id": "UC7kCeZ53sli_9XwuQeFxLqw",
+          "title": "Ticker Symbol: YOU",
+          "handle": "@tickersymbolyou",
+          "uploads": "UU7kCeZ53sli_9XwuQeFxLqw"
+        }
+      ]
+    },
+    {
+      "requestedHandle": "@josephhogue",
+      "requestUrl": "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails&forHandle=%40josephhogue",
+      "channels": [
+        {
+          "id": "UCbKdotYtcY9SxoU8CYAXdvg",
+          "title": "Let's Talk Money! with Joseph Hogue, CFA",
+          "handle": "@josephhogue",
+          "uploads": "UUbKdotYtcY9SxoU8CYAXdvg"
+        }
+      ]
+    },
+    {
+      "requestedHandle": "@ytfinance",
+      "requestUrl": "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails&forHandle=%40ytfinance",
+      "channels": [
+        {
+          "id": "UC3xKgYs1GqtoPu9tyYSjR8w",
+          "title": "YT Finance",
+          "handle": "@ytfinance",
+          "uploads": "UU3xKgYs1GqtoPu9tyYSjR8w"
+        }
+      ]
+    },
+    {
+      "requestedHandle": "@BullmarketLifestyle",
+      "requestUrl": "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails&forHandle=%40BullmarketLifestyle",
+      "channels": [
+        {
+          "id": "UC3cAbmdQafYWGdrUguDHGaQ",
+          "title": "Bullmarket Lifestyle by Daniel Wilhelmi",
+          "handle": "@bullmarketlifestyle",
+          "uploads": "UU3cAbmdQafYWGdrUguDHGaQ"
+        }
+      ]
+    },
+    {
+      "requestedHandle": "@ChitChatStocks",
+      "requestUrl": "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails&forHandle=%40ChitChatStocks",
+      "channels": [
+        {
+          "id": "UCG5Ni-SI-jyrEsoNUhqftNQ",
+          "title": "Chit Chat Stocks Podcast",
+          "handle": "@chitchatstocks",
+          "uploads": "UUG5Ni-SI-jyrEsoNUhqftNQ"
+        }
+      ]
+    },
+    {
+      "requestedHandle": "@InvestwithHenry",
+      "requestUrl": "https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails&forHandle=%40InvestwithHenry",
+      "channels": [
+        {
+          "id": "UC2Zg12phLyX1KTnH6D47d9g",
+          "title": "Invest with Henry",
+          "handle": "@investwithhenry",
+          "uploads": "UU2Zg12phLyX1KTnH6D47d9g"
+        }
+      ]
+    }
+  ]
+}

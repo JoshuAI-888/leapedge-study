@@ -8,6 +8,20 @@ description: Run and write up a YouTube Intelligence v2 phase gate — the check
 A phase does not close because its features are built. It closes because
 somebody wrote down, criterion by criterion, what was shown and what was not.
 
+## Current execution override — 19 September 2026
+
+Read `docs/delivery/standalone-scope.json` and `docs/delivery/standalone-build-loop.md`.
+The current user request authorizes completing Phase 2 and Phase 3 before stopping
+at Phase 4. The fifty human-verified cases are removed, not deferred. Old text
+below requiring those inputs or a separate human approval to start the next of
+these two build phases is superseded. Do not stop independent implementation for
+those reasons. Preserve real checks, honest merge state and conformance reports.
+Use browser control for the documented workflow and visual acceptance matrix;
+never infer it from a production build. The promotion command below is a legacy
+regression diagnostic only. Later LeapEdge comparisons have a cap of twenty
+analyses and all APIs together have a US$25 task cap. The worker runs on this Mac;
+hosted setup is documented. No Phase 4 feature or Finradar deployment is included.
+
 ## 0. Is the phase actually ready?
 
 ```sh

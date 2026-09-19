@@ -1,3 +1,5 @@
+import { claimsForRun } from "../../../../../server/youtube-intelligence/repos/claims.ts";
+import { spansForClaims } from "../../../../../server/youtube-intelligence/repos/evidence-spans.ts";
 import { docs } from "../../../../../server/youtube-intelligence/research-store.ts";
 import { get } from "../../../../../server/youtube-intelligence/store.ts";
 import {
@@ -19,8 +21,12 @@ export async function GET(
   try {
     guard(r);
     const run = await get((await params).id);
+    const claims = run ? await claimsForRun(run.id) : [];
     return run
       ? Response.json({
+          claims,
+          evidenceSpans: await spansForClaims(claims.map((c) => c.id)),
+          reviewerConfigured: Boolean(process.env.YTI_REVIEWER_ACCOUNT_ID),
           run: {
             ...run,
             output: { ...run.output, entityRegistry: await docs("entity") },

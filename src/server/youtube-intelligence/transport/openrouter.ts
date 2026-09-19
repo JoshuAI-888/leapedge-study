@@ -1,3 +1,4 @@
+import { normaliseModel, isPriced } from "./prices.ts";
 import { z } from "zod";
 import {
   ModelRequest,
@@ -32,11 +33,14 @@ const CatalogueModel = z.looseObject({
   id: z.string(),
   context_length: z.union([z.number(), z.string()]),
   pricing: Price.extend({ overrides: z.array(Price).optional() }),
+  supported_parameters: z.array(z.string()).optional(),
   reasoning: z
     .looseObject({ supported_efforts: z.array(z.string()).optional() })
     .optional(),
 });
-const Catalogue = z.looseObject({ data: z.array(z.looseObject({ id: z.string() })) });
+const Catalogue = z.looseObject({
+  data: z.array(z.looseObject({ id: z.string() })),
+});
 const Completion = z.looseObject({
   model: z.string().optional(),
   provider: z.string().optional(),
@@ -60,7 +64,10 @@ const Completion = z.looseObject({
 export function fromOpenRouter(data: unknown): ModelResponseData {
   const parsed = Completion.safeParse(data);
   if (!parsed.success)
-    throw new TransportError("unknown", "Provider response had an unexpected shape.");
+    throw new TransportError(
+      "unknown",
+      "Provider response had an unexpected shape.",
+    );
   const c = parsed.data;
   const choice = c.choices?.[0];
   const content = choice?.message?.content;
@@ -87,10 +94,17 @@ export type OpenRouterOptions = {
   timeoutMs?: number;
   catalogueTimeoutMs?: number;
 };
+function routerModel(model: string) {
+  const normalized = normaliseModel(model);
+  return normalized.startsWith("gemini-") && isPriced(normalized)
+    ? `google/${normalized}`
+    : model;
+}
 export class OpenRouterTransport implements ModelTransport {
   readonly name = "openrouter";
   readonly family = "openrouter" as const;
   private options: OpenRouterOptions;
+  private supportedParameters = new Map<string, string[]>();
   constructor(options: OpenRouterOptions = {}) {
     this.options = options;
   }
@@ -102,10 +116,16 @@ export class OpenRouterTransport implements ModelTransport {
   private async json(url: string, init: RequestInit, timeoutMs: number) {
     let response: Response;
     try {
-      response = await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+      response = await fetch(url, {
+        ...init,
+        signal: AbortSignal.timeout(timeoutMs),
+      });
     } catch (error) {
       if (error instanceof Error && error.name === "TimeoutError")
-        throw new TransportError("timeout", "Provider request timed out before a response.");
+        throw new TransportError(
+          "timeout",
+          "Provider request timed out before a response.",
+        );
       throw error;
     }
     if (!response.ok)
@@ -119,15 +139,27 @@ export class OpenRouterTransport implements ModelTransport {
   async describe(model: string): Promise<ModelDescription> {
     this.key();
     const catalogue = Catalogue.parse(
-      await this.json(CATALOGUE_URL, {}, this.options.catalogueTimeoutMs ?? 30000),
+      await this.json(
+        CATALOGUE_URL,
+        {},
+        this.options.catalogueTimeoutMs ?? 30000,
+      ),
     );
-    const entry = catalogue.data.find((m) => m.id === model);
+    const entry = catalogue.data.find((m) => m.id === routerModel(model));
     if (!entry) throw Error("Model is unavailable in the current catalogue.");
     const spec = CatalogueModel.parse(entry);
+    if (spec.supported_parameters)
+      this.supportedParameters.set(
+        routerModel(model),
+        spec.supported_parameters,
+      );
+    else this.supportedParameters.delete(routerModel(model));
     const rates = [spec.pricing, ...(spec.pricing.overrides || [])];
     return {
       contextLength: Number(spec.context_length),
-      inputRate: Math.max(...rates.map((p) => Number(p.prompt ?? spec.pricing.prompt))),
+      inputRate: Math.max(
+        ...rates.map((p) => Number(p.prompt ?? spec.pricing.prompt)),
+      ),
       audioRate: Math.max(...rates.map((p) => Number(p.audio || 0))),
       outputRate: Math.max(
         ...rates.map((p) => Number(p.completion ?? spec.pricing.completion)),
@@ -138,8 +170,12 @@ export class OpenRouterTransport implements ModelTransport {
   /** The chat/completions body for a request. */
   body(request: ModelRequestData) {
     const r = ModelRequest.parse(request);
-    const content: unknown[] = r.user.map((p) => ({ type: "text", text: p.text }));
-    if (r.video) content.push({ type: "video_url", video_url: { url: r.video.url } });
+    const content: unknown[] = r.user.map((p) => ({
+      type: "text",
+      text: p.text,
+    }));
+    if (r.video)
+      content.push({ type: "video_url", video_url: { url: r.video.url } });
     const messages: unknown[] = [];
     if (r.system?.length)
       messages.push({
@@ -148,11 +184,19 @@ export class OpenRouterTransport implements ModelTransport {
       });
     messages.push({ role: "user", content });
     return {
-      model: r.model,
+      model: routerModel(r.model),
       messages,
       max_tokens: r.maxOutputTokens,
-      temperature: r.temperature,
-      ...(r.reasoningEffort ? { reasoning: { effort: r.reasoningEffort } } : {}),
+      // require_parameters rejects every endpoint when a model does not
+      // support sampling temperature (for example Claude Sonnet 5).
+      ...(this.supportedParameters
+        .get(routerModel(r.model))
+        ?.includes("temperature") === false
+        ? {}
+        : { temperature: r.temperature }),
+      ...(r.reasoningEffort
+        ? { reasoning: { effort: r.reasoningEffort } }
+        : {}),
       ...(r.responseSchema
         ? {
             response_format: {

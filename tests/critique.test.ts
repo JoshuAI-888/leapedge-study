@@ -64,7 +64,11 @@ const claim = (i: number): ClaimData => ({
   risks_en: [],
   levels: [],
   evidence: [
-    { segment_id: `s${i}`, quote_original: line(i), quote_translation_en: line(i) },
+    {
+      segment_id: `s${i}`,
+      quote_original: line(i),
+      quote_translation_en: line(i),
+    },
   ],
 });
 const item = (id: string, i: number): CheckedClaim => ({
@@ -146,7 +150,8 @@ type RunFixture = {
 async function critiqueRun(setup: RunFixture) {
   await freshDatabase();
   process.env.YTI_BUDGET_USD = "10";
-  const { create } = await import("../src/server/youtube-intelligence/store.ts");
+  const { create } =
+    await import("../src/server/youtube-intelligence/store.ts");
   const snapshot = {
     id: setup.pointer ? "pointer.test.v1" : "evidence-first.web.v5",
     rationale: "Fixture prompt snapshot for the batched-critique test.",
@@ -187,10 +192,13 @@ async function withFake<T>(
 }
 
 test("the batched critic answers every claim in one call, whatever the claim count", async () => {
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   for (const count of [3, 30]) {
     const source = fixture(count);
-    const claims = Array.from({ length: count }, (_, i) => item(`c${i + 1}`, i));
+    const claims = Array.from({ length: count }, (_, i) =>
+      item(`c${i + 1}`, i),
+    );
     const run = await critiqueRun({ source, claims });
     const fake = new FakeModelTransport({ responses: { critique: critic() } });
     await withFake(fake, () => step(run));
@@ -199,7 +207,11 @@ test("the batched critic answers every claim in one call, whatever the claim cou
       1,
       `${count} claims must cost exactly one critic call`,
     );
-    assert.equal(fake.requestsFor("critique-0").length, 0, "no per-claim stage");
+    assert.equal(
+      fake.requestsFor("critique-0").length,
+      0,
+      "no per-claim stage",
+    );
     const request = fake.requestsFor("critique")[0];
     assert.equal(request.model, CRITIC);
     assert.deepEqual(request.responseSchema, critiqueResponseSchema);
@@ -223,7 +235,11 @@ test("the batched critic answers every claim in one call, whatever the claim cou
       reason_en: "The cited span supports c1.",
     });
     assert.equal(run.stage, "publish");
-    assert.equal(run.output.auditIndex, undefined, "no per-claim cursor remains");
+    assert.equal(
+      run.output.auditIndex,
+      undefined,
+      "no per-claim cursor remains",
+    );
     assert.equal(
       (run.output.critique as { calls: number; items: number }).calls,
       1,
@@ -232,7 +248,8 @@ test("the batched critic answers every claim in one call, whatever the claim cou
 });
 
 test("verdict ids map back to claims, key points and mentions", async () => {
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   const claims = [item("c1", 1), item("c2", 2)];
   const keyPoints = [item("k1", 3)];
   const mentions = [mention(4), mention(5)];
@@ -308,7 +325,8 @@ test("verdict ids map back to claims, key points and mentions", async () => {
 });
 
 test("the transcript is cached once per run, reused by a later pass and released at publish", async () => {
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   const run = await critiqueRun({ claims: [item("c1", 1)] });
   const fake = new FakeModelTransport({ responses: { critique: critic() } });
   const settings = teamDefaults();
@@ -369,7 +387,8 @@ test("the transcript is cached once per run, reused by a later pass and released
 });
 
 test("with context caching off the transcript is inlined and no cache is created", async () => {
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   const run = await critiqueRun({ claims: [item("c1", 1)] });
   const fake = new FakeModelTransport({ responses: { critique: critic() } });
   const settings = teamDefaults();
@@ -390,7 +409,8 @@ test("with context caching off the transcript is inlined and no cache is created
 });
 
 test("the transcript is chunked only above processing.chunkAboveTokens", async () => {
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   const source = fixture(1200);
   const tokens = estimateTokens(source.segments);
   assert.ok(tokens > 10000 && tokens < 700000, `fixture is ${tokens} tokens`);
@@ -468,7 +488,8 @@ test("the transcript is chunked only above processing.chunkAboveTokens", async (
 });
 
 test("a legacy run with no pointer evidence uses the same batched critic", async () => {
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   const claims = [item("c1", 1), item("c2", 2)];
   const run = await critiqueRun({ claims, pointer: false });
   assert.equal(
@@ -493,8 +514,12 @@ test("a legacy run with no pointer evidence uses the same batched critic", async
 });
 
 test("a claim with a structural reason is never sent to the critic and no call is made for an empty batch", async () => {
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
-  const rejected = { ...item("c1", 1), reasons: ["Quote does not match the retained source."] };
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
+  const rejected = {
+    ...item("c1", 1),
+    reasons: ["Quote does not match the retained source."],
+  };
   const run = await critiqueRun({ claims: [rejected] });
   const fake = new FakeModelTransport({ responses: { critique: critic() } });
   await withFake(fake, () => step(run));
@@ -507,8 +532,10 @@ test("a claim with a structural reason is never sent to the critic and no call i
 test("an incomplete generated transcript is held for review; there is no source-repair stage", async () => {
   await freshDatabase();
   process.env.YTI_BUDGET_USD = "10";
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
-  const { create } = await import("../src/server/youtube-intelligence/store.ts");
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { create } =
+    await import("../src/server/youtube-intelligence/store.ts");
   const run = await create(
     "no-repair",
     MODEL,
@@ -540,8 +567,19 @@ test("parseCritique accepts either envelope and refuses a duplicated id", () => 
   const one = { id: "c1", verdict: "accept", reason_en: "Supported." };
   assert.deepEqual(parseCritique({ verdicts: [one] }), [one]);
   assert.deepEqual(parseCritique([one]), [one]);
+  for (const blank of ["", "   "])
+    assert.equal(
+      parseCritique({ verdicts: [{ ...one, cross_claim_notes: blank }] })[0]
+        .cross_claim_notes,
+      undefined,
+    );
+  assert.throws(() =>
+    parseCritique({ verdicts: [{ ...one, cross_claim_notes: 123 }] }),
+  );
   assert.throws(() => parseCritique({ verdicts: [one, one] }), /two verdicts/);
-  assert.throws(() => parseCritique({ verdicts: [{ ...one, verdict: "maybe" }] }));
+  assert.throws(() =>
+    parseCritique({ verdicts: [{ ...one, verdict: "maybe" }] }),
+  );
   assert.throws(() => parseCritique({ verdicts: [{ ...one, reason_en: "" }] }));
   assert.deepEqual(
     parseCritique({
@@ -611,7 +649,10 @@ test("GoogleNativeTransport creates, names and deletes an explicit cache; OpenRo
   });
   assert.equal(transport.parameters(request).config?.cachedContent, cache.name);
   // OpenRouter cannot cache: the field is ignored, never sent as an unknown key.
-  const body = new OpenRouterTransport().body(request) as Record<string, unknown>;
+  const body = new OpenRouterTransport().body(request) as Record<
+    string,
+    unknown
+  >;
   assert.equal(body.cachedContent, undefined);
   assert.equal(JSON.stringify(body).includes(cache.name), false);
   const openRouter: ModelTransport = new OpenRouterTransport();

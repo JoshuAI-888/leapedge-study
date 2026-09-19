@@ -45,11 +45,23 @@ export async function savePrices(rows: PriceRow[]): Promise<number> {
     for (const row of rows) {
       await database
         .prepare(
+          `INSERT INTO price_history(${COLUMNS}) VALUES($1,$2,$3,$4,$5) ON CONFLICT(ticker,date,fetched_at) DO NOTHING`,
+        )
+        .run(
+          row.ticker,
+          row.date,
+          row.adjustedClose,
+          row.source,
+          row.fetchedAt,
+        );
+      await database
+        .prepare(
           `INSERT INTO prices(${COLUMNS}) VALUES($1,$2,$3,$4,$5)
            ON CONFLICT(ticker,date) DO UPDATE SET
              adjusted_close=excluded.adjusted_close,
              source=excluded.source,
-             fetched_at=excluded.fetched_at`,
+             fetched_at=excluded.fetched_at
+           WHERE excluded.fetched_at > prices.fetched_at`,
         )
         .run(
           row.ticker,
@@ -84,4 +96,15 @@ export async function pricedTickers(): Promise<string[]> {
     .prepare("SELECT DISTINCT ticker FROM prices ORDER BY ticker")
     .all()) as { ticker: string }[];
   return rows.map((r) => String(r.ticker));
+}
+
+/** All retained revisions for query-time benchmark selection and historical cutoffs. */
+export async function priceHistory(): Promise<PriceRow[]> {
+  return (
+    (await database
+      .prepare(
+        `SELECT ${COLUMNS} FROM price_history ORDER BY ticker,date,fetched_at`,
+      )
+      .all()) as Record<string, unknown>[]
+  ).map(convert);
 }

@@ -1,0 +1,64 @@
+{
+  "version": "standalone-verification.v1",
+  "at": "2026-09-19T12:44:23.630Z",
+  "sourceSha256": "4c02b7b1acf3b57a25ac1efad11ab900c40351b5ef164dc3dc551cc09e4cf436",
+  "commandChecksPassed": true,
+  "checks": [
+    {
+      "id": "tests",
+      "exitCode": 0
+    },
+    {
+      "id": "pglite-tests",
+      "exitCode": 0
+    },
+    {
+      "id": "typecheck",
+      "exitCode": 0
+    },
+    {
+      "id": "build",
+      "exitCode": 0
+    },
+    {
+      "id": "audit",
+      "exitCode": 0
+    },
+    {
+      "id": "promotion-diagnostic",
+      "exitCode": 0
+    }
+  ],
+  "tests": {
+    "default": {
+      "total": 402,
+      "passed": 401,
+      "failed": 0,
+      "skipped": 1
+    },
+    "pglite": {
+      "total": 402,
+      "passed": 401,
+      "failed": 0,
+      "skipped": 1
+    },
+    "realPostgres": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "dependencyVulnerabilities": 0,
+  "auditNote": "Final complete loop ran with network access; npm audit passed with zero vulnerabilities.",
+  "browser": "partial; see browser-acceptance.json",
+  "live": "completed one caption-first English pilot; docs/delivery/live-comparison.json",
+  "finradarIntegration": "out-of-scope",
+  "macServices": {
+    "runtime": "~/Library/Application Support/YouTube Intelligence",
+    "postgres": "running",
+    "worker": "running; fresh heartbeat",
+    "web": "running; status API HTTP 200",
+    "queuePaused": true
+  },
+  "ledgerAfterDocumentation": "9/9 targeted ledger checks pass"
+}

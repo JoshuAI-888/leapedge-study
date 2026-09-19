@@ -1,8 +1,14 @@
 import { z } from "zod";
-import { doc, put, researchDB, queue } from "./research-store.ts";
+import { randomUUID } from "node:crypto";
+import {
+  doc,
+  put,
+  researchDB,
+  queue,
+  teamPreferences,
+} from "./research-store.ts";
 import { json } from "./database.ts";
 import {
-  PROCESSING_AUTOMATIC,
   PROCESSING_ON_REQUEST,
   getChannel,
   listChannels,
@@ -104,7 +110,9 @@ export async function updateChannel(input: unknown) {
       p.autoAnalyze === undefined
         ? c.processing
         : p.autoAnalyze
-          ? PROCESSING_AUTOMATIC
+          ? c.processing && c.processing !== PROCESSING_ON_REQUEST
+            ? c.processing
+            : (await teamPreferences()).processing.channelUploads
           : PROCESSING_ON_REQUEST,
   });
   return (await getChannel(p.id))!;
@@ -141,6 +149,12 @@ export async function pull(id: string, older = false) {
         .run(videoId, id, JSON.stringify(payload), new Date().toISOString());
       added += Number(r.changes);
     }
+    // Only the latest-feed refresh proves the top of a projection window is fresh.
+    // Older pagination must not refresh this timestamp.
+    if (!older)
+      await put("channelCoverage", id, {
+        latestMetadataAt: new Date().toISOString(),
+      });
     await upsertChannel({
       ...c,
       lastPull: new Date().toISOString(),
@@ -170,19 +184,27 @@ export async function pull(id: string, older = false) {
   }
 }
 export async function analyzeDiscovery(id: string) {
-  const d = await researchDB(),
-    v = await d
-      .prepare("SELECT * FROM yi_discoveries WHERE video_id=$1")
+  const d = await researchDB();
+  return d.transaction(async () => {
+    const v = await d
+      .prepare("SELECT * FROM yi_discoveries WHERE video_id=$1 FOR UPDATE")
       .get(id);
-  if (!v) throw Error("Upload not found.");
-  if (v.run_id) return { id: v.run_id };
-  const run = await queue(id);
-  await d
-    .prepare(
-      "UPDATE yi_discoveries SET run_id=$1 WHERE video_id=$2 AND run_id IS NULL",
-    )
-    .run(run.id, id);
-  return run;
+    if (!v) throw Error("Upload not found.");
+    if (v.run_id) return { id: String(v.run_id), newlyQueued: false };
+    const channel = await getChannel(String(v.channel_id));
+    const processingMode =
+      channel?.processing === "immediate" || channel?.processing === "batch"
+        ? channel.processing
+        : undefined;
+    const run = await queue(id, undefined, undefined, false, {
+      origin: "channel",
+      processingMode,
+    });
+    await d
+      .prepare("UPDATE yi_discoveries SET run_id=$1 WHERE video_id=$2")
+      .run(run.id, id);
+    return { ...run, newlyQueued: true };
+  });
 }
 export async function pullDue() {
   for (const c of (await listChannels())
@@ -304,4 +326,47 @@ export async function backfillChannel(input: unknown) {
     message:
       "Metadata only. Analysis requires a separate action. Continue from the saved cursor for more history.",
   };
+}
+
+/** Apply the complete user-selected processing set in one transaction and retain its history. */
+export async function saveProcessingSelection(input: unknown) {
+  const selected = [
+    ...new Set(z.array(z.string().min(1)).max(1000).parse(input)),
+  ].sort();
+  const d = await researchDB();
+  return d.transaction(async () => {
+    const channels = await listChannels();
+    const known = new Set(channels.map((c) => c.id));
+    if (selected.some((id) => !known.has(id)))
+      throw Error("Unknown channel in processing selection.");
+    for (const c of channels)
+      await updateChannel({ id: c.id, autoAnalyze: selected.includes(c.id) });
+    const version = {
+      id: `manual.${randomUUID()}`,
+      rule: "manual",
+      version: "v1",
+      at: new Date().toISOString(),
+      reason: "User-selected automatic processing channels.",
+      channelIds: selected,
+    };
+    await put("channelSelection", version.id, version);
+    return version;
+  });
+}
+
+/** Explicit UI opt-in: analyse this upload and enable future processing in the same transaction. */
+export async function analyzeUploadAndProcess(id: string) {
+  const d = await researchDB();
+  return d.transaction(async () => {
+    const upload = await d
+      .prepare("SELECT channel_id FROM yi_discoveries WHERE video_id=$1")
+      .get(id);
+    if (!upload) throw Error("Upload not found.");
+    const run = await analyzeDiscovery(id);
+    const selected = (await listChannels())
+      .filter((c) => c.autoAnalyze)
+      .map((c) => c.id);
+    await saveProcessingSelection([...selected, String(upload.channel_id)]);
+    return run;
+  });
 }

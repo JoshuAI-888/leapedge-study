@@ -5,6 +5,10 @@ import {
 } from "../../../server/youtube-intelligence/research-store.ts";
 import type { CheckedClaim } from "../contracts.ts";
 import {
+  loadBoardSnapshot,
+  boardAsOf,
+} from "../../../server/youtube-intelligence/leaderboard.ts";
+import {
   MetricContext,
   SettlementRow,
   TrustLevel,
@@ -34,11 +38,69 @@ export function trustLevelOf(claim: CheckedClaim): TrustLevelName | null {
   if (stored.success) return stored.data;
   return claim.audit?.verdict === "accept" ? "L1" : "L0";
 }
-export function emptyMetricContext(scope: MetricScopeInput = { asOf: "1970-01-01" }): MetricContext {
-  return MetricContext.parse({ ...MetricScope.parse(scope), settlements: [], claims: [] });
+export function emptyMetricContext(
+  scope: MetricScopeInput = { asOf: "1970-01-01" },
+): MetricContext {
+  return MetricContext.parse({
+    ...MetricScope.parse(scope),
+    settlements: [],
+    claims: [],
+  });
 }
-export async function loadMetricContext(input: MetricScopeInput): Promise<MetricContext> {
+export async function loadMetricContext(
+  input: MetricScopeInput,
+): Promise<MetricContext> {
   const scope = MetricScope.parse(input);
+  if (scope.mode !== "leapedge") {
+    const snapshot = await loadBoardSnapshot();
+    const board = boardAsOf(snapshot, {
+      asOf: scope.asOf,
+      horizonDays: scope.horizonDays as 90 | 180 | 365,
+      benchmark: scope.benchmark,
+      record: scope.mode,
+    });
+    const eligibleRuns = new Set(
+      snapshot.runs
+        .filter(
+          (r) =>
+            r.record === scope.mode && r.createdAt.slice(0, 10) <= scope.asOf,
+        )
+        .map((r) => r.id),
+    );
+    const claims = snapshot.claims
+      .filter((c) => eligibleRuns.has(c.runId))
+      .map((c) => ({
+        runId: c.runId,
+        claimId: c.id,
+        channel:
+          snapshot.channels.find((row) => row.id === c.channelId)?.title ??
+          c.channelId ??
+          "Unknown",
+        ticker: c.ticker,
+        stance: c.stance,
+        conviction: c.creatorConviction,
+        passed: true,
+        trust: c.trustLevel,
+      }));
+    const settlements = board.scored.map((s) => ({
+      id: s.settlement.id,
+      runId: s.claim.runId,
+      claimId: s.claim.id,
+      channel: claims.find((c) => c.claimId === s.claim.id)!.channel,
+      ticker: s.claim.ticker ?? undefined,
+      status: "completed",
+      stockReturn: s.settlement.return!,
+      spyReturn: s.benchmarkReturn,
+      excessReturn: s.excess,
+      win: s.settlement.return! > 0,
+      beatsSpy: s.excess > 0,
+      horizonDays: scope.horizonDays,
+      benchmark: scope.benchmark,
+      mode: scope.mode,
+    }));
+    return MetricContext.parse({ ...scope, claims, settlements });
+  }
+  // Legacy comparison fixtures are a Lab-only oracle; product records above use relational rows.
   const runs = await canonicalRuns();
   const runIds = new Set(runs.map((r) => r.id));
   const claims: ClaimRowData[] = runs.flatMap((r) => {
@@ -59,7 +121,8 @@ export async function loadMetricContext(input: MetricScopeInput): Promise<Metric
     .filter(
       (row) =>
         (row.runId === undefined || runIds.has(row.runId)) &&
-        (row.horizonDays === undefined || row.horizonDays === scope.horizonDays) &&
+        (row.horizonDays === undefined ||
+          row.horizonDays === scope.horizonDays) &&
         (row.benchmark === undefined || row.benchmark === scope.benchmark) &&
         (row.mode === undefined || row.mode === scope.mode),
     );

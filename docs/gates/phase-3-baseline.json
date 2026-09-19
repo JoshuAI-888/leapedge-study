@@ -1,0 +1,16 @@
+{
+  "version": "standalone-conformance.v1",
+  "phase": 3,
+  "status": "acceptance-incomplete",
+  "implementation": "F32-F48 in review in PR 6",
+  "commandEvidence": "docs/gates/standalone-verification.json",
+  "browserEvidence": "docs/gates/browser-acceptance.json",
+  "liveEvidence": "docs/delivery/live-comparison.json",
+  "remaining": [
+    "Final production desktop/mobile visual and UX acceptance via browser control",
+    "Completed live native batch job",
+    "Reachable HTTPS push delivery"
+  ],
+  "humanVerified50": "removed from scope",
+  "finradarIntegration": "out of scope"
+}

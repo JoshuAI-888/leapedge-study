@@ -10,7 +10,6 @@ import {
 } from "./research-store.ts";
 import { get, db } from "./store.ts";
 import {
-  MODELS,
   Source,
   type Run,
 } from "../../features/youtube-intelligence/contracts.ts";
@@ -21,8 +20,8 @@ const Spec = z.object({
   variants: z
     .array(
       z.object({
-        model: z.enum(MODELS),
-        criticModel: z.enum(MODELS),
+        model: z.string().trim().min(1).max(200),
+        criticModel: z.string().trim().min(1).max(200),
         promptVersion: z.string(),
       }),
     )

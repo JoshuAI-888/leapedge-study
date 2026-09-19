@@ -3,7 +3,7 @@ import * as R from "../research-store.ts";
 import { queueAudioReview } from "../audio-review.ts";
 import { startExperiment } from "../experiments.ts";
 import { managedTranscript, SourcePending } from "../transcripts.ts";
-import { MODELS } from "../../../features/youtube-intelligence/contracts.ts";
+import { videoId } from "../../../features/youtube-intelligence/contracts.ts";
 import { writes, type ActionTable } from "./types.ts";
 const CaptionProbe = z.strictObject({
   videoId: z.string().regex(/^[\w-]{11}$/),
@@ -47,6 +47,10 @@ async function captionProbe(v: z.output<typeof CaptionProbe>) {
   }
 }
 export const runs: ActionTable = {
+  analyse: writes(
+    z.strictObject({ url: z.string().trim().min(1).max(1000) }),
+    ({ url }) => R.queue(videoId(url)),
+  ),
   captionProbe: writes(CaptionProbe, captionProbe),
   audioReview: writes(z.string(), (id) => queueAudioReview(id)),
   experiment: writes(
@@ -56,8 +60,8 @@ export const runs: ActionTable = {
       variants: z
         .array(
           z.strictObject({
-            model: z.enum(MODELS),
-            criticModel: z.enum(MODELS),
+            model: z.string().trim().min(1).max(200),
+            criticModel: z.string().trim().min(1).max(200),
             promptVersion: z.string(),
           }),
         )

@@ -1,18 +1,48 @@
 {
   "source": "truealpha",
   "tier": 1,
-  "placeholder": true,
-  "note": "PLACEHOLDER. The real TrueAlphaData Tier 1 list (about 20 channels) was not available to the build that created this file, and channel IDs and handles are not guessable, so inventing them would have seeded rows pointing at the wrong creators. Replace the entries below with the real list. Every entry is tier 1 unless it says otherwise, and tier 1 is selected for automatic analysis.",
+  "placeholder": false,
+  "note": "Eight explicit Tier 1 handles from archived handoff section 6, resolved through YouTube channels.list on 2026-09-19T11:49:14.189Z. Tier reflects the archived research priority, not a verified or current performance ranking. Archive narrative mentions 12 but provides only these 8 Tier 1 handles. Evidence: docs/delivery/channel-seed-resolution.json.",
   "channels": [
     {
-      "id": "UCPLACEHOLDER-truealpha1",
-      "handle": "@placeholder-truealpha-1",
-      "title": "TrueAlphaData placeholder 1"
+      "id": "UC5cEHfCr6WOE1R1zcohd1IA",
+      "handle": "@josenajarrostocks",
+      "title": "Jose Najarro Stocks"
     },
     {
-      "id": "UCPLACEHOLDER-truealpha2",
-      "handle": "@placeholder-truealpha-2",
-      "title": "TrueAlphaData placeholder 2"
+      "id": "UC_xMKlHYdRNXLX9XzuOLjsg",
+      "handle": "@jeremylefebvre-clips",
+      "title": "Jeremy Lefebvre Clips"
+    },
+    {
+      "id": "UC7kCeZ53sli_9XwuQeFxLqw",
+      "handle": "@tickersymbolyou",
+      "title": "Ticker Symbol: YOU"
+    },
+    {
+      "id": "UCbKdotYtcY9SxoU8CYAXdvg",
+      "handle": "@josephhogue",
+      "title": "Let's Talk Money! with Joseph Hogue, CFA"
+    },
+    {
+      "id": "UC3xKgYs1GqtoPu9tyYSjR8w",
+      "handle": "@ytfinance",
+      "title": "YT Finance"
+    },
+    {
+      "id": "UC3cAbmdQafYWGdrUguDHGaQ",
+      "handle": "@bullmarketlifestyle",
+      "title": "Bullmarket Lifestyle by Daniel Wilhelmi"
+    },
+    {
+      "id": "UCG5Ni-SI-jyrEsoNUhqftNQ",
+      "handle": "@chitchatstocks",
+      "title": "Chit Chat Stocks Podcast"
+    },
+    {
+      "id": "UC2Zg12phLyX1KTnH6D47d9g",
+      "handle": "@investwithhenry",
+      "title": "Invest with Henry"
     }
   ]
 }

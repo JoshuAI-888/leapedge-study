@@ -1,0 +1,32 @@
+{
+  "version": "standalone-conformance.v1",
+  "phase": 2,
+  "date": "2026-09-19",
+  "implementationStatus": "in-review",
+  "overallStatus": "implementation-and-command-checks-passed-in-review",
+  "evidence": {
+    "realPostgres": {
+      "database": "isolated localhost yti_queue",
+      "tests": "tests/e2e-parallel.test.ts",
+      "passed": 2,
+      "skipped": 0,
+      "proves": [
+        "four concurrent fixture stages on separate connections",
+        "SIGKILL restart reuses retained matching paid response",
+        "stale lease fencing"
+      ]
+    },
+    "queue": "targeted claim, capacity, dedupe, lease renewal and pause/drain checks pass",
+    "cost": "unknown coverage, zero-result cost, UTC month, open holds and atomic selection tests pass",
+    "seed": "eight archived TrueAlpha Tier-1 handles resolved through official YouTube API; unavailable LeapEdge ranking explicitly empty",
+    "api": "strict action schemas and read/write methods tested",
+    "commandChecks": "docs/gates/standalone-verification.json"
+  },
+  "limitations": [
+    "Full final branch checks recorded separately",
+    "Fixture providers do not establish live model quality",
+    "Human gold-set minimum removed from scope",
+    "Mac service and browser acceptance tracked separately"
+  ],
+  "finradarIntegration": "out-of-scope"
+}

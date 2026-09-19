@@ -37,8 +37,7 @@ test("Prompt v7 carries the pointer flag through the registry and leaves every s
     assert.equal(row!.hash, hash, `${id} hash moved`);
   }
   const v7 = byId.get("evidence-first.web.v7") as
-    | { hash?: string; pointerEvidence?: boolean }
-    | undefined;
+    { hash?: string; pointerEvidence?: boolean } | undefined;
   assert.ok(v7, "evidence-first.web.v7 is not seeded");
   assert.equal(v7!.pointerEvidence, true);
   assert.notEqual(v7!.hash, FROZEN_HASHES["evidence-first.web.v6"]);
@@ -62,10 +61,12 @@ test("Prompt v7 carries the pointer flag through the registry and leaves every s
     true,
   );
 });
-test("Seeding the bundled versions is idempotent and promotion stays with the gate", async () => {
+test("Seeding the bundled versions is idempotent and new teams use pointer evidence", async () => {
   await R.promptVersions();
   await R.prompt("evidence-first.web.v7");
-  const rows = await (await S.db())
+  const rows = await (
+    await S.db()
+  )
     .prepare("SELECT id FROM yi_prompts WHERE id=$1")
     .all("evidence-first.web.v7");
   assert.equal(rows.length, 1);
@@ -75,8 +76,9 @@ test("Seeding the bundled versions is idempotent and promotion stays with the ga
     all.length,
     "a bundled version was seeded twice",
   );
-  // F19 ships v7 as a candidate only: the default moves through F08's gate.
-  assert.equal(teamDefaults().prompts.version, "evidence-first.web.v5");
+  // Standalone completion defaults new teams to the pointer-evidence prompt.
+  assert.equal(teamDefaults().prompts.version, "evidence-first.web.v7");
+  // The compatibility preferences document keeps its historical default.
   assert.equal((await R.preferences()).promptVersion, "evidence-first.web.v5");
 });
 test("v7 asks for pointer evidence, sentiment-bearing mentions and a calibrated conviction", async () => {

@@ -1,3 +1,4 @@
+import { assertCriticIndependent, modelFamily } from "./transport/index.ts";
 import { canDropFailedAudit } from "../../features/youtube-intelligence/research-quality.ts";
 import { randomUUID, createHash } from "node:crypto";
 import { z } from "zod";
@@ -307,7 +308,9 @@ async function insertPrompt(input: unknown) {
 export async function addPrompt(input: unknown) {
   const { version, inserted } = await insertPrompt(input);
   if (!inserted)
-    throw Error("A prompt version with this id or this content already exists.");
+    throw Error(
+      "A prompt version with this id or this content already exists.",
+    );
   return version;
 }
 /**
@@ -317,12 +320,11 @@ export async function addPrompt(input: unknown) {
 async function seed() {
   if (process.env.YTI_PREVIEW_READ_ONLY === "true") return;
   const present = new Set(
-    (
-      await (await researchDB()).prepare("SELECT id FROM yi_prompts").all()
-    ).map((r) => String(r.id)),
+    (await (await researchDB()).prepare("SELECT id FROM yi_prompts").all()).map(
+      (r) => String(r.id),
+    ),
   );
-  for (const p of bundledPrompts)
-    if (!present.has(p.id)) await insertPrompt(p);
+  for (const p of bundledPrompts) if (!present.has(p.id)) await insertPrompt(p);
 }
 export async function prompt(id: string) {
   await seed();
@@ -405,25 +407,92 @@ export async function resolvedAccountPreferences(
     await accountPreferences(accountId),
   );
 }
+/** A queued run owns its effective settings; later team edits affect new runs. */
+export async function runTeamPreferences(
+  run: Run,
+  override?: TeamPreferencesData,
+): Promise<TeamPreferencesData> {
+  return run.input.teamPreferencesSnapshot !== undefined
+    ? TeamPreferences.parse(run.input.teamPreferencesSnapshot)
+    : override
+      ? TeamPreferences.parse(override)
+      : teamPreferences();
+}
+/** Explicit audio verification owns a second snapshot without rewriting extraction provenance. */
+export async function runAudioTrustPreferences(
+  run: Run,
+  override?: TeamPreferencesData,
+): Promise<TeamPreferencesData> {
+  return run.input.audioTrustConfig !== undefined
+    ? TeamPreferences.parse(run.input.audioTrustConfig)
+    : runTeamPreferences(run, override);
+}
 export async function queue(
   videoId: string,
   source?: unknown,
-  config?: Partial<PreferencesData>,
+  config?: Omit<Partial<PreferencesData>, "model" | "criticModel"> & {
+    model?: string;
+    criticModel?: string;
+  },
   experiment = false,
+  options: {
+    origin?: "channel" | "manual";
+    record?: "historical" | "forward";
+    processingMode?: "batch" | "immediate";
+  } = {},
 ) {
-  const p = { ...(await preferences()), ...config };
+  const origin = z
+    .object({
+      origin: z.enum(["channel", "manual"]).default("manual"),
+      record: z.enum(["historical", "forward"]).default("forward"),
+      processingMode: z.enum(["batch", "immediate"]).optional(),
+    })
+    .parse(options);
+  const team = await teamPreferences();
+  const legacy = await preferences();
+  const p = {
+    ...legacy,
+    model: team.models.extraction.id,
+    criticModel: team.models.critique.id,
+    transcriptionModel: team.models.transcription.id,
+    promptVersion: team.prompts.version,
+    nativeGoogleExperimental: false,
+    ...config,
+  };
+  const effective = TeamPreferences.parse(team);
+  effective.models.extraction.id = p.model;
+  effective.models.critique.id = p.criticModel;
+  effective.models.transcription.id = p.transcriptionModel;
+  effective.prompts.version = p.promptVersion;
+  if (config?.model && modelFamily(p.model) !== "google")
+    effective.models.extraction.transport = "openrouter";
+  if (config?.criticModel && modelFamily(p.criticModel) !== "google")
+    effective.models.critique.transport = "openrouter";
+  if (experiment) effective.models.critique.requireDifferentFamily = true;
+  assertCriticIndependent(effective);
   const snapshot = await prompt(p.promptVersion);
   return await create(
     videoId,
     p.model,
     {
       ...(source ? { source } : {}),
+      teamPreferencesSnapshot: TeamPreferences.parse(effective),
+      origin: origin.origin,
+      record: origin.record,
+      processingMode:
+        origin.processingMode ??
+        (origin.origin === "channel"
+          ? team.processing.channelUploads
+          : team.processing.userSubmitted),
       criticModel: p.criticModel,
       transcriptionModel: p.transcriptionModel,
       promptSnapshot: snapshot,
       experiment: experiment || p.nativeGoogleExperimental,
       pipelineVersion: "research.v5.institutional-candidate",
-      inferenceConfig: { critiqueMaxTokens: 6000, reasoningEffort: "low" },
+      inferenceConfig: {
+        critiqueMaxTokens: 6000,
+        reasoningEffort: effective.models.critique.thinkingBudget,
+      },
       transcriptionWindowSeconds: p.windowedTranscription ? 600 : 0,
       nativeGoogleExperimental: p.nativeGoogleExperimental,
     },
@@ -457,7 +526,9 @@ export async function canonicalRuns() {
     seen.add(r.videoId);
     return true;
   });
-  for (const r of process.env.YTI_PREVIEW_READ_ONLY === "true" ? [] : result) {
+  for (const r of process.env.YTI_PREVIEW_READ_ONLY === "true"
+    ? []
+    : result.filter((r) => r.input.record !== "historical")) {
     // A freeze: written once and never overwritten, so a later read of the same
     // video cannot rewrite what was first observed.
     await putIfAbsent("forwardObservation", r.videoId, {
@@ -657,6 +728,7 @@ export async function researchSnapshot() {
         cost: r.cost,
       })),
     integrations: {
+      fixtureMode: process.env.YTI_FIXTURE_MODE === "true",
       readOnly: process.env.YTI_PREVIEW_READ_ONLY === "true",
       youtube: !!process.env.YOUTUBE_API_KEY,
       openrouter: !!process.env.OPENROUTER_API_KEY,

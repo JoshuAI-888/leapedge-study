@@ -11,7 +11,11 @@ export function proxy(r: NextRequest) {
     return process.env.YTI_PUBLIC_SHARES === "true"
       ? NextResponse.next()
       : new NextResponse("Public shares are disabled.", { status: 404 });
-  if (path === "/api/cron/intelligence" || path === "/api/email/webhook")
+  if (
+    path === "/api/cron/intelligence" ||
+    path === "/api/email/webhook" ||
+    path === "/api/youtube-intelligence/push"
+  )
     return NextResponse.next();
   if (path === "/access" || path === "/api/access") return NextResponse.next();
   if (!validSession(r.cookies.get("yti_session")?.value || "")) {

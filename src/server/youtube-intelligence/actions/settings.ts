@@ -1,7 +1,24 @@
 import { z } from "zod";
+import {
+  TeamPreferences,
+  AccountPreferences,
+  teamDefaults,
+} from "../../../features/youtube-intelligence/settings.ts";
 import * as R from "../research-store.ts";
 import { reads, writes, nothing, type ActionTable } from "./types.ts";
 export const settings: ActionTable = {
+  teamAccount: reads(nothing, async () => ({
+    defaults: teamDefaults(),
+    team: await R.teamPreferences(),
+    account: await R.accountPreferences(),
+    resolved: await R.resolvedAccountPreferences(),
+  })),
+  saveTeam: writes(z.strictObject(TeamPreferences.shape), (v) =>
+    R.saveTeamPreferences(v),
+  ),
+  saveAccount: writes(z.strictObject(AccountPreferences.shape), (v) =>
+    R.saveAccountPreferences(v),
+  ),
   current: reads(nothing, async () => ({ preferences: await R.preferences() })),
   preferences: writes(z.strictObject(R.Preferences.shape), (v) =>
     R.savePreferences(v),

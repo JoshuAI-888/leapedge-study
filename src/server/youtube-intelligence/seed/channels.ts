@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { database } from "../database.ts";
 import { docs, putIfAbsent } from "../research-store.ts";
 import {
   DISCOVERY_SCHEDULED,
@@ -8,11 +9,7 @@ import {
   seedChannel,
   setAutomaticAnalysis,
 } from "../repos/channels.ts";
-import {
-  LEAPEDGE,
-  seedLists,
-  type SeedListData,
-} from "./lists.ts";
+import { LEAPEDGE, seedLists, type SeedListData } from "./lists.ts";
 /**
  * Seeding records a channel as worth watching. It does not start polling it:
  * a seeded row has no uploads playlist, because resolving one costs a YouTube
@@ -200,5 +197,26 @@ export async function seedChannels(lists: SeedListData[] = seedLists()) {
     seeded: (await listSeededChannels()).length,
     selection,
     recorded,
+  };
+}
+
+/** Install only source-backed catalog metadata; discovery and paid selection remain explicit user actions. */
+export async function seedCatalog(lists: SeedListData[] = seedLists()) {
+  const resolved = resolveSeeds(lists.filter((list) => !list.placeholder));
+  await database.transaction(async () => {
+    for (const channel of resolved)
+      await seedChannel({
+        id: channel.id,
+        handle: channel.handle,
+        title: channel.title,
+        tier: String(channel.tier),
+        seedSource: channel.seedSource,
+        discovery: DISCOVERY_SCHEDULED,
+        processing: PROCESSING_ON_REQUEST,
+      });
+  });
+  return {
+    channels: resolved.length,
+    recommendedChannelIds: defaultSelection(resolved),
   };
 }

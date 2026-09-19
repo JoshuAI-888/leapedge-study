@@ -21,7 +21,10 @@ export const CritiqueVerdict = z.object({
   verdict: z.enum(["accept", "reject"]),
   reason_en: z.string().min(1),
   /** Set only when another supplied id contradicts or qualifies this one. */
-  cross_claim_notes: z.string().min(1).optional(),
+  cross_claim_notes: z.preprocess(
+    (value) => (typeof value === "string" && !value.trim() ? undefined : value),
+    z.string().min(1).optional(),
+  ),
 });
 export type CritiqueVerdictData = z.infer<typeof CritiqueVerdict>;
 /**
@@ -128,5 +131,8 @@ export function critiquePayload(input: {
  * per-claim figure, and stays inside a bound no batch can talk past.
  */
 export function critiqueOutputTokens(items: number, configured?: number) {
-  return Math.min(48000, Math.max(configured || 3000, 400 * Math.max(1, items)));
+  return Math.min(
+    48000,
+    Math.max(configured || 3000, 400 * Math.max(1, items)),
+  );
 }

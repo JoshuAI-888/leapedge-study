@@ -13,10 +13,15 @@ export async function resolveInstrument(symbol: string) {
     throw Error(
       "Unresolved or non-equity symbol; explicit instrument mapping required.",
     );
-  const old = await doc<{ symbol: string; currency: string; exchange: string }>(
-    "instrument",
-    symbol,
-  );
+  const old = await doc<{
+    symbol: string;
+    currency: string;
+    exchange: string;
+    name?: string;
+    sector?: string;
+    market?: string;
+    verifiedAt?: string;
+  }>("instrument", symbol);
   if (old) return old;
   if (!process.env.FMP_API_KEY) throw Error("FMP key is not configured.");
   const url = new URL("https://financialmodelingprep.com/stable/profile");
@@ -48,6 +53,8 @@ export async function resolveInstrument(symbol: string) {
     currency: p.currency,
     exchange: p.exchangeShortName || p.exchange,
     name: p.companyName,
+    sector: typeof p.sector === "string" ? p.sector : undefined,
+    market: p.isEtf === true ? "us-etf" : "us-stock",
     verifiedAt: new Date().toISOString(),
   };
   await put("instrument", symbol, result);
