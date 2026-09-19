@@ -1087,13 +1087,15 @@
         "F48"
       ],
       "files": [
-        "docs/gates/phase-3-baseline.json"
+        "docs/gates/phase-3-baseline.json",
+        "docs/delivery/live-comparison-20-20260920.md",
+        "docs/delivery/live-comparison-20-20260920.json"
       ],
       "tests": [
         "tests/leaderboard.test.ts",
         "tests/push.test.ts"
       ],
-      "note": "Implementation and full command checks pass; one live caption-first pilot completed and compared with a retained LeapEdge report (US$0.12925415 total allocated spend, zero new LeapEdge analyses). Gate remains open: native Chrome screen/accessibility unavailable before final mobile/visual/UX pass; completed live Batch API and reachable HTTPS push evidence still absent. Fifty human-verified cases removed from scope. See docs/gates/browser-acceptance.json and docs/delivery/standalone-conformance.md. Approved Finradar UI alignment follow-up merged in PR #7 (3c8c2f3) on 20 September 2026 NZ time; see docs/delivery/finradar-ui-alignment.md for desktop/mobile evidence and preserved functionality.",
+      "note": "Code merged; acceptance remains open. Approved Finradar UI alignment merged in PR #7 with desktop/mobile checks (finradar-ui-alignment.md). The 20-video live comparison on 20 September completed: local 13 completed, 5 failed, 2 need review; LeapEdge 19 ready, 1 stopped. Repriced model usage US$2.176206, 16 free transcript credits, 16 new LeapEdge submissions plus 4 retained references. Live findings include ASR timing/coverage, synthesis span/truncation recovery, unresolved tickers, stale translation pricing and initial evidence-player timestamp mismatch. See docs/delivery/live-comparison-20-20260920.md. No human gold set or accuracy certification. Batch, HTTPS push and remaining broader browser acceptance stay open.",
       "planned": false,
       "pr": 6
     },

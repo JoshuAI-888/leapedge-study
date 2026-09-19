@@ -43,14 +43,15 @@
     "humanVerifiedGoldSetRequired": false,
     "reference": "leapedge-output-comparison",
     "timing": "after-build",
-    "desiredVideos": 50,
+    "desiredVideos": 20,
     "minimumVideosForBuild": 0,
     "candidateSources": [
       "existing archived video links",
       "TrueAlphaData channel links",
       "LeapEdge channel links"
     ],
-    "comparisonIsGroundTruth": false
+    "comparisonIsGroundTruth": false,
+    "latestComparison": "docs/delivery/live-comparison-20-20260920.md"
   },
   "requiredBuildEvidence": [
     "unit-and-integration-tests",
@@ -64,10 +65,12 @@
     "feature-conformance"
   ],
   "liveVerification": {
-    "status": "authorized-pending-build-and-credential-validation",
-    "apiSpendUsd": 25,
+    "status": "20-video-comparison-completed-with-findings",
+    "apiSpendUsd": null,
     "leapedgeAnalyses": 20,
-    "workerHost": "local Mac; hosted deployment documented, no new hosting subscription"
+    "workerHost": "local Mac; hosted deployment documented, no new hosting subscription",
+    "apiSpendPolicy": "User removed the prior US$25 cap for the 20-test comparison on 20 September 2026. Measure incurred usage including failures; no unbounded channel processing.",
+    "comparisonNewLeapEdgeSubmissions": 16
   },
   "completionRule": "Only evidence-backed implemented features count; never mark merged before merge. Build completion and live-provider verification are separate statuses."
 }
