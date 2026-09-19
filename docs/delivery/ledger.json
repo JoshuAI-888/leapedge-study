@@ -1304,7 +1304,7 @@
       "tests/ui-viewmodel.test.ts",
       "tests/runs-api.test.ts"
     ],
-    "note": "Seven stopped runs and four retained-transcript quality checks completed. Long podcast residual gap recovered; no new LeapEdge calls. Additional model usage $2.75417070. Dashboard now distinguishes recovered history from active review; final checks and browser acceptance in progress. Runs API exposes only validated recovery IDs so the browser can resolve recovered history without leaking private inputs.",
+    "note": "Seven stopped runs and four quality checks completed; long podcast has no uncovered interval over three seconds. No new LeapEdge calls. Additional API usage $2.75417070. Both full suites: 417 pass, one existing skip, zero failures; typecheck/build pass, offline gate advisory-only. Desktop/mobile browser checks passed, including zero unresolved dashboard runs and retained recovered history. PR #8 records merge/deployment; Mac runtime update preserves its database and paused queue.",
     "report": "docs/delivery/recovery-20260920.md",
     "results": "docs/delivery/recovery-20260920.json"
   }
