@@ -1308,6 +1308,16 @@
     "report": "docs/delivery/recovery-20260920.md",
     "results": "docs/delivery/recovery-20260920.json",
     "mergeCommit": "b27c9034ff1f2c143106cc91513a4e9a1f9fd2a2",
-    "hostedFollowUp": "Production origin corrected and redeployed; login reports hosted access not configured. Creating a valid production access code was blocked by automatic approval review pending explicit user approval. Authenticated hosted verification remains incomplete."
+    "hostedFollowUp": "Access code creation explicitly approved and completed. Production login 303, authenticated status/runs 200, browser login successful. Hosted database has zero runs and no worker/model credentials; local comparison/Mac runtime remain separate. See research review for operational follow-up."
+  },
+  "researchReview": {
+    "status": "proposed",
+    "report": "docs/reviews/investment-research-review-20260920.md",
+    "scope": "20 retained cases, 19 usable LeapEdge references; no new LeapEdge calls; proposal only",
+    "preferences": {
+      "horizons": "equal tactical and fundamental",
+      "timeContext": "video-date plus separate current update",
+      "ranking": "general cross-company material developments"
+    }
   }
 }
