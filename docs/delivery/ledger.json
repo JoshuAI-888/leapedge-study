@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-09-18",
+  "updated": "2026-09-19",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -139,7 +139,7 @@
         "tests/gold-validate.test.ts"
       ],
       "pr": 2,
-      "note": "Holds 5 pending cases against the 50 spec 4.9 requires. See docs/gates/gate-debt.md.",
+      "note": "Legacy diagnostic with five pending cases. The user removed the fifty human-verified case requirement on 19 September 2026; see standalone-scope.json.",
       "planned": true
     },
     {
@@ -682,7 +682,8 @@
       "tests": [
         "tests/e2e-parallel.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "note": "Close on real Postgres four-job concurrency, checkpoint/restart/no duplicate spend, pause/drain, cost projection and seed conformance; no human gold prerequisite."
     },
     {
       "id": "F32",
@@ -1056,7 +1057,7 @@
         "tests/leaderboard.test.ts",
         "tests/push.test.ts"
       ],
-      "note": "Anchor accuracy needs handoff A. Deferred in docs/gates/gate-debt.md until then.",
+      "note": "Close on implemented Phase 3 features, browser workflows and visual review, deterministic trust/anchor fixtures and conformance. Human gold-set accuracy requirement removed by user on 19 September 2026; LeapEdge comparison follows the build.",
       "planned": true
     },
     {
@@ -1249,5 +1250,6 @@
       "tests": [],
       "note": "What a fresh session reads before it touches anything."
     }
-  ]
+  ],
+  "executionScope": "docs/delivery/standalone-scope.json"
 }

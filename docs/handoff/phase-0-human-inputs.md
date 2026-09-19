@@ -1,5 +1,8 @@
 # Phase-0 human inputs: what to produce, how, and what "done" means
 
+> Superseded on 19 September 2026: the user removed the fifty human-verified cases from scope. This document is historical, not an outstanding request. Follow [the standalone loop](../delivery/standalone-build-loop.md); LeapEdge comparison follows the build.
+
+
 **For:** the person running the live keys.
 **Branch:** `feat/yti-v2` (worktree of `youtube-intelligence`), commits `dea63a4` (F01) to `b94831e` (F08a, the four scripts named below).
 **Why this exists:** phase 0 built the evaluation harness (gold set and promotion gate) but every number it reports is still *advisory*, because the inputs that make it binding can only be produced by a person with the audio and the keys. The moment each input lands, the matching gate check becomes binding.
