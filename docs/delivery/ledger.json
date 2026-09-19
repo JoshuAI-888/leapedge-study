@@ -567,7 +567,7 @@
       "lane": "queue",
       "title": "Postgres queue and always-on worker: jobs table with FOR UPDATE SKIP LOCKED",
       "spec": "4.7",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F23"
       ],
@@ -578,10 +578,12 @@
         "scripts/worker.ts"
       ],
       "tests": [
-        "tests/queue.test.ts"
+        "tests/queue.test.ts",
+        "tests/e2e-parallel.test.ts"
       ],
-      "note": "repos/jobs.ts landed with F24 and defines the jobs table, but defers FOR UPDATE SKIP LOCKED, lease fencing and the concurrency limit to this feature, so nothing imports it yet. PGlite is single-connection, so run scripts/postgres-check.ts against a real Postgres before the phase-2 gate.",
-      "planned": true
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged.",
+      "planned": true,
+      "pr": 6
     },
     {
       "id": "F27",
@@ -589,7 +591,7 @@
       "lane": "queue",
       "title": "Restart-safe resume from stage checkpoints and open-attempt rows",
       "spec": "4.4, 9",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F26",
         "F16"
@@ -601,7 +603,9 @@
       "tests": [
         "tests/resume.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F28",
@@ -629,20 +633,22 @@
       "lane": "seed",
       "title": "Cost projection and budget meter as registry metrics",
       "spec": "4.15, 6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F04",
         "F25",
         "F28"
       ],
       "files": [
-        "src/features/youtube-intelligence/metrics/cost.ts"
+        "src/features/youtube-intelligence/metrics/cost.ts",
+        "src/server/youtube-intelligence/cost-metrics.ts"
       ],
       "tests": [
-        "tests/seed.test.ts"
+        "tests/cost-metrics.test.ts"
       ],
-      "note": "Reads token counts. Depends on the D2 fix (reasoning tokens) already merged on the review branch.",
-      "planned": true
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged.",
+      "planned": true,
+      "pr": 6
     },
     {
       "id": "F30",
@@ -670,7 +676,7 @@
       "lane": "gate",
       "title": "Phase-2 gate run: four-video parallel end to end, kill-and-resume, seed dedupe",
       "spec": "9",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F26",
         "F27",
@@ -683,7 +689,8 @@
         "tests/e2e-parallel.test.ts"
       ],
       "planned": true,
-      "note": "Close on real Postgres four-job concurrency, checkpoint/restart/no duplicate spend, pause/drain, cost projection and seed conformance; no human gold prerequisite."
+      "note": "Real PostgreSQL concurrency and SIGKILL recovery passed 2/2 without skips; conformance report records final integrated verification pending.",
+      "pr": 6
     },
     {
       "id": "F32",
@@ -691,19 +698,20 @@
       "lane": "asr",
       "title": "Windowed ASR with videoMetadata offsets at LOW resolution",
       "spec": "4.5, 5",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F10",
         "F24"
       ],
       "files": [
-        "src/server/youtube-intelligence/native-google.ts",
-        "src/server/youtube-intelligence/repos/transcripts.ts"
+        "src/server/youtube-intelligence/windowed-asr.ts"
       ],
       "tests": [
-        "tests/asr-agreement.test.ts"
+        "tests/windowed-asr.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F33",
@@ -711,7 +719,7 @@
       "lane": "asr",
       "title": "Agreement scoring: edit-distance core moved into agreement.ts, per-span scores",
       "spec": "4.5",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F32"
       ],
@@ -720,9 +728,11 @@
         "evaluations/transcript-accuracy.ts"
       ],
       "tests": [
-        "tests/asr-agreement.test.ts"
+        "tests/agreement.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F34",
@@ -730,18 +740,20 @@
       "lane": "asr",
       "title": "Whisper tie-break: one Supadata generate below threshold, two-of-three rule",
       "spec": "4.10",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F18",
         "F33"
       ],
       "files": [
-        "src/server/youtube-intelligence/transcripts.ts"
+        "src/server/youtube-intelligence/windowed-asr.ts"
       ],
       "tests": [
-        "tests/asr-agreement.test.ts"
+        "tests/windowed-asr.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F35",
@@ -749,20 +761,21 @@
       "lane": "asr",
       "title": "Trust ladder L0-L3 with trust_basis; append-only reviews sign L3",
       "spec": "4.6, 4.18",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F33",
         "F24"
       ],
       "files": [
         "src/features/youtube-intelligence/trust.ts",
-        "src/server/youtube-intelligence/repos/reviews.ts"
+        "src/server/youtube-intelligence/actions/trust.ts"
       ],
       "tests": [
-        "tests/asr-agreement.test.ts"
+        "tests/trust.test.ts"
       ],
       "planned": true,
-      "note": "repos/reviews.ts landed with F24 as the append-only reviews table, but nothing imports it until the trust ladder exists: only a signed review reaches L3, and computeTrustLevel is what reads one."
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged.",
+      "pr": 6
     },
     {
       "id": "F36",
@@ -770,7 +783,7 @@
       "lane": "board",
       "title": "Leaderboard statistics: Wilson, t, p, BH q, gates; boards by creator and by ticker",
       "spec": "4.12",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F25",
         "F35",
@@ -779,13 +792,16 @@
       "files": [
         "src/features/youtube-intelligence/significance.ts",
         "src/features/youtube-intelligence/leaderboard.ts",
-        "src/features/youtube-intelligence/metrics/leaderboard.ts"
+        "src/features/youtube-intelligence/metrics/registry.ts",
+        "src/server/youtube-intelligence/leaderboard.ts"
       ],
       "tests": [
         "tests/significance.test.ts",
         "tests/leaderboard.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F37",
@@ -793,17 +809,20 @@
       "lane": "board",
       "title": "Changes tab: boardAsOf and diffBoards over a user-selected window",
       "spec": "4.12",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F36"
       ],
       "files": [
-        "src/features/youtube-intelligence/metrics/changes.ts"
+        "src/features/youtube-intelligence/leaderboard.ts",
+        "src/features/youtube-intelligence/metrics/registry.ts"
       ],
       "tests": [
         "tests/leaderboard.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F38",
@@ -811,20 +830,21 @@
       "lane": "board",
       "title": "Sentiment shift for period P against the prior P, with trust filter",
       "spec": "4.13",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F13",
         "F24",
         "F04"
       ],
       "files": [
-        "src/features/youtube-intelligence/metrics/sentiment-shift.ts",
-        "src/server/youtube-intelligence/repos/mentions.ts"
+        "src/features/youtube-intelligence/metrics/sentiment-shift.ts"
       ],
       "tests": [
-        "tests/mentions.test.ts"
+        "tests/sentiment-shift.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F39",
@@ -832,7 +852,7 @@
       "lane": "automation",
       "title": "Push notifications: PubSubHubbub verify and notify with HMAC, subscribe/renew job",
       "spec": "4.8",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F26"
       ],
@@ -843,7 +863,9 @@
       "tests": [
         "tests/push.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F40",
@@ -851,19 +873,20 @@
       "lane": "automation",
       "title": "Batch mode: Google Batch API submit and poll; ledger settles on completion",
       "spec": "4.8, 5",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F10",
         "F26"
       ],
       "files": [
-        "src/server/youtube-intelligence/transport/google-native.ts",
-        "src/server/youtube-intelligence/queue.ts"
+        "src/server/youtube-intelligence/batch.ts"
       ],
       "tests": [
         "tests/batch.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F41",
@@ -871,19 +894,21 @@
       "lane": "automation",
       "title": "Historical replay of Tier-1 uploads from January 2026; Shorts skipped",
       "spec": "4.16",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F40",
         "F28"
       ],
       "files": [
         "src/server/youtube-intelligence/replay.ts",
-        "scripts/replay.ts"
+        "src/server/youtube-intelligence/actions/automation.ts"
       ],
       "tests": [
         "tests/replay.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F42",
@@ -891,19 +916,21 @@
       "lane": "ui-shell",
       "title": "UI shell: module layout with side panel; ResearchApp split into page components",
       "spec": "7.1, 7.3",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F30"
       ],
       "files": [
         "src/app/youtube-intelligence/layout.tsx",
-        "src/features/youtube-intelligence/ui/SidePanel.tsx"
+        "src/features/youtube-intelligence/ui/Shell.tsx",
+        "src/features/youtube-intelligence/ui/workspace.tsx"
       ],
       "tests": [
-        "tests/metrics-registry.test.ts"
+        "tests/ui-viewmodel.test.ts"
       ],
-      "note": "Replaces IntelligenceApp.tsx and ResearchApp.tsx, 2768 lines deleted at the phase-3 gate.",
-      "planned": true
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged.",
+      "planned": true,
+      "pr": 6
     },
     {
       "id": "F43",
@@ -911,19 +938,20 @@
       "lane": "ui-shell",
       "title": "Shared components: TrustBadge, ConvictionChip, MetricHeader, DataTable, selectors",
       "spec": "7.2, 7.5",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F04",
         "F42"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/TrustBadge.tsx",
-        "src/features/youtube-intelligence/ui/DataTable.tsx"
+        "src/features/youtube-intelligence/ui/components.tsx"
       ],
       "tests": [
-        "tests/metrics-registry.test.ts"
+        "tests/ui-viewmodel.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F44",
@@ -931,7 +959,7 @@
       "lane": "ui-today",
       "title": "Today page",
       "spec": "7.3",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F43",
         "F35",
@@ -941,9 +969,11 @@
         "src/features/youtube-intelligence/ui/pages/Today.tsx"
       ],
       "tests": [
-        "tests/metrics-registry.test.ts"
+        "tests/ui-viewmodel.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F45",
@@ -951,7 +981,7 @@
       "lane": "ui-channels",
       "title": "Channels page: seed list, cost projection before save, trust distribution",
       "spec": "4.15, 7.2",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F43",
         "F29"
@@ -960,9 +990,11 @@
         "src/features/youtube-intelligence/ui/pages/Channels.tsx"
       ],
       "tests": [
-        "tests/metrics-registry.test.ts"
+        "tests/ui-viewmodel.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F46",
@@ -970,20 +1002,21 @@
       "lane": "ui-leaderboard",
       "title": "Leaderboard page with Changes, selectors, CSV export and Methodology",
       "spec": "4.12, 7.3",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F43",
         "F36",
         "F37"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/pages/Leaderboard.tsx",
-        "src/features/youtube-intelligence/ui/pages/Methodology.tsx"
+        "src/features/youtube-intelligence/ui/pages/Leaderboard.tsx"
       ],
       "tests": [
-        "tests/leaderboard.test.ts"
+        "tests/ui-viewmodel.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F47",
@@ -991,19 +1024,20 @@
       "lane": "ui-analysis",
       "title": "Analysis page: trust strip, claim cards, evidence viewer, play-from",
       "spec": "7.4",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F43",
         "F35"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/pages/Analysis.tsx",
-        "src/features/youtube-intelligence/SourcePlayer.tsx"
+        "src/features/youtube-intelligence/ui/pages/Analysis.tsx"
       ],
       "tests": [
-        "tests/metrics-registry.test.ts"
+        "tests/ui-viewmodel.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F48",
@@ -1011,7 +1045,7 @@
       "lane": "ui-lab-settings",
       "title": "Saved calls, Lab and Settings pages with reset-to-team-default",
       "spec": "7.2, 7.3",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F43",
         "F08"
@@ -1020,9 +1054,11 @@
         "src/features/youtube-intelligence/ui/pages/Settings.tsx"
       ],
       "tests": [
-        "tests/settings.test.ts"
+        "tests/ui-viewmodel.test.ts"
       ],
-      "planned": true
+      "planned": true,
+      "pr": 6,
+      "note": "Implemented on standalone build branch; targeted checks pass. Full integrated verification and browser acceptance tracked in PR #6; not merged."
     },
     {
       "id": "F49",
@@ -1030,7 +1066,7 @@
       "lane": "gate",
       "title": "Phase-3 gate run: anchor accuracy, push end to end, registry CI, Changes diff",
       "spec": "9",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F32",
         "F33",
@@ -1057,8 +1093,9 @@
         "tests/leaderboard.test.ts",
         "tests/push.test.ts"
       ],
-      "note": "Close on implemented Phase 3 features, browser workflows and visual review, deterministic trust/anchor fixtures and conformance. Human gold-set accuracy requirement removed by user on 19 September 2026; LeapEdge comparison follows the build.",
-      "planned": true
+      "note": "Implementation and full command checks pass; one live caption-first pilot completed and compared with a retained LeapEdge report (US$0.12925415 total allocated spend, zero new LeapEdge analyses). Gate remains open: native Chrome screen/accessibility unavailable before final mobile/visual/UX pass; completed live Batch API and reachable HTTPS push evidence still absent. Fifty human-verified cases removed from scope. See docs/gates/browser-acceptance.json and docs/delivery/standalone-conformance.md.",
+      "planned": false,
+      "pr": 6
     },
     {
       "id": "F50",
@@ -1073,7 +1110,7 @@
       ],
       "files": [
         "src/server/youtube-intelligence/context-check.ts",
-        "src/server/youtube-intelligence/migrations/0005_context_checks.sql"
+        "src/server/youtube-intelligence/migrations/0007_context_checks.sql"
       ],
       "tests": [
         "tests/context-check.test.ts"

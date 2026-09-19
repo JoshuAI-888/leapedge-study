@@ -89,56 +89,14 @@ export const AccuracyCase = z
 
 export const ACCURACY_VERSION = "audio-reference.v1";
 
-export function units(text: string, language: "en" | "zh") {
-  const normalized = text.normalize("NFC").toLowerCase();
-  // Preserve financial punctuation within English tokens: 1.5 must not equal 15.
-  if (language === "en")
-    return (
-      normalized.match(/[+-]?[\p{L}\p{N}]+(?:[.'’%/-][\p{L}\p{N}]+)*%?/gu) || []
-    );
-  // CER preserves decimal points, percent signs and minus signs. No script conversion.
-  return [...normalized].filter((c) => /[\p{L}\p{N}.%+-]/u.test(c));
-}
-
-export function editCounts(reference: string[], candidate: string[]) {
-  // Two rows keep memory linear in candidate length. Ties prefer fewer insertions/deletions.
-  type Cell = {
-    errors: number;
-    substitutions: number;
-    deletions: number;
-    insertions: number;
-  };
-  let row: Cell[] = Array.from({ length: candidate.length + 1 }, (_, i) => ({
-    errors: i,
-    substitutions: 0,
-    deletions: 0,
-    insertions: i,
-  }));
-  for (let i = 1; i <= reference.length; i++) {
-    const next: Cell[] = [
-      { errors: i, substitutions: 0, deletions: i, insertions: 0 },
-    ];
-    for (let j = 1; j <= candidate.length; j++) {
-      if (reference[i - 1] === candidate[j - 1]) next[j] = row[j - 1];
-      else {
-        const sub = row[j - 1],
-          del = row[j],
-          ins = next[j - 1];
-        next[j] = [
-          {
-            ...sub,
-            errors: sub.errors + 1,
-            substitutions: sub.substitutions + 1,
-          },
-          { ...del, errors: del.errors + 1, deletions: del.deletions + 1 },
-          { ...ins, errors: ins.errors + 1, insertions: ins.insertions + 1 },
-        ].sort((a, b) => a.errors - b.errors)[0];
-      }
-    }
-    row = next;
-  }
-  return row[candidate.length];
-}
+export {
+  units,
+  editCounts,
+} from "../src/features/youtube-intelligence/agreement.ts";
+import {
+  units,
+  editCounts,
+} from "../src/features/youtube-intelligence/agreement.ts";
 
 export function scoreAccuracy(input: unknown) {
   const c = AccuracyCase.parse(input);

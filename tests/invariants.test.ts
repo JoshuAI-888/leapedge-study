@@ -16,6 +16,12 @@ import {
   settlementsFor,
 } from "../src/server/youtube-intelligence/repos/settlements.ts";
 import { settleCall } from "../src/server/youtube-intelligence/settlement.ts";
+import {
+  claimContentDigest,
+  upsertClaim,
+  claimsForRun,
+} from "../src/server/youtube-intelligence/repos/claims.ts";
+import { appendReview } from "../src/server/youtube-intelligence/repos/reviews.ts";
 
 /**
  * The system invariants from build plan section 4, as seeded property tests
@@ -62,7 +68,12 @@ test("Invariant 1: retries never double-spend, for any sequence of outcomes", as
     for (let step = 0; step < 12; step++) {
       if (!open) {
         attempt += 1;
-        const id = await store.reserve(run.id, stage, 0.01 + random() * 0.05, attempt);
+        const id = await store.reserve(
+          run.id,
+          stage,
+          0.01 + random() * 0.05,
+          attempt,
+        );
         open = true;
         const draw = random();
         if (draw < 0.4) {
@@ -90,13 +101,25 @@ test("Invariant 1: retries never double-spend, for any sequence of outcomes", as
       `seed ${seed}: ${completed.length} completed attempts for one stage`,
     );
     if (settled !== null) {
-      assert.equal(completed.length, 1, `seed ${seed}: the settled attempt is missing`);
-      assert.equal(completed[0]!.amount, settled, `seed ${seed}: settled amount changed`);
+      assert.equal(
+        completed.length,
+        1,
+        `seed ${seed}: the settled attempt is missing`,
+      );
+      assert.equal(
+        completed[0]!.amount,
+        settled,
+        `seed ${seed}: settled amount changed`,
+      );
     }
     // Released attempts hold nothing, so they cannot contribute to the run cost.
     for (const a of attempts)
       if (a.status === "released")
-        assert.equal(a.amount, 0, `seed ${seed}: a released attempt still holds money`);
+        assert.equal(
+          a.amount,
+          0,
+          `seed ${seed}: a released attempt still holds money`,
+        );
     // Attempt numbers are dense and increasing: one row per try, never two open.
     assert.deepEqual(
       attempts.map((a) => a.attempt),
@@ -200,22 +223,98 @@ test("Invariant 7: every evidence pointer resolves to text the source really con
         createHash("sha256").update(expected).digest("hex"),
         `seed ${seed}: the hash does not describe the copied text`,
       );
-      assert.equal(derived.start_seconds, source.segments[start]!.start_seconds);
+      assert.equal(
+        derived.start_seconds,
+        source.segments[start]!.start_seconds,
+      );
       assert.equal(derived.end_seconds, source.segments[end]!.end_seconds);
 
       // The rejection side of the same invariant: a range the source cannot
       // resolve is never silently turned into some other range's text.
       if (end > start)
         assert.throws(
-          () => deriveEvidence(source, { start_id: `s${end}`, end_id: `s${start}` }),
+          () =>
+            deriveEvidence(source, {
+              start_id: `s${end}`,
+              end_id: `s${start}`,
+            }),
           `seed ${seed}: a reversed range was accepted`,
         );
       assert.throws(
-        () => deriveEvidence(source, { start_id: `s${start}`, end_id: "no-such-id" }),
+        () =>
+          deriveEvidence(source, {
+            start_id: `s${start}`,
+            end_id: "no-such-id",
+          }),
         `seed ${seed}: a range naming an unknown segment was accepted`,
       );
     }
   }
+});
+
+test("Invariant 4: trust is monotonic and L3 requires a durable signed human review", async () => {
+  await freshDatabase();
+  const claim = {
+    id: "trust-invariant",
+    runId: "trust-run",
+    videoId: "abcdefghijk",
+    channelId: null,
+    instrument: null,
+    ticker: null,
+    tickerExplicit: false,
+    stance: "long",
+    thesisEn: "Fixture",
+    horizonEn: null,
+    conditionsEn: [],
+    risksEn: [],
+    creatorConviction: "unspecified",
+    trustLevel: "L2" as const,
+    trustBasis: { source: "audio" },
+    configHash: null,
+    publishedAt: null,
+  };
+  await upsertClaim(claim);
+  await assert.rejects(
+    () => upsertClaim({ ...claim, trustLevel: "L3" }),
+    /signed human review/,
+  );
+  for (const level of ["L1", "L0"] as const)
+    await upsertClaim({
+      ...claim,
+      trustLevel: level,
+      trustBasis: { source: "weaker" },
+    });
+  assert.equal((await claimsForRun("trust-run"))[0].trustLevel, "L2");
+  assert.equal(
+    ((await claimsForRun("trust-run"))[0].trustBasis as { source: string })
+      .source,
+    "audio",
+  );
+  await appendReview({
+    id: "review-invariant",
+    claimId: claim.id,
+    reviewerAccountId: "fixture-human",
+    verdict: "verified",
+    note: "Listened",
+    listenedSpan: {
+      startSeconds: 0,
+      endSeconds: 10,
+      contentDigest: claimContentDigest(claim, []),
+    },
+    signedAt: "2026-09-19T00:00:00Z",
+  });
+  await upsertClaim({
+    ...claim,
+    trustLevel: "L3",
+    trustBasis: { review: "review-invariant" },
+  });
+  await upsertClaim(claim);
+  assert.equal((await claimsForRun("trust-run"))[0].trustLevel, "L3");
+  assert.equal(
+    ((await claimsForRun("trust-run"))[0].trustBasis as { review: string })
+      .review,
+    "review-invariant",
+  );
 });
 
 // --- Invariant 5 ------------------------------------------------------------
@@ -236,8 +335,7 @@ test("Invariant 5: settlements and reviews are append-only, whatever the caller 
       creatorConviction: "high",
       callDate: "2026-01-05",
       record: (random() < 0.5 ? "forward" : "historical") as
-        | "forward"
-        | "historical",
+        "forward" | "historical",
     };
     const bars = Array.from({ length: 140 }, (_, i) => ({
       ticker: "NVDA",
@@ -280,19 +378,9 @@ test("Invariant 5: settlements and reviews are append-only, whatever the caller 
  */
 const PENDING: { invariant: string; feature: string; unlockedBy: string }[] = [
   {
-    invariant: "4: trust is monotonic; only an append to reviews reaches L3",
-    feature: "F35",
-    unlockedBy: "src/features/youtube-intelligence/trust.ts",
-  },
-  {
     invariant: "6: every context_checks source date lies inside its window",
     feature: "F50",
     unlockedBy: "src/server/youtube-intelligence/context-check.ts",
-  },
-  {
-    invariant: "8: no reserved row outlives the hold window without a reconcile job",
-    feature: "F26",
-    unlockedBy: "src/server/youtube-intelligence/queue.ts",
   },
 ];
 
@@ -303,12 +391,16 @@ test("The invariants later phases unlock are written the moment they can be", ()
     [],
     `these features landed, so their invariants are now writable and must be written here:\n` +
       arrived
-        .map((p) => `  ${p.feature} (${p.unlockedBy}) -> invariant ${p.invariant}`)
+        .map(
+          (p) => `  ${p.feature} (${p.unlockedBy}) -> invariant ${p.invariant}`,
+        )
         .join("\n"),
   );
   // And the ledger must still agree that they are unbuilt, so the two files
   // cannot drift into disagreeing about what exists.
-  const ledger = JSON.parse(readFileSync("docs/delivery/ledger.json", "utf8")) as {
+  const ledger = JSON.parse(
+    readFileSync("docs/delivery/ledger.json", "utf8"),
+  ) as {
     features: { id: string; status: string }[];
   };
   for (const pending of PENDING) {
@@ -319,5 +411,40 @@ test("The invariants later phases unlock are written the moment they can be", ()
       "todo",
       `${pending.feature} is ${entry!.status} in the ledger but invariant ${pending.invariant} is still listed as pending here`,
     );
+  }
+});
+
+test("Invariant 8: expired orphan reservations get durable reconciliation jobs, live leases are protected", async () => {
+  const db = await freshDatabase();
+  try {
+    const run = await store.create("orphan-reservation", "fixture", {}, "v1");
+    const id = await store.reserve(run.id, "extraction", 0.01);
+    await db
+      .prepare("UPDATE yi_calls SET metrics=$1 WHERE id=$2")
+      .run(JSON.stringify({ reservedAt: "2000-01-01T00:00:00.000Z" }), id);
+    await db
+      .prepare("UPDATE jobs SET status='running',lease_until=$1 WHERE id=$2")
+      .run(new Date(Date.now() + 60000).toISOString(), `analyze:${run.id}`);
+    assert.equal(await store.enqueueExpiredReservations(10), 0);
+    await db
+      .prepare("UPDATE jobs SET lease_until='2000-01-01' WHERE id=$1")
+      .run(`analyze:${run.id}`);
+    assert.equal(await store.enqueueExpiredReservations(10), 1);
+    const job = await db
+      .prepare("SELECT kind,status FROM jobs WHERE id=$1")
+      .get(`reconcile:${id}`);
+    assert.equal(job?.kind, "reconcile");
+    assert.equal(job?.status, "queued");
+    assert.equal(
+      (await store.listAttempts(run.id, "extraction"))[0].status,
+      "unknown",
+    );
+    await store.enqueueExpiredReservations(10);
+    const count = await db
+      .prepare("SELECT COUNT(*) AS n FROM jobs WHERE kind='reconcile'")
+      .get();
+    assert.equal(Number(count?.n), 1);
+  } finally {
+    await db.close();
   }
 });

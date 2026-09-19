@@ -234,7 +234,10 @@ test("OpenRouter transport refuses to run without a key and classifies HTTP fail
           () => null,
           (e: unknown) => e,
         );
-        assert.ok(error instanceof TransportError, `expected TransportError for ${kind}`);
+        assert.ok(
+          error instanceof TransportError,
+          `expected TransportError for ${kind}`,
+        );
         assert.equal(error.kind, kind);
         assert.equal(error.status, status);
         if (status)
@@ -259,11 +262,19 @@ test("fromOpenRouter normalises usage and tolerates a partial completion", () =>
     choices: [{ finish_reason: "length", message: { content: "{" } }],
   });
   assert.equal(partial.finishReason, "length");
-  assert.deepEqual(partial.usage, { inputTokens: 5, outputTokens: 7, costUsd: null });
+  assert.deepEqual(partial.usage, {
+    inputTokens: 5,
+    outputTokens: 7,
+    costUsd: null,
+  });
   const empty = fromOpenRouter({ choices: [] });
   assert.equal(empty.text, "");
   assert.equal(empty.finishReason, undefined);
-  assert.deepEqual(empty.usage, { inputTokens: 0, outputTokens: 0, costUsd: null });
+  assert.deepEqual(empty.usage, {
+    inputTokens: 0,
+    outputTokens: 0,
+    costUsd: null,
+  });
 });
 test("FakeModelTransport replays in-memory responses by stage and records every request", async () => {
   const fake = new FakeModelTransport({
@@ -296,10 +307,14 @@ test("FakeModelTransport replays in-memory responses by stage and records every 
     /No frozen response at .*translation-[0-9a-f]{16}\.json.*tests\/fixtures\/model\/README\.md/,
   );
   const spec = await fake.describe(MODEL);
-  assert.ok(spec.contextLength > 0 && spec.inputRate > 0 && spec.outputRate > 0);
+  assert.ok(
+    spec.contextLength > 0 && spec.inputRate > 0 && spec.outputRate > 0,
+  );
 });
 test("FakeModelTransport fails on the Nth call with the requested failure kind", async () => {
-  const fake = new FakeModelTransport({ responses: { synthesis: { json: {} } } })
+  const fake = new FakeModelTransport({
+    responses: { synthesis: { json: {} } },
+  })
     .failOn(2, "429")
     .failOn(3, "5xx")
     .failOn(4, "timeout")
@@ -350,7 +365,13 @@ test("FakeModelTransport replays frozen files named by the helper's request hash
   );
   writeFileSync(
     frozenPath("critique-0", requestHash(videoRequest), dir),
-    JSON.stringify({ stage: "critique-0", hash: "0000000000000000", model: MODEL, capturedAt: "x", response: {} }),
+    JSON.stringify({
+      stage: "critique-0",
+      hash: "0000000000000000",
+      model: MODEL,
+      capturedAt: "x",
+      response: {},
+    }),
   );
   await assert.rejects(() => fake.call(videoRequest), /malformed/);
 });
@@ -377,15 +398,24 @@ test("transportFor routes each stage by its settings key and honours the injecte
   // The stage's own key beats the default, in either direction.
   const mixed = teamDefaults();
   mixed.transport.default = "openrouter";
-  mixed.models.extraction = { id: "gemini-3.8-flash", transport: "google-native" };
+  mixed.models.extraction = {
+    id: "gemini-3.8-flash",
+    transport: "google-native",
+  };
   mixed.models.transcription = { id: "gpt-4o-mini", transport: "openrouter" };
   assert.equal(transportFor("synthesis", mixed).family, "google-native");
   assert.equal(transportFor("transcribe", mixed).family, "openrouter");
   assert.equal(transportFor("source-repair", mixed).family, "openrouter");
   // Stage keys also name the model id a stage runs when the run pins none.
-  assert.equal(modelIdFor("synthesis-chunk-1", team), team.models.extraction.id);
+  assert.equal(
+    modelIdFor("synthesis-chunk-1", team),
+    team.models.extraction.id,
+  );
   assert.equal(modelIdFor("critique-7", team), team.models.critique.id);
-  assert.equal(modelIdFor("transcribe-window-4", team), team.models.transcription.id);
+  assert.equal(
+    modelIdFor("transcribe-window-4", team),
+    team.models.transcription.id,
+  );
   assert.equal(modelIdFor("audio-review", team), team.models.audioReview.id);
   assert.equal(modelIdFor("translate", team), team.models.translation.id);
   assert.equal(modelIdFor("context", team), team.models.context.id);
@@ -398,8 +428,13 @@ test("transportFor routes each stage by its settings key and honours the injecte
   assert.equal(stageKey("experiment-x"), undefined);
   // With no settings at all, the transport that needs no per-stage configuration.
   assert.ok(transportFor("synthesis") instanceof OpenRouterTransport);
-  assert.equal(transportFor("critique-0", { transport: { default: "openrouter" } }).family, "openrouter");
-  assert.throws(() => transportFor("synthesis", { transport: { default: "carrier-pigeon" } }));
+  assert.equal(
+    transportFor("critique-0", { transport: { default: "openrouter" } }).family,
+    "openrouter",
+  );
+  assert.throws(() =>
+    transportFor("synthesis", { transport: { default: "carrier-pigeon" } }),
+  );
   const fake = new FakeModelTransport();
   const restore = injectTransport(fake);
   try {
@@ -450,19 +485,29 @@ test("withOpenRouterFallback re-issues one retryable failure and records fallbac
     const secondary = new FakeModelTransport({
       responses: { transcribe: secondaryReply },
     });
-    return { primary, secondary, transport: withOpenRouterFallback(primary, secondary) };
+    return {
+      primary,
+      secondary,
+      transport: withOpenRouterFallback(primary, secondary),
+    };
   };
   for (const kind of ["429", "5xx", "timeout"] as const) {
     const { primary, secondary, transport } = attempt(kind);
     const response = await transport.call(request);
-    assert.deepEqual(JSON.parse(response.text), { segments: ["from openrouter"] });
+    assert.deepEqual(JSON.parse(response.text), {
+      segments: ["from openrouter"],
+    });
     const raw = response.raw as Record<string, unknown>;
     assert.equal(raw.fallbackUsed, true, `${kind} should fall back`);
     assert.equal(raw.fallbackFrom, "fake");
     assert.ok(typeof raw.fallbackReason === "string");
     assert.equal(primary.requests.length, 1);
     assert.equal(secondary.requests.length, 1, "re-issued exactly once");
-    assert.deepEqual(secondary.requests[0], request, "the same request, byte for byte");
+    assert.deepEqual(
+      secondary.requests[0],
+      request,
+      "the same request, byte for byte",
+    );
   }
   // A non-retryable failure and a failure that is not a TransportError at all
   // both stop the call; paying a second vendor would not help.
@@ -474,14 +519,20 @@ test("withOpenRouterFallback re-issues one retryable failure and records fallbac
   plain.primary.call = async () => {
     throw Error("the client blew up");
   };
-  await assert.rejects(() => plain.transport.call(request), /the client blew up/);
+  await assert.rejects(
+    () => plain.transport.call(request),
+    /the client blew up/,
+  );
   assert.equal(plain.secondary.requests.length, 0);
   plain.primary.call = restoreCall;
   // A healthy primary neither calls the secondary nor marks the response.
   const healthy = attempt(null);
   const response = await healthy.transport.call(request);
   assert.deepEqual(JSON.parse(response.text), { segments: ["from google"] });
-  assert.equal((response.raw as Record<string, unknown>).fallbackUsed, undefined);
+  assert.equal(
+    (response.raw as Record<string, unknown>).fallbackUsed,
+    undefined,
+  );
   assert.equal(healthy.secondary.requests.length, 0);
   // describe() stays with the primary: it is the model the call will run on.
   const described = await healthy.transport.describe(MODEL);
@@ -504,7 +555,10 @@ test("withOpenRouterFallback re-issues one retryable failure and records fallbac
   assert.equal(typeof wrapped.createCache, "function");
   assert.equal(typeof wrapped.deleteCache, "function");
   assert.equal(typeof wrapped.countTokens, "function");
-  assert.equal((await wrapped.createCache!(MODEL, [], 300)).name, "caches/from-primary");
+  assert.equal(
+    (await wrapped.createCache!(MODEL, [], 300)).name,
+    "caches/from-primary",
+  );
   assert.equal((await wrapped.countTokens!(request)).totalTokens, 7);
   // A primary without the capabilities leaves them undefined on the wrapper.
   const minimal = attempt(null).primary;
@@ -559,14 +613,19 @@ test("A critic from the extraction model's family is refused by the settings che
     () =>
       assertCriticIndependent({
         models: {
-          critique: { id: "anthropic/claude-sonnet-5", requireDifferentFamily: true },
+          critique: {
+            id: "anthropic/claude-sonnet-5",
+            requireDifferentFamily: true,
+          },
           extraction: {},
         },
       }),
     /models\.extraction\.id is not set/,
   );
   // Without the flag there is nothing to apply, so a bare document still passes.
-  assert.doesNotThrow(() => assertCriticIndependent({ models: { critique: {} } }));
+  assert.doesNotThrow(() =>
+    assertCriticIndependent({ models: { critique: {} } }),
+  );
 });
 test("A migrated legacy team may audit itself: the family requirement is off when it cannot be met", async () => {
   // Every id the old document could name is a Google one, so a migration that
@@ -595,7 +654,8 @@ test("A migrated legacy team may audit itself: the family requirement is off whe
   assert.doesNotThrow(() => assertCriticIndependent(crossFamily));
   // The same holds through the store, which is where a real install migrates.
   await freshDatabase();
-  const R = await import("../src/server/youtube-intelligence/research-store.ts");
+  const R =
+    await import("../src/server/youtube-intelligence/research-store.ts");
   await R.savePreferences({
     timezone: "Pacific/Auckland",
     model: "google/gemini-3.8-flash",
@@ -612,12 +672,15 @@ test("A migrated legacy team may audit itself: the family requirement is off whe
   assert.doesNotThrow(() => assertCriticIndependent(migrated));
 });
 test("The critique stage refuses a same-family critic before it bills a call", async () => {
-  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { step } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   const claim = {
     thesis_en: "The creator is buying this name.",
     stance: "long",
     horizon_en: "into next year",
-    evidence: [{ segment_id: "s1", quote_original: "q", quote_translation_en: "q" }],
+    evidence: [
+      { segment_id: "s1", quote_original: "q", quote_translation_en: "q" },
+    ],
   };
   const run = {
     id: "critic-family",
@@ -658,7 +721,11 @@ test("The OpenRouter body asks for strict json_schema only when the request carr
     additionalProperties: false,
   };
   const withSchema = transport.body(
-    ModelRequest.parse({ ...textRequest, stage: "synthesis-chunk-1", responseSchema: schema }),
+    ModelRequest.parse({
+      ...textRequest,
+      stage: "synthesis-chunk-1",
+      responseSchema: schema,
+    }),
   ) as Record<string, unknown>;
   assert.deepEqual(withSchema.response_format, {
     type: "json_schema",
@@ -686,19 +753,23 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
   const d = await freshDatabase();
   const oldBudget = process.env.YTI_BUDGET_USD;
   process.env.YTI_BUDGET_USD = "10";
-  const { create } = await import("../src/server/youtube-intelligence/store.ts");
-  const { modelCall } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { create } =
+    await import("../src/server/youtube-intelligence/store.ts");
+  const { modelCall } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   const fake = new FakeModelTransport({
     responses: {
       synthesis: {
         model: MODEL,
         provider: "fixture",
         usage: { prompt_tokens: 10, completion_tokens: 4, cost: 0.02 },
-        choices: [{ finish_reason: "stop", message: { content: '{"claims":[]}' } }],
+        choices: [
+          { finish_reason: "stop", message: { content: '{"claims":[]}' } },
+        ],
       },
       "audio-review": { json: { passed: true }, finishReason: "length" },
       "critique-0": { json: { passed: true } },
-      "transcribe": { json: { error: "unreadable" } },
+      transcribe: { json: { error: "unreadable" } },
     },
   });
   const restore = injectTransport(fake);
@@ -724,8 +795,14 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
     assert.equal(request.temperature, 0);
     assert.equal(request.reasoningEffort, undefined);
     const call = (await d
-      .prepare("SELECT status, amount, metrics FROM yi_calls WHERE run_id=$1 AND stage=$2")
-      .get(run.id, "synthesis")) as { status: string; amount: number; metrics: string };
+      .prepare(
+        "SELECT status, amount, metrics FROM yi_calls WHERE run_id=$1 AND stage=$2",
+      )
+      .get(run.id, "synthesis")) as {
+      status: string;
+      amount: number;
+      metrics: string;
+    };
     assert.equal(call.status, "completed");
     assert.equal(Number(call.amount), 0.02);
     const metrics = JSON.parse(call.metrics);
@@ -738,17 +815,25 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
       { prompt_tokens: 10, completion_tokens: 4, cost: 0.02 },
       "metrics.usage keeps the provider's raw usage; scripts/report-results.ts sums prompt_tokens/completion_tokens from it",
     );
-    assert.deepEqual(metrics.tokens, { inputTokens: 10, outputTokens: 4, costUsd: 0.02 });
+    assert.deepEqual(metrics.tokens, {
+      inputTokens: 10,
+      outputTokens: 4,
+      costUsd: 0.02,
+    });
     const retained = (await d
       .prepare("SELECT payload FROM yi_responses WHERE run_id=$1 AND stage=$2")
       .get(run.id, "synthesis")) as { payload: string };
-    assert.equal(JSON.parse(retained.payload).choices[0].message.content, '{"claims":[]}');
+    assert.equal(
+      JSON.parse(retained.payload).choices[0].message.content,
+      '{"claims":[]}',
+    );
     assert.deepEqual(
       (run.output.metrics as { stage: string }[]).map((m) => m.stage),
       ["synthesis"],
     );
     await assert.rejects(
-      () => modelCall(run, "audio-review", MODEL, "REVIEW", { samples: [] }, true),
+      () =>
+        modelCall(run, "audio-review", MODEL, "REVIEW", { samples: [] }, true),
       /incomplete/,
     );
     const review = fake.requests[1];
@@ -783,16 +868,25 @@ test("modelCall builds a ModelRequest, calls the transport and keeps the ledger,
       .reduce(
         (acc, m) => ({
           inputTokens: acc.inputTokens + Number(m.usage?.prompt_tokens || 0),
-          outputTokens: acc.outputTokens + Number(m.usage?.completion_tokens || 0),
+          outputTokens:
+            acc.outputTokens + Number(m.usage?.completion_tokens || 0),
         }),
         { inputTokens: 0, outputTokens: 0 },
       );
-    assert.deepEqual(sums, { inputTokens: 10, outputTokens: 4 }, "report-results.ts token sum over yi_calls.metrics");
+    assert.deepEqual(
+      sums,
+      { inputTokens: 10, outputTokens: 4 },
+      "report-results.ts token sum over yi_calls.metrics",
+    );
     await assert.rejects(
       () => modelCall(run, "transcribe", MODEL, "T", {}, true),
       /could not be processed/,
     );
-    assert.equal(stub.log.length, 0, "no HTTP call reaches fetch through the fake transport");
+    assert.equal(
+      stub.log.length,
+      0,
+      "no HTTP call reaches fetch through the fake transport",
+    );
   } finally {
     stub.restore();
     restore();
@@ -805,8 +899,10 @@ test("modelCall takes the model id and the transport from the settings when the 
   const d = await freshDatabase();
   const oldBudget = process.env.YTI_BUDGET_USD;
   process.env.YTI_BUDGET_USD = "10";
-  const { create } = await import("../src/server/youtube-intelligence/store.ts");
-  const { modelCall } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const { create } =
+    await import("../src/server/youtube-intelligence/store.ts");
+  const { modelCall } =
+    await import("../src/server/youtube-intelligence/pipeline.ts");
   const fake = new FakeModelTransport({
     responses: {
       "critique-0": { json: { verdict: "accept" } },
@@ -816,15 +912,25 @@ test("modelCall takes the model id and the transport from the settings when the 
   });
   const routed: string[] = [];
   const restore = injectTransport((stage, settings) => {
-    routed.push(`${stage}->${settings.models?.[stageKey(stage) ?? "extraction"]?.transport}`);
+    routed.push(
+      `${stage}->${settings.models?.[stageKey(stage) ?? "extraction"]?.transport}`,
+    );
     return fake;
   });
   const settings = teamDefaults();
   try {
     const run = await create("settings-routing", MODEL, {}, "fixture");
-    await modelCall(run, "critique-0", undefined, "CRITIC", { claim: 1 }, false, {
-      settings,
-    });
+    await modelCall(
+      run,
+      "critique-0",
+      undefined,
+      "CRITIC",
+      { claim: 1 },
+      false,
+      {
+        settings,
+      },
+    );
     assert.equal(
       fake.requestsFor("critique-0")[0].model,
       settings.models.critique.id,
@@ -835,7 +941,9 @@ test("modelCall takes the model id and the transport from the settings when the 
       fake.requestsFor("transcribe")[0].model,
       settings.models.transcription.id,
     );
-    await modelCall(run, "synthesis", MODEL, "P", { a: 1 }, false, { settings });
+    await modelCall(run, "synthesis", MODEL, "P", { a: 1 }, false, {
+      settings,
+    });
     assert.equal(
       fake.requestsFor("synthesis")[0].model,
       MODEL,
@@ -855,7 +963,12 @@ test("modelCall takes the model id and the transport from the settings when the 
 });
 test("pipeline.ts no longer talks to openrouter.ai directly", () => {
   const source = readFileSync(
-    fileURLToPath(new URL("../src/server/youtube-intelligence/pipeline.ts", import.meta.url)),
+    fileURLToPath(
+      new URL(
+        "../src/server/youtube-intelligence/pipeline.ts",
+        import.meta.url,
+      ),
+    ),
     "utf8",
   );
   assert.ok(!source.includes("openrouter.ai"));
@@ -942,7 +1055,9 @@ const nativeReply = {
   },
 };
 test("GoogleNativeTransport maps a ModelRequest onto generateContent with offsets, schema and LOW media resolution", () => {
-  const transport = new GoogleNativeTransport({ client: stubClient(() => nativeReply).client });
+  const transport = new GoogleNativeTransport({
+    client: stubClient(() => nativeReply).client,
+  });
   assert.equal(transport.name, "google-native");
   assert.equal(transport.family, "google-native");
   const video = transport.parameters(nativeVideoRequest);
@@ -1005,13 +1120,23 @@ test("GoogleNativeTransport maps a ModelRequest onto generateContent with offset
     client: stubClient(() => nativeReply).client,
   }).parameters(nativeVideoRequest);
   assert.equal(asDefault.config?.mediaResolution, undefined);
-  const openEnded = new GoogleNativeTransport({ client: stubClient(() => nativeReply).client })
-    .parameters({
-      ...nativeVideoRequest,
-      video: { type: "video", url: "https://www.youtube.com/watch?v=abcdefghijk" },
-    });
-  const parts = (openEnded.contents as { parts: Record<string, unknown>[] }[])[0].parts;
-  assert.equal(parts[0].videoMetadata, undefined, "no offsets, no videoMetadata");
+  const openEnded = new GoogleNativeTransport({
+    client: stubClient(() => nativeReply).client,
+  }).parameters({
+    ...nativeVideoRequest,
+    video: {
+      type: "video",
+      url: "https://www.youtube.com/watch?v=abcdefghijk",
+    },
+  });
+  const parts = (
+    openEnded.contents as { parts: Record<string, unknown>[] }[]
+  )[0].parts;
+  assert.equal(
+    parts[0].videoMetadata,
+    undefined,
+    "no offsets, no videoMetadata",
+  );
 });
 test("GoogleNativeTransport reports usage and a price-table cost from usageMetadata", async () => {
   const stub = stubClient(() => nativeReply);
@@ -1019,8 +1144,12 @@ test("GoogleNativeTransport reports usage and a price-table cost from usageMetad
   try {
     const transport = new GoogleNativeTransport({ client: stub.client });
     const response = await transport.call(nativeVideoRequest);
-    assert.equal(response.text, '{"claims":[]}', "thought parts are not the answer");
-    assert.equal(response.finishReason, "STOP");
+    assert.equal(
+      response.text,
+      '{"claims":[]}',
+      "thought parts are not the answer",
+    );
+    assert.equal(response.finishReason, "stop");
     assert.equal(response.model, "gemini-3.8-flash-001");
     assert.equal(response.provider, "google-native");
     assert.equal(response.raw, nativeReply);
@@ -1036,19 +1165,32 @@ test("GoogleNativeTransport reports usage and a price-table cost from usageMetad
     });
     assert.equal(stub.generate.length, 1);
     const sent = stub.generate[0] as { config: { abortSignal?: AbortSignal } };
-    assert.ok(sent.config.abortSignal instanceof AbortSignal, "the deadline can abort the call");
+    assert.ok(
+      sent.config.abortSignal instanceof AbortSignal,
+      "the deadline can abort the call",
+    );
     const bare = await new GoogleNativeTransport({
-      client: stubClient(() => ({ candidates: [{ content: { parts: [{ text: "{}" }] } }] }))
-        .client,
+      client: stubClient(() => ({
+        candidates: [{ content: { parts: [{ text: "{}" }] } }],
+      })).client,
     }).call(nativeTextRequest);
-    assert.deepEqual(bare.usage, { inputTokens: 0, outputTokens: 0, costUsd: null });
+    assert.deepEqual(bare.usage, {
+      inputTokens: 0,
+      outputTokens: 0,
+      costUsd: null,
+    });
     assert.equal(bare.finishReason, undefined);
     const blocked = await new GoogleNativeTransport({
-      client: stubClient(() => ({ promptFeedback: { blockReason: "SAFETY" } })).client,
+      client: stubClient(() => ({ promptFeedback: { blockReason: "SAFETY" } }))
+        .client,
     }).call(nativeTextRequest);
     assert.equal(blocked.text, "");
     assert.equal(blocked.finishReason, "SAFETY");
-    assert.equal(fetchStub.log.length, 0, "the stubbed client never reaches the network");
+    assert.equal(
+      fetchStub.log.length,
+      0,
+      "the stubbed client never reaches the network",
+    );
   } finally {
     fetchStub.restore();
   }
@@ -1060,9 +1202,9 @@ test("Reported tokens explain the reported cost: reasoning is billed and counted
   const stub = stubClient(() => nativeReply);
   const fetchStub = stubFetch([]);
   try {
-    const { usage } = await new GoogleNativeTransport({ client: stub.client }).call(
-      nativeVideoRequest,
-    );
+    const { usage } = await new GoogleNativeTransport({
+      client: stub.client,
+    }).call(nativeVideoRequest);
     const price = priceTable["gemini-3.8-flash"];
     assert.ok(price, "the model under test is in the static table");
     const cachedTokens = 200;
@@ -1074,7 +1216,11 @@ test("Reported tokens explain the reported cost: reasoning is billed and counted
         audioTokens * price.audioPerMillion +
         usage.outputTokens * price.outputPerMillion) /
       1e6;
-    assert.equal(fromTokens, usage.costUsd, "tokens times rate reproduces the cost");
+    assert.equal(
+      fromTokens,
+      usage.costUsd,
+      "tokens times rate reproduces the cost",
+    );
     assert.equal(usage.reasoningTokens, 100);
     assert.ok(
       usage.outputTokens > (usage.reasoningTokens ?? 0),
@@ -1104,27 +1250,38 @@ test("GoogleNativeTransport classifies provider failures as TransportError kinds
       () => null,
       (e: unknown) => e,
     );
-    assert.ok(error instanceof TransportError, "every provider failure is a TransportError");
+    assert.ok(
+      error instanceof TransportError,
+      "every provider failure is a TransportError",
+    );
     return [error.kind, error.status, error.message] as const;
   };
-  assert.deepEqual(await kindOf(fail(Object.assign(new Error("slow down"), { status: 429 }))), [
-    "rate_limited",
-    429,
-    "Provider HTTP 429. No automatic paid retry.",
-  ]);
   assert.deepEqual(
-    (await kindOf(fail(Object.assign(new Error("down"), { status: 503 })))).slice(0, 2),
+    await kindOf(fail(Object.assign(new Error("slow down"), { status: 429 }))),
+    ["rate_limited", 429, "Provider HTTP 429. No automatic paid retry."],
+  );
+  assert.deepEqual(
+    (
+      await kindOf(fail(Object.assign(new Error("down"), { status: 503 })))
+    ).slice(0, 2),
     ["server", 503],
   );
   assert.deepEqual(
-    (await kindOf(fail(Object.assign(new Error("bad"), { code: 400 })))).slice(0, 2),
+    (await kindOf(fail(Object.assign(new Error("bad"), { code: 400 })))).slice(
+      0,
+      2,
+    ),
     ["unknown", 400],
   );
   assert.deepEqual(
-    (await kindOf(fail(Object.assign(new Error("nope"), { status: 401 })))).slice(0, 2),
+    (
+      await kindOf(fail(Object.assign(new Error("nope"), { status: 401 })))
+    ).slice(0, 2),
     ["unknown", 401],
   );
-  const [kind, status, message] = await kindOf(fail(new Error("socket closed")));
+  const [kind, status, message] = await kindOf(
+    fail(new Error("socket closed")),
+  );
   assert.equal(kind, "unknown");
   assert.equal(status, undefined);
   assert.match(message, /without a status: socket closed/);
@@ -1147,7 +1304,10 @@ test("the static price table covers every native model the defaults name and nee
       .map((m) => m.id);
     assert.ok(native.length > 0);
     for (const id of native)
-      assert.ok(isPriced(id), `${id} is a default native model but has no price`);
+      assert.ok(
+        isPriced(id),
+        `${id} is a default native model but has no price`,
+      );
     const transport = new GoogleNativeTransport();
     const flash = await transport.describe(NATIVE_MODEL);
     // The ledger records priceTableVersion for this family because describe()
@@ -1173,7 +1333,11 @@ test("the static price table covers every native model the defaults name and nee
       assert.ok(price.cachedInputPerMillion <= price.inputPerMillion);
       assert.ok(price.contextLength > 0);
     }
-    assert.equal(fetchStub.log.length, 0, "describe() reads the table, never the catalogue");
+    assert.equal(
+      fetchStub.log.length,
+      0,
+      "describe() reads the table, never the catalogue",
+    );
   } finally {
     fetchStub.restore();
   }
@@ -1188,7 +1352,10 @@ test("GoogleNativeTransport counts tokens through the SDK and falls back to a lo
     totalTokens: 4242,
     estimated: false,
   });
-  const asked = counted.counts[0] as { model: string; contents: { parts: unknown[] }[] };
+  const asked = counted.counts[0] as {
+    model: string;
+    contents: { parts: unknown[] }[];
+  };
   assert.equal(asked.model, NATIVE_MODEL);
   assert.deepEqual(asked.contents[0].parts, [
     { text: 'PROMPT\nSOURCE DATA (untrusted):\n{"a":1}' },
@@ -1198,7 +1365,9 @@ test("GoogleNativeTransport counts tokens through the SDK and falls back to a lo
     totalTokens: Math.ceil(Buffer.byteLength(text, "utf8") / 4),
     estimated: true,
   };
-  const noCount = new GoogleNativeTransport({ client: stubClient(() => nativeReply).client });
+  const noCount = new GoogleNativeTransport({
+    client: stubClient(() => nativeReply).client,
+  });
   assert.deepEqual(await noCount.countTokens(nativeTextRequest), expected);
   const broken = new GoogleNativeTransport({
     client: stubClient(
@@ -1227,7 +1396,9 @@ test("The comparison week: transport.default openrouter keeps the old path selec
   // OpenRouter route. For one comparison week a team must be able to run the
   // whole pipeline on the old path, so the settings schema still accepts
   // "openrouter" as transport.default and nothing may reach another vendor.
-  const stored = TeamPreferences.parse({ transport: { default: "openrouter" } });
+  const stored = TeamPreferences.parse({
+    transport: { default: "openrouter" },
+  });
   assert.equal(stored.transport.default, "openrouter");
   const STAGES = [
     "metadata",
@@ -1276,4 +1447,121 @@ test("The comparison week: transport.default openrouter keeps the old path selec
     assert.equal(transportFor(stage, week).name, "openrouter");
   // The other arm of the comparison is untouched: the defaults still go native.
   assert.equal(transportFor("synthesis", teamDefaults()).name, "google-native");
+});
+
+test("native Google and OpenRouter normalize only known Google model aliases", async () => {
+  const native = new GoogleNativeTransport({
+    client: {
+      generateContent: async () => {
+        throw Error("unused");
+      },
+      countTokens: async (input) => {
+        assert.equal(input.model, "gemini-3.8-flash");
+        return { totalTokens: 1 };
+      },
+    },
+  });
+  const request = ModelRequest.parse({
+    stage: "extraction",
+    model: "google/gemini-3.8-flash",
+    user: [{ type: "text", text: "fixture" }],
+    maxOutputTokens: 10,
+    temperature: 0,
+  });
+  assert.equal(native.parameters(request).model, "gemini-3.8-flash");
+  await native.countTokens(request);
+  const router = new OpenRouterTransport({ apiKey: "fixture" });
+  assert.equal(
+    router.body({ ...request, model: "gemini-3.8-flash" }).model,
+    "google/gemini-3.8-flash",
+  );
+  assert.equal(
+    router.body({ ...request, model: "anthropic/claude-sonnet-5" }).model,
+    "anthropic/claude-sonnet-5",
+  );
+  assert.equal(
+    router.body({ ...request, model: "unrecognized-model" }).model,
+    "unrecognized-model",
+  );
+  const stub = stubFetch([
+    { url: "openrouter.ai/api/v1/models", respond: () => json(catalogue) },
+  ]);
+  try {
+    assert.equal(
+      (await router.describe("gemini-3.8-flash")).contextLength,
+      100000,
+    );
+  } finally {
+    stub.restore();
+  }
+});
+
+test("Native schema omits array expansion caps while local extraction still rejects oversized output", async () => {
+  const { extractionResponseSchema, parsePointerExtraction } =
+    await import("../src/server/youtube-intelligence/schemas/extraction.ts");
+  const original = JSON.stringify(extractionResponseSchema);
+  const request = new GoogleNativeTransport().parameters({
+    ...nativeTextRequest,
+    responseSchema: extractionResponseSchema,
+  });
+  assert.doesNotMatch(
+    JSON.stringify(request.config?.responseSchema),
+    /"maxItems"/,
+  );
+  assert.match(JSON.stringify(request.config?.responseSchema), /"minItems":1/);
+  assert.match(JSON.stringify(request.config?.responseSchema), /"required"/);
+  assert.equal(
+    JSON.stringify(extractionResponseSchema),
+    original,
+    "never mutate shared schema used by other transports",
+  );
+  const claim = {
+    thesis_en: "Buy SOFI",
+    instrument_as_spoken: "SOFI",
+    ticker: "SOFI",
+    ticker_explicit: true,
+    stance: "long",
+    horizon_en: null,
+    conditions_en: [],
+    creator_conviction: "high",
+    risks_en: [],
+    levels: [],
+    evidence_ranges: [{ start_id: "s1", end_id: "s1" }],
+  };
+  assert.equal(parsePointerExtraction({ claims: [claim] }).claims.length, 1);
+  assert.throws(() =>
+    parsePointerExtraction({ claims: Array(41).fill(claim) }),
+  );
+});
+
+test("OpenRouter omits temperature when the priced model catalogue declares it unsupported", async () => {
+  const stub = stubFetch([
+    {
+      url: "openrouter.ai/api/v1/models",
+      respond: () =>
+        json({
+          data: [
+            {
+              ...catalogue.data[0],
+              supported_parameters: ["max_tokens", "response_format"],
+            },
+          ],
+        }),
+    },
+  ]);
+  try {
+    const transport = new OpenRouterTransport({ apiKey: "fixture" });
+    await transport.describe(MODEL);
+    const body = transport.body({
+      ...nativeTextRequest,
+      model: MODEL,
+      responseSchema: nativeSchema,
+    });
+    assert.equal(Object.hasOwn(body, "temperature"), false);
+    assert.equal(body.provider.require_parameters, true);
+    assert.equal(body.response_format?.type, "json_schema");
+    assert.equal(body.max_tokens, nativeTextRequest.maxOutputTokens);
+  } finally {
+    stub.restore();
+  }
 });

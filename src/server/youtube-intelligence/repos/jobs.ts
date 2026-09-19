@@ -1,9 +1,9 @@
+import { z } from "zod";
 import { database, iso, json } from "../database.ts";
 /**
  * The only door to the `jobs` table. The claim, lease and retry semantics —
- * FOR UPDATE SKIP LOCKED, lease fencing, the concurrency limit — belong to the
- * queue item, and nothing enqueues a row until it lands. What is here is the
- * table's shape and the two reads a health check needs.
+ * FOR UPDATE SKIP LOCKED, lease fencing, the concurrency limit — live in queue.ts.
+ * This repository owns validated enqueueing and reads for diagnostics.
  */
 export const JOB_KINDS = [
   "analyze",
@@ -26,9 +26,9 @@ export type JobRow = {
   createdAt: string | null;
   updatedAt: string | null;
 };
-const COLUMNS =
+export const COLUMNS =
   "id,kind,payload,status,run_after,lease_until,lease_token,attempts,error,created_at,updated_at";
-function convert(r: Record<string, unknown>): JobRow {
+export function convert(r: Record<string, unknown>): JobRow {
   return {
     id: String(r.id),
     kind: String(r.kind),
@@ -53,12 +53,26 @@ export async function enqueueJob(job: {
   payload?: unknown;
   runAfter?: string;
 }) {
+  job = z
+    .object({
+      id: z.string().min(1),
+      kind: z.enum(JOB_KINDS),
+      payload: z.unknown().optional(),
+      runAfter: z.iso.datetime().optional(),
+    })
+    .parse(job);
   const now = new Date().toISOString();
   const result = await database
     .prepare(
       "INSERT INTO jobs(id,kind,payload,status,run_after,created_at,updated_at) VALUES($1,$2,$3::jsonb,'queued',$4,$5,$5) ON CONFLICT(id) DO NOTHING",
     )
-    .run(job.id, job.kind, JSON.stringify(job.payload ?? {}), job.runAfter ?? now, now);
+    .run(
+      job.id,
+      job.kind,
+      JSON.stringify(job.payload ?? {}),
+      job.runAfter ?? now,
+      now,
+    );
   return result.changes > 0;
 }
 export async function listJobs(limit = 100): Promise<JobRow[]> {

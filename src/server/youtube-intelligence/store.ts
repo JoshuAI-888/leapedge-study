@@ -1,4 +1,8 @@
 import { advisoryKey, database, iso, json } from "./database.ts";
+import { TeamPreferences } from "../../features/youtube-intelligence/settings.ts";
+import { resolveTeam } from "./env.ts";
+import { enqueueJob } from "./repos/jobs.ts";
+import { queuePaused } from "./queue.ts";
 import { randomUUID } from "node:crypto";
 import type { Run } from "../../features/youtube-intelligence/contracts.ts";
 export function db() {
@@ -98,7 +102,14 @@ export async function create(
           payload,
           "{}",
         );
-      if (inserted.changes) return (await get(id))!;
+      if (inserted.changes) {
+        await enqueueJob({
+          id: `analyze:${id}`,
+          kind: "analyze",
+          payload: { runId: id },
+        });
+        return (await get(id))!;
+      }
       const old = await existing();
       if (old) return (await get(String(old.id)))!;
     }
@@ -111,6 +122,7 @@ export async function create(
  * instead of waiting behind it.
  */
 export async function claimNext() {
+  if (queuePaused()) return null;
   const d = await db();
   return d.transaction(async () => {
     const { now, until } = lease.window();
@@ -136,7 +148,7 @@ export async function save(run: Run, token: string) {
     await db()
   )
     .prepare(
-      `UPDATE yi_runs SET title=$1,status=$2,stage=$3,updated_at=$4,error=$5,output=$6,lease_until=${lease.released} WHERE id=$7 AND lease_token=$8`,
+      `UPDATE yi_runs SET title=$1,status=$2,stage=$3,updated_at=$4,error=$5,output=$6,lease_until=${lease.released} WHERE id=$7 AND lease_token=$8 AND lease_until>$9`,
     )
     .run(
       run.title,
@@ -147,6 +159,7 @@ export async function save(run: Run, token: string) {
       JSON.stringify(run.output),
       run.id,
       token,
+      Date.now(),
     );
   if (!result.changes) throw Error("Stale worker lease.");
 }
@@ -237,13 +250,55 @@ export async function reserve(
       used + amount > limit
     )
       throw Error("Local experiment budget limit reached.");
+    // Admission uses current administrative limits, never a run's frozen config.
+    // Hold the settings row until commit so an existing limit cannot change
+    // halfway through the budget decision. The advisory lock serializes spend.
+    const current = (await d
+      .prepare(
+        "SELECT payload FROM yi_documents WHERE kind='teamPreferences' AND id='default' FOR SHARE",
+      )
+      .get()) as { payload: unknown } | undefined;
+    const monthlyLimit = resolveTeam(
+      TeamPreferences.parse(json(current?.payload) ?? {}),
+    ).budget.monthlyUsd;
+    const now = new Date();
+    const monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
+    const commitments = (await d
+      .prepare(`SELECT status,amount,metrics FROM yi_calls WHERE ${COUNTED}`)
+      .all()) as { status: string; amount: number; metrics: unknown }[];
+    const monthlyUsed = commitments.reduce((total, call) => {
+      const metrics = (json(call.metrics) ?? {}) as Record<string, unknown>;
+      const settledAt =
+        typeof metrics.settledAt === "string"
+          ? Date.parse(metrics.settledAt)
+          : NaN;
+      // All open holds and undated legacy charges remain committed. Only a
+      // positively dated completed charge before this month can be excluded.
+      const previous =
+        call.status === "completed" &&
+        Number.isFinite(settledAt) &&
+        settledAt < monthStart;
+      return total + (previous ? 0 : Number(call.amount));
+    }, 0);
+    if (monthlyUsed + amount > monthlyLimit)
+      throw Error(
+        `Monthly budget limit reached: US$${monthlyUsed.toFixed(4)} is spent or reserved against US$${monthlyLimit.toFixed(2)} allowed.`,
+      );
     const id = randomUUID();
     try {
       await d
         .prepare(
           "INSERT INTO yi_calls(id,run_id,stage,status,amount,metrics,attempt) VALUES($1,$2,$3,$4,$5,$6,$7)",
         )
-        .run(id, runId, stage, "reserved", amount, "{}", attempt);
+        .run(
+          id,
+          runId,
+          stage,
+          "reserved",
+          amount,
+          JSON.stringify({ reservedAt: new Date().toISOString() }),
+          attempt,
+        );
     } catch (e) {
       if (isOpenAttemptConflict(e)) throw Error(OPEN_ATTEMPT_MESSAGE);
       throw e;
@@ -270,12 +325,15 @@ export async function settle(
   await d.transaction(async () => {
     const row = (await d
       .prepare(
-        "UPDATE yi_calls SET status=$1,amount=COALESCE($2,amount),metrics=$3 WHERE id=$4 RETURNING run_id",
+        "UPDATE yi_calls SET status=$1,amount=COALESCE($2,amount),metrics=metrics::jsonb || $3::jsonb WHERE id=$4 RETURNING run_id",
       )
       .get(
         amount === null ? "reserved" : "completed",
         amount,
-        JSON.stringify(metrics),
+        JSON.stringify({
+          ...(metrics as Record<string, unknown>),
+          ...(amount === null ? {} : { settledAt: new Date().toISOString() }),
+        }),
         id,
       )) as { run_id: string } | undefined;
     if (row) await recomputeCost(String(row.run_id));
@@ -349,7 +407,9 @@ export async function unknownCalls(before: string): Promise<UnknownCall[]> {
         metrics,
       };
     })
-    .filter((row) => (row.unknownSince ?? "") <= before)
+    .filter(
+      (row) => row.metrics.batch !== true && (row.unknownSince ?? "") <= before,
+    )
     .sort((a, b) => (a.unknownSince ?? "").localeCompare(b.unknownSince ?? ""));
 }
 /**
@@ -454,7 +514,9 @@ export async function listAttempts(
       metrics,
       priceTableVersion: metricsText(metrics, "priceTableVersion"),
       reservationRates: metricsRates(metrics),
-      open: (OPEN_CALL_STATUSES as readonly string[]).includes(String(r.status)),
+      open: (OPEN_CALL_STATUSES as readonly string[]).includes(
+        String(r.status),
+      ),
     };
   });
 }
@@ -525,4 +587,42 @@ export async function retainResponse(
       "INSERT INTO yi_responses(id,run_id,stage,payload,created_at) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING",
     )
     .run(id, runId, stage, JSON.stringify(payload), new Date().toISOString());
+}
+/** Crash-left reservations become explicit reconciliation jobs once the hold
+ * expires and no live queue lease can still be using the provider response. */
+export async function enqueueExpiredReservations(
+  holdMinutes: number,
+  now = Date.now(),
+) {
+  const cutoff = new Date(now - Math.max(0, holdMinutes) * 60000).toISOString();
+  const rows = await db()
+    .prepare(
+      `SELECT c.id,c.run_id,c.metrics FROM yi_calls c
+  WHERE c.status IN ('reserved','unknown') AND COALESCE(c.metrics::jsonb->>'batch','false')<>'true'
+  AND COALESCE(c.metrics::jsonb->>'unknown_since',c.metrics::jsonb->>'reservedAt','')<=$1
+  AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.payload->>'runId'=c.run_id AND j.status='running' AND j.lease_until>now())`,
+    )
+    .all(cutoff);
+  for (const row of rows) {
+    await db().transaction(async () => {
+      const metrics = parseMetrics(row.metrics);
+      await markUnknown(
+        String(row.id),
+        "Worker reservation exceeded its hold without an active lease",
+        new Date(
+          typeof metrics.unknown_since === "string"
+            ? metrics.unknown_since
+            : typeof metrics.reservedAt === "string"
+              ? metrics.reservedAt
+              : cutoff,
+        ),
+      );
+      await enqueueJob({
+        id: `reconcile:${row.id}`,
+        kind: "reconcile",
+        payload: { callId: String(row.id) },
+      });
+    });
+  }
+  return rows.length;
 }

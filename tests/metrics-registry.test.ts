@@ -18,7 +18,10 @@ import {
 } from "../src/features/youtube-intelligence/metrics/context.ts";
 import { renderMethodology } from "../src/features/youtube-intelligence/metrics/methodology.ts";
 import { docs } from "../src/server/youtube-intelligence/research-store.ts";
-import { summarizeScores, type scoreCall } from "../src/features/youtube-intelligence/performance.ts";
+import {
+  summarizeScores,
+  type scoreCall,
+} from "../src/features/youtube-intelligence/performance.ts";
 import type { CheckedClaim } from "../src/features/youtube-intelligence/contracts.ts";
 
 const ids = new Set(registry.map((m) => m.id));
@@ -26,19 +29,32 @@ const ids = new Set(registry.map((m) => m.id));
 test("registry ids are unique and every entry has a definition, steps and inputs", () => {
   assert.equal(ids.size, registry.length, "duplicate metric id");
   for (const m of registry) {
-    assert.match(m.id, /^[a-z][a-zA-Z0-9]*(\.[a-z][a-zA-Z0-9]*)+$/, `${m.id}: dotted id`);
+    assert.match(
+      m.id,
+      /^[a-z][a-zA-Z0-9]*(\.[a-z][a-zA-Z0-9]*)+$/,
+      `${m.id}: dotted id`,
+    );
     assert.ok(m.label.trim().length > 0, `${m.id}: label`);
     assert.ok(m.definition.trim().length > 0, `${m.id}: definition`);
-    assert.match(m.definition.trim(), /[.!?]$/, `${m.id}: definition is a sentence`);
+    assert.match(
+      m.definition.trim(),
+      /[.!?]$/,
+      `${m.id}: definition is a sentence`,
+    );
     assert.ok(m.steps.length > 0, `${m.id}: steps`);
-    for (const s of m.steps) assert.ok(s.trim().length > 0, `${m.id}: blank step`);
+    for (const s of m.steps)
+      assert.ok(s.trim().length > 0, `${m.id}: blank step`);
     assert.ok(m.inputs.length > 0, `${m.id}: inputs`);
     for (const i of m.inputs) {
       assert.ok(i.table.length > 0, `${m.id}: input table`);
       assert.ok(i.columns.length > 0, `${m.id}: input columns`);
     }
     assert.ok(Array.isArray(m.settingsUsed), `${m.id}: settingsUsed`);
-    assert.equal(typeof m.implementation, "function", `${m.id}: implementation`);
+    assert.equal(
+      typeof m.implementation,
+      "function",
+      `${m.id}: implementation`,
+    );
     assert.doesNotMatch(
       `${m.definition} ${m.steps.join(" ")}`,
       /TODO|TBD|placeholder|lorem/i,
@@ -50,7 +66,10 @@ test("registry ids are unique and every entry has a definition, steps and inputs
 test("every UI column maps to a registry id", () => {
   assert.ok(uiColumns.length > 0);
   for (const c of uiColumns) {
-    assert.ok(ids.has(c.metricId), `${c.surface} / ${c.column} -> ${c.metricId} is not in the registry`);
+    assert.ok(
+      ids.has(c.metricId),
+      `${c.surface} / ${c.column} -> ${c.metricId} is not in the registry`,
+    );
     assert.ok(c.surface.length > 0 && c.column.length > 0);
   }
   const seen = new Set<string>();
@@ -59,25 +78,41 @@ test("every UI column maps to a registry id", () => {
     assert.ok(!seen.has(k), `duplicate column ${c.surface} / ${c.column}`);
     seen.add(k);
   }
-  const performance = uiColumns.filter((c) => c.surface === "research.performance").map((c) => c.column);
-  assert.deepEqual(performance, ["Channel", "Priced calls", "Mean return", "SPY", "Excess", "Win rate"]);
+  const performance = uiColumns
+    .filter((c) => c.surface === "standalone.creator")
+    .map((c) => c.column);
+  assert.deepEqual(performance, [
+    "Name",
+    "Rank",
+    "Settled calls",
+    "Win rate",
+    "Median excess",
+    "Evidence",
+  ]);
 });
 
 test("renderHover and renderMethodology share the registry text", () => {
   const m = metric("calls.winRate");
   const hover = renderHover("calls.winRate");
   assert.ok(hover.startsWith(m.definition), "hover starts with the definition");
-  m.steps.forEach((s, i) => assert.ok(hover.includes(`${i + 1}. ${s}`), `hover lists step ${i + 1}`));
+  m.steps.forEach((s, i) =>
+    assert.ok(hover.includes(`${i + 1}. ${s}`), `hover lists step ${i + 1}`),
+  );
   const md = renderMethodology();
   assert.ok(md.startsWith("# Methodology"));
   for (const entry of registry) {
     assert.ok(md.includes(`## ${entry.label}`), `${entry.id}: heading`);
     assert.ok(md.includes(`\`${entry.id}\``), `${entry.id}: id`);
     assert.ok(md.includes(entry.definition), `${entry.id}: definition`);
-    entry.steps.forEach((s, i) => assert.ok(md.includes(`${i + 1}. ${s}`), `${entry.id}: step ${i + 1}`));
+    entry.steps.forEach((s, i) =>
+      assert.ok(md.includes(`${i + 1}. ${s}`), `${entry.id}: step ${i + 1}`),
+    );
   }
   assert.throws(() => renderHover("no.such.metric"), /Unknown metric/);
-  assert.throws(() => evaluate("no.such.metric", emptyMetricContext()), /Unknown metric/);
+  assert.throws(
+    () => evaluate("no.such.metric", emptyMetricContext()),
+    /Unknown metric/,
+  );
 });
 
 test("Wilson 95% interval matches known values", () => {
@@ -101,17 +136,33 @@ test("trust level derives from the checks a claim has passed until a stored leve
     reasons: [],
   };
   assert.equal(trustLevelOf(claim), "L0");
-  assert.equal(trustLevelOf({ ...claim, audit: { verdict: "accept", reason_en: "" } }), "L1");
-  assert.equal(trustLevelOf({ ...claim, passed: false, audit: { verdict: "reject", reason_en: "" } }), null);
+  assert.equal(
+    trustLevelOf({ ...claim, audit: { verdict: "accept", reason_en: "" } }),
+    "L1",
+  );
+  assert.equal(
+    trustLevelOf({
+      ...claim,
+      passed: false,
+      audit: { verdict: "reject", reason_en: "" },
+    }),
+    null,
+  );
   assert.equal(trustLevelOf({ ...claim, trust: "L2" } as CheckedClaim), "L2");
-  assert.equal(trustLevelOf({ ...claim, trust: "bogus" } as CheckedClaim), "L0");
+  assert.equal(
+    trustLevelOf({ ...claim, trust: "bogus" } as CheckedClaim),
+    "L0",
+  );
 });
 
 test("every entry evaluates on an empty context without throwing", () => {
   const ctx = emptyMetricContext();
   for (const m of registry) {
     const value = evaluate(m.id, ctx);
-    assert.ok(value === null || typeof value === "number" || Array.isArray(value), `${m.id}: ${JSON.stringify(value)}`);
+    assert.ok(
+      value === null || typeof value === "number" || Array.isArray(value),
+      `${m.id}: ${JSON.stringify(value)}`,
+    );
   }
   assert.equal(evaluate("calls.count", ctx), 0);
   assert.equal(evaluate("calls.winRate", ctx), null);
@@ -136,7 +187,9 @@ test("every entry evaluates on the baseline fixture and equals the direct comput
     assert.notEqual(value, undefined, `${m.id} returned undefined`);
   }
   // The rendered figure and the computation share one source: summarizeScores over the stored rows.
-  const stored = (await docs<ReturnType<typeof scoreCall>>("settlement")).filter((r) =>
+  const stored = (
+    await docs<ReturnType<typeof scoreCall>>("settlement")
+  ).filter((r) =>
     Object.values(seeded.settlements).includes(`${r.id}:leapedge:90`),
   );
   const direct = summarizeScores(stored);
@@ -154,9 +207,15 @@ test("every entry evaluates on the baseline fixture and equals the direct comput
   assert.equal(direct.priced, 2);
   assert.equal(direct.completed, 1);
   assert.equal(direct.ongoing, 1);
-  const interval = evaluate("calls.winRateInterval", ctx) as { low: number; high: number; n: number };
+  const interval = evaluate("calls.winRateInterval", ctx) as {
+    low: number;
+    high: number;
+    n: number;
+  };
   assert.equal(interval.n, 2);
-  assert.ok(interval.low >= 0 && interval.high <= 1 && interval.low <= interval.high);
+  assert.ok(
+    interval.low >= 0 && interval.high <= 1 && interval.low <= interval.high,
+  );
   // Trust ladder: every accepted fixture claim carries a critic verdict, so all sit at L1 today.
   const acceptedClaims = ctx.claims.filter((c) => c.trust !== null).length;
   assert.equal(evaluate("trust.l0Count", ctx), 0);
@@ -164,5 +223,8 @@ test("every entry evaluates on the baseline fixture and equals the direct comput
   assert.equal(evaluate("trust.l2Count", ctx), 0);
   assert.equal(evaluate("trust.l3Count", ctx), 0);
   assert.ok(acceptedClaims >= 5, `accepted claims ${acceptedClaims}`);
-  assert.deepEqual(evaluate("channel.title", ctx), [...new Set(ctx.settlements.map((s) => s.channel))].sort());
+  assert.deepEqual(
+    evaluate("channel.title", ctx),
+    [...new Set(ctx.settlements.map((s) => s.channel))].sort(),
+  );
 });

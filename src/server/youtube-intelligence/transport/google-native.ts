@@ -21,7 +21,7 @@ import {
   type TextPart,
   type TransportErrorKind,
 } from "./types.ts";
-import { describeFromPrices, costUsd } from "./prices.ts";
+import { describeFromPrices, costUsd, normaliseModel } from "./prices.ts";
 import { classifyError } from "../native-google-core.ts";
 /**
  * GoogleNativeTransport: the Gemini Developer API through @google/genai, on
@@ -39,6 +39,25 @@ import { classifyError } from "../native-google-core.ts";
  * Tests inject { client }; nothing here reads a key until a call is made.
  */
 const MIME_VIDEO = "video/*";
+/** Nested array caps can exceed Gemini's schema-complexity limit (HTTP 400).
+ * Keep shape/required fields at the provider; callers enforce full Zod bounds
+ * before accepting output. Do not mutate schemas shared with other transports.
+ */
+function nativeResponseSchema(
+  schema: Record<string, unknown>,
+): Record<string, unknown> {
+  const simplify = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(simplify);
+    if (value && typeof value === "object")
+      return Object.fromEntries(
+        Object.entries(value)
+          .filter(([key]) => key !== "maxItems")
+          .map(([key, child]) => [key, simplify(child)]),
+      );
+    return value;
+  };
+  return simplify(schema) as Record<string, unknown>;
+}
 const THINKING: Record<string, ThinkingLevel> = {
   minimal: ThinkingLevel.MINIMAL,
   low: ThinkingLevel.LOW,
@@ -47,8 +66,12 @@ const THINKING: Record<string, ThinkingLevel> = {
 };
 /** The slice of the SDK this transport uses, so a stub needs no network and no key. */
 export type GoogleNativeClient = {
-  generateContent(request: GenerateContentParameters): Promise<GenerateContentResponse>;
-  countTokens?(request: CountTokensParameters): Promise<{ totalTokens?: number }>;
+  generateContent(
+    request: GenerateContentParameters,
+  ): Promise<GenerateContentResponse>;
+  countTokens?(
+    request: CountTokensParameters,
+  ): Promise<{ totalTokens?: number }>;
 };
 /** The slice of ai.caches explicit caching uses; a stub needs no network and no key. */
 export type GoogleNativeCacheClient = {
@@ -89,7 +112,9 @@ export function usageOf(
   const candidates = usage.candidatesTokenCount ?? 0;
   const thoughts = usage.thoughtsTokenCount ?? 0;
   const media = (usage.promptTokensDetails ?? [])
-    .filter((d) => String(d.modality) === "AUDIO" || String(d.modality) === "VIDEO")
+    .filter(
+      (d) => String(d.modality) === "AUDIO" || String(d.modality) === "VIDEO",
+    )
     .reduce((sum, d) => sum + (d.tokenCount ?? 0), 0);
   // promptTokenCount already includes the cached and media tokens; bill each
   // slice once, at its own rate, and never let rounding push a slice negative.
@@ -113,7 +138,10 @@ export function usageOf(
 function transportError(error: unknown, aborted: boolean): TransportError {
   const { outcome, httpStatus } = classifyError(error, aborted);
   if (outcome === "transport_uncertain_timeout")
-    return new TransportError("timeout", "Provider request timed out before a response.");
+    return new TransportError(
+      "timeout",
+      "Provider request timed out before a response.",
+    );
   const kind: TransportErrorKind =
     outcome === "quota_or_rate_limit"
       ? "rate_limited"
@@ -168,7 +196,8 @@ export class GoogleNativeTransport implements ModelTransport {
       ? [
           {
             fileData: { fileUri: video.url, mimeType: MIME_VIDEO },
-            ...(video.startSeconds !== undefined || video.endSeconds !== undefined
+            ...(video.startSeconds !== undefined ||
+            video.endSeconds !== undefined
               ? {
                   videoMetadata: {
                     ...(video.startSeconds !== undefined
@@ -192,22 +221,32 @@ export class GoogleNativeTransport implements ModelTransport {
   ): GenerateContentParameters {
     const r = ModelRequest.parse(request);
     const level = r.reasoningEffort ? THINKING[r.reasoningEffort] : undefined;
-    const lowMedia = (this.options.mediaResolution ?? "low") === "low" && !!r.video;
+    const lowMedia =
+      (this.options.mediaResolution ?? "low") === "low" && !!r.video;
     return {
-      model: r.model,
+      model: normaliseModel(r.model),
       contents: [{ role: "user", parts: this.parts(r) }],
       config: {
         ...(signal ? { abortSignal: signal } : {}),
         httpOptions: { retryOptions: { attempts: 1 } },
         ...(r.system?.length
-          ? { systemInstruction: { role: "system", parts: r.system.map((p) => ({ text: p.text })) } }
+          ? {
+              systemInstruction: {
+                role: "system",
+                parts: r.system.map((p) => ({ text: p.text })),
+              },
+            }
           : {}),
         maxOutputTokens: r.maxOutputTokens,
         temperature: r.temperature,
         responseMimeType: "application/json",
-        ...(r.responseSchema ? { responseSchema: r.responseSchema } : {}),
+        ...(r.responseSchema
+          ? { responseSchema: nativeResponseSchema(r.responseSchema) }
+          : {}),
         ...(r.cachedContent ? { cachedContent: r.cachedContent } : {}),
-        ...(lowMedia ? { mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW } : {}),
+        ...(lowMedia
+          ? { mediaResolution: MediaResolution.MEDIA_RESOLUTION_LOW }
+          : {}),
         ...(level ? { thinkingConfig: { thinkingLevel: level } } : {}),
       },
     };
@@ -238,7 +277,10 @@ export class GoogleNativeTransport implements ModelTransport {
         usage: usageOf(r.model, response),
         model: response.modelVersion ?? r.model,
         provider: this.name,
-        finishReason: response.candidates?.[0]?.finishReason ?? blocked ?? undefined,
+        finishReason:
+          response.candidates?.[0]?.finishReason === "STOP"
+            ? "stop"
+            : (response.candidates?.[0]?.finishReason ?? blocked ?? undefined),
         raw: response,
       };
     } catch (error) {
@@ -263,9 +305,11 @@ export class GoogleNativeTransport implements ModelTransport {
     const client = this.cacheClient();
     try {
       const created = await client.create({
-        model,
+        model: normaliseModel(model),
         config: {
-          contents: [{ role: "user", parts: parts.map((p) => ({ text: p.text })) }],
+          contents: [
+            { role: "user", parts: parts.map((p) => ({ text: p.text })) },
+          ],
           ttl: `${Math.max(1, Math.round(ttlSeconds))}s`,
         },
       });
@@ -304,7 +348,9 @@ export class GoogleNativeTransport implements ModelTransport {
   async countTokens(request: ModelRequestData): Promise<TokenCount> {
     const r = ModelRequest.parse(request);
     const local = () => {
-      const text = [...(r.system ?? []), ...r.user].map((p) => p.text).join("\n");
+      const text = [...(r.system ?? []), ...r.user]
+        .map((p) => p.text)
+        .join("\n");
       return {
         totalTokens: Math.ceil(Buffer.byteLength(text, "utf8") / 4),
         estimated: true,
@@ -319,7 +365,7 @@ export class GoogleNativeTransport implements ModelTransport {
     if (!client.countTokens) return local();
     try {
       const counted = await client.countTokens({
-        model: r.model,
+        model: normaliseModel(r.model),
         contents: [{ role: "user", parts: this.parts(r) }],
       });
       if (typeof counted.totalTokens !== "number" || counted.totalTokens < 0)

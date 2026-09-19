@@ -1,0 +1,41 @@
+{
+  "version": "standalone-browser-acceptance.v1",
+  "date": "2026-09-19",
+  "branch": "codex/standalone-build-loop",
+  "url": "http://127.0.0.1:3018/youtube-intelligence/today",
+  "mode": "isolated real PostgreSQL, visibly labelled synthetic fixtures, no provider keys",
+  "controller": "CUA native Google Chrome",
+  "status": "in-progress",
+  "observed": [
+    "Desktop Today renders navigation, empty trust-filter state, video activity and labelled synthetic banner",
+    "Invalid non-YouTube URL rejected with actionable message",
+    "Minimum trust Audio-agreed to All extracted reveals five baseline fixture claims",
+    "Save call confirms success and persists into Saved calls route",
+    "Research note saves and remains displayed",
+    "Analysis shows relational trust counts, exact original/translated evidence and timestamps",
+    "Selecting 0:17 updates timestamped source URL; unavailable embed reports fallback link",
+    "Human-review submission disabled until deliberate listening confirmation; no human review fabricated",
+    "Leaderboard renders benchmark, record, horizon, market and trust controls with honest insufficient-data state",
+    "Changes renders compare-from date and window controls",
+    "Settings preference save confirms success; Use team defaults restores inheritance and saves",
+    "Channels unsaved processing selection changes projected cost from zero to Not measured before save",
+    "Channel selection saves and can be restored off",
+    "Lab renders prompt, comparison, experiment and provider diagnostic controls"
+  ],
+  "fixedFindings": [
+    "Mutation errors no longer disappear during background data polling",
+    "Baseline fixture enrichment passed partial channel fields and overwrote names; fixture writer corrected",
+    "Schema migration applied to browser DB after live development advanced to version 6"
+  ],
+  "pending": [
+    "Native browser stopped returning screenshots and accessibility content during responsive-mode transition; user asked to restore visible unlocked Chrome",
+    "Populated leaderboard and meaningful Changes with new 24-call synthetic fixture",
+    "Narrow-phone and tablet screenshots, menu, overflow, keyboard navigation",
+    "Valid submission through queued and recovered state, reload persistence, provider error/retry",
+    "Latest catalog, historical replay, price refresh and recovery controls",
+    "CSV export contents against displayed rows",
+    "Final production-build browser pass after legacy UI retirement"
+  ],
+  "leapedgeAnalysesUsed": 0,
+  "humanVerificationCreated": 0
+}

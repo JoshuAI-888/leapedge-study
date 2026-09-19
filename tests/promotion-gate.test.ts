@@ -24,9 +24,11 @@ import {
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const run = promisify(execFile);
 
-function measurements(over: {
-  gold?: Partial<GateMeasurements["gold"]>;
-} = {}): GateMeasurements {
+function measurements(
+  over: {
+    gold?: Partial<GateMeasurements["gold"]>;
+  } = {},
+): GateMeasurements {
   return {
     gold: {
       advisory: false,
@@ -53,7 +55,9 @@ test("lab.gates defaults match the spec thresholds and stay outside the configur
   assert.throws(() => GateThresholds.parse({ costPerAcceptedClaimMaxUsd: -1 }));
   assert.throws(() => GateThresholds.parse({ advisoryPolicy: "fail" }));
   const stricter = TeamPreferences.parse({
-    lab: { gates: { goldPrecisionMin: 0.99, costPerAcceptedClaimMaxUsd: 0.05 } },
+    lab: {
+      gates: { goldPrecisionMin: 0.99, costPerAcceptedClaimMaxUsd: 0.05 },
+    },
   });
   assert.equal(stricter.lab.gates.goldPrecisionMin, 0.99);
   assert.equal(stricter.lab.gates.goldRecallMin, 0.8);
@@ -65,7 +69,10 @@ test("every binding check above threshold passes the gate with nothing advisory"
   assert.equal(gate.pass, true);
   assert.equal(gate.verdict, "pass");
   assert.deepEqual(gate.advisory, []);
-  assert.deepEqual(Object.keys(gate.results).sort(), [...GATE_CHECK_IDS].sort());
+  assert.deepEqual(
+    Object.keys(gate.results).sort(),
+    [...GATE_CHECK_IDS].sort(),
+  );
   for (const id of GATE_CHECK_IDS) {
     const r = gate.results[id];
     assert.equal(r.id, id);
@@ -86,7 +93,10 @@ test("a binding metric below its threshold fails the gate; a value at the thresh
   const thresholds = teamDefaults().lab.gates;
   const low = evaluateGate(
     measurements({
-      gold: { claims: { precision: 0.85, recall: 0.9 }, cost: { perAcceptedClaimUsd: 0.3 } },
+      gold: {
+        claims: { precision: 0.85, recall: 0.9 },
+        cost: { perAcceptedClaimUsd: 0.3 },
+      },
     }),
     thresholds,
   );
@@ -158,7 +168,8 @@ test("advisory results never fail the gate but are reported with their reason", 
     measurements({
       gold: {
         advisory: true,
-        advisoryReason: "Only 12 of 50 required verified cases; metrics are advisory, not a gate.",
+        advisoryReason:
+          "Only 12 of 50 required verified cases; metrics are advisory, not a gate.",
         claims: { precision: 0.5, recall: 0.4 },
         anchors: { accuracy: 0.2, toleranceSeconds: 2 },
         cost: { perAcceptedClaimUsd: 0.9 },
@@ -199,14 +210,20 @@ test("advisory results never fail the gate but are reported with their reason", 
 
 test("gateReport carries configHash, thresholds, results, advisory and pass, and validates", () => {
   const team = TeamPreferences.parse({
-    models: { extraction: { id: "gemini-3.8-pro", transport: "google-native" } },
+    models: {
+      extraction: { id: "gemini-3.8-pro", transport: "google-native" },
+    },
   });
   const report = gateReport({
     team,
     mode: "offline",
     measurements: measurements(),
     sources: {
-      goldSet: { casesPath: "evaluations/gold-set/cases.json", casesHash: "abc", runs: 0 },
+      goldSet: {
+        casesPath: "evaluations/gold-set/cases.json",
+        casesHash: "abc",
+        runs: 0,
+      },
     },
   });
   assert.equal(report.version, GATE_REPORT_VERSION);
@@ -217,7 +234,7 @@ test("gateReport carries configHash, thresholds, results, advisory and pass, and
   assert.match(report.date, /^\d{4}-\d{2}-\d{2}$/);
   assert.deepEqual(report.thresholds, team.lab.gates);
   assert.equal(report.configuration.models.extraction.id, "gemini-3.8-pro");
-  assert.equal(report.configuration.prompts.version, "evidence-first.web.v5");
+  assert.equal(report.configuration.prompts.version, "evidence-first.web.v7");
   assert.equal(report.pass, true);
   assert.equal(report.verdict, "pass");
   assert.deepEqual(report.advisory, []);
@@ -294,7 +311,10 @@ test("The offline gate runs with no DATABASE_URL and no YTI_DB, which is how CI 
   const script = fileURLToPath(
     new URL("../scripts/promotion-gate.ts", import.meta.url),
   );
-  const out = join(mkdtempSync(join(tmpdir(), "yti-gate-keyless-")), "gate.json");
+  const out = join(
+    mkdtempSync(join(tmpdir(), "yti-gate-keyless-")),
+    "gate.json",
+  );
   const env = { ...process.env };
   for (const key of [
     "DATABASE_URL",
@@ -316,7 +336,11 @@ test("The offline gate runs with no DATABASE_URL and no YTI_DB, which is how CI 
   const report = GateReport.parse(JSON.parse(readFileSync(out, "utf8")));
   assert.equal(report.mode, "offline");
   assert.equal(report.verdict, "advisory-only");
-  assert.equal(report.sources.goldSet.runs, 0, "an empty database has no runs to replay");
+  assert.equal(
+    report.sources.goldSet.runs,
+    0,
+    "an empty database has no runs to replay",
+  );
   const summary = JSON.parse(stdout.trim().split("\n").at(-1)!);
   assert.equal(summary.pass, true);
 });

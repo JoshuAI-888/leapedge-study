@@ -37,9 +37,11 @@ await db().transaction(async () => {
     for (const row of rows) {
       const keys = Object.keys(row);
       if (keys.some((k) => !/^\w+$/.test(k))) throw Error("Invalid column");
+      const identityOverride =
+        table === "settlements" ? "OVERRIDING SYSTEM VALUE " : "";
       await db()
         .prepare(
-          `INSERT INTO ${table}(${keys.join(",")}) VALUES(${keys.map((_, i) => `$${i + 1}`).join(",")})`,
+          `INSERT INTO ${table}(${keys.join(",")}) ${identityOverride}VALUES(${keys.map((_, i) => `$${i + 1}`).join(",")})`,
         )
         .run(...keys.map((k) => row[k]));
     }
@@ -49,6 +51,18 @@ await db().transaction(async () => {
     if (Number(actual?.n) !== rows.length)
       throw Error("Restore count mismatch");
   }
+  if (tables.includes("settlements"))
+    await db()
+      .prepare(
+        "SELECT setval(pg_get_serial_sequence('settlements','revision'),COALESCE(MAX(revision),1),MAX(revision) IS NOT NULL) FROM settlements",
+      )
+      .get();
+  if (Number(input.version) < 3 && tables.includes("prices"))
+    await db()
+      .prepare(
+        "INSERT INTO price_history(ticker,date,adjusted_close,source,fetched_at) SELECT ticker,date,adjusted_close,source,fetched_at FROM prices ON CONFLICT DO NOTHING",
+      )
+      .run();
 });
 console.log(
   `Backup checksum and all ${tables.length} restored table counts verified (backup version ${input.version}).`,

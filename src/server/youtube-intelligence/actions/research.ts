@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { seedLists } from "../seed/lists.ts";
 import * as R from "../research-store.ts";
 import { countClaims } from "../repos/claims.ts";
 import { countMentions } from "../repos/mentions.ts";
@@ -17,6 +18,15 @@ async function snapshot() {
   ]);
   return {
     ...s,
+    seedSources: seedLists().map((list) => ({
+      source: list.source,
+      placeholder: list.placeholder,
+      note: list.note,
+      count: list.channels.length,
+      installedCount: s.channels.filter((channel) =>
+        list.channels.some((seed) => seed.id === channel.id),
+      ).length,
+    })),
     performances:
       await R.docs<Awaited<ReturnType<typeof performance>>>("performance"),
     counts: {

@@ -38,7 +38,10 @@ test("No TypeScript that --experimental-strip-types cannot strip", () => {
   // Node runs the .ts sources directly, so a construct that needs emitting is
   // not a style question: it is a file that will not run.
   const banned: [RegExp, string][] = [
-    [/^\s*(export\s+)?(const\s+)?enum\s+\w+/m, "enum (use a const object or a zod enum)"],
+    [
+      /^\s*(export\s+)?(const\s+)?enum\s+\w+/m,
+      "enum (use a const object or a zod enum)",
+    ],
     [/^\s*(export\s+)?(declare\s+)?namespace\s+\w+/m, "namespace"],
     [
       /constructor\s*\([^)]*\b(private|public|protected|readonly)\s+\w+/s,
@@ -65,6 +68,11 @@ test("No TypeScript that --experimental-strip-types cannot strip", () => {
  * object. Retire something, add it here, and it stays retired.
  */
 const RETIRED_IN_CODE: Record<string, string[] | null> = {
+  "research-utils": null, // orphaned legacy formatting helper
+  CorpusPanel: null, // legacy monolithic research subpanel
+  TrendsPanel: null, // replaced by registry-backed sentiment and Changes
+  IntelligenceApp: null, // replaced by standalone pages, F42
+  ResearchApp: null, // replaced by standalone pages, F42
   "youtubei.js": null, // F20
   youtubejs: null, // F20
   auditSource: null, // deleted 18 September with evaluations/native-google
@@ -155,7 +163,11 @@ test("No source file contains a control character", () => {
   // tests/metrics-registry.test.ts held a raw NUL as a map-key separator, so
   // git classified it as binary: no diff, not reviewable on GitHub, for a day.
   const control = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/;
-  for (const path of [...liveCode, ...liveDocs, ...tracked.filter((p) => /\.(json|sql|yml|css)$/.test(p) && !ARCHIVED(p))]) {
+  for (const path of [
+    ...liveCode,
+    ...liveDocs,
+    ...tracked.filter((p) => /\.(json|sql|yml|css)$/.test(p) && !ARCHIVED(p)),
+  ]) {
     if (path === "tests/conventions.test.ts") continue;
     assert.ok(
       !control.test(read(path)),
@@ -172,16 +184,21 @@ test("No source file contains a control character", () => {
  * it talks to, so a new call site is a decision somebody makes on purpose.
  */
 const MAY_FETCH: Record<string, string> = {
-  "src/server/youtube-intelligence/transport/openrouter.ts": "the OpenRouter API",
+  "src/server/youtube-intelligence/replay.ts":
+    "YouTube metadata duration and channel verification for bounded historical replay",
+  "src/server/youtube-intelligence/push.ts":
+    "YouTube WebSub subscription hub; payload authentication and topic checks live in the adapter",
+  "src/features/youtube-intelligence/ui/api.ts":
+    "Same-origin application actions and run reads for the standalone UI",
+  "src/server/youtube-intelligence/transport/openrouter.ts":
+    "the OpenRouter API",
   "src/server/youtube-intelligence/channels.ts": "the YouTube Data API",
-  "src/server/youtube-intelligence/transcripts.ts": "TranscriptAPI and Supadata",
+  "src/server/youtube-intelligence/transcripts.ts":
+    "TranscriptAPI and Supadata",
   "src/server/youtube-intelligence/market.ts": "FMP prices and filings",
   "src/server/youtube-intelligence/email.ts": "Resend",
   "src/server/youtube-intelligence/pipeline.ts":
     "YouTube video metadata only; every model call goes through a transport",
-  "src/features/youtube-intelligence/IntelligenceApp.tsx": "this app's own API routes",
-  "src/features/youtube-intelligence/ResearchApp.tsx": "this app's own API routes",
-  "src/features/youtube-intelligence/CorpusPanel.tsx": "this app's own API routes",
 };
 
 test("Only listed adapters call fetch, and the list says what each one talks to", () => {
@@ -211,7 +228,9 @@ test("Every module under src has something that imports it", () => {
   // it defines the jobs table F24 created, and F26 is what will import it.
   // The ledger entry is the escape hatch, so the intent is written down where
   // the next session reads it rather than inferred from an empty file.
-  const ledger = JSON.parse(readFileSync("docs/delivery/ledger.json", "utf8")) as {
+  const ledger = JSON.parse(
+    readFileSync("docs/delivery/ledger.json", "utf8"),
+  ) as {
     features: { id: string; status: string; files: string[]; note?: string }[];
   };
   const groundwork = new Map<string, string>();
@@ -223,8 +242,7 @@ test("Every module under src has something that imports it", () => {
       (p.startsWith("src/features/") || p.startsWith("src/server/")) &&
       /\.(ts|tsx)$/.test(p),
   );
-  const importers = [...liveCode]
-    .map((p) => ({ path: p, source: read(p) }));
+  const importers = [...liveCode].map((p) => ({ path: p, source: read(p) }));
   for (const path of modules) {
     const file = path.split("/").pop()!;
     const stem = file.replace(/\.(tsx|ts)$/, "");
@@ -279,7 +297,9 @@ test("No document is committed twice under two names", () => {
   for (const path of tracked) {
     if (!/\.md$/.test(path)) continue;
     if (!existsSync(path) || statSync(path).size < 512) continue;
-    const digest = createHash("sha256").update(readFileSync(path)).digest("hex");
+    const digest = createHash("sha256")
+      .update(readFileSync(path))
+      .digest("hex");
     const first = seen.get(digest);
     assert.ok(
       !first,

@@ -97,7 +97,9 @@ export const TeamPreferences = z.object({
     .prefault({}),
   sources: z
     .object({
-      captionProvider: z.enum(["transcriptapi", "none"]).default("transcriptapi"),
+      captionProvider: z
+        .enum(["transcriptapi", "none"])
+        .default("transcriptapi"),
       standby: z.enum(["supadata", "none"]).default("supadata"),
       standbyPlan: z.enum(["free", "basic", "pro", "mega"]).default("free"),
       standbyCooldownMinutes: z.number().int().min(0).max(1440).default(15),
@@ -190,7 +192,10 @@ export const TeamPreferences = z.object({
       minSettledForRank: z.number().int().min(1).default(20),
       fdrQ: z.number().gt(0).lt(1).default(0.05),
       minSettledPerTicker: z.number().int().min(1).default(10),
-      convictionIncluded: z.array(Conviction).min(1).default(["high", "medium"]),
+      convictionIncluded: z
+        .array(Conviction)
+        .min(1)
+        .default(["high", "medium"]),
       minimumTrust: TrustLevel.default("audio-agreed"),
     })
     .prefault({}),
@@ -231,7 +236,7 @@ export const TeamPreferences = z.object({
       version: z
         .string()
         .regex(/^[a-zA-Z0-9._-]{3,100}$/)
-        .default("evidence-first.web.v5"),
+        .default("evidence-first.web.v7"),
     })
     .prefault({}),
 });

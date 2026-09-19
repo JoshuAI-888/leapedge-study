@@ -12,16 +12,57 @@ export type UiColumn = {
   metricId: string;
 };
 export const uiColumns: UiColumn[] = [
-  // ResearchApp, Performance tab: "Creator performance versus SPY" per-channel table.
-  { surface: "research.performance", column: "Channel", metricId: "channel.title" },
-  { surface: "research.performance", column: "Priced calls", metricId: "calls.priced" },
-  { surface: "research.performance", column: "Mean return", metricId: "calls.meanReturn" },
-  { surface: "research.performance", column: "SPY", metricId: "calls.meanBenchmarkReturn" },
-  { surface: "research.performance", column: "Excess", metricId: "calls.meanExcessReturn" },
-  { surface: "research.performance", column: "Win rate", metricId: "calls.winRate" },
-  // ResearchApp, Performance tab: the summary line above each saved calculation.
-  { surface: "research.performance.summary", column: "priced", metricId: "calls.priced" },
-  { surface: "research.performance.summary", column: "calls", metricId: "calls.count" },
-  { surface: "research.performance.summary", column: "completed", metricId: "calls.completed" },
-  { surface: "research.performance.summary", column: "ongoing", metricId: "calls.ongoing" },
+  { surface: "standalone.ticker", column: "Ticker", metricId: "ticker.symbol" },
+  {
+    surface: "standalone.ticker",
+    column: "Sentiment shift",
+    metricId: "sentiment.direction",
+  },
+  {
+    surface: "standalone.ticker",
+    column: "Consensus now",
+    metricId: "ticker.consensus",
+  },
+  {
+    surface: "standalone.ticker",
+    column: "Creators",
+    metricId: "ticker.creators",
+  },
+  {
+    surface: "standalone.ticker",
+    column: "Settled calls",
+    metricId: "board.settledCount",
+  },
+  {
+    surface: "standalone.ticker",
+    column: "Median excess",
+    metricId: "board.medianExcess",
+  },
+  {
+    surface: "standalone.ticker",
+    column: "Most reliable creator",
+    metricId: "ticker.reliableCreator",
+  },
+  { surface: "standalone.creator", column: "Name", metricId: "board.label" },
+  { surface: "standalone.creator", column: "Rank", metricId: "board.rank" },
+  {
+    surface: "standalone.creator",
+    column: "Settled calls",
+    metricId: "board.settledCount",
+  },
+  {
+    surface: "standalone.creator",
+    column: "Win rate",
+    metricId: "board.winRate",
+  },
+  {
+    surface: "standalone.creator",
+    column: "Median excess",
+    metricId: "board.medianExcess",
+  },
+  {
+    surface: "standalone.creator",
+    column: "Evidence",
+    metricId: "board.status",
+  },
 ];

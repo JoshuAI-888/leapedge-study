@@ -1,4 +1,4 @@
-import { IntelligenceApp } from "../features/youtube-intelligence/IntelligenceApp";
+import { redirect } from "next/navigation";
 export default function Page() {
-  return <IntelligenceApp />;
+  redirect("/youtube-intelligence/today");
 }

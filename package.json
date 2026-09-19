@@ -17,7 +17,7 @@
     "documents:migrate": "YTI_DB_ROLE=direct node --env-file-if-exists=.env --experimental-strip-types scripts/migrate-documents.ts",
     "research:export": "YTI_DB_ROLE=direct node --env-file-if-exists=.env --experimental-strip-types scripts/export-research.ts",
     "research:restore": "YTI_DB_ROLE=direct node --env-file-if-exists=.env --experimental-strip-types scripts/restore-research.ts",
-    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test": "node --experimental-strip-types --test --test-concurrency=4 tests/*.test.ts",
     "typecheck": "next typegen && tsc --noEmit",
     "eval:transcripts": "node --experimental-strip-types scripts/transcript-accuracy.ts",
     "delivery:status": "node --experimental-strip-types scripts/standalone-build.ts status",

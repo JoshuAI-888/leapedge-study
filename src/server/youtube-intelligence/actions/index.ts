@@ -1,3 +1,5 @@
+import { automation } from "./automation.ts";
+import { trust } from "./trust.ts";
 import { briefings } from "./briefings.ts";
 import { channels } from "./channels.ts";
 import { entities } from "./entities.ts";
@@ -12,6 +14,8 @@ import type { ActionEntry, ActionTable } from "./types.ts";
  * action is validated the same way whichever route reached it.
  */
 export const RESOURCES: Record<string, ActionTable> = {
+  automation,
+  trust,
   briefings,
   channels,
   entities,

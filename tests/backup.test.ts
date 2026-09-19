@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   BACKUP_TABLES,
   BACKUP_V1_TABLES,
+  BACKUP_V2_TABLES,
   BACKUP_VERSION,
   NOT_BACKED_UP,
   tablesFor,
@@ -40,14 +41,16 @@ test("The runner's own ledger is the only table left out", () => {
 });
 
 test("A version-1 backup restores its nine tables; an unknown version restores none", () => {
-  assert.equal(BACKUP_VERSION, 2);
-  assert.deepEqual(tablesFor(2), BACKUP_TABLES);
+  assert.equal(BACKUP_VERSION, 3);
+  assert.deepEqual(tablesFor(3), BACKUP_TABLES);
+  assert.deepEqual(tablesFor(2), BACKUP_V2_TABLES);
   assert.deepEqual(tablesFor(1), BACKUP_V1_TABLES);
   assert.equal(BACKUP_V1_TABLES.length, 9);
   // Every version-1 table is still backed up today, so an old file restores
   // into the current schema with the newer tables left empty, which is what
   // that database held.
-  for (const t of BACKUP_V1_TABLES) assert.equal(BACKUP_TABLES.includes(t), true);
-  assert.throws(() => tablesFor(3), /not one this build can restore/);
+  for (const t of BACKUP_V1_TABLES)
+    assert.equal(BACKUP_TABLES.includes(t), true);
+  assert.throws(() => tablesFor(4), /not one this build can restore/);
   assert.throws(() => tablesFor(Number.NaN), /not one this build can restore/);
 });

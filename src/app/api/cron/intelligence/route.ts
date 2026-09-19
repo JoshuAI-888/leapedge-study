@@ -1,13 +1,11 @@
 import { constantEqual } from "../../../../server/youtube-intelligence/access.ts";
-import {
-  processWindow,
-  sweep,
-} from "../../../../server/youtube-intelligence/runner.ts";
+import { sweep } from "../../../../server/youtube-intelligence/runner.ts";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 800;
 export async function GET(r: Request) {
-  if(process.env.YTI_PREVIEW_READ_ONLY === "true")return Response.json({skipped:true,reason:"Read-only preview"});
+  if (process.env.YTI_PREVIEW_READ_ONLY === "true")
+    return Response.json({ skipped: true, reason: "Read-only preview" });
   const secret = process.env.CRON_SECRET;
   if (
     !secret ||
@@ -17,9 +15,9 @@ export async function GET(r: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const scheduled = await sweep();
-    const job = await processWindow();
+    // The persistent worker owns provider execution; cron only dispatches.
     return Response.json(
-      { scheduled, job },
+      { scheduled },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch {

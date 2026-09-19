@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { freshDatabase } from "./helpers/db.ts";
@@ -40,9 +41,8 @@ import {
   type SeedListData,
 } from "../src/server/youtube-intelligence/seed/lists.ts";
 /**
- * The lists that ship are placeholders, so every assertion here works from the
- * SHAPE of a seed list and builds its own entries. Replacing the JSON files
- * with the real lists changes nothing below.
+ * Generic seeding assertions build fixture lists. The shipped-list assertion
+ * separately verifies source-backed coverage and an honest missing ranking.
  */
 function channelId(prefix: string, n: number) {
   const body = `${prefix}${String(n).padStart(3, "0")}`;
@@ -79,17 +79,31 @@ const rowsSnapshot = async () =>
     .prepare(`SELECT ${COLUMNS} FROM channels ORDER BY id`)
     .all()) as Record<string, unknown>[];
 
-test("The shipped seed lists parse, and say plainly that they are placeholders", () => {
+test("Shipped channels have source evidence; unavailable LeapEdge contributes no invented ranks", () => {
   const lists = seedLists();
   assert.deepEqual(
     lists.map((l) => l.source),
     ["leapedge", "truealpha"],
   );
-  assert.equal(lists[1].tier, 1, "the TrueAlphaData list is Tier 1");
-  for (const l of lists) {
-    assert.equal(l.placeholder, true);
-    assert.match(l.note, /PLACEHOLDER/);
-  }
+  assert.equal(lists[0].placeholder, true);
+  assert.equal(lists[0].channels.length, 0);
+  assert.match(lists[0].note, /UNAVAILABLE/);
+  assert.equal(lists[1].placeholder, false);
+  assert.equal(lists[1].tier, 1);
+  assert.equal(lists[1].channels.length, 8);
+  const evidence = JSON.parse(
+    readFileSync("docs/delivery/channel-seed-resolution.json", "utf8"),
+  ) as { lookups: { channels: { id: string }[] }[] };
+  assert.deepEqual(
+    lists[1].channels.map((channel) => channel.id),
+    evidence.lookups.map((row) => row.channels[0].id),
+  );
+  assert.ok(
+    lists[1].channels.every((channel) => !channel.id.includes("PLACEHOLDER")),
+  );
+  const resolved = resolveSeeds(lists);
+  assert.ok(resolved.every((channel) => channel.leapedgeRank === null));
+  assert.equal(defaultSelection(resolved).length, 8);
 });
 
 test("A channel on both lists is one row, and it names both sources", async () => {
@@ -104,7 +118,11 @@ test("A channel on both lists is one row, and it names both sources", async () =
     list("truealpha", 1, 2, [shared]),
   ]);
   const rows = await listSeededChannels();
-  assert.equal(rows.length, 3 + 2 + 1, "the shared channel is not seeded twice");
+  assert.equal(
+    rows.length,
+    3 + 2 + 1,
+    "the shared channel is not seeded twice",
+  );
   const both = (await getChannel(shared.id))!;
   assert.deepEqual(both.seedSource, ["leapedge", "truealpha"]);
   // Tier 1 from one list beats tier 2 from the other: a tier describes the
@@ -126,10 +144,17 @@ test("A channel that joins a second list later gains a source, and stays one row
   // did not exist when the row was written, so the union has to happen in the
   // conflict branch of the INSERT. Every other test here seeds both lists at
   // once and so passes through the INSERT path only.
-  await seedChannels([list("leapedge", 2, 3, [shared]), list("truealpha", 1, 2, [shared])]);
+  await seedChannels([
+    list("leapedge", 2, 3, [shared]),
+    list("truealpha", 1, 2, [shared]),
+  ]);
   const row = (await getChannel(shared.id))!;
   assert.deepEqual(row.seedSource, ["leapedge", "truealpha"]);
-  assert.equal(row.tier, "1", "and it takes the stronger tier the new list gives it");
+  assert.equal(
+    row.tier,
+    "1",
+    "and it takes the stronger tier the new list gives it",
+  );
   assert.equal(
     (await listSeededChannels()).filter((c) => c.id === shared.id).length,
     1,
@@ -318,7 +343,11 @@ test("A channel write lands in the table and is read back from it", async () => 
   ]);
   await seedChannels([seeded]);
   const seedRow = (await getChannel(id))!;
-  assert.equal(seedRow.followedAt, null, "seeding a channel is not following it");
+  assert.equal(
+    seedRow.followedAt,
+    null,
+    "seeding a channel is not following it",
+  );
   // A clear millisecond between the seed and the follow, so the two timestamps
   // below are comparable at the resolution Date.parse reads.
   await new Promise((r) => setTimeout(r, 5));
@@ -371,7 +400,7 @@ test("A channel write lands in the table and is read back from it", async () => 
     assert.equal(changed.processing, PROCESSING_ON_REQUEST);
     assert.equal(
       (await updateChannel({ id, autoAnalyze: true })).processing,
-      PROCESSING_AUTOMATIC,
+      "batch",
       "and back again",
     );
     assert.equal(changed.tier, "1");
@@ -430,7 +459,7 @@ test("A new selection re-projects the rows, but never overrules a person", async
     true,
     "nor stop paying for one somebody switched on",
   );
-  assert.equal(held.processing, PROCESSING_AUTOMATIC);
+  assert.equal(held.processing, "batch");
   // The projection still does its job on every row nobody has touched: the new
   // Tier-1 entry is selected, and this run is what switches it on.
   const added = (await getChannel(channelId("truealpha", 5)))!;
@@ -495,9 +524,17 @@ test("pullDue discovers freely and spends only where both switches agree", async
     if (oldKey) process.env.YOUTUBE_API_KEY = oldKey;
     else delete process.env.YOUTUBE_API_KEY;
   }
-  const rows = (await (await researchDB())
-    .prepare("SELECT video_id,channel_id,run_id FROM yi_discoveries ORDER BY video_id")
-    .all()) as { video_id: string; channel_id: string; run_id: string | null }[];
+  const rows = (await (
+    await researchDB()
+  )
+    .prepare(
+      "SELECT video_id,channel_id,run_id FROM yi_discoveries ORDER BY video_id",
+    )
+    .all()) as {
+    video_id: string;
+    channel_id: string;
+    run_id: string | null;
+  }[];
   // Discovery is the free half and runs for both channels: four uploads found.
   assert.equal(rows.length, 4, "both channels were polled");
   const queued = rows.filter((r) => r.run_id).map((r) => r.video_id);
@@ -514,4 +551,34 @@ test("pullDue discovers freely and spends only where both switches agree", async
     null,
     "following a channel does not buy its back catalogue",
   );
+});
+
+test("catalog setup is metadata only, skips unavailable sources, and preserves explicit choices", async () => {
+  await freshDatabase();
+  const { seedCatalog } =
+    await import("../src/server/youtube-intelligence/seed/channels.ts");
+  const confirmed = { ...list("confirmed", 1, 2), placeholder: false };
+  const unavailable = list("unavailable", 1, 1);
+  await seedCatalog([confirmed, unavailable]);
+  let rows = await listChannels();
+  assert.equal(rows.length, 2);
+  assert.ok(
+    rows.every(
+      (c) =>
+        !c.autoAnalyze &&
+        !c.active &&
+        !c.uploads &&
+        c.processing === PROCESSING_ON_REQUEST,
+    ),
+  );
+  assert.equal(
+    (await selectionHistory()).length,
+    0,
+    "metadata setup never creates a paid selection",
+  );
+  await updateChannel({ id: rows[0].id, autoAnalyze: true, favorite: true });
+  await seedCatalog([confirmed, unavailable]);
+  rows = await listChannels();
+  assert.equal(rows.length, 2);
+  assert.equal(rows.filter((c) => c.autoAnalyze && c.favorite).length, 1);
 });

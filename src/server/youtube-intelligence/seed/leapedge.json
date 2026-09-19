@@ -2,23 +2,6 @@
   "source": "leapedge",
   "tier": 2,
   "placeholder": true,
-  "note": "PLACEHOLDER. The real LeapEdge list (about 47 channels) was not available to the build that created this file, and channel IDs and handles are not guessable, so inventing them would have seeded rows pointing at the wrong creators. Replace the entries below with the real list: order is the ranking, best first, and the first 20 entries are the LeapEdge top 20 the default selection picks up. An entry may carry its own tier; otherwise the list tier above applies.",
-  "channels": [
-    {
-      "id": "UCPLACEHOLDER-leapedge01",
-      "handle": "@placeholder-leapedge-01",
-      "title": "LeapEdge placeholder 01"
-    },
-    {
-      "id": "UCPLACEHOLDER-leapedge02",
-      "handle": "@placeholder-leapedge-02",
-      "title": "LeapEdge placeholder 02"
-    },
-    {
-      "id": "UCPLACEHOLDER-leapedge03",
-      "handle": "@placeholder-leapedge-03",
-      "title": "LeapEdge placeholder 03",
-      "tier": 3
-    }
-  ]
+  "note": "UNAVAILABLE: no source-backed ranked LeapEdge channel list is archived. Personal subscription snapshots contain 3 then 4 channels, but do not establish ranking or membership in the advertised top 20/47. No channels are seeded from this unavailable list.",
+  "channels": []
 }

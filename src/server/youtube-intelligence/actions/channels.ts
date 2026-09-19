@@ -5,10 +5,19 @@ import {
   backfillChannel as backfill,
   pull as pullChannel,
   updateChannel,
-  analyzeDiscovery,
+  analyzeUploadAndProcess,
+  saveProcessingSelection,
 } from "../channels.ts";
-import { writes, type ActionTable } from "./types.ts";
+import { seedCatalog } from "../seed/channels.ts";
+import { loadCostMetrics } from "../cost-metrics.ts";
+import { reads, nothing, writes, type ActionTable } from "./types.ts";
 export const channels: ActionTable = {
+  seedCatalog: writes(nothing, () => seedCatalog()),
+  saveSelection: writes(
+    z.strictObject({ channelIds: z.array(z.string().min(1)).max(1000) }),
+    (v) => saveProcessingSelection(v.channelIds),
+  ),
+  costMetrics: reads(nothing, () => loadCostMetrics()),
   discoverChannels: writes(
     z.strictObject({
       query: z.string().trim().min(3).max(150),
@@ -35,5 +44,5 @@ export const channels: ActionTable = {
     }),
     (v) => backfill(v),
   ),
-  analyzeUpload: writes(z.string(), (id) => analyzeDiscovery(id)),
+  analyzeUpload: writes(z.string(), (id) => analyzeUploadAndProcess(id)),
 };

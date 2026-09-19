@@ -17,10 +17,11 @@ import type { SettlementResult, SettlementRecord } from "../settlement.ts";
 export type SettlementRow = SettlementResult & {
   id: string;
   createdAt: string;
+  revision?: number;
 };
 
 const COLUMNS =
-  "id,claim_id,horizon_days,entry_date,entry_price,exit_date,exit_price,return_pct,status,reason,record,created_at";
+  "id,claim_id,horizon_days,entry_date,entry_price,exit_date,exit_price,return_pct,status,reason,record,created_at,revision";
 
 function day(value: unknown): string | null {
   if (value === null || value === undefined) return null;
@@ -41,6 +42,7 @@ function convert(r: Record<string, unknown>): SettlementRow {
     reason: r.reason === null ? null : String(r.reason),
     record: String(r.record) as SettlementRecord,
     createdAt: iso(r.created_at)!,
+    revision: Number(r.revision),
   };
 }
 
@@ -51,7 +53,7 @@ export async function appendSettlement(
   const id = randomUUID();
   const rows = (await database
     .prepare(
-      `INSERT INTO settlements(${COLUMNS.replace(",created_at", "")})
+      `INSERT INTO settlements(${COLUMNS.replace(",created_at", "").replace(",revision", "")})
        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
        RETURNING ${COLUMNS}`,
     )
@@ -72,10 +74,12 @@ export async function appendSettlement(
 }
 
 /** Every settlement written for one claim, oldest first. */
-export async function settlementsFor(claimId: string): Promise<SettlementRow[]> {
+export async function settlementsFor(
+  claimId: string,
+): Promise<SettlementRow[]> {
   const rows = (await database
     .prepare(
-      `SELECT ${COLUMNS} FROM settlements WHERE claim_id=$1 ORDER BY created_at, id`,
+      `SELECT ${COLUMNS} FROM settlements WHERE claim_id=$1 ORDER BY created_at, revision`,
     )
     .all(claimId)) as Record<string, unknown>[];
   return rows.map(convert);
@@ -113,7 +117,7 @@ export async function listSettlements(
   // a stray one is a SQLite placeholder that Postgres would not understand.
   let sql = `SELECT ${COLUMNS} FROM settlements`;
   if (where.length) sql += ` WHERE ${where.join(" AND ")}`;
-  sql += " ORDER BY created_at, id";
+  sql += " ORDER BY created_at, revision";
   const rows = (await database.prepare(sql).all(...values)) as Record<
     string,
     unknown

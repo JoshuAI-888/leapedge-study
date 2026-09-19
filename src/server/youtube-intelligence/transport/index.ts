@@ -93,11 +93,15 @@ export function stageKey(stage: string): ModelStageKey | undefined {
   return undefined;
 }
 /** The model id configured for a stage, or the extraction model for an unkeyed stage. */
-export function modelIdFor(stage: string, settings?: unknown): string | undefined {
+export function modelIdFor(
+  stage: string,
+  settings?: unknown,
+): string | undefined {
   const parsed = TransportSettings.parse(settings ?? {});
   const key = stageKey(stage);
   return (
-    (key ? parsed.models?.[key]?.id : undefined) ?? parsed.models?.extraction?.id
+    (key ? parsed.models?.[key]?.id : undefined) ??
+    parsed.models?.extraction?.id
   );
 }
 /**
@@ -163,7 +167,24 @@ export function withOpenRouterFallback(
   return {
     name: `${primary.name}+openrouter-fallback`,
     family: primary.family,
-    describe: (model: string) => primary.describe(model),
+    async describe(model: string) {
+      // A fallback is part of the same reserved attempt. Bound every rate by
+      // both routes before paying either vendor; settlement releases surplus.
+      // If either catalogue is unavailable, fail before reserving/spending.
+      const [first, second] = await Promise.all([
+        primary.describe(model),
+        secondary.describe(model),
+      ]);
+      return {
+        contextLength: Math.min(first.contextLength, second.contextLength),
+        inputRate: Math.max(first.inputRate, second.inputRate),
+        audioRate: Math.max(first.audioRate, second.audioRate),
+        outputRate: Math.max(first.outputRate, second.outputRate),
+        supportedEfforts: first.supportedEfforts.filter((e) =>
+          second.supportedEfforts.includes(e),
+        ),
+      };
+    },
     // Optional capabilities belong to the primary: a cache name is only
     // meaningful to the transport that created it, and a token count is a
     // count for the model the call will run on.
@@ -201,7 +222,10 @@ const stock: Partial<Record<TransportKind, () => ModelTransport>> = {
   "google-native": () => googleNative,
 };
 let override: TransportFactory | null = null;
-export function transportFor(stage: string, settings?: unknown): ModelTransport {
+export function transportFor(
+  stage: string,
+  settings?: unknown,
+): ModelTransport {
   const parsed = TransportSettings.parse(settings ?? {});
   if (override) return override(stage, parsed);
   const key = stageKey(stage);
@@ -215,7 +239,8 @@ export function transportFor(stage: string, settings?: unknown): ModelTransport 
   const make = stock[kind];
   if (!make) throw Error(`Transport "${kind}" is not available yet.`);
   const chosen = make();
-  return parsed.transport?.fallbackToOpenRouter === true && kind !== "openrouter"
+  return parsed.transport?.fallbackToOpenRouter === true &&
+    kind !== "openrouter"
     ? withOpenRouterFallback(chosen, openrouter)
     : chosen;
 }

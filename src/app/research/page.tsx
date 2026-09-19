@@ -1,4 +1,4 @@
-import { ResearchApp } from "../../features/youtube-intelligence/ResearchApp";
+import { redirect } from "next/navigation";
 export default function ResearchPage() {
-  return <ResearchApp />;
+  redirect("/youtube-intelligence/lab");
 }

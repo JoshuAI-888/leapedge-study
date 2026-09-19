@@ -12,7 +12,7 @@
  * actually create, so the next table added to the schema fails a test rather
  * than being quietly left out of the backup.
  */
-export const BACKUP_VERSION = 2;
+export const BACKUP_VERSION = 3;
 /**
  * The runner's own ledger. It is rebuilt by `npm run migrate` on the restore
  * target before any rows go in, and restoring one database's ledger into
@@ -40,6 +40,7 @@ export const BACKUP_TABLES = [
   "jobs",
   "prices",
   "settlements",
+  "price_history",
 ];
 /**
  * The tables a version-1 backup carries. Such a file was written before the
@@ -48,10 +49,14 @@ export const BACKUP_TABLES = [
  * have contained.
  */
 export const BACKUP_V1_TABLES = BACKUP_TABLES.slice(0, 9);
+export const BACKUP_V2_TABLES = BACKUP_TABLES.filter(
+  (t) => t !== "price_history",
+);
 export function tablesFor(version: number): string[] {
   if (version === 1) return BACKUP_V1_TABLES;
+  if (version === 2) return BACKUP_V2_TABLES;
   if (version === BACKUP_VERSION) return BACKUP_TABLES;
   throw Error(
-    `Backup version ${version} is not one this build can restore (1 or ${BACKUP_VERSION}).`,
+    `Backup version ${version} is not one this build can restore (1, 2 or ${BACKUP_VERSION}).`,
   );
 }
