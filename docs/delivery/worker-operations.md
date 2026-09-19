@@ -157,3 +157,8 @@ store alongside the database/model credentials. The web service does not need
 the search key merely to display retained briefs. Search timeouts/unknown
 charges do not automatically rebill; inspect the retained record before
 requesting a new revision.
+
+Research build PR #9 was installed on this Mac on 20 September 2026. V8 was
+selected explicitly with a retained `configurationChange` document. The web
+and status endpoints returned HTTP 200, the worker heartbeat is online, and
+`YTI_QUEUE_PAUSED=true` remains in effect. Database and secrets were preserved.

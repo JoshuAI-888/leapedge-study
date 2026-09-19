@@ -1311,7 +1311,7 @@
     "hostedFollowUp": "Access code creation explicitly approved and completed. Production login 303, authenticated status/runs 200, browser login successful. Hosted database has zero runs and no worker/model credentials; local comparison/Mac runtime remain separate. See research review for operational follow-up."
   },
   "researchReview": {
-    "status": "in-review",
+    "status": "implemented-external-verification-pending",
     "report": "docs/reviews/investment-research-review-20260920.md",
     "scope": "20 retained cases, 19 usable saved LeapEdge references; approved research implementation; zero new LeapEdge calls",
     "preferences": {
@@ -1328,7 +1328,7 @@
         "research-ui",
         "retained-case-and-browser-acceptance"
       ],
-      "status": "in-review",
+      "status": "merged",
       "pr": 9,
       "report": "docs/reviews/research-implementation-20260920.md",
       "results": "docs/reviews/research-implementation-20260920.json",
@@ -1338,7 +1338,9 @@
         "typecheck": "pass",
         "productionBuild": "pass",
         "offlinePromotion": "pass; legacy advisory-only diagnostic",
-        "browser": "desktop and 390x844 mobile; evidence, focus, transcript search, horizon/time controls and timestamp handoff verified"
+        "browser": "desktop and 390x844 mobile; evidence, focus, transcript search, horizon/time controls and timestamp handoff verified",
+        "github": "Both verify jobs passed; Vercel preview passed before merge",
+        "postgres": "Disposable real-Postgres concurrency, deduplication, budgeting, immutable documents and lease fencing passed"
       },
       "liveJobs": {
         "completed": 66,
@@ -1362,7 +1364,17 @@
         "tests/research-pipeline.test.ts",
         "tests/research-sources.test.ts"
       ],
-      "operations": "docs/delivery/worker-operations.md"
+      "operations": "docs/delivery/worker-operations.md",
+      "mergeCommit": "8cda21f2a39550b8ade0ebfdcfe6d21d280a58ba",
+      "mergedAt": "2026-09-19T23:20:59Z",
+      "macRuntime": {
+        "installedCodeCommit": "18c7ad6",
+        "webStatus": 200,
+        "workerOnline": true,
+        "promptVersion": "evidence-first.web.v8",
+        "automaticQueuePaused": true,
+        "databaseAndSecretsPreserved": true
+      }
     }
   }
 }

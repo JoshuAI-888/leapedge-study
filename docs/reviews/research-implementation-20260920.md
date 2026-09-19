@@ -1,6 +1,6 @@
 # Research implementation and retained-case verification
 
-20 September 2026. PR #9, `codex/evidence-led-research`. Standalone scope; Finradar integration remains excluded.
+20 September 2026. [PR #9](https://github.com/JoshuAI-888/leapedge-study/pull/9) merged as `8cda21f2a39550b8ade0ebfdcfe6d21d280a58ba` after both GitHub verify jobs and Vercel preview passed. Standalone scope; Finradar integration remains excluded.
 
 ## Delivered
 
@@ -83,7 +83,7 @@ These checks are not WCAG certification or a screen-reader audit. Native browser
 
 ## Build checks
 
-Both complete suites passed: **436 pass, one existing skip, zero failures** in each normal and PGlite run. TypeScript and the production build passed. The offline promotion command passed as an advisory-only historical diagnostic; the removed fifty-human-case requirement was not restored. No runtime dependencies were added. Real PostgreSQL backed all 66 live jobs and their resumptions.
+Both complete suites passed: **436 pass, one existing skip, zero failures** in each normal and PGlite run. TypeScript and the production build passed. The offline promotion command passed as an advisory-only historical diagnostic; the removed fifty-human-case requirement was not restored. No runtime dependencies were added. Real PostgreSQL backed all 66 live jobs and their resumptions. The separate disposable PostgreSQL check also passed concurrent deduplication, exclusive claims, per-run cost scoping, immutable documents, budget reservations and lease fencing.
 
 ## Remaining limits and activation
 
@@ -91,6 +91,6 @@ Both complete suites passed: **436 pass, one existing skip, zero failures** in e
 
 The current primary-domain registry and curated listing resolver have limited coverage. Ambiguous symbols/share classes and speaker identities remain qualified; this build does not supply a comprehensive point-in-time security master, independent diarisation or universal issuer verification. Baseline novelty requires previous dated coverage; the initial cohort largely remains unknown. Summary synthesis can still omit a supported topic, and critic agreement is not a substitute for independent facts. More arithmetic kinds are tested than the live models elected to populate.
 
-The separate hosted database still needs deliberate worker/provider configuration before it is an operational ingestion service. The Mac worker remains paused outside this bounded verification cohort. Do not copy databases or unpause paid channel processing implicitly. Hosted worker instructions remain in the standalone operations documentation.
+The separate hosted database still needs deliberate worker/provider configuration before it is an operational ingestion service. The verified build is installed in the Mac runtime; web/status routes returned HTTP 200 and the worker heartbeat is online. V8 was selected with a retained configuration-change record. The Mac worker remains paused outside this bounded verification cohort. Do not copy databases or unpause paid channel processing implicitly. Hosted worker instructions remain in the standalone operations documentation.
 
 [Machine-readable case results, costs and provenance](research-implementation-20260920.json).
