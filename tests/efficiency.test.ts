@@ -18,7 +18,7 @@ test('workspace profile overrides deployment default and freezes new-run flags',
   const standard = freezeEfficiency(withProfile('off'), env);
   assert.equal(standard.speculativeResearch, false);
   assert.equal(standard.reuseResearchCache, false);
-  assert.equal(standard.efficiencyVersion, undefined);
+  assert.equal(standard.efficiencyVersion, null);
   const efficient = freezeEfficiency(withProfile('conservative'), env);
   assert.equal(efficient.speculativeResearch, false);
   assert.equal(efficient.reuseResearchCache, true);
@@ -46,4 +46,13 @@ test('saved workspace profile is used for manual runs without a prebuilt setting
     assert.equal(second.input.speculativeResearch, false);
     assert.equal(first.input.speculativeResearch, true, 'already admitted input is immutable');
   } finally { await db.close(); }
+});
+
+test('Standard remains disabled after JSON persistence and explicit re-admission under a new default', () => {
+  const frozen = freezeEfficiency({}, {}, 'off');
+  const persisted = JSON.parse(JSON.stringify(frozen));
+  const readmitted = freezeEfficiency(persisted, {YTI_EFFICIENCY_PROFILE:'experimental-overlap'});
+  assert.equal(readmitted.efficiencyVersion, null);
+  assert.equal(readmitted.speculativeResearch, false);
+  assert.equal(readmitted.reuseResearchCache, false);
 });

@@ -17,7 +17,7 @@ export function freezeEfficiency(
     : selected;
   if (profile === "off" && selected === "deployment-default") return input;
   return {
-    efficiencyVersion: profile === "off" ? undefined : "evidence-efficiency.v1",
+    efficiencyVersion: profile === "off" ? null : "evidence-efficiency.v1",
     reuseResearchCache: profile !== "off",
     speculativeResearch: profile === "experimental-overlap",
     ...input,

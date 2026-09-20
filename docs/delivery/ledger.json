@@ -1594,6 +1594,7 @@
       "docs/reviews/operational-quality-20260920.md",
       "docs/reviews/admission-validation-20260920.md",
       "docs/reviews/cache-validation-20260920.md"
-    ]
+    ],
+    "profilePersistence": "Explicit Standard disabled value survives JSON persistence and changed-default re-admission; regression test passed"
   }
 }
