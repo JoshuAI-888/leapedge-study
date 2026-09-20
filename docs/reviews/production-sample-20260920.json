@@ -1,0 +1,228 @@
+{
+  "testedCommit": "7b609a2",
+  "environment": "installed Mac production app, local yti_live database",
+  "results": [
+    {
+      "case": 1,
+      "videoId": "SPIRV9UjNYU",
+      "runId": "4b4876e4-44e9-4526-b95a-f20bd7157a0c",
+      "status": "failed",
+      "stage": "asr-source",
+      "elapsedSeconds": 7.134,
+      "modelUsd": 0,
+      "sourceRetained": false,
+      "coverage": null,
+      "timings": [
+        {
+          "id": "analyze:4b4876e4-44e9-4526-b95a-f20bd7157a0c:a788a0ee-2e17-43a2-a705-67566306afac",
+          "run_id": "4b4876e4-44e9-4526-b95a-f20bd7157a0c",
+          "job_id": "analyze:4b4876e4-44e9-4526-b95a-f20bd7157a0c",
+          "stage": "metadata",
+          "claimed_at": "2026-09-20T03:58:01.414Z",
+          "finished_at": "2026-09-20T03:58:01.905Z",
+          "queue_ms": 33,
+          "execution_ms": 488.239875,
+          "checkpoint_ms": 2.8730829999999514,
+          "outcome": "queued"
+        },
+        {
+          "id": "analyze:4b4876e4-44e9-4526-b95a-f20bd7157a0c:fc849ba4-f246-4692-a283-98e219085d0c",
+          "run_id": "4b4876e4-44e9-4526-b95a-f20bd7157a0c",
+          "job_id": "analyze:4b4876e4-44e9-4526-b95a-f20bd7157a0c",
+          "stage": "source",
+          "claimed_at": "2026-09-20T03:58:03.496Z",
+          "finished_at": "2026-09-20T03:58:06.045Z",
+          "queue_ms": 91,
+          "execution_ms": 2546.5009579999996,
+          "checkpoint_ms": 2.0451249999996435,
+          "outcome": "queued"
+        },
+        {
+          "id": "analyze:4b4876e4-44e9-4526-b95a-f20bd7157a0c:3d3d8d53-23e7-4f4f-b54d-d961faf33889",
+          "run_id": "4b4876e4-44e9-4526-b95a-f20bd7157a0c",
+          "job_id": "analyze:4b4876e4-44e9-4526-b95a-f20bd7157a0c",
+          "stage": "asr-source",
+          "claimed_at": "2026-09-20T03:58:07.605Z",
+          "finished_at": "2026-09-20T03:58:08.512Z",
+          "queue_ms": 1561,
+          "execution_ms": 905.1052920000002,
+          "checkpoint_ms": 1.7969590000002427,
+          "outcome": "failed"
+        }
+      ]
+    },
+    {
+      "case": 5,
+      "videoId": "M1FJ5dNiBEs",
+      "runId": "1e937be6-90f9-4df9-9514-0b5dbbd7d99f",
+      "status": "failed",
+      "stage": "synthesis",
+      "elapsedSeconds": 6.087,
+      "modelUsd": 0,
+      "sourceRetained": true,
+      "coverage": {
+        "ratio": 0.9996063960639607,
+        "coveredSeconds": 812.6800000000001,
+        "durationSeconds": 813,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "timings": [
+        {
+          "id": "analyze:1e937be6-90f9-4df9-9514-0b5dbbd7d99f:d1760b24-c93a-41dd-8314-14fbcfcac2bc",
+          "run_id": "1e937be6-90f9-4df9-9514-0b5dbbd7d99f",
+          "job_id": "analyze:1e937be6-90f9-4df9-9514-0b5dbbd7d99f",
+          "stage": "metadata",
+          "claimed_at": "2026-09-20T03:58:01.439Z",
+          "finished_at": "2026-09-20T03:58:01.910Z",
+          "queue_ms": 53,
+          "execution_ms": 469.85925,
+          "checkpoint_ms": 1.6810830000000578,
+          "outcome": "queued"
+        },
+        {
+          "id": "analyze:1e937be6-90f9-4df9-9514-0b5dbbd7d99f:6b339b5c-f7c4-4779-a063-32e3fda9a73d",
+          "run_id": "1e937be6-90f9-4df9-9514-0b5dbbd7d99f",
+          "job_id": "analyze:1e937be6-90f9-4df9-9514-0b5dbbd7d99f",
+          "stage": "source",
+          "claimed_at": "2026-09-20T03:58:03.516Z",
+          "finished_at": "2026-09-20T03:58:04.872Z",
+          "queue_ms": 106,
+          "execution_ms": 1346.2191659999999,
+          "checkpoint_ms": 9.279125000000022,
+          "outcome": "queued"
+        },
+        {
+          "id": "analyze:1e937be6-90f9-4df9-9514-0b5dbbd7d99f:a904e5a5-a2e6-4c4a-9b4d-c1e35e8b503b",
+          "run_id": "1e937be6-90f9-4df9-9514-0b5dbbd7d99f",
+          "job_id": "analyze:1e937be6-90f9-4df9-9514-0b5dbbd7d99f",
+          "stage": "synthesis",
+          "claimed_at": "2026-09-20T03:58:05.830Z",
+          "finished_at": "2026-09-20T03:58:07.476Z",
+          "queue_ms": 959,
+          "execution_ms": 1639.3054590000002,
+          "checkpoint_ms": 7.176457999999911,
+          "outcome": "failed"
+        }
+      ]
+    },
+    {
+      "case": 11,
+      "videoId": "ZfOQoh82JTo",
+      "runId": "9e7764b4-8f3c-47ca-96ad-66134ec31fbe",
+      "status": "failed",
+      "stage": "synthesis",
+      "elapsedSeconds": 14.507,
+      "modelUsd": 0,
+      "sourceRetained": true,
+      "coverage": {
+        "ratio": 0.9987028061224491,
+        "coveredSeconds": 3914.9150000000004,
+        "durationSeconds": 3920,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "timings": [
+        {
+          "id": "analyze:9e7764b4-8f3c-47ca-96ad-66134ec31fbe:261eef76-2f98-45de-9839-e2bf920077b4",
+          "run_id": "9e7764b4-8f3c-47ca-96ad-66134ec31fbe",
+          "job_id": "analyze:9e7764b4-8f3c-47ca-96ad-66134ec31fbe",
+          "stage": "metadata",
+          "claimed_at": "2026-09-20T03:58:01.451Z",
+          "finished_at": "2026-09-20T03:58:01.909Z",
+          "queue_ms": 60,
+          "execution_ms": 449.37770800000004,
+          "checkpoint_ms": 8.179499999999962,
+          "outcome": "queued"
+        },
+        {
+          "id": "analyze:9e7764b4-8f3c-47ca-96ad-66134ec31fbe:42d8414f-d492-4bc8-9b37-d1c588c79900",
+          "run_id": "9e7764b4-8f3c-47ca-96ad-66134ec31fbe",
+          "job_id": "analyze:9e7764b4-8f3c-47ca-96ad-66134ec31fbe",
+          "stage": "source",
+          "claimed_at": "2026-09-20T03:58:03.502Z",
+          "finished_at": "2026-09-20T03:58:10.961Z",
+          "queue_ms": 93,
+          "execution_ms": 7450.8814170000005,
+          "checkpoint_ms": 8.137582999999722,
+          "outcome": "queued"
+        },
+        {
+          "id": "analyze:9e7764b4-8f3c-47ca-96ad-66134ec31fbe:cef8ed8a-17f7-4e95-981a-4d353905073f",
+          "run_id": "9e7764b4-8f3c-47ca-96ad-66134ec31fbe",
+          "job_id": "analyze:9e7764b4-8f3c-47ca-96ad-66134ec31fbe",
+          "stage": "synthesis",
+          "claimed_at": "2026-09-20T03:58:11.086Z",
+          "finished_at": "2026-09-20T03:58:15.910Z",
+          "queue_ms": 125,
+          "execution_ms": 4810.502624999999,
+          "checkpoint_ms": 13.231541000001016,
+          "outcome": "failed"
+        }
+      ]
+    },
+    {
+      "case": 18,
+      "videoId": "1WNowIoNgtg",
+      "runId": "2c99ce29-6ecf-491a-994f-7b51b37e4497",
+      "status": "failed",
+      "stage": "synthesis",
+      "elapsedSeconds": 8.439,
+      "modelUsd": 0,
+      "sourceRetained": true,
+      "coverage": {
+        "ratio": 0.9999627560521416,
+        "coveredSeconds": 2147.92,
+        "durationSeconds": 2148,
+        "status": "timestamps_cover_most_video",
+        "audioVerified": false
+      },
+      "timings": [
+        {
+          "id": "analyze:2c99ce29-6ecf-491a-994f-7b51b37e4497:b66062f0-c0a4-4699-ba53-6c532bdc4e45",
+          "run_id": "2c99ce29-6ecf-491a-994f-7b51b37e4497",
+          "job_id": "analyze:2c99ce29-6ecf-491a-994f-7b51b37e4497",
+          "stage": "metadata",
+          "claimed_at": "2026-09-20T03:58:02.021Z",
+          "finished_at": "2026-09-20T03:58:02.222Z",
+          "queue_ms": 627,
+          "execution_ms": 198.20458399999995,
+          "checkpoint_ms": 2.9573749999999563,
+          "outcome": "queued"
+        },
+        {
+          "id": "analyze:2c99ce29-6ecf-491a-994f-7b51b37e4497:12712ce5-e23c-42c7-8a10-a90d241bf9d3",
+          "run_id": "2c99ce29-6ecf-491a-994f-7b51b37e4497",
+          "job_id": "analyze:2c99ce29-6ecf-491a-994f-7b51b37e4497",
+          "stage": "source",
+          "claimed_at": "2026-09-20T03:58:04.999Z",
+          "finished_at": "2026-09-20T03:58:05.701Z",
+          "queue_ms": 1278,
+          "execution_ms": 696.8165000000004,
+          "checkpoint_ms": 4.524833000000399,
+          "outcome": "queued"
+        },
+        {
+          "id": "analyze:2c99ce29-6ecf-491a-994f-7b51b37e4497:1595f213-0887-4c4c-b883-9e25293a619b",
+          "run_id": "2c99ce29-6ecf-491a-994f-7b51b37e4497",
+          "job_id": "analyze:2c99ce29-6ecf-491a-994f-7b51b37e4497",
+          "stage": "synthesis",
+          "claimed_at": "2026-09-20T03:58:06.185Z",
+          "finished_at": "2026-09-20T03:58:09.841Z",
+          "queue_ms": 485,
+          "execution_ms": 3641.126916,
+          "checkpoint_ms": 15.57929200000035,
+          "outcome": "failed"
+        }
+      ]
+    }
+  ],
+  "blocker": "Gemini HTTP402 RESOURCE_EXHAUSTED: prepayment credits depleted",
+  "modelLedgerUsd": 0,
+  "modelAttempts": 16,
+  "outstandingReservations": 0,
+  "captionCredits": 3,
+  "newLeapEdgeRequests": 0,
+  "browserInspection": "not performed: Mac locked",
+  "liveSpeedup": "not measurable because no generation completed"
+}

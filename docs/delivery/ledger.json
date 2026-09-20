@@ -1431,6 +1431,15 @@
       "state": "READY",
       "schemaVersion": 7,
       "workerActivation": "separate; not certified by web deployment"
+    },
+    "liveSample": {
+      "status": "blocked-provider-prepayment-depleted",
+      "attemptedVideos": 4,
+      "completedVideos": 0,
+      "modelLedgerUsd": 0,
+      "captionCredits": 3,
+      "newLeapEdgeRequests": 0,
+      "report": "docs/reviews/production-sample-20260920.md"
     }
   }
 }
