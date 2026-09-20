@@ -163,3 +163,56 @@ test('final brief preserves unresolved donor costs without rebuying exact provis
     await db.close();
   }
 });
+
+for (const efficiencyVersion of [undefined, 'evidence-efficiency.v1']) test(`final planning reuses identical accepted evidence and settings (${efficiencyVersion ?? 'off'})`, async () => {
+  const db = await freshDatabase();
+  const { researchStep } = await import('../src/server/youtube-intelligence/research-pipeline.ts');
+  const team = teamDefaults();
+  const fake = new FakeModelTransport({ responses: { 'synthesis-research-plan': { json: { queries: [], coverage: ['Company'] } } } });
+  const restore = injectTransport(fake);
+  try {
+    const source = await create('plan-reuse', team.models.extraction.id, { efficiencyVersion, speculativeResearch: true, teamPreferencesSnapshot: team }, team.prompts.version);
+    source.output.claims = [pendingCandidate()];
+    await prefetchResearch(source);
+    const snapshot = await doc('researchPrefetchSnapshot', `${source.id}:research-prefetch.v1`);
+    const accepted = structuredClone(snapshot!);
+    (accepted.evidence as Array<{ trust: string }>)[0].trust = 'L1';
+    const final = await create('plan-final', team.models.extraction.id, { efficiencyVersion, task: 'research-brief', speculativeResearch: true, teamPreferencesSnapshot: team, snapshot: accepted }, team.prompts.version);
+    final.output.researchBaseline = [];
+    await researchStep(final);
+    assert.equal(fake.requestsFor('synthesis-research-plan').length, 1, 'no duplicate planning charge for the same accepted content');
+    assert.equal((final.output.prefetchPlanReuse as { donorRunId: string }).donorRunId, source.id);
+    assert.equal(final.stage, 'research-sources');
+    for (const kind of ['evidence', 'quotes', 'settings', 'baseline', 'date']) {
+      const next = await create(`changed-${kind}`, team.models.extraction.id, { ...final.input, snapshot: structuredClone(accepted), teamPreferencesSnapshot: structuredClone(team) }, team.prompts.version);
+      next.output.researchBaseline = [];
+      if (kind === 'quotes') ((next.input.snapshot as typeof accepted).evidence as Array<{ quotes: Array<{ text: string }> }>)[0].quotes[0].text = 'Different retained quotation';
+      if (kind === 'evidence') (next.input.snapshot as typeof accepted).evidence = [];
+      if (kind === 'settings') (next.input.teamPreferencesSnapshot as typeof team).models.extraction.id = 'different-model';
+      if (kind === 'date') ((next.input.snapshot as typeof accepted).context as { analysedAt: string }).analysedAt = '2025-01-01T00:00:00Z';
+      if (kind === 'baseline') next.output.researchBaseline = [{ id: 'prior', sourceRunId: 'prior', publishedAt: '2025-01-01T00:00:00Z', topic: 'Company', text: 'prior coverage', speaker: 'unknown', channelId: null, evidence: [] }];
+      const before = fake.requestsFor('synthesis-research-plan').length;
+      await researchStep(next);
+      assert.equal(fake.requestsFor('synthesis-research-plan').length, before + 1, `${kind} change requires a fresh plan`);
+      assert.equal(next.output.prefetchPlanReuse, undefined);
+    }
+  } finally { restore(); await db.close(); }
+});
+
+test('provisional planning includes exact non-call mentions without accepting them on the parent', async () => {
+  const db = await freshDatabase();
+  const team = teamDefaults();
+  const fake = new FakeModelTransport({ responses: { 'synthesis-research-plan': { json: { queries: [], coverage: ['Company'] } } } });
+  const restore = injectTransport(fake);
+  try {
+    const source = await create('mention-planning', team.models.extraction.id, { speculativeResearch: true, teamPreferencesSnapshot: team }, team.prompts.version);
+    const text = 'I hold Company shares';
+    source.output.source = { source_kind: 'imported_transcript', language: 'en', segments: [{ id: 's1', text, start_seconds: 0, end_seconds: 5 }] };
+    source.output.mentions = [{ instrument_as_spoken: 'Company', ticker: null, market: 'unknown', claim_id: null, stance: 'hold', sentiment: 'neutral', rationale_en: text, is_call: false, source_span: { start_id: 's1', end_id: 's1', start_seconds: 0, end_seconds: 5, text_hash: createHash('sha256').update(text).digest('hex') } }];
+    await prefetchResearch(source);
+    const snapshot = await doc('researchPrefetchSnapshot', `${source.id}:research-prefetch.v1`);
+    assert.equal((snapshot?.evidence as unknown[])?.length, 1);
+    assert.equal(source.output.mentionChecks, undefined);
+    assert.equal((await researchBriefs()).length, 0);
+  } finally { restore(); await db.close(); }
+});

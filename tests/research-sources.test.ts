@@ -157,3 +157,59 @@ test("unknown and unpriced responses never become cross-run cache donors", async
     await db.close();
   }
 });
+
+test("cache independently checks donor policy when its pointer targets a different cutoff", async () => {
+  const db = await freshDatabase();
+  const old = process.env.EXA_API_KEY; process.env.EXA_API_KEY = 'fixture';
+  const stub = stubFetch([{ url: 'https://api.exa.ai/search', respond: () => json({ costDollars: { total: 0.007 }, results: [] }) }]);
+  try {
+    const { createHash } = await import('node:crypto');
+    const { put } = await import('../src/server/youtube-intelligence/research-store.ts');
+    const input = { query: 'Revenue', timeMode: 'video_date' as const, cutoff: '2026-09-19T00:00:00Z', primaryDomains: ['sec.gov'], reuseCache: true };
+    const runA = await create('policy-donor', 'fixture', {}, 'fixture');
+    const donor = await retrieveResearchSources({ ...input, runId: runA.id });
+    const earlier = { ...input, cutoff: '2026-09-18T00:00:00Z' };
+    const cacheKey = createHash('sha256').update(JSON.stringify({ version: 'exa-retrieval.v1', query: earlier.query, timeMode: earlier.timeMode, cutoff: earlier.cutoff, primaryDomains: earlier.primaryDomains })).digest('hex');
+    await put('researchRetrievalCache', cacheKey, { version: 'exa-retrieval.v1', donorKey: donor.key, donorRunId: runA.id });
+    const runB = await create('policy-consumer', 'fixture', {}, 'fixture');
+    const result = await retrieveResearchSources({ ...earlier, runId: runB.id });
+    assert.equal(stub.log.length, 2, 'wrong-cutoff donor must not substitute for a fresh eligible search');
+    assert.equal(result.cache, undefined);
+  } finally {
+    stub.restore(); if (old === undefined) delete process.env.EXA_API_KEY; else process.env.EXA_API_KEY = old;
+    await db.close();
+  }
+});
+
+test("twenty identical eligible searches avoid nineteen provider charges with unchanged source content", async (t) => {
+  const db = await freshDatabase();
+  const old = process.env.EXA_API_KEY; process.env.EXA_API_KEY = 'fixture';
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-09-20T00:00:00Z') });
+  const stub = stubFetch([{ url: 'https://api.exa.ai/search', respond: () => json({ costDollars: { total: 0.007 }, results: [{ url: 'https://sec.gov/a', title: 'Retained filing', text: 'Published on: September 17, 2026\nRevenue increased 10%.', publishedDate: '2026-09-17' }] }) }]);
+  try {
+    const summaries = [];
+    let reference;
+    for (const reuseCache of [false, true]) {
+      const start = stub.log.length;
+      let cost = 0;
+      for (let i = 0; i < 20; i++) {
+        const run = await create(`measured-${reuseCache}-${i}`, 'fixture', {}, 'fixture');
+        const record = await retrieveResearchSources({ runId: run.id, query: 'Revenue', timeMode: 'video_date', cutoff: '2026-09-19T00:00:00Z', primaryDomains: i % 2 ? ['sec.gov', 'sec.gov'] : ['sec.gov'], reuseCache });
+        assert.equal(record.state, 'complete');
+        assert.notEqual(record.costUsd, null);
+        cost += record.costUsd!;
+        // IDs belong to the donor request; all content, hashes, dates and trust
+        // metadata supplied to synthesis must remain identical.
+        const sourceContent = record.sources.map(({ id: _id, ...source }) => source);
+        reference ??= sourceContent;
+        assert.deepEqual(sourceContent, reference);
+      }
+      summaries.push({ reuseCache, calls: stub.log.length - start, costUsd: Number(cost.toFixed(6)) });
+    }
+    assert.deepEqual(summaries, [{ reuseCache: false, calls: 20, costUsd: 0.14 }, { reuseCache: true, calls: 1, costUsd: 0.007 }]);
+    t.diagnostic(JSON.stringify(summaries));
+  } finally {
+    t.mock.timers.reset(); stub.restore(); if (old === undefined) delete process.env.EXA_API_KEY; else process.env.EXA_API_KEY = old;
+    await db.close();
+  }
+});
