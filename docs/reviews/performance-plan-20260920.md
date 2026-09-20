@@ -64,3 +64,16 @@ run count and secrets were preserved. Vercel production deployment
 `youtube-intel-riio8gh5x-joshu-ai.vercel.app` is Ready and its build log confirms
 migration 0007 applied. Hosted worker/provider activation remains separate.
 The mobile visual check remains explicitly deferred until the Mac is unlocked.
+
+
+### Live follow-up and deferred browser check closed
+
+After replenishing Gemini credits, four production recovery analyses and their
+four research briefs completed for $1.54788125 recorded model/search usage, with
+no additional caption credits or LeapEdge requests. Final briefs took 138–185
+seconds from recovery submission. Desktop/mobile browser checks passed, including
+the 390×844 layout, evidence drawer, horizon filter and transcript timestamp
+navigation. This supersedes the earlier pending mobile status. The result review
+identified recall and external-corroboration gaps; see the
+[live report](production-resume-20260920.md). These recovery measurements do not
+replace the controlled fixture benchmark or certify daily capacity.

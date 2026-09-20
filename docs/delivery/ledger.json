@@ -1411,8 +1411,8 @@
         "productionDependencyAudit": "zero vulnerabilities"
       },
       "desktopBrowser": "passed: pagination, long report, evidence drawer and completion display",
-      "mobileBrowser": "pending: Mac locked; user explicitly deferred until home",
-      "liveProviderBenchmark": "not performed; controlled fixture and browser results only",
+      "mobileBrowser": "passed: production 390x844, no horizontal overflow, navigation, horizon filter, evidence drawer, Escape/focus restoration",
+      "liveProviderBenchmark": "four production recovery analyses and four briefs completed; observed timing/cost, not a controlled speedup or capacity certification",
       "newLeapEdgeRequests": 0
     },
     "migrationVersion": 7,
@@ -1433,13 +1433,25 @@
       "workerActivation": "separate; not certified by web deployment"
     },
     "liveSample": {
-      "status": "blocked-provider-prepayment-depleted",
+      "status": "completed-with-quality-findings",
       "attemptedVideos": 4,
-      "completedVideos": 0,
-      "modelLedgerUsd": 0,
-      "captionCredits": 3,
+      "completedVideos": 4,
+      "completedBriefs": 4,
+      "recordedModelAndSearchUsd": 1.54788125,
+      "recordedSearchUsd": 0.112,
+      "additionalCaptionCredits": 0,
+      "earlierCaptionCredits": 3,
       "newLeapEdgeRequests": 0,
-      "report": "docs/reviews/production-sample-20260920.md"
+      "report": "docs/reviews/production-resume-20260920.md",
+      "initialBlockedAttempt": "docs/reviews/production-sample-20260920.md",
+      "remaining": [
+        "Credo under-170 explicit preference missed despite identical transcript",
+        "Long-podcast main brief omits some covered company topics",
+        "External retrieval accepted no factual corroboration or dated current updates",
+        "Consolidate repeated position-management calls"
+      ],
+      "queuePaused": true,
+      "concurrencyRestored": 1
     }
   }
 }

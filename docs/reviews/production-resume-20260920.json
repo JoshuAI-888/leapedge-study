@@ -1,0 +1,329 @@
+{
+  "environment": "Mac production runtime 7b609a2, local yti_live, bounded rolling runner with three concurrent stages; no scheduler",
+  "startedAt": "2026-09-20T04:29:09.678Z",
+  "finishedAt": "2026-09-20T04:32:14.938Z",
+  "completedAnalyses": 4,
+  "completedBriefs": 4,
+  "ledgerTotalUsd": 1.5478812499999999,
+  "externalUsd": 0.112,
+  "completedLedgerEntries": 61,
+  "outstandingLedgerEntries": 0,
+  "additionalCaptionCredits": 0,
+  "earlierFailedAttemptCaptionCredits": 3,
+  "newLeapEdgeRequests": 0,
+  "browser": {
+    "mobileViewport": "390x844",
+    "documentWidth": 390,
+    "horizontalOverflow": false,
+    "desktop": "passed",
+    "mobileNavigation": "passed",
+    "horizonFilter": "passed",
+    "evidenceDrawer": "passed",
+    "escapeRestoresFocus": "passed",
+    "transcriptSearch": "Dutch; six matches",
+    "timestampLink": "1436s / 23:56"
+  },
+  "rows": [
+    {
+      "case": 1,
+      "title": "大多头突然改口！我为什么还敢拿着AI股？｜雅德尼下调目标",
+      "videoId": "SPIRV9UjNYU",
+      "runId": "a4cf2f88-cfa0-44a2-8678-381041d45a8b",
+      "briefRunId": "db1b9c46-c886-4220-873e-a8ae33cd94ba",
+      "analysisSeconds": 81.63,
+      "throughBriefSeconds": 145.254,
+      "recordedTotalUsd": 0.31176250000000005,
+      "externalUsd": 0.028,
+      "modelUsd": 0.28376250000000003,
+      "claims": 1,
+      "keyPoints": 7,
+      "briefSentences": 10,
+      "sourceHashMatchesPreviousV8": false,
+      "priorV8AnalysisSeconds": 366.908,
+      "priorV8Claims": 1,
+      "stagesSeconds": {
+        "asr-source": 33.347910208,
+        "synthesis": 6.559790207999998,
+        "translate": 9.652557459000004,
+        "critique": 19.396700665999997,
+        "publish": 5.905225292000003,
+        "brief:metadata": 4.579845625000002,
+        "brief:research-sources": 9.281309875000007,
+        "brief:research-synthesis": 11.094481167000005,
+        "brief:research-audit": 22.314777791000015
+      },
+      "queueSeconds": 20.367,
+      "checkpointSeconds": 2.868429166000011,
+      "factualStatuses": {
+        "unverified": 10
+      },
+      "timeModes": {
+        "video_date": 10
+      },
+      "retainedLeapEdge": {
+        "status": "ready",
+        "displayedUsd": 0.03,
+        "claims": [
+          {
+            "instrument": "MACRO",
+            "stance": "long",
+            "conviction": "high",
+            "horizon": "LONG-TERM",
+            "thesis": "AI stock pullbacks are currently driven by valuation compression from elevated interest rates and yen carry trade unwinding rather than deteriorating fundamentals; as long as corporate earnings and orders hold up, long-term secular growth remains intact.",
+            "quote": "对于我来说，AI 这条主线仍然值得长期看好，短期就算跌下来，我先问公司的订单利润有没有变",
+            "details": [
+              "VERBATIM · SUPPORTING QUOTE “ 对于我来说，AI 这条主线仍然值得长期看好，短期就算跌下来，我先问公司的订单利润有没有变 ”",
+              "ENTRY",
+              "—",
+              "TARGET",
+              "—",
+              "STOP",
+              "reassess if company earnings expectations begin broad downward revisions",
+              "CATALYSTS Fed rate trajectory BOJ policy meetings corporate earnings reports",
+              "ACTION",
+              "hold through volatility and maintain a long-term perspective",
+              "RISKS",
+              "elevated oil prices",
+              "high interest rates",
+              "yen carry trade unwinding",
+              "potential downward revisions in earnings",
+              "PIPELINE METADATA",
+              "PROMPT",
+              "keypoints.v1-insights.v3-critique.v1",
+              "TOKENS",
+              "72.2k",
+              "MODELS",
+              "gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite"
+            ]
+          }
+        ],
+        "keyPointCount": 8,
+        "reportUrl": "https://leapedge.app/analyses/SPIRV9UjNYU__keypoints.v1-insights.v3-critique.v1",
+        "observedAt": "2026-09-19T20:34:15.108Z",
+        "raw": "\t\t\t\t\t\t\t45 link Description: TODAY SPIRV9UJ, Value: leapedge.app/today\n\t\t\t\t\t\t\t46 container Status: ready\n\t\t\t\t\t\t\t\t47 text READY\n\t\t\t\t\t\t\t48 text $ 0.030\n\t\t\t\t\t\t49 container\n\t\t\t\t\t\t\t50 link Description: watch on youtube, Value: youtube.com/watch?v=SPIRV9UjNYU\n\t\t\t\t\t\t\t51 heading 大多头突然改口！我为什么还敢拿着AI股？｜雅德尼下调目标, Value: 1\n\t\t\t\t\t\t\t\t52 text 大多头突然改口！我为什么还敢拿着AI股？｜雅德尼下调目标\n\t\t\t\t\t\t\t53 link Description: 霍比特小灰, Value: leapedge.app/channels/UCq_uARg8CRY2YeV2loQ7O_A?src=analysis\n\t\t\t\t\t\t\t54 toggle button Description: Favorite channel, Value: 0\n\t\t\t\t\t\t\t55 link Description: watch on youtube, Value: youtube.com/watch?v=SPIRV9UjNYU\n\t\t\t\t\t\t\t56 text VERDICT 1 idea HIGH conviction\n\t\t\t\t\t\t\t57 image Direction mix: 1 long\n\t\t\t\t\t\t\t58 text 1 LONG SUMMARY Ed Yardeni reduced his year-end S&P 500 target to 7,900 due to valuation multiple compression from sustained higher interest rates, elevated energy costs, and Yen carry-trade unwinding rather than falling corporate earnings. The creator argues that despite temporary multiple contraction and macro-driven selling, core AI fundamentals and order growth remain solid, justifying holding long positions through near-term volatility. KEY POINTS\n\t\t\t\t\t\t\t59 content list\n\t\t\t\t\t\t\t\t60 text Market strategist Ed Yardeni lowered his S&P 500 year-end target by 500 points to 7,900, citing a contraction in valuation multiples rather than declining corporate earnings.\n\t\t\t\t\t\t\t\t61 text Valuation pressure stems from rising interest rates, which increase the opportunity cost of holding growth stocks and reduce the present value of future earnings.\n\t\t\t\t\t\t\t\t62 text Persistent high energy prices pose a risk to inflation, potentially forcing the Federal Reserve to keep interest rates higher for longer to suppress demand.\n\t\t\t\t\t\t\t\t63 text Unwinding of Japanese Yen carry trades creates systemic risk, as rising rates in Japan and a strengthening Yen force leveraged investors to liquidate foreign assets.\n\t\t\t\t\t\t\t\t64 text Liquidation pressure from carry trades can lead to the indiscriminate selling of high-quality assets, regardless of the underlying business fundamentals.\n\t\t\t\t\t\t\t\t65 text The Bank of Japan’s recent 25 basis point rate hike was less aggressive than feared, providing temporary stability to global markets and currency volatility.\n\t\t\t\t\t\t\t\t66 text For AI-themed investments, focus on whether business fundamentals—such as order growth and profit margins—remain intact despite temporary market volatility.\n\t\t\t\t\t\t\t\t67 text Investors should monitor whether inflation pressure eventually forces companies to raise prices to a level that destroys consumer demand, potentially triggering downward earnings revisions.\n\t\t\t\t\t\t68 button MACRO LONG HIGH LONG-TERM\n\t\t\t\t\t\t\t69 text MACRO\n\t\t\t\t\t\t\t70 text LONG\n\t\t\t\t\t\t\t71 text HIGH\n\t\t\t\t\t\t\t72 text LONG-TERM\n\t\t\t\t\t\t73 text AI stock pullbacks are currently driven by valuation compression from elevated interest rates and yen carry trade unwinding rather than deteriorating fundamentals; as long as corporate earnings and orders hold up, long-term secular growth remains intact.\n\t\t\t\t\t\t74 container\n\t\t\t\t\t\t\t75 text VERBATIM · SUPPORTING QUOTE “ 对于我来说，AI 这条主线仍然值得长期看好，短期就算跌下来，我先问公司的订单利润有没有变 ”\n\t\t\t\t\t\t76 definition list\n\t\t\t\t\t\t\t77 container ENTRY\n\t\t\t\t\t\t\t\t78 text ENTRY\n\t\t\t\t\t\t\t79 text —\n\t\t\t\t\t\t\t80 container TARGET\n\t\t\t\t\t\t\t\t81 text TARGET\n\t\t\t\t\t\t\t82 text —\n\t\t\t\t\t\t\t83 container STOP\n\t\t\t\t\t\t\t\t84 text STOP\n\t\t\t\t\t\t\t85 text reassess if company earnings expectations begin broad downward revisions\n\t\t\t\t\t\t86 text CATALYSTS Fed rate trajectory BOJ policy meetings corporate earnings reports\n\t\t\t\t\t\t87 text ACTION\n\t\t\t\t\t\t88 text hold through volatility and maintain a long-term perspective\n\t\t\t\t\t\t89 text RISKS\n\t\t\t\t\t\t90 content list\n\t\t\t\t\t\t\t91 text elevated oil prices\n\t\t\t\t\t\t\t92 text high interest rates\n\t\t\t\t\t\t\t93 text yen carry trade unwinding\n\t\t\t\t\t\t\t94 text potential downward revisions in earnings\n\t\t\t\t\t\t95 toggle button SAVE TO TRADE, Help: save to trade list, Value: 0\n\t\t\t\t\t\t96 container\n\t\t\t\t\t\t\t97 disclosure triangle PIPELINE METADATA\n\t\t\t\t\t\t\t\t98 text PIPELINE METADATA\n\t\t\t\t\t\t\t99 definition list\n\t\t\t\t\t\t\t\t100 container PROMPT\n\t\t\t\t\t\t\t\t\t101 text PROMPT\n\t\t\t\t\t\t\t\t102 text keypoints.v1-insights.v3-critique.v1\n\t\t\t\t\t\t\t\t103 container TOKENS\n\t\t\t\t\t\t\t\t\t104 text TOKENS\n\t\t\t\t\t\t\t\t105 text 72.2k\n\t\t\t\t\t\t\t\t106 container MODELS\n\t\t\t\t\t\t\t\t\t107 text MODELS\n\t\t\t\t\t\t\t\t108 text gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite\n\t\t\t\t\t\t109 container"
+      }
+    },
+    {
+      "case": 5,
+      "title": "AI Compute Demand Could DOUBLE Again by 2027!!",
+      "videoId": "M1FJ5dNiBEs",
+      "runId": "c3930540-d070-42f1-9d07-981fe145fe38",
+      "briefRunId": "6ee7162b-b38a-4194-8af7-4524c77f3be4",
+      "analysisSeconds": 40.464,
+      "throughBriefSeconds": 138.18,
+      "recordedTotalUsd": 0.181064,
+      "externalUsd": 0.028,
+      "modelUsd": 0.153064,
+      "claims": 2,
+      "keyPoints": 5,
+      "briefSentences": 10,
+      "sourceHashMatchesPreviousV8": true,
+      "priorV8AnalysisSeconds": 292.153,
+      "priorV8Claims": 3,
+      "stagesSeconds": {
+        "synthesis": 7.412662042000001,
+        "critique": 14.994015333,
+        "publish": 0.3141319169999988,
+        "brief:metadata": 3.2285553329999965,
+        "brief:research-sources": 10.917106707999991,
+        "brief:research-synthesis": 11.1297365,
+        "brief:research-audit": 18.91643625
+      },
+      "queueSeconds": 70.874,
+      "checkpointSeconds": 0.539325084,
+      "factualStatuses": {
+        "unverified": 10
+      },
+      "timeModes": {
+        "video_date": 10
+      },
+      "retainedLeapEdge": {
+        "status": "ready",
+        "displayedUsd": 0.03,
+        "claims": [
+          {
+            "instrument": "NVDA",
+            "stance": "long",
+            "conviction": "high",
+            "horizon": "LONG-TERM",
+            "thesis": "Nvidia's upcoming Vera Rubin platform delivers up to 67x performance-per-dollar improvements and more than doubles profits per gigawatt over Blackwell in agentic workloads, cementing its technological and pricing dominance.",
+            "quote": "Rubin can earn over 2 times more profit per gigawatt than the Blackwell platform. Everyone's going to go out there buying Vera Rubins",
+            "details": [
+              "VERBATIM · SUPPORTING QUOTE “ Rubin can earn over 2 times more profit per gigawatt than the Blackwell platform. Everyone's going to go out there buying Vera Rubins ”",
+              "CATALYSTS Vera Rubin platform launch Market transition to agentic workload inference benchmarks",
+              "ACTION",
+              "long NVDA"
+            ]
+          },
+          {
+            "instrument": "META",
+            "stance": "long",
+            "conviction": "high",
+            "horizon": "LONG-TERM",
+            "thesis": "Meta is uniquely positioned to monetize its AI infrastructure by selling excess compute in the short term while transitioning toward selling higher-margin intelligence services, supported by strong initial traction for Meta Muse.",
+            "quote": "I personally believe Mark Zuckerberg, right? I do believe that his goal of being able to sell intelligence is very, very viable",
+            "details": [
+              "VERBATIM · SUPPORTING QUOTE “ I personally believe Mark Zuckerberg, right? I do believe that his goal of being able to sell intelligence is very, very viable ”",
+              "CATALYSTS Meta Muse user adoption Potential third-party compute contracting agreements",
+              "ACTION",
+              "long META"
+            ]
+          },
+          {
+            "instrument": "CRDO",
+            "stance": "long",
+            "conviction": "medium",
+            "horizon": "LONG-TERM",
+            "thesis": "Credo remains a top valuation opportunity within the AI infrastructure and connectivity supply chain to benefit from massive ongoing data center scaling.",
+            "quote": "One of my favorite opportunities is Credo in the under the 170s, we were talking about it",
+            "details": [
+              "VERBATIM · SUPPORTING QUOTE “ One of my favorite opportunities is Credo in the under the 170s, we were talking about it ”",
+              "ENTRY",
+              "under the 170s",
+              "TARGET",
+              "—",
+              "STOP",
+              "—",
+              "CATALYSTS data center scaling",
+              "ACTION",
+              "accumulate CRDO",
+              "PIPELINE METADATA",
+              "PROMPT",
+              "keypoints.v1-insights.v3-critique.v1",
+              "TOKENS",
+              "93.9k",
+              "MODELS",
+              "gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite"
+            ]
+          }
+        ],
+        "keyPointCount": 10,
+        "reportUrl": "https://leapedge.app/analyses/M1FJ5dNiBEs__keypoints.v1-insights.v3-critique.v1",
+        "observedAt": "2026-09-19T20:40:06.321Z",
+        "raw": "\t\t\t\t\t\t\t45 link Description: TODAY M1FJ5DNI, Value: leapedge.app/today\n\t\t\t\t\t\t\t46 container Status: ready\n\t\t\t\t\t\t\t\t47 text READY\n\t\t\t\t\t\t\t48 text $ 0.030\n\t\t\t\t\t\t49 container\n\t\t\t\t\t\t\t50 link Description: watch on youtube, Value: youtube.com/watch?v=M1FJ5dNiBEs\n\t\t\t\t\t\t\t51 heading AI Compute Demand Could DOUBLE Again by 2027!!, Value: 1\n\t\t\t\t\t\t\t\t52 text AI Compute Demand Could DOUBLE Again by 2027!!\n\t\t\t\t\t\t\t53 text Jose Najarro Stocks\n\t\t\t\t\t\t\t54 link Description: watch on youtube, Value: youtube.com/watch?v=M1FJ5dNiBEs\n\t\t\t\t\t\t\t55 text VERDICT 3 ideas HIGH conviction\n\t\t\t\t\t\t\t56 image Direction mix: 3 long\n\t\t\t\t\t\t\t57 text 3 LONG CRDO META NVDA SUMMARY Fears of an AI slowdown are overblown as leading frontier labs like OpenAI and Anthropic plan to aggressively expand compute capacity toward 10 gigawatts by 2027 while exploring distributed 20-30 megawatt inference deployments. AI infrastructure plays remain prime beneficiaries, led by Nvidia's upcoming Vera Rubin architecture dominating high-margin agentic workloads and Meta expanding from raw compute into higher-margin intelligence monetization. KEY POINTS\n\t\t\t\t\t\t\t58 content list\n\t\t\t\t\t\t\t\t59 text AI compute demand remains robust as top AI companies like Anthropic and OpenAI target an expansion to 10 gigawatts of compute capacity by 2027.\n\t\t\t\t\t\t\t\t60 text Anthropic and OpenAI are shifting strategy to include smaller, 20-30 megawatt compute deployments in the UK, Nordics, and US, specifically for inference.\n\t\t\t\t\t\t\t\t61 text Neocloud players like WhiteFiber are gaining traction by retrofitting existing facilities into data centers, which is more cost-effective than greenfield construction.\n\t\t\t\t\t\t\t\t62 text Companies like iREN and Nebius are identified as potential beneficiaries of the shift toward smaller, distributed data center deployments.\n\t\t\t\t\t\t\t\t63 text Large-scale institutional call buying in semiconductor stocks like Micron and Marvell indicates renewed market interest in the sector.\n\t\t\t\t\t\t\t\t64 text Credo remains a preferred valuation play within the semiconductor and AI infrastructure space.\n\t\t\t\t\t\t\t\t65 text Meta Platforms is uniquely positioned to monetize AI through both raw compute sales and higher-margin intelligence services.\n\t\t\t\t\t\t\t\t66 text Nvidia’s upcoming Vera Rubin platform is expected to significantly outperform the Blackwell architecture in agentic workloads.\n\t\t\t\t\t\t\t\t67 text Investors should focus on agentic workload performance benchmarks rather than standard inference metrics, as these represent the primary future revenue driver for AI.\n\t\t\t\t\t\t\t\t68 text Nvidia’s Vera Rubin platform reportedly offers up to 67 times the performance-per-dollar improvement compared to previous generation solutions.\n\t\t\t\t\t\t69 button COLLAPSE ALL\n\t\t\t\t\t\t70 button NVDA LONG HIGH LONG-TERM\n\t\t\t\t\t\t\t71 text NVDA\n\t\t\t\t\t\t\t72 text LONG\n\t\t\t\t\t\t\t73 text HIGH\n\t\t\t\t\t\t\t74 text LONG-TERM\n\t\t\t\t\t\t75 text Nvidia's upcoming Vera Rubin platform delivers up to 67x performance-per-dollar improvements and more than doubles profits per gigawatt over Blackwell in agentic workloads, cementing its technological and pricing dominance.\n\t\t\t\t\t\t76 container\n\t\t\t\t\t\t\t77 text VERBATIM · SUPPORTING QUOTE “ Rubin can earn over 2 times more profit per gigawatt than the Blackwell platform. Everyone's going to go out there buying Vera Rubins ”\n\t\t\t\t\t\t78 text CATALYSTS Vera Rubin platform launch Market transition to agentic workload inference benchmarks\n\t\t\t\t\t\t79 text ACTION\n\t\t\t\t\t\t80 text long NVDA\n\t\t\t\t\t\t81 toggle button SAVE TO TRADE, Help: save to trade list, Value: 0\n\t\t\t\t\t\t82 button META LONG HIGH LONG-TERM\n\t\t\t\t\t\t\t83 text META\n\t\t\t\t\t\t\t84 text LONG\n\t\t\t\t\t\t\t85 text HIGH\n\t\t\t\t\t\t\t86 text LONG-TERM\n\t\t\t\t\t\t87 text Meta is uniquely positioned to monetize its AI infrastructure by selling excess compute in the short term while transitioning toward selling higher-margin intelligence services, supported by strong initial traction for Meta Muse.\n\t\t\t\t\t\t88 container\n\t\t\t\t\t\t\t89 text VERBATIM · SUPPORTING QUOTE “ I personally believe Mark Zuckerberg, right? I do believe that his goal of being able to sell intelligence is very, very viable ”\n\t\t\t\t\t\t90 text CATALYSTS Meta Muse user adoption Potential third-party compute contracting agreements\n\t\t\t\t\t\t91 text ACTION\n\t\t\t\t\t\t92 text long META\n\t\t\t\t\t\t93 toggle button SAVE TO TRADE, Help: save to trade list, Value: 0\n\t\t\t\t\t\t94 button CRDO LONG MEDIUM LONG-TERM\n\t\t\t\t\t\t\t95 text CRDO\n\t\t\t\t\t\t\t96 text LONG\n\t\t\t\t\t\t\t97 text MEDIUM\n\t\t\t\t\t\t\t98 text LONG-TERM\n\t\t\t\t\t\t99 text Credo remains a top valuation opportunity within the AI infrastructure and connectivity supply chain to benefit from massive ongoing data center scaling.\n\t\t\t\t\t\t100 container\n\t\t\t\t\t\t\t101 text VERBATIM · SUPPORTING QUOTE “ One of my favorite opportunities is Credo in the under the 170s, we were talking about it ”\n\t\t\t\t\t\t102 definition list\n\t\t\t\t\t\t\t103 container ENTRY\n\t\t\t\t\t\t\t\t104 text ENTRY\n\t\t\t\t\t\t\t105 text under the 170s\n\t\t\t\t\t\t\t106 container TARGET\n\t\t\t\t\t\t\t\t107 text TARGET\n\t\t\t\t\t\t\t108 text —\n\t\t\t\t\t\t\t109 container STOP\n\t\t\t\t\t\t\t\t110 text STOP\n\t\t\t\t\t\t\t111 text —\n\t\t\t\t\t\t112 text CATALYSTS data center scaling\n\t\t\t\t\t\t113 text ACTION\n\t\t\t\t\t\t114 text accumulate CRDO\n\t\t\t\t\t\t115 toggle button SAVE TO TRADE, Help: save to trade list, Value: 0\n\t\t\t\t\t\t116 container\n\t\t\t\t\t\t\t117 disclosure triangle PIPELINE METADATA\n\t\t\t\t\t\t\t\t118 text PIPELINE METADATA\n\t\t\t\t\t\t\t119 definition list\n\t\t\t\t\t\t\t\t120 container PROMPT\n\t\t\t\t\t\t\t\t\t121 text PROMPT\n\t\t\t\t\t\t\t\t122 text keypoints.v1-insights.v3-critique.v1\n\t\t\t\t\t\t\t\t123 container TOKENS\n\t\t\t\t\t\t\t\t\t124 text TOKENS\n\t\t\t\t\t\t\t\t125 text 93.9k\n\t\t\t\t\t\t\t\t126 container MODELS\n\t\t\t\t\t\t\t\t\t127 text MODELS\n\t\t\t\t\t\t\t\t128 text gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite\n\t\t\t\t\t\t129 container"
+      }
+    },
+    {
+      "case": 11,
+      "title": "Nu Bank's Territorial Expansion; LVMH + Stocks At Cheapest Valuations Ever; Fed Hikes Interest Rates",
+      "videoId": "ZfOQoh82JTo",
+      "runId": "4c820d42-e0b4-4d68-863b-a6773536ac09",
+      "briefRunId": "05b65c2c-44c7-4df5-bced-4d3ecf906a84",
+      "analysisSeconds": 122.621,
+      "throughBriefSeconds": 179.668,
+      "recordedTotalUsd": 0.6432537500000001,
+      "externalUsd": 0.028,
+      "modelUsd": 0.61525375,
+      "claims": 2,
+      "keyPoints": 21,
+      "briefSentences": 14,
+      "sourceHashMatchesPreviousV8": false,
+      "priorV8AnalysisSeconds": 924.642,
+      "priorV8Claims": 5,
+      "stagesSeconds": {
+        "synthesis": 22.203234543000004,
+        "translate": 24.856544500000005,
+        "critique": 52.09151879100001,
+        "publish": 5.445948000000004,
+        "brief:metadata": 3.6050398750000023,
+        "brief:research-sources": 9.982093499999987,
+        "brief:research-synthesis": 15.919803125000005,
+        "brief:research-audit": 20.353496583000002
+      },
+      "queueSeconds": 23.534,
+      "checkpointSeconds": 1.740619416999998,
+      "factualStatuses": {
+        "unverified": 14
+      },
+      "timeModes": {
+        "video_date": 14
+      },
+      "retainedLeapEdge": {
+        "status": "stopped",
+        "displayedUsd": 0.14,
+        "claims": [],
+        "keyPointCount": 0,
+        "reportUrl": "https://leapedge.app/analyses/ZfOQoh82JTo__keypoints.v1-insights.v3-critique.v1",
+        "observedAt": "2026-09-19T20:41:11.584Z",
+        "raw": "\t\t\t\t\t\t\t45 link Description: TODAY ZFOQOH82, Value: leapedge.app/today\n\t\t\t\t\t\t\t46 container Status: stopped\n\t\t\t\t\t\t\t\t47 text STOPPED\n\t\t\t\t\t\t\t48 text $ 0.140\n\t\t\t\t\t\t49 text ERRORED\n\t\t\t\t\t\t50 text This video is too long to transcribe in one pass. Try a shorter video.\n\t\t\t\t\t\t51 button RETRY ANALYSIS\n\t\t\t\t\t\t52 container"
+      }
+    },
+    {
+      "case": 18,
+      "title": "Generate $3,000 Weekly Passive Income with this Options Strategy",
+      "videoId": "1WNowIoNgtg",
+      "runId": "707d28f5-b355-40bc-a76f-5ad09cf3ba12",
+      "briefRunId": "c1785afc-5173-462e-8921-b643e452a704",
+      "analysisSeconds": 91.553,
+      "throughBriefSeconds": 185.209,
+      "recordedTotalUsd": 0.41180100000000003,
+      "externalUsd": 0.028,
+      "modelUsd": 0.383801,
+      "claims": 5,
+      "keyPoints": 12,
+      "briefSentences": 10,
+      "sourceHashMatchesPreviousV8": true,
+      "priorV8AnalysisSeconds": 794.837,
+      "priorV8Claims": 6,
+      "stagesSeconds": {
+        "synthesis": 15.728158540999996,
+        "translate": 13.870839291999998,
+        "critique": 34.435284749999994,
+        "publish": 12.973167583999995,
+        "brief:metadata": 4.446628125000003,
+        "brief:research-sources": 9.105275083999995,
+        "brief:research-synthesis": 12.36748679200001,
+        "brief:research-audit": 34.241643916
+      },
+      "queueSeconds": 46.438,
+      "checkpointSeconds": 1.8004614989999936,
+      "factualStatuses": {
+        "unverified": 10
+      },
+      "timeModes": {
+        "video_date": 10
+      },
+      "retainedLeapEdge": {
+        "status": "ready",
+        "displayedUsd": null,
+        "claims": [
+          {
+            "instrument": "PLTR",
+            "stance": "long",
+            "conviction": "high",
+            "horizon": "UNTIL NOVEMBER 20TH",
+            "thesis": "Palantir is currently stable and the creator believes selling puts is an efficient way to generate income and gain buffered downside exposure compared to buying the stock outright.",
+            "quote": "selling puts to me is the number one strategy that I would be using on Palantir right now",
+            "details": [
+              "VERBATIM · SUPPORTING QUOTE “ selling puts to me is the number one strategy that I would be using on Palantir right now ”",
+              "ENTRY",
+              "165 strike",
+              "TARGET",
+              "—",
+              "STOP",
+              "—",
+              "EXPIRES:  NOVEMBER 20TH",
+              "ACTION",
+              "sell 165 put option",
+              "RISKS",
+              "downside risk if stock falls below breakeven",
+              "assignment risk",
+              "opportunity cost of missing out on significant stock upside",
+              "PIPELINE METADATA",
+              "PROMPT",
+              "keypoints.v1-insights.v3-critique.v1",
+              "TOKENS",
+              "235.0k",
+              "MODELS",
+              "gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite"
+            ]
+          }
+        ],
+        "keyPointCount": 10,
+        "reportUrl": "https://leapedge.app/analyses/1WNowIoNgtg__keypoints.v1-insights.v3-critique.v1",
+        "observedAt": "2026-09-19T20:42:03.499Z",
+        "raw": "\t\t\t\t\t\t\t50 link Description: TODAY 1WNOWION, Value: leapedge.app/today\n\t\t\t\t\t\t\t51 container Status: ready\n\t\t\t\t\t\t\t\t52 text READY\n\t\t\t\t\t\t53 container\n\t\t\t\t\t\t\t54 link Description: watch on youtube, Value: youtube.com/watch?v=1WNowIoNgtg\n\t\t\t\t\t\t\t55 heading Generate $3,000 Weekly Passive Income with this Options Strategy, Value: 1\n\t\t\t\t\t\t\t\t56 text Generate $3,000 Weekly Passive Income with this Options Strategy\n\t\t\t\t\t\t\t57 link Description: Invest with Henry, Value: leapedge.app/channels/UC2Zg12phLyX1KTnH6D47d9g?src=analysis\n\t\t\t\t\t\t\t58 link Description: watch on youtube, Value: youtube.com/watch?v=1WNowIoNgtg\n\t\t\t\t\t\t\t59 text VERDICT 1 idea HIGH conviction\n\t\t\t\t\t\t\t60 image Direction mix: 1 long\n\t\t\t\t\t\t\t61 text 1 LONG PLTR SUMMARY The creator details a cash-secured put selling strategy designed to generate consistent income by functioning similarly to an insurance provider. He recommends targeting fundamentally sound stocks at around a 30 delta with 30 to 45 days to expiration to maximize theta decay while balancing assignment risk. KEY POINTS\n\t\t\t\t\t\t\t62 content list\n\t\t\t\t\t\t\t\t63 text Selling put options functions like selling insurance, where you collect a premium in exchange for the obligation to buy a stock at a specified strike price.\n\t\t\t\t\t\t\t\t64 text The strategy requires having sufficient cash to purchase the underlying shares at the strike price if the option is assigned, making it a 'cash-secured put' strategy.\n\t\t\t\t\t\t\t\t65 text The creator suggests only selling put options on stocks you are fundamentally bullish on and would not mind holding long-term.\n\t\t\t\t\t\t\t\t66 text A 30 delta is recommended as the 'sweet spot' for striking a balance between receiving meaningful premiums and maintaining a higher probability of the option expiring out of the money.\n\t\t\t\t\t\t\t\t67 text When a put option is in the money at expiration, traders have three primary management choices: close the position, roll the position to a later date, or accept assignment.\n\t\t\t\t\t\t\t\t68 text If assigned shares, the creator employs the 'wheel strategy' by selling covered calls against those shares to continue generating income.\n\t\t\t\t\t\t\t\t69 text Traders should prioritize stocks with higher implied volatility to ensure enough premium collection, as low-volatility stocks yield lower income.\n\t\t\t\t\t\t\t\t70 text Always check the bid-ask spread before executing trades to avoid unnecessary slippage costs that eat into total returns.\n\t\t\t\t\t\t\t\t71 text The ideal time horizon to sell put options is between 30 and 45 days out to take advantage of accelerating theta decay (time value loss).\n\t\t\t\t\t\t\t\t72 text Selling puts limits upside potential, as you do not benefit from stock price appreciation beyond the strike price plus the collected premium.\n\t\t\t\t\t\t73 button PLTR LONG HIGH UNTIL NOVEMBER 20TH\n\t\t\t\t\t\t\t74 text PLTR\n\t\t\t\t\t\t\t75 text LONG\n\t\t\t\t\t\t\t76 text HIGH\n\t\t\t\t\t\t\t77 text UNTIL NOVEMBER 20TH\n\t\t\t\t\t\t78 text Palantir is currently stable and the creator believes selling puts is an efficient way to generate income and gain buffered downside exposure compared to buying the stock outright.\n\t\t\t\t\t\t79 container\n\t\t\t\t\t\t\t80 text VERBATIM · SUPPORTING QUOTE “ selling puts to me is the number one strategy that I would be using on Palantir right now ”\n\t\t\t\t\t\t81 definition list\n\t\t\t\t\t\t\t82 container ENTRY\n\t\t\t\t\t\t\t\t83 text ENTRY\n\t\t\t\t\t\t\t84 text 165 strike\n\t\t\t\t\t\t\t85 container TARGET\n\t\t\t\t\t\t\t\t86 text TARGET\n\t\t\t\t\t\t\t87 text —\n\t\t\t\t\t\t\t88 container STOP\n\t\t\t\t\t\t\t\t89 text STOP\n\t\t\t\t\t\t\t90 text —\n\t\t\t\t\t\t91 text EXPIRES:  NOVEMBER 20TH\n\t\t\t\t\t\t92 text ACTION\n\t\t\t\t\t\t93 text sell 165 put option\n\t\t\t\t\t\t94 text RISKS\n\t\t\t\t\t\t95 content list\n\t\t\t\t\t\t\t96 text downside risk if stock falls below breakeven\n\t\t\t\t\t\t\t97 text assignment risk\n\t\t\t\t\t\t\t98 text opportunity cost of missing out on significant stock upside\n\t\t\t\t\t\t99 toggle button SAVE TO TRADE, Help: save to trade list, Value: 0\n\t\t\t\t\t\t100 container\n\t\t\t\t\t\t\t101 disclosure triangle PIPELINE METADATA\n\t\t\t\t\t\t\t\t102 text PIPELINE METADATA\n\t\t\t\t\t\t\t103 definition list\n\t\t\t\t\t\t\t\t104 container PROMPT\n\t\t\t\t\t\t\t\t\t105 text PROMPT\n\t\t\t\t\t\t\t\t106 text keypoints.v1-insights.v3-critique.v1\n\t\t\t\t\t\t\t\t107 container TOKENS\n\t\t\t\t\t\t\t\t\t108 text TOKENS\n\t\t\t\t\t\t\t\t109 text 235.0k\n\t\t\t\t\t\t\t\t110 container MODELS\n\t\t\t\t\t\t\t\t\t111 text MODELS\n\t\t\t\t\t\t\t\t112 text gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite\n\t\t\t\t\t\t113 container"
+      }
+    }
+  ]
+}

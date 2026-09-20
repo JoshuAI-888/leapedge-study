@@ -1,5 +1,7 @@
 # Live production sample after performance build
 
+**Follow-up:** the user replenished credit and all four recovery analyses/briefs completed. See [the recovery results and browser checks](production-resume-20260920.md). The blocked attempt below is retained as historical evidence.
+
 Four videos from the original twenty were submitted through the installed Mac production implementation (`7b609a2`, merged in PR #10), using the real `yti_live` database and live providers. Fresh metadata/caption ingestion was used; no retained transcript was injected. Automatic intake stayed paused; a bounded runner admitted only this cohort and its child briefs, without running the scheduler. Concurrency was temporarily three and restored to one afterward. Each run's snapshot enabled windowed ASR when captions were missing; global ASR settings stayed unchanged.
 
 ## Result: blocked by depleted Gemini prepayment credits
