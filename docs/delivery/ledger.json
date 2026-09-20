@@ -1569,6 +1569,31 @@
     "vercelDeployed": false,
     "newLeapEdgeRequests": 0,
     "measurement": "Live frozen-source sequential/overlap comparison in progress; real PostgreSQL worker fixture completed; cache/fatal fixtures complete",
-    "qualityPolicy": "Preserve exact accepted evidence, independent critique, audit, point-in-time separation; hold overlap off unless measured benefit and source-backed review support rollout"
+    "qualityPolicy": "Preserve exact accepted evidence, independent critique, audit, point-in-time separation; hold overlap off unless measured benefit and source-backed review support rollout",
+    "profileSetting": "Workspace processing.efficiencyProfile dropdown: deployment-default, off, conservative, experimental-overlap; frozen for new runs",
+    "browserStatus": "Deferred at user request while away from Mac; automatic approval review blocked stale target inspection",
+    "vercelEnvironment": "User-approved YTI_EFFICIENCY_PROFILE=conservative added; awaits deployment",
+    "verification": {
+      "tests": "495 passed, 1 skipped in each database mode",
+      "typecheck": "passed",
+      "build": "passed",
+      "realPostgres": "passed",
+      "offlineGate": "advisory-only",
+      "profileHTTP": "four save/reloads and invalid-profile rejection passed in isolated database",
+      "browser": "deferred at user request"
+    },
+    "confirmedExperimentCostUsd": 2.87606825,
+    "overlapDecision": "Remain disabled by default: quality parity not established",
+    "liveBriefs": {
+      "beforeCompleted": 3,
+      "beforeFailed": 1,
+      "afterCompleted": 4
+    },
+    "reports": [
+      "docs/reviews/operational-metrics-20260920.json",
+      "docs/reviews/operational-quality-20260920.md",
+      "docs/reviews/admission-validation-20260920.md",
+      "docs/reviews/cache-validation-20260920.md"
+    ]
   }
 }

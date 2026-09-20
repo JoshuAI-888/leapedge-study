@@ -39,6 +39,8 @@ never overwrite or replace the active runtime database.
   `data/postgres`, all retained data and other runtime state.
 - [ ] Run required migrations through the direct endpoint (none for this release).
 - [ ] Set `CODE_REVISION` and `installed-revision.txt` to the merged source SHA.
+  Check Settings → Processing profile: `deployment-default` inherits the environment;
+  a named workspace profile overrides it for new runs. Record this saved selection.
   Set `YTI_EFFICIENCY_PROFILE=conservative` unless overlap separately passes its
   measured release decision. Existing queued flags stay frozen.
 - [ ] Confirm team `processing.parallelVideos` and connection/provider limits.

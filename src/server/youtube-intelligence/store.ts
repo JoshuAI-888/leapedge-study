@@ -70,7 +70,10 @@ export async function create(
   input: Record<string, unknown>,
   version: string,
 ) {
-  input = (await import("./efficiency.ts")).freezeEfficiency(input);
+  const profile = input.task || input.teamPreferencesSnapshot
+    ? "deployment-default"
+    : (await (await import("./research-store.ts")).teamPreferences()).processing.efficiencyProfile;
+  input = (await import("./efficiency.ts")).freezeEfficiency(input, process.env, profile);
   const d = await db();
   const payload = JSON.stringify(input);
   const existing = async () =>
