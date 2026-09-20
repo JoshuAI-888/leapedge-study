@@ -50,3 +50,17 @@ Migration **0007** must be applied through the direct database endpoint before d
 This build does **not certify 1,000 videos/day or a 100-video live burst**. Remaining work includes a bounded live workload with P50/P95 stage and end-to-end timings, account-specific request/token rate limits, durable hosted uptime if required, and burst/soak testing against actual provider quotas. Initial/terminal workspace refreshes still contain retained brief history (about 5 MB here), and the activity terminal count still grows with history; independently paginating briefs and maintaining a cheap revision counter remain future improvements. Native provider batch execution remains asynchronous and is not made interactive by this change.
 
 Historical comparison context: the prior v8 cohort averaged 75.77 seconds of model work and 1,239.30 seconds elapsed under a different retained-transcript/wave harness. It is not a controlled before arm and is not used to calculate gains above. No new LeapEdge result or relative speed claim is inferred.
+
+
+### Recorded release
+
+PR #10 merged as `2210320884456760bd99e54c7a83c750f463ccad` on 20 September 2026.
+Both GitHub CI runs passed. Each local full suite recorded 449 passed, zero
+failed and one existing skip; the production dependency audit found zero
+vulnerabilities. The Mac runtime has the identical implementation (`7b609a2`),
+schema seven, HTTP 200 for the web/status/activity/run-page endpoints, and a
+healthy paused worker. A database/code backup was taken before installation;
+run count and secrets were preserved. Vercel production deployment
+`youtube-intel-riio8gh5x-joshu-ai.vercel.app` is Ready and its build log confirms
+migration 0007 applied. Hosted worker/provider activation remains separate.
+The mobile visual check remains explicitly deferred until the Mac is unlocked.

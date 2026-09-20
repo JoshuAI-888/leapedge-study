@@ -185,3 +185,11 @@ See [the before/after report](../reviews/performance-plan-20260920.md). UI activ
 polls are small, but full retained brief history still loads on terminal changes.
 The 1,000-video/day target needs real-provider quota and soak testing before it
 can be treated as demonstrated capacity. The queue stays paused after deployment.
+
+
+PR #10 was merged and installed on this Mac on 20 September 2026. Schema seven
+is applied, database/code backups are retained under ignored
+`data/performance-20260920`, and the web/status/activity/run-summary endpoints
+returned HTTP 200. The worker heartbeat is online with admission still paused.
+The matching Vercel production build is Ready and applied migration 0007.
+Mobile visual acceptance is deferred by the user until the Mac is unlocked.

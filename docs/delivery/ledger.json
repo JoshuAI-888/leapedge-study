@@ -1378,7 +1378,7 @@
     }
   },
   "performance": {
-    "status": "in-review",
+    "status": "merged",
     "scope": [
       "stage-timings",
       "queue-priority",
@@ -1406,13 +1406,31 @@
         "typecheck": "passed",
         "productionBuild": "passed",
         "offlineGate": "passed, advisory-only",
-        "realPostgres": "passed: integrity, shared capacity, restart/fencing/replay"
+        "realPostgres": "passed: integrity, shared capacity, restart/fencing/replay",
+        "githubCI": "both PR checks passed",
+        "productionDependencyAudit": "zero vulnerabilities"
       },
       "desktopBrowser": "passed: pagination, long report, evidence drawer and completion display",
       "mobileBrowser": "pending: Mac locked; user explicitly deferred until home",
       "liveProviderBenchmark": "not performed; controlled fixture and browser results only",
       "newLeapEdgeRequests": 0
     },
-    "migrationVersion": 7
+    "migrationVersion": 7,
+    "mergeCommit": "2210320884456760bd99e54c7a83c750f463ccad",
+    "mergedAt": "2026-09-20T03:41:27Z",
+    "macRuntime": {
+      "installedCodeCommit": "7b609a219b7a034e44b808ebb36a762e5217a84d",
+      "schemaVersion": 7,
+      "webStatus": 200,
+      "workerOnline": true,
+      "automaticQueuePaused": true,
+      "databaseAndSecretsPreserved": true
+    },
+    "vercel": {
+      "deployment": "https://youtube-intel-riio8gh5x-joshu-ai.vercel.app",
+      "state": "READY",
+      "schemaVersion": 7,
+      "workerActivation": "separate; not certified by web deployment"
+    }
   }
 }
