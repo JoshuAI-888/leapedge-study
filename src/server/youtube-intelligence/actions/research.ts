@@ -19,6 +19,10 @@ async function snapshot() {
   ]);
   return {
     ...s,
+    // These collections only back canonical IDs and Lab selectors. Full
+    // transcripts, extraction plans and audits remain on the run detail API.
+    runs: s.runs.map((run) => ({ ...run, output: {} })),
+    evaluationRuns: s.evaluationRuns.map((run) => ({ ...run, output: {} })),
     researchBriefs: (await researchBriefs()).map(
       ({ evidence, external, retrievalNotes, baseline, ...brief }) => ({
         ...brief,

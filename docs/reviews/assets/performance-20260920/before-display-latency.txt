@@ -1,0 +1,24 @@
+The following is a diff from the previous accessibility tree for Window: "YouTube Intelligence" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 545-546, 552-553
+~													527 container 9 messages in console
++															949 container Warning, Repeated 2 times
++																950 text 2
++															951 container Warning, Repeated 2 times
++																952 text 2
++														953 container YTI_BASELINE_DISPLAY_LATENCY_MS
++															954 container  YTI_BASELINE_DISPLAY_LATENCY_MS 8108 Stack table collapsed
++																955 container
++																	956 link Description: VM594:1, Help: debugger:///VM594:1
++																		957 text VM594:1
++																	958 text YTI_BASELINE_DISPLAY_LATENCY_MS 8108
+~						448 link Description: Skip to content, Value: 127.0.0.1:3025/youtube-intelligence/today
+~								613 link Description: AI Infrastructure Strategy, Value: 127.0.0.1:3025/youtube-intelligence/analysis/8fae7a8a-f4df-4357-bbab-f3d9a7112283
+~							624 link Description: Read brief and inspect evidence →, Value: 127.0.0.1:3025/youtube-intelligence/analysis/8fae7a8a-f4df-4357-bbab-f3d9a7112283
+~								629 link Description: Oracle earnings and balance sheet leverage, Value: 127.0.0.1:3025/youtube-intelligence/analysis/83858f51-80f8-4237-9c8f-b7f3c27ac89c
+~							640 link Description: Read brief and inspect evidence →, Value: 127.0.0.1:3025/youtube-intelligence/analysis/83858f51-80f8-4237-9c8f-b7f3c27ac89c
+~									671 link Description: SYNTHETIC PERF before COMPLETE 1789874822205, Value: 127.0.0.1:3025/youtube-intelligence/analysis/de6dffa9-775f-4fb1-800d-8e136fd2e639
+~									672 text Processed  Sep 20, 2026 Ready
+~									786 link Description: Generate $3,000 Weekly Passive Income with this Options Strategy, Value: 127.0.0.1:3025/youtube-intelligence/analysis/275bc8da-d3ce-40af-8798-2224fa299734
+~								942 link Description: Open diagnostics in Lab →, Value: …
+~					428 tab (selected, settable, boolean) Description: YouTube Intelligence - Memory usage - 232 MB, Value: on
+The focused UI element is 570 text entry area (settable) Description: Console prompt, Value:

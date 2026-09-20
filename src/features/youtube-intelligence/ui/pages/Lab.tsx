@@ -8,7 +8,8 @@ import { action } from "../api.ts";
 import { Collapsible, Empty, PageTitle } from "../components.tsx";
 import { money, processingState, dateLabel } from "../viewmodel.ts";
 export function Lab() {
-  const { data, perform, busy } = useWorkspace();
+  const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
+    useWorkspace();
   const [left, setLeft] = useState(""),
     [right, setRight] = useState(""),
     [hypothesis, setHypothesis] = useState(""),
@@ -293,6 +294,16 @@ export function Lab() {
       </section>
       <section className="yi-panel">
         <h2>Experiments and processing</h2>
+        {hasMoreRuns && (
+          <button
+            className="yi-text-button"
+            disabled={loadingMoreRuns}
+            onClick={() => void loadMoreRuns()}
+          >
+            {loadingMoreRuns ? "Loading…" : "Load older runs"}
+          </button>
+        )}
+        <p className="yi-muted">Showing {data.runs.length} loaded videos.</p>
         {data.runs.length ? (
           <ul className="yi-list">
             {data.runs.map((r) => (

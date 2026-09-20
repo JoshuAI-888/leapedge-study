@@ -30,11 +30,43 @@ export async function claimJob(options: z.input<typeof ClaimOptions> = {}) {
       )
       .get(now)) as { n: unknown };
     if (Number(count.n) >= capacity || queuePaused()) return null;
+    const backgroundLimit = Math.min(
+      capacity,
+      z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(64)
+        .parse(
+          process.env.YTI_BACKGROUND_CONCURRENCY ?? Math.max(1, capacity - 1),
+        ),
+    );
+    const background = await database
+      .prepare(
+        `SELECT COUNT(*) AS n FROM jobs j JOIN yi_runs r ON r.id=(j.payload::jsonb)->>'runId'
+      WHERE j.status='running' AND j.lease_until>$1 AND ((r.input::jsonb)->>'origin'='channel' OR (r.input::jsonb)->>'processingMode'='batch') AND COALESCE((r.input::jsonb)->>'task','')!='research-brief'`,
+      )
+      .get(now);
+    const admitBackground = Number(background?.n ?? 0) < backgroundLimit;
     const row = await database
       .prepare(
-        `SELECT ${COLUMNS} FROM jobs WHERE ((status='queued' AND run_after<=$1) OR (status='running' AND lease_until<=$1)) AND kind=ANY($2::text[]) ORDER BY run_after,created_at,id LIMIT 1 FOR UPDATE SKIP LOCKED`,
+        `SELECT ${COLUMNS} FROM jobs WHERE ((status='queued' AND run_after<=$1) OR (status='running' AND lease_until<=$1)) AND kind=ANY($2::text[]) AND ($3::boolean OR NOT EXISTS (
+          SELECT 1 FROM yi_runs r WHERE r.id=(jobs.payload::jsonb)->>'runId'
+          AND ((r.input::jsonb)->>'origin'='channel' OR (r.input::jsonb)->>'processingMode'='batch')
+          AND COALESCE((r.input::jsonb)->>'task','')!='research-brief'
+        )) ORDER BY
+          CASE WHEN run_after < $1::timestamptz - interval '120 seconds' THEN 0 ELSE 1 END,
+          CASE WHEN run_after < $1::timestamptz - interval '120 seconds' THEN run_after END,
+          CASE
+            WHEN kind='analyze' THEN COALESCE((SELECT CASE
+              WHEN (input::jsonb)->>'origin'='manual' THEN 0
+              WHEN (input::jsonb)->>'task'='research-brief' THEN 1
+              WHEN (input::jsonb)->>'origin' IN ('channel','replay') OR (input::jsonb)->>'processingMode'='batch' THEN 3
+              ELSE 2 END FROM yi_runs WHERE id=(jobs.payload::jsonb)->>'runId'),2)
+            ELSE 2 END,
+          run_after,created_at,id LIMIT 1 FOR UPDATE SKIP LOCKED`,
       )
-      .get(now, parsed.kinds ?? [...JOB_KINDS]);
+      .get(now, parsed.kinds ?? [...JOB_KINDS], admitBackground);
     if (!row) return null;
     const claimed = await database
       .prepare(

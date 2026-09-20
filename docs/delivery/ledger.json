@@ -1376,5 +1376,43 @@
         "databaseAndSecretsPreserved": true
       }
     }
+  },
+  "performance": {
+    "status": "in-review",
+    "scope": [
+      "stage-timings",
+      "queue-priority",
+      "bounded-parallel-extraction-search",
+      "incremental-ui"
+    ],
+    "baselineCommit": "140d6b2",
+    "report": "docs/reviews/performance-plan-20260920.md",
+    "targetVideosPerDay": 1000,
+    "targetBurst": 100,
+    "pr": 10,
+    "implementationComplete": true,
+    "verification": {
+      "automated": {
+        "defaultTests": {
+          "passed": 449,
+          "failed": 0,
+          "skipped": 1
+        },
+        "pgliteTests": {
+          "passed": 449,
+          "failed": 0,
+          "skipped": 1
+        },
+        "typecheck": "passed",
+        "productionBuild": "passed",
+        "offlineGate": "passed, advisory-only",
+        "realPostgres": "passed: integrity, shared capacity, restart/fencing/replay"
+      },
+      "desktopBrowser": "passed: pagination, long report, evidence drawer and completion display",
+      "mobileBrowser": "pending: Mac locked; user explicitly deferred until home",
+      "liveProviderBenchmark": "not performed; controlled fixture and browser results only",
+      "newLeapEdgeRequests": 0
+    },
+    "migrationVersion": 7
   }
 }

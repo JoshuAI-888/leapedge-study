@@ -105,7 +105,7 @@ test("A database that already has the baseline is stamped at version 1", async (
     // A database from an older deployment: it carries the queue tables 0001
     // would have created, but not everything 0001 declares.
     await instance.exec(
-      "CREATE TABLE yi_runs(id TEXT PRIMARY KEY,video_id TEXT,model TEXT,prompt_version TEXT,status TEXT,input TEXT);CREATE TABLE yi_calls(id TEXT PRIMARY KEY,run_id TEXT,stage TEXT,status TEXT)",
+      "CREATE TABLE yi_runs(id TEXT PRIMARY KEY,video_id TEXT,model TEXT,prompt_version TEXT,status TEXT,input TEXT,created_at TEXT,updated_at TEXT);CREATE TABLE yi_calls(id TEXT PRIMARY KEY,run_id TEXT,stage TEXT,status TEXT)",
     );
     const later = (await loadMigrations())
       .map((m) => m.version)

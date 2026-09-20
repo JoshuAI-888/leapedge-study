@@ -1,3 +1,4 @@
+import { boundedSettled } from "./bounded-parallel.ts";
 import { createHash } from "node:crypto";
 import { claimsForRun } from "./repos/claims.ts";
 import { z } from "zod";
@@ -282,28 +283,35 @@ export async function researchStep(run: Run) {
     const records = z
       .array(RetrievalRecordSchema)
       .parse(run.output.retrievals ?? []);
-    const request = requests[records.length];
-    if (request) {
-      const result = request.cutoff
-        ? await retrieveResearchSources({
-            runId: run.id,
-            query: request.query,
-            timeMode: request.timeMode,
-            cutoff: request.cutoff,
-            primaryDomains: PRIMARY_DOMAINS,
-          })
-        : {
-            key: "unknown-date",
-            state: "unavailable" as const,
-            query: request.query,
-            timeMode: request.timeMode,
-            sources: [],
-            costUsd: 0,
-            costBasis: "no request",
-            note: "Video date unknown; historical verification skipped.",
-            requestedAt: new Date().toISOString(),
-          };
-      run.output.retrievals = [...records, result];
+    const pending = requests.slice(records.length);
+    if (pending.length) {
+      const results = await boundedSettled(pending, 2, async (request) =>
+        request.cutoff
+          ? await retrieveResearchSources({
+              runId: run.id,
+              query: request.query,
+              timeMode: request.timeMode,
+              cutoff: request.cutoff,
+              primaryDomains: PRIMARY_DOMAINS,
+            })
+          : {
+              key: "unknown-date",
+              state: "unavailable" as const,
+              query: request.query,
+              timeMode: request.timeMode,
+              sources: [],
+              costUsd: 0,
+              costBasis: "no request",
+              note: "Video date unknown; historical verification skipped.",
+              requestedAt: new Date().toISOString(),
+            },
+      );
+      const failure = results.find((r) => r.status === "rejected");
+      if (failure?.status === "rejected") throw failure.reason;
+      run.output.retrievals = [
+        ...records,
+        ...results.flatMap((r) => (r.status === "fulfilled" ? [r.value] : [])),
+      ];
       return;
     }
     run.stage = "research-synthesis";

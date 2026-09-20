@@ -1,3 +1,5 @@
+import { withProviderSlot } from "./provider-limits.ts";
+import { boundedSettled } from "./bounded-parallel.ts";
 import {
   extractionContext,
   actionRecallWindows,
@@ -70,6 +72,8 @@ import { isRetryableTransportError, withRetry } from "./retry.ts";
 import * as P from "./prompts.ts";
 import { standbyTranscript } from "./transcripts.ts";
 import {
+  doc,
+  putIfAbsent,
   prompt as getPrompt,
   runTeamPreferences,
   runAudioTrustPreferences,
@@ -500,34 +504,39 @@ export async function modelCall(
    * reconcile.ts to settle or release once the hold has passed. Spec 4.4.
    */
   let id = "";
+  let capacityWaitMs = 0;
   const { result: response, attempts } = await withRetry(
     async (attempt) => {
-      id = await reserve(
-        run.id,
-        stage,
-        amount,
-        attemptOffset + attempt,
-        settings.budget.perVideoMaxUsd,
-      );
-      try {
-        return await transport.call(request);
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        if (unknownOutcome(error)) {
-          await settle(id, null, {
-            model: modelId,
-            maxTokens,
-            attempt,
-            reservedUsd: amount,
-            priceTableVersion: pricedBy,
-            rates,
-            inputTokens: counted.tokens,
-            error: reason,
-          });
-          await markUnknown(id, reason);
-        } else await release(id, reason);
-        throw error;
-      }
+      const capacityRequestedAt = Date.now();
+      return withProviderSlot(transport.family, async () => {
+        capacityWaitMs += Date.now() - capacityRequestedAt;
+        id = await reserve(
+          run.id,
+          stage,
+          amount,
+          attemptOffset + attempt,
+          settings.budget.perVideoMaxUsd,
+        );
+        try {
+          return await transport.call(request);
+        } catch (error) {
+          const reason = error instanceof Error ? error.message : String(error);
+          if (unknownOutcome(error)) {
+            await settle(id, null, {
+              model: modelId,
+              maxTokens,
+              attempt,
+              reservedUsd: amount,
+              priceTableVersion: pricedBy,
+              rates,
+              inputTokens: counted.tokens,
+              error: reason,
+            });
+            await markUnknown(id, reason);
+          } else await release(id, reason);
+          throw error;
+        }
+      });
     },
     {
       // maxRetriesPerStage counts retries; withRetry counts calls.
@@ -550,6 +559,7 @@ export async function modelCall(
     provider: response.provider,
     processingMode: "immediate",
     seconds: (Date.now() - start) / 1000,
+    capacityWaitMs,
     usage: providerUsage(response),
     tokens: response.usage,
     /** What was held before the provider reported, and how it was counted. */
@@ -1079,13 +1089,42 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
      */
     const pointer =
       (prompts as { pointerEvidence?: boolean }).pointerEvidence === true;
-    let raw: unknown;
-    try {
-      raw = await modelCall(
+    // Freeze each chunk's original request before fanout. A later truncated
+    // sibling may split the plan; completed siblings must retain their original
+    // stage key, chunk count and payload so replay never purchases them again.
+    const extract = async (chunkIndex: number) => {
+      const key = `${run.id}:${modelCallFingerprint(chunks[chunkIndex])}`;
+      const schema = z.object({ stage: z.string(), payload: z.unknown() });
+      let request = await doc<z.infer<typeof schema>>("extractionRequest", key);
+      if (!request) {
+        await putIfAbsent("extractionRequest", key, {
+          stage:
+            chunks.length === 1
+              ? "synthesis"
+              : `synthesis-chunk-${chunkIndex}${run.output.extractionRepairs ? `-repair-${run.output.extractionRepairs}` : ""}`,
+          payload: {
+            ...extractionPayload(
+              (prompts as { temporalResearch?: boolean }).temporalResearch
+                ? [
+                    ...extractionContext(run, chunks[chunkIndex])
+                      .previousSection,
+                    ...chunks[chunkIndex],
+                  ]
+                : chunks[chunkIndex],
+              chunkIndex,
+              chunks.length,
+              pointer,
+            ),
+            ...((prompts as { temporalResearch?: boolean }).temporalResearch
+              ? extractionContext(run, chunks[chunkIndex])
+              : {}),
+          },
+        });
+        request = schema.parse(await doc("extractionRequest", key));
+      } else request = schema.parse(request);
+      return modelCall(
         run,
-        chunks.length === 1
-          ? "synthesis"
-          : `synthesis-chunk-${chunkIndex}${run.output.extractionRepairs ? `-repair-${run.output.extractionRepairs}` : ""}`,
+        request.stage,
         // The run records the extraction model it was created with; the stages
         // it names no model for take theirs from the settings.
         run.model,
@@ -1097,22 +1136,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           (chunks.length > 1
             ? "\nThis is one chronological excerpt. Extract only claims supported here; retain conditions and do not infer the rest of the video."
             : ""),
-        {
-          ...extractionPayload(
-            (prompts as { temporalResearch?: boolean }).temporalResearch
-              ? [
-                  ...extractionContext(run, chunks[chunkIndex]).previousSection,
-                  ...chunks[chunkIndex],
-                ]
-              : chunks[chunkIndex],
-            chunkIndex,
-            chunks.length,
-            pointer,
-          ),
-          ...((prompts as { temporalResearch?: boolean }).temporalResearch
-            ? extractionContext(run, chunks[chunkIndex])
-            : {}),
-        },
+        request.payload,
         false,
         {
           settings: team,
@@ -1121,6 +1145,17 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           ...(pointer ? { responseSchema: extractionResponseSchema } : {}),
         },
       );
+    };
+    const results = await boundedSettled(
+      chunks.slice(chunkIndex).map((_, offset) => chunkIndex + offset),
+      2,
+      extract,
+    );
+    let raw: unknown;
+    try {
+      const result = results[0];
+      if (result.status === "rejected") throw result.reason;
+      raw = result.value;
     } catch (error) {
       // A truncated response is already settled. Split only this batch, using
       // a fresh stage key; never repeat a successful extraction checkpoint.

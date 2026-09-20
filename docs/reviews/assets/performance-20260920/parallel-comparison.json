@@ -1,0 +1,18 @@
+[
+  {
+    "stage": "8-chunk extraction (64-minute transcript)",
+    "beforeMs": 3318.896917,
+    "afterMs": 1737.2145840000003,
+    "reductionPercent": 47.65686830760944,
+    "speedup": 1.9104703285175733,
+    "equivalentOutput": true
+  },
+  {
+    "stage": "4 external searches (2 claims \u00d7 2 time modes)",
+    "beforeMs": 1669.566999999999,
+    "afterMs": 850.5706659999996,
+    "reductionPercent": 49.054415546066735,
+    "speedup": 1.9628786492855608,
+    "equivalentOutput": true
+  }
+]

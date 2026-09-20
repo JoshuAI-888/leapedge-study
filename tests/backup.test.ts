@@ -4,6 +4,7 @@ import {
   BACKUP_TABLES,
   BACKUP_V1_TABLES,
   BACKUP_V2_TABLES,
+  BACKUP_V3_TABLES,
   BACKUP_VERSION,
   NOT_BACKED_UP,
   tablesFor,
@@ -36,13 +37,14 @@ test("Every table the migrations create is backed up, or excluded on purpose", a
   assert.deepEqual(phantom, [], "a backup cannot read a table nothing creates");
 });
 
-test("The runner's own ledger is the only table left out", () => {
-  assert.deepEqual(NOT_BACKED_UP, ["yi_migrations"]);
+test("Migration bookkeeping and live provider permits are excluded deliberately", () => {
+  assert.deepEqual(NOT_BACKED_UP, ["yi_migrations", "yi_provider_slots"]);
 });
 
 test("A version-1 backup restores its nine tables; an unknown version restores none", () => {
-  assert.equal(BACKUP_VERSION, 3);
-  assert.deepEqual(tablesFor(3), BACKUP_TABLES);
+  assert.equal(BACKUP_VERSION, 4);
+  assert.deepEqual(tablesFor(4), BACKUP_TABLES);
+  assert.deepEqual(tablesFor(3), BACKUP_V3_TABLES);
   assert.deepEqual(tablesFor(2), BACKUP_V2_TABLES);
   assert.deepEqual(tablesFor(1), BACKUP_V1_TABLES);
   assert.equal(BACKUP_V1_TABLES.length, 9);
@@ -51,6 +53,6 @@ test("A version-1 backup restores its nine tables; an unknown version restores n
   // that database held.
   for (const t of BACKUP_V1_TABLES)
     assert.equal(BACKUP_TABLES.includes(t), true);
-  assert.throws(() => tablesFor(4), /not one this build can restore/);
+  assert.throws(() => tablesFor(5), /not one this build can restore/);
   assert.throws(() => tablesFor(Number.NaN), /not one this build can restore/);
 });

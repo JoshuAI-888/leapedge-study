@@ -1,3 +1,4 @@
+import { database } from "../../../../../server/youtube-intelligence/database.ts";
 import { researchBriefs } from "../../../../../server/youtube-intelligence/research-pipeline.ts";
 import { claimsForRun } from "../../../../../server/youtube-intelligence/repos/claims.ts";
 import { spansForClaims } from "../../../../../server/youtube-intelligence/repos/evidence-spans.ts";
@@ -35,6 +36,7 @@ export async function GET(
             ...run,
             output: {
               ...run.output,
+              stageTimings: await database.prepare("SELECT stage,claimed_at,finished_at,queue_ms,execution_ms,checkpoint_ms,outcome FROM yi_stage_timings WHERE run_id=$1 ORDER BY claimed_at LIMIT 1000").all(run.id),
               entityRegistry: await docs("entity"),
               ...(run.input.task === "research-brief"
                 ? {

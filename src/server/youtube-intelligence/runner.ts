@@ -105,6 +105,24 @@ export async function processNext(executeStage: typeof step = step) {
         "UPDATE yi_runs SET status='running',lease_token=$1,lease_until=$2 WHERE id=$3",
       )
       .run(token, Date.now() + 600000, run.id);
+    const timingId = `${job.id}:${token}`;
+    const stageStarted = performance.now();
+    await db()
+      .prepare(
+        `INSERT INTO yi_stage_timings(id,run_id,job_id,stage,claimed_at,queue_ms)
+      VALUES($1,$2,$3,$4,$5,$6)`,
+      )
+      .run(
+        timingId,
+        run.id,
+        job.id,
+        run.stage,
+        new Date().toISOString(),
+        Math.max(
+          0,
+          Date.now() - Date.parse(job.runAfter ?? new Date().toISOString()),
+        ),
+      );
     run.status = "running";
     run.error = null;
     try {
@@ -114,6 +132,8 @@ export async function processNext(executeStage: typeof step = step) {
       run.status = error instanceof SourcePending ? "queued" : "failed";
       run.error = error instanceof Error ? error.message : "Stage failed";
     }
+    const executionMs = performance.now() - stageStarted;
+    const checkpointStarted = performance.now();
     // Lock and check queue ownership in the same transaction as the checkpoint.
     await db().transaction(async () => {
       const owner = await db()
@@ -142,8 +162,19 @@ export async function processNext(executeStage: typeof step = step) {
       else if (run.status === "failed")
         await failJob(job.id, token, run.error ?? "Stage failed");
       else await completeJob(job.id, token);
+      await db()
+        .prepare(
+          `UPDATE yi_stage_timings SET finished_at=$1,execution_ms=$2,checkpoint_ms=$3,outcome=$4 WHERE id=$5`,
+        )
+        .run(
+          new Date().toISOString(),
+          executionMs,
+          performance.now() - checkpointStarted,
+          run.status,
+          timingId,
+        );
     });
-    await finishExperiments();
+    if (run.status !== "queued") await finishExperiments();
     return { id: run.id, stage: run.stage, status: run.status };
   } catch (error) {
     if (error instanceof SourcePending) {

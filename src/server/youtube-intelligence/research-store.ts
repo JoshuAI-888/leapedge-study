@@ -658,7 +658,7 @@ export async function researchSnapshot() {
   const [allRuns, documents] = await Promise.all([
     list(),
     researchDB()
-      .prepare("SELECT kind,payload FROM yi_documents ORDER BY created_at DESC")
+      .prepare("SELECT kind,payload FROM yi_documents WHERE kind IN ('reference','audioReview','transcriptAccuracy','captionBenchmark','experiment','evaluation','managedCaptionAttempt','idea','watchlist','comparison','review','improvement','briefing','delivery') ORDER BY created_at DESC")
       .all(),
   ]);
   async function readDocs<T = Record<string, unknown>>(
