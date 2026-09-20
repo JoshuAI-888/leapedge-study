@@ -28,7 +28,7 @@ Same four retained transcripts, model settings and original analysis cutoff; no 
 
 Options and AI reused one provisional plan and four exact searches each, without a consumer charge. Podcast and Mandarin replanned because final accepted context changed; speculative work added cost there. The long podcast was only slightly faster, while Mandarin was slower and more expensive. No aggregate all-success speedup or quality-parity claim is justified.
 
-Confirmed model/search experiment spend: **US$2.87606825** including the failed baseline audit. No unsettled ledger rows remained. All four original transcripts are byte-equivalent under canonical comparison in both arms.
+Confirmed model/search experiment spend: **US$2.87606825** including the failed baseline audit. No unsettled ledger rows remained. All four retained transcripts match under canonical JSON comparison in both arms.
 
 Full stage breakdowns are in [the metrics](operational-metrics-20260920.json). Raw runs, requests, ledger rows and timings remain in ignored `data/operational-efficiency-20260920/` (`live-sequential.json`, `live-sequential-mandarin.json`, `live-overlap.json`). No experimental output was imported into production or used to rewrite historical results.
 
@@ -40,10 +40,19 @@ The options validator withheld the inconsistent breakeven, but an accepted inval
 
 ## Verification and deployment
 
-495 tests passed and one skipped in **each** database mode; typecheck, production build and real PostgreSQL integrity checks passed. Offline diagnostic remains advisory. HTTP checks against an isolated database verified all four profile values save/reload, invalid values reject without changing the setting, and the Settings/information-page routes return 200. Actual extraction/worker integration proves fatal-account drain, no publication and no duplicate settled sibling payment after explicit recovery.
+496 tests passed and one skipped in **each** database mode; typecheck, production build and real PostgreSQL integrity checks passed. Offline diagnostic remains advisory. HTTP checks against an isolated database verified all four profile values save/reload, invalid values reject without changing the setting, and the Settings/information-page routes return 200. Actual extraction/worker integration proves fatal-account drain, no publication and no duplicate settled sibling payment after explicit recovery.
 
 Desktop/mobile visual and browser interaction checks are **deferred at the user's request** while away from the Mac. Automatic review rejected inspection after Chrome navigation appeared stuck on an unrelated search page. HTTP/API checks are not substituted for visual inspection. Resume this acceptance step when the user is home.
 
 Deployment follows [the release checklist](../delivery/release-checklist.md). User explicitly approved Vercel Production `YTI_EFFICIENCY_PROFILE=conservative`; it was added without downloading secrets. Mac preflight confirms 14 retained runs, no unfinished runs or active leases, and a paused queue. Final merge, Mac installation and Vercel production revision/health are recorded below when verified. The Mac uses local PostgreSQL; Vercel uses a different Neon database. Web READY does not certify a worker for Vercel jobs. No Finradar integration or 1,000-video/day certification.
 
-Post-review hardening: Standard stores an explicit disabled value that survives JSON persistence and re-admission under a changed deployment default. The regression test failed before the fix and passed after it; final release checks are rerun for this addition.
+Post-review hardening: Standard stores an explicit disabled value that survives JSON persistence and re-admission under a changed deployment default. The regression test failed before the fix and passed after it; final release checks passed for this addition.
+
+
+## Verified release
+
+PR #12 merged as `d39e09dfe113473e53b3a3a70ebf5df4a61586ea`; both GitHub verification jobs and the preview passed. Installed that release on the Mac with a private rollback backup, preserving schema 7, all 14 stored runs and credentials. Profile default conservative, capacity 3, automatic queue paused, speculative overlap off. Six local routes returned 200, including Settings and the new profile guide; worker heartbeat age 0.021 seconds at 06:16:51 UTC.
+
+Vercel Production deployment `dpl_Dsdhrk2wZxNjYWja3Vn4XFUaSjWg` is READY at [the release URL](https://youtube-intel-2t39tnn4l-joshu-ai.vercel.app), with [the production alias](https://youtube-intel-delta.vercel.app). GitHub deployment 6549773261 maps it to the merged SHA. Conservative Production default was configured before this build. Public pages correctly redirect to `/access`, unauthenticated status returns 401, and the deployment error-log query returned no rows. These are access-boundary checks, **not authenticated app or worker verification**. Authenticated Vercel smoke tests and browser visual/interaction checks remain pending while the user is away. No production secrets were downloaded.
+
+Next quality work before considering overlap as a default: require explicit external support for stronger corroboration labels, preserve material countercases and conditional/no-position disclosures in condensed briefs, distinguish creator attribution from analyst invalidation, and add a bounded missing-verdict repair that retains the original incomplete audit. Those are recorded findings, not claimed fixes in this performance release.

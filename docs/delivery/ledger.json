@@ -1554,7 +1554,7 @@
     ]
   },
   "operationalEfficiency": {
-    "status": "in-review",
+    "status": "merged",
     "pr": 12,
     "features": [
       3,
@@ -1565,22 +1565,23 @@
     "report": "docs/reviews/operational-efficiency-20260920.md",
     "releaseChecklist": "docs/delivery/release-checklist.md",
     "baselineCommit": "e71ca3d",
-    "macDeployed": false,
-    "vercelDeployed": false,
+    "macDeployed": true,
+    "vercelDeployed": true,
     "newLeapEdgeRequests": 0,
-    "measurement": "Live frozen-source sequential/overlap comparison in progress; real PostgreSQL worker fixture completed; cache/fatal fixtures complete",
+    "measurement": "Completed four frozen-source comparisons; baseline 3 briefs/1 incomplete audit, overlap4 briefs; quality parity not established",
     "qualityPolicy": "Preserve exact accepted evidence, independent critique, audit, point-in-time separation; hold overlap off unless measured benefit and source-backed review support rollout",
     "profileSetting": "Workspace processing.efficiencyProfile dropdown: deployment-default, off, conservative, experimental-overlap; frozen for new runs",
     "browserStatus": "Deferred at user request while away from Mac; automatic approval review blocked stale target inspection",
-    "vercelEnvironment": "User-approved YTI_EFFICIENCY_PROFILE=conservative added; awaits deployment",
+    "vercelEnvironment": "User-approved conservative Production default deployed without downloading secrets",
     "verification": {
-      "tests": "495 passed, 1 skipped in each database mode",
+      "tests": "496 passed, 1 skipped in each database mode",
       "typecheck": "passed",
       "build": "passed",
       "realPostgres": "passed",
       "offlineGate": "advisory-only",
       "profileHTTP": "four save/reloads and invalid-profile rejection passed in isolated database",
-      "browser": "deferred at user request"
+      "browser": "deferred at user request",
+      "githubCI": "both PR verification jobs and Vercel preview passed"
     },
     "confirmedExperimentCostUsd": 2.87606825,
     "overlapDecision": "Remain disabled by default: quality parity not established",
@@ -1595,6 +1596,63 @@
       "docs/reviews/admission-validation-20260920.md",
       "docs/reviews/cache-validation-20260920.md"
     ],
-    "profilePersistence": "Explicit Standard disabled value survives JSON persistence and changed-default re-admission; regression test passed"
+    "profilePersistence": "Explicit Standard disabled value survives JSON persistence and changed-default re-admission; regression test passed",
+    "mergeCommit": "d39e09dfe113473e53b3a3a70ebf5df4a61586ea",
+    "macRuntime": {
+      "at": "2026-09-20T06:16:51.960Z",
+      "revision": "d39e09dfe113473e53b3a3a70ebf5df4a61586ea",
+      "profile": "conservative",
+      "queuePaused": true,
+      "schema": 7,
+      "workerHeartbeatAgeSeconds": 0.021,
+      "requests": [
+        {
+          "path": "/youtube-intelligence/today",
+          "status": 200,
+          "seconds": 0.13687991700000002,
+          "bytes": 14119
+        },
+        {
+          "path": "/youtube-intelligence/settings",
+          "status": 200,
+          "seconds": 0.010713209000000007,
+          "bytes": 14108
+        },
+        {
+          "path": "/youtube-intelligence/processing-profiles",
+          "status": 200,
+          "seconds": 0.009114083999999991,
+          "bytes": 21083
+        },
+        {
+          "path": "/api/intelligence/status",
+          "status": 200,
+          "seconds": 0.02752741599999999,
+          "bytes": 215
+        },
+        {
+          "path": "/api/intelligence/activity",
+          "status": 200,
+          "seconds": 0.003008499999999998,
+          "bytes": 176
+        },
+        {
+          "path": "/api/youtube-intelligence/research/snapshot",
+          "status": 200,
+          "seconds": 0.127467334,
+          "bytes": 3312035
+        }
+      ]
+    },
+    "vercel": {
+      "releaseRevision": "d39e09dfe113473e53b3a3a70ebf5df4a61586ea",
+      "url": "https://youtube-intel-2t39tnn4l-joshu-ai.vercel.app",
+      "productionAlias": "https://youtube-intel-delta.vercel.app",
+      "state": "READY",
+      "profileDefault": "conservative",
+      "authenticatedSmoke": "pending workspace session; public access boundary verified",
+      "errorLogRows": 0,
+      "workerActivation": "separate Neon database; Mac local heartbeat does not certify Vercel processing"
+    }
   }
 }
