@@ -1453,5 +1453,22 @@
       "queuePaused": true,
       "concurrencyRestored": 1
     }
+  },
+  "evidenceEfficiency": {
+    "status": "in-progress",
+    "baselineCommit": "a949a8e",
+    "report": "docs/reviews/evidence-efficiency-20260920.md",
+    "sequence": [
+      1,
+      2,
+      5,
+      3,
+      4,
+      6,
+      7
+    ],
+    "productionPromoted": false,
+    "qualityGate": "paired frozen-input measurements plus source-backed review; no quality claim from counts",
+    "newLeapEdgeRequests": 0
   }
 }
