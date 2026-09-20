@@ -1,3 +1,4 @@
+import { ProcessingProfileSetting } from "./processing-profiles.ts";
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import { modelFamily } from "./model-family.ts";
@@ -131,6 +132,7 @@ export const TeamPreferences = z.object({
     .prefault({}),
   processing: z
     .object({
+      efficiencyProfile: ProcessingProfileSetting.default("deployment-default"),
       userSubmitted: z.enum(["immediate", "batch"]).default("immediate"),
       channelUploads: z.enum(["immediate", "batch"]).default("batch"),
       contextCaching: z.boolean().default(true),

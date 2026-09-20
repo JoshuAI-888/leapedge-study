@@ -14,6 +14,7 @@ const { values } = parseArgs({
     revision: { type: 'string' },
     variant: { type: 'string' },
     live: { type: 'boolean', default: false },
+    treatment: { type: 'string' },
   },
 });
 if (
@@ -22,6 +23,9 @@ if (
 )
   throw Error('Required: --live --root checkout --input retained-export.json --output result.json --revision SHA --variant before|after');
 const variant = values.variant;
+if (values.treatment && !['sequential', 'overlap'].includes(values.treatment)) throw Error('treatment must be sequential or overlap');
+const operational = !!values.treatment;
+const overlap = values.treatment === 'overlap';
 const file = resolve(values.output);
 // Exclusive creation prevents both overwriting evidence and concurrent reuse of
 // one destination. A failed attempt leaves this diagnostic rather than inviting
@@ -101,9 +105,10 @@ const output = {
         .digest('hex'),
       start: 'synthesis',
       asOf: 'frozen original createdAt',
-      search: 'live uncached per run; retrieval content may vary between trials',
-      speculativeResearch: false,
-      reuseResearchCache: false,
+      search: operational ? 'live exact-key cache; retrieval content may vary between trials' : 'live uncached per run; retrieval content may vary between trials',
+      treatment: values.treatment ?? 'evidence-efficiency',
+      speculativeResearch: overlap,
+      reuseResearchCache: operational,
       baselineHistory: 'empty frozen baseline for every research brief',
     },
   },
@@ -149,8 +154,11 @@ async function execute(run) {
       status: run.status, error: run.error,
     }));
   }
-  if (run.status !== 'completed')
-    throw Error(run.error ?? 'stage limit');
+  if (run.status === 'running') {
+    run.status = 'failed'; run.error = 'Benchmark stage limit';
+    await database.prepare('UPDATE yi_runs SET status=$1,error=$2 WHERE id=$3').run(run.status, run.error, run.id);
+    await save();
+  }
   return await S.get(run.id);
 }
 try {
@@ -158,9 +166,9 @@ try {
     const input = {
       ...old.input,
       teamPreferencesSnapshot: settings,
-      efficiencyVersion: variant === 'after' ? 'evidence-efficiency.v1' : undefined,
-      speculativeResearch: false,
-      reuseResearchCache: false,
+      efficiencyVersion: operational || variant === 'after' ? 'evidence-efficiency.v1' : undefined,
+      speculativeResearch: overlap,
+      reuseResearchCache: operational,
     };
     for (const k of ['recoveryOf', 'recoveryBatch', 'productionSample'])
       delete input[k];
@@ -179,6 +187,7 @@ try {
     await database.prepare('UPDATE yi_runs SET created_at=$1 WHERE id=$2')
       .run(old.createdAt, run.id);
     const done = await execute(run);
+    if (done.status !== 'completed') continue;
     const brief = await ensureResearchBrief(done);
     if (brief) {
       brief.output.researchBaseline = [];

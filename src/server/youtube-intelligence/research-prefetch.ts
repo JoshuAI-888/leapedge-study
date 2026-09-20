@@ -1,11 +1,13 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
-import { Claim, type Run, type CheckedClaim } from "../../features/youtube-intelligence/contracts.ts";
-import { AnalysisContext, EvidenceRecord, analysisContext, evidenceInventory } from "../../features/youtube-intelligence/research-brief.ts";
+import { Claim, Mention, type Run, type CheckedClaim } from "../../features/youtube-intelligence/contracts.ts";
+import { AnalysisContext, EvidenceRecord, analysisContext } from "../../features/youtube-intelligence/research-brief.ts";
 import { TeamPreferences, type TeamPreferencesData } from "../../features/youtube-intelligence/settings.ts";
 import { doc, put, putIfAbsent, runTeamPreferences } from "./research-store.ts";
 import { researchStep } from "./research-pipeline.ts";
 import { RetrievalRecordSchema } from "./research-sources.ts";
+
+import { researchEvidenceInventory } from "./research-evidence-inventory.ts";
 
 const VERSION = "research-prefetch.v1";
 const Snapshot = z.object({
@@ -32,8 +34,20 @@ function candidateSnapshot(run: Run, settings: TeamPreferencesData) {
       return [{ id: parsed.data.id, claim: parsed.data.claim, passed: true, reasons: [] } satisfies CheckedClaim];
     });
   }
+  // Only the cloned query-planning view treats candidates as provisional.
+  // Exact mention spans are still reconstructed and hash-checked by the inventory.
+  shadow.output.mentionChecks = Object.fromEntries(
+    (Array.isArray(shadow.output.mentions) ? shadow.output.mentions : []).flatMap(raw => {
+      const parsed = Mention.safeParse(raw);
+      if (!parsed.success) return [];
+      const mention = parsed.data;
+      const key = `${mention.ticker ?? mention.instrument_as_spoken}:${mention.source_span.start_id}:${mention.source_span.end_id}`;
+      if ((run.output.mentionChecks as Record<string, unknown> | undefined)?.[key] === false) return [];
+      return [[key, true]];
+    }),
+  );
   return Snapshot.parse({ sourceRunId: run.id, title: run.title,
-    context: { ...analysisContext(run), analysedAt: run.createdAt }, evidence: evidenceInventory(shadow), teamPreferencesSnapshot: settings,
+    context: { ...analysisContext(run), analysedAt: run.createdAt }, evidence: researchEvidenceInventory(shadow), teamPreferencesSnapshot: settings,
     operationalInput: structuredClone(run.input),
   });
 }
@@ -112,4 +126,13 @@ export async function retainedPrefetchRetrieval(input: z.infer<typeof RetrievalI
       note: `${donor.note} Reused exact provisional request; no additional provider request was made.`,
     },
   };
+}
+
+/** Plan reuse is separate from search reuse: accepted content must match exactly. */
+export async function retainedPrefetchPlan(sourceRunId: string, identity: string) {
+  const raw = await doc("researchPrefetchProgress", `${sourceRunId}:${VERSION}`);
+  const parsed = Progress.safeParse(raw);
+  if (!parsed.success || parsed.data.state !== "complete" ||
+      parsed.data.output.researchPlanIdentity !== identity) return null;
+  return { plan: parsed.data.output.researchPlan };
 }

@@ -279,15 +279,27 @@ export async function researchStep(run: Run) {
   };
   if (run.stage === "metadata") {
     run.title = `Research brief · ${snapshot.title}`;
-    run.output.researchPlan = Plan.parse(
-      await invoke(
-        "synthesis-research-plan",
-        PRINCIPLES +
-          " Select at most two highly material factual claims for external verification. Write precise search queries with company, claim and relevant period. List main topics in coverage. Return the supplied JSON schema.",
-        planningSnapshot,
-        Plan,
-      ),
-    );
+    const instructions = PRINCIPLES +
+      " Select at most two highly material factual claims for external verification. Write precise search queries with company, claim and relevant period. List main topics in coverage. Return the supplied JSON schema.";
+    // Trust may advance during critique. Query selection can be reused only when
+    // every other evidence field, date, baseline, setting and instruction agrees.
+    // Synthesis and audit still consume the final accepted inventory and trust.
+    const identityPayload = structuredClone(snapshot) as Record<string, unknown>;
+    for (const key of ["evidence", "evidenceInventory"]) {
+      if (Array.isArray(identityPayload[key])) identityPayload[key] = identityPayload[key].map(({ trust: _trust, ...item }: Record<string, unknown>) => item);
+    }
+    const identity = createHash("sha256").update(JSON.stringify({
+      version: "research-plan-reuse.v1", efficient, instructions, payload: identityPayload,
+      model: run.model, settings, schema: z.toJSONSchema(Plan),
+    })).digest("hex");
+    run.output.researchPlanIdentity = identity;
+    const reused = run.input.speculativeResearch === true && snapshot.sourceRunId !== run.id
+      ? await (await import("./research-prefetch.ts")).retainedPrefetchPlan(snapshot.sourceRunId, identity)
+      : null;
+    run.output.researchPlan = Plan.parse(reused?.plan ?? await invoke(
+      "synthesis-research-plan", instructions, planningSnapshot, Plan,
+    ));
+    if (reused) run.output.prefetchPlanReuse = { donorRunId: snapshot.sourceRunId, identity, note: "Identical accepted evidence and planning context, excluding trust advancement; original planning charge remains on donor." };
     run.output.retrievals = [];
     run.stage = "research-sources";
     return;

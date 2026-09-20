@@ -61,6 +61,13 @@ export const RetrievalRecordSchema = z.object({
   note: z.string(),
   requestedAt: z.iso.datetime(),
   completedAt: z.iso.datetime().optional(),
+  cacheIdentity: z.object({
+    version: z.literal("exa-retrieval.v1"),
+    key: z.string().regex(/^[a-f0-9]{64}$/),
+    runId: z.string().min(1),
+    cutoff: z.iso.datetime(),
+    primaryDomains: z.array(z.string()),
+  }).optional(),
   cache: z.object({
     version: z.literal("exa-retrieval.v1"),
     donorKey: z.string(),
@@ -106,6 +113,10 @@ export async function retrieveResearchSources(input: {
     costUsd: null,
     costBasis: "provider costDollars.total, when supplied",
     requestedAt,
+    cacheIdentity: {
+      version: "exa-retrieval.v1" as const, key: cacheKey, runId: input.runId,
+      cutoff: input.cutoff, primaryDomains: [...new Set(input.primaryDomains)].sort(),
+    },
   };
   if (reuseCache) {
     const pointer = z.object({ version: z.literal("exa-retrieval.v1"), donorKey: z.string(), donorRunId: z.string() }).safeParse(
@@ -117,7 +128,13 @@ export async function retrieveResearchSources(input: {
         const record = donor.data;
         const age = record.completedAt ? Date.now() - Date.parse(record.completedAt) : Infinity;
         const ttl = input.timeMode === "current" ? 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
-        if (record.state === "complete" && record.costUsd !== null && !record.cache && age >= 0 && age <= ttl) {
+        const identityMatches = record.key === pointer.data.donorKey
+          && record.query === input.query && record.timeMode === input.timeMode
+          && record.cacheIdentity?.key === cacheKey
+          && record.cacheIdentity.runId === pointer.data.donorRunId
+          && record.cacheIdentity.cutoff === input.cutoff
+          && JSON.stringify(record.cacheIdentity.primaryDomains) === JSON.stringify(base.cacheIdentity.primaryDomains);
+        if (identityMatches && record.state === "complete" && record.costUsd !== null && !record.cache && age >= 0 && age <= ttl) {
           if (!await get(input.runId)) throw Error("External verification requires a retained research run.");
           const hit: RetrievalRecord = { ...record, key, costUsd: 0,
             costBasis: "Retained retrieval reused; no provider request or consumer charge",

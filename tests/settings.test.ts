@@ -59,6 +59,7 @@ test("Team and account defaults parse from an empty object and match spec 6.2 / 
     sinceThenAtSettlement: true,
   });
   assert.deepEqual(team.processing, {
+    efficiencyProfile: "deployment-default",
     userSubmitted: "immediate",
     channelUploads: "batch",
     contextCaching: true,

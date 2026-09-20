@@ -6,6 +6,7 @@ import { Settings } from "../../../features/youtube-intelligence/ui/pages/Settin
 import { Analysis } from "../../../features/youtube-intelligence/ui/pages/Analysis.tsx";
 import { Lab } from "../../../features/youtube-intelligence/ui/pages/Lab.tsx";
 import { Methodology } from "../../../features/youtube-intelligence/ui/pages/Methodology.tsx";
+import { ProcessingProfiles } from "../../../features/youtube-intelligence/ui/pages/ProcessingProfiles.tsx";
 import { Leaderboard } from "../../../features/youtube-intelligence/ui/pages/Leaderboard.tsx";
 export default async function Page({
   params,
@@ -22,6 +23,7 @@ export default async function Page({
     channels: Channels,
     saved: Saved,
     settings: Settings,
+    "processing-profiles": ProcessingProfiles,
     lab: Lab,
     methodology: Methodology,
     leaderboard: Leaderboard,

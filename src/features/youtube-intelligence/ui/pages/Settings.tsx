@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { PROCESSING_PROFILES, ProcessingProfileSetting } from "../../processing-profiles.ts";
 import { useWorkspace, type Preferences } from "../workspace.tsx";
 import { action } from "../api.ts";
 import { money } from "../viewmodel.ts";
@@ -76,6 +78,7 @@ function ObjectFields({
         if (
           [
             "selection",
+            "efficiencyProfile",
             "context",
             "corpus",
             "sharing",
@@ -439,6 +442,42 @@ export function Settings() {
             Existing results keep their original configuration. The critic must
             always use a different model family from extraction.
           </p>
+          <fieldset className="yi-panel">
+            <legend>Processing profile</legend>
+            <div className="yi-settings-fields">
+              <label>
+                Profile for new analyses
+                <select
+                  value={t.processing.efficiencyProfile ?? "deployment-default"}
+                  aria-describedby="yi-processing-profile-description yi-processing-profile-scope"
+                  disabled={busy}
+                  onChange={(e) => setTeam({
+                    ...t,
+                    processing: {
+                      ...t.processing,
+                      efficiencyProfile: ProcessingProfileSetting.parse(e.target.value),
+                    },
+                  })}
+                >
+                  {PROCESSING_PROFILES.map((profile) => (
+                    <option key={profile.value} value={profile.value}>{profile.label}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <p id="yi-processing-profile-description" className="yi-muted" aria-live="polite">
+              {PROCESSING_PROFILES.find(profile => profile.value === (t.processing.efficiencyProfile ?? "deployment-default"))?.description}
+            </p>
+            <p id="yi-processing-profile-scope" className="yi-muted">
+              Save team configuration to apply this workspace setting to new analyses.
+              Existing and already queued analyses keep their original profile.
+              Every profile preserves evidence, references and required audits.
+            </p>
+            {t.processing.efficiencyProfile === "experimental-overlap" ? (
+              <p className="yi-warning">Experimental research overlap may add cost. Quality parity has not been established; use Efficient for routine research.</p>
+            ) : null}
+            <Link href="/youtube-intelligence/processing-profiles">Compare processing profiles and safeguards</Link>
+          </fieldset>
           <ObjectFields
             value={t as unknown as Record<string, unknown>}
             onChange={(v) => setTeam(v as unknown as Preferences["team"])}

@@ -1,5 +1,7 @@
 # Standalone worker operations
 
+For every update, complete the [release checklist](release-checklist.md), including separate Mac and Vercel verification.
+
 > 20 September 2026 update: the user removed the old US$25 cap for a bounded 20-video comparison. That comparison is complete with findings; see [the report](live-comparison-20-20260920.md). Historical budget/status statements below describe the earlier pilot. Finradar integration remains excluded.
 
 The web app serves UI/API and dispatches jobs. `scripts/worker.ts` executes them from Postgres. The current user-approved host is this Mac. Three login services are installed and running from `~/Library/Application Support/YouTube Intelligence`; the worker is deliberately paused during acceptance. Keep the Mac awake and connected for continuous work. Sleep or shutdown interrupts processing; this is not unattended hosted uptime.
