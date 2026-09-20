@@ -340,6 +340,21 @@ export function validateBrief(
       );
     if (sentence.timeMode === "current" && !sentence.externalIds.length)
       reasons.push("A current update requires dated external evidence.");
+    if (sentence.calculation?.expression.kind === "short_put_breakeven") {
+      const computed = financialCheck(sentence.calculation.expression).value;
+      // Model prose can disagree with its structured calculation even when
+      // no separate breakeven financialFact was emitted. Check both surfaces.
+      const statedBreakevens = [
+        ...sentence.text.matchAll(/\bbreak[\s-]*even(?:\s+(?:price|level|of|is|at|was|equals|would|be|around|approximately|about|near|effectively))*\s*(?:USD\s*)?\$?\s*(-?\d[\d,]*(?:\.\d+)?)/gi),
+        ...sentence.text.matchAll(/(?:\$|USD\s*)(-?\d[\d,]*(?:\.\d+)?)\s+(?:(?:per.share|expiry|calculated|effective)\s+)*break[\s-]*even\b/gi),
+      ].map(match => Number(match[1].replaceAll(",", "")));
+      const inconsistentFact = sentence.financialFacts.some(f =>
+        /break[\s-]*even/i.test(f.label) && f.unit === "per_share" &&
+        f.scale === "ones" && computed !== null && Math.abs(f.value - computed) > 0.011,
+      );
+      if (computed !== null && (inconsistentFact || statedBreakevens.some(value => Math.abs(value - computed) > 0.011)))
+        reasons.push(`Quoted breakeven conflicts with the supplied option inputs: strike minus premium is ${computed.toFixed(2)} before fees. The source discrepancy must be resolved before this sentence can appear in the summary.`);
+    }
     if (
       sentence.financialFacts.some(
         (f) =>
@@ -357,6 +372,8 @@ export function validateBrief(
     const sources = sentence.externalIds.map((id) => ext.get(id)!);
     const primary = sources.some((s) => s.sourceClass === "primary");
     const factualStatus = primary ? audit!.factualStatus : "unverified";
+    const withheldExternalAudit = !primary && audit!.factualStatus !== "unverified";
+    const withheldReason = "External-verification assessment withheld: this sentence has no eligible cited primary evidence. The original audit is retained in the run trace; external corroboration or contradiction has not been established.";
     const trust = Math.min(
       ...sentence.evidenceIds.map((id) => Number(byId.get(id)!.trust.slice(1))),
     );
@@ -396,11 +413,11 @@ export function validateBrief(
               ? "Text-checked source"
               : "Extracted source",
       robustness:
-        factualStatus === "disputed" || audit!.robustness === "fragile"
+        !withheldExternalAudit && (factualStatus === "disputed" || audit!.robustness === "fragile")
           ? "fragile"
           : "insufficient",
-      robustnessReason: audit!.robustnessReason,
-      auditReason: audit!.reason,
+      robustnessReason: withheldExternalAudit ? withheldReason : audit!.robustnessReason,
+      auditReason: withheldExternalAudit ? withheldReason : audit!.reason,
       calculationResult: sentence.calculation
         ? financialCheck(sentence.calculation.expression)
         : null,

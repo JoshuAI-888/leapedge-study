@@ -1453,5 +1453,59 @@
       "queuePaused": true,
       "concurrencyRestored": 1
     }
+  },
+  "evidenceEfficiency": {
+    "status": "in-review",
+    "baselineCommit": "a949a8e",
+    "report": "docs/reviews/evidence-efficiency-20260920.md",
+    "sequence": [
+      1,
+      2,
+      5,
+      3,
+      4,
+      6,
+      7
+    ],
+    "productionPromoted": false,
+    "qualityGate": "paired frozen-input measurements plus source-backed review; no quality claim from counts",
+    "newLeapEdgeRequests": 0,
+    "pr": 11,
+    "implemented": [
+      1,
+      2,
+      5,
+      3,
+      4,
+      6,
+      7
+    ],
+    "rollout": "Conservative profile approved by bounded source/browser checks; install pending. Speculative overlap remains experimental and disabled.",
+    "reports": [
+      "docs/reviews/optimization-stage-20260920.md",
+      "docs/reviews/optimization-full-quality-20260920.md",
+      "docs/reviews/optimization-harness-notes-20260920.md"
+    ],
+    "verification": {
+      "nodeTests": "484 passed, 1 skipped",
+      "typecheck": "passed",
+      "productionBuild": "passed",
+      "realPostgres": "passed: claims, deduplication, ledger reservations, fencing, frozen documents",
+      "offlineGate": "passed, advisory-only",
+      "liveComparison": "four frozen-source baseline/candidate analyses and briefs; four brief-only coverage followups completed, targeted source findings resolved or explicitly bounded",
+      "queueFixture": {
+        "jobs": 100,
+        "beforeSeconds": 73.078899,
+        "afterSeconds": 36.154157,
+        "beforeCapacity": 1,
+        "afterCapacity": 3,
+        "liveCapacityCertified": false
+      },
+      "pgliteTests": "484 passed, 1 skipped",
+      "desktopBrowser": "passed: final theme, equal horizons, retained revision and confidence display",
+      "mobileBrowser": "passed at 390x844: no horizontal overflow, navigation, horizon filter, quote/hash drill-down, Escape/focus, transcript search and timestamp target"
+    },
+    "confirmedExperimentCostUsd": 3.895488925,
+    "briefFollowupCostUsd": 0.50987525
   }
 }

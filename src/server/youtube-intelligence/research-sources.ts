@@ -61,6 +61,13 @@ export const RetrievalRecordSchema = z.object({
   note: z.string(),
   requestedAt: z.iso.datetime(),
   completedAt: z.iso.datetime().optional(),
+  cache: z.object({
+    version: z.literal("exa-retrieval.v1"),
+    donorKey: z.string(),
+    donorRunId: z.string(),
+    donorCostUsd: z.number().nonnegative(),
+    reusedAt: z.iso.datetime(),
+  }).optional(),
 });
 export type RetrievalRecord = z.infer<typeof RetrievalRecordSchema>;
 const RetrievalInput = z.object({
@@ -69,6 +76,7 @@ const RetrievalInput = z.object({
   timeMode: z.enum(["video_date", "current"]),
   cutoff: z.iso.datetime(),
   primaryDomains: z.array(z.string().regex(/^[a-z0-9.-]+$/)).max(100),
+  reuseCache: z.boolean().optional(),
 });
 export async function retrieveResearchSources(input: {
   runId: string;
@@ -76,9 +84,17 @@ export async function retrieveResearchSources(input: {
   timeMode: "video_date" | "current";
   cutoff: string;
   primaryDomains: string[];
+  reuseCache?: boolean;
 }): Promise<RetrievalRecord> {
   input = RetrievalInput.parse(input);
-  const key = createHash("sha256").update(JSON.stringify(input)).digest("hex");
+  // The feature toggle is not part of paid-request identity: toggling cannot
+  // rebuy an existing same-run unknown outcome.
+  const { reuseCache, ...identity } = input;
+  const key = createHash("sha256").update(JSON.stringify(identity)).digest("hex");
+  const cacheKey = createHash("sha256").update(JSON.stringify({
+    version: "exa-retrieval.v1", query: input.query, timeMode: input.timeMode,
+    cutoff: input.cutoff, primaryDomains: [...new Set(input.primaryDomains)].sort(),
+  })).digest("hex");
   const retained = await doc<RetrievalRecord>("researchRetrieval", key);
   if (retained) return RetrievalRecordSchema.parse(retained);
   const requestedAt = new Date().toISOString();
@@ -91,6 +107,29 @@ export async function retrieveResearchSources(input: {
     costBasis: "provider costDollars.total, when supplied",
     requestedAt,
   };
+  if (reuseCache) {
+    const pointer = z.object({ version: z.literal("exa-retrieval.v1"), donorKey: z.string(), donorRunId: z.string() }).safeParse(
+      await doc("researchRetrievalCache", cacheKey),
+    );
+    if (pointer.success) {
+      const donor = RetrievalRecordSchema.safeParse(await doc("researchRetrieval", pointer.data.donorKey));
+      if (donor.success) {
+        const record = donor.data;
+        const age = record.completedAt ? Date.now() - Date.parse(record.completedAt) : Infinity;
+        const ttl = input.timeMode === "current" ? 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+        if (record.state === "complete" && record.costUsd !== null && !record.cache && age >= 0 && age <= ttl) {
+          if (!await get(input.runId)) throw Error("External verification requires a retained research run.");
+          const hit: RetrievalRecord = { ...record, key, costUsd: 0,
+            costBasis: "Retained retrieval reused; no provider request or consumer charge",
+            requestedAt, completedAt: requestedAt,
+            cache: { ...pointer.data, donorCostUsd: record.costUsd, reusedAt: requestedAt },
+          };
+          await put("researchRetrieval", key, hit);
+          return hit;
+        }
+      }
+    }
+  }
   const apiKey = process.env.EXA_API_KEY;
   if (!apiKey)
     return {
@@ -99,8 +138,7 @@ export async function retrieveResearchSources(input: {
       note: "EXA_API_KEY is not configured. No external facts were verified.",
     };
   const run = await get(input.runId);
-  if (!run)
-    throw Error("External verification requires a retained research run.");
+  if (!run) throw Error("External verification requires a retained research run.");
   const settings = await runTeamPreferences(run);
   return withProviderSlot("exa", async () => {
     const reservation = await reserve(
@@ -193,6 +231,13 @@ export async function retrieveResearchSources(input: {
           "External response did not report its charge.",
         );
       await put("researchRetrieval", key, record);
+      // Index only successful known-charge donor records; never cache a cache
+      // hit, extend freshness on reuse, or reuse uncertain paid outcomes.
+      if (reuseCache && record.costUsd !== null) {
+        // A best-effort reuse index must never downgrade a confirmed paid
+        // response to an unknown outcome if its separate write fails.
+        await put("researchRetrievalCache", cacheKey, { version: "exa-retrieval.v1", donorKey: key, donorRunId: input.runId }).catch(() => undefined);
+      }
       return record;
     } catch (e) {
       const record: RetrievalRecord = {

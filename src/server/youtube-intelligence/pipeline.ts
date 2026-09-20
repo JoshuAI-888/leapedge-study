@@ -1,5 +1,5 @@
 import { withProviderSlot } from "./provider-limits.ts";
-import { boundedSettled } from "./bounded-parallel.ts";
+import { boundedSettled, isFatalAccountError } from "./bounded-parallel.ts";
 import {
   extractionContext,
   actionRecallWindows,
@@ -1150,7 +1150,12 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       chunks.slice(chunkIndex).map((_, offset) => chunkIndex + offset),
       2,
       extract,
+      { stopOnError: isFatalAccountError },
     );
+    // Paid successes are already retained by modelCall. Stop this run even if
+    // the fatal error belongs to a later sibling than the next draft to apply.
+    const fatal = results.find(r => r.status === "rejected" && isFatalAccountError(r.reason));
+    if (fatal?.status === "rejected") throw fatal.reason;
     let raw: unknown;
     try {
       const result = results[0];
@@ -1295,13 +1300,14 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
      */
     const { targets, language } = pendingTranslations(run);
     if (targets.length) {
+      const translationRequest = translationPayload(targets);
       const raw = await modelCall(
         run,
         "translate",
         // The stage takes its model from settings.models.translation.
         undefined,
         (prompts as { translation?: string }).translation || TRANSLATION_PROMPT,
-        translationPayload(targets),
+        translationRequest,
         false,
         {
           settings: await prefs(),
@@ -1310,9 +1316,14 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       );
       applyTranslations(targets, parseTranslations(raw));
       run.output.translation = { spans: targets.length, language };
+      run.output.translationEfficiency = { targetSpans: targets.length, uniqueSpans: translationRequest.spans.length, savedSpans: targets.length - translationRequest.spans.length };
     }
     run.stage = "critique";
   } else if (run.stage === "critique") {
+    const prefetch = run.input.speculativeResearch === true
+      ? (await import("./research-prefetch.ts")).prefetchResearch(run)
+      : Promise.resolve();
+    try {
     /**
      * One batched critique per run (spec 4.3). The per-claim loop this replaces
      * re-sent the transcript once per claim, so the transcript cost was
@@ -1530,6 +1541,9 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       ...(crossClaimNotes.length ? { crossClaimNotes } : {}),
     };
     run.stage = "publish";
+    } finally {
+      await prefetch;
+    }
   } else if (run.stage === "publish") {
     const settings = await prefs();
     if (
