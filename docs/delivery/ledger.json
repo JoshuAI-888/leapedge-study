@@ -1376,5 +1376,18 @@
         "databaseAndSecretsPreserved": true
       }
     }
+  },
+  "performance": {
+    "status": "in-progress",
+    "scope": [
+      "stage-timings",
+      "queue-priority",
+      "bounded-parallel-extraction-search",
+      "incremental-ui"
+    ],
+    "baselineCommit": "140d6b2",
+    "report": "docs/reviews/performance-plan-20260920.md",
+    "targetVideosPerDay": 1000,
+    "targetBurst": 100
   }
 }
