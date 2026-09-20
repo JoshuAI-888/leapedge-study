@@ -35,9 +35,11 @@ test("PGlite driver applies the schema and reports the Postgres dialect", async 
       "yi_heartbeat",
       "yi_migrations",
       "yi_prompts",
+      "yi_provider_slots",
       "yi_responses",
       "yi_runs",
       "yi_shares",
+      "yi_stage_timings",
     ],
   );
   const idx = await d

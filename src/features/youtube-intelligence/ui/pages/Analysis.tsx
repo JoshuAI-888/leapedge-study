@@ -73,7 +73,7 @@ export function Analysis({ id }: { id: string }) {
         if (!controller.signal.aborted) setError(e.message);
       });
     return () => controller.abort();
-  }, [id, data]);
+  }, [id, data?.snapshot.runs, data?.snapshot.researchBriefs]);
   if (error)
     return (
       <div role="alert" className="yi-warning">
@@ -463,6 +463,7 @@ export function Analysis({ id }: { id: string }) {
         <pre>
           {JSON.stringify(
             {
+              stageTimings: run.output.stageTimings,
               coverage: run.output.coverage,
               audioTrust: audio,
               transcriptionCompleteness: run.output.transcriptionCompleteness,

@@ -641,3 +641,34 @@ test("A truncated extraction subdivides its checkpoint and uses fresh stage keys
     restore();
   }
 });
+
+test("parallel extraction retains successful siblings when an earlier chunk splits", async () => {
+  const snapshot = { id: "parallel-repair", transcribe: "transcribe", synthesis: "synthesize", extraction: "extract", critique: "critique", pointerEvidence: true };
+  const run = await create("parallel-repair", "fixture", { promptSnapshot: snapshot }, snapshot.id);
+  run.stage = "synthesis";
+  const source = Source.parse({ source_kind: "native_captions", segments: Array.from({length: 24}, (_, i) => ({id: `p${i}`, text: "Retained evidence.", start_seconds: i*5, end_seconds: i*5+5})) });
+  run.output.source = source;
+  run.output.extractionPlan = [source.segments.slice(0, 16), source.segments.slice(16)];
+  let active = 0, peak = 0;
+  const reply = async () => {
+    active++; peak = Math.max(peak, active);
+    await new Promise(resolve => setTimeout(resolve, 20)); active--;
+    return {json: {claims: [], key_points: [], mentions: []}};
+  };
+  const fake = new FakeModelTransport({ responses: {
+    "synthesis-chunk-0": async () => { await reply(); return {json: {claims: []}, finishReason: "length"}; },
+    "synthesis-chunk-1": reply,
+    "synthesis-chunk-0-repair-1": reply,
+    "synthesis-chunk-1-repair-1": reply,
+  }});
+  const restore = injectTransport(fake);
+  try {
+    await step(run);
+    assert.equal(peak, 2);
+    assert.equal(run.output.extractionRepairs, 1);
+    for (let i=0; i<3; i++) await step(run);
+    assert.equal(run.stage, "critique");
+    assert.equal(fake.requests.length, 4);
+    assert.equal(fake.requests.filter(r => r.stage === "synthesis-chunk-1").length, 1);
+  } finally { restore(); }
+});

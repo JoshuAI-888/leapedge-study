@@ -307,3 +307,44 @@ for (const bucket of ["claims", "key_points"] as const)
       await db.close();
     }
   });
+
+test("research searches overlap with bounded fanout and replay retained siblings after a lost checkpoint", async () => {
+  const db = await freshDatabase();
+  const { stubFetch, json } = await import('./helpers/fetch-stub.ts');
+  const priorKey = process.env.EXA_API_KEY;
+  process.env.EXA_API_KEY = 'fixture';
+  let active = 0, peak = 0;
+  const stub = stubFetch([{url: 'https://api.exa.ai/search', respond: async () => {
+    active++; peak = Math.max(peak, active);
+    await new Promise(resolve => setTimeout(resolve, 20));
+    active--;
+    return json({costDollars: {total: 0.007}, results: []});
+  }}]);
+  try {
+    const run = await create('parallel-search', 'fixture', {
+      task: 'research-brief', teamPreferencesSnapshot: teamDefaults(),
+      snapshot: {sourceRunId: 'source', title: 'Search test', evidence: [], context: {
+        videoPublishedAt: '2026-01-01T00:00:00Z', recordedAt: null,
+        analysedAt: '2026-09-20T00:00:00Z', language: 'en', videoId: 'parallel-search',
+        temporalPolicy: 'video-date evidence and later updates are separate',
+      }},
+    }, 'fixture');
+    run.stage = 'research-sources';
+    run.output.researchPlan = {queries: [{query: 'Company revenue', reason: 'Material'}, {query: 'Company margins', reason: 'Material'}], coverage: []};
+    await researchStep(run);
+    assert.equal(peak, 2);
+    assert.equal(stub.log.length, 4);
+    const records = structuredClone(run.output.retrievals);
+    delete run.output.retrievals;
+    await researchStep(run);
+    assert.equal(stub.log.length, 4, 'no repurchase after checkpoint loss');
+    assert.deepEqual(run.output.retrievals, records);
+    await researchStep(run);
+    assert.equal(run.stage, 'research-synthesis');
+  } finally {
+    stub.restore();
+    if (priorKey === undefined) delete process.env.EXA_API_KEY;
+    else process.env.EXA_API_KEY = priorKey;
+    await db.close();
+  }
+});

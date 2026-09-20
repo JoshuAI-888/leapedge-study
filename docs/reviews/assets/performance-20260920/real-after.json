@@ -1,0 +1,514 @@
+{
+  "mode": "deterministic stage-latency fixture; real runner/PostgreSQL; rolling harness",
+  "phase": "after",
+  "n": 100,
+  "peak": 8,
+  "seconds": 10.680280042,
+  "interactive": {
+    "id": "c2ceaf9d-6199-4bc4-b31b-284bbf02592e",
+    "video": "fixture-99",
+    "seconds": 0.469227542
+  },
+  "times": [
+    {
+      "id": "c2ceaf9d-6199-4bc4-b31b-284bbf02592e",
+      "video": "fixture-99",
+      "seconds": 0.469227542
+    },
+    {
+      "id": "5b5a7621-41ca-4276-acc5-7e99387aa6fb",
+      "video": "fixture-1",
+      "seconds": 6.984285208
+    },
+    {
+      "id": "a718a27e-aefb-444f-9718-6a73c5172568",
+      "video": "fixture-2",
+      "seconds": 7.015225708
+    },
+    {
+      "id": "f4b2cdbb-a3af-47a8-9199-9b6b86bcf636",
+      "video": "fixture-3",
+      "seconds": 7.039503167
+    },
+    {
+      "id": "4802cc00-4fb6-40d7-abb2-113620d76eab",
+      "video": "fixture-4",
+      "seconds": 7.063609833
+    },
+    {
+      "id": "668d346d-eee3-4bd9-8baa-6499c2de9212",
+      "video": "fixture-5",
+      "seconds": 7.085367708000001
+    },
+    {
+      "id": "1076b0b8-1991-4cee-9fc6-8af691041369",
+      "video": "fixture-6",
+      "seconds": 7.090281417
+    },
+    {
+      "id": "2495b96a-075b-45f8-99a1-ebdfbfe62555",
+      "video": "fixture-7",
+      "seconds": 7.122808667
+    },
+    {
+      "id": "5ddfeab2-fb64-4f47-b1e6-7120d4178744",
+      "video": "fixture-8",
+      "seconds": 7.1708365
+    },
+    {
+      "id": "4e893724-c861-4363-8701-abc42ea062e7",
+      "video": "fixture-9",
+      "seconds": 7.194902375000001
+    },
+    {
+      "id": "cec810b0-c785-43e1-9d4b-ee0978d118fc",
+      "video": "fixture-11",
+      "seconds": 7.200149708
+    },
+    {
+      "id": "080d7a03-38e9-4cfb-8e75-f27e8f931b91",
+      "video": "fixture-12",
+      "seconds": 7.232844917
+    },
+    {
+      "id": "90d2b29e-27d3-42ac-a0bb-9659575625d1",
+      "video": "fixture-13",
+      "seconds": 7.2817584580000005
+    },
+    {
+      "id": "5efa518d-c349-4ac6-90f1-2e5c4944c831",
+      "video": "fixture-14",
+      "seconds": 7.304213583000001
+    },
+    {
+      "id": "4ec4b363-35f0-462f-bc7e-0099ce9733e7",
+      "video": "fixture-15",
+      "seconds": 7.30721025
+    },
+    {
+      "id": "83725b0e-ad6c-49b2-9dc1-0e27b9925d10",
+      "video": "fixture-16",
+      "seconds": 7.345310625
+    },
+    {
+      "id": "79072ddd-72e7-4f01-b5c0-19d5ada19d89",
+      "video": "fixture-17",
+      "seconds": 7.3894635420000006
+    },
+    {
+      "id": "9133f6eb-ab94-4889-ab04-de798b98df75",
+      "video": "fixture-18",
+      "seconds": 7.416896625000001
+    },
+    {
+      "id": "146097e1-e2ae-4146-9317-6601cbbeaba1",
+      "video": "fixture-19",
+      "seconds": 7.418332167000001
+    },
+    {
+      "id": "08037dd9-b75a-4ee7-a554-1bc1519cda34",
+      "video": "fixture-21",
+      "seconds": 7.454437542000001
+    },
+    {
+      "id": "b7711b4f-3b66-4110-9389-9094fee35916",
+      "video": "fixture-22",
+      "seconds": 7.500579292
+    },
+    {
+      "id": "f9a1dec6-de29-47e6-b31a-8fad9563f270",
+      "video": "fixture-23",
+      "seconds": 7.523155292
+    },
+    {
+      "id": "7d417cf0-8afc-4e31-9641-20f0d3233df6",
+      "video": "fixture-24",
+      "seconds": 7.5261671670000005
+    },
+    {
+      "id": "eab0c220-d3be-45db-8f2f-8caa3f4b9114",
+      "video": "fixture-25",
+      "seconds": 7.560607792000001
+    },
+    {
+      "id": "4231ac79-6c6f-4b46-8502-62d45eadc53f",
+      "video": "fixture-26",
+      "seconds": 7.610748958
+    },
+    {
+      "id": "cd122f26-ffc9-44ea-bb32-7dfe97d4a605",
+      "video": "fixture-27",
+      "seconds": 7.63230775
+    },
+    {
+      "id": "f7418e83-6627-4cb3-9e87-e30114e34f93",
+      "video": "fixture-28",
+      "seconds": 7.634685167000001
+    },
+    {
+      "id": "1177fccb-4d1a-4007-af71-42ae58e7e8f6",
+      "video": "fixture-29",
+      "seconds": 7.692108375000001
+    },
+    {
+      "id": "8e580dd1-88a3-4a03-a3a3-c2d45bbed62e",
+      "video": "fixture-31",
+      "seconds": 7.718637917
+    },
+    {
+      "id": "c9a3957c-37d7-40fd-a567-0fbe8ebab9d7",
+      "video": "fixture-32",
+      "seconds": 7.742702167
+    },
+    {
+      "id": "61e3ec15-5e73-48a4-95d1-5dd367baad7c",
+      "video": "fixture-33",
+      "seconds": 7.74464925
+    },
+    {
+      "id": "ac9d3d53-3c56-4bba-bdd8-2b0600fecb16",
+      "video": "fixture-34",
+      "seconds": 7.7998153750000006
+    },
+    {
+      "id": "13cccb36-83cc-443e-beef-30af47488336",
+      "video": "fixture-35",
+      "seconds": 7.826269542
+    },
+    {
+      "id": "31499e9f-3296-4eea-b0dd-bbe94d000ac7",
+      "video": "fixture-36",
+      "seconds": 7.8513495
+    },
+    {
+      "id": "9440ba36-00d3-4bb2-9d8e-574fe6b1e3f4",
+      "video": "fixture-37",
+      "seconds": 7.854229625
+    },
+    {
+      "id": "854f60c7-72c1-41e3-bb4e-8d9cac595ae9",
+      "video": "fixture-38",
+      "seconds": 7.908460417000001
+    },
+    {
+      "id": "b202938b-99da-4f3f-ae85-4dfb13deac55",
+      "video": "fixture-39",
+      "seconds": 7.936392667
+    },
+    {
+      "id": "94e739f0-3d1e-4edf-856a-dde493cff63f",
+      "video": "fixture-41",
+      "seconds": 7.954933625
+    },
+    {
+      "id": "5331dbc3-f9c0-4062-a71b-876405689dda",
+      "video": "fixture-43",
+      "seconds": 7.960084833000001
+    },
+    {
+      "id": "6f1920f2-e5b7-492c-aaab-f51b596589a1",
+      "video": "fixture-42",
+      "seconds": 7.961278292000001
+    },
+    {
+      "id": "98557c5b-1373-46fb-a8c7-385a902bdcb5",
+      "video": "fixture-44",
+      "seconds": 8.048848125000001
+    },
+    {
+      "id": "9558f7a6-6e4c-4779-9d42-e5e6742d2399",
+      "video": "fixture-45",
+      "seconds": 8.063564
+    },
+    {
+      "id": "42a06905-0b95-4b18-96db-9bf98662a91f",
+      "video": "fixture-47",
+      "seconds": 8.069698917
+    },
+    {
+      "id": "5f281bc5-2a9c-4764-9efe-c4a5cbcce77b",
+      "video": "fixture-46",
+      "seconds": 8.071265917
+    },
+    {
+      "id": "5b4a44c2-4407-406f-8c3b-a63a8a3c5f78",
+      "video": "fixture-48",
+      "seconds": 8.119752
+    },
+    {
+      "id": "cebf1dc3-01d9-4aaa-9a65-3ded84806d4a",
+      "video": "fixture-49",
+      "seconds": 8.156260625000002
+    },
+    {
+      "id": "0dca205a-c7c2-4854-a467-acbe408d75e2",
+      "video": "fixture-51",
+      "seconds": 8.172975875
+    },
+    {
+      "id": "5dc00613-2c1f-48a8-a136-8ea9be1df7f7",
+      "video": "fixture-52",
+      "seconds": 8.177133375
+    },
+    {
+      "id": "92408596-6f8b-48f5-bfd0-3dc491983ca8",
+      "video": "fixture-53",
+      "seconds": 8.180455125
+    },
+    {
+      "id": "7ae24d92-775c-4b9d-b8cf-18a0ab3a4466",
+      "video": "fixture-54",
+      "seconds": 8.227411292000001
+    },
+    {
+      "id": "9719b096-a825-4bc6-9ec5-b60700e8eab2",
+      "video": "fixture-55",
+      "seconds": 8.261265208000001
+    },
+    {
+      "id": "e720872d-2322-4e64-baa5-7d91c65c1a9f",
+      "video": "fixture-56",
+      "seconds": 8.278321792
+    },
+    {
+      "id": "22a022ff-4dd8-4714-8443-f8952f6d5a3e",
+      "video": "fixture-58",
+      "seconds": 8.28415575
+    },
+    {
+      "id": "84ede86c-d6ca-4321-bb3c-d80e9f475487",
+      "video": "fixture-57",
+      "seconds": 8.287458458000001
+    },
+    {
+      "id": "74ae1bdb-bd5b-4af7-847e-f3a91a2935ad",
+      "video": "fixture-61",
+      "seconds": 8.336696374999999
+    },
+    {
+      "id": "d5ad9e83-eff8-45f7-8e5c-be912fef94ab",
+      "video": "fixture-59",
+      "seconds": 8.37102175
+    },
+    {
+      "id": "f5946289-6a3e-45e2-a58a-b56dc729b515",
+      "video": "fixture-62",
+      "seconds": 8.385564958000002
+    },
+    {
+      "id": "073cfa47-94b2-4a9d-b0a6-a1c849bd61fe",
+      "video": "fixture-65",
+      "seconds": 8.391293125
+    },
+    {
+      "id": "6159e585-b63c-459b-a0b5-7882bcf0c788",
+      "video": "fixture-63",
+      "seconds": 8.443451291999999
+    },
+    {
+      "id": "9c8c00e2-8e8b-4434-a75b-62bc14d76099",
+      "video": "fixture-64",
+      "seconds": 8.478658583
+    },
+    {
+      "id": "00df5b43-ea56-435d-80da-cafc673a0469",
+      "video": "fixture-66",
+      "seconds": 8.482169333
+    },
+    {
+      "id": "3608da99-b8e0-49c9-aef0-08545ca4923b",
+      "video": "fixture-67",
+      "seconds": 8.492593917
+    },
+    {
+      "id": "18e0cdd4-7332-4f40-9599-477e0ab7c403",
+      "video": "fixture-68",
+      "seconds": 8.498599917
+    },
+    {
+      "id": "c5944388-2af1-4de3-885e-5f0df86704b7",
+      "video": "fixture-69",
+      "seconds": 8.556065167
+    },
+    {
+      "id": "8e0dfe63-b752-43bc-a81d-bd7ca77ddf4c",
+      "video": "fixture-71",
+      "seconds": 8.587277208
+    },
+    {
+      "id": "2afb3cc1-0233-4934-a749-ca7545ba823e",
+      "video": "fixture-73",
+      "seconds": 8.588339792000001
+    },
+    {
+      "id": "3ad4e0d9-82ac-447f-a59a-47f96cfa19c5",
+      "video": "fixture-72",
+      "seconds": 8.6024625
+    },
+    {
+      "id": "53c60a19-6b46-435d-b839-72a4b070f452",
+      "video": "fixture-74",
+      "seconds": 8.60440525
+    },
+    {
+      "id": "64b9a164-f90d-463a-bd79-528476d711ac",
+      "video": "fixture-75",
+      "seconds": 8.662278083
+    },
+    {
+      "id": "8c26a337-d2d4-4d3a-9e1d-392106fc3238",
+      "video": "fixture-77",
+      "seconds": 8.693133292
+    },
+    {
+      "id": "d64b0a16-812b-410b-bdcd-d24282014fdb",
+      "video": "fixture-76",
+      "seconds": 8.695237667
+    },
+    {
+      "id": "06669584-09da-4a64-8ba7-c6c08e8b7a2b",
+      "video": "fixture-78",
+      "seconds": 8.710950667
+    },
+    {
+      "id": "1610e3e8-7612-4d58-b9d3-42c6eb7e25a3",
+      "video": "fixture-79",
+      "seconds": 8.714553
+    },
+    {
+      "id": "3c6e481f-ba49-45ca-b934-7e10caa2f2d9",
+      "video": "fixture-81",
+      "seconds": 8.770691625
+    },
+    {
+      "id": "2898200c-588c-413d-bb48-5b88a0c686a6",
+      "video": "fixture-82",
+      "seconds": 8.80021725
+    },
+    {
+      "id": "29ede443-d354-48a7-b95c-79c29ba457fb",
+      "video": "fixture-83",
+      "seconds": 8.8041745
+    },
+    {
+      "id": "9e041497-4e1d-4428-aba1-d484d0654243",
+      "video": "fixture-84",
+      "seconds": 8.820064417
+    },
+    {
+      "id": "aaa8a3aa-fdf0-4fcf-b448-3f0d35e18089",
+      "video": "fixture-85",
+      "seconds": 8.8222
+    },
+    {
+      "id": "8b50091a-2899-46f3-8453-ed8cd4e87186",
+      "video": "fixture-86",
+      "seconds": 8.824166292
+    },
+    {
+      "id": "9ce4bd87-dcec-4221-9b9d-a9c99a4baea5",
+      "video": "fixture-87",
+      "seconds": 8.876894583
+    },
+    {
+      "id": "8950b279-208f-4a1f-9bf8-499bda8428bd",
+      "video": "fixture-88",
+      "seconds": 8.910136375
+    },
+    {
+      "id": "ea223c1d-121d-4f1f-8d43-de081a5525f9",
+      "video": "fixture-89",
+      "seconds": 8.926693208000001
+    },
+    {
+      "id": "f65ea3f4-a3ec-477f-b6b4-05fa33e623d8",
+      "video": "fixture-91",
+      "seconds": 8.9321235
+    },
+    {
+      "id": "30fd59cc-8436-43e9-8117-5ce0bdc9ec40",
+      "video": "fixture-92",
+      "seconds": 8.982487792
+    },
+    {
+      "id": "358f6f98-13d2-479e-a56f-b2e6d9806030",
+      "video": "fixture-93",
+      "seconds": 9.016636458
+    },
+    {
+      "id": "5cba6ca1-cb94-478a-9baf-733f7c9642f0",
+      "video": "fixture-96",
+      "seconds": 9.033132958
+    },
+    {
+      "id": "c64cd2ef-127c-4cd4-8286-6a810c8dda91",
+      "video": "fixture-94",
+      "seconds": 9.038189333
+    },
+    {
+      "id": "fd4822b5-32fe-4b58-b8f1-b8f1d455228f",
+      "video": "fixture-95",
+      "seconds": 9.089348542
+    },
+    {
+      "id": "470cd9b3-2e1c-4ba0-ba36-b63277ed9aff",
+      "video": "fixture-97",
+      "seconds": 9.124729833000002
+    },
+    {
+      "id": "b1e3f94f-806b-44c0-aaae-43dc4884cf63",
+      "video": "fixture-98",
+      "seconds": 9.140312333
+    },
+    {
+      "id": "554a075f-d444-4ae8-b928-ac330b2d013d",
+      "video": "fixture-0",
+      "seconds": 9.606830958
+    },
+    {
+      "id": "048d979c-e3a7-4729-82a2-360e36838f6d",
+      "video": "fixture-10",
+      "seconds": 9.629786207999999
+    },
+    {
+      "id": "22959686-8e27-4f7c-9754-70702c6ca6fc",
+      "video": "fixture-20",
+      "seconds": 9.844716917
+    },
+    {
+      "id": "d743afc7-72f2-401b-b48f-7e9e7db59215",
+      "video": "fixture-30",
+      "seconds": 9.903246958
+    },
+    {
+      "id": "10b51e1a-4f10-462d-8708-6493d7be9463",
+      "video": "fixture-40",
+      "seconds": 9.907239375000001
+    },
+    {
+      "id": "4b5f9d01-40f1-4a49-9419-cedea65fa73d",
+      "video": "fixture-50",
+      "seconds": 9.932871292
+    },
+    {
+      "id": "112b7b38-7079-4427-ac82-553de9a25e17",
+      "video": "fixture-60",
+      "seconds": 9.947081917
+    },
+    {
+      "id": "e654fdb3-f6df-44af-b29f-bbe4318f31b1",
+      "video": "fixture-70",
+      "seconds": 10.416404375
+    },
+    {
+      "id": "3f3a0596-eb3b-45e7-9dac-14eb7338ff0d",
+      "video": "fixture-80",
+      "seconds": 10.440531625
+    },
+    {
+      "id": "e116ba3e-1779-45af-8ed3-7d1de33719c2",
+      "video": "fixture-90",
+      "seconds": 10.670123625
+    }
+  ]
+}

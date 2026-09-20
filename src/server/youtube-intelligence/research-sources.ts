@@ -1,3 +1,4 @@
+import { withProviderSlot } from "./provider-limits.ts";
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import { doc, put, runTeamPreferences } from "./research-store.ts";
@@ -90,7 +91,8 @@ export async function retrieveResearchSources(input: {
     costBasis: "provider costDollars.total, when supplied",
     requestedAt,
   };
-  if (!process.env.EXA_API_KEY)
+  const apiKey = process.env.EXA_API_KEY;
+  if (!apiKey)
     return {
       ...base,
       state: "unavailable",
@@ -100,108 +102,110 @@ export async function retrieveResearchSources(input: {
   if (!run)
     throw Error("External verification requires a retained research run.");
   const settings = await runTeamPreferences(run);
-  const reservation = await reserve(
-    input.runId,
-    `external-search-${key.slice(0, 16)}`,
-    0.1,
-    1,
-    settings.budget.perVideoMaxUsd,
-  );
-  // A pre-request durable unknown record prevents a crash or timeout from buying
-  // the same search twice. An operator may explicitly request a new revision.
-  await put("researchRetrieval", key, {
-    ...base,
-    state: "unknown",
-    note: "Request started; outcome not yet confirmed. Never automatically rebilled.",
-  });
-  try {
-    const response = await fetch("https://api.exa.ai/search", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": process.env.EXA_API_KEY,
-      },
-      body: JSON.stringify({
-        query:
-          input.query +
-          " primary sources official company investor relations filings",
-        type: "auto",
-        numResults: 3,
-        endPublishedDate: input.cutoff,
-        contents: { text: { maxCharacters: 12000 } },
-      }),
-      signal: AbortSignal.timeout(45000),
-    });
-    if (!response.ok) throw Error(`External search HTTP ${response.status}`);
-    const data = Reply.parse(await response.json());
-    const sources = data.results
-      .filter((r) => r.text.trim())
-      .map((r, index) => {
-        const publishedAt = confirmedPublication(
-          r.text,
-          r.publishedDate ?? null,
-        );
-        const host = new URL(r.url).hostname.toLowerCase();
-        const primary = input.primaryDomains.some(
-          (d) => host === d || host.endsWith("." + d),
-        );
-        return ExternalEvidence.parse({
-          id: `web-${key.slice(0, 10)}-${index}`,
-          url: r.url,
-          title: r.title,
-          text: r.text.slice(0, 12000),
-          publishedAt:
-            publishedAt ??
-            (r.publishedDate && Number.isFinite(Date.parse(r.publishedDate))
-              ? new Date(r.publishedDate).toISOString()
-              : null),
-          retrievedAt: new Date().toISOString(),
-          publicationConfirmed: !!publishedAt,
-          dateBasis: publishedAt
-            ? "Publication label in retained source; end-of-day cutoff conservatively applied"
-            : "Provider estimated date only; excluded from synthesis",
-          sourceClass: primary ? "primary" : "unknown",
-          hash: createHash("sha256")
-            .update(r.text.slice(0, 12000))
-            .digest("hex"),
-          query: input.query,
-          timeMode: input.timeMode,
-          provider: "Exa",
-        });
-      });
-    const record: RetrievalRecord = {
-      ...base,
-      state: "complete",
-      sources,
-      costUsd: data.costDollars?.total ?? null,
-      ...(data.requestId ? { requestId: data.requestId } : {}),
-      note: "Search metadata alone does not establish publication time or factual corroboration.",
-      completedAt: new Date().toISOString(),
-    };
-    await settle(reservation, record.costUsd, {
-      provider: "Exa",
-      requestId: data.requestId ?? null,
-      retrievalKey: key,
-      costBasis: record.costBasis,
-    });
-    if (record.costUsd === null)
-      await markUnknown(
-        reservation,
-        "External response did not report its charge.",
-      );
-    await put("researchRetrieval", key, record);
-    return record;
-  } catch (e) {
-    const record: RetrievalRecord = {
+  return withProviderSlot("exa", async () => {
+    const reservation = await reserve(
+      input.runId,
+      `external-search-${key.slice(0, 16)}`,
+      0.1,
+      1,
+      settings.budget.perVideoMaxUsd,
+    );
+    // A pre-request durable unknown record prevents a crash or timeout from buying
+    // the same search twice. An operator may explicitly request a new revision.
+    await put("researchRetrieval", key, {
       ...base,
       state: "unknown",
-      note:
-        e instanceof Error
-          ? e.message
-          : "External retrieval failed; cost unknown.",
-    };
-    await markUnknown(reservation, record.note);
-    await put("researchRetrieval", key, record);
-    return record;
-  }
+      note: "Request started; outcome not yet confirmed. Never automatically rebilled.",
+    });
+    try {
+      const response = await fetch("https://api.exa.ai/search", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": apiKey,
+        },
+        body: JSON.stringify({
+          query:
+            input.query +
+            " primary sources official company investor relations filings",
+          type: "auto",
+          numResults: 3,
+          endPublishedDate: input.cutoff,
+          contents: { text: { maxCharacters: 12000 } },
+        }),
+        signal: AbortSignal.timeout(45000),
+      });
+      if (!response.ok) throw Error(`External search HTTP ${response.status}`);
+      const data = Reply.parse(await response.json());
+      const sources = data.results
+        .filter((r) => r.text.trim())
+        .map((r, index) => {
+          const publishedAt = confirmedPublication(
+            r.text,
+            r.publishedDate ?? null,
+          );
+          const host = new URL(r.url).hostname.toLowerCase();
+          const primary = input.primaryDomains.some(
+            (d) => host === d || host.endsWith("." + d),
+          );
+          return ExternalEvidence.parse({
+            id: `web-${key.slice(0, 10)}-${index}`,
+            url: r.url,
+            title: r.title,
+            text: r.text.slice(0, 12000),
+            publishedAt:
+              publishedAt ??
+              (r.publishedDate && Number.isFinite(Date.parse(r.publishedDate))
+                ? new Date(r.publishedDate).toISOString()
+                : null),
+            retrievedAt: new Date().toISOString(),
+            publicationConfirmed: !!publishedAt,
+            dateBasis: publishedAt
+              ? "Publication label in retained source; end-of-day cutoff conservatively applied"
+              : "Provider estimated date only; excluded from synthesis",
+            sourceClass: primary ? "primary" : "unknown",
+            hash: createHash("sha256")
+              .update(r.text.slice(0, 12000))
+              .digest("hex"),
+            query: input.query,
+            timeMode: input.timeMode,
+            provider: "Exa",
+          });
+        });
+      const record: RetrievalRecord = {
+        ...base,
+        state: "complete",
+        sources,
+        costUsd: data.costDollars?.total ?? null,
+        ...(data.requestId ? { requestId: data.requestId } : {}),
+        note: "Search metadata alone does not establish publication time or factual corroboration.",
+        completedAt: new Date().toISOString(),
+      };
+      await settle(reservation, record.costUsd, {
+        provider: "Exa",
+        requestId: data.requestId ?? null,
+        retrievalKey: key,
+        costBasis: record.costBasis,
+      });
+      if (record.costUsd === null)
+        await markUnknown(
+          reservation,
+          "External response did not report its charge.",
+        );
+      await put("researchRetrieval", key, record);
+      return record;
+    } catch (e) {
+      const record: RetrievalRecord = {
+        ...base,
+        state: "unknown",
+        note:
+          e instanceof Error
+            ? e.message
+            : "External retrieval failed; cost unknown.",
+      };
+      await markUnknown(reservation, record.note);
+      await put("researchRetrieval", key, record);
+      return record;
+    }
+  });
 }

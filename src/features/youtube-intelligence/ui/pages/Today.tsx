@@ -22,7 +22,8 @@ import {
   MetricHeading,
 } from "../components.tsx";
 export function Today() {
-  const { data, perform, busy } = useWorkspace();
+  const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
+    useWorkspace();
   const [url, setUrl] = useState(""),
     [search, setSearch] = useState(""),
     [minimum, setMinimum] = useState(""),
@@ -378,6 +379,19 @@ export function Today() {
                 Submitted videos will appear here as they progress.
               </Empty>
             )}
+            {hasMoreRuns && (
+              <button
+                className="yi-text-button"
+                disabled={loadingMoreRuns}
+                onClick={() => void loadMoreRuns()}
+              >
+                {loadingMoreRuns ? "Loading…" : "Load older video activity"}
+              </button>
+            )}
+            <p className="yi-muted">
+              Showing {data.runs.length} loaded videos. Status filters apply to
+              loaded activity.
+            </p>
           </section>
         </div>
         <aside className="yi-today-rail" aria-label="Research context">

@@ -4,7 +4,7 @@ import {
   Source,
   videoId,
 } from "../../../../features/youtube-intelligence/contracts.ts";
-import { create, list } from "../../../../server/youtube-intelligence/store.ts";
+import { runSummaryPage } from "../../../../server/youtube-intelligence/run-summaries.ts";
 import {
   guard,
   failure,
@@ -15,37 +15,12 @@ export const dynamic = "force-dynamic";
 export async function GET(r: Request) {
   try {
     guard(r);
-    return Response.json({
-      runs: (await list())
-        .filter((r) => !r.input.task)
-        .map((r) => ({
-          ...r,
-          input: z.uuid().safeParse(r.input.recoveryOf).success
-            ? { recoveryOf: r.input.recoveryOf }
-            : {},
-          output: {
-            metadata: r.output.metadata,
-            sourceHash: r.output.sourceHash,
-            coverage: r.output.coverage,
-            acceptedEvidenceCount: [
-              ...(Array.isArray(r.output.claims) ? r.output.claims : []),
-              ...(Array.isArray(r.output.keyPoints) ? r.output.keyPoints : []),
-            ].filter((c) => c.passed).length,
-            rejectedEvidenceCount: [
-              ...(Array.isArray(r.output.claims) ? r.output.claims : []),
-              ...(Array.isArray(r.output.keyPoints) ? r.output.keyPoints : []),
-            ].filter((c) => !c.passed).length,
-            acceptedCount:
-              r.status === "completed" && Array.isArray(r.output.claims)
-                ? r.output.claims.filter((c) => c.passed).length
-                : undefined,
-            rejectedCount:
-              r.status === "completed" && Array.isArray(r.output.claims)
-                ? r.output.claims.filter((c) => !c.passed).length
-                : undefined,
-          },
-        })),
-    });
+    const params = new URL(r.url).searchParams;
+    return Response.json(await runSummaryPage({
+      ...(params.has("limit") ? { limit: params.get("limit") } : {}),
+      ...(params.has("cursor") ? { cursor: params.get("cursor") } : {}),
+      ...(params.has("ids") ? { ids: params.get("ids")!.split(",") } : {}),
+    }), { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     return failure(e);
   }

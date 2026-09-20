@@ -162,3 +162,26 @@ Research build PR #9 was installed on this Mac on 20 September 2026. V8 was
 selected explicitly with a retained `configurationChange` document. The web
 and status endpoints returned HTTP 200, the worker heartbeat is online, and
 `YTI_QUEUE_PAUSED=true` remains in effect. Database and secrets were preserved.
+
+
+### Performance build (PR #10)
+
+Migration 0007 adds durable stage timings and ephemeral shared provider permits.
+Apply it before starting this code. The existing Vercel build command already
+runs migrations before Next.js builds; it can read integration-managed secrets
+inside Vercel without downloading or exposing them locally.
+
+`YTI_PROVIDER_CONCURRENCY` defaults to eight in-flight calls per provider across
+all workers using the database. It does not enforce account RPM/TPM quotas.
+Set it consistently on every replica. Extraction and retrieval each use at most
+two independent calls per stage; paid-response replay and audits remain enabled.
+`YTI_BACKGROUND_CONCURRENCY` defaults to global video capacity minus one (minimum
+one), reserving an interactive slot when capacity exceeds one. Manual and finishing
+brief work have priority; eligible jobs gain age priority after 120 seconds.
+Reserving capacity can reduce pure background throughput: the controlled
+100-job fixture took 12% longer while its manual request completed 94% sooner.
+
+See [the before/after report](../reviews/performance-plan-20260920.md). UI activity
+polls are small, but full retained brief history still loads on terminal changes.
+The 1,000-video/day target needs real-provider quota and soak testing before it
+can be treated as demonstrated capacity. The queue stays paused after deployment.
