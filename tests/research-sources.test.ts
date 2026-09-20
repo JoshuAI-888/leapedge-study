@@ -84,3 +84,76 @@ test("external retrieval retains responses/cost and never repeats an unknown pai
     await db.close();
   }
 });
+
+test("opt-in shared retrieval reuses only fresh matching successful evidence without billing consumers", async (t) => {
+  const db = await freshDatabase();
+  const old = process.env.EXA_API_KEY;
+  process.env.EXA_API_KEY = 'fixture';
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-09-20T00:00:00Z') });
+  const stub = stubFetch([{ url: 'https://api.exa.ai/search', responses: Array.from({ length: 12 }, () => json({ costDollars: { total: 0.007 }, results: [{ url: 'https://sec.gov/a', text: 'Published on: September 17, 2026\nRevenue', publishedDate: '2026-09-17' }] })) }]);
+  try {
+    const input = { query: 'Revenue', timeMode: 'video_date' as const, cutoff: '2026-09-19T00:00:00Z', primaryDomains: ['sec.gov'], reuseCache: true };
+    let sequence = 0;
+    const retrieve = async (overrides = {}) => {
+      const run = await create(`cache-fixture-${sequence++}`, 'fixture', {}, 'fixture');
+      return retrieveResearchSources({ ...input, ...overrides, runId: run.id });
+    };
+    const donor = await retrieve();
+    const hit = await retrieve();
+    assert.equal(stub.log.length, 1);
+    assert.equal(hit.costUsd, 0);
+    assert.equal(hit.cache?.donorKey, donor.key);
+    assert.equal(hit.cache?.donorCostUsd, 0.007);
+    assert.deepEqual(hit.sources, donor.sources);
+    assert.equal((await db.prepare('SELECT * FROM yi_calls').all()).length, 1);
+    await retrieve({ cutoff: '2026-09-18T00:00:00Z' });
+    await retrieve({ primaryDomains: ['other.com'] });
+    await retrieve({ query: 'Profit' });
+    await retrieve({ timeMode: 'current' });
+    assert.equal(stub.log.length, 5);
+    t.mock.timers.tick(60 * 60 * 1000 + 1);
+    await retrieve({ timeMode: 'current' });
+    assert.equal(stub.log.length, 6);
+    await retrieve();
+    assert.equal(stub.log.length, 6, 'historical cache remains fresh for 24 hours');
+    t.mock.timers.tick(24 * 60 * 60 * 1000);
+    await retrieve();
+    assert.equal(stub.log.length, 7);
+    await retrieve({ reuseCache: false });
+    assert.equal(stub.log.length, 8, 'disabled feature always performs a fresh cross-run search');
+    const { createHash } = await import('node:crypto');
+    const { put, doc } = await import('../src/server/youtube-intelligence/research-store.ts');
+    const cacheKey = createHash('sha256').update(JSON.stringify({ version: 'exa-retrieval.v1', query: input.query, timeMode: input.timeMode, cutoff: input.cutoff, primaryDomains: input.primaryDomains })).digest('hex');
+    await put('researchRetrievalCache', cacheKey, { ...await doc('researchRetrievalCache', cacheKey), version: 'exa-retrieval.v0' });
+    await retrieve();
+    assert.equal(stub.log.length, 9, 'old cache formats cannot donate evidence');
+  } finally {
+    t.mock.timers.reset(); stub.restore();
+    if (old === undefined) delete process.env.EXA_API_KEY; else process.env.EXA_API_KEY = old;
+    await db.close();
+  }
+});
+
+test("unknown and unpriced responses never become cross-run cache donors", async () => {
+  const db = await freshDatabase();
+  const old = process.env.EXA_API_KEY; process.env.EXA_API_KEY = 'fixture';
+  const stub = stubFetch([{ url: 'https://api.exa.ai/search', responses: [
+    () => { throw Error('unknown outcome'); }, json({ results: [] }), json({ costDollars: { total: 0.007 }, results: [] }),
+  ] }]);
+  try {
+    const input = { query: 'Cache unknown', timeMode: 'current' as const, cutoff: '2026-09-20T00:00:00Z', primaryDomains: [], reuseCache: true };
+    const a = await create('unknown-cache-a', 'fixture', {}, 'fixture');
+    const first = await retrieveResearchSources({ ...input, runId: a.id });
+    assert.equal(first.state, 'unknown');
+    assert.deepEqual(await retrieveResearchSources({ ...input, reuseCache: false, runId: a.id }), first);
+    const b = await create('unknown-cache-b', 'fixture', {}, 'fixture');
+    const unpriced = await retrieveResearchSources({ ...input, runId: b.id });
+    assert.equal(unpriced.costUsd, null);
+    const c = await create('unknown-cache-c', 'fixture', {}, 'fixture');
+    assert.equal((await retrieveResearchSources({ ...input, runId: c.id })).costUsd, 0.007);
+    assert.equal(stub.log.length, 3);
+  } finally {
+    stub.restore(); if (old === undefined) delete process.env.EXA_API_KEY; else process.env.EXA_API_KEY = old;
+    await db.close();
+  }
+});

@@ -70,6 +70,7 @@ export async function create(
   input: Record<string, unknown>,
   version: string,
 ) {
+  input = (await import("./efficiency.ts")).freezeEfficiency(input);
   const d = await db();
   const payload = JSON.stringify(input);
   const existing = async () =>

@@ -24,9 +24,9 @@ const HAN = /\p{Script=Han}/u;
 export function hasHan(text: string) {
   return HAN.test(text);
 }
-/** BCP-47 language tags the source may carry for English; everything else is translated. */
+/** English tags/names, including the existing caption-provider asr- prefix. Unknown labels still translate. */
 export function isEnglishLanguage(language?: string | null) {
-  return typeof language === "string" && /^en(-|_|$)/i.test(language.trim());
+  return typeof language === "string" && /^(?:english|eng|en(?:[-_][a-z0-9]+)*)$/i.test(language.trim().replace(/^asr-/i, ""));
 }
 /**
  * Whether one copied span needs an English translation. The source language
@@ -120,8 +120,19 @@ export type TranslatedMention = Omit<MentionData, "source_span"> & {
 /** The payload: the copied text of every span that needs English, and nothing else — no segment ids, no claims, no transcript. */
 export function translationPayload(targets: TranslationTarget[]) {
   return {
-    spans: targets.map((t) => ({ id: t.id, text_original: t.text_original })),
+    spans: uniqueTranslationTargets(targets).map((t) => ({ id: t.id, text_original: t.text_original })),
   };
+}
+/** Exact copies share one translation; every target retains its own hash check. */
+function uniqueTranslationTargets(targets: TranslationTarget[]) {
+  assertSpansUnchanged(targets);
+  const byText = new Map<string, TranslationTarget>();
+  for (const target of targets) {
+    if (sha256(target.text_original) !== target.text_hash)
+      throw Error(`Copied span "${target.id}" does not match its hash.`);
+    if (!byText.has(target.text_original)) byText.set(target.text_original, target);
+  }
+  return [...byText.values()];
 }
 /**
  * Every span of a pointer-evidence run that is not already English: one entry
@@ -190,6 +201,8 @@ export function applyTranslations(
   targets: TranslationTarget[],
   entries: TranslationEntryData[],
 ) {
+  const unique = uniqueTranslationTargets(targets);
+  const byText = new Map<string, string>();
   const byId = new Map<string, TranslationEntryData>();
   for (const entry of entries) {
     if (byId.has(entry.id))
@@ -198,7 +211,7 @@ export function applyTranslations(
       );
     byId.set(entry.id, entry);
   }
-  for (const target of targets) {
+  for (const target of unique) {
     const entry = byId.get(target.id);
     if (!entry)
       throw Error(`Translation returned no translation for span "${target.id}".`);
@@ -210,13 +223,15 @@ export function applyTranslations(
       throw Error(
         `Translation returned altered source text for span "${target.id}". The copied span is the record of what was said and the translation stage cannot rewrite it.`,
       );
-    target.apply(entry.translation_en);
+    byText.set(target.text_original, entry.translation_en);
   }
   const unknown = [...byId.keys()];
   if (unknown.length)
     throw Error(
       `Translation returned ids that were not sent: ${unknown.join(", ")}.`,
     );
+  // Validate the complete response before mutating any evidence.
+  for (const target of targets) target.apply(byText.get(target.text_original)!);
   assertSpansUnchanged(targets);
 }
 /** The assertion the stage exists to keep: after translation every copied span still hashes to the value recorded when it was copied. */

@@ -1,4 +1,6 @@
+import { researchEvidenceInventory, researchEvidenceInventoryWithDiagnostics } from "./research-evidence-inventory.ts";
 import { boundedSettled } from "./bounded-parallel.ts";
+import { buildEvidenceIndex, expandEvidenceIndex, INDEX_INSTRUCTIONS } from "./research-evidence-index.ts";
 import { createHash } from "node:crypto";
 import { claimsForRun } from "./repos/claims.ts";
 import { z } from "zod";
@@ -25,7 +27,6 @@ import {
   parseResearchDraft,
   ResearchAudit,
   analysisContext,
-  evidenceInventory,
   eligibleExternal,
   validateBrief,
   type ResearchBriefData,
@@ -37,6 +38,7 @@ const Snapshot = z.object({
   context: AnalysisContext,
   evidence: z.array(EvidenceRecord),
   baseline: z.array(BaselinePoint).default([]),
+  inventoryOmissions: z.array(z.object({ id: z.string(), reason: z.string() })).default([]),
 });
 const Plan = z.object({
   queries: z
@@ -90,7 +92,7 @@ export async function queueResearchBrief(sourceRunId: string) {
         ?.sourceRunId === source.id,
   );
   if (active) return active;
-  const evidence = evidenceInventory(source);
+  const evidence = researchEvidenceInventory(source);
   if (!evidence.length)
     throw Error("No accepted transcript evidence is available.");
   return queueSourceBrief(
@@ -105,7 +107,8 @@ async function queueSourceBrief(
   analysedAt: string,
 ) {
   const rows = await claimsForRun(source.id);
-  const evidence = evidenceInventory(source)
+  const inventory = researchEvidenceInventoryWithDiagnostics(source);
+  const evidence = inventory.evidence
     .filter(
       (e) =>
         !rows.some(
@@ -126,6 +129,7 @@ async function queueSourceBrief(
     title: source.title,
     context: { ...analysisContext(source), analysedAt },
     evidence,
+    inventoryOmissions: inventory.omissions,
   });
   return create(
     source.videoId,
@@ -137,6 +141,9 @@ async function queueSourceBrief(
       criticModel: team.models.critique.id,
       promptSnapshot: await prompt(team.prompts.version),
       pipelineVersion: "research-brief.v1",
+      efficiencyVersion: source.input.efficiencyVersion,
+      speculativeResearch: source.input.speculativeResearch,
+      reuseResearchCache: source.input.reuseResearchCache,
     },
     team.prompts.version,
   );
@@ -149,7 +156,7 @@ export async function ensureResearchBrief(source: Run) {
         ?.sourceRunId === source.id,
   );
   if (existing) return existing;
-  if (!evidenceInventory(source).length) return null;
+  if (!researchEvidenceInventory(source).length) return null;
   return queueSourceBrief(
     source,
     await runTeamPreferences(source),
@@ -204,6 +211,24 @@ export async function researchStep(run: Run) {
     run.output.researchBaseline = points;
   }
   snapshot.baseline = z.array(BaselinePoint).parse(run.output.researchBaseline);
+  const efficient = run.input.efficiencyVersion === "evidence-efficiency.v1";
+  const evidenceIndex = buildEvidenceIndex(snapshot.evidence);
+  if (efficient) {
+    expandEvidenceIndex(evidenceIndex);
+    await putIfAbsent("researchEvidenceIndex", evidenceIndex.hash, evidenceIndex);
+    run.output.evidenceIndexHash = evidenceIndex.hash;
+  }
+  // Use dictionary encoding only when its measured payload is smaller.
+  const indexed = efficient && JSON.stringify(evidenceIndex).length + INDEX_INSTRUCTIONS.length < JSON.stringify(snapshot.evidence).length;
+  const { evidence: _evidence, ...snapshotContext } = snapshot;
+  const modelSnapshot = indexed ? { ...snapshotContext, evidenceIndex } : snapshot;
+  // Planning selects queries, not publishable assertions. All quotations remain
+  // available to synthesis and audit; this inventory preserves every topic.
+  const planningSnapshot = efficient ? {
+    ...snapshotContext,
+    evidenceInventory: snapshot.evidence.map(({quotes: _quotes, ...item}) => item),
+    note: "Query planning inventory only. Original quotations will be supplied to synthesis and independent audit; do not treat summaries as external corroboration.",
+  } : snapshot;
   const settings = await runTeamPreferences(run);
   const invoke = async (
     stage: string,
@@ -218,7 +243,7 @@ export async function researchStep(run: Run) {
       model: stage.startsWith("critique")
         ? settings.models.critique.id
         : run.model,
-      prompt: instructions,
+      prompt: instructions + (payload && typeof payload === "object" && "evidenceIndex" in payload ? INDEX_INSTRUCTIONS : ""),
       payload,
       responseSchema,
       maxOutputTokens: 16000,
@@ -241,7 +266,7 @@ export async function researchStep(run: Run) {
       run,
       stage,
       stage.startsWith("critique") ? settings.models.critique.id : run.model,
-      instructions,
+      trace.prompt,
       payload,
       false,
       {
@@ -259,7 +284,7 @@ export async function researchStep(run: Run) {
         "synthesis-research-plan",
         PRINCIPLES +
           " Select at most two highly material factual claims for external verification. Write precise search queries with company, claim and relevant period. List main topics in coverage. Return the supplied JSON schema.",
-        snapshot,
+        planningSnapshot,
         Plan,
       ),
     );
@@ -285,14 +310,28 @@ export async function researchStep(run: Run) {
       .parse(run.output.retrievals ?? []);
     const pending = requests.slice(records.length);
     if (pending.length) {
-      const results = await boundedSettled(pending, 2, async (request) =>
-        request.cutoff
+      const results = await boundedSettled(pending, 2, async (request) => {
+        if (run.input.speculativeResearch === true && request.cutoff) {
+          const retained = await (await import("./research-prefetch.ts")).retainedPrefetchRetrieval({
+            runId: snapshot.sourceRunId, query: request.query, timeMode: request.timeMode,
+            cutoff: request.cutoff, primaryDomains: PRIMARY_DOMAINS,
+          });
+          if (retained) {
+            run.output.prefetchReuse = [...((run.output.prefetchReuse ?? []) as unknown[]), {
+              donorRunId: retained.donorRunId, donorKey: retained.donorKey,
+              donorCostUsd: retained.donorCostUsd, state: retained.record.state,
+            }];
+            return retained.record;
+          }
+        }
+        return request.cutoff
           ? await retrieveResearchSources({
               runId: run.id,
               query: request.query,
               timeMode: request.timeMode,
               cutoff: request.cutoff,
               primaryDomains: PRIMARY_DOMAINS,
+              reuseCache: run.input.reuseResearchCache === true,
             })
           : {
               key: "unknown-date",
@@ -304,8 +343,8 @@ export async function researchStep(run: Run) {
               costBasis: "no request",
               note: "Video date unknown; historical verification skipped.",
               requestedAt: new Date().toISOString(),
-            },
-      );
+            };
+      });
       const failure = results.find((r) => r.status === "rejected");
       if (failure?.status === "rejected") throw failure.reason;
       run.output.retrievals = [
@@ -331,7 +370,7 @@ export async function researchStep(run: Run) {
         PRINCIPLES +
           " For explicit growth, earnings-times-multiple or short-put examples, include the optional calculation with the original supported inputs, currency/scale and assumptions; use null otherwise. Do not invent missing inputs. Produce a concise whole-video brief, generally 8–18 sentences, at most 48. Do not force unsupported content into either horizon. Explain why each material point matters. MainTopics must use exact topic labels in sentences. Include central company/context, countercase, valuation drivers, invalidation or next check where supported. Attribute speaker as unknown if unclear. Record missing evidence in omissions. Current updates are optional and must have eligible sources. Return the supplied JSON schema.",
         {
-          ...snapshot,
+          ...modelSnapshot,
           plan: run.output.researchPlan,
           external: eligible,
           retrievalNotes: records.map((r) => r.note),
@@ -344,20 +383,42 @@ export async function researchStep(run: Run) {
   }
   if (run.stage === "research-audit") {
     const draft = ResearchDraft.parse(run.output.researchDraft);
+    const preflight = efficient ? validateBrief(
+      draft, snapshot.evidence, external, snapshot.context,
+      draft.sentences.map(s => ({id:s.id,accepted:true,reason:"Structural preflight only",factualStatus:"unverified" as const})),
+      snapshot.baseline,
+    ).rejected : [];
+    const rejectedIds = new Set(preflight.map(r => r.sentence.id));
+    const auditDraft = {...draft, sentences:draft.sentences.filter(s => !rejectedIds.has(s.id))};
+    // Uncited sources and history can contradict a draft. Retain their full text
+    // for independent review; only structurally invalid sentences bypass AI.
+    const auditPayload = { ...modelSnapshot, draft:auditDraft, external:eligible };
+    run.output.auditPreflight = preflight.map(r => ({id:r.sentence.id,reasons:r.reasons}));
+    run.output.auditPayloadMetrics = {
+      originalBytes: Buffer.byteLength(JSON.stringify({ ...snapshot, draft, external: eligible })),
+      actualBytes: Buffer.byteLength(JSON.stringify(auditPayload)),
+      evidenceItems: snapshot.evidence.length,
+      sentences: draft.sentences.length,
+      policy: efficient ? "structural-preflight-full-context-v2" : "full-v1",
+      deterministicallyRejected: preflight.length,
+      byteScope: "JSON payload only; excludes model instructions",
+    };
     const audit = ResearchAudit.parse(
-      await invoke(
+      auditDraft.sentences.length ? await invoke(
         "critique-research",
         PRINCIPLES +
-          " Independently audit EVERY sentence against all cited original quotes and external source text. Check every optional calculation input, units and assumptions against the cited quotes; reject if any input is invented or the periods/scales differ. Accept only if EVERY clause, causal link, quantity, attribution and time boundary is supported or clearly marked grounded inference. Reject unrelated or weak citations. Do not reject cautious next-check questions simply for being questions. factualStatus corroborated requires direct primary-source support of the exact factual assertion, never mere quotation agreement; partial means incomplete external corroboration; disputed requires evidence of contradiction. Creator views and scenarios normally remain unverified. Return exactly one verdict per sentence ID and coverageFindings for missing central themes or unbalanced treatment. Assess robustness conservatively: supported requires corroborated primary facts plus explicit cited countercase and invalidation sentence IDs for the same topic, horizon and time boundary; otherwise insufficient or fragile with a concrete reason. Independently verify novelty against the cited baseline text and original evidence, including actor, conditions and horizon; mark noveltyAccepted false when unknown, unmatched, or just wording changes.",
-        { ...snapshot, draft, external: eligible },
+          " Independently audit EVERY sentence against all cited original quotes and external source text. Inspect uncited external sources and baseline history for counterevidence as well. External factualStatus requires eligible sources cited by THIS sentence; the presence of other documents is not corroboration. Do not label quantities contradictory unless their observation dates, periods, instruments, units and basis are comparable; distinguish a change over time from disagreement. Check every optional calculation input, units and assumptions against the cited quotes; reject if any input is invented or the periods/scales differ. Accept only if EVERY clause, causal link, quantity, attribution and time boundary is supported or clearly marked grounded inference. Reject unrelated or weak citations. Do not reject cautious next-check questions simply for being questions. factualStatus corroborated requires direct primary-source support of the exact factual assertion, never mere quotation agreement; partial means incomplete external corroboration; disputed requires evidence of contradiction. Creator views and scenarios normally remain unverified. Return exactly one verdict per sentence ID and coverageFindings for missing central themes or unbalanced treatment. Assess robustness conservatively: supported requires corroborated primary facts plus explicit cited countercase and invalidation sentence IDs for the same topic, horizon and time boundary; otherwise insufficient or fragile with a concrete reason. Independently verify novelty against the cited baseline text and original evidence, including actor, conditions and horizon; mark noveltyAccepted false when unknown, unmatched, or just wording changes.",
+        auditPayload,
         ResearchAudit,
-      ),
+      ) : {verdicts:[],coverageFindings:["All draft sentences failed structural checks; semantic audit was not performed."]},
     );
     if (
-      audit.verdicts.length !== draft.sentences.length ||
-      audit.verdicts.some((v) => !draft.sentences.some((s) => s.id === v.id))
+      audit.verdicts.length !== auditDraft.sentences.length ||
+      new Set(audit.verdicts.map(v => v.id)).size !== audit.verdicts.length ||
+      audit.verdicts.some((v) => !auditDraft.sentences.some((s) => s.id === v.id))
     )
       throw Error("Incomplete research audit.");
+    audit.verdicts.push(...preflight.map(r => ({id:r.sentence.id,accepted:false,reason:r.reasons.join(" "),factualStatus:"unverified" as const,noveltyAccepted:false,robustness:"insufficient" as const,robustnessReason:"Failed deterministic structural checks.",thesisSupportIds:[]})));
     run.output.researchAudit = audit;
     const brief: ResearchBriefData = {
       ...validateBrief(
@@ -383,7 +444,7 @@ export async function researchStep(run: Run) {
       ),
       externalCostUsd: records.reduce((n, r) => n + (r.costUsd ?? 0), 0),
       unknownExternalCosts: records.filter(
-        (r) => r.state !== "unavailable" && r.costUsd === null,
+        (r) => r.state !== "unavailable" && (r.costUsd === null || r.state === "unknown"),
       ).length,
       modelCostUsd: Number(
         (

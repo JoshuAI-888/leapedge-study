@@ -193,3 +193,32 @@ is applied, database/code backups are retained under ignored
 returned HTTP 200. The worker heartbeat is online with admission still paused.
 The matching Vercel production build is Ready and applied migration 0007.
 Mobile visual acceptance is deferred by the user until the Mac is unlocked.
+
+### Evidence efficiency (PR #11, rollout under review)
+
+`YTI_EFFICIENCY_PROFILE` defaults to `off`. `conservative` freezes the lossless
+research inventory, structural audit preflight and exact retrieval-cache reuse
+onto newly admitted video runs. Explicit run inputs override the environment;
+queued inputs never silently change on worker restart. `experimental-overlap`
+also permits speculative query planning/retrieval during critique. Keep that
+profile disabled until bounded live measurements show its extra planning and
+potentially unused searches improve the overall result. Both profiles retain the
+independent critic, original spans, date gates and full counterevidence.
+
+English caption-language recognition, identical-text translation deduplication,
+accepted-mention context preservation and fatal-account admission stopping are
+correctness changes in the code, independent of this experimental profile.
+Known fatal HTTP 401/402/403 errors stop untouched extraction chunks, while
+already-started calls drain and retain their paid responses. HTTP 429 is still
+handled by the existing retry/quota controls.
+
+The 100-job PostgreSQL fixture improved from 73.079s to 36.154s at video capacity
+three instead of one. This supports a bounded capacity-three trial, not a
+1,000-live-video/day capacity claim. Keep provider and database concurrency caps
+in place; inspect 429/timeout rates, queue delay, latency, cost and quality before
+raising capacity further. Paused intake remains paused after installation.
+
+Before copying this revision into an installed runtime, confirm there are no
+active paid calls/jobs: translation request identities have changed. Preserve
+`.env.live` and `data/postgres`, back up code/database, restart paused, then check
+health and the browser. No database migration is added by this change.

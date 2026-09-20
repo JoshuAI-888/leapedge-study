@@ -23,7 +23,7 @@ const sentence = {
   timeMode: "video_date",
   calculation: null,
 };
-test("research stages resume paid synthesis and retain original evidence, independent critique and actual cost", async () => {
+for (const efficient of [false, true]) test(`research stages resume paid synthesis and retain original evidence, independent critique and actual cost (efficient=${efficient})`, async () => {
   const db = await freshDatabase();
   const settings = teamDefaults();
   const fake = new FakeModelTransport({
@@ -52,12 +52,12 @@ test("research stages resume paid synthesis and retain original evidence, indepe
               reason: "Holding supported.",
               factualStatus: "corroborated",
             },
-            {
+            ...(!efficient ? [{
               id: "invented",
               accepted: true,
               reason: "Accepted by model but invalid reference.",
               factualStatus: "unverified",
-            },
+            }] : []),
           ],
           coverageFindings: ["No valuation data supplied."],
         },
@@ -72,6 +72,7 @@ test("research stages resume paid synthesis and retain original evidence, indepe
       settings.models.extraction.id,
       {
         task: "research-brief",
+        efficiencyVersion: efficient ? "evidence-efficiency.v1" : undefined,
         teamPreferencesSnapshot: settings,
         snapshot: {
           sourceRunId: "original",
@@ -122,8 +123,15 @@ test("research stages resume paid synthesis and retain original evidence, indepe
     assert.equal(fake.requests.length, 1, "restart reused recorded response");
     await researchStep(run);
     await researchStep(run);
+    run.output.retrievals = [{key:"fixture",state:"complete",query:"fixture",timeMode:"video_date",costUsd:0,costBasis:"fixture",note:"fixture",requestedAt:"2026-01-01T00:00:00Z",sources:[{id:"unused",url:"https://sec.gov/fixture",title:"Unused source",text:"UNRELATED_EXTERNAL_SENTINEL",publishedAt:"2025-01-01T00:00:00Z",retrievedAt:"2026-01-01T00:00:00Z",publicationConfirmed:true,dateBasis:"fixture",sourceClass:"primary",hash:"fixture",query:"fixture",timeMode:"video_date",provider:"fixture"}]}];
     await researchStep(run);
+    const auditPayload = JSON.stringify(fake.requests[2].user);
+    assert.ok(auditPayload.includes("UNRELATED_EXTERNAL_SENTINEL"), "uncited contradictory external evidence remains visible to the critic");
+    assert.equal(fake.requests[2].user.some(p => 'text' in p && p.text.includes('"id":"invented"')), !efficient);
+    assert.ok(auditPayload.includes("I hold shares"), "all video evidence remains in independent audit");
     assert.equal(run.status, "completed");
+    if (efficient) assert.equal(typeof run.output.evidenceIndexHash, "string");
+    assert.equal((run.output.auditPayloadMetrics as {evidenceItems:number}).evidenceItems, 1);
     assert.equal(fake.requests.length, 3);
     const [brief] = await researchBriefs();
     assert.equal(brief.sourceRunId, "original");

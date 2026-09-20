@@ -383,3 +383,32 @@ test('recall windows cover an explicit stance split across cues but exclude alre
  const covered={...r,output:{...r.output,claims:[{id:'c1',passed:true,reasons:[],claim:{evidence:[{segment_id:'a',end_segment_id:'c'}]}}]}} as unknown as Run;
  assert.equal(actionRecallWindows(covered).length,0);
 });
+
+test('unsupported external verification cannot leak a contradictory audit explanation or robustness label', () => {
+  const result = validateBrief(
+    { sentences: [sentence], mainTopics: ['Company'], omissions: [] },
+    evidenceInventory(run), [], analysisContext(run),
+    [{id:'s1',accepted:true,reason:'External yield contradicts the video',factualStatus:'partial',robustness:'fragile',robustnessReason:'External yield differs'}],
+  );
+  assert.equal(result.sentences[0].factualStatus,'unverified');
+  assert.equal(result.sentences[0].robustness,'insufficient');
+  assert.doesNotMatch(result.sentences[0].auditReason,/yield contradicts/);
+  assert.match(result.sentences[0].auditReason,/withheld/);
+});
+
+test('a quoted but arithmetically inconsistent short-put breakeven cannot become a headline', () => {
+  const evidence=evidenceInventory(run);
+  evidence[0].quotes[0].text='165 minus $1.85 gets you a break even of effectively 153';
+  const item={...sentence,text:'The 165 put less $1.85 premium gives a $153 breakeven.',
+    financialFacts:[{label:'Put breakeven price',value:153,currency:'USD',unit:'per_share',scale:'ones',period:null,basis:'not_stated',nature:'scenario',evidenceId:'c1',quote:evidence[0].quotes[0].text}],
+    calculation:{expression:{kind:'short_put_breakeven',strike:165,premiumPerShare:1.85},units:'USD per share',assumptions:'Before fees'},
+  };
+  const validate=(draft:unknown)=>validateBrief({sentences:[draft],mainTopics:['Company'],omissions:[]},evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'faithful quotation',factualStatus:'unverified'}]);
+  const rejected=validate(item);
+  assert.equal(rejected.sentences.length,0);
+  assert.match(rejected.rejected[0].reasons.join(' '),/breakeven.*163\.15/i);
+  assert.equal(validate({...item,text:'Calculated breakeven is $163.15.',financialFacts:[]}).sentences.length,1);
+  for (const text of ['Calculated breakeven is $153.15.', 'A $153.15 breakeven follows from the option inputs.', 'Breakeven of USD 153.15 is below the downside floor.']) {
+    assert.equal(validate({...item,text,financialFacts:[]}).sentences.length,0, text);
+  }
+});

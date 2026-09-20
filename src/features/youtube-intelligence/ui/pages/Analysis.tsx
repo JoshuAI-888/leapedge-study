@@ -98,7 +98,7 @@ export function Analysis({ id }: { id: string }) {
   const evidence = persistedSpans.length
     ? persistedSpans.map((s) => ({
         quote_original: s.textOriginal,
-        quote_translation_en: s.translationEn ?? "Translation unavailable",
+        quote_translation_en: s.translationEn ?? "",
         source_span: {
           start_seconds: s.startSeconds,
           end_seconds: s.endSeconds,
@@ -241,7 +241,11 @@ export function Analysis({ id }: { id: string }) {
                   <h3>What the creator said</h3>
                   <blockquote>{e.quote_original}</blockquote>
                   <h3>English translation</h3>
-                  <p>{e.quote_translation_en}</p>
+                  <p>{e.quote_translation_en || (
+                    /^(?:asr-)?(?:en(?:[-_].*)?|eng|english)$/i.test(String((run.output.source as SourceData | undefined)?.language ?? "")) && !/\p{Script=Han}/u.test(e.quote_original)
+                      ? "Original evidence is already in English."
+                      : "Translation unavailable"
+                  )}</p>
                   <p className="yi-muted">
                     Span agreement:{" "}
                     {agreements[i]
