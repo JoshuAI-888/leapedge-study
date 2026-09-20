@@ -194,7 +194,7 @@ returned HTTP 200. The worker heartbeat is online with admission still paused.
 The matching Vercel production build is Ready and applied migration 0007.
 Mobile visual acceptance is deferred by the user until the Mac is unlocked.
 
-### Evidence efficiency (PR #11, rollout under review)
+### Evidence efficiency (PR #11, merged and installed on this Mac)
 
 `YTI_EFFICIENCY_PROFILE` defaults to `off`. `conservative` freezes the lossless
 research inventory, structural audit preflight and exact retrieval-cache reuse
@@ -222,3 +222,12 @@ Before copying this revision into an installed runtime, confirm there are no
 active paid calls/jobs: translation request identities have changed. Preserve
 `.env.live` and `data/postgres`, back up code/database, restart paused, then check
 health and the browser. No database migration is added by this change.
+
+
+PR #11 is merged and installed at code revision
+`b82ff7a7afc1f2da84f707cc1af518a1bd769013`. The Mac uses
+`YTI_EFFICIENCY_PROFILE=conservative` and video capacity three. Automatic intake
+is still paused, and speculative overlap is off. Web/status/activity/snapshot
+checks returned HTTP 200 with a fresh worker heartbeat; all 14 existing runs and
+schema seven were preserved. Old stored briefs remain retained revisions;
+refreshing them applies the new quality checks and can incur API charges.

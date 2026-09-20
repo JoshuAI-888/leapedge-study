@@ -1,6 +1,6 @@
 # Evidence efficiency build and measurement
 
-Status: implemented in PR #11; final release verification in progress. Production promotion is recorded separately in the delivery ledger.
+Status: PR #11 merged; conservative build installed on this Mac. Automatic intake is paused and speculative overlap remains disabled.
 
 User-authorized order: (1) reusable evidence, (2) focused audits, (5) selective translation, then (3) overlapping research, (4) worker admission tuning, (6) version/date-aware caching, (7) fatal-account fail-fast. Finradar integration and new LeapEdge submissions remain excluded.
 
@@ -86,3 +86,16 @@ runs, paired full runs and four followups totals **$3.895488925**. The initial
 sandbox-denied followup attempt is retained separately with an unconfirmed local
 reservation, not counted as a provider charge. No additional captions or
 LeapEdge analyses were purchased.
+
+
+## Installed release
+
+Merge `b82ff7a7afc1f2da84f707cc1af518a1bd769013` installed on this Mac.
+Both GitHub PR verification jobs passed and the Vercel preview deployed.
+Local web, status, activity and research snapshot endpoints returned HTTP 200;
+worker heartbeat age was 0.043 seconds at verification. All 14 prior runs and
+schema version 7 were preserved. Protected credentials and the active database
+were backed up and preserved. Conservative profile enabled, capacity three,
+automatic intake paused, speculative overlap disabled. Historical stored briefs
+are not rewritten by installing new code; the new safeguards apply to new
+analyses/brief revisions.

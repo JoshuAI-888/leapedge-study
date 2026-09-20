@@ -1455,7 +1455,7 @@
     }
   },
   "evidenceEfficiency": {
-    "status": "in-review",
+    "status": "merged",
     "baselineCommit": "a949a8e",
     "report": "docs/reviews/evidence-efficiency-20260920.md",
     "sequence": [
@@ -1467,7 +1467,7 @@
       6,
       7
     ],
-    "productionPromoted": false,
+    "productionPromoted": true,
     "qualityGate": "paired frozen-input measurements plus source-backed review; no quality claim from counts",
     "newLeapEdgeRequests": 0,
     "pr": 11,
@@ -1480,7 +1480,7 @@
       6,
       7
     ],
-    "rollout": "Conservative profile approved by bounded source/browser checks; install pending. Speculative overlap remains experimental and disabled.",
+    "rollout": "Installed on Mac: conservative profile, capacity 3, automatic intake paused, speculative overlap disabled",
     "reports": [
       "docs/reviews/optimization-stage-20260920.md",
       "docs/reviews/optimization-full-quality-20260920.md",
@@ -1503,9 +1503,54 @@
       },
       "pgliteTests": "484 passed, 1 skipped",
       "desktopBrowser": "passed: final theme, equal horizons, retained revision and confidence display",
-      "mobileBrowser": "passed at 390x844: no horizontal overflow, navigation, horizon filter, quote/hash drill-down, Escape/focus, transcript search and timestamp target"
+      "mobileBrowser": "passed at 390x844: no horizontal overflow, navigation, horizon filter, quote/hash drill-down, Escape/focus, transcript search and timestamp target",
+      "githubCI": "both PR verification jobs passed; Vercel preview ready"
     },
     "confirmedExperimentCostUsd": 3.895488925,
-    "briefFollowupCostUsd": 0.50987525
+    "briefFollowupCostUsd": 0.50987525,
+    "mergeCommit": "b82ff7a7afc1f2da84f707cc1af518a1bd769013",
+    "macRuntime": {
+      "at": "2026-09-20T05:42:33.258Z",
+      "revision": "b82ff7a7afc1f2da84f707cc1af518a1bd769013",
+      "profile": "conservative",
+      "queuePaused": true,
+      "schema": 7,
+      "workerHeartbeatAgeSeconds": 0.043,
+      "requests": [
+        {
+          "path": "/youtube-intelligence/today",
+          "status": 200,
+          "seconds": 0.10611675,
+          "bytes": 14119
+        },
+        {
+          "path": "/api/intelligence/status",
+          "status": 200,
+          "seconds": 0.02993312500000002,
+          "bytes": 215
+        },
+        {
+          "path": "/api/intelligence/activity",
+          "status": 200,
+          "seconds": 0.002532291999999984,
+          "bytes": 176
+        },
+        {
+          "path": "/api/youtube-intelligence/research/snapshot",
+          "status": 200,
+          "seconds": 0.10939808399999998,
+          "bytes": 3311891
+        }
+      ]
+    },
+    "experimentalDisabled": [
+      "speculativeResearch"
+    ],
+    "remainingLimits": [
+      "No final end-to-end speedup claim after coverage repair",
+      "Four-video source review is not universal quality certification",
+      "Live provider quota and 1,000-video/day capacity not certified",
+      "Cache/overlap fleet-wide savings unmeasured"
+    ]
   }
 }
