@@ -44,6 +44,7 @@ export function Lab() {
             Compare outputs from the same video for agreement, omissions and
             usefulness.
           </p>
+          <Link href="/youtube-intelligence/comparison">Inspect all 20 retained cases and attempts →</Link>
           <p className="yi-muted">
             Agreement is not independent factual verification. Human gold-set
             minimums are outside this build's scope.

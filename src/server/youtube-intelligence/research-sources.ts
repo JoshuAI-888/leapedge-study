@@ -28,23 +28,17 @@ const Reply = z.object({
 export function confirmedPublication(text: string, estimated: string | null) {
   if (!estimated || !Number.isFinite(Date.parse(estimated))) return null;
   const day = new Date(estimated).toISOString().slice(0, 10);
-  const full = new Date(day + "T12:00:00Z").toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-  const short = new Date(day + "T12:00:00Z").toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  // Only a publication/filing label at a line boundary counts. Fiscal periods,
+  // quotes about another document, crawl dates and updated dates do not.
   const header = text.slice(0, 4500);
-  for (const match of header.matchAll(
-    /(?:published(?: on)?|release date|filed(?: on)?|filing date|for immediate release)[\s:–-]*([^\n]{0,100})/gi,
-  )) {
-    if ([day, full, short].some((d) => match[1].includes(d)))
+  const month = "(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\\.?";
+  const date = `(?:\\d{4}-\\d{2}-\\d{2}|${month} +\\d{1,2}(?:st|nd|rd|th)?[,]? +\\d{4}|\\d{1,2}(?:st|nd|rd|th)? +${month}[,]? +\\d{4})`;
+  const pattern = new RegExp(`(?:^|\\n)[ \\t#*]*(?:published(?: on)?|release date|filed(?: on)?|filing date|for immediate release)[ \\t:–-]*(?:\\r?\\n[ \\t]*)?(${date})(?![\\d\\w])`, "gi");
+  for (const match of header.matchAll(pattern)) {
+    const normalized = match[1].replace(/(\d)(st|nd|rd|th)/gi, "$1").replace(/Sept\.?\b/gi, "Sep").replace(/\./g, "");
+    const timestamp = Date.parse(normalized + " 12:00:00 GMT");
+    const statedDay = /^\d{4}-/.test(normalized) ? Number(normalized.slice(8, 10)) : Number(normalized.match(/\b(\d{1,2})\b/)?.[1]);
+    if (Number.isFinite(timestamp) && new Date(timestamp).getUTCDate() === statedDay && new Date(timestamp).toISOString().slice(0, 10) === day)
       return day + "T23:59:59.999Z";
   }
   return null;
@@ -62,14 +56,15 @@ export const RetrievalRecordSchema = z.object({
   requestedAt: z.iso.datetime(),
   completedAt: z.iso.datetime().optional(),
   cacheIdentity: z.object({
-    version: z.literal("exa-retrieval.v1"),
+    version: z.enum(["exa-retrieval.v1", "exa-retrieval.v2"]),
     key: z.string().regex(/^[a-f0-9]{64}$/),
     runId: z.string().min(1),
     cutoff: z.iso.datetime(),
+    since: z.iso.datetime().optional(),
     primaryDomains: z.array(z.string()),
   }).optional(),
   cache: z.object({
-    version: z.literal("exa-retrieval.v1"),
+    version: z.enum(["exa-retrieval.v1", "exa-retrieval.v2"]),
     donorKey: z.string(),
     donorRunId: z.string(),
     donorCostUsd: z.number().nonnegative(),
@@ -82,14 +77,16 @@ const RetrievalInput = z.object({
   query: z.string().min(1).max(400),
   timeMode: z.enum(["video_date", "current"]),
   cutoff: z.iso.datetime(),
+  since: z.iso.datetime().optional(),
   primaryDomains: z.array(z.string().regex(/^[a-z0-9.-]+$/)).max(100),
   reuseCache: z.boolean().optional(),
-});
+}).refine((input) => !input.since || (input.timeMode === "current" && Date.parse(input.since) < Date.parse(input.cutoff)), { message: "since is allowed only for a current interval before cutoff" });
 export async function retrieveResearchSources(input: {
   runId: string;
   query: string;
   timeMode: "video_date" | "current";
   cutoff: string;
+  since?: string;
   primaryDomains: string[];
   reuseCache?: boolean;
 }): Promise<RetrievalRecord> {
@@ -99,8 +96,8 @@ export async function retrieveResearchSources(input: {
   const { reuseCache, ...identity } = input;
   const key = createHash("sha256").update(JSON.stringify(identity)).digest("hex");
   const cacheKey = createHash("sha256").update(JSON.stringify({
-    version: "exa-retrieval.v1", query: input.query, timeMode: input.timeMode,
-    cutoff: input.cutoff, primaryDomains: [...new Set(input.primaryDomains)].sort(),
+    version: "exa-retrieval.v2", query: input.query, timeMode: input.timeMode,
+    cutoff: input.cutoff, since: input.since ?? null, primaryDomains: [...new Set(input.primaryDomains)].sort(),
   })).digest("hex");
   const retained = await doc<RetrievalRecord>("researchRetrieval", key);
   if (retained) return RetrievalRecordSchema.parse(retained);
@@ -114,12 +111,12 @@ export async function retrieveResearchSources(input: {
     costBasis: "provider costDollars.total, when supplied",
     requestedAt,
     cacheIdentity: {
-      version: "exa-retrieval.v1" as const, key: cacheKey, runId: input.runId,
-      cutoff: input.cutoff, primaryDomains: [...new Set(input.primaryDomains)].sort(),
+      version: "exa-retrieval.v2" as const, key: cacheKey, runId: input.runId,
+      cutoff: input.cutoff, ...(input.since ? { since: input.since } : {}), primaryDomains: [...new Set(input.primaryDomains)].sort(),
     },
   };
   if (reuseCache) {
-    const pointer = z.object({ version: z.literal("exa-retrieval.v1"), donorKey: z.string(), donorRunId: z.string() }).safeParse(
+    const pointer = z.object({ version: z.enum(["exa-retrieval.v1", "exa-retrieval.v2"]), donorKey: z.string(), donorRunId: z.string() }).safeParse(
       await doc("researchRetrievalCache", cacheKey),
     );
     if (pointer.success) {
@@ -132,7 +129,9 @@ export async function retrieveResearchSources(input: {
           && record.query === input.query && record.timeMode === input.timeMode
           && record.cacheIdentity?.key === cacheKey
           && record.cacheIdentity.runId === pointer.data.donorRunId
+          && record.cacheIdentity.version === "exa-retrieval.v2"
           && record.cacheIdentity.cutoff === input.cutoff
+          && record.cacheIdentity.since === input.since
           && JSON.stringify(record.cacheIdentity.primaryDomains) === JSON.stringify(base.cacheIdentity.primaryDomains);
         if (identityMatches && record.state === "complete" && record.costUsd !== null && !record.cache && age >= 0 && age <= ttl) {
           if (!await get(input.runId)) throw Error("External verification requires a retained research run.");
@@ -186,6 +185,8 @@ export async function retrieveResearchSources(input: {
           type: "auto",
           numResults: 3,
           endPublishedDate: input.cutoff,
+          ...(input.since ? { startPublishedDate: input.since } : {}),
+          ...(input.primaryDomains.length ? { includeDomains: [...new Set(input.primaryDomains)].sort() } : {}),
           contents: { text: { maxCharacters: 12000 } },
         }),
         signal: AbortSignal.timeout(45000),
@@ -233,7 +234,7 @@ export async function retrieveResearchSources(input: {
         sources,
         costUsd: data.costDollars?.total ?? null,
         ...(data.requestId ? { requestId: data.requestId } : {}),
-        note: "Search metadata alone does not establish publication time or factual corroboration.",
+        note: "Search metadata alone does not establish publication time or factual corroboration. " + (input.primaryDomains.length ? "Search limited to the configured primary-domain registry; unlisted issuers and sources may be missed. This is not exhaustive verification." : "No primary-domain registry entries supplied; returned hosts are unverified and are not promoted to primary sources."),
         completedAt: new Date().toISOString(),
       };
       await settle(reservation, record.costUsd, {
@@ -253,7 +254,7 @@ export async function retrieveResearchSources(input: {
       if (reuseCache && record.costUsd !== null) {
         // A best-effort reuse index must never downgrade a confirmed paid
         // response to an unknown outcome if its separate write fails.
-        await put("researchRetrievalCache", cacheKey, { version: "exa-retrieval.v1", donorKey: key, donorRunId: input.runId }).catch(() => undefined);
+        await put("researchRetrievalCache", cacheKey, { version: "exa-retrieval.v2", donorKey: key, donorRunId: input.runId }).catch(() => undefined);
       }
       return record;
     } catch (e) {

@@ -194,3 +194,40 @@ export function recoveredRuns<
   }
   return recovered;
 }
+
+/** A processing status is not a research-readiness verdict. Keep both visible. */
+export function latestResearchBySource<T extends {
+  sourceRunId: string;
+  createdAt: string;
+}>(briefs: T[]) {
+  const latest = new Map<string, T>();
+  for (const brief of briefs) {
+    const previous = latest.get(brief.sourceRunId);
+    if (!previous || brief.createdAt > previous.createdAt)
+      latest.set(brief.sourceRunId, brief);
+  }
+  return latest;
+}
+export function activityReadiness(
+  run: { status: string },
+  brief?: { readiness: { status: "complete" | "partial" | "review_required" } },
+  recovered = false,
+) {
+  if (recovered)
+    return { label: "Recovered · earlier attempt failed", filter: "Recovered", needsReview: false };
+  if (run.status === "queued" || run.status === "running") {
+    const label = processingState(run.status);
+    return { label, filter: label, needsReview: brief?.readiness.status === "partial" || brief?.readiness.status === "review_required" };
+  }
+  if (run.status !== "completed")
+    return { label: run.status === "failed" ? "Analysis failed · needs review" : "Analysis needs review", filter: "Needs review", needsReview: true };
+  if (brief?.readiness.status === "review_required")
+    return { label: "Research review required", filter: "Needs review", needsReview: true };
+  if (brief?.readiness.status === "partial")
+    return { label: "Analysis complete · research partial", filter: "Needs review", needsReview: true };
+  return {
+    label: brief ? "Analysis complete · coverage accounted for" : "Analysis complete · no research brief",
+    filter: "Ready",
+    needsReview: false,
+  };
+}

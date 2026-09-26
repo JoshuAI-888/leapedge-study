@@ -1,3 +1,5 @@
+import { researchReadiness } from "../../features/youtube-intelligence/research-readiness.ts";
+import { reconcileResearchAudit } from "./research-audit-repair.ts";
 import { researchEvidenceInventory, researchEvidenceInventoryWithDiagnostics } from "./research-evidence-inventory.ts";
 import { boundedSettled } from "./bounded-parallel.ts";
 import { buildEvidenceIndex, expandEvidenceIndex, INDEX_INSTRUCTIONS } from "./research-evidence-index.ts";
@@ -48,8 +50,8 @@ const Plan = z.object({
         reason: z.string().max(500),
       }),
     )
-    .max(2),
-  coverage: z.array(z.string()).max(20),
+    .max(8),
+  coverage: z.array(z.string()).max(100),
 });
 // Ownership is an application-controlled registry, not a domain proposed by a model.
 const PRIMARY_DOMAINS = [
@@ -129,7 +131,7 @@ async function queueSourceBrief(
     title: source.title,
     context: { ...analysisContext(source), analysedAt },
     evidence,
-    inventoryOmissions: inventory.omissions,
+    inventoryOmissions: [...inventory.omissions, ...((source.output.limitations ?? []) as string[]).map((reason, index) => ({id:`source-${index}`,reason}))],
   });
   return create(
     source.videoId,
@@ -248,7 +250,7 @@ export async function researchStep(run: Run) {
       responseSchema,
       maxOutputTokens: 16000,
       reasoningEffort: "low",
-      version: "research-brief.v1",
+      version: "research-readiness.v2",
       settings,
     };
     const hash = createHash("sha256")
@@ -279,8 +281,11 @@ export async function researchStep(run: Run) {
   };
   if (run.stage === "metadata") {
     run.title = `Research brief · ${snapshot.title}`;
+    const topicCount = new Set(snapshot.evidence.map(e => e.instrument ?? e.summary)).size;
+    const queryBudget = Math.min(8, Math.max(2, topicCount));
     const instructions = PRINCIPLES +
-      " Select at most two highly material factual claims for external verification. Write precise search queries with company, claim and relevant period. List main topics in coverage. Return the supplied JSON schema.";
+      ` Select up to ${queryBudget} distinct material factual claims for external verification. Prioritise valuation inputs, earnings/cash-flow claims, balance-sheet risks and material current events across companies. Do not spend queries verifying opinions. Write precise search queries with company, exact assertion and relevant period. List all main topics in coverage even if the query budget cannot cover them. Return the supplied JSON schema.`;
+    run.output.researchVerificationScope = {queryBudget, topicCount, note:"Bounded risk-prioritised verification; unsearched facts remain unverified."};
     // Trust may advance during critique. Query selection can be reused only when
     // every other evidence field, date, baseline, setting and instruction agrees.
     // Synthesis and audit still consume the final accepted inventory and trust.
@@ -310,6 +315,7 @@ export async function researchStep(run: Run) {
       (["video_date", "current"] as const).map((timeMode) => ({
         ...q,
         timeMode,
+        since: timeMode === "current" && snapshot.context.videoPublishedAt && Date.parse(snapshot.context.videoPublishedAt) < Date.parse(snapshot.context.analysedAt) ? snapshot.context.videoPublishedAt : undefined,
         cutoff:
           timeMode === "current"
             ? snapshot.context.analysedAt
@@ -326,7 +332,7 @@ export async function researchStep(run: Run) {
         if (run.input.speculativeResearch === true && request.cutoff) {
           const retained = await (await import("./research-prefetch.ts")).retainedPrefetchRetrieval({
             runId: snapshot.sourceRunId, query: request.query, timeMode: request.timeMode,
-            cutoff: request.cutoff, primaryDomains: PRIMARY_DOMAINS,
+            cutoff: request.cutoff, since: request.since, primaryDomains: PRIMARY_DOMAINS,
           });
           if (retained) {
             run.output.prefetchReuse = [...((run.output.prefetchReuse ?? []) as unknown[]), {
@@ -342,6 +348,7 @@ export async function researchStep(run: Run) {
               query: request.query,
               timeMode: request.timeMode,
               cutoff: request.cutoff,
+              since: request.since,
               primaryDomains: PRIMARY_DOMAINS,
               reuseCache: run.input.reuseResearchCache === true,
             })
@@ -380,7 +387,7 @@ export async function researchStep(run: Run) {
       await invoke(
         "synthesis-research",
         PRINCIPLES +
-          " For explicit growth, earnings-times-multiple or short-put examples, include the optional calculation with the original supported inputs, currency/scale and assumptions; use null otherwise. Do not invent missing inputs. Produce a concise whole-video brief, generally 8–18 sentences, at most 48. Do not force unsupported content into either horizon. Explain why each material point matters. MainTopics must use exact topic labels in sentences. Include central company/context, countercase, valuation drivers, invalidation or next check where supported. Attribute speaker as unknown if unclear. Record missing evidence in omissions. Current updates are optional and must have eligible sources. Return the supplied JSON schema.",
+          " For explicit growth, earnings-times-multiple or short-put examples, include the optional calculation with the original supported inputs, currency/scale and assumptions; use null otherwise. Do not invent missing inputs. Produce a concise whole-video brief, at most 48 sentences. Do not force long multi-company videos into 8–18 sentences. Account for every material evidence item, retaining entry/valuation conditions, no-position/hypothetical disclosures and bearish countercases; explicitly list any unsupported or unresolved coverage in omissions. Separate compound facts so rejecting one incorrect number does not discard independently supported strategy and expiry details. Do not force unsupported content into either horizon. Explain why each material point matters. MainTopics must use exact topic labels in sentences. Include central company/context, countercase, valuation drivers, invalidation or next check where supported. Attribute speaker as unknown if unclear. Record missing evidence in omissions. Current updates are optional and must have eligible sources. Return the supplied JSON schema.",
         {
           ...modelSnapshot,
           plan: run.output.researchPlan,
@@ -415,26 +422,28 @@ export async function researchStep(run: Run) {
       deterministicallyRejected: preflight.length,
       byteScope: "JSON payload only; excludes model instructions",
     };
-    const audit = ResearchAudit.parse(
+    const initialAudit = ResearchAudit.parse(
       auditDraft.sentences.length ? await invoke(
-        "critique-research",
+        run.output.coverageRepair ? "critique-research-coverage" : "critique-research",
         PRINCIPLES +
-          " Independently audit EVERY sentence against all cited original quotes and external source text. Inspect uncited external sources and baseline history for counterevidence as well. External factualStatus requires eligible sources cited by THIS sentence; the presence of other documents is not corroboration. Do not label quantities contradictory unless their observation dates, periods, instruments, units and basis are comparable; distinguish a change over time from disagreement. Check every optional calculation input, units and assumptions against the cited quotes; reject if any input is invented or the periods/scales differ. Accept only if EVERY clause, causal link, quantity, attribution and time boundary is supported or clearly marked grounded inference. Reject unrelated or weak citations. Do not reject cautious next-check questions simply for being questions. factualStatus corroborated requires direct primary-source support of the exact factual assertion, never mere quotation agreement; partial means incomplete external corroboration; disputed requires evidence of contradiction. Creator views and scenarios normally remain unverified. Return exactly one verdict per sentence ID and coverageFindings for missing central themes or unbalanced treatment. Assess robustness conservatively: supported requires corroborated primary facts plus explicit cited countercase and invalidation sentence IDs for the same topic, horizon and time boundary; otherwise insufficient or fragile with a concrete reason. Independently verify novelty against the cited baseline text and original evidence, including actor, conditions and horizon; mark noveltyAccepted false when unknown, unmatched, or just wording changes.",
+          " Independently audit EVERY sentence against all cited original quotes and external source text. Inspect uncited external sources and baseline history for counterevidence as well. External factualStatus requires eligible sources cited by THIS sentence; the presence of other documents is not corroboration. Do not label quantities contradictory unless their observation dates, periods, instruments, units and basis are comparable; distinguish a change over time from disagreement. Check every optional calculation input, units and assumptions against the cited quotes; reject if any input is invented or the periods/scales differ. Accept only if EVERY clause, causal link, quantity, attribution and time boundary is supported or clearly marked grounded inference. Reject unrelated or weak citations. Do not reject cautious next-check questions simply for being questions. factualStatus corroborated requires direct primary-source support of the exact factual assertion, never mere quotation agreement; partial means incomplete external corroboration; disputed requires evidence of contradiction. Creator views and scenarios normally remain unverified. For every external label above unverified, return externalSupport entries mapping the exact assertion substring to an exact passage in a cited primary source, with supports/contradicts relationship and explanation. Corroborated requires support for the complete sentence; partial requires an explicit supported subset. A source discussing the company is not support for an unrelated multiple or quantity. Return exactly one verdict per sentence ID and coverageFindings for missing central themes or unbalanced treatment. Assess robustness conservatively: supported requires corroborated primary facts plus explicit cited countercase and invalidation sentence IDs for the same topic, horizon and time boundary; otherwise insufficient or fragile with a concrete reason. Independently verify novelty against the cited baseline text and original evidence, including actor, conditions and horizon; mark noveltyAccepted false when unknown, unmatched, or just wording changes.",
         auditPayload,
         ResearchAudit,
       ) : {verdicts:[],coverageFindings:["All draft sentences failed structural checks; semantic audit was not performed."]},
     );
-    if (
-      audit.verdicts.length !== auditDraft.sentences.length ||
-      new Set(audit.verdicts.map(v => v.id)).size !== audit.verdicts.length ||
-      audit.verdicts.some((v) => !auditDraft.sentences.some((s) => s.id === v.id))
-    )
-      throw Error("Incomplete research audit.");
-    audit.verdicts.push(...preflight.map(r => ({id:r.sentence.id,accepted:false,reason:r.reasons.join(" "),factualStatus:"unverified" as const,noveltyAccepted:false,robustness:"insufficient" as const,robustnessReason:"Failed deterministic structural checks.",thesisSupportIds:[]})));
+    const repaired = await reconcileResearchAudit(auditDraft.sentences.map(s => s.id), initialAudit, async ids =>
+      invoke(run.output.coverageRepair ? "critique-research-coverage-repair" : "critique-research-repair", PRINCIPLES +
+        " Audit ONLY the requested sentence IDs. Return one verdict per requested ID; preserve original evidence, attribution, numerical conditions and time boundaries. For any factual label above unverified, externalSupport must map an exact assertion substring to an exact cited primary-source quote with supports/contradicts relationship and a reason. A URL or related topic is insufficient. Inspect all evidence for countercases and omissions.",
+        {...auditPayload, draft:{...auditDraft,sentences:auditDraft.sentences.filter(s=>ids.includes(s.id))}, requestedIds:ids}, ResearchAudit));
+    run.output.researchAuditAttempts = repaired.attempts;
+    run.output.unresolvedResearchAuditIds = repaired.missing;
+    if (repaired.missing.length) throw Error(`Incomplete research audit after bounded repair: ${repaired.missing.join(", ")}. Evidence retained for review.`);
+    const audit = repaired.audit;
+    audit.verdicts.push(...preflight.map(r => ({id:r.sentence.id,accepted:false,reason:r.reasons.join(" "),factualStatus:"unverified" as const,noveltyAccepted:false,robustness:"insufficient" as const,robustnessReason:"Failed deterministic structural checks.",thesisSupportIds:[],externalSupport:[]})));
     run.output.researchAudit = audit;
     const brief: ResearchBriefData = {
       ...validateBrief(
-        draft,
+        {...draft, omissions:[...draft.omissions, ...snapshot.inventoryOmissions.map(o=>`${o.id}: ${o.reason}`)].slice(0,30)},
         snapshot.evidence,
         external,
         snapshot.context,
@@ -468,9 +477,27 @@ export async function researchStep(run: Run) {
         )?.cost ?? 0,
       ),
     };
+    const readiness = researchReadiness(brief);
+    run.output.researchReadiness = readiness;
+    const missingEvidence = readiness.coverage.filter(c=>c.status === "unresolved").map(c=>c.evidenceId);
+    if (!run.output.coverageRepair && missingEvidence.length && draft.sentences.length < 48) {
+      // Additive and bounded: never replace accepted statements to make room.
+      // Both the original attempt and the supplement are retained and paid once.
+      const available = Math.min(12, 48 - draft.sentences.length);
+      const supplement = parseResearchDraft(await invoke("synthesis-research-coverage", PRINCIPLES +
+        ` Repair missing coverage by adding at most ${available} atomic sentences. Include the source's exact conditions, valuation qualifications, countercases and hypothetical/no-position disclosures. Use only the missing evidence IDs and supplied eligible sources. Do not repeat or replace existing sentences. If evidence is insufficient, explain the unresolved gap in omissions. Return the supplied draft schema.`,
+        {...modelSnapshot, external:eligible, existingDraft:draft, missingEvidenceIds:missingEvidence, coverageFindings:audit.coverageFindings}, ResearchDraft));
+      if (supplement.sentences.length > available) throw Error("Coverage supplement exceeds bounded repair size; original draft retained.");
+      run.output.coverageRepair = {originalDraft:draft, originalAudit:audit, missingEvidenceIds:missingEvidence, supplement};
+      const additions = supplement.sentences.map((sentence,index)=>({...sentence,id:`coverage-${index+1}`}));
+      if(additions.some(s=>draft.sentences.some(original=>original.id===s.id))) throw Error("Coverage repair ID collision; original draft retained.");
+      run.output.researchDraft = ResearchDraft.parse({...draft, sentences:[...draft.sentences,...additions], mainTopics:[...new Set([...draft.mainTopics,...supplement.mainTopics])], omissions:[...draft.omissions,...supplement.omissions].slice(0,30)});
+      run.stage = "research-audit";
+      return;
+    }
     await putIfAbsent("researchBrief", run.id, brief);
     run.output.researchBriefId = run.id;
-    run.status = "completed";
+    run.status = readiness.status === "review_required" ? "needs_review" : "completed";
     run.stage = "complete";
     return;
   }

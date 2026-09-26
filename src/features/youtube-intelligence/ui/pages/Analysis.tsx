@@ -160,7 +160,7 @@ export function Analysis({ id }: { id: string }) {
         completed={run.status === "completed"}
       />
       <div className="yi-trust-strip">
-        <span className="yi-chip">{processingState(run.status)}</span>
+        <span className="yi-chip">{run.status === "completed" ? "Analysis complete" : processingState(run.status)}</span>
         {["L0", "L1", "L2", "L3"].map((level) => (
           <span key={level}>
             <TrustBadge level={level} />{" "}

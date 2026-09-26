@@ -129,8 +129,11 @@ export function eligibleExternal(
   if (!source.publicationConfirmed || !source.publishedAt) return false;
   if (Date.parse(source.publishedAt) > Date.parse(context.analysedAt))
     return false;
-  if (mode === "current")
-    return Date.parse(source.publishedAt) <= Date.parse(context.analysedAt);
+  if (mode === "current") {
+    const originalCutoff = context.recordedAt ?? context.videoPublishedAt;
+    return !!originalCutoff && Date.parse(source.publishedAt) > Date.parse(originalCutoff) &&
+      Date.parse(source.publishedAt) <= Date.parse(context.analysedAt);
+  }
   const cutoff = context.recordedAt ?? context.videoPublishedAt;
   return !!cutoff && Date.parse(source.publishedAt) <= Date.parse(cutoff);
 }
@@ -271,10 +274,18 @@ export const ResearchSentence = z.object({
 export type ResearchSentenceData = z.infer<typeof ResearchSentence>;
 export const ResearchDraft = z.object({
   sentences: z.array(ResearchSentence).max(48),
-  mainTopics: z.array(z.string()).max(8),
+  mainTopics: z.array(z.string()).max(100),
   omissions: z.array(z.string()).max(30),
 });
+export const ExternalSupport = z.object({
+  externalId: z.string(),
+  assertion: z.string().min(1).max(4000),
+  quote: z.string().min(1).max(6000),
+  relationship: z.enum(["supports", "contradicts"]),
+  reason: z.string().min(1).max(1000),
+});
 export const ResearchVerdict = z.object({
+  externalSupport: z.array(ExternalSupport).max(16).default([]),
   id: z.string(),
   accepted: z.boolean(),
   reason: z.string(),
@@ -294,6 +305,7 @@ export const ResearchAudit = z.object({
   coverageFindings: z.array(z.string()).max(30),
 });
 export type AcceptedSentence = ResearchSentenceData & {
+  externalSupport?: z.infer<typeof ExternalSupport>[];
   factualStatus: "unverified" | "corroborated" | "partial" | "disputed";
   fidelity: string;
   robustness: "insufficient" | "fragile" | "supported";
@@ -370,10 +382,21 @@ export function validateBrief(
       continue;
     }
     const sources = sentence.externalIds.map((id) => ext.get(id)!);
-    const primary = sources.some((s) => s.sourceClass === "primary");
-    const factualStatus = primary ? audit!.factualStatus : "unverified";
-    const withheldExternalAudit = !primary && audit!.factualStatus !== "unverified";
-    const withheldReason = "External-verification assessment withheld: this sentence has no eligible cited primary evidence. The original audit is retained in the run trace; external corroboration or contradiction has not been established.";
+    // A primary URL is only eligibility. Require the independent critic to
+    // identify the exact assertion and retained supporting/contradicting passage.
+    const externalSupport = audit!.externalSupport.filter(link =>
+      sentence.text.includes(link.assertion) && sources.some(source =>
+        source.id === link.externalId && source.sourceClass === "primary" &&
+        source.text.includes(link.quote)),
+    );
+    const fullSupport = externalSupport.some(s => s.relationship === "supports" && s.assertion === sentence.text);
+    const fullConflict = externalSupport.some(s => s.relationship === "contradicts" && s.assertion === sentence.text);
+    const permitted = audit!.factualStatus === "corroborated" ? fullSupport && !externalSupport.some(s => s.relationship === "contradicts")
+      : audit!.factualStatus === "disputed" ? fullConflict
+      : audit!.factualStatus === "partial" ? externalSupport.some(s => s.relationship === "supports") : true;
+    const factualStatus = permitted ? audit!.factualStatus : "unverified";
+    const withheldExternalAudit = !permitted;
+    const withheldReason = "External-verification assessment withheld: no valid assertion-level primary-source passage supports the proposed label. The original audit remains in the run trace; source eligibility alone is not corroboration.";
     const trust = Math.min(
       ...sentence.evidenceIds.map((id) => Number(byId.get(id)!.trust.slice(1))),
     );
@@ -403,6 +426,7 @@ export function validateBrief(
     sentences.push({
       ...sentence,
       factualStatus,
+      externalSupport,
       novelty,
       fidelity:
         trust >= 3
@@ -714,7 +738,7 @@ export function parseResearchDraft(raw: unknown) {
   // Keep the UI bounded and explicitly disclose any additional retained limitations.
   const draft = ResearchDraft.parse({
     ...envelope,
-    mainTopics: envelope.mainTopics.slice(0, 8),
+    mainTopics: envelope.mainTopics,
     sentences,
     omissions:
       omissions.length > 30
@@ -744,7 +768,7 @@ export function actionRecallWindows(run: Run) {
         for (const c of source.slice(first, last + 1)) covered.add(c.id);
     }
   const expression =
-    /\b(?:I\s*(?:am|'m|’m)\s+(?:(?:not|still|very)\s+)?(?:bullish|bearish|long|short|holding|buying|selling)|I\s+(?:will buy|would buy|own|bought|sold|hold|recommend)|stocks\s+(?:that\s+)?I\s+will\s+buy)\b|我.{0,6}(?:看好|看空|买入|持有|减仓|加仓|卖出)/i;
+    /\b(?:I\s*(?:am|'m|’m)\s+(?:(?:not|still|very)\s+)?(?:bullish|bearish|long|short|holding|buying|selling)|I\s+(?:will buy|would buy|own|bought|sold|hold|recommend)|stocks\s+(?:that\s+)?I\s+will\s+buy)\b|\b(?:valuation|moat|cash.flow|leverage|dilution|entry.price|countercase|not.(?:own|hold|short)|hypothetical|margin.pressure)\b|我.{0,6}(?:看好|看空|买入|持有|减仓|加仓|卖出)|估值|护城河|現金流|现金流|杠杆|槓桿|稀释|稀釋|沒有持倉|没有持仓/i;
   const ranges: { start: number; end: number }[] = [];
   source.forEach((cue, i) => {
     if (

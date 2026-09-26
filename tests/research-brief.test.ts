@@ -248,7 +248,7 @@ test("overlong topic navigation does not discard supported content", async () =>
     mainTopics: Array.from({ length: 10 }, (_, i) => "Topic " + i),
     omissions: [],
   });
-  assert.equal(parsed.mainTopics.length, 8);
+  assert.equal(parsed.mainTopics.length, 10);
   assert.equal(parsed.sentences.length, 1);
 });
 
@@ -411,4 +411,30 @@ test('a quoted but arithmetically inconsistent short-put breakeven cannot become
   for (const text of ['Calculated breakeven is $153.15.', 'A $153.15 breakeven follows from the option inputs.', 'Breakeven of USD 153.15 is below the downside floor.']) {
     assert.equal(validate({...item,text,financialFacts:[]}).sentences.length,0, text);
   }
+});
+
+test('eligible primary URL without assertion-level support cannot confer corroboration', () => {
+ const external={id:'x1',url:'https://example.com/report',title:'Primary',text:'Revenue increased 10%.',publishedAt:'2026-04-01T00:00:00Z',retrievedAt:'2026-09-20T00:00:00Z',publicationConfirmed:true,dateBasis:'fixture',sourceClass:'primary' as const,hash:'fixture',query:'fixture',timeMode:'video_date' as const,provider:'fixture'};
+ const s={...sentence,externalIds:['x1']};
+ const result=validateBrief({sentences:[s],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[external],analysisContext(run),[{id:'s1',accepted:true,reason:'The cited source does not substantiate the holding.',factualStatus:'partial'}]);
+ assert.equal(result.sentences[0].factualStatus,'unverified');
+});
+
+test('corroboration requires an exact retained passage and the assertion being assessed', () => {
+ const external={id:'x1',url:'https://example.com/report',title:'Primary',text:'The creator holds shares.',publishedAt:'2026-04-01T00:00:00Z',retrievedAt:'2026-09-20T00:00:00Z',publicationConfirmed:true,dateBasis:'fixture',sourceClass:'primary' as const,hash:'fixture',query:'fixture',timeMode:'video_date' as const,provider:'fixture'};
+ const check=(quote:string,assertion=sentence.text)=>validateBrief({sentences:[{...sentence,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[external],analysisContext(run),[{id:'s1',accepted:true,reason:'Exact holding independently reported.',factualStatus:'corroborated',externalSupport:[{externalId:'x1',assertion,quote,relationship:'supports',reason:'Same holder and position.'}]}]);
+ assert.equal(check('Fabricated passage').sentences[0].factualStatus,'unverified');
+ assert.equal(check(external.text,'Unrelated assertion').sentences[0].factualStatus,'unverified');
+ assert.equal(check(external.text).sentences[0].factualStatus,'corroborated');
+});
+
+
+test("an old filing cannot be relabelled as a subsequent current update", () => {
+ assert.equal(eligibleExternal({publishedAt:"2026-04-09T00:00:00Z",publicationConfirmed:true},analysisContext(run),"current"),false);
+});
+
+test('supplementary recall also examines non-action valuation and moat qualifications',async()=>{
+ const {actionRecallWindows}=await import('../src/features/youtube-intelligence/research-brief.ts');
+ const r={...run,output:{source:{segments:[{id:'a',text:'Dutch Bros lacks a sustainable moat; valuation only works at a low entry price.',start_seconds:0,end_seconds:8}]},claims:[]}};
+ assert.equal(actionRecallWindows(r).length,1);
 });

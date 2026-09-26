@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import type { ResearchBriefData, AcceptedSentence } from "../research-brief.ts";
 import { prioritiseBriefs } from "../research-brief.ts";
+import { researchReadiness } from "../research-readiness.ts";
+import { factualSupportLabel, thesisRobustnessLabel } from "../research-presentation.ts";
 import type { SourceData } from "../contracts.ts";
 import { useWorkspace } from "./workspace.tsx";
 import { action } from "./api.ts";
@@ -31,6 +33,7 @@ export function ResearchOverview() {
         : b.context.videoPublishedAt,
     sentences: b.sentences.filter((s) => s.timeMode === timeMode),
     status: "completed",
+    readiness: b.readiness,
   }));
   const ranked = prioritiseBriefs(
     rows.filter((b) => b.sentences.length > 0),
@@ -67,6 +70,15 @@ export function ResearchOverview() {
         Ranked by materiality and the publication date of the selected evidence.
         Processing an old video does not make it new information.
       </p>
+      {rows.some((b) => b.readiness.status !== "complete") && (
+        <div className="yi-warning">
+          <strong>Research needs attention</strong>
+          <ul>{rows.filter((b) => b.readiness.status !== "complete").map((b) => (
+            <li key={b.id}><Link href={`/youtube-intelligence/analysis/${b.sourceRunId}#research-brief`}>{b.title || b.videoId}</Link>: {b.readiness.label} · {b.readiness.issues[0]}</li>
+          ))}</ul>
+          <p>Processing completion does not establish research completeness. Briefs with no accepted points are included here.</p>
+        </div>
+      )}
       {ranked.length ? (
         <>
           <div className="yi-brief-feed">
@@ -82,6 +94,7 @@ export function ResearchOverview() {
                   </span>
                   <small>Published {date(b.publishedAt)}</small>
                 </div>
+                <p className={b.readiness.status === "complete" ? "yi-muted" : "yi-warning"}>{b.readiness.label} · {b.readiness.covered}/{b.readiness.total} retained evidence items represented</p>
                 <h3>
                   <Link
                     href={`/youtube-intelligence/analysis/${b.sourceRunId}#research-brief`}
@@ -119,12 +132,10 @@ export function ResearchOverview() {
                           .sort((a, b) => b.materiality - a.materiality)[0]
                           ?.fidelity ?? "No assessed source"}{" "}
                         · Facts:{" "}
-                        {b.sentences
-                          .filter(
-                            (s) => s.horizon === h || s.horizon === "both",
-                          )
-                          .sort((a, b) => b.materiality - a.materiality)[0]
-                          ?.factualStatus ?? "unverified"}
+                        {(() => {
+                          const point = b.sentences.filter((s) => s.horizon === h || s.horizon === "both").sort((a, b) => b.materiality - a.materiality)[0];
+                          return point ? factualSupportLabel(point) : "Unverified";
+                        })()}
                       </small>
                     </div>
                   ))}
@@ -226,6 +237,8 @@ export function ResearchBrief({
         </p>
       </section>
     );
+  const readiness = researchReadiness(brief);
+  const unresolved = readiness.coverage.filter((item) => item.status === "unresolved");
   const current = brief.sentences.find((s) => s.id === selected);
   const cues = source?.segments ?? [];
   const sentence = (s: AcceptedSentence) => (
@@ -234,7 +247,7 @@ export function ResearchBrief({
       className={`yi-research-point ${selected === s.id ? "is-selected" : ""}`}
     >
       <span className="yi-eyebrow">
-        {s.topic} · {s.kind.replaceAll("_", " ")}
+        {s.topic} · {s.kind === "analysis" ? "Analyst inference" : s.kind === "creator_view" ? "Creator view" : s.kind.replaceAll("_", " ")}
       </span>
       <p>{s.text}</p>
       {s.calculationResult && (
@@ -252,13 +265,13 @@ export function ResearchBrief({
       <small>{s.importanceReason}</small>
       <div className="yi-confidence">
         <span>{s.fidelity}</span>
-        <span>Facts: {s.factualStatus}</span>
+        <span>Facts: {factualSupportLabel(s)}</span>
         <span>
           Novelty: {s.novelty?.status.replaceAll("_", " ") ?? "unknown"}
         </span>
         <span>
           Thesis:{" "}
-          {s.robustness === "insufficient" ? "not established" : s.robustness}
+          {thesisRobustnessLabel(s)}
         </span>
       </div>
       <button
@@ -289,6 +302,34 @@ export function ResearchBrief({
           {pending ? "Brief in progress…" : "Refresh as new revision"}
         </button>
       </div>
+      <section aria-label="Research readiness" className={readiness.status === "complete" ? "yi-current-update" : "yi-warning"}>
+        <h3>{readiness.label}</h3>
+        <p>{readiness.covered}/{readiness.total} retained evidence items represented. Coverage measures the retained inventory, not everything said in the video.</p>
+        <p>Readiness is separate from factual confidence. This is research support, not an independently verified investment recommendation.</p>
+        {readiness.issues.length > 0 && <ul>{readiness.issues.slice(0, 3).map((issue, i) => <li key={i}>{issue}</li>)}</ul>}
+        {readiness.issues.length > 3 && <details>
+          <summary>{readiness.issues.length - 3} more research gaps or limitations</summary>
+          <ul>{readiness.issues.slice(3).map((issue, i) => <li key={i}>{issue}</li>)}</ul>
+        </details>}
+        {unresolved.length > 0 && <details>
+          <summary>Inspect {unresolved.length} unresolved evidence item{unresolved.length === 1 ? "" : "s"}</summary>
+          <ul>{unresolved.map((item) => {
+            const evidence = brief.evidence.find((e) => e.id === item.evidenceId);
+            return <li key={item.evidenceId}>
+              <strong>{item.topic}</strong> · {item.evidenceId}
+              {evidence && <details><summary>Inspect omitted evidence</summary>
+                <p>{evidence.summary}</p>
+                {evidence.quotes.map((quote, i) => <div key={i}><blockquote>{quote.text}</blockquote>
+                  {quote.translation && <p>{quote.translation}</p>}
+                  <button className="yi-text-button" disabled={quote.start === null} onClick={() => onSeek(quote.start ?? 0)}>Play source · {quote.start ?? "untimed"} seconds</button>
+                  <small> {quote.startId}–{quote.endId} · {quote.hash ?? "No retained hash"}</small>
+                </div>)}
+              </details>}
+            </li>;
+          })}</ul>
+        </details>}
+        <Link href="/youtube-intelligence/comparison">Inspect retained LeapEdge comparisons →</Link>
+      </section>
       <div className="yi-research-dates">
         <span>
           Video published{" "}
@@ -421,8 +462,22 @@ export function ResearchBrief({
           <p>
             <strong>Independent critique:</strong> {current.auditReason}
           </p>
+          <p><strong>Factual support:</strong> {factualSupportLabel(current)}</p>
+          {!!current.externalSupport?.length && <section aria-label="Assertion support">
+            <h4>Assertion-level external evidence</h4>
+            {current.externalSupport.map((support, i) => <div key={i}>
+              <p><strong>{support.relationship === "supports" ? "Supports" : "Contradicts"}:</strong> {support.assertion}</p>
+              <blockquote>{support.quote}</blockquote>
+              <p>{support.reason}</p>
+              <small>Source {support.externalId} · model-assessed relationship; inspect the retained source below.</small>
+            </div>)}
+          </section>}
           <p>
             <strong>Thesis robustness:</strong>{" "}
+            {thesisRobustnessLabel(current)}
+          </p>
+          <p>
+            <strong>Retained audit explanation (historical assessment):</strong>{" "}
             {current.robustnessReason ?? "Not independently established."}
           </p>
           <p>

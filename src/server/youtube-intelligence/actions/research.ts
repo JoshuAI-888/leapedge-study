@@ -1,5 +1,6 @@
 import { queueResearchBrief, researchBriefs } from "../research-pipeline.ts";
 import { z } from "zod";
+import { researchReadiness } from "../../../features/youtube-intelligence/research-readiness.ts";
 import { seedLists } from "../seed/lists.ts";
 import * as R from "../research-store.ts";
 import { countClaims } from "../repos/claims.ts";
@@ -26,6 +27,7 @@ async function snapshot() {
     researchBriefs: (await researchBriefs()).map(
       ({ evidence, external, retrievalNotes, baseline, ...brief }) => ({
         ...brief,
+        readiness: researchReadiness({ ...brief, evidence }),
         latestExternalPublishedAt:
           external
             .filter((e) =>

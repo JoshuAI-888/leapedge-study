@@ -24,10 +24,14 @@ export function researchOutcome(run: Run) {
       ? "No verified evidence · review required"
       : "No research extracted · completeness unverified";
 }
-export function canDropFailedAudit(run: Run) {
+export function canRetryFailedAudit(run: Run) {
   return (
     run.status === "failed" &&
     run.stage === "critique" &&
-    !/budget|quota|401|403|429|key|auth/i.test(run.error || "")
+    !/budget|quota|401|402|403|429|key|auth|open|unknown|uncertain/i.test(run.error || "") &&
+    Number(run.output.auditRecoveryAttempts ?? 0) < 2
   );
 }
+
+/** Compatibility for older callers; recovery never drops evidence. */
+export const canDropFailedAudit = canRetryFailedAudit;

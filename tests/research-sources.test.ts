@@ -123,7 +123,7 @@ test("opt-in shared retrieval reuses only fresh matching successful evidence wit
     assert.equal(stub.log.length, 8, 'disabled feature always performs a fresh cross-run search');
     const { createHash } = await import('node:crypto');
     const { put, doc } = await import('../src/server/youtube-intelligence/research-store.ts');
-    const cacheKey = createHash('sha256').update(JSON.stringify({ version: 'exa-retrieval.v1', query: input.query, timeMode: input.timeMode, cutoff: input.cutoff, primaryDomains: input.primaryDomains })).digest('hex');
+    const cacheKey = createHash('sha256').update(JSON.stringify({ version: 'exa-retrieval.v2', query: input.query, timeMode: input.timeMode, cutoff: input.cutoff, since: null, primaryDomains: input.primaryDomains })).digest('hex');
     await put('researchRetrievalCache', cacheKey, { ...await doc('researchRetrievalCache', cacheKey), version: 'exa-retrieval.v0' });
     await retrieve();
     assert.equal(stub.log.length, 9, 'old cache formats cannot donate evidence');
@@ -169,8 +169,8 @@ test("cache independently checks donor policy when its pointer targets a differe
     const runA = await create('policy-donor', 'fixture', {}, 'fixture');
     const donor = await retrieveResearchSources({ ...input, runId: runA.id });
     const earlier = { ...input, cutoff: '2026-09-18T00:00:00Z' };
-    const cacheKey = createHash('sha256').update(JSON.stringify({ version: 'exa-retrieval.v1', query: earlier.query, timeMode: earlier.timeMode, cutoff: earlier.cutoff, primaryDomains: earlier.primaryDomains })).digest('hex');
-    await put('researchRetrievalCache', cacheKey, { version: 'exa-retrieval.v1', donorKey: donor.key, donorRunId: runA.id });
+    const cacheKey = createHash('sha256').update(JSON.stringify({ version: 'exa-retrieval.v2', query: earlier.query, timeMode: earlier.timeMode, cutoff: earlier.cutoff, since: null, primaryDomains: earlier.primaryDomains })).digest('hex');
+    await put('researchRetrievalCache', cacheKey, { version: 'exa-retrieval.v2', donorKey: donor.key, donorRunId: runA.id });
     const runB = await create('policy-consumer', 'fixture', {}, 'fixture');
     const result = await retrieveResearchSources({ ...earlier, runId: runB.id });
     assert.equal(stub.log.length, 2, 'wrong-cutoff donor must not substitute for a fresh eligible search');
@@ -212,4 +212,34 @@ test("twenty identical eligible searches avoid nineteen provider charges with un
     t.mock.timers.reset(); stub.restore(); if (old === undefined) delete process.env.EXA_API_KEY; else process.env.EXA_API_KEY = old;
     await db.close();
   }
+});
+
+test('publication labels support SEC and IR date formats without accepting incidental body dates',()=>{
+ for(const text of ['Filing Date\n2026-09-17','Release date: Sept. 17, 2026','Published on 17 September 2026','Published: September 17th, 2026'])
+  assert.equal(confirmedPublication(text,'2026-09-17'),'2026-09-17T23:59:59.999Z');
+ for(const text of ['Quarter ended September 17, 2026','Our source was published on September 17, 2026','Updated September 17, 2026','Published: September 17, 20260'])
+  assert.equal(confirmedPublication(text,'2026-09-17'),null);
+});
+
+test('invalid publication calendar dates are never rolled into a different publication date',()=>{
+ assert.equal(confirmedPublication('Published: February 30, 2026','2026-03-02'),null);
+ assert.equal(confirmedPublication('Filing Date: 2026-02-30','2026-03-02'),null);
+});
+
+test('current search interval and primary domains are enforced in requests and cache identities',async()=>{
+ const db=await freshDatabase();const old=process.env.EXA_API_KEY;process.env.EXA_API_KEY='fixture';
+ const text='Filing Date\n2026-09-20\nRevenue increased.';
+ const stub=stubFetch([{url:'https://api.exa.ai/search',respond:()=>json({costDollars:{total:.007},results:[{url:'https://sec.gov/a',text,publishedDate:'2026-09-20'}]})}]);
+ try{
+  const input={query:'Revenue',timeMode:'current' as const,cutoff:'2026-09-21T00:00:00Z',since:'2026-09-19T00:00:00Z',primaryDomains:['sec.gov'],reuseCache:true};
+  const a=await create('since-a','fixture',{},'fixture');const first=await retrieveResearchSources({...input,runId:a.id});
+  assert.equal(JSON.parse(stub.log[0].body!).startPublishedDate,input.since);
+  assert.deepEqual(JSON.parse(stub.log[0].body!).includeDomains,['sec.gov']);
+  assert.equal(first.sources[0].text,text);
+  assert.equal(first.sources[0].publicationConfirmed,true);
+  const b=await create('since-b','fixture',{},'fixture');await retrieveResearchSources({...input,runId:b.id});assert.equal(stub.log.length,1);
+  const c=await create('since-c','fixture',{},'fixture');await retrieveResearchSources({...input,since:'2026-09-20T00:00:00Z',runId:c.id});assert.equal(stub.log.length,2);
+  await assert.rejects(retrieveResearchSources({...input,since:input.cutoff,runId:c.id}));
+  await assert.rejects(retrieveResearchSources({...input,timeMode:'video_date',runId:c.id}));
+ }finally{stub.restore();if(old===undefined)delete process.env.EXA_API_KEY;else process.env.EXA_API_KEY=old;await db.close();}
 });

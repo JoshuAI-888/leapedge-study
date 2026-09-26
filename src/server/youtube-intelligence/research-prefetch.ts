@@ -101,6 +101,7 @@ export async function prefetchResearch(run: Run): Promise<void> {
 const RetrievalIdentity = z.object({
   runId: z.string().min(1), query: z.string().min(1).max(400),
   timeMode: z.enum(["video_date", "current"]), cutoff: z.iso.datetime(),
+  since: z.iso.datetime().optional(),
   primaryDomains: z.array(z.string().regex(/^[a-z0-9.-]+$/)).max(100),
 });
 /**
