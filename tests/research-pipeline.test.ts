@@ -363,18 +363,38 @@ test('missing company coverage gets one additive repair, preserving the original
  const extra={...sentence,id:'extra',topic:'Credo',evidenceIds:['c2'],text:'Credo condition'};
  const fake=new FakeModelTransport({responses:{
  'critique-research':{json:{verdicts:[{id:'point',accepted:true,reason:'Supported',factualStatus:'unverified'}],coverageFindings:['Credo missing']},usage:{costUsd:.01}},
- 'synthesis-research-coverage':{json:{sentences:[extra],mainTopics:['Credo'],omissions:[]},usage:{costUsd:.02}},
+ 'synthesis-research-coverage':{json:{sentences:[...Array.from({length:17},(_,i)=>({...sentence,id:`echo-${i}`})),extra,{...extra,id:'duplicate-extra'}],mainTopics:['Credo'],omissions:[]},usage:{costUsd:.02}},
  'critique-research-coverage':{json:{verdicts:[{id:'point',accepted:false,reason:'Unsolicited reversal must not remove original',factualStatus:'unverified'},{id:'coverage-1',accepted:true,reason:'Supported',factualStatus:'unverified'}],coverageFindings:[]},usage:{costUsd:.03}},
  }});const restore=injectTransport(fake);
  try{
  const run=await create('coverage-video',settings.models.extraction.id,{task:'research-brief',teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Company and Credo',context:{videoPublishedAt:'2026-01-01T00:00:00Z',recordedAt:null,analysedAt:'2026-09-20T00:00:00Z',language:'en',videoId:'coverage-video',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[evidence('c1','Company'),evidence('c2','Credo')]}},'test');
  run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[sentence],mainTopics:['Company'],omissions:[]};
- await researchStep(run);assert.equal(run.stage,'research-audit');assert.ok(run.output.coverageRepair);assert.equal((run.output.researchDraft as {sentences:unknown[]}).sentences.length,2);
+ await researchStep(run);assert.equal(run.stage,'research-audit');assert.ok(run.output.coverageRepair);assert.equal((run.output.researchDraft as {sentences:unknown[]}).sentences.length,2);assert.equal((run.output.coverageRepair as {excludedAdditions:unknown[]}).excludedAdditions.length,18);
  await researchStep(run);assert.equal(run.status,'completed');
  const [brief]=await researchBriefs();assert.equal(brief.sentences.length,2);assert.equal(brief.sentences[0].text,sentence.text);assert.equal(brief.sentences[0].auditReason,'Supported');assert.equal(brief.modelCostUsd,.06);
  const {docs}=await import('../src/server/youtube-intelligence/research-store.ts');
  const requests=await docs<{stage:string;payload:{draft:{sentences:{id:string}[]}}}>('researchRequest');
  assert.deepEqual(requests.find(r=>r.stage==='critique-research-coverage')!.payload.draft.sentences.map(s=>s.id),['coverage-1']);
+ }finally{restore();await db.close();}
+});
+test('optional repair failure retains accepted research with explicit review status', async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ const evidence=(id:string,instrument:string)=>({id,kind:'research_context',summary:`${instrument} condition`,instrument,ticker:null,stance:'neutral',horizon:null,conditions:['Entry only below stated level'],risks:[],levels:[],trust:'L1',quotes:[{startId:id,endId:id,text:`${instrument} condition`,translation:'',start:0,end:4,hash:null}]});
+ const extra={...sentence,id:'extra',topic:'Credo',evidenceIds:['c2'],text:'Credo condition'};
+ const fake=new FakeModelTransport({responses:{
+ 'critique-research':{json:{verdicts:[{id:'point',accepted:true,reason:'Supported',factualStatus:'unverified'}],coverageFindings:['Credo missing']},usage:{costUsd:.01}},
+ 'synthesis-research-coverage':{json:{invalid:'malformed supplement'},usage:{costUsd:.02}},
+ 'critique-research-coverage':{json:{verdicts:[{id:'point',accepted:false,reason:'Unsolicited reversal must not remove original',factualStatus:'unverified'},{id:'coverage-1',accepted:true,reason:'Supported',factualStatus:'unverified'}],coverageFindings:[]},usage:{costUsd:.03}},
+ }});const restore=injectTransport(fake);
+ try{
+ const run=await create('coverage-video',settings.models.extraction.id,{task:'research-brief',teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Company and Credo',context:{videoPublishedAt:'2026-01-01T00:00:00Z',recordedAt:null,analysedAt:'2026-09-20T00:00:00Z',language:'en',videoId:'coverage-video',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[evidence('c1','Company'),evidence('c2','Credo')]}},'test');
+ run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[sentence],mainTopics:['Company'],omissions:[]};
+ await researchStep(run);assert.equal(run.stage,'research-audit');assert.ok(run.output.coverageRepair);assert.equal((run.output.researchDraft as {sentences:unknown[]}).sentences.length,1);assert.ok(run.output.coverageRepairError);
+ await researchStep(run);assert.equal(run.status,'needs_review');
+ const [brief]=await researchBriefs();assert.equal(brief.sentences.length,1);assert.ok(brief.omissions.some(x=>x.includes('Coverage repair failed')));assert.equal(brief.sentences[0].text,sentence.text);assert.equal(brief.sentences[0].auditReason,'Supported');assert.equal(brief.modelCostUsd,.03);
+ const {docs}=await import('../src/server/youtube-intelligence/research-store.ts');
+ const requests=await docs<{stage:string;payload:{draft:{sentences:{id:string}[]}}}>('researchRequest');
+ assert.equal(requests.some(r=>r.stage==='critique-research-coverage'),false);
  }finally{restore();await db.close();}
 });
 
@@ -386,4 +406,73 @@ test('all-invalid brief is retained for review and never marked completed',async
  await researchStep(run);assert.equal(run.status,'needs_review');assert.equal((run.output.researchReadiness as {status:string}).status,'review_required');
  const [brief]=await researchBriefs();assert.equal(brief.rejected.length,1);assert.equal(brief.sentences.length,0);
  }finally{restore();await db.close();}
+});
+
+for (const mode of ['malformed', 'missing', 'unknown', 'partial'] as const) test(`optional supplemental audit ${mode} preserves original audited research and unresolved additions`, async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();settings.processing.maxRetriesPerStage=0;
+ const evidence=(id:string,instrument:string)=>({id,kind:'research_context',summary:`${instrument} condition`,instrument,ticker:null,stance:'neutral',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:id,endId:id,text:`${instrument} condition`,translation:'',start:0,end:4,hash:null}]});
+ const extra={...sentence,id:'extra',topic:'Credo',evidenceIds:['c2'],text:'Credo condition'};
+ const {TransportError}=await import('../src/server/youtube-intelligence/transport/types.ts');
+ const fake=new FakeModelTransport({responses:{
+  'critique-research':{json:{verdicts:[{id:'point',accepted:true,reason:'Original independently supported',factualStatus:'unverified'}],coverageFindings:['Credo missing']},usage:{costUsd:.01}},
+  'synthesis-research-coverage':{json:{sentences:mode==='partial'?[extra,{...extra,id:'second',text:'Another Credo condition'}]:[extra],mainTopics:['Credo'],omissions:[]},usage:{costUsd:.02}},
+  'critique-research-coverage':mode==='unknown' ? ()=>{throw new TransportError('unknown','Fixture connection interrupted after submission');} : {json:mode==='partial'?{verdicts:[{id:'coverage-1',accepted:true,reason:'Supplement supported',factualStatus:'unverified'}],coverageFindings:[]}:mode==='missing'?{verdicts:[],coverageFindings:[]}:{malformed:true},usage:{costUsd:.03}},
+ }});const restore=injectTransport(fake);
+ try{
+ const run=await create('optional-audit',settings.models.extraction.id,{task:'research-brief',teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Company and Credo',context:{videoPublishedAt:'2026-01-01T00:00:00Z',recordedAt:null,analysedAt:'2026-09-20T00:00:00Z',language:'en',videoId:'optional-audit',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[evidence('c1','Company'),evidence('c2','Credo')]}},'test');
+ run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[sentence],mainTopics:['Company'],omissions:[]};
+ await researchStep(run);await researchStep(run);
+ assert.equal(run.status,'needs_review');assert.equal(run.stage,'complete');
+ const [brief]=await researchBriefs();assert.equal(brief.sentences.length,mode==='partial'?2:1);assert.equal(brief.sentences[0].auditReason,'Original independently supported');
+ assert.equal(brief.rejected.length,1);assert.match(brief.rejected[0].reasons.join(' '),/audit|verdict/i);
+ assert.deepEqual(run.output.unresolvedResearchAuditIds,[mode==='partial'?'coverage-2':'coverage-1']);assert.ok(run.output.coverageRepairError);
+ assert.equal(fake.requestsFor('critique-research-coverage').length,1);assert.equal(fake.requestsFor('critique-research-coverage-repair').length,0);
+ const calls=await db.prepare('SELECT status,amount FROM yi_calls WHERE run_id=$1').all(run.id) as {status:string;amount:number}[];
+ assert.equal(calls.filter(c=>c.status==='unknown').length,mode==='unknown'?1:0);
+ assert.ok(brief.omissions.some(x=>/supplemental audit/i.test(x)));
+ }finally{restore();await db.close();}
+});
+
+test('mandatory original audit failure never publishes unaudited original research',async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ const fake=new FakeModelTransport({responses:{'critique-research':{json:{malformed:true},usage:{costUsd:.01}}}});const restore=injectTransport(fake);
+ try{
+ const run=await create('mandatory-audit',settings.models.extraction.id,{task:'research-brief',teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Company',context:{videoPublishedAt:null,recordedAt:null,analysedAt:'2026-09-20T00:00:00Z',language:'en',videoId:'mandatory-audit',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[{id:'c1',kind:'research_context',summary:'Company holding',instrument:'Company',ticker:null,stance:'hold',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:'a',endId:'a',text:'The creator holds shares.',translation:'',start:0,end:4,hash:null}]}]}},'test');
+ run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[sentence],mainTopics:['Company'],omissions:[]};
+ await assert.rejects(researchStep(run));assert.equal((await researchBriefs()).length,0);assert.equal(run.stage,'research-audit');assert.equal(run.output.researchBriefId,undefined);
+ }finally{restore();await db.close();}
+});
+
+for (const efficient of [false, true]) test(`published brief retains deterministic ambiguous split warning and partial readiness (efficient=${efficient})`, async () => {
+  const db = await freshDatabase();
+  const settings = teamDefaults();
+  const quote = '公司拆股比例是1比3。';
+  const point = { ...sentence, text: 'The company announced a 1-for-3 stock split.', kind: 'reported_fact' };
+  const fake = new FakeModelTransport({ responses: {
+    'critique-research': { json: { verdicts: [{ id: 'point', accepted: true, reason: 'Model accepted the ratio.', factualStatus: 'unverified' }], coverageFindings: [] }, usage: { costUsd: 0.01 } },
+  } });
+  const restore = injectTransport(fake);
+  try {
+    const run = await create('ambiguous-split', settings.models.extraction.id, {
+      task: 'research-brief', efficiencyVersion: efficient ? 'evidence-efficiency.v1' : undefined,
+      teamPreferencesSnapshot: settings,
+      snapshot: { sourceRunId: 'original', title: 'Company split', context: {
+        videoPublishedAt: '2026-01-01T00:00:00Z', recordedAt: null, analysedAt: '2026-09-27T00:00:00Z', language: 'zh', videoId: 'ambiguous-split', temporalPolicy: 'video-date evidence and later updates are separate',
+      }, evidence: [{ id: 'c1', kind: 'research_context', summary: 'Company split', instrument: 'Company', ticker: null, stance: 'neutral', horizon: null, conditions: [], risks: [], levels: [], trust: 'L1', quotes: [{ startId: 'a', endId: 'a', text: quote, translation: '', start: 0, end: 4, hash: null }] }] },
+    }, 'test');
+    run.stage = 'research-audit';
+    run.output.researchBaseline = [];
+    run.output.researchDraft = { sentences: [point], mainTopics: ['Company'], omissions: [] };
+    await researchStep(run);
+    const [brief] = await researchBriefs();
+    assert.ok(brief, 'The audited brief is actually persisted');
+    assert.ok(brief.omissions.some(note => /stock-split ratio direction remains unresolved/i.test(note)), 'Deterministic validation warning survives publication composition');
+    assert.equal((run.output.researchReadiness as { status: string }).status, 'partial');
+    const { researchReadiness } = await import('../src/features/youtube-intelligence/research-readiness.ts');
+    assert.equal(researchReadiness(brief).status, 'partial');
+    assert.equal(brief.sentences[0].text, point.text, 'Ambiguity does not invent corrected prose');
+    assert.equal(brief.evidence[0].quotes[0].text, quote);
+    assert.deepEqual((run.output.researchDraft as { omissions: string[] }).omissions, [], 'Retained model draft stays original');
+    assert.equal(fake.requests.length, 1);
+  } finally { restore(); await db.close(); }
 });

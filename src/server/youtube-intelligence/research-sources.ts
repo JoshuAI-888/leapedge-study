@@ -1,3 +1,4 @@
+import { isVerifiedPrimaryHost, PRIMARY_DOMAIN_REGISTRY_VERSION } from "./primary-domain-registry.ts";
 import { withProviderSlot } from "./provider-limits.ts";
 import { createHash } from "node:crypto";
 import { z } from "zod";
@@ -55,6 +56,7 @@ export const RetrievalRecordSchema = z.object({
   note: z.string(),
   requestedAt: z.iso.datetime(),
   completedAt: z.iso.datetime().optional(),
+  ownershipRegistryVersion: z.string().optional(),
   cacheIdentity: z.object({
     version: z.enum(["exa-retrieval.v1", "exa-retrieval.v2"]),
     key: z.string().regex(/^[a-f0-9]{64}$/),
@@ -72,6 +74,12 @@ export const RetrievalRecordSchema = z.object({
   }).optional(),
 });
 export type RetrievalRecord = z.infer<typeof RetrievalRecordSchema>;
+/** Recheck ownership on replay without refetching or altering retained paid records. */
+export function reclassifyRetrievalOwnership(record: RetrievalRecord, domains: string[]): RetrievalRecord {
+  return { ...record, ownershipRegistryVersion: PRIMARY_DOMAIN_REGISTRY_VERSION,
+    sources: record.sources.map(source => ({ ...source, sourceClass: isVerifiedPrimaryHost(new URL(source.url).hostname, domains) ? "primary" : "unknown" })) };
+}
+
 const RetrievalInput = z.object({
   runId: z.string().min(1),
   query: z.string().min(1).max(400),
@@ -96,13 +104,14 @@ export async function retrieveResearchSources(input: {
   const { reuseCache, ...identity } = input;
   const key = createHash("sha256").update(JSON.stringify(identity)).digest("hex");
   const cacheKey = createHash("sha256").update(JSON.stringify({
-    version: "exa-retrieval.v2", query: input.query, timeMode: input.timeMode,
+    version: "exa-retrieval.v2", registryVersion: PRIMARY_DOMAIN_REGISTRY_VERSION, query: input.query, timeMode: input.timeMode,
     cutoff: input.cutoff, since: input.since ?? null, primaryDomains: [...new Set(input.primaryDomains)].sort(),
   })).digest("hex");
   const retained = await doc<RetrievalRecord>("researchRetrieval", key);
-  if (retained) return RetrievalRecordSchema.parse(retained);
+  if (retained) return reclassifyRetrievalOwnership(RetrievalRecordSchema.parse(retained), input.primaryDomains);
   const requestedAt = new Date().toISOString();
   const base = {
+    ownershipRegistryVersion: PRIMARY_DOMAIN_REGISTRY_VERSION,
     key,
     query: input.query,
     timeMode: input.timeMode,
@@ -201,9 +210,7 @@ export async function retrieveResearchSources(input: {
             r.publishedDate ?? null,
           );
           const host = new URL(r.url).hostname.toLowerCase();
-          const primary = input.primaryDomains.some(
-            (d) => host === d || host.endsWith("." + d),
-          );
+          const primary = isVerifiedPrimaryHost(host, input.primaryDomains);
           return ExternalEvidence.parse({
             id: `web-${key.slice(0, 10)}-${index}`,
             url: r.url,
@@ -234,7 +241,7 @@ export async function retrieveResearchSources(input: {
         sources,
         costUsd: data.costDollars?.total ?? null,
         ...(data.requestId ? { requestId: data.requestId } : {}),
-        note: "Search metadata alone does not establish publication time or factual corroboration. " + (input.primaryDomains.length ? "Search limited to the configured primary-domain registry; unlisted issuers and sources may be missed. This is not exhaustive verification." : "No primary-domain registry entries supplied; returned hosts are unverified and are not promoted to primary sources."),
+        note: "Search metadata alone does not establish publication time or factual corroboration. " + (input.primaryDomains.length ? "Search limited to the verified publisher-domain registry (exact approved hosts are classified primary); unlisted issuers and sources may be missed. This is not exhaustive verification." : "No primary-domain registry entries supplied; returned hosts are unverified and are not promoted to primary sources."),
         completedAt: new Date().toISOString(),
       };
       await settle(reservation, record.costUsd, {

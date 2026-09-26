@@ -670,6 +670,15 @@ function materializeMentions(
   run.output.mentions = mentions;
   if (rejected.length) run.output.rejectedMentions = rejected;
 }
+/** A span locates a mention, but only exact content may reuse an audit. */
+function mentionKey(mention: MentionData) {
+  return `${mention.ticker ?? mention.instrument_as_spoken}:${mention.source_span.start_id}:${mention.source_span.end_id}`;
+}
+function mentionAuditAccepted(run: Run, mention: MentionData) {
+  const key = mentionKey(mention);
+  return (run.output.mentionChecks as Record<string, boolean> | undefined)?.[key] === true &&
+    (run.output.mentionAuditIdentities as Record<string, string> | undefined)?.[key] === modelCallFingerprint(mention);
+}
 /** How long an explicit context cache is held: one run's critique, not a day of storage. */
 export const CONTEXT_CACHE_TTL_SECONDS = 1800;
 /** What the run records about the cache it holds, so a later step can reuse or release it. */
@@ -1375,9 +1384,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
     // the translation stage uses for its spans.
     const mentions = ((run.output.mentions || []) as MentionData[]).map(
       (mention, index) => ({ id: `m${index + 1}`, mention }),
-    ).filter(({ mention }) => (run.output.mentionChecks as Record<string, boolean> | undefined)?.[
-      `${mention.ticker ?? mention.instrument_as_spoken}:${mention.source_span.start_id}:${mention.source_span.end_id}`
-    ] !== true);
+    ).filter(({ mention }) => !mentionAuditAccepted(run, mention));
     if (!pending.length && !mentions.length) {
       run.stage = "publish";
       return;
@@ -1427,7 +1434,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       | undefined;
     const answered = new Map<string, CritiqueVerdictData>();
     const mentionAuditVerdicts = (run.output.mentionAuditVerdicts ?? {}) as Record<string, CritiqueVerdictData>;
-    const mentionIdentity = (mention: MentionData) => `${mention.ticker ?? mention.instrument_as_spoken}:${mention.source_span.start_id}:${mention.source_span.end_id}`;
+    const mentionIdentity = (mention: MentionData) => modelCallFingerprint(mention);
     for (const { id, mention } of mentions) {
       const retained = mentionAuditVerdicts[mentionIdentity(mention)];
       if (retained) answered.set(id, { ...retained, id });
@@ -1544,9 +1551,11 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       }));
       for (const { id, mention } of mentions) {
         const verdict = answered.get(id);
-        mentionChecks[
-          `${mention.ticker ?? mention.instrument_as_spoken}:${mention.source_span.start_id}:${mention.source_span.end_id}`
-        ] = verdict?.verdict === "accept";
+        mentionChecks[mentionKey(mention)] = verdict?.verdict === "accept";
+        run.output.mentionAuditIdentities = {
+          ...((run.output.mentionAuditIdentities ?? {}) as Record<string, string>),
+          [mentionKey(mention)]: modelCallFingerprint(mention),
+        };
         if (!verdict) missing.push(id);
         if (verdict?.cross_claim_notes)
           notes.push({ id, note: verdict.cross_claim_notes });
@@ -1700,6 +1709,23 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         run.output.claims = [...existing, ...added];
         run.output.keyPoints = [...context, ...addedContext];
         const mentions = (run.output.mentions ?? []) as MentionData[];
+        const upsertMention = (mention: MentionData) => {
+          const key = mentionKey(mention);
+          const prior = mentions.findIndex(m => mentionKey(m) === key);
+          if (prior >= 0 && modelCallFingerprint(mentions[prior]) === modelCallFingerprint(mention)) return;
+          if (prior >= 0) mentions[prior] = mention;
+          else mentions.push(mention);
+          // Existing consumers use the coarse span key, so explicitly invalidate
+          // it too when recall changes the underlying assertion.
+          run.output.mentionChecks = { ...((run.output.mentionChecks ?? {}) as Record<string, boolean>), [key]: false };
+        };
+        // Materialize non-call recall evidence without inheriting a claim merely
+        // because it happens to name the same ticker elsewhere in the video.
+        const recalled = { ...run, output: { claims: [] } } as Run;
+        materializeMentions(recalled, [{ mentions: pointed.mentions }], source);
+        for (const mention of (recalled.output.mentions ?? []) as MentionData[]) upsertMention(mention);
+        if ((recalled.output.rejectedMentions as unknown[] | undefined)?.length)
+          run.output.rejectedMentions = [...((run.output.rejectedMentions ?? []) as unknown[]), ...(recalled.output.rejectedMentions as unknown[])];
         for (const c of added) {
           const identity = resolveListing(
             c.claim.instrument_as_spoken,
@@ -1724,14 +1750,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
               is_call: true,
               claim_id: c.id,
             });
-            const prior = mentions.findIndex(
-              (m) =>
-                m.instrument_as_spoken === mention.instrument_as_spoken &&
-                m.source_span.start_id === span.start_id &&
-                m.source_span.end_id === span.end_id,
-            );
-            if (prior >= 0) mentions[prior] = mention;
-            else mentions.push(mention);
+            upsertMention(mention);
           }
         }
         run.output.mentions = mentions;
@@ -1750,7 +1769,8 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       const pending = [
         ...((run.output.claims ?? []) as CheckedClaim[]),
         ...((run.output.keyPoints ?? []) as CheckedClaim[]),
-      ].some((c) => !c.audit && !c.reasons.length);
+      ].some((c) => !c.audit && !c.reasons.length) ||
+        ((run.output.mentions ?? []) as MentionData[]).some(mention => !mentionAuditAccepted(run, mention));
       if (pending) {
         run.stage = pendingTranslations(run).targets.length
           ? "translate"

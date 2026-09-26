@@ -5,7 +5,7 @@ import { AnalysisContext, EvidenceRecord, analysisContext } from "../../features
 import { TeamPreferences, type TeamPreferencesData } from "../../features/youtube-intelligence/settings.ts";
 import { doc, put, putIfAbsent, runTeamPreferences } from "./research-store.ts";
 import { researchStep } from "./research-pipeline.ts";
-import { RetrievalRecordSchema } from "./research-sources.ts";
+import { RetrievalRecordSchema, reclassifyRetrievalOwnership } from "./research-sources.ts";
 
 import { researchEvidenceInventory } from "./research-evidence-inventory.ts";
 
@@ -114,7 +114,7 @@ export async function retainedPrefetchRetrieval(input: z.infer<typeof RetrievalI
   const key = createHash("sha256").update(JSON.stringify(identity)).digest("hex");
   const raw = await doc("researchRetrieval", key);
   if (!raw) return null;
-  const donor = RetrievalRecordSchema.parse(raw);
+  const donor = reclassifyRetrievalOwnership(RetrievalRecordSchema.parse(raw), identity.primaryDomains);
   if (donor.state === "complete") {
     const age = donor.completedAt ? Date.now() - Date.parse(donor.completedAt) : Infinity;
     const ttl = identity.timeMode === "current" ? 60 * 60 * 1000 : 24 * 60 * 60 * 1000;

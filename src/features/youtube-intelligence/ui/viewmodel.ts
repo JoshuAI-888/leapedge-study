@@ -8,7 +8,7 @@ export const trustNames: Record<string, string> = {
 export function processingState(status: string) {
   return (
     (
-      { queued: "Queued", running: "Analysing", completed: "Ready" } as Record<
+      { queued: "Queued", running: "Analysing", completed: "Processing complete" } as Record<
         string,
         string
       >

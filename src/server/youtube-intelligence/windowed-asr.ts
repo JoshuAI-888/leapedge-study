@@ -71,6 +71,15 @@ export function parseWindow(value: unknown, window: Window, index: number) {
       throw Error(
         "ASR returned invalid absolute window timestamps; no automatic timing repair.",
       );
+    // A syntactically in-bounds timestamp can still pack a whole paragraph
+    // into the clip's final second. Do not stretch or infer corrected timings.
+    const englishWords = s.text.match(/\b[A-Za-z]+(?:['’-][A-Za-z]+)*\b/g) ?? [];
+    const explicitEnglish = result.language?.toLowerCase().startsWith("en");
+    const unknownLatin = !result.language && !/[^\x00-\x7F]/.test(s.text);
+    if ((explicitEnglish || unknownLatin) && englishWords.length >= 20 &&
+        englishWords.length / (s.end_seconds - s.start_seconds) > 12) {
+      throw Error("ASR returned implausible English speech density; no automatic timing repair.");
+    }
     priorStart = s.start_seconds;
   }
   return {
@@ -243,7 +252,7 @@ export async function windowedAsrStep(
     } catch (error) {
       if (
         error instanceof Error &&
-        /invalid absolute window timestamps|response was incomplete|not valid JSON/.test(
+        /invalid absolute window timestamps|implausible English speech density|response was incomplete|not valid JSON/.test(
           error.message,
         ) &&
         next.endSeconds - next.startSeconds > 30
@@ -262,6 +271,12 @@ export async function windowedAsrStep(
           ...((run.output.asrRecovery ?? []) as unknown[]),
           { window: next, reason: error.message },
         ];
+        return;
+      }
+      if (error instanceof Error && /implausible English speech density/.test(error.message)) {
+        run.status = "needs_review";
+        run.error = error.message + " Bounded clip remains unreliable; inspect retained paid response.";
+        run.output.asrRecovery = [...((run.output.asrRecovery ?? []) as unknown[]), {window:next,reason:run.error}];
         return;
       }
       throw error;

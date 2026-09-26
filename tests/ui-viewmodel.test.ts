@@ -9,7 +9,7 @@ import {
 test("public processing status hides stages and does not call failures ready", () => {
   assert.equal(processingState("queued"), "Queued");
   assert.equal(processingState("running"), "Analysing");
-  assert.equal(processingState("completed"), "Ready");
+  assert.equal(processingState("completed"), "Processing complete");
   assert.equal(processingState("failed"), "Needs review");
 });
 test("claim filters apply trust before ranking, retain neutral stances, and search Chinese", () => {

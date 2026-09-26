@@ -451,3 +451,37 @@ test('a supported clause cannot hide a contradictory material clause behind a pa
  const result=validateBrief({sentences:[{...sentence,text,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[external],analysisContext(run),[{id:'s1',accepted:true,reason:'Mixed support',factualStatus:'partial',externalSupport:[{externalId:'x1',assertion:'Revenue rose',quote:'Revenue rose.',relationship:'supports',reason:'Same period.'},{externalId:'x1',assertion:'margins expanded',quote:'Margins declined.',relationship:'contradicts',reason:'Same period and margin basis.'}]}]);
  assert.equal(result.sentences[0].factualStatus,'disputed');assert.equal(result.sentences[0].robustness,'fragile');
 });
+
+test('Chinese old-to-new share count cannot be published with a reversed stock-split ratio', () => {
+ const evidence=evidenceInventory(run);evidence[0].quotes[0].text='公司宣布1股拆3股，下月实施。';
+ const result=validateBrief({sentences:[{...sentence,text:'The company announced a 1-for-3 stock split.'}],mainTopics:['Company'],omissions:[]},evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'Model accepted',factualStatus:'unverified'}]);
+ assert.equal(result.sentences.length,0);assert.equal(result.rejected[0].sentence.text,'The company announced a 1-for-3 stock split.');assert.match(result.rejected[0].reasons.join(' '),/stock.split.*direction/i);assert.equal(evidence[0].quotes[0].text,'公司宣布1股拆3股，下月实施。');
+});
+test('matching Chinese and explicit English stock-split directions remain reviewable', () => {
+ for(const quote of ['公司宣布1股拆3股。','The company announced a three-for-one stock split.','Each existing share will be split into three new shares.']){
+  const evidence=evidenceInventory(run);evidence[0].quotes[0].text=quote;
+  const result=validateBrief({sentences:[{...sentence,text:'The company announced a 3-for-1 stock split.'}],mainTopics:['Company'],omissions:[]},evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'Model accepted',factualStatus:'unverified'}]);
+  assert.equal(result.sentences.length,1,quote);
+  assert.deepEqual(result.omissions,[],quote);
+  const reversed=validateBrief({sentences:[{...sentence,text:'The company announced a 1-for-3 stock split.'}],mainTopics:['Company'],omissions:[]},evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'Model accepted',factualStatus:'unverified'}]);
+  assert.equal(reversed.sentences.length,0,quote);
+ }
+});
+test('unambiguous English reverse split rejects a forward split and ambiguity does not invent a ratio', () => {
+ const check=(quote:string,text:string)=>{const evidence=evidenceInventory(run);evidence[0].quotes[0].text=quote;return validateBrief({sentences:[{...sentence,text}],mainTopics:['Company'],omissions:[]},evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'Model accepted',factualStatus:'unverified'}]);};
+ assert.equal(check('The company announced a 1-for-3 reverse stock split.','The company announced a 3-for-1 stock split.').sentences.length,0);
+ const ambiguous=check('公司拆股比例是1比3。','The company announced a 1-for-3 stock split.');
+ assert.equal(ambiguous.sentences.length,1);assert.ok(ambiguous.omissions.some(note=>/direction.*unresolved/i.test(note)));assert.ok(!ambiguous.omissions.some(note=>note.includes('3-for-1')));
+ const multiple=check('A announced a 3-for-1 stock split; B announced a 1-for-3 stock split.','The company announced a 3-for-1 stock split.');
+ assert.equal(multiple.sentences.length,1);assert.ok(multiple.omissions.some(note=>/direction.*unresolved/i.test(note)));
+});
+test('explicit percentage-point source units cannot become percent in a typed fact', () => {
+ const evidence=evidenceInventory(run);evidence[0].quotes[0].text='利润率提高了1个百分点。';
+ const result=validateBrief({sentences:[{...sentence,text:'Margin increased 1 percent.',financialFacts:[{label:'Margin change',value:1,currency:null,unit:'percent',scale:'ones',period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote:'利润率提高了1个百分点。'}]}],mainTopics:['Company'],omissions:[]},evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'Model accepted',factualStatus:'unverified'}]);
+ assert.equal(result.sentences.length,0);assert.match(result.rejected[0].reasons.join(' '),/percentage.points.*percent/i);
+});
+test('a quote containing both percent and percentage-point facts does not invent a unit conflict', () => {
+ const evidence=evidenceInventory(run);evidence[0].quotes[0].text='利润率为10%，提高了1个百分点。';
+ const result=validateBrief({sentences:[{...sentence,text:'Margin is 10 percent.',financialFacts:[{label:'Margin',value:10,currency:null,unit:'percent',scale:'ones',period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote:evidence[0].quotes[0].text}]}],mainTopics:['Company'],omissions:[]},evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'Model accepted',factualStatus:'unverified'}]);
+ assert.equal(result.sentences.length,1);
+});

@@ -710,3 +710,18 @@ test("explicit missing-verdict retry asks only unresolved evidence under a separ
   assert.equal(fake.requestsFor("critique").length, 1);
   assert.deepEqual((run.output.critique as { missingVerdicts: string[] }).missingVerdicts, []);
 });
+
+test('a changed mention at the same instrument and source span must receive a fresh audit', async () => {
+  const { step } = await import('../src/server/youtube-intelligence/pipeline.ts');
+  const run = await critiqueRun({ mentions: [mention(4)] });
+  const fake = new FakeModelTransport({ responses: { critique: critic() } });
+  await withFake(fake, () => step(run));
+  assert.equal(fake.requestsFor('critique').length, 1);
+  const changed = (run.output.mentions as MentionData[])[0];
+  changed.stance = 'avoid'; changed.sentiment = 'bearish'; changed.rationale_en = 'Changed material interpretation requires a new independent verdict.';
+  run.stage = 'critique';
+  await withFake(fake, () => step(run));
+  assert.equal(fake.requestsFor('critique').length, 2, 'coarse accepted span must not authorize changed content');
+  const request = payloadOf(fake.requestsFor('critique')[1]);
+  assert.equal(request.mentions[0].mention.stance, 'avoid');
+});

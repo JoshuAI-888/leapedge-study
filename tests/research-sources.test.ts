@@ -123,7 +123,8 @@ test("opt-in shared retrieval reuses only fresh matching successful evidence wit
     assert.equal(stub.log.length, 8, 'disabled feature always performs a fresh cross-run search');
     const { createHash } = await import('node:crypto');
     const { put, doc } = await import('../src/server/youtube-intelligence/research-store.ts');
-    const cacheKey = createHash('sha256').update(JSON.stringify({ version: 'exa-retrieval.v2', query: input.query, timeMode: input.timeMode, cutoff: input.cutoff, since: null, primaryDomains: input.primaryDomains })).digest('hex');
+    const { PRIMARY_DOMAIN_REGISTRY_VERSION } = await import('../src/server/youtube-intelligence/primary-domain-registry.ts');
+    const cacheKey = createHash('sha256').update(JSON.stringify({ version: 'exa-retrieval.v2', registryVersion: PRIMARY_DOMAIN_REGISTRY_VERSION, query: input.query, timeMode: input.timeMode, cutoff: input.cutoff, since: null, primaryDomains: input.primaryDomains })).digest('hex');
     await put('researchRetrievalCache', cacheKey, { ...await doc('researchRetrievalCache', cacheKey), version: 'exa-retrieval.v0' });
     await retrieve();
     assert.equal(stub.log.length, 9, 'old cache formats cannot donate evidence');

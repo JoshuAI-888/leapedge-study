@@ -31,3 +31,17 @@ test('material valuation and moat context is recovered as an unaudited key point
   assert.deepEqual(run.output.claims,[]);
  } finally { restore(); await db.close(); }
 });
+
+test('a non-call mention-only recall survives and returns to independent critique', async () => {
+ const db = await freshDatabase();
+ const fake = new FakeModelTransport({responses:{'synthesis-recall-0':{json:{claims:[],key_points:[],mentions:[{instrument_as_spoken:'Dutch Bros',ticker:null,market:'unknown',stance:'watch',sentiment:'neutral',rationale_en:'The creator watches valuation but holds no position.',ranges:[{start_id:'a',end_id:'a'}]}]},usage:{costUsd:0.001}}}});
+ const restore=injectTransport(fake);
+ try {
+  const settings=teamDefaults();const run=await create('mention-recall',settings.models.extraction.id,{promptSnapshot:await prompt('evidence-first.web.v8'),teamPreferencesSnapshot:settings},'evidence-first.web.v8');
+  run.stage='publish';run.output={source:Source.parse({language:'en',segments:[{id:'a',text:'Dutch Bros valuation is worth watching, but I have no position.',start_seconds:0,end_seconds:10}]}),claims:[],keyPoints:[],mentions:[]};
+  await step(run);
+  assert.equal((run.output.mentions as unknown[]).length,1);
+  assert.notEqual(run.status,'completed');assert.ok(['translate','critique'].includes(run.stage));
+  assert.equal((run.output.mentions as {is_call:boolean}[])[0].is_call,false);
+ }finally{restore();await db.close();}
+});

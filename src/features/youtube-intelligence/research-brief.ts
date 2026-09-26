@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { stockSplitDirectionCheck, explicitPercentagePointConflict } from "./source-quantity-checks.ts";
 import type { Run, CheckedClaim, SourceData } from "./contracts.ts";
 export const RESEARCH_VERSION = "research-brief.v1";
 export const AnalysisContext = z.object({
@@ -354,6 +355,16 @@ export function validateBrief(
       );
     if (sentence.timeMode === "current" && !sentence.externalIds.length)
       reasons.push("A current update requires dated external evidence.");
+    if (sentence.timeMode === "video_date") {
+      const ratio = stockSplitDirectionCheck(sentence.text, sentence.evidenceIds.flatMap(id =>
+        (byId.get(id)?.quotes ?? []).map(quote => quote.text)));
+      if (ratio.conflict)
+        reasons.push("Stock-split ratio direction conflicts with the explicit original share counts. The original evidence and rejected sentence are retained; resolve new shares versus old shares before publication.");
+      if (ratio.unresolved)
+        draft.omissions.push(`Stock-split ratio direction remains unresolved for ${sentence.id}: the original evidence is ambiguous, missing an explicit direction, or contains multiple ratios. No corrected ratio has been inferred.`);
+    }
+    if (sentence.financialFacts.some(f => f.unit === "percent" && explicitPercentagePointConflict(f.value, f.quote)))
+      reasons.push("The cited source uses percentage points, but the typed fact uses percent. Resolve the unit distinction before publication; no corrected value has been inferred.");
     if (sentence.calculation?.expression.kind === "short_put_breakeven") {
       const computed = financialCheck(sentence.calculation.expression).value;
       // Model prose can disagree with its structured calculation even when
