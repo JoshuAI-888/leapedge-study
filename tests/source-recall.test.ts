@@ -41,7 +41,7 @@ test('proposition accounting rejects broad-theme substitution, rejected IDs and 
 });
 
 test('retained recall checkpoint resumes original window plan without selecting or paying again for processed windows',async()=>{
- const db=await freshDatabase();const settings=teamDefaults();const fake=new FakeModelTransport({responses:{'synthesis-recall-1':{json:{claims:[],key_points:[],mentions:[],reconciliation:{reviewedSourceIds:['b'],propositions:[{summary:'Closing credits',sourceIds:['b'],disposition:'not_material',existingIds:[],candidateRefs:[],reason:'Closing credits contain no research information.'}],limitations:[]}},usage:{costUsd:.001}}}});const restore=injectTransport(fake);
+ const db=await freshDatabase();const settings=teamDefaults();const fake=new FakeModelTransport({responses:{'synthesis-recall-1':{json:{claims:[],key_points:[],mentions:[],reconciliation:{reviewedSourceIds:['b'],propositions:[{summary:'Closing credits',sourceIds:['b'],disposition:'not_material',exclusionBasis:'nonfinancial_filler',existingIds:[],candidateRefs:[],reason:'Closing credits contain no research information.'}],limitations:[]}},usage:{costUsd:.001}}}});const restore=injectTransport(fake);
  try{
  const run=await create('recall-resume',settings.models.extraction.id,{promptSnapshot:await prompt('evidence-first.web.v8'),teamPreferencesSnapshot:settings},'evidence-first.web.v8');run.stage='publish';
  const source=Source.parse({source_kind:'imported_transcript',language:'en',segments:[{id:'a',text:'Opening credits',start_seconds:0,end_seconds:2},{id:'b',text:'Closing credits',start_seconds:200,end_seconds:202}]});
@@ -56,5 +56,50 @@ test('reconciliation cannot count an addition discarded by reference normalizati
  try{
  const run=await create('recall-normalization',settings.models.extraction.id,{promptSnapshot:await prompt('evidence-first.web.v8'),teamPreferencesSnapshot:settings},'evidence-first.web.v8');run.stage='publish';run.output={source:Source.parse({source_kind:'imported_transcript',language:'en',segments:[{id:'a',text:'The policy forecast is 4.1%.',start_seconds:0,end_seconds:3}]}),claims:[],keyPoints:[],mentions:[]};
  await step(run);assert.equal((run.output.recallCoverage as {assessment:string}).assessment,'incomplete');assert.match(JSON.stringify(run.output.recallCandidates),/not retained as a structurally valid candidate/);assert.equal((run.output.keyPoints as unknown[]).length,0);assert.equal(fake.requests.length,1);
+ }finally{restore();await db.close();}
+});
+
+test('descriptive macro data and policy forecasts cannot be excluded for lacking a trading stance',()=>{
+ const source=Source.parse({source_kind:'imported_transcript',language:'zh',segments:[{id:'cpi',text:'美国8月CPI环比上涨0.4%',start_seconds:177,end_seconds:181},{id:'fed',text:'最新点阵图对应年内还要加息25个基点啊，明年的中位数也在4.1%左右。',start_seconds:230,end_seconds:237}]});
+ const run={output:{source,claims:[],keyPoints:[]}} as unknown as Run;
+ for(const [id,summary,reason] of [['cpi','Inflation data supports the inflation backdrop.','Descriptive macro economic release data without establishing an instrument stance.'],['fed','Fed policy projections show another25bps and around4.1%.','Standard macro commentary explaining Federal Reserve rate mechanics and expectations.']]){
+  const p={summary,sourceIds:[id],disposition:'not_material',exclusionBasis:'nonfinancial_filler',existingIds:[],candidateRefs:[],reason};
+  const review=assessRecallReconciliation({reviewedSourceIds:[id],propositions:[p],limitations:[]},source.segments.filter(s=>s.id===id),run,{claims:0,key_points:0,mentions:0});assert.equal(review.assessment,'incomplete');assert.match(review.warnings.join(' '),/exclusion|materiality/i);
+ }
+});
+
+test('research key points retain reported rates and prices without inventing trade-level roles',async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ const point={thesis_en:'BOJ policy rate is1.25%; oil remains104 per barrel and a hypothetical bond yields5%.',instrument_as_spoken:null,ticker:null,ticker_explicit:false,stance:'neutral',horizon_en:null,conditions_en:['Higher yields can compress valuations'],creator_conviction:'unspecified',risks_en:[],levels:[{kind:'entry',value_original:'1.25'},{kind:'resistance',value_original:'104'},{kind:'support',value_original:'100'},{kind:'entry',value_original:'5%'}],evidence_ranges:[{start_id:'a',end_id:'a'}]};
+ const raw={claims:[],key_points:[point],mentions:[]};const original=JSON.stringify(raw);const fake=new FakeModelTransport({responses:{'synthesis-recall-0':{json:raw,usage:{costUsd:.001}}}});const restore=injectTransport(fake);
+ try{
+ const run=await create('context-levels',settings.models.extraction.id,{promptSnapshot:await prompt('evidence-first.web.v8'),teamPreferencesSnapshot:settings},'evidence-first.web.v8');run.stage='publish';run.output={source:Source.parse({source_kind:'imported_transcript',language:'en',segments:[{id:'a',text:'The policy rate is1.25%, oil is104 per barrel above100, and suppose a bond yields5%.',start_seconds:0,end_seconds:8}]}),claims:[],keyPoints:[],mentions:[]};
+ await step(run);const points=run.output.keyPoints as {passed:boolean;claim:{thesis_en:string;conditions_en:string[];levels:unknown[];evidence:{quote_original:string}[]}}[];assert.equal(points.length,1);assert.deepEqual(points[0].claim.levels,[]);assert.equal(points[0].claim.thesis_en,point.thesis_en);assert.deepEqual(points[0].claim.conditions_en,point.conditions_en);assert.match(points[0].claim.evidence[0].quote_original,/1.25%/);assert.equal(points[0].passed,false);assert.equal(JSON.stringify(raw),original);
+ const diagnostics=run.output.contextLevelNormalizations as {original:{levels:unknown[]}}[];assert.equal(diagnostics[0].original.levels.length,4);assert.equal(run.stage,'critique');
+ }finally{restore();await db.close();}
+});
+
+test('exclusions require explicit valid basis while key-point contract accepts omitted levels and preserves claims',async()=>{
+ const {parsePointerExtraction,normalizeResearchContextLevels,RESEARCH_CONTEXT_POLICY}=await import('../src/server/youtube-intelligence/schemas/extraction.ts');
+ const item={thesis_en:'Policy guidance affects discount rates.',instrument_as_spoken:null,ticker:null,ticker_explicit:false,stance:'neutral',horizon_en:null,conditions_en:['Discount rate changes'],creator_conviction:'unspecified',risks_en:[],evidence_ranges:[{start_id:'a',end_id:'a'}]};
+ const extraction=parsePointerExtraction({claims:[{...item,stance:'long',levels:[{kind:'entry',value_original:'100'}]}],key_points:[item],mentions:[]});assert.deepEqual(extraction.key_points[0].levels,[]);assert.equal(normalizeResearchContextLevels(extraction).extraction.claims[0].levels[0].kind,'entry');assert.match(RESEARCH_CONTEXT_POLICY,/claims, key_points and mentions/);assert.match(RESEARCH_CONTEXT_POLICY,/require NO trading stance/);
+ const source=Source.parse({source_kind:'imported_transcript',language:'en',segments:[{id:'a',text:'Subscribe to the channel.',start_seconds:0,end_seconds:2}]});const run={output:{source,claims:[],keyPoints:[]}} as unknown as Run;const p={summary:'Subscription reminder',sourceIds:['a'],disposition:'not_material',existingIds:[],candidateRefs:[],reason:'Channel subscription administration.'};
+ for(const exclusionBasis of [undefined,'standard_macro'])assert.equal(assessRecallReconciliation({reviewedSourceIds:['a'],propositions:[{...p,exclusionBasis}],limitations:[]},source.segments,run,{claims:0,key_points:0,mentions:0}).assessment,'incomplete');
+ assert.equal(assessRecallReconciliation({reviewedSourceIds:['a'],propositions:[{...p,exclusionBasis:'channel_administration'}],limitations:[]},source.segments,run,{claims:0,key_points:0,mentions:0}).assessment,'accounted');
+});
+
+for(const alreadyChecked of [false,true])test(`legacy recall policy checkpoint remains incomplete without repeating paid work (checked=${alreadyChecked})`,async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();const fake=new FakeModelTransport({responses:{}});const restore=injectTransport(fake);
+ try{
+ const run=await create('old-recall-policy',settings.models.extraction.id,{promptSnapshot:await prompt('evidence-first.web.v8'),teamPreferencesSnapshot:settings},'evidence-first.web.v8');run.stage='publish';const source=Source.parse({source_kind:'imported_transcript',language:'en',segments:[{id:'a',text:'Standard macro data.',start_seconds:0,end_seconds:3}]});
+ run.output={source,claims:[],keyPoints:[],mentions:[],recallPlanVersion:'source-recall.full-chronological.v1',recallPlan:[source.segments],recallIndex:1,recallChecked:alreadyChecked,recallCandidates:[{index:0,sourceIds:['a'],assessment:'accounted',addedIds:[]}],recallCoverage:{assessment:'accounted'}};
+ await step(run);assert.equal(fake.requests.length,0);assert.equal((run.output.recallCoverage as {assessment:string}).assessment,'incomplete');assert.match(JSON.stringify(run.output.limitations),/policy.*legacy|legacy.*policy/i);
+ }finally{restore();await db.close();}
+});
+for(const levels of [undefined,[{kind:'entry',value_original:'5%'}]])test(`legacy nonpointer research context accepts omitted levels and preserves any removed proposals (${levels?'populated':'omitted'})`,async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();const point={thesis_en:'A hypothetical bond yield illustrates valuation discounting.',instrument_as_spoken:null,ticker:null,ticker_explicit:false,stance:'neutral',horizon_en:null,conditions_en:['Higher discount rate'],creator_conviction:'unspecified',risks_en:[],...(levels?{levels}:{}),evidence:[{segment_id:'a',quote_original:'Suppose a bond yields5%.',quote_translation_en:'Suppose a bond yields5%.'}]};const raw={claims:[],key_points:[point]};const original=JSON.stringify(raw);const fake=new FakeModelTransport({responses:{synthesis:{json:raw,usage:{costUsd:.001}}}});const restore=injectTransport(fake);
+ try{
+ const run=await create('legacy-context',settings.models.extraction.id,{promptSnapshot:{...(await prompt('evidence-first.web.v5')),pointerEvidence:false},teamPreferencesSnapshot:settings},'evidence-first.web.v5');run.stage='synthesis';run.output={source:Source.parse({source_kind:'imported_transcript',language:'en',segments:[{id:'a',text:'Suppose a bond yields5%.',start_seconds:0,end_seconds:3}]}),metadata:{},claims:[],keyPoints:[],mentions:[]};
+ await step(run);assert.deepEqual((run.output.keyPoints as {claim:{levels:unknown[]}}[])[0].claim.levels,[]);assert.equal(JSON.stringify(raw),original);assert.equal(fake.requests.length,1);assert.equal(run.stage,'critique');if(levels)assert.equal((run.output.contextLevelNormalizations as {original:{levels:unknown[]}}[])[0].original.levels.length,1);
  }finally{restore();await db.close();}
 });

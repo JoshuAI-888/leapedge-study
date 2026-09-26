@@ -17,6 +17,9 @@ test('real Google SDK serializes combined recall schema without nested JSON-sche
  assert.doesNotMatch(JSON.stringify(schema),/"\$schema"/);assert.doesNotMatch(JSON.stringify(schema),/"maxItems"/);
  assert.ok(schema.required.includes('reconciliation'));assert.ok(schema.properties.reconciliation.required.includes('propositions'));
  assert.ok(schema.properties.reconciliation.properties.propositions.items.required.includes('candidateRefs'));
+ assert.ok(schema.properties.reconciliation.properties.propositions.items.required.includes('exclusionBasis'));
+ assert.equal(schema.properties.key_points.items.properties.levels,undefined,'Context contract does not offer trade level roles');
+ assert.ok(schema.properties.claims.items.properties.levels,'Actual creator claims retain supported trade roles');
  assert.equal(JSON.stringify(sourceRecallResponseSchema),original,'Transport must not mutate shared strict/local schema');
  assert.equal(RecallReconciliation.safeParse({reviewedSourceIds:Array(201).fill('x'),propositions:[],limitations:[]}).success,false,'Local cardinality constraints still enforce the strict model contract');
  }finally{stub.restore();}

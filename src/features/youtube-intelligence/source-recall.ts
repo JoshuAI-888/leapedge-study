@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import type {SourceData,CheckedClaim,Run} from './contracts.ts';
 
-export const SOURCE_RECALL_VERSION='source-recall.full-chronological.v1';
+export const SOURCE_RECALL_VERSION='source-recall.full-chronological.v2';
 /** Small full-source review windows, independent of action vocabulary or previous citation coverage. */
 export function sourceRecallPlan(source:SourceData) {
  const windows:SourceData['segments'][]=[];let current:SourceData['segments']=[];
@@ -26,6 +26,7 @@ export const RecallReconciliation=z.object({
  propositions:z.array(z.object({
   summary:z.string().min(1).max(1500),sourceIds:z.array(z.string()).min(1).max(200),
   disposition:z.enum(['already_retained','added','not_material','unresolved']),
+  exclusionBasis:z.enum(['channel_administration','nonfinancial_filler','unrelated_to_research']).nullable().default(null),
   existingIds:z.array(z.string()).max(40),
   candidateRefs:z.array(z.object({bucket:z.enum(['claims','key_points','mentions']),index:z.number().int().min(0)})).max(40),
   reason:z.string().min(1).max(1500),
@@ -46,9 +47,15 @@ export function assessRecallReconciliation(raw:unknown,window:SourceData['segmen
   if(p.disposition==='already_retained'&&(!p.existingIds.length||p.existingIds.some(id=>!accepted.has(id))))warnings.push('Claimed existing coverage lacks accepted evidence IDs; rejected candidates cannot establish coverage.');
   if(p.disposition==='already_retained'&&p.sourceIds.some(id=>!p.existingIds.some(existing=>coveredIds(existing).has(id))))warnings.push('Claimed existing coverage does not anchor the specific proposition source cues; broad theme agreement is insufficient.');
   if(p.disposition==='added'&&(!p.candidateRefs.length||p.candidateRefs.some(ref=>ref.index>=counts[ref.bucket])))warnings.push('Proposed addition does not map to returned candidates.');
+  if(p.disposition==='not_material') {
+    if(!p.exclusionBasis)warnings.push('Materiality exclusion lacks a valid structured basis; missing or invalid basis is not accounted coverage.');
+    if(/(?:without|lack(?:s|ing)?|no|not)\b.{0,70}\b(?:stance|trade|actionable|recommendation)\b|\b(?:standard|descriptive|routine|generic)\s+(?:macro|economic|market|financial)/i.test(p.reason))
+      warnings.push('Invalid materiality exclusion: research context does not require an instrument stance and standard/descriptive macro information can be a material causal input.');
+  }
+  if(p.disposition!=='not_material'&&p.exclusionBasis!==null)warnings.push('Exclusion basis conflicts with a retained or unresolved proposition disposition.');
   if(p.disposition==='unresolved')warnings.push(`Unresolved proposition: ${p.summary}`);
  }
  warnings.push(...review.limitations);
  return {assessment:warnings.length?'incomplete' as const:'accounted' as const,warnings:[...new Set(warnings)],reconciliation:review};
 }
-export const RECALL_RECONCILIATION_INSTRUCTIONS=' Review every chronological cue in this bounded window. Reconcile each material proposition separately: specific numbers and units, events, dates, actors, conditions, exceptions, holdings, no-position disclosures, risks, causal limits and future monitoring criteria. An already-covered broad theme or a quoted passage is NOT proof that every proposition in it was retained. Compare against the full accepted inventory quotes, conditions, risks and levels. Return reconciliation.reviewedSourceIds containing every window cue exactly once, and propositions with exact sourceIds, disposition, existingIds or zero-based candidateRefs, plus a concrete comparison reason. Existing IDs qualify only when their accepted statement actually preserves this proposition. Add missing specifics even when the broad topic is present. Assign every cue to at least one proposition or explicit materiality disposition, including opening/closing filler. For genuinely immaterial passages use not_material with a reason; ambiguous or unresolved omissions must be disclosed. Empty extraction arrays require explicit proposition accounting, not a bare empty answer. This is a bounded review pass, never proof of semantic completeness.';
+export const RECALL_RECONCILIATION_INSTRUCTIONS=' Review every chronological cue in this bounded window. Reconcile each material proposition separately: specific numbers and units, events, dates, actors, conditions, exceptions, holdings, no-position disclosures, risks, causal limits and future monitoring criteria. An already-covered broad theme or a quoted passage is NOT proof that every proposition in it was retained. Compare against the full accepted inventory quotes, conditions, risks and levels. Return reconciliation.reviewedSourceIds containing every window cue exactly once, and propositions with exact sourceIds, disposition, existingIds or zero-based candidateRefs, plus a concrete comparison reason. Existing IDs qualify only when their accepted statement actually preserves this proposition. Add missing specifics even when the broad topic is present. Assign every cue to at least one proposition or explicit materiality disposition, including opening/closing filler. Use not_material only for actual channel administration, nonfinancial filler, or demonstrably unrelated content, and select matching exclusionBasis (otherwise null). Explain why the passage has no causal link to valuation, earnings, liquidity, risk or monitoring. Absence of an instrument stance, familiarity, descriptive content or standard macro context is NEVER an exclusion basis. ambiguous or unresolved omissions must be disclosed. Empty extraction arrays require explicit proposition accounting, not a bare empty answer. This is a bounded review pass, never proof of semantic completeness.';

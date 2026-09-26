@@ -509,15 +509,15 @@ export async function researchStep(run: Run) {
       const available = Math.min(12, 48 - draft.sentences.length);
       let supplement: z.infer<typeof ResearchDraft>;
       try { supplement = parseResearchDraft(await invoke("synthesis-research-coverage", PRINCIPLES +
-        ` Repair missing coverage by adding at most ${available} atomic sentences. Include the source's exact conditions, valuation qualifications, countercases and hypothetical/no-position disclosures. Use only the missing evidence IDs and supplied eligible sources. An already cited evidence ID can still contain an omitted material proposition: repair the specified missing clauses, not the topic already summarized. Do not repeat or replace existing sentences. If evidence is insufficient, explain the unresolved gap in omissions. Return the supplied draft schema.`,
-        {...modelSnapshot, external:eligible, existingDraft:draft, missingEvidenceIds:missingEvidence, evidenceCoverage:audit.evidenceCoverage, coverageFindings:audit.coverageFindings}, ResearchDraft));
+        ` Repair missing coverage by adding at most ${available} atomic sentences. Include the source's exact conditions, valuation qualifications, countercases and hypothetical/no-position disclosures. Use only the missing evidence IDs and supplied eligible sources. An already cited evidence ID can still contain an omitted material proposition: repair the specified missing clauses, not the topic already summarized. Do not repeat or replace accepted sentences. The supplied withheldDraftPoints are NOT accepted coverage: fix their specific rejection reasons (including exact original quotes and hypothetical framing) in a new candidate, preserving source meaning and the original rejected attempt. Do not return unchanged rejected content. If evidence is insufficient, explain the unresolved gap in omissions. Return the supplied draft schema.`,
+        {...modelSnapshot, external:eligible, existingDraft:draft, acceptedSentenceIds:validatedBrief.sentences.map(s=>s.id), withheldDraftPoints:validatedBrief.rejected, missingEvidenceIds:missingEvidence, evidenceCoverage:audit.evidenceCoverage, coverageFindings:audit.coverageFindings}, ResearchDraft));
       } catch (error) {
         // An optional repair failure must not hide already audited research.
         // No retry or further paid work: retain the raw call/hold and original.
         run.output.coverageRepairError = error instanceof Error ? error.message : String(error);
         supplement = ResearchDraft.parse({sentences:[],mainTopics:[],omissions:['Coverage repair failed; only the original independently audited statements are available. Review the retained failed attempt and unresolved coverage.']});
       }
-      const filtered = coverageAdditions(draft, supplement, missingEvidence);
+      const filtered = coverageAdditions(draft, supplement, missingEvidence, validatedBrief.rejected.map(r=>r.sentence.id));
       const overflow = filtered.sentences.splice(available);
       filtered.excluded.push(...overflow.map(sentence=>({sentence,reason:'Exceeded the bounded supplemental audit size; retained for review, not published.'})));
       if (overflow.length) supplement.omissions.push(`${overflow.length} supplemental statements exceed the bounded repair size and remain unaudited; see the retained repair trace.`);

@@ -132,11 +132,17 @@ const mentionSchema = {
     "ranges",
   ],
 };
+const researchContextSchema = {
+  ...claimSchema,
+  properties: Object.fromEntries(Object.entries(claimSchema.properties).filter(([key])=>key!=="levels")),
+  required: claimSchema.required.filter(key=>key!=="levels"),
+  additionalProperties: false,
+};
 export const extractionResponseSchema = {
   type: "object",
   properties: {
     claims: { type: "array", maxItems: 40, items: claimSchema },
-    key_points: { type: "array", maxItems: 30, items: claimSchema },
+    key_points: { type: "array", maxItems: 30, items: researchContextSchema },
     mentions: { type: "array", maxItems: 200, items: mentionSchema },
   },
   required: ["claims", "key_points", "mentions"],
@@ -160,7 +166,7 @@ export type MentionExtractionData = z.infer<typeof MentionExtraction>;
 /** The same contract on the way back in: ranges, never quotes. */
 export const PointerExtraction = z.object({
   claims: z.array(RangeSelectedClaim).max(40),
-  key_points: z.array(RangeSelectedClaim).max(30).default([]),
+  key_points: z.array(RangeSelectedClaim.extend({levels:RangeSelectedClaim.shape.levels.default([])})).max(30).default([]),
   mentions: z.array(MentionExtraction).max(200).default([]),
 });
 export type PointerExtractionData = z.infer<typeof PointerExtraction>;
@@ -178,3 +184,14 @@ export const MENTION_OUTPUT_FORMAT =
 /** Semantics applied independently of the historical prompt snapshot. */
 export const FINANCIAL_SEMANTICS =
   "Keep actionable creator instructions in claims; put hypothetical returns, educational scenarios and descriptive commentary in key_points unless the creator expresses an actual position or action. A conditional action must retain every trigger. Extract separate claims for separately named companies ONLY when the same cited instruction truly applies to each; never substitute tickers or ETFs for a sector, theme, index or vague group. Preserve options mechanics explicitly: put/call, buy/sell, strike as levels.kind=strike (not entry), expiry exactly as spoken in horizon_en, and the underlying support separately. Do not infer an expiry year. Preserve percentage upside/downside targets as target levels with their exact original strings. Do not omit conditions, expiry or price-role labels to shorten output. Use multiple short supporting ranges when needed. A company name can remain unresolved: ticker is only the literal ticker in the source, not a guess from the name.";
+
+
+export const RESEARCH_CONTEXT_POLICY = " OUTPUT CONTRACT OVERRIDE: return claims, key_points and mentions, even if a historical format printed above omits key_points. Claims require a supported creator investment stance/action; key_points are material research context and require NO trading stance, newness or ticker. Central-bank actions and guidance, inflation, discount rates, financing/liquidity, earnings and risk inputs are material when they causally inform the video's valuation, thesis, countercase or monitoring criteria. Standard, descriptive or widely known information is not immaterial for that reason. Preserve actual observations separately from forecasts, conditions and hypothetical examples. In key_points do NOT output a levels field: reported prices, policy rates, hypothetical yields, valuation multiples and third-party forecasts are not creator entry/support/resistance/stop instructions. Keep all quantities, units, dates, conditions and assumptions in thesis_en and exact source evidence ranges. Trade-role levels belong only to actual creator claims with supporting action evidence. No inference of a trade from a descriptive number.";
+export function normalizeResearchContextLevels(extraction:PointerExtractionData){
+ const diagnostics: {index:number;original:PointerExtractionData['key_points'][number];reason:string}[]=[];
+ return {extraction:{...extraction,key_points:extraction.key_points.map((point,index)=>{
+  if(!point.levels.length)return point;
+  diagnostics.push({index,original:point,reason:"Removed trade-level roles from a research context item; original values remain here and in the model response, while thesis, source ranges and conditions remain unchanged."});
+  return {...point,levels:[]};
+ })},diagnostics};
+}

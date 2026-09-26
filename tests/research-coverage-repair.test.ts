@@ -13,3 +13,11 @@ test('supplemental IDs avoid original IDs without rewriting or removing original
  assert.deepEqual(original,snapshot);
  assert.equal(new Set([...original.sentences,...result.sentences].map(s=>s.id)).size,4);
 });
+test('a corrected rejected statement can be audited again without duplicating accepted prose or replacing history',()=>{
+ const base={id:'bad',text:'The creator illustrates a 5% bond return.',evidenceIds:['k1'],externalIds:[],kind:'education',horizon:'general',topic:'Valuation',materiality:2,importanceReason:'Discount rate',speaker:'unknown',timeMode:'video_date',calculation:null,financialFacts:[{label:'Scenario yield',value:5,currency:null,unit:'percent',scale:'ones',period:null,basis:'not_stated',nature:'scenario',evidenceId:'k1',quote:'incorrect quote'}]};
+ const original=ResearchDraft.parse({sentences:[base],mainTopics:['Valuation'],omissions:[]});const before=structuredClone(original);
+ const fixed=ResearchDraft.parse({sentences:[{...base,financialFacts:[{...base.financialFacts[0],quote:'Suppose a bond yields 5%.'}]}],mainTopics:['Valuation'],omissions:[]});
+ assert.equal(coverageAdditions(original,fixed,['k1']).sentences.length,0,'Accepted text still deduplicates');
+ const repaired=coverageAdditions(original,fixed,['k1'],['bad']);assert.equal(repaired.sentences.length,1);assert.notEqual(repaired.sentences[0].id,'bad');assert.deepEqual(original,before);
+ assert.equal(coverageAdditions(original,original,['k1'],['bad']).sentences.length,0,'Unchanged failed content is not a new repair');
+});

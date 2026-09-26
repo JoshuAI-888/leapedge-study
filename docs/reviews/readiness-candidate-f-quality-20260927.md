@@ -1,0 +1,15 @@
+# Candidate F — provider fix passes, first-case quality gate fails
+
+Revision `e96111b`, paused after **1 published case;19 not started**. Brief `ef92c1bd-1f7c-425e-b30e-b6c4504227b4`. All20 remain in the denominator. No new provider or LeapEdge calls were made for this assessment.
+
+The provider accepts the revised recall requests: all **173 source segments across5 windows** were processed. However, only **1/5 windows** have accounted proposition assessments; `assessment:incomplete` and `semanticCompleteness:not_established` remain. These are different measures. The final brief retains bounded-review/incomplete-accounting warnings and has **partial readiness**, avoiding a false completeness claim.
+
+**Material exclusion remains:** window1 explicitly marks the Fed actual/expected25bps and approximately4.1% policy-rate passage `not_material`, calling it “Standard macro commentary explaining Federal Reserve rate mechanics and expectations.” CPI0.4%MoM, gasoline3.9%, core0.3%MoM and core2.4%YoY are also `not_material` because they do not establish an instrument stance. These facts inform the video's inflation/discount-rate thesis. They were reviewed then excluded by relevance policy, rather than lost because the model never received their source window. Fed unit and approximation fixes remain unexercised; omitted data is not a passing result.
+
+Selected improvements: BOJ25 uses `basis_points`; Brent104 uses `per_barrel`, and its100 threshold retains `greater_than`. Final `s12` restores subsequent BOJ hiking pace, continued yen appreciation and customer price tolerance. Eleven published sentences have eleven unique texts. The creator4.93% yield remains unverified with no external-support comparison, so H15 comparability is not exercised in this candidate.
+
+The valuation-mechanism draft `s9` was withheld because its typed fact quote does not exactly match the retained source. The final result specifically surfaces missing `k8`/`m5` details, including the illustrative5% Treasury-versus-tech comparison. This is safer than publishing a broken quote, but the safe underlying proposition is still absent. Supplemental repeated originals are excluded and retained in the repair trace; that deduplication also prevents a corrected same-text rejected draft from being re-admitted without a distinct repair identity/new audit. The next fix must preserve the original rejection while independently validating the corrected candidate.
+
+Settled **$0.38761045 = $0.31761045 models + $0.07 search**; no open holds. Session wall **162.920s**, starting with frozen transcript/metadata and ending at first-case checkpoint. No fresh acquisition, ASR or UI display lies in that boundary. Prior paid attempts are separate and remain retained; no LeapEdge timing ratio is justified.
+
+Final snapshot SHA-256: `ef3c39e72ba03e138759d04525ea6b4b621e475bc06eb1153dc8701cb748f3b5`. Companion JSON preserves exact not-material dispositions, source accounting, rejected quote, excluded supplement IDs, readiness issues and cost split. Candidate F is not a complete quality pass and should not be described as such.

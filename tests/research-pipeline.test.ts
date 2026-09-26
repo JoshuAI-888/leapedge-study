@@ -555,3 +555,20 @@ for (const coverageAnswer of ['covered','omitted','unknown'] as const) test(`a c
  const {researchReadiness}=await import('../src/features/youtube-intelligence/research-readiness.ts');assert.equal(researchReadiness(brief).status,coverageAnswer==='covered'?'complete':'partial');if(coverageAnswer!=='covered')assert.match(researchReadiness(brief).issues.join(' '),/Monitor subsequent/);assert.equal(brief.modelCostUsd,.06);
  } finally {restore();await db.close();}
 });
+test('corrected financial quote receives a new independent verdict while original rejection remains',async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ const text='The creator illustrates a 5% bond return.';
+ const bad={...sentence,id:'bad',text,kind:'education',evidenceIds:['k1'],financialFacts:[{label:'Scenario yield',value:5,currency:null,unit:'percent',unitDescription:'percent return',relation:'exact',scale:'ones',period:null,basis:'not_stated',nature:'scenario',evidenceId:'k1',quote:'wrong quote'}]};
+ const fixed={...bad,financialFacts:[{...bad.financialFacts[0],quote:'Suppose a bond yields 5%.'}]};
+ const fake=new FakeModelTransport({responses:{
+ 'synthesis-research-coverage':{json:{sentences:[fixed],mainTopics:['Company'],omissions:[]},usage:{costUsd:.02}},
+ 'critique-research-coverage':{json:{verdicts:[{id:'coverage-1',accepted:true,reason:'New exact source quote and hypothetical wording independently supported',factualStatus:'unverified'}],coverageFindings:[],evidenceCoverage:[{evidenceId:'k1',status:'covered',sentenceIds:['coverage-1'],missingPoints:[],reason:'Scenario faithfully represented'}]},usage:{costUsd:.03}},
+ }});const restore=injectTransport(fake);
+ try{
+ const run=await create('quote-recovery',settings.models.extraction.id,{task:'research-brief',efficiencyVersion:'evidence-efficiency.v1',teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'source',title:'Scenario',context:{videoPublishedAt:null,recordedAt:null,analysedAt:'2026-09-20T00:00:00Z',language:'en',videoId:'quote-recovery',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[{id:'k1',kind:'research_context',summary:text,instrument:null,ticker:null,stance:'neutral',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:'a',endId:'a',text:'Suppose a bond yields 5%.',translation:'',start:0,end:3,hash:null}]}]}},'test');
+ run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[bad],mainTopics:['Company'],omissions:[]};
+ await researchStep(run);assert.equal(run.stage,'research-audit');assert.equal((run.output.researchDraft as {sentences:unknown[]}).sentences.length,2);
+ await researchStep(run);const [brief]=await researchBriefs();assert.equal(brief.sentences.length,1);assert.equal(brief.sentences[0].id,'coverage-1');assert.equal(brief.sentences[0].text,text);assert.match(brief.sentences[0].auditReason,/independently/);assert.equal(brief.rejected[0].sentence.id,'bad');assert.equal(brief.rejected[0].sentence.financialFacts[0].quote,'wrong quote');assert.equal(fake.requestsFor('critique-research-coverage').length,1);assert.equal(brief.modelCostUsd,.05);
+ const {docs}=await import('../src/server/youtube-intelligence/research-store.ts');const requests=await docs<{stage:string;payload:{withheldDraftPoints:{sentence:{id:string}}[]}}>('researchRequest');assert.equal(requests.find(r=>r.stage==='synthesis-research-coverage')!.payload.withheldDraftPoints[0].sentence.id,'bad');
+ }finally{restore();await db.close();}
+});
