@@ -1,0 +1,216 @@
+{
+  "version": "readiness-candidate-e-quality.v1",
+  "reviewedAt": "2026-09-26T22:21:01.020725+00:00",
+  "snapshotSha256": "22e2a63c544ad56b9dec4db2c1bdca4d85c8f0032eea5730d128e77a719fd23e",
+  "revision": "582bbee",
+  "state": "paused",
+  "decision": "provider-request-failure-no-quality-pass",
+  "denominator": 20,
+  "published": 0,
+  "caseStates": {
+    "failed": 3,
+    "running": 1,
+    "not-started": 16
+  },
+  "accounting": {
+    "settledLedgerUsd": 0.35994099999999996,
+    "settledModelUsd": 0.35994099999999996,
+    "settledExternalUsd": 0,
+    "openHolds": [],
+    "note": "Historical ledger prices; excludes unpriced credits. Cumulative snapshots must not be added. Cache consumer donor charges are not added again."
+  },
+  "failures": [
+    {
+      "runId": "7419c91e-33a0-49dd-9e18-f4d8f44fdf0e",
+      "videoId": "SPIRV9UjNYU",
+      "stage": "publish",
+      "error": "Provider HTTP 400. No automatic paid retry.",
+      "at": "2026-09-26T22:18:16.897Z"
+    },
+    {
+      "runId": "f1c9cb2d-0cfc-4135-a352-d03aae516ccb",
+      "videoId": "J_VpfkM74Wk",
+      "stage": "publish",
+      "error": "Provider HTTP 400. No automatic paid retry.",
+      "at": "2026-09-26T22:18:52.503Z"
+    },
+    {
+      "runId": "c0f8d863-6419-4127-846c-d9c33cc8e5ec",
+      "videoId": "9nb3fp76Rz0",
+      "stage": "publish",
+      "error": "Provider HTTP 400. No automatic paid retry.",
+      "at": "2026-09-26T22:19:40.979Z"
+    }
+  ],
+  "cases": [
+    {
+      "videoId": "SPIRV9UjNYU",
+      "state": "failed",
+      "sourceRunId": "7419c91e-33a0-49dd-9e18-f4d8f44fdf0e",
+      "researchRunId": null
+    },
+    {
+      "videoId": "J_VpfkM74Wk",
+      "state": "failed",
+      "sourceRunId": "f1c9cb2d-0cfc-4135-a352-d03aae516ccb",
+      "researchRunId": null
+    },
+    {
+      "videoId": "9nb3fp76Rz0",
+      "state": "failed",
+      "sourceRunId": "c0f8d863-6419-4127-846c-d9c33cc8e5ec",
+      "researchRunId": null
+    },
+    {
+      "videoId": "3u24qyWjSVM",
+      "state": "running",
+      "sourceRunId": "fe896f95-5374-427f-9099-fd62832b9082",
+      "researchRunId": null
+    },
+    {
+      "videoId": "M1FJ5dNiBEs",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "LF7fgz1HAFs",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "U32FPvvBaNI",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "jPy5aDhMsMY",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "elD62rk5Ijo",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "zYeJZu1hkdM",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "ZfOQoh82JTo",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "iBMZc7zs_Ew",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "tUR0w-LDSbU",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "DuIyF_34ReI",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "QEwLInO3iZY",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "IjYr5acuBT4",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "pWnu1C8I6Xw",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "1WNowIoNgtg",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "vrTbCxUzRw4",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    },
+    {
+      "videoId": "Dy_0RtmAt1U",
+      "state": "not-started",
+      "sourceRunId": null,
+      "researchRunId": null
+    }
+  ],
+  "runs": [
+    {
+      "id": "fe896f95-5374-427f-9099-fd62832b9082",
+      "videoId": "3u24qyWjSVM",
+      "stage": "synthesis",
+      "status": "running",
+      "error": null
+    },
+    {
+      "id": "c0f8d863-6419-4127-846c-d9c33cc8e5ec",
+      "videoId": "9nb3fp76Rz0",
+      "stage": "publish",
+      "status": "failed",
+      "error": "Provider HTTP 400. No automatic paid retry."
+    },
+    {
+      "id": "f1c9cb2d-0cfc-4135-a352-d03aae516ccb",
+      "videoId": "J_VpfkM74Wk",
+      "stage": "publish",
+      "status": "failed",
+      "error": "Provider HTTP 400. No automatic paid retry."
+    },
+    {
+      "id": "7419c91e-33a0-49dd-9e18-f4d8f44fdf0e",
+      "videoId": "SPIRV9UjNYU",
+      "stage": "publish",
+      "status": "failed",
+      "error": "Provider HTTP 400. No automatic paid retry."
+    }
+  ],
+  "sessions": [
+    {
+      "startedAt": "2026-09-26T22:17:47.569Z",
+      "endedAt": "2026-09-26T22:19:50.818Z",
+      "stopReason": "SIGTERM"
+    }
+  ],
+  "recordedExecutionSeconds": 122.854948752,
+  "boundary": "Frozen source synthesis/extraction through failed initial recall request at publish, not research publication. Excludes fresh acquisition and UI display.",
+  "unassessed": [
+    "Fed current and expected25bps units",
+    "4.1 approximation",
+    "BOJ25bps",
+    "Future yen monitoring",
+    "Yield comparability",
+    "Five-window source recall/proposition coverage",
+    "Research omissions/readiness"
+  ],
+  "controlLimitation": "First-terminal wrapper did not pause on source failures, admitting four cases instead of one. Parent reports wrapper now checks source failures; that amended controller was not demonstrated by this paid candidate."
+}

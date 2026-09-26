@@ -1,4 +1,5 @@
-import {SOURCE_RECALL_VERSION, sourceRecallPlan, sourceRecallInventory, RecallReconciliation, assessRecallReconciliation, RECALL_RECONCILIATION_INSTRUCTIONS} from "../../features/youtube-intelligence/source-recall.ts";
+import {sourceRecallResponseSchema} from "./schemas/source-recall.ts";
+import {SOURCE_RECALL_VERSION, sourceRecallPlan, sourceRecallInventory, assessRecallReconciliation, RECALL_RECONCILIATION_INSTRUCTIONS} from "../../features/youtube-intelligence/source-recall.ts";
 import { withProviderSlot } from "./provider-limits.ts";
 import { boundedSettled, isFatalAccountError } from "./bounded-parallel.ts";
 import {
@@ -1642,7 +1643,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           false,
           {
             settings,
-            responseSchema: {...extractionResponseSchema, properties:{...extractionResponseSchema.properties,reconciliation:z.toJSONSchema(RecallReconciliation)},required:[...extractionResponseSchema.required,"reconciliation"]},
+            responseSchema: sourceRecallResponseSchema,
             maxOutputTokens: 12000,
             reasoningEffort: "low",
           },
