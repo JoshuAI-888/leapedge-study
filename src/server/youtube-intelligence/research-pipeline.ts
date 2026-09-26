@@ -409,7 +409,7 @@ export async function researchStep(run: Run) {
       auditDraft.sentences.length ? await invoke(
         run.output.coverageRepair ? "critique-research-coverage" : "critique-research",
         PRINCIPLES +
-          " Independently audit EVERY sentence against all cited original quotes and external source text. Inspect uncited external sources and baseline history for counterevidence as well. External factualStatus requires eligible sources cited by THIS sentence; the presence of other documents is not corroboration. Do not label quantities contradictory unless their observation dates, periods, instruments, units and basis are comparable; distinguish a change over time from disagreement. A small numerical difference is not a proven contradiction when observation conventions are unknown (for example intraday traded Treasury yield versus a daily constant-maturity series). Require a matching observation time and definition; otherwise mark unverified and explain the comparability gap, never call one value the actual figure. Independently inspect every typed financial fact value, unit, scale, denominator, qualifier and comparison baseline against its exact original quote; correct prose does not excuse an incorrect typed field. Check every optional calculation input, units and assumptions against the cited quotes; reject if any input is invented or the periods/scales differ. Accept only if EVERY clause, causal link, quantity, attribution and time boundary is supported or clearly marked grounded inference. Reject unrelated or weak citations. Do not reject cautious next-check questions simply for being questions. factualStatus corroborated requires direct primary-source support of the exact factual assertion, never mere quotation agreement; partial means incomplete external corroboration; disputed requires evidence of contradiction. Creator views and scenarios normally remain unverified. For every external label above unverified, return externalSupport entries mapping the exact assertion substring to an exact passage in a cited primary source, with supports/contradicts relationship and explanation. Corroborated requires support for the complete sentence; partial requires an explicit supported subset. A source discussing the company is not support for an unrelated multiple or quantity. Return exactly one verdict per sentence ID and coverageFindings for missing central themes or unbalanced treatment. Assess robustness conservatively: supported requires corroborated primary facts plus explicit cited countercase and invalidation sentence IDs for the same topic, horizon and time boundary; otherwise insufficient or fragile with a concrete reason. Independently verify novelty against the cited baseline text and original evidence, including actor, conditions and horizon; mark noveltyAccepted false when unknown, unmatched, or just wording changes.",
+          " Independently audit EVERY sentence against all cited original quotes and external source text. Inspect uncited external sources and baseline history for counterevidence as well. External factualStatus requires eligible sources cited by THIS sentence; the presence of other documents is not corroboration. Do not label quantities contradictory unless their observation dates, periods, instruments, units and basis are comparable; distinguish a change over time from disagreement. A small numerical difference is not a proven contradiction when observation conventions are unknown (for example intraday traded Treasury yield versus a daily constant-maturity series). Require a matching observation time and definition; otherwise mark unverified and explain the comparability gap, never call one value the actual figure. Independently inspect every typed financial fact value, unit, scale, denominator, qualifier and comparison baseline against its exact original quote; correct prose does not excuse an incorrect typed field. Check every optional calculation input, units and assumptions against the cited quotes; reject if any input is invented or the periods/scales differ. Accept only if EVERY clause, causal link, quantity, attribution and time boundary is supported or clearly marked grounded inference. Reject unrelated or weak citations. Do not reject cautious next-check questions simply for being questions. factualStatus corroborated requires direct primary-source support of the exact factual assertion, never mere quotation agreement; partial means incomplete external corroboration; disputed requires evidence of contradiction. Creator views and scenarios normally remain unverified. For every external label above unverified, return externalSupport entries mapping the exact assertion substring to an exact passage in a cited primary source, with supports/contradicts relationship and explanation. Corroborated requires support for the complete sentence; partial requires an explicit supported subset. A source discussing the company is not support for an unrelated multiple or quantity. Return exactly one verdict per sentence ID and coverageFindings for missing central themes or unbalanced treatment. Independently return evidenceCoverage for EVERY supplied evidence ID against the entire retained brief. A cited ID or shared topic does NOT establish coverage of its material propositions. Inspect all original quotes, quantities, conditions, risks, valuation qualifications, forward monitoring and invalidation points; mark partial or missing if any material detail is absent. Include each missing point with its exact original quote and an explanation, and list only accepted sentence IDs that actually represent it. Mark covered only when all material propositions are represented. On supplemental audits reassess whole retainedDraft coverage, including previous missing details; never infer coverage from a new citation alone. Assess robustness conservatively: supported requires corroborated primary facts plus explicit cited countercase and invalidation sentence IDs for the same topic, horizon and time boundary; otherwise insufficient or fragile with a concrete reason. Independently verify novelty against the cited baseline text and original evidence, including actor, conditions and horizon; mark noveltyAccepted false when unknown, unmatched, or just wording changes.",
         auditPayload,
         ResearchAuditResponse,
       ) : {verdicts:[],coverageFindings:previousAudit?.coverageFindings ?? ["All draft sentences failed structural checks; semantic audit was not performed."]},
@@ -431,7 +431,7 @@ export async function researchStep(run: Run) {
       if (!previousAudit) throw error; // An unaudited original is never publishable.
       const message = error instanceof Error ? error.message : String(error);
       supplementalAuditError = message;
-      repaired = { audit: { verdicts: [], coverageFindings: previousAudit.coverageFindings }, attempts: [], missing: auditDraft.sentences.map(s => s.id) };
+      repaired = { audit: { verdicts: [], evidenceCoverage: previousAudit.evidenceCoverage, coverageFindings: previousAudit.coverageFindings }, attempts: [], missing: auditDraft.sentences.map(s => s.id) };
     }
     run.output.researchAuditAttempts = repaired.attempts;
     run.output.unresolvedResearchAuditIds = repaired.missing;
@@ -446,7 +446,19 @@ export async function researchStep(run: Run) {
       repaired.audit.coverageFindings = [...new Set([...previousAudit.coverageFindings, ...repaired.audit.coverageFindings, omission])];
       repaired.audit.verdicts.push(...repaired.missing.map(id => ({ id, accepted: false, reason: `Supplemental audit unavailable: ${diagnostic}. This statement remains unaudited, not disproven.`, factualStatus: "unverified" as const, noveltyAccepted: false, robustness: "insufficient" as const, robustnessReason: "No unambiguous independent verdict was obtained.", thesisSupportIds: [], externalSupport: [] })));
     }
-    const audit = {...repaired.audit, verdicts:[...(previousAudit?.verdicts ?? []),...repaired.audit.verdicts]};
+    const priorCoverage = previousAudit?.evidenceCoverage ?? [];
+    const currentCoverage = repaired.audit.evidenceCoverage;
+    // An optional supplement cannot erase a previously identified clause gap
+    // merely by omitting its assessment. Raw audits remain in the repair trace.
+    const evidenceCoverage = [...currentCoverage.map(current => {
+      const prior = priorCoverage.find(item => item.evidenceId === current.evidenceId);
+      return current.status === "unknown" && prior?.missingPoints.length
+        ? {...current, status: "partial" as const, missingPoints: prior.missingPoints,
+          reason: `Previously identified gap remains unresolved: ${prior.reason}. ${current.reason}`}
+        : current;
+    }), ...priorCoverage.filter(prior =>
+      !currentCoverage.some(current => current.evidenceId === prior.evidenceId))];
+    const audit = {...repaired.audit, evidenceCoverage, verdicts:[...(previousAudit?.verdicts ?? []),...repaired.audit.verdicts]};
     audit.verdicts.push(...preflight.map(r => ({id:r.sentence.id,accepted:false,reason:r.reasons.join(" "),factualStatus:"unverified" as const,noveltyAccepted:false,robustness:"insufficient" as const,robustnessReason:"Failed deterministic structural checks.",thesisSupportIds:[],externalSupport:[]})));
     run.output.researchAudit = audit;
     const validatedBrief = validateBrief(
@@ -470,6 +482,7 @@ export async function researchStep(run: Run) {
       baseline: snapshot.baseline,
       external,
       coverageFindings: audit.coverageFindings,
+      evidenceCoverage: audit.evidenceCoverage,
       retrievalNotes: records.map(
         (r) => `${r.timeMode}: ${r.query} — ${r.note}`,
       ),
@@ -496,8 +509,8 @@ export async function researchStep(run: Run) {
       const available = Math.min(12, 48 - draft.sentences.length);
       let supplement: z.infer<typeof ResearchDraft>;
       try { supplement = parseResearchDraft(await invoke("synthesis-research-coverage", PRINCIPLES +
-        ` Repair missing coverage by adding at most ${available} atomic sentences. Include the source's exact conditions, valuation qualifications, countercases and hypothetical/no-position disclosures. Use only the missing evidence IDs and supplied eligible sources. Do not repeat or replace existing sentences. If evidence is insufficient, explain the unresolved gap in omissions. Return the supplied draft schema.`,
-        {...modelSnapshot, external:eligible, existingDraft:draft, missingEvidenceIds:missingEvidence, coverageFindings:audit.coverageFindings}, ResearchDraft));
+        ` Repair missing coverage by adding at most ${available} atomic sentences. Include the source's exact conditions, valuation qualifications, countercases and hypothetical/no-position disclosures. Use only the missing evidence IDs and supplied eligible sources. An already cited evidence ID can still contain an omitted material proposition: repair the specified missing clauses, not the topic already summarized. Do not repeat or replace existing sentences. If evidence is insufficient, explain the unresolved gap in omissions. Return the supplied draft schema.`,
+        {...modelSnapshot, external:eligible, existingDraft:draft, missingEvidenceIds:missingEvidence, evidenceCoverage:audit.evidenceCoverage, coverageFindings:audit.coverageFindings}, ResearchDraft));
       } catch (error) {
         // An optional repair failure must not hide already audited research.
         // No retry or further paid work: retain the raw call/hold and original.

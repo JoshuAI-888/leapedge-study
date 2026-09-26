@@ -536,3 +536,22 @@ for(const efficient of [false,true]) test(`publication normalizes anchored bps w
  assert.match(JSON.stringify(fake.requests[0]),/25 basis points = 0.25 percentage points/);
  }finally{restore();await db.close();}
 });
+
+for (const coverageAnswer of ['covered','omitted','unknown'] as const) test(`a cited policy event receives additive repair without erasing unresolved assessment (${coverageAnswer})`,async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ const original={...sentence,evidenceIds:['k5'],text:'The BOJ raised its rate by 25 basis points.',topic:'BOJ'};
+ const extra={...original,id:'extra',text:'Watch the pace of subsequent Japanese rate hikes and further yen appreciation.'};
+ const missing={evidenceId:'k5',status:'partial',sentenceIds:['point'],missingPoints:[{point:'Monitor subsequent rate hikes and yen appreciation',quote:'Watch the pace of subsequent Japanese rate hikes and further yen appreciation.'}],reason:'Event represented; forward condition omitted.'};
+ const fake=new FakeModelTransport({responses:{
+ 'critique-research':{json:{verdicts:[{id:'point',accepted:true,reason:'Supported event',factualStatus:'unverified'}],coverageFindings:[],evidenceCoverage:[missing]},usage:{costUsd:.01}},
+ 'synthesis-research-coverage':{json:{sentences:[extra],mainTopics:['BOJ'],omissions:[]},usage:{costUsd:.02}},
+ 'critique-research-coverage':{json:{verdicts:[{id:'coverage-1',accepted:true,reason:'Forward condition supported',factualStatus:'unverified'}],coverageFindings:[],evidenceCoverage:coverageAnswer==='omitted'?[]:[{...missing,status:coverageAnswer==='unknown'?'unknown':'covered',sentenceIds:['point','coverage-1'],missingPoints:[],reason:coverageAnswer==='unknown'?'Unable to reassess coverage.':'Both event and forward condition represented.'}]},usage:{costUsd:.03}},
+ }});const restore=injectTransport(fake);
+ try {
+ const run=await create('policy-coverage',settings.models.extraction.id,{task:'research-brief',teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'source',title:'Policy',context:{videoPublishedAt:null,recordedAt:null,analysedAt:'2026-09-20T00:00:00Z',language:'en',videoId:'policy-coverage',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[{id:'k5',kind:'research_context',summary:'Policy decision and forward monitoring',instrument:null,ticker:null,stance:'neutral',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:'a',endId:'b',text:original.text+' '+extra.text,translation:'',start:0,end:10,hash:null}]}]}},'test');
+ run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[original],mainTopics:['BOJ'],omissions:[]};
+ await researchStep(run);assert.equal(run.stage,'research-audit');assert.deepEqual((run.output.coverageRepair as {missingEvidenceIds:string[]}).missingEvidenceIds,['k5']);
+ await researchStep(run);const [brief]=await researchBriefs();assert.deepEqual(brief.sentences.map(s=>s.text),[original.text,extra.text]);assert.equal(brief.sentences[0].auditReason,'Supported event');assert.equal(brief.evidenceCoverage?.[0].status,coverageAnswer==='covered'?'covered':'partial');
+ const {researchReadiness}=await import('../src/features/youtube-intelligence/research-readiness.ts');assert.equal(researchReadiness(brief).status,coverageAnswer==='covered'?'complete':'partial');if(coverageAnswer!=='covered')assert.match(researchReadiness(brief).issues.join(' '),/Monitor subsequent/);assert.equal(brief.modelCostUsd,.06);
+ } finally {restore();await db.close();}
+});

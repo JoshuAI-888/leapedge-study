@@ -15,3 +15,11 @@ test('duplicate conflicting verdicts cannot silently choose a winner',async()=>{
  const r=await reconcileResearchAudit(['a'],{verdicts:[verdict('a'),{...verdict('a'),accepted:false}],coverageFindings:[]},async ids=>({verdicts:ids.map(verdict),coverageFindings:[]}));
  assert.equal(r.attempts.length,2);assert.equal(r.audit.verdicts.length,1);
 });
+test('restricted verdict repair cannot erase new gaps or upgrade old proposition gaps',async()=>{
+ const covered={evidenceId:'k1',status:'covered',sentenceIds:['a'],missingPoints:[],reason:'Event represented'};
+ const partial={...covered,status:'partial',missingPoints:[{point:'Future yen monitoring',quote:'Watch further yen appreciation.'}],reason:'Forward monitor missing'};
+ for(const [first,second] of [[covered,partial],[partial,covered]]) {
+ const r=await reconcileResearchAudit(['a','b'],{verdicts:[verdict('a')],coverageFindings:[],evidenceCoverage:[first]},async()=>({verdicts:[verdict('b')],coverageFindings:[],evidenceCoverage:[second]}));
+ assert.equal(r.audit.evidenceCoverage[0].status,'partial');assert.equal(r.audit.evidenceCoverage[0].missingPoints[0].point,'Future yen monitoring');
+ }
+});

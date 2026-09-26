@@ -1,3 +1,4 @@
+import { EvidenceCoverage } from "./research-readiness.ts";
 import { z } from "zod";
 import { stockSplitDirectionCheck, explicitPercentagePointConflict, explicitRateQuantities, explicitBasisPointProseConflict } from "./source-quantity-checks.ts";
 import type { Run, CheckedClaim, SourceData } from "./contracts.ts";
@@ -398,10 +399,12 @@ export const ResearchVerdict = z.object({
 export const ResearchAudit = z.object({
   verdicts: z.array(ResearchVerdict).max(48),
   coverageFindings: z.array(z.string()).max(30),
+  evidenceCoverage: z.array(EvidenceCoverage).default([]),
 });
 // New model calls must return explicit comparison assessments. The retained
 // artifact parser above keeps defaults solely for backward compatibility.
 export const ResearchAuditResponse = ResearchAudit.extend({
+  evidenceCoverage: z.array(EvidenceCoverage),
   verdicts: z.array(ResearchVerdict.extend({
     externalSupport: z.array(ExternalSupport.extend({
       comparability: z.object({
@@ -817,6 +820,7 @@ export type ResearchBriefData = ReturnType<typeof validateBrief> & {
   evidence: EvidenceRecordData[];
   external: ExternalEvidenceData[];
   coverageFindings: string[];
+  evidenceCoverage?: z.infer<typeof EvidenceCoverage>[];
   retrievalNotes: string[];
   externalCostUsd: number;
   unknownExternalCosts: number;
