@@ -8,6 +8,7 @@ import {
   prioritiseBriefs,
   evidenceInventory,
   extractionContext,
+  actionRecallWindows,
 } from "../src/features/youtube-intelligence/research-brief.ts";
 import type { Run } from "../src/features/youtube-intelligence/contracts.ts";
 const run = {
@@ -422,7 +423,7 @@ test('eligible primary URL without assertion-level support cannot confer corrobo
 
 test('corroboration requires an exact retained passage and the assertion being assessed', () => {
  const external={id:'x1',url:'https://example.com/report',title:'Primary',text:'The creator holds shares.',publishedAt:'2026-04-01T00:00:00Z',retrievedAt:'2026-09-20T00:00:00Z',publicationConfirmed:true,dateBasis:'fixture',sourceClass:'primary' as const,hash:'fixture',query:'fixture',timeMode:'video_date' as const,provider:'fixture'};
- const check=(quote:string,assertion=sentence.text)=>validateBrief({sentences:[{...sentence,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[external],analysisContext(run),[{id:'s1',accepted:true,reason:'Exact holding independently reported.',factualStatus:'corroborated',externalSupport:[{externalId:'x1',assertion,quote,relationship:'supports',reason:'Same holder and position.'}]}]);
+ const check=(quote:string,assertion=sentence.text)=>validateBrief({sentences:[{...sentence,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[external],analysisContext(run),[{id:'s1',accepted:true,reason:'Exact holding independently reported.',factualStatus:'corroborated',externalSupport:[{externalId:'x1',assertion,quote,relationship:'supports',reason:'Same holder and position.',comparability:{metric:'matched',period:'matched',units:'not_applicable',observationBasis:'matched',reason:'Same holder, position and as-of date.'}}]}]);
  assert.equal(check('Fabricated passage').sentences[0].factualStatus,'unverified');
  assert.equal(check(external.text,'Unrelated assertion').sentences[0].factualStatus,'unverified');
  assert.equal(check(external.text).sentences[0].factualStatus,'corroborated');
@@ -448,7 +449,7 @@ test('a day-only publication cannot prove it happened after a video earlier the 
 test('a supported clause cannot hide a contradictory material clause behind a partial label',()=>{
  const text='Revenue rose, but margins expanded.';
  const external={id:'x1',url:'https://example.com/report',title:'Primary',text:'Revenue rose. Margins declined.',publishedAt:'2026-04-01T00:00:00Z',retrievedAt:'2026-09-20T00:00:00Z',publicationConfirmed:true,publicationPrecision:'day' as const,dateBasis:'fixture',sourceClass:'primary' as const,hash:'fixture',query:'fixture',timeMode:'video_date' as const,provider:'fixture'};
- const result=validateBrief({sentences:[{...sentence,text,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[external],analysisContext(run),[{id:'s1',accepted:true,reason:'Mixed support',factualStatus:'partial',externalSupport:[{externalId:'x1',assertion:'Revenue rose',quote:'Revenue rose.',relationship:'supports',reason:'Same period.'},{externalId:'x1',assertion:'margins expanded',quote:'Margins declined.',relationship:'contradicts',reason:'Same period and margin basis.'}]}]);
+ const result=validateBrief({sentences:[{...sentence,text,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[external],analysisContext(run),[{id:'s1',accepted:true,reason:'Mixed support',factualStatus:'partial',externalSupport:[{externalId:'x1',assertion:'Revenue rose',quote:'Revenue rose.',relationship:'supports',reason:'Same period.',comparability:{metric:'matched',period:'matched',units:'matched',observationBasis:'matched',reason:'Same revenue definition and period.'}},{externalId:'x1',assertion:'margins expanded',quote:'Margins declined.',relationship:'contradicts',reason:'Same period and margin basis.',comparability:{metric:'matched',period:'matched',units:'matched',observationBasis:'matched',reason:'Same margin definition, fiscal period and percent units.'}}]}]);
  assert.equal(result.sentences[0].factualStatus,'disputed');assert.equal(result.sentences[0].robustness,'fragile');
 });
 
@@ -484,4 +485,69 @@ test('a quote containing both percent and percentage-point facts does not invent
  const evidence=evidenceInventory(run);evidence[0].quotes[0].text='利润率为10%，提高了1个百分点。';
  const result=validateBrief({sentences:[{...sentence,text:'Margin is 10 percent.',financialFacts:[{label:'Margin',value:10,currency:null,unit:'percent',scale:'ones',period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote:evidence[0].quotes[0].text}]}],mainTopics:['Company'],omissions:[]},evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'Model accepted',factualStatus:'unverified'}]);
  assert.equal(result.sentences.length,1);
+});
+
+const comparableObservation = {metric:'matched' as const,period:'matched' as const,units:'matched' as const,observationBasis:'matched' as const,reason:'Same instrument, date, units and closing observation convention established from both sources.'};
+const yieldExternal = {id:'x1',url:'https://example.com/h15',title:'H15',text:'10-year constant maturity yield: 4.94%.',publishedAt:'2026-04-01T00:00:00Z',retrievedAt:'2026-09-20T00:00:00Z',publicationConfirmed:true,dateBasis:'fixture',sourceClass:'primary' as const,hash:'fixture',query:'fixture',timeMode:'video_date' as const,provider:'fixture'};
+function yieldComparison(comparability?: {metric:"matched"|"not_applicable"|"unknown"|"mismatched";period:"matched"|"not_applicable"|"unknown"|"mismatched";units:"matched"|"not_applicable"|"unknown"|"mismatched";observationBasis:"matched"|"not_applicable"|"unknown"|"mismatched";reason:string},quote=yieldExternal.text) {
+ const text='The 10-year Treasury yield pulled back to 4.93%.';
+ return validateBrief({sentences:[{...sentence,text,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[yieldExternal],analysisContext(run),[{id:'s1',accepted:true,reason:'The numerical gap may reflect different conventions, not a proven contradiction.',factualStatus:'disputed',robustness:'fragile',robustnessReason:'Yield differs by one basis point.',externalSupport:[{externalId:'x1',assertion:text,quote,relationship:'contradicts',reason:'The observation basis is not confirmed identical; this is not conclusively proven to be a contradiction.',...(comparability?{comparability}: {})}]}]);
+}
+test('unknown Treasury observation convention withholds disputed and fragile while preserving potential conflict passage',()=>{
+ const result=yieldComparison({...comparableObservation,observationBasis:'unknown'});
+ assert.equal(result.sentences[0].factualStatus,'unverified');assert.equal(result.sentences[0].robustness,'insufficient');
+ assert.equal(result.sentences[0].externalSupport?.length,1);assert.equal(result.sentences[0].externalSupport?.[0].quote,yieldExternal.text);
+ assert.match(result.sentences[0].auditReason,/comparab|convention/i);
+});
+test('legacy absent comparability defaults unknown without dropping its retained evidence',()=>{
+ const result=yieldComparison();assert.equal(result.sentences[0].factualStatus,'unverified');
+ assert.equal(result.sentences[0].externalSupport?.[0].comparability.observationBasis,'unknown');
+});
+test('numeric conflicts require all four comparison dimensions matched, including units and basis',()=>{
+ for(const dimension of ['metric','period','units','observationBasis']) for(const status of ['unknown','mismatched','not_applicable'] as const) {
+  const result=yieldComparison({...comparableObservation,[dimension]:status});assert.equal(result.sentences[0].factualStatus,'unverified',`${dimension}:${status}`);
+ }
+ assert.equal(yieldComparison(comparableObservation).sentences[0].factualStatus,'disputed');
+ assert.equal(yieldComparison(comparableObservation).sentences[0].robustness,'fragile');
+ assert.equal(yieldComparison(comparableObservation,'Fabricated quote').sentences[0].factualStatus,'unverified');
+});
+
+test('numerical support with unknown or mismatched measurement cannot corroborate or partially confirm',()=>{
+ const text='The 10-year Treasury yield was 4.94%.';
+ for(const label of ['corroborated','partial'] as const) for(const status of ['unknown','mismatched','not_applicable'] as const) {
+  const result=validateBrief({sentences:[{...sentence,text,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[yieldExternal],analysisContext(run),[{id:'s1',accepted:true,reason:'Same-looking yield.',factualStatus:label,externalSupport:[{externalId:'x1',assertion:text,quote:yieldExternal.text,relationship:'supports',reason:'May be different observation convention.',comparability:{...comparableObservation,observationBasis:status}}]}]);
+  assert.equal(result.sentences[0].factualStatus,'unverified',`${label}:${status}`);assert.equal(result.sentences[0].externalSupport?.length,1);
+ }
+});
+
+test('explicitly comparable quantitative support can confirm while an unresolved conflict still blocks promotion',()=>{
+ const text='The 10-year Treasury yield was 4.94%.';
+ const support={externalId:'x1',assertion:text,quote:yieldExternal.text,relationship:'supports' as const,reason:'Same constant-maturity observation.',comparability:comparableObservation};
+ const check=(conflict=false)=>validateBrief({sentences:[{...sentence,text,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[yieldExternal],analysisContext(run),[{id:'s1',accepted:true,reason:'Compared exact observation.',factualStatus:'corroborated',externalSupport:[support,...(conflict?[{...support,relationship:'contradicts' as const,comparability:{...comparableObservation,period:'unknown' as const}}]:[])]}]);
+ assert.equal(check().sentences[0].factualStatus,'corroborated');assert.equal(check(true).sentences[0].factualStatus,'unverified');assert.equal(check(true).sentences[0].externalSupport?.length,2);
+});
+
+test('matched comparison flags without a comparison reason do not manufacture certainty',()=>{
+ const {reason: _reason,...incomplete}=comparableObservation;
+ const result=validateBrief({sentences:[{...sentence,text:'The yield was 4.93%.',externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[yieldExternal],analysisContext(run),[{id:'s1',accepted:true,reason:'Matched flags alone.',factualStatus:'disputed',externalSupport:[{externalId:'x1',assertion:'The yield was 4.93%.',quote:yieldExternal.text,relationship:'contradicts',reason:'Different yield.',comparability:incomplete}]}]);
+ assert.equal(result.sentences[0].factualStatus,'unverified');
+});
+
+test('recall revisits rejected core holding and sector reluctance split across Vistra caption cues',()=>{
+ const cues=[
+  {id:'s00031',text:"business's cash flow. You also need to",start_seconds:77.24,end_seconds:80.64},
+  {id:'s00032',text:'jump through hoops to figure out',start_seconds:79.24,end_seconds:83.08},
+  {id:'s00033',text:'profitability. Ultimately, not a sector',start_seconds:80.64,end_seconds:85.28},
+  {id:'s00034',text:'that I absolutely love beyond Bloom',start_seconds:83.08,end_seconds:86.64},
+  {id:'s00035',text:'Energy, which is one of my core',start_seconds:85.28,end_seconds:88.84},
+  {id:'s00036',text:'holdings, but the macro tailwind and',start_seconds:86.64,end_seconds:91.08},
+  {id:'s00037',text:"Tepper's double-down push me over the",start_seconds:88.84,end_seconds:92.96},
+ ];
+ const retained={...run,output:{source:{segments:cues},claims:[
+  {id:'c1',passed:true,reasons:[],claim:{evidence:[{segment_id:'s00031',end_segment_id:'s00033'},{segment_id:'s00036',end_segment_id:'s00037'}]}},
+  {id:'c2',passed:false,reasons:['High conviction unsupported for passive holding.'],claim:{instrument_as_spoken:'Bloom Energy',creator_conviction:'high',evidence:[{segment_id:'s00033',end_segment_id:'s00035'}]}},
+ ]}} as unknown as Run;
+ const original=JSON.stringify(retained);const windows=actionRecallWindows(retained);
+ assert.equal(windows.length,1);assert.ok(windows[0].some(s=>s.id==='s00034'));assert.ok(windows[0].some(s=>s.id==='s00036'));
+ assert.equal(JSON.stringify(retained),original,'Candidate selection does not promote or mutate a rejected holding');
 });

@@ -11,6 +11,10 @@ const hash=value=>createHash('sha256').update(value).digest('hex');
 const stable=value=>Array.isArray(value)?value.map(stable):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>[k,stable(v)])):value;
 export function benchmarkDatabaseName(id){if(!/^[a-z][a-z0-9_]{0,35}$/.test(id))throw Error('Invalid benchmark identifier');return 'yti_perf_readiness_'+id;}
 export function assertResumeIdentity(expected,actual){if(JSON.stringify(stable(expected))!==JSON.stringify(stable(actual)))throw Error('Resume identity mismatch. Changed code, source, settings or limits require a separately identified experiment.');}
+export function frozenSourceOutput(output){
+ const keys=['source','metadata','sourceHash','coverage','limitations','transcriptionCompleteness'];
+ return structuredClone(Object.fromEntries(keys.filter(key=>output[key]!==undefined).map(key=>[key,output[key]])));
+}
 export function ledgerAccounting(calls){
  const completed=calls.filter(c=>c.status==='completed');
  const sum=rows=>rows.reduce((n,c)=>n+Number(c.amount??0),0);
@@ -97,7 +101,7 @@ export async function main(argv=process.argv.slice(2), testHooks={}){
    if(!source){const cleanInput={...old.input};for(const key of ['recoveryOf','recoveryBatch','productionSample'])delete cleanInput[key];source=await S.create(old.videoId,old.model,{...cleanInput,benchmarkId:values.id,teamPreferencesSnapshot:settings,efficiencyVersion:'evidence-efficiency.v1',speculativeResearch:false,reuseResearchCache:true},old.promptVersion);await testHooks.afterAdmission?.({run:source});}
    item.sourceRunId=source.id;item.state='running';
    if(source.stage==='metadata'&&source.status==='queued'){
-    source.stage='synthesis';source.title=old.title;source.output={source:old.output.source,metadata:old.output.metadata,sourceHash:old.output.sourceHash,coverage:old.output.coverage};
+    source.stage='synthesis';source.title=old.title;source.output=frozenSourceOutput(old.output);
     await database.prepare('UPDATE yi_runs SET stage=$1,title=$2,output=$3 WHERE id=$4').run(source.stage,source.title,JSON.stringify(source.output),source.id);
    }
    await checkpoint();source=await execute(source,item.cutoff);if(stop())break;

@@ -369,6 +369,14 @@ export async function windowedAsrStep(
       .digest("hex");
     run.output.coverage = coverage(source, duration);
     run.output.audioTrustProcessed = true; // A source cannot independently verify itself.
+    const fidelityLimitation = "Windowed ASR acquisition completed, but source wording and timestamps remain unverified. Processed clips and cue coverage do not establish transcription accuracy or semantic completeness; check material quotations, position disclosures and timing against the audio before relying on them.";
+    const existingLimitations = Array.isArray(run.output.limitations)
+      ? run.output.limitations
+      : [];
+    run.output.limitations = [...existingLimitations];
+    if (!existingLimitations.includes(fidelityLimitation)) {
+      (run.output.limitations as unknown[]).push(fidelityLimitation);
+    }
     run.output.transcriptionCompleteness = {
       status: "windows_processed_gaps_checked",
       windowCount: done.length,

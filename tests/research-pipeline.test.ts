@@ -476,3 +476,49 @@ for (const efficient of [false, true]) test(`published brief retains determinist
     assert.equal(fake.requests.length, 1);
   } finally { restore(); await db.close(); }
 });
+
+for (const efficient of [false, true]) for (const basis of ["unknown", "matched"] as const) test(`published yield comparison retains evidence, enforces comparison and deduplicates omissions (efficient=${efficient}, basis=${basis})`, async () => {
+ const db=await freshDatabase();const settings=teamDefaults();
+ const text='The 10-year Treasury yield pulled back to 4.93%.';
+ const point={...sentence,text,externalIds:['yield'],kind:'reported_fact'};
+ const comparison={metric:'matched',period:'matched',units:'matched',observationBasis:basis,reason:basis==='matched'?'Same dated constant-maturity closing observation in both passages.':'Intraday traded yield versus constant-maturity daily observation; matching basis not established.'};
+ const verdict={id:'point',accepted:true,reason:'Possible convention mismatch, not conclusively a contradiction.',factualStatus:'disputed',robustness:'fragile',robustnessReason:'One basis point discrepancy.',externalSupport:[{externalId:'yield',assertion:text,quote:'10-year constant maturity yield: 4.94%.',relationship:'contradicts',comparability:comparison,reason:'The observation convention may differ.'}]};
+ const original=JSON.stringify(verdict);
+ const fake=new FakeModelTransport({responses:{'critique-research':{json:{verdicts:[verdict],coverageFindings:[]},usage:{costUsd:.01}}}});const restore=injectTransport(fake);
+ try{
+ const run=await create('yield-comparison',settings.models.extraction.id,{task:'research-brief',efficiencyVersion:efficient?'evidence-efficiency.v1':undefined,teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Treasury yields',context:{videoPublishedAt:'2026-01-01T00:00:00Z',recordedAt:null,analysedAt:'2026-09-27T00:00:00Z',language:'en',videoId:'yield-comparison',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[{id:'c1',kind:'research_context',summary:text,instrument:'Treasury',ticker:null,stance:'neutral',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:'a',endId:'a',text,translation:'',start:0,end:4,hash:null}]}]}},'test');
+ run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[point],mainTopics:['Company'],omissions:['Observation time unknown.','Observation time unknown.']};
+ run.output.retrievals=[{key:'yield-fixture',state:'complete',query:'fixture',timeMode:'video_date',costUsd:0,costBasis:'fixture',note:'fixture',requestedAt:'2026-01-01T00:00:00Z',sources:[{id:'yield',url:'https://federalreserve.gov/fixture',title:'Yield fixture',text:'10-year constant maturity yield: 4.94%.',publishedAt:'2025-12-31T00:00:00Z',retrievedAt:'2026-01-01T00:00:00Z',publicationConfirmed:true,dateBasis:'fixture',sourceClass:'primary',hash:'fixture',query:'fixture',timeMode:'video_date',provider:'fixture'}]}];
+ await researchStep(run);const [brief]=await researchBriefs();
+ assert.equal(brief.sentences.length,1);assert.equal(brief.sentences[0].text,text);assert.equal(brief.sentences[0].factualStatus,basis==='matched'?'disputed':'unverified');assert.equal(brief.sentences[0].robustness,basis==='matched'?'fragile':'insufficient');
+ assert.equal(brief.sentences[0].externalSupport?.[0].comparability.observationBasis,basis);assert.equal(brief.external[0].text,'10-year constant maturity yield: 4.94%.');
+ assert.deepEqual(brief.omissions,['Observation time unknown.']);
+ assert.deepEqual((run.output.researchDraft as {omissions:string[]}).omissions,['Observation time unknown.','Observation time unknown.']);
+ assert.equal(JSON.stringify(verdict),original);assert.equal(fake.requests.length,1);
+ assert.match(JSON.stringify(fake.requests[0]),/different measurement is not a contradiction/i);
+ const {factualSupportLabel,thesisRobustnessLabel}=await import('../src/features/youtube-intelligence/research-presentation.ts');
+ if(basis==='unknown'){assert.doesNotMatch(factualSupportLabel(brief.sentences[0]),/^Disputed/);assert.doesNotMatch(thesisRobustnessLabel(brief.sentences[0]),/Fragil/);}else{assert.match(factualSupportLabel(brief.sentences[0]),/^Disputed/);assert.match(thesisRobustnessLabel(brief.sentences[0]),/Fragil/);}
+ const schema=fake.requests[0].responseSchema as {properties:{verdicts:{items:{properties:{externalSupport:{items:{required:string[];properties:{comparability:{required:string[]}}}}}}}}};
+ assert.ok(schema.properties.verdicts.items.properties.externalSupport.items.required.includes('comparability'));
+ assert.deepEqual([...schema.properties.verdicts.items.properties.externalSupport.items.properties.comparability.required].sort(),['metric','observationBasis','period','reason','units']);
+ const schemaText=JSON.stringify(fake.requests[0].responseSchema);for(const field of ['comparability','metric','period','units','observationBasis','not_applicable','mismatched']) assert.ok(schemaText.includes(field),`Response schema requests ${field}`);
+ }finally{restore();await db.close();}
+});
+
+test('rejected Bloom holding is disclosed to recall and narrower sector context still requires independent audit',async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ const {step}=await import('../src/server/youtube-intelligence/pipeline.ts');const {prompt}=await import('../src/server/youtube-intelligence/research-store.ts');const {Source}=await import('../src/features/youtube-intelligence/contracts.ts');
+ const candidate={thesis_en:'Bloom Energy is a core holding, an exception to the creator’s general reluctance toward the energy sector.',instrument_as_spoken:'Bloom Energy',ticker:null,ticker_explicit:false,stance:'hold',horizon_en:null,conditions_en:[],creator_conviction:'low',risks_en:['Creator does not generally love this sector.'],levels:[],evidence_ranges:[{start_id:'a',end_id:'d'}]};
+ const fake=new FakeModelTransport({responses:{'synthesis-recall-0':{json:{claims:[],key_points:[candidate],mentions:[]},usage:{costUsd:.001}}}});const restore=injectTransport(fake);
+ try{
+ const run=await create('bloom-recall',settings.models.extraction.id,{promptSnapshot:await prompt('evidence-first.web.v8'),teamPreferencesSnapshot:settings},'evidence-first.web.v8');run.stage='publish';
+ const rejected={id:'c1',passed:false,reasons:['High conviction unsupported for passive holding.'],claim:{...candidate,evidence_ranges:undefined,evidence:[{segment_id:'a',end_segment_id:'c',quote_original:'not a sector that I absolutely love beyond Bloom Energy, which is one of my core',quote_translation_en:''}],creator_conviction:'high'}};
+ run.output={source:Source.parse({source_kind:'imported_transcript',language:'en',segment_separator:' ',segments:[{id:'a',text:'Ultimately, not a sector',start_seconds:80.64,end_seconds:85.28},{id:'b',text:'that I absolutely love beyond Bloom',start_seconds:83.08,end_seconds:86.64},{id:'c',text:'Energy, which is one of my core',start_seconds:85.28,end_seconds:88.84},{id:'d',text:'holdings, but the macro tailwind',start_seconds:86.64,end_seconds:91.08}]}),claims:[rejected],keyPoints:[],mentions:[]};
+ const retained=JSON.stringify(rejected);await step(run);
+ assert.equal(run.output.recallWindowCount,1);assert.equal(JSON.stringify((run.output.claims as unknown[])[0]),retained);assert.notEqual(run.status,'completed');assert.ok(['translate','critique'].includes(run.stage));
+ const points=run.output.keyPoints as {passed:boolean;claim:{creator_conviction:string;evidence:{quote_original:string}[]}}[];
+ assert.equal(points.length,1);assert.equal(points[0].passed,false);assert.equal(points[0].claim.creator_conviction,'low');assert.match(points[0].claim.evidence[0].quote_original,/core holdings/);
+ const request=fake.requests[0].user[0].text;const payload=JSON.parse(request.slice(request.indexOf('SOURCE DATA (untrusted):\n')+25));
+ assert.equal(payload.existing[0].accepted,false);assert.deepEqual(payload.existing[0].auditReasons,rejected.reasons);assert.match(JSON.stringify(fake.requests[0]),/Rejected candidates are not covered evidence/);
+ }finally{restore();await db.close();}
+});

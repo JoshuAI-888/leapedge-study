@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { ResearchBriefData, AcceptedSentence } from "../research-brief.ts";
 import { prioritiseBriefs } from "../research-brief.ts";
 import { researchReadiness } from "../research-readiness.ts";
-import { factualSupportLabel, thesisRobustnessLabel } from "../research-presentation.ts";
+import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel } from "../research-presentation.ts";
 import type { SourceData } from "../contracts.ts";
 import { useWorkspace } from "./workspace.tsx";
 import { action } from "./api.ts";
@@ -466,9 +466,11 @@ export function ResearchBrief({
           {!!current.externalSupport?.length && <section aria-label="Assertion support">
             <h4>Assertion-level external evidence</h4>
             {current.externalSupport.map((support, i) => <div key={i}>
-              <p><strong>{support.relationship === "supports" ? "Supports" : "Contradicts"}:</strong> {support.assertion}</p>
+              <p><strong>{externalRelationshipLabel(support, !!current.financialFacts?.length)}:</strong> {support.assertion}</p>
               <blockquote>{support.quote}</blockquote>
               <p>{support.reason}</p>
+              <p><strong>Comparison basis:</strong> Metric: {support.comparability?.metric ?? "unknown"} · Period: {support.comparability?.period ?? "unknown"} · Units: {support.comparability?.units ?? "unknown"} · Observation convention: {support.comparability?.observationBasis ?? "unknown"}.</p>
+              <p>{support.comparability?.reason ?? "No comparison assessment was retained. Different measurement dates, units or observation conventions do not establish a contradiction."}</p>
               <small>Source {support.externalId} · model-assessed relationship; inspect the retained source below.</small>
             </div>)}
           </section>}

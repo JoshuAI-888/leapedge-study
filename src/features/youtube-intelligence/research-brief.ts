@@ -280,13 +280,37 @@ export const ResearchDraft = z.object({
   mainTopics: z.array(z.string()).max(100),
   omissions: z.array(z.string()).max(30),
 });
+const ComparisonStatus = z.enum(["matched", "not_applicable", "unknown", "mismatched"]);
+export const ExternalComparability = z.object({
+  metric: ComparisonStatus.default("unknown"),
+  period: ComparisonStatus.default("unknown"),
+  units: ComparisonStatus.default("unknown"),
+  observationBasis: ComparisonStatus.default("unknown"),
+  reason: z.string().min(1).max(1000).default("Comparability has not been established."),
+});
 export const ExternalSupport = z.object({
   externalId: z.string(),
   assertion: z.string().min(1).max(4000),
   quote: z.string().min(1).max(6000),
   relationship: z.enum(["supports", "contradicts"]),
+  comparability: ExternalComparability.default(() => ExternalComparability.parse({})),
   reason: z.string().min(1).max(1000),
 });
+// Legacy records without comparison metadata remain readable but cannot
+// establish a contradiction. Shared with presentation so a badge cannot bypass
+// the publication rule merely because a retained link says "contradicts".
+export function externalComparisonEstablished(
+  link: { assertion?: string; comparability?: z.input<typeof ExternalComparability> },
+  hasFinancialFacts = false,
+): boolean {
+  const parsed = ExternalComparability.safeParse(link.comparability ?? {});
+  if (!parsed.success || !link.comparability?.reason?.trim() || parsed.data.reason === "Comparability has not been established.") return false;
+  const comparison = parsed.data;
+  const quantitative = hasFinancialFacts || /[0-9%]|\b(?:yield|margin|revenue|earnings|profit|ratio|multiple|basis points?|percent)\b/i.test(link.assertion ?? "");
+  return comparison.metric === "matched" &&
+    [comparison.period, comparison.units, comparison.observationBasis].every(status =>
+      status === "matched" || (!quantitative && status === "not_applicable"));
+}
 export const ResearchVerdict = z.object({
   externalSupport: z.array(ExternalSupport).max(16).default([]),
   id: z.string(),
@@ -306,6 +330,21 @@ export const ResearchVerdict = z.object({
 export const ResearchAudit = z.object({
   verdicts: z.array(ResearchVerdict).max(48),
   coverageFindings: z.array(z.string()).max(30),
+});
+// New model calls must return explicit comparison assessments. The retained
+// artifact parser above keeps defaults solely for backward compatibility.
+export const ResearchAuditResponse = ResearchAudit.extend({
+  verdicts: z.array(ResearchVerdict.extend({
+    externalSupport: z.array(ExternalSupport.extend({
+      comparability: z.object({
+        metric: ComparisonStatus,
+        period: ComparisonStatus,
+        units: ComparisonStatus,
+        observationBasis: ComparisonStatus,
+        reason: z.string().min(1).max(1000),
+      }),
+    })).max(16),
+  })).max(48),
 });
 export type AcceptedSentence = ResearchSentenceData & {
   externalSupport?: z.infer<typeof ExternalSupport>[];
@@ -402,14 +441,20 @@ export function validateBrief(
         source.id === link.externalId && source.sourceClass === "primary" &&
         source.text.includes(link.quote)),
     );
-    const fullSupport = externalSupport.some(s => s.relationship === "supports" && s.assertion === sentence.text);
-    const fullConflict = externalSupport.some(s => s.relationship === "contradicts");
+    const comparableSupport = externalSupport.filter(s => s.relationship === "supports" && externalComparisonEstablished(s, sentence.financialFacts.length > 0));
+    const fullSupport = comparableSupport.some(s => s.assertion === sentence.text);
+    // Retain possible conflicting passages even when their measurements cannot
+    // be compared. A different measurement is not a contradiction.
+    const fullConflict = externalSupport.some(s => s.relationship === "contradicts" && externalComparisonEstablished(s, sentence.financialFacts.length > 0));
+    const unresolvedConflict = externalSupport.some(s => s.relationship === "contradicts" && !externalComparisonEstablished(s, sentence.financialFacts.length > 0));
     const permitted = audit!.factualStatus === "corroborated" ? fullSupport && !externalSupport.some(s => s.relationship === "contradicts")
       : audit!.factualStatus === "disputed" ? fullConflict
-      : audit!.factualStatus === "partial" ? externalSupport.some(s => s.relationship === "supports") : true;
-    const factualStatus = fullConflict ? "disputed" : permitted ? audit!.factualStatus : "unverified";
-    const withheldExternalAudit = !permitted && !fullConflict;
-    const withheldReason = "External-verification assessment withheld: no valid assertion-level primary-source passage supports the proposed label. The original audit remains in the run trace; source eligibility alone is not corroboration.";
+      : audit!.factualStatus === "partial" ? comparableSupport.length > 0 : true;
+    const factualStatus = fullConflict ? "disputed" : unresolvedConflict ? "unverified" : permitted ? audit!.factualStatus : "unverified";
+    const withheldExternalAudit = !fullConflict && (unresolvedConflict || !permitted);
+    const withheldReason = unresolvedConflict
+      ? "External-verification assessment withheld: potential conflict retained, but comparable metric, period, units and observation convention have not been established. A different measurement is not a contradiction. Review the retained passage and comparability reason; the original audit remains in the run trace."
+      : "External-verification assessment withheld: no valid assertion-level primary-source passage with established comparability supports the proposed label. The original audit remains in the run trace; source eligibility alone is not corroboration.";
     const trust = Math.min(
       ...sentence.evidenceIds.map((id) => Number(byId.get(id)!.trust.slice(1))),
     );
@@ -781,7 +826,7 @@ export function actionRecallWindows(run: Run) {
         for (const c of source.slice(first, last + 1)) covered.add(c.id);
     }
   const expression =
-    /\b(?:I\s*(?:am|'m|’m)\s+(?:(?:not|still|very)\s+)?(?:bullish|bearish|long|short|holding|buying|selling)|I\s+(?:will buy|would buy|own|bought|sold|hold|recommend)|stocks\s+(?:that\s+)?I\s+will\s+buy)\b|\b(?:valuation|moat|cash.flow|leverage|dilution|entry.price|countercase|not.(?:own|hold|short)|hypothetical|margin.pressure)\b|我.{0,6}(?:看好|看空|买入|持有|减仓|加仓|卖出)|估值|护城河|現金流|现金流|杠杆|槓桿|稀释|稀釋|沒有持倉|没有持仓/i;
+    /\b(?:I\s*(?:am|'m|’m)\s+(?:(?:not|still|very)\s+)?(?:bullish|bearish|long|short|holding|buying|selling)|I\s+(?:will buy|would buy|own|bought|sold|hold|recommend)|stocks\s+(?:that\s+)?I\s+will\s+buy)\b|\b(?:valuation|moat|cash.flow|leverage|dilution|entry.price|countercase|not.(?:own|hold|short)|hypothetical|margin.pressure)\b|\b(?:one\s+of\s+my\s+(?:core\s+)?holdings?|my\s+(?:core|largest)\s+(?:holdings?|positions?)|not\s+(?:a|the)\s+sector\s+that\s+I\s+(?:absolutely\s+)?(?:love|like))\b|我.{0,6}(?:看好|看空|买入|持有|减仓|加仓|卖出)|估值|护城河|現金流|现金流|杠杆|槓桿|稀释|稀釋|沒有持倉|没有持仓/i;
   const ranges: { start: number; end: number }[] = [];
   source.forEach((cue, i) => {
     if (

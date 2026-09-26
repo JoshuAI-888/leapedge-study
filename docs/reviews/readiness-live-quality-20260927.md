@@ -1,6 +1,12 @@
-# Candidate live quality review — incomplete
+# Candidate A live quality review — execution finished, quality not certified
 
-Candidate implementation: `ddf1006`. Evidence source: the atomic export `data/readiness-20260927/live-candidate.json`. This is an interim source-backed review, not a cohort quality pass. The candidate is still running; no production promotion is implied. No new LeapEdge calls are made for this review.
+Final frozen-transcript experiment: **20 admitted, 12 published, 8 failed**. All eight failures are `Coverage supplement exceeds bounded repair size; original draft retained.` They include the long podcast and Palantir options case, so their draft-only output cannot count as published success. This candidate fails release acceptance.
+
+Settled total **$7.92614625 = $6.38614625 model + $1.54 external search**, across427 completed ledger rows including220 external requests. No open holds or unknown external costs remain in this export. External retrieval documents reconcile to$1.54 and are not added again. The old export's `settledModelUsd` name actually denotes all settled rows. No new LeapEdge calls.
+
+Eight published cases have selected source checks; four published cases remain source-unassessed. One failed case also had its original draft/trace inspected. Selected checks exposed duplicate publication, reversed split direction and material qualification/coverage gaps. These findings are not a whole-cohort accuracy score. The final all20 table and companion JSON retain every outcome and historical LeapEdge excerpt. Earlier incremental observations below remain explicitly historical.
+
+Evidence: `data/readiness-20260927/live-candidate.json`, final SHA-256 `89d7a22210bfc8bdb7c48d1464e76c7813ff5ce2afe321220276db0e47c405ea`. Candidate HEAD label `ddf1006` was dirty; retained implementation hashes identify the treatment. Runtime starts from frozen retained transcript/metadata at synthesis and excludes acquisition/ASR and UI display. Historical LeapEdge timing is not comparable. Execution completion does not imply quality approval or production promotion.
 
 ## Review criteria fixed before inspecting completed briefs
 
@@ -97,4 +103,49 @@ Research run `94e5391e-293b-407e-9e41-0bee720e538f` publishes nine sentences. Se
 
 ## Remaining cohort acceptance
 
-Dutch Bros moat/entry and Opendoor hypothetical-position checks, Palantir options expiry/strike/attribution, and all not-yet-published cases remain unassessed in the denominator. A corrected treatment must be identified separately from this failed candidate; existing paid outcomes and failures cannot be replaced or silently dropped from the comparison.
+At final execution, the Dutch Bros/Opendoor long podcast and Palantir options cases failed publication; their required final-output fidelity checks therefore remain unmet. Other unassessed criteria remain in the denominator. A corrected treatment must be identified separately from this failed candidate; existing paid outcomes and failures cannot be replaced or silently dropped from the comparison.
+
+## Incremental publication-failure snapshot
+
+As of 2026-09-26T21:23:49.977033+00:00, the first candidate has five final briefs and five failed publications out of the fixed 20-case denominator. The additional failures are AMD (`U32FPvvBaNI`), Oracle/Adobe (`jPy5aDhMsMY`), NVIDIA opportunity (`elD62rk5Ijo`), and `zYeJZu1hkdM`. Each retains the same research-audit error: “Coverage supplement exceeds bounded repair size; original draft retained.” Their unpublished content is not assessed or counted as delivered research. The companion JSON records exact failed run IDs and timestamps. Current settled call ledger is US$4.39246825; this running snapshot includes subsequent in-progress work and is not the total cost of only these ten outcomes. This is a separate failed candidate from corrected revision `68eda4d`.
+
+## Additional selected source review — cases 14, 15 and 17
+
+Independent UI-agent review adds three scoped checks, not cohort certification. Ondas (`DuIyF_34ReI`) has ten exact duplicate pairs (22 sentences,12 unique). Its >$1B contractor-access discussion drops the IDIQ qualification (`s00072–85`,148.4–176s); expected >$50M follow-ons obscure the distinct initial awarded $15.8M (`s00120–134`,245.6–277.6s). These are material qualification/coverage gaps; the report does not explicitly call all access booked revenue. Selected acquisition/guidance figures remain faithful.
+
+Vistra (`pWnu1C8I6Xw`) preserves selected13F delay, CEO purchases and valuation figures, but source `s00033–37`,80.64–88.84s, says the creator dislikes the sector except Bloom Energy, a core holding. That qualification is absent from the final brief and upstream inventory. Retained LeapEdge also omits it: agreement alone cannot certify recall.
+
+Education (`QEwLInO3iZY`) preserves the three selected research-discipline statements, but narrows a general sell/invalidation rule to operational or financial conditions (`s00015–16`,29.04–31.04s) without that restriction in the source. The six-minute statistic remains appropriately unverified. These findings concern candidate A, not the corrected build.
+
+## Failure-inclusive retained-reference comparison snapshot
+
+Snapshot 89d7a22210bfc8bdb7c48d1464e76c7813ff5ce2afe321220276db0e47c405ea at 2026-09-26T21:40:25.641210+00:00; state **finished**. All 20 cases remain in the denominator: 20 admitted, 12 published, 8 failed. Publication is not a quality pass. New final briefs remain unassessed until a source-backed finding is recorded.
+
+Runtime starts with frozen retained transcript/metadata at synthesis and ends with research publication/failure. It excludes fresh ingestion, ASR and UI display. Table seconds sum recorded stage execution, not user-facing end-to-end latency; an exception may omit its failing stage timing. Retained LeapEdge reports have no consistently captured comparable timing, so no speed ratio is calculated. Candidate A revision label is `ddf1006` with a dirty-tree flag: exact implementation hash, not HEAD alone, identifies treatment.
+
+Settled cost **$7.926146 = models $6.386146 + external search $1.540000**. `accounting.settledModelUsd` in this old runner is misleadingly named and includes external rows. Retrieval documents/cache copies are not added again. Failure costs remain included.
+
+| Case | Candidate outcome | Recorded execution s | Model $ | Search $ | Retained LeapEdge summary excerpt | Source review |
+|---|---|---:|---:|---:|---|---|
+| 1 `SPIRV9UjNYU` | retained-final-brief (18 sentences) | 140.0 | 0.3176 | 0.056 | Ed Yardeni reduced his year-end S&P 500 target to 7,900 due to valuation multiple compression from sustained higher interest rates, elevated energy costs, and Y… | date_context: pass; external_support_labels: review_required; duplicate_publication: fail |
+| 2 `J_VpfkM74Wk` | failed-no-final-brief | 127.6 | 0.3183 | 0.084 | The AI industry's primary bottleneck has shifted from software demand to the massive capital required to build out physical GPU data centers, as illustrated by … | publication_reliability: fail |
+| 3 `9nb3fp76Rz0` | retained-final-brief (10 sentences) | 74.6 | 0.1857 | 0.042 | The broader AI-driven bull market remains intact from a multi-year secular perspective, but the market faces short-term consolidation under moving-average resis… | numeric_and_condition_fidelity: pass; creator_vs_inference: pass; external_support_labels: pass; duplicate_publication: pass |
+| 4 `3u24qyWjSVM` | retained-final-brief (18 sentences) | 123.4 | 0.2840 | 0.112 | The U.S. stock market experienced sharp intraday volatility due to news of potential U.S. intervention in the yen currency market, triggering yen carry trade un… | numeric_and_condition_fidelity: fail; creator_vs_inference: pass; external_support_labels: pass; duplicate_publication: pass |
+| 5 `M1FJ5dNiBEs` | retained-final-brief (14 sentences) | 93.7 | 0.2461 | 0.098 | Fears of an AI slowdown are overblown as leading frontier labs like OpenAI and Anthropic plan to aggressively expand compute capacity toward 10 gigawatts by 202… | numeric_and_condition_fidelity: pass; material_coverage: pass; external_support_labels: pass; duplicate_publication: pass |
+| 6 `LF7fgz1HAFs` | retained-final-brief (9 sentences) | 74.1 | 0.2031 | 0.084 | Surging AI compute demand is enabling neo-cloud providers to aggressively raise on-demand GPU prices and secure lucrative short-term contracts at roughly $40 mi… | numeric_and_condition_fidelity: pass; creator_vs_inference: pass; external_support_labels: pass; duplicate_publication: pass |
+| 7 `U32FPvvBaNI` | failed-no-final-brief | 114.3 | 0.2987 | 0.098 | The creator argues that AMD is entering a major multi-year growth cycle bolstered by price increases and margin expansion, targeting a $1 trillion market cap. A… | publication_reliability: fail |
+| 8 `jPy5aDhMsMY` | failed-no-final-brief | 117.6 | 0.3566 | 0.084 | Oracle delivers impressive top-line and operating profit growth but remains weighed down by heavy debt and rising interest expenses, warranting caution and smal… | publication_reliability: fail |
+| 9 `elD62rk5Ijo` | failed-no-final-brief | 120.4 | 0.3379 | 0.112 | SK hynix holds a dominant position in high-bandwidth memory (HBM) and enterprise SSDs, positioning it as a core beneficiary of multi-year AI data center infrast… | publication_reliability: fail |
+| 10 `zYeJZu1hkdM` | failed-no-final-brief | 104.9 | 0.2430 | 0.098 | The primary AI hardware bottleneck has transitioned from raw compute to networking infrastructure, making optical networking and Indium Phosphide lasers essenti… | publication_reliability: fail |
+| 11 `ZfOQoh82JTo` | failed-no-final-brief | 177.5 | 0.7753 | 0.112 | No retained excerpt | publication_reliability: fail |
+| 12 `iBMZc7zs_Ew` | retained-final-brief (33 sentences) | 213.5 | 0.9950 | 0.112 | Brazilian digital bank Inter & Co (INTR) offers a compelling long opportunity trading at roughly 8x earnings despite 30% annual growth and strong profitability.… | Unassessed |
+| 13 `tUR0w-LDSbU` | retained-final-brief (8 sentences) | 62.4 | 0.1536 | 0.028 | Palantir is unlikely to deliver a 100x return from its current $350 billion valuation, as reaching a $35 trillion market cap is unrealistic. However, achieving … | Unassessed |
+| 14 `DuIyF_34ReI` | retained-final-brief (22 sentences) | 79.2 | 0.2029 | 0.056 | Ondas Holdings (ONDS) is transforming from a niche tech provider into a full prime defense contractor through its acquisition of Mistral, a strategic partnershi… | numeric_and_condition_fidelity: review_required; material_coverage: fail; duplicate_publication: fail |
+| 15 `QEwLInO3iZY` | retained-final-brief (3 sentences) | 21.9 | 0.0303 | 0.000 | The creator argues that buying stocks without rigorous fundamental research and defined thesis invalidation rules is gambling rather than investing. Investors s… | creator_vs_inference: review_required; material_coverage: pass; external_support_labels: pass |
+| 16 `IjYr5acuBT4` | failed-no-final-brief | 137.8 | 0.3585 | 0.112 | The creator argues that the September market pullback provides a major buying opportunity across secular growth themes like cybersecurity, AI infrastructure, an… | publication_reliability: fail |
+| 17 `pWnu1C8I6Xw` | retained-final-brief (5 sentences) | 36.5 | 0.0565 | 0.028 | The creator initiated a long position in Vistra (VST) following significant insider accumulation by CEO James Burke and high-conviction buying from superinvesto… | numeric_and_condition_fidelity: pass; creator_vs_inference: review_required; material_coverage: fail |
+| 18 `1WNowIoNgtg` | failed-no-final-brief | 107.7 | 0.4658 | 0.028 | The creator details a cash-secured put selling strategy designed to generate consistent income by functioning similarly to an insurance provider. He recommends … | publication_reliability: fail |
+| 19 `vrTbCxUzRw4` | retained-final-brief (13 sentences) | 136.6 | 0.3453 | 0.112 | The creator outlines a strategic accumulation framework for precious metals miners that prioritizes buying technically strong leaders in confirmed uptrends rath… | Unassessed |
+| 20 `Dy_0RtmAt1U` | retained-final-brief (9 sentences) | 94.4 | 0.2119 | 0.084 | Silver is testing critical triple support at its 50-day moving average and uptrend channel bottom, pressured by rising bond yields and US Dollar strength ahead … | Unassessed |
+
+LeapEdge excerpts are retained historical comparator output, not ground truth; full excerpt, URL and report hash are in the companion JSON. No new LeapEdge calls. Failure-free source semantics, external accuracy and complete-video recall have not been certified.

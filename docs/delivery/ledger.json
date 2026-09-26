@@ -1660,7 +1660,7 @@
     "scope": "Priority 1 and 2 authorised 27 September 2026; no new LeapEdge calls or Finradar integration",
     "audit": "docs/reviews/adversarial-readiness-20260927.md",
     "implementation": "implemented-under-validation",
-    "validation": "Both initial integrated suites543pass/1existingSkip/0fail; later quantity/registry/ASR fixes require final verification. Candidate ddf1006 rejected; corrected live candidate pending.",
+    "validation": "Final frozen-code checks:571tests/570pass/1existingSkip/0fail in each default and PGlite suite; typecheck/build pass; offline gate advisory-only. Four isolated PostgreSQL interruption/resume and source-limitation retention checks pass with zero provider calls. Corrected live evaluation pending.",
     "operations": "pending-production-topology-answer; no release installed",
     "lanes": [
       "safe-recovery-and-long-source-coverage",
@@ -1671,8 +1671,8 @@
     ],
     "pr": 13,
     "report": "docs/reviews/readiness-implementation-20260927.md",
-    "browser": "Passed isolated desktop and 390x844/320x800 checks: readiness, review counts, confidence passages, keyboard, retained revision/comparison, profile persistence; final generic processing label verified.",
-    "liveEvaluation": "ddf1006 bounded twenty-case replay in progress; duplicate supplement and optional-repair loss block promotion. Raw attempts/costs preserved; zero new LeapEdge calls.",
-    "longVideo": "First fresh forced-ASR trial: 3920s source; 271.737s acquisition; US$0.592134 settled; no open holds; 14 base windows+12 gap checks; max remaining timestamp gap2.903s. FAILED fidelity acceptance due recovered-window drift and ownership-wording disagreement versus retained captions; smaller-window trial pending."
+    "browser": "Passed isolated desktop/mobile readiness and workflows; new comparability drawer tested at390x844 plus actual retained candidateB in read-only app: unknown comparison shows potential conflict, exact source/history retained, Escape restores focus. No production-path acceptance.",
+    "liveEvaluation": "CandidateA ddf1006 finished20 attempted/12published/8failed, all failures optional-supplement-size errors. US$7.92614625 total ledger =6.38614625 models+1.54 external search; no open holds. CandidateB68eda4d paused after one brief with no duplicate sentences but disputed-label failure. Corrected structured comparability, retention and recall code under validation. No new LeapEdge calls.",
+    "longVideo": "Two fresh forced-ASR trials of3920s source:300s windows271.737s/$0.592134;120s windows304.936s/$0.52072575. Both finished with no open holds. Selected duplicate/timestamp density defects improved; ownership wording still differs from captions. No semantic-fidelity pass or causal speed claim. See long-asr-fidelity-20260927.md."
   }
 }

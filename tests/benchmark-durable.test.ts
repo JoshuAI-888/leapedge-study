@@ -1,6 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { assertResumeIdentity, ledgerAccounting, benchmarkDatabaseName } from '../scripts/run-cohort-durable.mjs';
+import { assertResumeIdentity, ledgerAccounting, benchmarkDatabaseName, frozenSourceOutput } from '../scripts/run-cohort-durable.mjs';
+test('frozen source replay preserves acquisition limitations without inheriting old research',()=>{
+ const original={source:{segments:[{text:'Original words'}]},metadata:{duration:5},limitations:['Ownership wording unresolved'],transcriptionCompleteness:{status:'windows_processed_gaps_checked'},researchDraft:{sentences:['Old analysis']}};
+ const replay=frozenSourceOutput(original);
+ assert.deepEqual(replay.limitations,original.limitations);
+ assert.deepEqual(replay.transcriptionCompleteness,original.transcriptionCompleteness);
+ assert.equal(replay.researchDraft,undefined);
+ replay.source.segments[0].text='Changed copy';
+ assert.equal(original.source.segments[0].text,'Original words');
+});
 test('resuming refuses any implementation, source or settings change',()=>{
  const identity={implementationSha256:'a',inputSha256:'b',settingsSha256:'c'};
  assert.doesNotThrow(()=>assertResumeIdentity(identity,{...identity}));
