@@ -551,3 +551,85 @@ test('recall revisits rejected core holding and sector reluctance split across V
  assert.equal(windows.length,1);assert.ok(windows[0].some(s=>s.id==='s00034'));assert.ok(windows[0].some(s=>s.id==='s00036'));
  assert.equal(JSON.stringify(retained),original,'Candidate selection does not promote or mutate a rejected holding');
 });
+
+function rateBrief(quote:string,value=25,unit='percentage_points',text='The central bank raised rates by 25 basis points.',scale='ones',retained=quote) {
+ const fact={label:'Rate increase',value,unit,scale,currency:null,period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote};
+ const evidence=evidenceInventory(run).map(e=>({...e,quotes:e.quotes.map(q=>({...q,text:retained}))}));
+ const draft={sentences:[{...sentence,text,financialFacts:[fact]}],mainTopics:['Company'],omissions:[]};
+ return {draft, result:validateBrief(draft,evidence,[],analysisContext(run),[{id:'s1',accepted:true,reason:'Faithful source prose.',factualStatus:'unverified'}])};
+}
+test('exact English and Chinese basis-point quote transparently corrects typed unit without dropping correct prose',()=>{
+ for(const quote of ['The Fed raised rates by 25 basis points.','美联储已经加息了25个基点','加息25個基點']) {
+  const {draft,result}=rateBrief(quote);assert.equal(result.sentences.length,1);assert.equal(result.sentences[0].financialFacts[0].unit,'basis_points');assert.equal(result.sentences[0].financialFacts[0].value,25);
+  assert.equal(result.sentences[0].text,draft.sentences[0].text);assert.equal(draft.sentences[0].financialFacts[0].unit,'percentage_points');
+  assert.equal(result.sentences[0].financialFactChecks?.[0].original.unit,'percentage_points');assert.match(result.omissions.join(' '),/unit corrected/i);
+ }
+});
+test('equivalent quarter percentage-point representation remains valid but 100x erroneous prose is not published',()=>{
+ const correct=rateBrief('25 basis points',.25);assert.equal(correct.result.sentences[0].financialFacts[0].unit,'percentage_points');assert.equal(correct.result.sentences[0].financialFacts[0].value,.25);
+ const wrong=rateBrief('25 basis points',25,'percentage_points','The bank raised rates by 25 percentage points.');assert.equal(wrong.result.sentences.length,0);assert.match(wrong.result.rejected[0].reasons.join(' '),/basis.point/i);
+});
+test('ambiguous mixed rate quantities and non-unit scale retain unresolved original facts without guessed correction',()=>{
+ for(const [quote,scale] of [['25 basis points and 25 percent','ones'],['25 basis points','millions']]) {
+  const {result}=rateBrief(quote,25,'percentage_points', 'The source discusses a rate change.',scale);
+  assert.equal(result.sentences.length,1);assert.equal(result.sentences[0].financialFacts.length,0);assert.equal(result.sentences[0].financialFactChecks?.[0].status,'unresolved');assert.equal(result.sentences[0].financialFactChecks?.[0].original.value,25);assert.match(result.omissions.join(' '),/withheld/i);
+ }
+ const unanchored=rateBrief('25 basis points',25,'percentage_points',undefined,undefined,'The source only mentions policy.');assert.equal(unanchored.result.sentences.length,0);
+});
+
+test('ordinary share counts normalize from contracts or per-share fields with exact value and scale, never option contracts or prices',async()=>{
+ const {reviewFinancialFact,FinancialFact}=await import('../src/features/youtube-intelligence/research-brief.ts');
+ const fixtures=[{quote:'CEO James Burke, bought 1.1 million shares across three transactions last week near the 52-week low',value:1100000,scale:'ones',unit:'contracts'},{quote:'I just purchased 100 shares myself, and I am now long the stock',value:100,scale:'ones',unit:'contracts'},{quote:'under which it may offer if applicable sell up to 35 million shares.',value:35,scale:'millions',unit:'per_share',relation:'less_than_or_equal'},{quote:'我持有100股',value:100,scale:'ones',unit:'contracts'}];
+ for(const item of fixtures){const fact=FinancialFact.parse({label:'Count',currency:null,period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',...item});const result=reviewFinancialFact(fact,[item.quote]);assert.equal(result.status,'corrected');assert.equal(result.fact?.unit,'shares');assert.equal(result.fact?.value,item.value);assert.equal(fact.unit,item.unit);assert.equal(reviewFinancialFact(fact,[]).status,'unresolved');}
+ const base=FinancialFact.parse({label:'Count',value:100,scale:'ones',currency:null,period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',unit:'contracts',quote:'Each option contract represents 100 shares.'});
+ assert.equal(reviewFinancialFact(base,[base.quote]).status,'unresolved');
+ const price={...base,unit:'per_share' as const,quote:'Price is $100 per share.',currency:'USD'};assert.equal(reviewFinancialFact(price,[price.quote]).status,'unchanged');
+ for(const quote of ['100 shares and 200 shares','100 million shares']) assert.equal(reviewFinancialFact({...base,quote},[quote]).status,'unresolved');
+});
+
+test('per-barrel correction requires matching anchored currency and preserves unspecified qualifiers',async()=>{
+ const {reviewFinancialFact,FinancialFact}=await import('../src/features/youtube-intelligence/research-brief.ts');
+ for(const quote of ['布伦特原油仍然是每桶104美元','Brent crude was USD104 per barrel.']) {
+  const fact=FinancialFact.parse({label:'Brent price',value:104,unit:'total',scale:'ones',currency:'USD',period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote});
+  assert.equal(fact.relation,'unknown');assert.equal(fact.unitDescription,null);
+  const review=reviewFinancialFact(fact,[quote]);assert.equal(review.fact?.unit,'per_barrel');assert.equal(review.fact?.relation,'unknown');assert.equal(review.fact?.unitDescription,'USD per barrel');
+  assert.equal(reviewFinancialFact({...fact,currency:'EUR'},[quote]).status,'unresolved');assert.equal(reviewFinancialFact({...fact,scale:'millions'},[quote]).status,'unresolved');assert.equal(reviewFinancialFact(fact,[]).status,'unresolved');
+  const ambiguous={...fact,quote:'Brent crude was $104 per barrel.'};assert.equal(reviewFinancialFact(ambiguous,[ambiguous.quote]).status,'unresolved');
+ }
+});
+test('missing explicit dimension, qualifier and invented peak baseline remain unresolved without guessed semantics',async()=>{
+ const {reviewFinancialFact,FinancialFact}=await import('../src/features/youtube-intelligence/research-brief.ts');
+ const base=FinancialFact.parse({label:'Value',value:50,unit:'percent',scale:'ones',currency:null,period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote:'The shares are down 50% from where they traded two years ago.'});
+ assert.equal(reviewFinancialFact({...base,label:'Decline from peak'},[base.quote]).status,'unresolved');
+ for(const unit of ['capacity','other'] as const)assert.equal(reviewFinancialFact({...base,unit},[base.quote]).status,'unresolved');
+ const approx={...base,quote:'The increase was roughly 50 percent.'};assert.equal(reviewFinancialFact(approx,[approx.quote]).status,'unresolved');assert.equal(reviewFinancialFact({...approx,relation:'approximate'},[approx.quote]).status,'unchanged');
+ const words={...base,unit:'percentage_points' as const,value:25,quote:'An increase of twenty-five basis points.'};assert.equal(reviewFinancialFact(words,[words.quote]).status,'unresolved');
+});
+
+test('explicit qualifier direction and numerical like approximation cannot be overwritten by any nonunknown label',async()=>{
+ const {reviewFinancialFact,FinancialFact}=await import('../src/features/youtube-intelligence/research-brief.ts');
+ const base=FinancialFact.parse({label:'Increase',value:50,unit:'percent',scale:'ones',currency:null,period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote:'Growth was more than 50 percent.',relation:'less_than'});
+ assert.equal(reviewFinancialFact(base,[base.quote]).status,'unresolved');assert.equal(reviewFinancialFact({...base,relation:'greater_than'},[base.quote]).status,'unchanged');
+ for(const quote of ['Growth was at least 50 percent.','Growth was 50 percent.'])assert.equal(reviewFinancialFact({...base,quote},[quote]).status,'unresolved');
+ const like={...base,value:400,unit:'percentage_points' as const,relation:'unknown' as const,quote:'NPLs have gone up like 400 basis points over the past year.'};assert.equal(reviewFinancialFact(like,[like.quote]).status,'unresolved');
+ const precise={...like,relation:'approximate' as const};assert.equal(reviewFinancialFact(precise,[precise.quote]).fact?.unit,'basis_points');
+});
+
+test('inclusive issuance ceilings and order floors preserve equality and differ from strict bounds',async()=>{
+ const {reviewFinancialFact,FinancialFact}=await import('../src/features/youtube-intelligence/research-brief.ts');
+ for(const [quote,relation,wrong] of [['May sell up to 35 million shares.','less_than_or_equal','less_than'],['Orders of at least 35 million shares.','greater_than_or_equal','greater_than'],['No more than 35 million shares.','less_than_or_equal','greater_than'],['No less than 35 million shares.','greater_than_or_equal','less_than']]){
+  const fact=FinancialFact.parse({label:'Share bound',value:35,unit:'per_share',scale:'millions',currency:null,period:null,basis:'not_stated',nature:'contract_ceiling',evidenceId:'c1',quote,relation});
+  const good=reviewFinancialFact(fact,[quote]);assert.equal(good.fact?.unit,'shares');assert.equal(good.fact?.relation,relation);assert.equal(good.status,'corrected');assert.equal(reviewFinancialFact(FinancialFact.parse({...fact,relation:wrong}),[quote]).status,'unresolved');
+ }
+});
+
+test('Mandarin percentage-sign approximation stays unresolved until the qualifier matches',async()=>{
+ const {reviewFinancialFact,FinancialFact}=await import('../src/features/youtube-intelligence/research-brief.ts');
+ const quote='明年的中位数也在4.1%左右';const fact=FinancialFact.parse({label:'Median projection',value:4.1,unit:'percent',scale:'ones',currency:null,period:'next year',basis:'not_stated',nature:'forecast',evidenceId:'c1',quote});
+ assert.equal(reviewFinancialFact(fact,[quote]).status,'unresolved');assert.equal(reviewFinancialFact({...fact,relation:'exact'},[quote]).status,'unresolved');assert.equal(reviewFinancialFact({...fact,relation:'approximate'},[quote]).status,'unchanged');
+});
+
+test('legacy percent and total fields require exact sentence-scoped provenance before unchanged display',async()=>{
+ const {reviewFinancialFact,FinancialFact}=await import('../src/features/youtube-intelligence/research-brief.ts');
+ for(const unit of ['percent','total']) {const fact=FinancialFact.parse({label:'Quantity',value:50,unit,scale:'ones',currency:null,period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote:'A stated quantity of 50.'});assert.equal(reviewFinancialFact(fact,[]).status,'unresolved');assert.equal(reviewFinancialFact(fact,['Different source']).fact,null);assert.equal(reviewFinancialFact(fact,[fact.quote]).status,'unchanged');}
+});

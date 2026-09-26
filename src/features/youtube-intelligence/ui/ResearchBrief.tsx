@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { ResearchBriefData, AcceptedSentence } from "../research-brief.ts";
 import { prioritiseBriefs } from "../research-brief.ts";
 import { researchReadiness } from "../research-readiness.ts";
-import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel } from "../research-presentation.ts";
+import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel, financialFactRows } from "../research-presentation.ts";
 import type { SourceData } from "../contracts.ts";
 import { useWorkspace } from "./workspace.tsx";
 import { action } from "./api.ts";
@@ -240,14 +240,19 @@ export function ResearchBrief({
   const readiness = researchReadiness(brief);
   const unresolved = readiness.coverage.filter((item) => item.status === "unresolved");
   const current = brief.sentences.find((s) => s.id === selected);
+  const currentQuantities = current ? financialFactRows(current, brief.evidence) : [];
   const cues = source?.segments ?? [];
-  const sentence = (s: AcceptedSentence) => (
+  const sentence = (s: AcceptedSentence) => {
+    const quantities = financialFactRows(s, brief.evidence);
+    const corrected = quantities.filter(q=>q.status === "corrected").length;
+    const unresolvedFigures = quantities.filter(q=>q.status === "unresolved").length;
+    return (
     <article
       key={s.id}
       className={`yi-research-point ${selected === s.id ? "is-selected" : ""}`}
     >
       <span className="yi-eyebrow">
-        {s.topic} · {s.kind === "analysis" ? "Analyst inference" : s.kind === "creator_view" ? "Creator view" : s.kind.replaceAll("_", " ")}
+        {s.topic} · {s.kind === "analysis" ? "Analyst inference" : s.kind === "creator_view" ? "Creator view" : s.kind === "reported_fact" ? "Creator-reported claim" : s.kind.replaceAll("_", " ")}
       </span>
       <p>{s.text}</p>
       {s.calculationResult && (
@@ -274,6 +279,9 @@ export function ResearchBrief({
           {thesisRobustnessLabel(s)}
         </span>
       </div>
+      {!!(corrected || unresolvedFigures) && <p className="yi-muted">
+        Financial figures: {corrected} source-based unit correction(s), {unresolvedFigures} unresolved field(s). Inspect the original values and source checks below.
+      </p>}
       <button
         className="yi-text-button"
         aria-expanded={selected === s.id}
@@ -286,7 +294,8 @@ export function ResearchBrief({
         references
       </button>
     </article>
-  );
+    );
+  };
   return (
     <section id="research-brief" className="yi-panel yi-research-brief">
       <div className="yi-section-title">
@@ -486,20 +495,30 @@ export function ResearchBrief({
             <strong>Novelty:</strong>{" "}
             {current.novelty?.reason ?? "No audited comparable baseline."}
           </p>
-          {!!current.financialFacts?.length && (
+          {!!currentQuantities.length && (
             <details>
-              <summary>Typed financial quantities</summary>
-              {current.financialFacts.map((f, i) => (
+              <summary>Financial figures and source checks</summary>
+              <p>These checks preserve source units; they do not independently verify the underlying financial facts.</p>
+              {currentQuantities.map((check, i) => {
+                const f = check.fact ?? check.original;
+                return (
                 <p key={i}>
-                  <strong>{f.label}:</strong> {f.value} {f.scale}{" "}
-                  {f.currency ?? "currency unstated"} ·{" "}
+                  {check.status === "unresolved" && <strong>Unresolved proposed figure — do not use for calculations. </strong>}
+                  <strong>{f.label}:</strong> {f.currency ? `${f.currency} ` : ""}{f.value.toLocaleString(undefined, {maximumFractionDigits: 10})}{f.scale === "ones" ? "" : ` ${f.scale.replace(/s$/, "")}`} ·{" "}
                   {f.unit.replaceAll("_", " ")} ·{" "}
-                  {f.nature.replaceAll("_", " ")} · {f.basis} ·{" "}
+                  {f.nature.replaceAll("_", " ")}{f.basis === "not_stated" ? "" : ` · ${f.basis}`} ·{" "}
                   {f.period ?? "period unstated"}
                   <br />
+                  Dimension: {f.unitDescription ?? (["other", "capacity"].includes(f.unit) ? "not established" : f.unit.replaceAll("_", " "))} · Qualifier: {(f.relation ?? "unknown") === "unknown" ? "not established" : f.relation.replaceAll("_", " ")} (model assessed)
+                  <br />
                   Original: “{f.quote}” ({f.evidenceId})
+                  {check.status !== "unchanged" && <>
+                    <br /><strong>{check.status === "corrected" ? "Source-based correction: " : "Review needed: "}</strong>{check.reason.replaceAll("_", " ")}
+                    <br />Retained model proposal: {check.original.value}{check.original.scale === "ones" ? "" : ` ${check.original.scale.replace(/s$/, "")}`} {check.original.unit.replaceAll("_", " ")}.
+                  </>}
                 </p>
-              ))}
+                );
+              })}
             </details>
           )}
           {(brief.baseline ?? [])

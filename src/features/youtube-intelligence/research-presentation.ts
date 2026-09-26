@@ -1,4 +1,21 @@
-import { externalComparisonEstablished } from "./research-brief.ts";
+import { externalComparisonEstablished, reviewFinancialFact } from "./research-brief.ts";
+import type { AcceptedSentence } from "./research-brief.ts";
+
+/** Read-time review also protects legacy records without rewriting their audit. */
+export function financialFactRows(
+  sentence: Pick<AcceptedSentence, "financialFacts" | "financialFactChecks" | "evidenceIds">,
+  evidence: {id:string;quotes:{text:string}[]}[],
+) {
+  const key=(fact:object)=>JSON.stringify(Object.entries(fact).sort(([a],[b])=>a.localeCompare(b)));
+  const checks=sentence.financialFactChecks ?? [];
+  const originals=(sentence.financialFacts ?? []).map(fact=>
+    checks.find(check=>check.fact && key(check.fact)===key(fact))?.original ?? fact);
+  originals.push(...checks.filter(check=>!check.fact).map(check=>check.original));
+  return originals.map(fact=>reviewFinancialFact(fact,
+    sentence.evidenceIds.includes(fact.evidenceId)
+      ? (evidence.find(item=>item.id===fact.evidenceId)?.quotes ?? []).map(quote=>quote.text)
+      : []));
+}
 
 type SupportLink = Parameters<typeof externalComparisonEstablished>[0] & {
   relationship: "supports" | "contradicts";

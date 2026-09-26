@@ -1,9 +1,30 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel } from "../src/features/youtube-intelligence/research-presentation.ts";
+import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel, financialFactRows } from "../src/features/youtube-intelligence/research-presentation.ts";
+import { FinancialFact, reviewFinancialFact } from "../src/features/youtube-intelligence/research-brief.ts";
 const matched = { metric: "matched", period: "matched", units: "matched", observationBasis: "matched", reason: "Same metric and measurement basis." } as const;
 const support = { relationship: "supports", assertion: "Revenue grew 10 percent.", comparability: matched } as const;
 const conflict = { ...support, relationship: "contradicts" } as const;
+
+test("historical quantity display corrects anchored units without rewriting the retained fact", () => {
+  const original = FinancialFact.parse({label:'Rate hike',value:25,currency:null,unit:'percentage_points',scale:'ones',period:null,basis:'not_stated',nature:'reported',evidenceId:'e1',quote:'加息25个基点'});
+  const snapshot=JSON.stringify(original);
+  const evidence=[{id:'e1',quotes:[{text:'美联储已经加息25个基点。'}]}];
+  const rows=financialFactRows({evidenceIds:['e1'],financialFacts:[original]},evidence);
+  assert.equal(rows[0].status,'corrected');assert.equal(rows[0].fact?.unit,'basis_points');
+  assert.equal(rows[0].original.unit,'percentage_points');assert.equal(JSON.stringify(original),snapshot);
+  assert.equal(financialFactRows({evidenceIds:['different'],financialFacts:[original]},evidence)[0].status,'unresolved');
+});
+test("published correction history is displayed once and unresolved proposed quantities stay visible",()=>{
+  const original=FinancialFact.parse({label:'Rate hike',value:25,currency:null,unit:'percentage_points',scale:'ones',period:null,basis:'not_stated',nature:'reported',evidenceId:'e1',quote:'加息25个基点'});
+  const evidence=[{id:'e1',quotes:[{text:original.quote}]}];
+  const check=reviewFinancialFact(original,[original.quote]);assert.ok(check.fact);
+  const rows=financialFactRows({evidenceIds:['e1'],financialFacts:[check.fact],financialFactChecks:[check]},evidence);
+  assert.equal(rows.length,1);assert.equal(rows[0].status,'corrected');assert.equal(rows[0].original.unit,'percentage_points');
+  const unresolved=reviewFinancialFact({...original,scale:'millions'},[original.quote]);
+  const proposed=financialFactRows({evidenceIds:['e1'],financialFacts:[],financialFactChecks:[unresolved]},evidence);
+  assert.equal(proposed.length,1);assert.equal(proposed[0].fact,null);assert.equal(proposed[0].original.value,25);
+});
 
 test("legacy labels without retained comparable assertion support stay unverified", () => {
   assert.equal(factualSupportLabel({ factualStatus: "corroborated" }), "Unverified · no retained assertion support");

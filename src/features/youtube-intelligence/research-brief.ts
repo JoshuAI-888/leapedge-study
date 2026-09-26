@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { stockSplitDirectionCheck, explicitPercentagePointConflict } from "./source-quantity-checks.ts";
+import { stockSplitDirectionCheck, explicitPercentagePointConflict, explicitRateQuantities, explicitBasisPointProseConflict } from "./source-quantity-checks.ts";
 import type { Run, CheckedClaim, SourceData } from "./contracts.ts";
 export const RESEARCH_VERSION = "research-brief.v1";
 export const AnalysisContext = z.object({
@@ -168,13 +168,18 @@ export const FinancialFact = z.object({
   unit: z.enum([
     "total",
     "per_share",
+    "per_barrel",
     "percent",
     "percentage_points",
+    "basis_points",
     "multiple",
     "contracts",
+    "shares",
     "capacity",
     "other",
   ]),
+  unitDescription: z.string().max(150).nullable().default(null),
+  relation: z.enum(["exact", "approximate", "greater_than", "less_than", "greater_than_or_equal", "less_than_or_equal", "unknown"]).default("unknown"),
   scale: z.enum(["ones", "thousands", "millions", "billions", "trillions"]),
   period: z.string().nullable(),
   basis: z.enum(["GAAP", "non_GAAP", "not_stated"]),
@@ -192,6 +197,69 @@ export const FinancialFact = z.object({
   evidenceId: z.string(),
   quote: z.string().min(1).max(2000),
 });
+export type FinancialFactData = z.infer<typeof FinancialFact>;
+export function reviewFinancialFact(fact: FinancialFactData, retainedQuotes: string[]): {
+  fact: FinancialFactData | null; original: FinancialFactData;
+  status: "unchanged" | "corrected" | "unresolved"; reason: string;
+} {
+  const result = (status: "unchanged" | "corrected" | "unresolved", value: FinancialFactData | null, reason: string) => ({fact:value, original:fact, status, reason});
+  if (typeof fact.quote !== "string" || !fact.quote.trim() || !retainedQuotes.some(quote => quote.includes(fact.quote)))
+    return result("unresolved", null, "Proposed quantity withheld: its exact original quote is not anchored to the sentence’s retained evidence; no figure or unit was confirmed.");
+  if (/\b(?:peak|all[ -]time high|record high)\b|高[点點]|峰值/i.test(fact.label) && !/\b(?:peak|all[ -]time high|record high)\b|高[点點]|峰值/i.test(fact.quote))
+    return result("unresolved", null, "Proposed quantity withheld: the explicit peak baseline in its label is not established by its original quote; no comparison baseline was inferred.");
+  const qualifiers = new Set<string>();
+  if (/\b(?:about|approximately|roughly|around)\s+[$¥€£]?\s*\d|(?:大约|大約|约|約)\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*左右|\blike\s+\d+(?:\.\d+)?\s*(?:basis[ -]points?\b|bps?\b|percentage[ -]points?\b|percent\b|%)/i.test(fact.quote)) qualifiers.add("approximate");
+  if (/(?<!no )\b(?:more than|over)\s+[$¥€£]?\s*\d|(?:超过|超過)\s*\d/i.test(fact.quote)) qualifiers.add("greater_than");
+  if (/(?<!no )\b(?:less than|under)\s+[$¥€£]?\s*\d|不到\s*\d/i.test(fact.quote)) qualifiers.add("less_than");
+  if (/\b(?:at least|no less than)\s+[$¥€£]?\s*\d|至少\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*以上/i.test(fact.quote)) qualifiers.add("greater_than_or_equal");
+  if (/\b(?:at most|up to|no more than)\s+[$¥€£]?\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*以下/i.test(fact.quote)) qualifiers.add("less_than_or_equal");
+  if ((qualifiers.size > 0 && (qualifiers.size !== 1 || !qualifiers.has(fact.relation ?? "unknown"))) ||
+      (qualifiers.size === 0 && ["approximate", "greater_than", "less_than", "greater_than_or_equal", "less_than_or_equal"].includes(fact.relation ?? "unknown")))
+    return result("unresolved", null, "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.");
+  const barrelPrices = [...fact.quote.matchAll(/每桶\s*(\d+(?:\.\d+)?)\s*美元|(?:USD\s*|US\$)(\d+(?:\.\d+)?)\s*(?:per\s+|a\s+|\/\s*)barrel\b|(\d+(?:\.\d+)?)\s*(?:USD|US dollars?)\s*(?:per\s+|a\s+)barrel\b/gi)];
+  if ((barrelPrices.length || /每桶|\b(?:per|a)\s+barrel\b/i.test(fact.quote)) && ["total", "other", "per_barrel"].includes(fact.unit)) {
+    if (!retainedQuotes.some(quote => quote.includes(fact.quote)) || barrelPrices.length !== 1 || fact.currency !== "USD" || fact.scale !== "ones" || Number(barrelPrices[0][1] ?? barrelPrices[0][2] ?? barrelPrices[0][3]) !== fact.value)
+      return result("unresolved", null, "Per-barrel quantity withheld: source anchor, currency, value or scale is not an unambiguous match.");
+    if (fact.unit === "per_barrel") return result("unchanged", fact, "Per-barrel denomination matches the retained quote.");
+    return result("corrected", {...fact, unit:"per_barrel", unitDescription:"USD per barrel"}, `Typed unit corrected from ${fact.unit} to per_barrel using the exact USD-per-barrel quote. Original model quantity remains in the audit record.`);
+  }
+  const shareMatches = [...fact.quote.matchAll(/(\d+(?:,\d{3})*(?:\.\d+)?)\s*(thousand|million|billion|trillion)?\s*(?:(?:ordinary|common)\s+)?shares?\b|(\d+(?:\.\d+)?)\s*(万|萬|亿|億)?\s*股/gi)];
+  if (shareMatches.length && ["shares", "contracts", "per_share", "other"].includes(fact.unit)) {
+    if (!retainedQuotes.some(quote => quote.includes(fact.quote)))
+      return result("unresolved", null, "Share-count quantity withheld: exact original quote is not anchored to retained evidence.");
+    if (shareMatches.length !== 1 || /\b(?:options?|puts?|calls?|contracts?)\b|\bper[ -]share\b/i.test(fact.quote) || fact.currency !== null)
+      return result("unresolved", null, "Share-count quantity withheld: mixed quantities, option contracts, per-share prices or currency prevent an unambiguous ordinary-share mapping.");
+    const match = shareMatches[0];
+    const multipliers: Record<string, number> = {ones:1,thousands:1e3,millions:1e6,billions:1e9,trillions:1e12,thousand:1e3,million:1e6,billion:1e9,trillion:1e12,"万":1e4,"萬":1e4,"亿":1e8,"億":1e8};
+    const quotedCount = Number((match[1] ?? match[3]).replaceAll(",", "")) * (multipliers[(match[2] ?? match[4] ?? "ones").toLowerCase()] ?? 1);
+    if (Math.abs(quotedCount - fact.value * multipliers[fact.scale]) > 1e-6)
+      return result("unresolved", null, "Share-count quantity withheld: typed value/scale does not match the exact source count; no quantity was inferred.");
+    if (fact.unit === "shares") return result("unchanged", fact, "Share count and scale match the exact retained quote.");
+    return result("corrected", {...fact, unit:"shares"}, `Typed unit corrected from ${fact.unit} to shares using the exact retained ordinary-share count and scale. Original model quantity remains in the audit record.`);
+  }
+  const rates = explicitRateQuantities(fact.quote);
+  const related = fact.unit === "basis_points" || /\bbasis[ -]points?\b|\bbps?\b|基[点點]/i.test(fact.quote);
+  if (!related) {
+    if (["capacity", "other"].includes(fact.unit) && !fact.unitDescription?.trim())
+      return result("unresolved", null, "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label.");
+    return result("unchanged", fact, "No deterministic unit correction applied; qualifier and dimensional metadata are not independent proof of calculation readiness.");
+  }
+  if (!retainedQuotes.some(quote => quote.includes(fact.quote)))
+    return result("unresolved", null, "Basis-point quantity withheld: exact original quote is not anchored to retained evidence.");
+  if (fact.scale !== "ones" || fact.currency !== null)
+    return result("unresolved", null, "Basis-point quantity withheld: non-unit scale or currency on a rate requires review; no scale/currency conversion was inferred.");
+  if (rates.length !== 1)
+    return result("unresolved", null, "Basis-point quantity withheld: mixed or ambiguous rate quantities cannot be mapped to this metric safely.");
+  const rate = rates[0];
+  if (rate.unit === fact.unit && Math.abs(rate.value - fact.value) < 1e-10)
+    return result("unchanged", fact, "Typed quantity matches the exact retained rate quote.");
+  if ((rate.unit === "basis_points" && fact.unit === "percentage_points" && Math.abs(rate.value / 100 - fact.value) < 1e-10) ||
+      (rate.unit === "percentage_points" && fact.unit === "basis_points" && Math.abs(rate.value * 100 - fact.value) < 1e-10))
+    return result("unchanged", fact, "Equivalent conversion confirmed: 100 basis points equals 1 percentage point.");
+  if (rate.unit === "basis_points" && ["percentage_points", "percent", "other"].includes(fact.unit) && rate.value === fact.value)
+    return result("corrected", {...fact, unit:"basis_points"}, `Typed unit corrected from ${fact.unit} to basis_points using the exact retained quote; ${rate.value} basis points equals ${rate.value / 100} percentage points. Original model value and unit remain in the audit record.`);
+  return result("unresolved", null, "Basis-point quantity withheld: typed value or unit does not match the unambiguous original rate; no value was guessed.");
+}
 export const Calculation = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("enterprise_value_bridge"),
@@ -347,6 +415,7 @@ export const ResearchAuditResponse = ResearchAudit.extend({
   })).max(48),
 });
 export type AcceptedSentence = ResearchSentenceData & {
+  financialFactChecks?: ReturnType<typeof reviewFinancialFact>[];
   externalSupport?: z.infer<typeof ExternalSupport>[];
   factualStatus: "unverified" | "corroborated" | "partial" | "disputed";
   fidelity: string;
@@ -377,6 +446,7 @@ export function validateBrief(
   const rejected: { sentence: ResearchSentenceData; reasons: string[] }[] = [];
   for (const sentence of draft.sentences) {
     const audit = audits.find((v) => v.id === sentence.id);
+    const originalQuotes = sentence.evidenceIds.flatMap(id => (byId.get(id)?.quotes ?? []).map(q=>q.text));
     const reasons: string[] = [];
     if (!audit?.accepted)
       reasons.push(audit?.reason ?? "No independent audit verdict.");
@@ -402,6 +472,8 @@ export function validateBrief(
       if (ratio.unresolved)
         draft.omissions.push(`Stock-split ratio direction remains unresolved for ${sentence.id}: the original evidence is ambiguous, missing an explicit direction, or contains multiple ratios. No corrected ratio has been inferred.`);
     }
+    if (explicitBasisPointProseConflict(sentence.text, originalQuotes))
+      reasons.push("The sentence's explicit rate unit/value conflicts with the original basis-point quantity. Review the prose before publication; correcting a typed field cannot cure this claim.");
     if (sentence.financialFacts.some(f => f.unit === "percent" && explicitPercentagePointConflict(f.value, f.quote)))
       reasons.push("The cited source uses percentage points, but the typed fact uses percent. Resolve the unit distinction before publication; no corrected value has been inferred.");
     if (sentence.calculation?.expression.kind === "short_put_breakeven") {
@@ -433,6 +505,10 @@ export function validateBrief(
       rejected.push({ sentence, reasons });
       continue;
     }
+    const financialReviews = sentence.financialFacts.map(f => reviewFinancialFact(f,
+      sentence.evidenceIds.includes(f.evidenceId) ? (byId.get(f.evidenceId)?.quotes ?? []).map(q=>q.text) : []));
+    const financialFactChecks = financialReviews.filter(check => check.status !== "unchanged");
+    for (const check of financialFactChecks) draft.omissions.push(`${sentence.id}: ${check.reason}`);
     const sources = sentence.externalIds.map((id) => ext.get(id)!);
     // A primary URL is only eligibility. Require the independent critic to
     // identify the exact assertion and retained supporting/contradicting passage.
@@ -483,6 +559,8 @@ export function validateBrief(
           };
     sentences.push({
       ...sentence,
+      financialFacts: financialReviews.flatMap(check => check.fact ? [check.fact] : []),
+      ...(financialFactChecks.length ? {financialFactChecks} : {}),
       factualStatus,
       externalSupport,
       novelty,

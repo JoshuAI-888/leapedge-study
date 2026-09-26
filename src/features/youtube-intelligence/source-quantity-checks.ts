@@ -49,3 +49,19 @@ export function explicitPercentagePointConflict(amount: number, quote: string) {
   ];
   return points.includes(amount) && !percentages.includes(amount);
 }
+
+export type RateQuantity = {value:number; unit:'basis_points'|'percentage_points'|'percent'};
+/** Only explicit Arabic-number/unit pairs; no inferred metric or verbal number conversion. */
+export function explicitRateQuantities(text:string):RateQuantity[] {
+ return [...text.matchAll(/(-?\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:[-–]\s*)?(basis[ -]points?\b|bps?\b|(?:个|個)?(?:基点|基點|百分点|百分點)|percentage[ -]points?\b|percent\b|[%％])/gi)].map(match=>({value:Number(match[1].replaceAll(',','')),unit:/basis|^bps?$|基[点點]/i.test(match[2])?'basis_points':/percentage|百分[点點]/i.test(match[2])?'percentage_points':'percent'}));
+}
+export function explicitBasisPointProseConflict(text:string,quotes:string[]) {
+ const proposed=explicitRateQuantities(text),original=quotes.flatMap(explicitRateQuantities);
+ // Multi-quantity passages cannot be paired safely without metric attribution.
+ if(proposed.length!==1||original.length!==1)return false;
+ const a=proposed[0],b=original[0];
+ if(a.unit!=='basis_points'&&b.unit!=='basis_points')return false;
+ if(a.unit==='percent'||b.unit==='percent')return a.value===b.value;
+ const points=(x:RateQuantity)=>x.unit==='basis_points'?x.value/100:x.value;
+ return Math.abs(points(a)-points(b))>1e-10;
+}

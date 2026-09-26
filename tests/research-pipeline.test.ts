@@ -522,3 +522,17 @@ test('rejected Bloom holding is disclosed to recall and narrower sector context 
  assert.equal(payload.existing[0].accepted,false);assert.deepEqual(payload.existing[0].auditReasons,rejected.reasons);assert.match(JSON.stringify(fake.requests[0]),/Rejected candidates are not covered evidence/);
  }finally{restore();await db.close();}
 });
+
+for(const efficient of [false,true]) test(`publication normalizes anchored bps while retaining raw typed draft and audit (efficient=${efficient})`,async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ const quote='美联储已经加息了25个基点';const fact={label:'Rate hike',value:25,currency:null,unit:'percentage_points',scale:'ones',period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote};
+ const point={...sentence,text:'The Fed raised rates by 25 basis points.',kind:'reported_fact',financialFacts:[fact]};
+ const verdict={id:'point',accepted:true,reason:'Source prose is faithful.',factualStatus:'unverified'};
+ const fake=new FakeModelTransport({responses:{'critique-research':{json:{verdicts:[verdict],coverageFindings:[]},usage:{costUsd:.01}}}});const restore=injectTransport(fake);
+ try{
+ const run=await create('unit-normalization',settings.models.extraction.id,{task:'research-brief',efficiencyVersion:efficient?'evidence-efficiency.v1':undefined,teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Rate hike',context:{videoPublishedAt:null,recordedAt:null,analysedAt:'2026-09-27T00:00:00Z',language:'zh',videoId:'unit-normalization',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[{id:'c1',kind:'research_context',summary:point.text,instrument:null,ticker:null,stance:'neutral',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:'a',endId:'a',text:quote,translation:'',start:0,end:4,hash:null}]}]}},'test');
+ run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[point],mainTopics:['Company'],omissions:[]};const original=JSON.stringify(run.output.researchDraft);
+ await researchStep(run);const [brief]=await researchBriefs();assert.equal(brief.sentences[0].text,point.text);assert.equal(brief.sentences[0].financialFacts[0].unit,'basis_points');assert.equal(brief.sentences[0].financialFactChecks?.[0].original.unit,'percentage_points');assert.equal(brief.sentences[0].financialFactChecks?.[0].fact?.unit,'basis_points');assert.match(brief.omissions.join(' '),/unit corrected/);assert.equal(JSON.stringify(run.output.researchDraft),original);assert.equal(fake.requests.length,1);assert.equal(verdict.reason,'Source prose is faithful.');
+ assert.match(JSON.stringify(fake.requests[0]),/25 basis points = 0.25 percentage points/);
+ }finally{restore();await db.close();}
+});
