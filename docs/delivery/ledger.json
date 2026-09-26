@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-09-20",
+  "updated": "2026-09-27",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -1654,5 +1654,20 @@
       "errorLogRows": 0,
       "workerActivation": "separate Neon database; Mac local heartbeat does not certify Vercel processing"
     }
+  },
+  "investmentReadiness": {
+    "status": "in-progress",
+    "scope": "Priority 1 and 2 authorised 27 September 2026; no new LeapEdge calls or Finradar integration",
+    "audit": "docs/reviews/adversarial-readiness-20260927.md",
+    "implementation": "in-progress",
+    "validation": "pending",
+    "operations": "pending",
+    "lanes": [
+      "safe-recovery-and-long-source-coverage",
+      "assertion-support-and-research-readiness",
+      "retained-twenty-case-comparison",
+      "decision-focused-ui",
+      "production-path-verification"
+    ]
   }
 }
