@@ -364,14 +364,17 @@ test('missing company coverage gets one additive repair, preserving the original
  const fake=new FakeModelTransport({responses:{
  'critique-research':{json:{verdicts:[{id:'point',accepted:true,reason:'Supported',factualStatus:'unverified'}],coverageFindings:['Credo missing']},usage:{costUsd:.01}},
  'synthesis-research-coverage':{json:{sentences:[extra],mainTopics:['Credo'],omissions:[]},usage:{costUsd:.02}},
- 'critique-research-coverage':{json:{verdicts:[{id:'point',accepted:true,reason:'Supported',factualStatus:'unverified'},{id:'coverage-1',accepted:true,reason:'Supported',factualStatus:'unverified'}],coverageFindings:[]},usage:{costUsd:.03}},
+ 'critique-research-coverage':{json:{verdicts:[{id:'point',accepted:false,reason:'Unsolicited reversal must not remove original',factualStatus:'unverified'},{id:'coverage-1',accepted:true,reason:'Supported',factualStatus:'unverified'}],coverageFindings:[]},usage:{costUsd:.03}},
  }});const restore=injectTransport(fake);
  try{
  const run=await create('coverage-video',settings.models.extraction.id,{task:'research-brief',teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Company and Credo',context:{videoPublishedAt:'2026-01-01T00:00:00Z',recordedAt:null,analysedAt:'2026-09-20T00:00:00Z',language:'en',videoId:'coverage-video',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[evidence('c1','Company'),evidence('c2','Credo')]}},'test');
  run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[sentence],mainTopics:['Company'],omissions:[]};
  await researchStep(run);assert.equal(run.stage,'research-audit');assert.ok(run.output.coverageRepair);assert.equal((run.output.researchDraft as {sentences:unknown[]}).sentences.length,2);
  await researchStep(run);assert.equal(run.status,'completed');
- const [brief]=await researchBriefs();assert.equal(brief.sentences.length,2);assert.equal(brief.sentences[0].text,sentence.text);assert.equal(brief.modelCostUsd,.06);
+ const [brief]=await researchBriefs();assert.equal(brief.sentences.length,2);assert.equal(brief.sentences[0].text,sentence.text);assert.equal(brief.sentences[0].auditReason,'Supported');assert.equal(brief.modelCostUsd,.06);
+ const {docs}=await import('../src/server/youtube-intelligence/research-store.ts');
+ const requests=await docs<{stage:string;payload:{draft:{sentences:{id:string}[]}}}>('researchRequest');
+ assert.deepEqual(requests.find(r=>r.stage==='critique-research-coverage')!.payload.draft.sentences.map(s=>s.id),['coverage-1']);
  }finally{restore();await db.close();}
 });
 

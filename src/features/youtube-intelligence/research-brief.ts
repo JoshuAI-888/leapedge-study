@@ -113,6 +113,7 @@ export const ExternalEvidence = z.object({
   publishedAt: z.iso.datetime().nullable(),
   retrievedAt: z.iso.datetime(),
   publicationConfirmed: z.boolean(),
+  publicationPrecision: z.enum(["day", "timestamp"]).optional(),
   dateBasis: z.string(),
   sourceClass: z.enum(["primary", "secondary", "unknown"]),
   hash: z.string(),
@@ -122,20 +123,21 @@ export const ExternalEvidence = z.object({
 });
 export type ExternalEvidenceData = z.infer<typeof ExternalEvidence>;
 export function eligibleExternal(
-  source: Pick<ExternalEvidenceData, "publishedAt" | "publicationConfirmed">,
+  source: Pick<ExternalEvidenceData, "publishedAt" | "publicationConfirmed"> & {publicationPrecision?: "day" | "timestamp"},
   context: AnalysisContextData,
   mode: "video_date" | "current",
 ) {
   if (!source.publicationConfirmed || !source.publishedAt) return false;
-  if (Date.parse(source.publishedAt) > Date.parse(context.analysedAt))
-    return false;
+  const day = source.publishedAt.slice(0,10);
+  const earliest = source.publicationPrecision === "timestamp" ? Date.parse(source.publishedAt) : Date.parse(day+"T00:00:00.000Z");
+  const latest = source.publicationPrecision === "timestamp" ? Date.parse(source.publishedAt) : Date.parse(day+"T23:59:59.999Z");
+  if (latest > Date.parse(context.analysedAt)) return false;
   if (mode === "current") {
     const originalCutoff = context.recordedAt ?? context.videoPublishedAt;
-    return !!originalCutoff && Date.parse(source.publishedAt) > Date.parse(originalCutoff) &&
-      Date.parse(source.publishedAt) <= Date.parse(context.analysedAt);
+    return !!originalCutoff && earliest > Date.parse(originalCutoff);
   }
   const cutoff = context.recordedAt ?? context.videoPublishedAt;
-  return !!cutoff && Date.parse(source.publishedAt) <= Date.parse(cutoff);
+  return !!cutoff && latest <= Date.parse(cutoff);
 }
 export const BaselinePoint = z.object({
   id: z.string(),
@@ -390,12 +392,12 @@ export function validateBrief(
         source.text.includes(link.quote)),
     );
     const fullSupport = externalSupport.some(s => s.relationship === "supports" && s.assertion === sentence.text);
-    const fullConflict = externalSupport.some(s => s.relationship === "contradicts" && s.assertion === sentence.text);
+    const fullConflict = externalSupport.some(s => s.relationship === "contradicts");
     const permitted = audit!.factualStatus === "corroborated" ? fullSupport && !externalSupport.some(s => s.relationship === "contradicts")
       : audit!.factualStatus === "disputed" ? fullConflict
       : audit!.factualStatus === "partial" ? externalSupport.some(s => s.relationship === "supports") : true;
-    const factualStatus = permitted ? audit!.factualStatus : "unverified";
-    const withheldExternalAudit = !permitted;
+    const factualStatus = fullConflict ? "disputed" : permitted ? audit!.factualStatus : "unverified";
+    const withheldExternalAudit = !permitted && !fullConflict;
     const withheldReason = "External-verification assessment withheld: no valid assertion-level primary-source passage supports the proposed label. The original audit remains in the run trace; source eligibility alone is not corroboration.";
     const trust = Math.min(
       ...sentence.evidenceIds.map((id) => Number(byId.get(id)!.trust.slice(1))),

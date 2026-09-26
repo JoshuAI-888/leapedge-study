@@ -438,3 +438,16 @@ test('supplementary recall also examines non-action valuation and moat qualifica
  const r={...run,output:{source:{segments:[{id:'a',text:'Dutch Bros lacks a sustainable moat; valuation only works at a low entry price.',start_seconds:0,end_seconds:8}]},claims:[]}};
  assert.equal(actionRecallWindows(r).length,1);
 });
+
+test('a day-only publication cannot prove it happened after a video earlier the same day',()=>{
+ const context={...analysisContext(run),videoPublishedAt:'2026-04-10T12:00:00Z'};
+ assert.equal(eligibleExternal({publishedAt:'2026-04-10T23:59:59.999Z',publicationConfirmed:true},context,'current'),false);
+ assert.equal(eligibleExternal({publishedAt:'2026-04-11T23:59:59.999Z',publicationConfirmed:true},context,'current'),true);
+});
+
+test('a supported clause cannot hide a contradictory material clause behind a partial label',()=>{
+ const text='Revenue rose, but margins expanded.';
+ const external={id:'x1',url:'https://example.com/report',title:'Primary',text:'Revenue rose. Margins declined.',publishedAt:'2026-04-01T00:00:00Z',retrievedAt:'2026-09-20T00:00:00Z',publicationConfirmed:true,publicationPrecision:'day' as const,dateBasis:'fixture',sourceClass:'primary' as const,hash:'fixture',query:'fixture',timeMode:'video_date' as const,provider:'fixture'};
+ const result=validateBrief({sentences:[{...sentence,text,externalIds:['x1']}],mainTopics:['Company'],omissions:[]},evidenceInventory(run),[external],analysisContext(run),[{id:'s1',accepted:true,reason:'Mixed support',factualStatus:'partial',externalSupport:[{externalId:'x1',assertion:'Revenue rose',quote:'Revenue rose.',relationship:'supports',reason:'Same period.'},{externalId:'x1',assertion:'margins expanded',quote:'Margins declined.',relationship:'contradicts',reason:'Same period and margin basis.'}]}]);
+ assert.equal(result.sentences[0].factualStatus,'disputed');assert.equal(result.sentences[0].robustness,'fragile');
+});

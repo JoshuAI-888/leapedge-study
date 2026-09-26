@@ -402,16 +402,20 @@ export async function researchStep(run: Run) {
   }
   if (run.stage === "research-audit") {
     const draft = ResearchDraft.parse(run.output.researchDraft);
+    const previousAudit = run.output.coverageRepair
+      ? ResearchAudit.parse((run.output.coverageRepair as {originalAudit:unknown}).originalAudit) : null;
+    const previousIds = new Set(previousAudit?.verdicts.map(v=>v.id) ?? []);
+    const auditScope = {...draft, sentences:draft.sentences.filter(s=>!previousIds.has(s.id))};
     const preflight = efficient ? validateBrief(
-      draft, snapshot.evidence, external, snapshot.context,
-      draft.sentences.map(s => ({id:s.id,accepted:true,reason:"Structural preflight only",factualStatus:"unverified" as const})),
+      auditScope, snapshot.evidence, external, snapshot.context,
+      auditScope.sentences.map(s => ({id:s.id,accepted:true,reason:"Structural preflight only",factualStatus:"unverified" as const})),
       snapshot.baseline,
     ).rejected : [];
     const rejectedIds = new Set(preflight.map(r => r.sentence.id));
-    const auditDraft = {...draft, sentences:draft.sentences.filter(s => !rejectedIds.has(s.id))};
+    const auditDraft = {...auditScope, sentences:auditScope.sentences.filter(s => !rejectedIds.has(s.id))};
     // Uncited sources and history can contradict a draft. Retain their full text
     // for independent review; only structurally invalid sentences bypass AI.
-    const auditPayload = { ...modelSnapshot, draft:auditDraft, external:eligible };
+    const auditPayload = { ...modelSnapshot, draft:auditDraft, external:eligible, ...(previousAudit ? {retainedDraft:draft, previousCoverageFindings:previousAudit.coverageFindings, scope:"Audit only draft sentence IDs; use retainedDraft to reassess whole-brief coverage. Prior verdicts are immutable and cannot be overridden by this supplement audit."} : {}) };
     run.output.auditPreflight = preflight.map(r => ({id:r.sentence.id,reasons:r.reasons}));
     run.output.auditPayloadMetrics = {
       originalBytes: Buffer.byteLength(JSON.stringify({ ...snapshot, draft, external: eligible })),
@@ -438,18 +442,19 @@ export async function researchStep(run: Run) {
     run.output.researchAuditAttempts = repaired.attempts;
     run.output.unresolvedResearchAuditIds = repaired.missing;
     if (repaired.missing.length) throw Error(`Incomplete research audit after bounded repair: ${repaired.missing.join(", ")}. Evidence retained for review.`);
-    const audit = repaired.audit;
+    const audit = {...repaired.audit, verdicts:[...(previousAudit?.verdicts ?? []),...repaired.audit.verdicts]};
     audit.verdicts.push(...preflight.map(r => ({id:r.sentence.id,accepted:false,reason:r.reasons.join(" "),factualStatus:"unverified" as const,noveltyAccepted:false,robustness:"insufficient" as const,robustnessReason:"Failed deterministic structural checks.",thesisSupportIds:[],externalSupport:[]})));
     run.output.researchAudit = audit;
     const brief: ResearchBriefData = {
       ...validateBrief(
-        {...draft, omissions:[...draft.omissions, ...snapshot.inventoryOmissions.map(o=>`${o.id}: ${o.reason}`)].slice(0,30)},
+        draft,
         snapshot.evidence,
         external,
         snapshot.context,
         audit.verdicts,
         snapshot.baseline,
       ),
+      omissions: [...draft.omissions, ...z.array(z.string()).parse(run.output.coverageRepairOmissions ?? []), ...snapshot.inventoryOmissions.map(o=>`${o.id}: ${o.reason}`)],
       id: run.id,
       runId: run.id,
       sourceRunId: snapshot.sourceRunId,
@@ -489,9 +494,10 @@ export async function researchStep(run: Run) {
         {...modelSnapshot, external:eligible, existingDraft:draft, missingEvidenceIds:missingEvidence, coverageFindings:audit.coverageFindings}, ResearchDraft));
       if (supplement.sentences.length > available) throw Error("Coverage supplement exceeds bounded repair size; original draft retained.");
       run.output.coverageRepair = {originalDraft:draft, originalAudit:audit, missingEvidenceIds:missingEvidence, supplement};
+      run.output.coverageRepairOmissions = supplement.omissions;
       const additions = supplement.sentences.map((sentence,index)=>({...sentence,id:`coverage-${index+1}`}));
       if(additions.some(s=>draft.sentences.some(original=>original.id===s.id))) throw Error("Coverage repair ID collision; original draft retained.");
-      run.output.researchDraft = ResearchDraft.parse({...draft, sentences:[...draft.sentences,...additions], mainTopics:[...new Set([...draft.mainTopics,...supplement.mainTopics])], omissions:[...draft.omissions,...supplement.omissions].slice(0,30)});
+      run.output.researchDraft = ResearchDraft.parse({...draft, sentences:[...draft.sentences,...additions], mainTopics:[...new Set([...draft.mainTopics,...supplement.mainTopics])], omissions:draft.omissions});
       run.stage = "research-audit";
       return;
     }
