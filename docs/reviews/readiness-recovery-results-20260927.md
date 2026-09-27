@@ -2,6 +2,8 @@
 
 **Release decision: remain in draft.** Google-native calls resumed after the account update. The three failed research audits now publish, including the long source; this establishes operational recovery, not investment readiness. Source-backed review still finds materially unsupported claims and omissions. No new LeapEdge calls, production release or Finradar integration occurred.
 
+**Later billing-recovery update:** OpenRouter funding was restored and both interrupted cases now have completed recovery outputs. Additional settled cost was **$0.546416**, bringing the H recovery work to **$16.98790450**. All 11 selected cases now have an operationally completed output, including a separately identified supplemental-audit recovery for case19. Both newly recovered briefs remain **partial**, and the original needs-review brief remains unchanged. The earlier paused-state measurements below are historical; see the final section for the continuation.
+
 ## Measurement boundaries
 
 Candidate H live code was frozen at `4f57ed1f79679e62069c41c72d95cba3a5532657`. Both controllers shared the Mac/providers, and subsequent isolated-copy code checks shared the Mac. Durations are diagnostic summed stage execution, excluding fresh source acquisition, production queue, persistence gaps and browser display; they do not establish a causal speed change.
@@ -90,3 +92,35 @@ The next substantive acceptance work is to preserve each number/condition's subj
 Only after those quality gates pass should the documented production web/database/Mac-worker path be exercised, with the same revision, authenticated submission, heartbeat, restart recovery, cost settlement and rollback evidence. Production topology/path acceptance remains unresolved. No 1,000-videos/day or burst-100 capacity certification is implied.
 
 Private evidence: `data/readiness-20260927/candidate-h-session-1.json`, `candidate-h-remaining8-session-1.json`, `candidate-h-private-metrics.*`, selected review reports, and `h-offline-guard-replay/`. The committed comparison inventory retains historical failures and provenance.
+
+## OpenRouter-funded continuation
+
+The user confirmed funding and the read-only provider check succeeded. The exact original `4f57ed1` checkout was restored separately, with all 174 implementation-file hashes matching the frozen experiment. Current source safeguards were not mixed into the paid continuation. The draft revision `c8ff37f` passed both GitHub verification jobs and Vercel preview before this continuation; production remains unchanged.
+
+| Recovery | Additional stage seconds | Additional settled USD | Final output |
+|---|---:|---:|---|
+| Case20: remaining research from saved checkpoint | 122.513 | 0.335462 | Completed, 10 sentences; partial readiness |
+| Case19: released supplemental audit plus untouched jobs | 71.405 | 0.210954 | New completed recovery, 25 sentences; partial, 51/55 |
+
+These are resumed-stage durations, not fresh ingestion-to-display latency. Case20's complete source-plus-research stage sum is **215.734 seconds**, with **$0.59173975** cumulative case cost. The eight-case H controller now ends finished at **$9.56209650**, retaining case19's original needs-review output. Its prior seven case records, all prior call records and the original case19 brief are unchanged. Twelve search calls and four model calls finished case20; no prior completed calls were repeated.
+
+Case19 required a new research run in a separate local database because the original published brief is immutable. Original source ID, analysis cutoff, settings, draft, baseline, retrievals and batch-plan hash were preserved. Four completed supplemental jobs remained byte-equivalent. Only the single HTTP402 job, whose original call was released at zero charge with no retained response, and three untouched jobs were executed. Exactly four new critic calls completed; no source, search or synthesis calls were made. The original failure, request count, call ID and artifact/brief hashes remain in recovery provenance. The recovery runner stops at four new requests, any uncertain hold or a further failed/missing-answer job. This was an explicit recovery after funding, not an automatic paid retry.
+
+Case19's new ledger contains **$0.210954** incremental model cost only; inherited processing stays on its donor. Including the donor's **$1.445997** source-plus-research cost gives **$1.656951** across both attempts. Neither the latest snapshot nor inherited audit work is counted twice. Across the H3, H8 and separate audit continuation, **$16.98790450** is settled with **zero open holds**. The broader comparison inventory's **$54.47300295** is historical mixed-experiment spend, not this recovery round's cost. No new LeapEdge calls were made.
+
+### Remaining source-backed findings
+
+- **Case20:** conditional $54 downside and the distinction between existing holdings and cautious new buying survive. Sentence s4 reverses “silver cannot decouple from gold” into gold depending on silver. The creator's recent unnamed technical purchase is omitted, as is the no-quick-recovery condition for a sustained breakdown. Caption `5960` remains a chart/number ambiguity, not verified precision. Although all 19 inventory items are represented, two coverage assessments remain unanchored/unassessed. The retained LeapEdge report preserves the direction of the gold–silver relationship, but contains its own unsupported price ranges; it is not ground truth.
+- **Case19:** the six additions recover Cabral topping/relative-upside caveats, New Pacific's silver classification, portfolio averaging and selection disclosures, and company comparisons. All original 19 sentences are unchanged. The ambiguous moving-average normalization remains unresolved. New sentence coverage-5 overstates Banyan's absence of severe corrections; the original source describes a strong correction and a difficult June while the 200-day trend remained intact. Resilience despite corrections is not absence of corrections.
+
+These results close the billing interruptions, not the quality gate. Selected reviews are retained privately in `h20-billing-recovery-quality.md` and `h19-billing-recovery-quality.md`. The next work is assertion-level subject/direction and condition fidelity, full-source omissions, and accurate risk qualification before further release acceptance.
+
+Read-only browser verification on the integrated `c8ff37f` build confirmed case20's completed attempt and partial readiness appear separately, current source warnings precede the historical model critique, and original quotes remain accessible. Escape closes the evidence drawer and returns focus to its originating button. Screenshots: `billing-recovery-h20-desktop.png` and `billing-recovery-h20-evidence.png`. These checks did not trigger generation or change production.
+
+Case19's separate recovery preview also displays partial readiness (51/55) and exposes the new Banyan sentence beside the contradictory qualification in the original quote. Desktop and 390×844 mobile evidence drawers were inspected: document width390, drawer374, no page overflow; Escape closes and restores the originating evidence button. Screenshots: `billing-recovery-h19-desktop.png`, `billing-recovery-h19-source.png`, `billing-recovery-h19-mobile.png`. The isolated recovery database imports the source run and snapshot, not the normalized claim tables or original research run; its lower-page claim counts and one-attempt display are not evidence of complete production data migration. The original run remains in the donor database and comparison inventory.
+
+Continuation evidence: `candidate-h-remaining8-session-2.json` and `candidate-h19-audit-recovery-session-1.json`. The private `recover-h19-frozen-worktree.mjs` preserves the recovery procedure and must only run from the matching frozen checkout root; it is not a generic production retry command. Its first live preflight stopped before database creation or spending because the database JSON field required decoding before hashing; the corrected preflight verified the unchanged donor hash.
+
+Final continuation artifact SHA256 values: H8 session2 `cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7`; separate H19 recovery `8d7eece7ca5ea046f607866558653c90ea6ccc92428127f9075dbe7a6747a63a`.
+
+The continuation exporter/report follow-up passed both full suites again (695 tests, 694 passed, one existing skip, zero failures each), typecheck, production build, 16 targeted comparison/ledger tests and final manifest validation. The offline gate remains advisory-only. The manifest now retains 274 observations across 231 unique runs, with no unsettled calls; repeated observations are not additional videos or independently summed cost.

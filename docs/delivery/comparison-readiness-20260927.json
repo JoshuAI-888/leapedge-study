@@ -1,6 +1,6 @@
 {
   "version": "comparison-readiness.v1",
-  "generatedAt": "2026-09-27T03:27:57.076Z",
+  "generatedAt": "2026-09-27T04:30:50.481Z",
   "limitations": [
     "LeapEdge is a retained comparator, not ground truth. No new provider or LeapEdge calls were made.",
     "Attempt rows are retained run observations; the same run may appear in several snapshots. Earlier failures remain visible. Unique-call ledger totals avoid double billing repeated snapshots.",
@@ -8812,6 +8812,126 @@
       "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
       "status": "completed",
       "amount": 0.00440775
+    },
+    {
+      "id": "88224766-c7ea-424e-acbf-9961d0a796d5",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "5bfa2196-223c-41a7-8679-9a129b59b8de",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "1c03c685-3b6d-454d-93d3-72a4fd1e0a12",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "36d2cce4-d2a2-4509-bc21-1cc7a7e9443b",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "b73b1c0f-4d99-4c04-8746-c67d0d82ca3e",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "7744f608-2b96-4886-b3af-5d44907eccf1",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "dffb26e3-cd75-46f8-bd40-f703287f4eba",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "5cfe2277-217a-47f2-9d11-f64e348d2099",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "08e86d32-2f81-4e94-96bd-d2145a970027",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "3b57c80e-4397-4ef1-b909-261a30cbdcea",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "cdc8aede-7418-40f9-8c22-164b27c44fd7",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "0431d4a7-f72b-4a7a-a715-557292d3f843",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.007
+    },
+    {
+      "id": "dd0308fc-3cc1-4692-9be4-b947cbc2dd05",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.0229695
+    },
+    {
+      "id": "b92b174b-c63b-4bc5-9404-6bd39a2fc182",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.09418
+    },
+    {
+      "id": "89123cd9-2258-42ca-a75a-539e893ebb00",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.0269265
+    },
+    {
+      "id": "ab38a933-3030-4882-8c0b-55b513b4d9f3",
+      "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "status": "completed",
+      "amount": 0.107386
+    },
+    {
+      "id": "f279fcf3-c701-4578-83c0-685f81bac756",
+      "runId": "40933a7e-bfe9-4ee5-93c0-116178063e7d",
+      "status": "completed",
+      "amount": 0.055314
+    },
+    {
+      "id": "316edb4c-735f-400d-88f8-3ffc02336a42",
+      "runId": "40933a7e-bfe9-4ee5-93c0-116178063e7d",
+      "status": "completed",
+      "amount": 0.05304
+    },
+    {
+      "id": "f70f3448-2e09-4375-8d5c-ed6de2724193",
+      "runId": "40933a7e-bfe9-4ee5-93c0-116178063e7d",
+      "status": "completed",
+      "amount": 0.052832
+    },
+    {
+      "id": "79bc9c87-a70a-47fa-b5ce-13f1e277c6af",
+      "runId": "40933a7e-bfe9-4ee5-93c0-116178063e7d",
+      "status": "completed",
+      "amount": 0.049768
     },
     {
       "id": "d42f461c-8dc5-4adc-b72c-d07d354f6870",
@@ -21605,6 +21725,104 @@
           "modelAcceptedDraftSentences": null
         },
         {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:b13254e5-4fd9-4ee7-aac8-6b7e7f93f844",
+          "runId": "b13254e5-4fd9-4ee7-aac8-6b7e7f93f844",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T02:41:00.234Z",
+          "updatedAt": "2026-09-27T02:43:21.574Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "5b2e01f4f98bc1c9bdd391c5c6b29b1c71ac7b6692bc5356150582fe447457c5",
+          "transcriptSha256": null,
+          "outputSha256": "7b181c0bc80668fa033c8c743ad20c1d97ab262a86651e0450a57c2c4d7587ac",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 141.125876917,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.30720825,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 11,
+          "coverageFindings": [
+            "k3 and k8 are only partially represented once rejected sentences s7 and s11 are excluded; the accepted sentence set loses the revenue-growth/data-paradigm rationale for k3 and the explicit conditional caveats for the 2023-trough 100x scenario in k8.",
+            "No accepted sentence independently corroborates the $350B market cap, 232x P/E, $1.6B profit, or $13.3B 2023 trough figures against external primary sources; all remain unverified creator claims per modelVerdicts, which is consistent with the omissions notes in the retained draft.",
+            "Evidence m2 and m5 each contain material qualifying details (platform/government embeddedness for m2; execution/adoption/confidence conditions for m5) that exist only in rejected sentences s7, s8, and s11, leaving those propositions unrepresented in the accepted sentence set despite being part of the original evidence quotes.",
+            "No accepted sentence restates the specific caveat that the 100x scenario 'is not entirely impossible' but requires a near-perfect combination of conditions, which weakens balanced treatment of the central 100x-vs-4x thesis in the accepted draft."
+          ],
+          "outputSummary": [
+            "The commentary evaluates whether a $10,000 investment in Palantir Technologies could turn into $1,000,000 by 2035, which requires a 100-fold return.",
+            "From an approximate current market capitalization of $350 billion, a 100-fold return would require Palantir to reach a $35 trillion valuation, surpassing the combined market cap of the Magnificent Seven.",
+            "The speaker notes that Palantir trades at 232 times earnings and generated approximately $1.6 billion in profit over the past four reported quarters.",
+            "A more grounded long-term scenario posits a 4-fold return over the next decade to a $1.3 trillion market cap, which at a 40x multiple would require net income to grow to approximately $32.5 billion.",
+            "Reaching $32.5 billion in net income from $1.6 billion over the next decade necessitates a compound annual earnings growth rate of 35%.",
+            "Palantir's lowest market capitalization during the early 2023 artificial intelligence boom was approximately $13.3 billion, against which a 100-fold multiple equates to roughly $1.3 trillion.",
+            "Key countercases and risks include intensifying competition from well-funded large technology companies and new startups, which could compress margins and slow growth.",
+            "Palantir derives an operational moat from its dual exposure to United States government agencies in national security and intelligence alongside commercial clients for supply chain optimization.",
+            "Palantir positions its platforms to capture the long-term shift toward AI adoption by providing practical tools that analyze real-time data and automate complex processes.",
+            "While an early-stage artificial intelligence market and stable government relationships support growth, Palantir faces risks of stock stagnation if investors demand more reasonable valuation multiples.",
+            "The commentary concludes that a 4x increase over the next decade is a realistic target, whereas a 100x return from the current valuation is highly unlikely and would have required compounding from the 2023 expansion trough."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 11
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:30e86cc6-e009-4a68-ad52-a9a7dcc042dd",
+          "runId": "30e86cc6-e009-4a68-ad52-a9a7dcc042dd",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T02:39:54.611Z",
+          "updatedAt": "2026-09-27T02:41:00.238Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "5e3c4890fcd02b383aee7f8aad0358477f7a179b60cea237454dbe1fe7b364dc",
+          "transcriptSha256": "a2593ce514664ae4e37100873862a50447bb477a7205582c3abfae6a9e50fb85",
+          "outputSha256": "192159be66507c147f1b2ff510f17c007609fcea01b9458de4695f8dbf0a3cee",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 65.508918083,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.16874224999999998,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": 0,
+          "acceptedSentences": null,
+          "coverageFindings": [],
+          "outputSummary": [
+            "Turning a $10,000 investment into $1 million (a 100x return) in Palantir from its current market capitalization of roughly $350 billion is highly unrealistic, as it would require reaching a $35 trillion valuation.",
+            "A more grounded long-term expectation for Palantir is potential for a 4x return over the next decade to a $1.3 trillion market cap, but trading at a multiple of 40x earnings would require growing net income from $1.6 billion to roughly $32.5 billion, or a 35% compound annual growth rate.",
+            "Palantir has established a strong market presence in AI and enterprise data platforms, driven by rapid revenue growth and deep integration into U.S. government agencies and national security operations.",
+            "Palantir derives a unique operational moat from its dual exposure to both U.S. government agencies (national security, defense strategy, intelligence) and enterprise commercial clients (supply chain optimization and operations), positioning it as essential AI infrastructure.",
+            "Applying a 100x return to Palantir's 2023 artificial intelligence boom low valuation of approximately $13.3 billion yields a market cap of roughly $1.3 trillion, which remains ambitious but plausible compared to other major technology leaders.",
+            "Palantir is uniquely positioned to benefit from the foundational, long-term shift toward AI adoption because its platforms provide immediate, practical operational solutions that analyze real-time data and automate complex processes.",
+            "While the early-stage artificial intelligence market offers significant room for expansion and Palantir's strong government agency relationships provide a stable revenue base, Palantir faces rising competitive pressures from large technology firms and startups alongside valuation multiple contraction risks.",
+            "While a 100x return from Palantir's current valuation is highly unlikely, achieving a 4x increase over the next decade is a more realistic target, though it requires significant execution and favorable market conditions; delivering a 100x return from the early 2023 expansion through 2035 remains theoretically possible under rapid growth, broad AI adoption, and sustained investor confidence."
+          ],
+          "outputKind": "source-claims",
+          "modelAcceptedDraftSentences": null
+        },
+        {
           "id": "data/comparison-20260920/results.json:0f432b9a-f158-462a-81b5-1bcb2627c6d8",
           "runId": "0f432b9a-f158-462a-81b5-1bcb2627c6d8",
           "cohort": "comparison-20260920:results.json",
@@ -22155,6 +22373,119 @@
           "modelAcceptedDraftSentences": null
         },
         {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:f4778ca3-a0b0-43b9-8da5-8600c3f0fb10",
+          "runId": "f4778ca3-a0b0-43b9-8da5-8600c3f0fb10",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T02:44:48.889Z",
+          "updatedAt": "2026-09-27T02:48:26.473Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "afc37f4d24c9df765aee8c2bab8c1de6b1012467fad11c0b7a620a1c44f8df06",
+          "transcriptSha256": null,
+          "outputSha256": "94e987f9d72412d1c5f389650a8301d634c63d50612cb1dc0807a318dcdaa852",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 216.79411583399988,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.6249295,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 21,
+          "coverageFindings": [
+            "k7's material claim about redefining warfare and multi-domain operations as the backbone of modern defense strategy is omitted from all accepted sentences, leaving the macro thesis underrepresented beyond the headline dollar figure.",
+            "k8's specific point comparing the border security contract's potential contribution to a 'substantial portion of the company's prior annual revenue' is omitted from all accepted sentences, even though the broader 'hundreds of millions' and strategic-foothold framing is retained.",
+            "m5 is only partially represented: the retained draft captures the general 'emerging force' characterization but omits the specific detail that Ondas 'moved aggressively in recent weeks to strengthen its position,' which is a distinct strategic-action claim tied to the macro backdrop in the original quote.",
+            "All other requested evidence items (k9, k10, k11, m1, m2, m3, m4) are fully represented in the retained accepted sentences with their material propositions, conditions, and qualitative framing intact.",
+            "m7 is only partially represented: the retained draft's s2 conveys the existence of the Palantir collaboration but omits the specific claim that the AI platform enhances mission planning, production processes, and real-time operational execution.",
+            "All other requested evidence items (m6, m8, m9, m10) are fully represented by their respective accepted sentences with no missing material propositions identified."
+          ],
+          "outputSummary": [
+            "The presentation frames modern defense demand within an asserted 1.5 trillion dollar expansion in U.S. defense spending driven by autonomous technologies and rising geopolitical tensions.",
+            "Ondas Holdings announced a strategic collaboration with Palantir Technologies aimed at embedding artificial intelligence across its drone and robotic platforms.",
+            "Ondas confirmed a definitive agreement to merge with Bethesda-based prime contractor Mistral in an all-stock deal valued at 175 million dollars.",
+            "The transaction consideration includes 122.5 million dollars in common stock distributed upfront and in installments, with an additional 52.5 million dollars held in escrow, targeting a close in the second quarter of 2026.",
+            "The merger reportedly gives Ondas direct prime-contractor access to more than 1 billion dollars in existing war department contracts.",
+            "Ondas subsidiary 4M Defense secured an initial competitive demining award valued at 15.8 million dollars to clear legacy minefields across approximately 741 acres along the Israel-Syria border.",
+            "Near-term and follow-on orders linked to the demining project are expected to exceed 50 million dollars under Israel's 1.7 billion dollar Eastern Border Security Barrier Initiative.",
+            "In its March update, Ondas raised full-year 2026 revenue guidance to at least 375 million dollars, up from 50.7 million dollars reported for 2025.",
+            "Ondas guided first-quarter 2026 revenue to between 38 million and 40 million dollars, reflecting approximately 820 percent year-over-year expansion.",
+            "The commentary highlights that the Mistral merger has not yet closed, creating potential integration execution risks, while international programs remain exposed to regulatory or operational timing adjustments.",
+            "The analysis notes that Ondas shares may continue to experience volatility given the company's smaller market capitalization.",
+            "The speaker contrasts Ondas with larger drone peers like AeroVironment, which benefit from predictable pipelines but experience slower growth.",
+            "Next monitoring points for investors include upcoming earnings reports and backlog updates to verify if Ondas sustains its operational delivery and integration momentum.",
+            "The speaker asserts that Ondas's rapid expansion is propelled by an expanding contract backlog, added capabilities via acquisitions, and execution on recent program wins.",
+            "The presentation contends Ondas is moving away from being a speculative technology company toward commercial delivery, with tangible developments already generating revenue or expected to do so shortly.",
+            "The border demining contract is characterized as a strategic foothold that could lead to hundreds of millions of dollars in additional work over time.",
+            "The speaker frames Ondas's transformation as an end-to-end defense solution integrating Ondas's autonomous hardware, Mistral's prime contractor access, and Palantir's artificial intelligence platform.",
+            "Ondas is designing multi-domain intelligence, surveillance, and reconnaissance capabilities spanning high-altitude, aerial, and ground systems to capture future Department of Defense budget allocations.",
+            "The speaker maintains that if Ondas maintains its operational execution pace, it could transition from an under-the-radar player into a widely recognized defense and autonomous systems growth story.",
+            "The commentary positions Ondas Holdings as an emerging force actively capitalizing on modern defense expansion rather than merely participating in the trend.",
+            "The speaker concludes that despite transaction closing uncertainties and international program adjustments, the overall strategic position of Ondas appears significantly stronger."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 21
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:a9fa2215-367c-4b4f-ab33-1becb1577f53",
+          "runId": "a9fa2215-367c-4b4f-ab33-1becb1577f53",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T02:43:21.641Z",
+          "updatedAt": "2026-09-27T02:44:48.893Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "f5bdab34a80eaae18064068711d9247042f664c94725a8060bafeb8d1d6baa54",
+          "transcriptSha256": "5a59cbf2f0a8969a70b6a01460dda454b8311b847a4af2fff7539a54cd0c0569",
+          "outputSha256": "8a28b578e60751be07261e70823b3ca3ca40de9b672d7771cb19868c74688f3d",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 86.78360416700002,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.23124174999999997,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": 0,
+          "acceptedSentences": null,
+          "coverageFindings": [],
+          "outputSummary": [
+            "Ondas Holdings is shifting from a niche supplier to a prime contractor in modern defense through its strategic collaboration with Palantir Technologies and an agreed $175 million all-stock merger with Mistral.",
+            "Ondas subsidiary 4M Defense secured an initial $15.8 million demining award along the Israel-Syria border, with near-term and follow-on orders expected to exceed $50 million as part of Israel's $1.7 billion Eastern Border Security Barrier Initiative.",
+            "Ondas raised its full-year 2026 revenue guidance to at least $375 million and guided Q1 2026 revenue to between $38 million and $40 million, representing roughly 820% year-over-year growth.",
+            "Ondas is achieving rapid growth driven by an expanding contract backlog, acquisitions, and execution on recent program wins, contrasting with larger peers like AeroVironment that have steady pipelines but slower growth.",
+            "Ondas is transitioning away from being a speculative technology company toward delivering tangible revenue, though the stock may experience ongoing volatility due to its small market capitalization.",
+            "Investors should monitor upcoming earnings reports and backlog updates to assess whether Ondas can maintain its operational execution and momentum.",
+            "President Trump is pursuing a $1.5 trillion expansion in U.S. defense spending driven by rising geopolitical tensions and the rapid adoption of autonomous systems and AI, creating major tailwinds across the modern defense sector.",
+            "Ondas's border security contract serves as a substantial revenue driver and strategic foothold that could generate hundreds of millions of dollars in additional work over time.",
+            "Ondas's core transformation integrates Ondas's autonomous hardware, Mistral's prime defense contractor relationships, and Palantir Technologies' AI platform to deliver an end-to-end defense solution.",
+            "Ondas is positioning itself to capture future Department of Defense budget share by developing multi-domain intelligence, surveillance, and reconnaissance (ISR) capabilities spanning high-altitude, aerial, and ground systems.",
+            "If Ondas continues to execute at its current pace, it could transition from an under-the-radar player into a widely recognized growth story within defense and autonomous systems."
+          ],
+          "outputKind": "source-claims",
+          "modelAcceptedDraftSentences": null
+        },
+        {
           "id": "data/comparison-20260920/results.json:a60cea8c-81d9-48a7-97d6-6b54747b9e59",
           "runId": "a60cea8c-81d9-48a7-97d6-6b54747b9e59",
           "cohort": "comparison-20260920:results.json",
@@ -22633,6 +22964,86 @@
           "artifact": {
             "path": "data/readiness-20260927/candidate-h-remaining8-session-1.json",
             "sha256": "46e26a219c7ef077c16648afc1807afdc73e4dc348a02e1eda30a8ba7554e926"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 10.991147541999933,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.0155275,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": 0,
+          "acceptedSentences": null,
+          "coverageFindings": [],
+          "outputSummary": [
+            "Before buying any stock, investors should define a fundamental investment thesis by writing down three reasons the company will be more profitable in five years, as well as the specific invalidation criteria that would prompt a sale."
+          ],
+          "outputKind": "source-claims",
+          "modelAcceptedDraftSentences": null
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:9f8e8d15-a062-4e76-b8ee-761482e834d4",
+          "runId": "9f8e8d15-a062-4e76-b8ee-761482e834d4",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T02:48:37.734Z",
+          "updatedAt": "2026-09-27T02:48:51.938Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "54b1124649b67804da5cad949717a5e004a8f5e2e388dcae2af17a3a3ac43f37",
+          "transcriptSha256": null,
+          "outputSha256": "c75c572a4e16a41082f41a0ba387cd9aa0e6e4c5af20ea258a546680699c87c9",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 13.924152417000034,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.021877,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 2,
+          "coverageFindings": [
+            "Speaker identity remains unknown per source metadata; attribution not assessed and no role inference made.",
+            "Recording date is not specified; only video publication date is known, and relative dating is preserved."
+          ],
+          "outputSummary": [
+            "Before purchasing any stock, an investor should write down three specific reasons why the underlying company should generate higher profits five years in the future.",
+            "An investor must also document explicit invalidation conditions that would disprove the thesis and trigger a sale, arguing that failing to define these criteria amounts to gambling rather than disciplined investing."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 2
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:447f5dfa-718f-4d3f-9589-639b4a4c76a5",
+          "runId": "447f5dfa-718f-4d3f-9589-639b4a4c76a5",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T02:48:26.591Z",
+          "updatedAt": "2026-09-27T02:48:37.738Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "183cd9c05554e1a8129f4c6d3b18d0bd76122aabf22a3925f1cc938626cc8e56",
+          "transcriptSha256": "203ede23b6ebb3486f7fe122ca081f1b369e28c8756dead04f2419d9a1a60dec",
+          "outputSha256": "3dbc841f3118364b23a3b5f26778342f0fe8be19407490a714e3519296949c9f",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
           },
           "timing": {
             "boundary": "recorded-stage-execution",
@@ -23193,6 +23604,177 @@
           "artifact": {
             "path": "data/readiness-20260927/candidate-h-remaining8-session-1.json",
             "sha256": "46e26a219c7ef077c16648afc1807afdc73e4dc348a02e1eda30a8ba7554e926"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 202.20444162099997,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.5842864999999999,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": 11,
+          "acceptedSentences": null,
+          "coverageFindings": [],
+          "outputSummary": [
+            "Hold or own the cybersecurity group including Zscaler, CrowdStrike, Fortinet, Okta, and Palo Alto Networks, as cybersecurity IT spending cannot be cut and AI growth will drive the group higher despite elevated valuations.",
+            "Energy stocks are expected to continue performing well at least until early November, driven by sustained elevated oil prices and geopolitical tensions around the Strait of Hormuz.",
+            "Focus primarily on insurance companies within financials because higher bond yields allow them to earn significantly more investment income on their cash flows and premium float.",
+            "Treat the September dip in AI semiconductor, networking, memory, and cooling leaders as a buying opportunity, as AI demand and spending are not stopping.",
+            "Avoid real estate, consumer staples, and utilities sectors as they will continue facing pressure from high interest rates due to heavy debt loads and competition from risk-free Treasury yields.",
+            "Buy the dip on AI infrastructure stocks as recent concerns that AI is slowing down present a buying opportunity.",
+            "ServiceNow presents a strong buy-the-dip opportunity because it is down significantly and the market underappreciates its strong AI agent orchestration business relative to its core software business.",
+            "Stick with ServiceNow (NOW), as the market is wrong about it and it trades at a cheap 1.3 times price to earnings adjusted for growth basis.",
+            "Take another look at Palantir as it has entered value territory compared to peers, trading under 2 times price to earnings adjusted for growth despite a high nominal P/E ratio.",
+            "Consider AppLovin as a great value at 0.63 times price to earnings adjusted for growth, provided it can weather fears surrounding AI software.",
+            "Avoid jumping into consumer-related spaces such as travel or retail stocks on recent price dips until can't-miss prices appear or consumer spending strength returns.",
+            "Gartner forecasts total global AI spending to increase 47% to $2.6 trillion, with cybersecurity spending projected to jump 67% to $86 billion between 2026 and 2027, representing the second fastest growing AI subsegment behind data.",
+            "Top-down macroeconomic sector allocation is easier and more effective for portfolio performance than attempting to pick individual winning stocks from the entire market.",
+            "Rising bond yields cause yield-seeking investors to rotate out of dividend-paying defensive equities into risk-free Treasuries yielding 5% to 6%, forcing equity prices downward until dividend yields become competitive.",
+            "Rising interest rates negatively impact highly indebted sectors with stable cash flows like real estate, consumer staples, and utilities due to higher borrowing costs and competition from risk-free Treasury yields.",
+            "Software stocks have faced pressure from earnings warnings and fears that AI could weigh on near-term subscription and recurring revenue growth.",
+            "Valuation across software peers varies widely when adjusted for growth, with ServiceNow trading at 1.3 times PEG and Palantir trading under two times PEG despite high trailing multiples, whereas Cloudflare, Snowflake, and Datadog trade at premium multiples.",
+            "Cloudflare, Snowflake, and Datadog remain expensive on a growth-adjusted price-to-earnings basis because the market expects them to navigate AI software threats successfully.",
+            "A sharp drop across travel names alongside crude oil climbing past $100 per barrel and weak retail earnings indicates deep impending consumer strain.",
+            "Oil explorers are driving energy sector outperformance rather than equipment and services, because current high oil prices directly benefit explorers while services have lagged.",
+            "Downstream refiners and companies closer to retail gasoline sales such as Valero Energy, Marathon, and Phillips 66 are performing well due to strong gasoline-refining margins.",
+            "Large integrated and exploration energy names like Chevron, Exxon, Devon Energy, and Diamondback Energy are core energy leaders that should not be overlooked as energy stocks are expected to perform well into early November.",
+            "Higher interest rates and bond yields benefit banks and especially insurance companies, who invest premium float into liquid, safe bonds and earn more on loans assuming the economy avoids a recession.",
+            "Tech stocks have held up over the last 3 months, outperforming the market with an 8% return.",
+            "AI infrastructure stocks have pulled back as leading AI CEOs urge slowing the pace of AI development over safety concerns, but these calls appear disingenuous or designed to manage expectations ahead of IPOs while locking in leadership and billions to trillions in AI spending.",
+            "Consumer Discretionary has gained 1.2% over the last three months but fallen 5.6% in the last month alone, with further deterioration expected.",
+            "Cloudflare gained 10% last week as it positions itself as an intermediary between AI agents and model usage, helping enterprise clients reduce expenses.",
+            "Across software and cybersecurity peers, 1-year performance varies widely: Datadog is up 66% and Snowflake is up 47%, while Palantir is flat, ServiceNow is down 24%, and AppLovin is down 43%.",
+            "Forward revenue growth separates software companies: ServiceNow is expected to grow about 20% (holding the stock back), Snowflake around 30%, Palantir 62% (reflected in its valuation), Datadog 26%, AppLovin 29%, and Cloudflare 30%, with most peers clustered around 30% growth.",
+            "Over the past year, Palantir has been flat at 1.7%, while Cloudflare (ticker NET/NE) is up 47%, driven largely by its cybersecurity offering.",
+            "Travel stocks fell up to 11% in a week (including Airbnb down 8%, Trip.com down 11-12%, Expedia down 12-14%, TripAdvisor down 17%, Booking.com down 18%, and Norwegian Cruise Line down 24%), signaling deep consumer trouble ahead."
+          ],
+          "outputKind": "source-claims",
+          "modelAcceptedDraftSentences": null
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:a76d53a9-c16f-4c41-8347-25461fbc46b0",
+          "runId": "a76d53a9-c16f-4c41-8347-25461fbc46b0",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T02:52:15.445Z",
+          "updatedAt": "2026-09-27T03:02:37.873Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "b1cc79834899738d64ab68c3838d7f4d792ddf1bd7205f21a3d4fb68e8ddc20f",
+          "transcriptSha256": null,
+          "outputSha256": "4df95c5ff3abe96f2e09c9b00d708fb470fb780efa0e860d900cb9aced2cf322",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 619.2019825810002,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 2.8797047499999997,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 36,
+          "coverageFindings": [
+            "c3's insurer float mechanism (premiums collected but not paid out for years, requiring safe/liquid bond investment) is not explicitly represented in accepted sentences, only the higher-level rate-benefit conclusion.",
+            "c7's risk disclosure regarding ServiceNow's relatively low ~20% forward revenue growth versus peers is omitted from the accepted coverage of that evidence item, even though the growth figure itself appears elsewhere (s24) without being tied back as a risk qualifier for c7's buy-the-dip thesis.",
+            "c9 is only partially covered: the explicit 'take another look'/watch recommendation language is absent from accepted sentences, though the valuation rationale is preserved.",
+            "c11 is only partially covered: the oil-price risk factor cited in evidence is omitted from the accepted sentence, though the core avoidance stance and horizon are preserved.",
+            "k4 is only partially covered: the direct debt-servicing-cost mechanism (rising interest expense from high leverage) is not explicitly combined with the yield-rotation mechanism in any single accepted sentence, leaving a gap in fully representing the dual causal mechanism described in the evidence.",
+            "No coverage gaps were found for c10, k1, k2, k3, or k5 against the current accepted sentence set.",
+            "k6 coverage is fragmented across multiple sentences (s25, s26, coverage-3, s28) rather than unified, though each individual valuation figure is represented with appropriate uncertainty disclosure for AppLovin's ambiguous PEG number.",
+            "k12's specific mechanism describing insurers placing premium float into 'ultra safe and liquid investments... usually bonds' is not explicitly quoted in any accepted sentence; the float-yield relationship is stated generally in s11 but the underlying investment-mandate rationale is under-represented.",
+            "No accepted sentence unifies the full valuation-table methodology narrative from k6 (level playing field adjustment for growth) in one place, though individual data points are preserved elsewhere.",
+            "k14's specific rationale that AI CEOs are simultaneously locking in market leadership while continuing massive spending was only partially represented; the retained draft captures the expectation-management skepticism but drops this causal detail.",
+            "k16's quantification of enterprise savings ('save millions') was generalized into vaguer cost-reduction language, losing a specific magnitude claim from the source.",
+            "No sentence in the retained draft independently misstates or omits the cybersecurity-driver detail for Cloudflare in k19; this was correctly preserved via coverage-2.",
+            "Overall coverage of the requested evidence IDs is largely adequate, with only two partial-coverage gaps identified (k14, k16); no evidence ID was found entirely missing from the retained draft.",
+            "Two of the eight requested evidence items (m6, m7) are only partially represented: m6's specific 'another favorite on the channel' framing for Diamondback Energy is dropped, and m7's explicit 'sector to avoid' classification for Consumer Discretionary is not carried into the accepted sentence that reports its return figures.",
+            "The remaining six requested evidence items (m2, m3, m4, m5, m8, m9) are fully covered by accepted sentences s4, s6, and s21 without loss of material qualitative or numeric detail.",
+            "m11's specific -30% one-year decline figure for ServiceNow, quoted directly in the evidence, is not represented in the accepted draft; the accepted draft only carries a -24% figure (from k17/coverage-2), leaving a numeric discrepancy between the two sources for the same company/metric unaddressed and unreconciled within accepted sentences.",
+            "No accepted sentence explicitly reconciles or flags the differing ServiceNow one-year return figures appearing across evidence (m11's -30% vs k17's -24%), which is a source-level inconsistency that should be disclosed rather than silently resolved by omission.",
+            "The travel-sector decline data (m19-m25) is fully and consistently represented in accepted sentence s29 with matching percentages and company names.",
+            "Sentence s31 covers the core Dick's Sporting Goods and Foot Locker segment figures from m26 but omits the CEO's explicit statement about further consumer weakness, leaving a material qualitative point from the evidence unaddressed in the retained draft.",
+            "All eight requested evidence items (m27-m34) are individually represented within the accepted sentences s4, s10, s11, and s31, each preserving the specific company name and cited percentage figure without alteration.",
+            "No missing material points were identified for these individual name/percentage disclosures; broader qualitative framing (e.g., 'best platform' for CrowdStrike, dominance claims for Palo Alto) appears in s6 but s6 is not required for m30-m34 coverage since the core reported figures are captured in s4.",
+            "m38 and m39 both contain a shared qualitative rationale (proximity to retail customer driving refiner performance) that is only partially represented in the accepted draft via s9's more generic 'favorable spreads' framing.",
+            "m42 contains a distinct creator-conviction detail ('another favorite on the channel') and a forward continuation clause about energy stocks' durability that is not reflected in s10, which only lists the company among 'major integrated and exploration companies' without the tactical persistence framing tied to s7's Hormuz-driven timeline.",
+            "m50's specific numeric claim ('down 30% over the year' for ServiceNow) is not represented in any accepted sentence; the only accepted ServiceNow one-year figure is -24% (coverage-2), and the sentence that once tried to reconcile a 24%-to-30% range (s23) was rejected as an unsupported alteration, leaving this specific rationale for the buy-the-dip call under-evidenced.",
+            "All other requested evidence items (m43-m49) are substantively represented in the accepted draft, including one item (m46) where a transcription/naming ambiguity ('Credential Financial') is properly disclosed rather than resolved by inference.",
+            "Two requested evidence items (m51, m56) are only partially represented: m51's 'AI software fears survival' framing for Snowflake and m56's causal linkage between ServiceNow's low growth and stock underperformance are present in source evidence but not reflected in any accepted sentence.",
+            "The remaining requested evidence items (m52, m53, m54, m55, m57, m58) are adequately represented across the accepted sentences with matching figures and qualitative claims.",
+            "m59's clean, unambiguous quoted figure ('63 times price to earnings') is subsumed into a numeric-uncertainty disclosure driven by a different source's garbled text, which risks obscuring that m59 itself is not ambiguous.",
+            "m60's central thesis — travel stocks as an early warning sign of broader consumer deterioration — is only partially represented; the itemized declines are retained but the explicit causal/warning framing and the American Airlines decline percentage are not fully reflected in the accepted sentences."
+          ],
+          "outputSummary": [
+            "The speaker argues that starting portfolio strategy with top-down macroeconomic forces and sector identification is more effective than attempting to select winners among 5,000 individual stocks.",
+            "According to the speaker, Gartner forecasts global artificial intelligence spending to increase 47% this year to $2.6 trillion.",
+            "Cybersecurity spending is projected to grow 67% to $86 billion between 2026 and 2027, representing the second fastest growing segment behind data.",
+            "The speaker holds an owned cybersecurity basket that has appreciated an average of 95%, including Zscaler up 16% on Monday, CrowdStrike with a 108% return, Fortinet at 92%, Okta at 91%, and Palo Alto Networks up 148%.",
+            "Despite PEG ratios of four to five times for the group compared to one times or less for typical growth stocks, the speaker advises owning the entire cybersecurity basket because enterprise cybersecurity spending cannot be cut.",
+            "The speaker identifies relative value in Zscaler at 1.6 times growth-adjusted price-to-earnings and praises CrowdStrike as the best platform and Palo Alto Networks for dominating in size and scope.",
+            "Energy stocks are anticipated to perform well at least until early November, as geopolitical tensions around the Strait of Hormuz are expected to persist until then.",
+            "Exploration companies have driven energy sector strength over equipment and services because current high crude prices directly benefit explorers.",
+            "Downstream refiners such as Valero Energy, Marathon, and Phillips 66 have performed well over the last three months due to favorable spreads between retail gasoline and refining margins.",
+            "The speaker advises not overlooking major integrated and exploration companies including Chevron, Exxon, Devon Energy, and Diamondback Energy.",
+            "Within financials, the speaker recommends focusing primarily on insurance companies like Travelers, Prudential, and MetLife because higher bond yields allow them to earn significantly more on invested premium float.",
+            "Banks will also benefit by earning more on loans provided that the broader economy does not experience a recession.",
+            "Payments firms such as Global Payments and PayPal, alongside brokerage platforms like Robinhood Markets, have also shown positive 3-month performance.",
+            "Tech stocks outperformed the market over the last three months with an 8% return.",
+            "The speaker views September weakness in AI infrastructure stocks as a buying opportunity, dismissing comments by AI CEOs regarding slowing development pacing as pre-IPO expectation management.",
+            "The speaker targets leaders across semiconductors, networking, memory, and power and cooling, citing Nvidia, AMD, Broadcom, Marvell Technologies, SK Hynix, Micron, Bloom Energy, and Vistra.",
+            "Form 4 filings show Advanced Micro Devices Executive Vice President Forrest Eugene Norrod exercised options and sold shares pursuant to a Rule 10b5-1 plan on September 15, 2026.",
+            "Real estate, consumer staples, and utilities are sectors to avoid over the next few months due to heavy debt loads and refinancing costs in a high interest rate environment.",
+            "Consumer Discretionary rose 1.2% over the last three months but declined 5.6% in the last month, with the speaker expecting performance to worsen significantly.",
+            "Software stocks fell after Adobe warned that a business model transition could weigh on recurring revenue growth despite reaching one billion users, while Autodesk dropped 17% on missed quarterly and full-year guidance.",
+            "Cloudflare rose 10% last week as it positions itself as an intermediary between AI agents and model usage to assist enterprises in lowering costs.",
+            "Forward revenue growth forecasts across software peers stand at approximately 20% for ServiceNow, 26% for Datadog, 29% for AppLovin, 30% for Snowflake and Cloudflare, and 62% for Palantir.",
+            "The speaker considers ServiceNow a strong buy-the-dip opportunity trading at 1.3 times PEG, contending the market underappreciates its AI agent orchestration potential while focusing solely on software.",
+            "Palantir is highlighted as entering value territory under 2 times PEG despite trading at 103 times nominal P/E, driven by high earnings expansion.",
+            "Software peers Cloudflare, Snowflake, and Datadog trade at premium forward PEG ratios of 4.8 times, 3.8 times, and 3.2 times respectively.",
+            "Travel equities fell up to 11% in a single week, with Airbnb down 8%, Trip.com down 11% to 12%, American Airlines down, Expedia down 12% to 14%, TripAdvisor down 17%, Booking.com down 18%, and Norwegian Cruise Line down 24%.",
+            "Crude oil rose above $100 per barrel to $101, raising fuel costs alongside consumer headwinds from retailer earnings reports.",
+            "Dick's Sporting Goods fell 26% after Foot Locker segment sales fell 3.6%, and Lululemon fell 17% after reducing its sales forecast due to customer weakness.",
+            "The speaker advises against buying dips in travel or retail stocks until irresistible valuations emerge or consumer spending visibly rebounds, which is not expected over the next month.",
+            "The speaker explains that rising interest rates pull yield-seeking investors out of dividend stocks yielding three to four percent and into risk-free US Treasury bonds yielding five or six percent, lowering share prices until dividend yields become competitive.",
+            "Over the preceding year, software returns diverged sharply: Datadog gained 66%, Snowflake rose 47%, Cloudflare gained 47% driven largely by its cybersecurity offering, Palantir remained flat at 1.7%, ServiceNow fell 24%, and AppLovin declined 43%.",
+            "The speaker views AppLovin as the cheapest software peer on a growth-adjusted basis and a great value if it can survive AI software fears, though transcript passages preserve numerical transcription uncertainty between 111.63 times and 63 times price to earnings.",
+            "The market awards premium valuation multiples to Cloudflare, Snowflake, and Datadog because investors believe these platforms will survive AI software threats and perform strongly.",
+            "The speaker uses the Energy Select Sector SPDR (XLE) to review performance across the 21 largest S&P 500 energy companies rather than attempting to pick individual equities across thousands in the market.",
+            "The speaker also notes that Prudential (spoken in transcript as 'Credential Financial') is doing very well alongside other insurers benefiting from interest rate hikes.",
+            "Cloudflare closed up 9.9% over five days through Monday, described as the sole survivor in software, and was identified as a great buying opportunity as an AI agent middleman."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 38
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:599984b0-0f07-49f9-9b25-721a198dd9bf",
+          "runId": "599984b0-0f07-49f9-9b25-721a198dd9bf",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T02:48:52.047Z",
+          "updatedAt": "2026-09-27T02:52:15.450Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "130357143d5d8c6903be44702bd7443ebbc4b2822a30253b08947757571f74ad",
+          "transcriptSha256": "14105dce685d46826942c0cac2f70168ca19fce1ff680cbe8bf80bb641581f78",
+          "outputSha256": "72cc0ec4ea6790b5e585b078d0d650d1f8fb0ad57ab602fad639c667c4635457",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
           },
           "timing": {
             "boundary": "recorded-stage-execution",
@@ -23842,6 +24424,100 @@
           "modelAcceptedDraftSentences": null
         },
         {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:eb60d694-b38c-4ba9-bba3-92ef8ab82796",
+          "runId": "eb60d694-b38c-4ba9-bba3-92ef8ab82796",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T03:03:11.499Z",
+          "updatedAt": "2026-09-27T03:03:50.357Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "9d69d3edbb1e761bd2024000bb4903bdf99376f2e26f6d3cf78b8a0c5ba6d148",
+          "transcriptSha256": null,
+          "outputSha256": "fd7b3faa97d906b924e7808c501838bff3decba981bcd732fe8e25c36c3afdee",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 38.22222999899998,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.12808775,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 9,
+          "coverageFindings": [
+            "The draft omits explicit invalidation conditions or specific next-check triggers tied to the Vistra thesis (e.g., what would cause the creator to exit).",
+            "The draft does not address whether the CEO purchases or institutional filings have been independently verified, though this is disclosed in omissions.",
+            "The valuation multiples (10x EV/EBITDA, 16x 2026 earnings) are presented without external corroboration despite being central to the investment case."
+          ],
+          "outputSummary": [
+            "The creator disclosed purchasing 100 shares of Vistra (VST) and taking a long position, noting that the purchase occurred near the 52-week low.",
+            "The investment thesis relies on increasing energy demand driven by AI, with the creator arguing Vistra is positioned to capitalize.",
+            "The creator asserted that Vistra trades at 10 times enterprise value to EBITDA and 16 times 2026 earnings.",
+            "The creator reported that CEO James Burke purchased 1.1 million shares across three transactions during the prior week near the 52-week low.",
+            "The creator stated that Donald Trump, Nancy Pelosi, Peter Thiel, and David Tepper all bought or added to Vistra, noting Pelosi exercised call options and Tepper doubled his position.",
+            "The creator cautioned that 13F filings are 45 days stale, warning that even experienced investors make mistakes and copying trades blindly causes losses.",
+            "The creator cited David Tepper's historical fund performance, claiming a 10,000 dollar investment when he started grew to 3.6 million dollars by 2019 versus 120,000 dollars in the S&P 500.",
+            "The creator identified key risks for Vistra including heavy regulatory scrutiny, commoditized pricing risk, data center delays, weather impacts on cash flow, and difficulty assessing profitability.",
+            "The creator stated that Bloom Energy remains one of their core holdings, noting a general dislike of the energy sector outside of that position."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 9
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:9d2424eb-1383-4480-b969-eb7b221a0e23",
+          "runId": "9d2424eb-1383-4480-b969-eb7b221a0e23",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T03:02:38.057Z",
+          "updatedAt": "2026-09-27T03:03:11.501Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "fda2f8fd0e4c8272573d558ae62319da3c06c7345208e4364c69915c87f55c9a",
+          "transcriptSha256": "6059156a2ce999d8f3fff22a0e1d723e3bec780ff52684f00497749a025a0da0",
+          "outputSha256": "90955d61e942e60f2dcb3f345ab31c833f0416b2d3592719c33185a685791ee1",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 32.796661331999815,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.062568,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": 1,
+          "acceptedSentences": null,
+          "coverageFindings": [],
+          "outputSummary": [
+            "The speaker purchased 100 shares of Vistra (VST) and went long, driven by energy demand from AI, insider buying from the CEO, and David Tepper doubling his position.",
+            "13F filings are useful indicators of investor interest, but they can be 45 days stale and even renowned investors make mistakes.",
+            "Prominent figures including Trump, Nancy Pelosi, Peter Thiel, and David Tepper invested in Vistra, with CEO James Burke buying 1.1 million shares near the 52-week low.",
+            "Vistra trades at 10 times EV/EBITDA and 16 times 2026 earnings, positioned to benefit from surging AI-driven energy demand.",
+            "The speaker considers Bloom Energy to be one of their core holdings, while generally not loving the broader energy sector.",
+            "David Tepper's investment track record has outperformed the S&P 500 for nearly three decades.",
+            "David Tepper has significantly outperformed the S&P 500 for nearly three decades: $10,000 invested with him when he started until he closed his public fund in 2019 would be worth $3.6 million, compared to $120,000 in the S&P 500."
+          ],
+          "outputKind": "source-claims",
+          "modelAcceptedDraftSentences": null
+        },
+        {
           "id": "data/comparison-20260920/results.json:f8270148-9c71-4348-a152-72befa730d52",
           "runId": "f8270148-9c71-4348-a152-72befa730d52",
           "cohort": "comparison-20260920:results.json",
@@ -24367,6 +25043,154 @@
           "artifact": {
             "path": "data/readiness-20260927/candidate-h-remaining8-session-1.json",
             "sha256": "46e26a219c7ef077c16648afc1807afdc73e4dc348a02e1eda30a8ba7554e926"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 292.1643984570005,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.9291529999999999,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": 5,
+          "acceptedSentences": null,
+          "coverageFindings": [],
+          "outputSummary": [
+            "The speaker plans to manage an assigned in-the-money put position by either rolling the options contracts to a future expiration date or holding the assigned shares to run the wheel strategy by selling covered calls to generate ongoing income.",
+            "Selling put options is presented as the primary strategy for Palantir (PLTR) because the stock appears capped for near-term gains; selling an at-the-money 175 strike put or a lower 165 strike put provides substantial premium and downside buffer compared to outright share purchases.",
+            "Following early assignment on Google put options, plans to sell covered calls in a shorter time frame to generate income.",
+            "Following an early assignment on Google put options, the creator intends to manage the position by selling covered calls 5% higher to collect premium and reach break-even quickly.",
+            "The speaker holds an in-the-money Microsoft put position expiring 9/18 that is down slightly and will probably need to be managed later today by closing it out, rolling it, or taking assignment.",
+            "Selling put options functions like underwriting insurance to generate premium income, but it carries downside risk if the stock price drops below the strike price and assignment occurs.",
+            "Attempting to generate high weekly income on a smaller portfolio requires taking on significantly higher risk by chasing volatile premium.",
+            "A safer put-selling approach focuses on naming an acceptable purchase price and selling puts only on stocks the investor genuinely wants to own if assigned.",
+            "Selling cash-secured put options serves as a strategy to get paid while naming a purchase price, but requires having the cash and mental willingness to be assigned 100 shares of a stock you want to own if it falls below the strike price.",
+            "Selling options limits total upside potential to the premium collected, creating opportunity cost risk if the underlying stock or market rallies strongly.",
+            "Selling put options requires sufficient implied volatility; stocks that do not move much offer too little option premium to be worthwhile.",
+            "Selling puts is considered a safe income strategy if the investor is willing to own the underlying stock, but the main limitation is forfeiting upside beyond the collected premium.",
+            "A 30-delta strike is considered an optimal balance for selling puts, balancing high premium collection with a lower probability of assignment and attractive risk-adjusted returns based on a 10-year historical study.",
+            "When a high-quality stock hits a 52-week low and is poised for a sharp recovery, buying call options can be preferable to selling puts.",
+            "Managing in-the-money short put assignments can be handled via the wheel strategy by selling covered calls or rolling the position for a credit.",
+            "Selling put options at a 0.35 delta provides roughly a 65% probability of keeping the full premium without assignment, with low downside risk when combined with rolling or covered calls.",
+            "Rolling an in-the-money put option (such as moving from a 370 strike to a 360 strike out roughly 90 days) can lower the obligation strike price while collecting an additional net credit.",
+            "Assignment risk is minimal with ample time to expiration, becomes moderate within the final 30 days as delta rises, and becomes highest in the final week for deep in-the-money options.",
+            "A 30 delta strike and a duration of 30 to 45 days is identified as the optimal zone for selling put options due to accelerating theta decay relative to premium collected.",
+            "Generating $3,000 per week or month by selling put options carries significant risk and is far from guaranteed, as the majority of traders are not consistently profitable with options.",
+            "Selling a cash-secured put option (such as selling a $190 strike put on a $200 stock) allows an investor to get paid option premium while obtaining a discount (e.g., $10 per share) compared to purchasing the stock outright at market price.",
+            "Portfolio strategy and risk tolerance should be tailored to the investor's time horizon: longer horizons can accommodate higher risk and growth, whereas investors nearing retirement require focus on weekly income to live on their nest egg.",
+            "Selling covered calls caps upside and can underperform investor expectations during sharp market rallies, as seen when 10 positions in high-growth AI stocks moved in the money within 30 days and generated a 7.5% return ($200,000 to $215,000) while forfeiting substantial capital appreciation.",
+            "When executing trades, investors should seek a tight bid-ask spread; trading with a bid-ask spread that is too wide results in lost money.",
+            "Selling put options at higher deltas (such as 39 delta at a 195 strike on a $200 stock) generates higher premium (e.g. $800 or more) but carries higher assignment risk, whereas lower deltas (such as 185–190 strikes) offer lower premium with a higher win rate, and excessively low deltas (14–19 delta) collect too little premium to justify the weekly income target.",
+            "Selling put options at delta levels that are too low (such as 14 to 19 delta) does not generate enough weekly income relative to the capital required unless the portfolio is massive, and even with a massive portfolio it is inefficient compared to selecting a higher delta.",
+            "The speaker manages a put-selling strategy across multiple positions with common expiration dates, generating realized income (such as $739 on a 120 put and $2,700 on a 160 put) by selling put options on companies believed to be strong, such as Palantir.",
+            "Rolling a short put position to a lower strike and further expiration date can yield a substantial net credit, as demonstrated by rolling a Google put from the 380 strike to the 370 strike (buying back at 19 and selling at 28) to collect approximately $36,000 in premium while adding time to the trade.",
+            "When a short put position goes into the money, the trader has three primary choices: close out the trade, roll the trade (often for a credit), or take assignment of shares to transition into the wheel strategy.",
+            "The creator holds a short put position in Nvidia with an expiration date further out in January.",
+            "When a high-quality stock is trading at a 52-week low and poised for a sharp rebound, buying call options is preferable to selling puts.",
+            "Early assignment on short options positions is rare, occurring less than 10 times in 12 years of trading, and typically happens on large positions.",
+            "Despite receiving assignment on a $950,000 Google position at a 370 strike, the net breakeven is around $340 due to receiving approximately $28 to $30 in average credit across multiple sold put options, leaving the position essentially flat or slightly positive with Google trading at $344."
+          ],
+          "outputKind": "source-claims",
+          "modelAcceptedDraftSentences": null
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:a0b17ec4-fe6f-4885-ab90-f37bf1a1a010",
+          "runId": "a0b17ec4-fe6f-4885-ab90-f37bf1a1a010",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T03:08:47.486Z",
+          "updatedAt": "2026-09-27T03:15:58.712Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "52166a378ba0b4a33d3de32f0065befe2529e7318a7e70f09a7fd47f77d3b533",
+          "transcriptSha256": null,
+          "outputSha256": "dac67dbcbe51c4a98e7c30de074edce6ca38022f07d3c2da14db19a9321dc500",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 427.25267779399996,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 1.5710335000000002,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 23,
+          "coverageFindings": [
+            "The requested evidence set shows one clear gap: k2's portfolio-size risk scenario is entirely missing from the accepted sentence set because both candidate sentences representing it were rejected for numerical fidelity issues, leaving this material point about capital-size risk trade-offs unrepresented.",
+            "c1, c2, and c3 are only partially represented: specific tactical details (Google's roll-vs-assignment choice and wheel-strategy intent in c1; the concrete 165-strike/$1.85-premium/$153-breakeven Palantir proposal and the 175-strike at-the-money cost comparison in c2; the covered-call/shorter-timeframe management intent in c3) exist in the raw evidence but are absent from the surviving accepted sentences, since the sentences that would have captured these numeric specifics (s15, coverage-4) were rejected.",
+            "k7's specific 'very safe strategy' framing and the concrete stock-doubling example are not explicitly represented in any accepted sentence, though the general opportunity-cost concept is covered via s4 shared with k5.",
+            "All other requested evidence items (k4, k5, k6, k8, k9, k10, k11) are fully covered by accepted sentences with their material propositions, quotes, and conditions intact.",
+            "Evidence k15 (the explicit risk disclaimer that generating consistent weekly options income is far from guaranteed and that a majority of traders are not profitable) has no accepted sentence representing it: both s2 and coverage-1, which cited k15, were rejected for unsupported/altered numerical prose, leaving this cautionary point absent from the accepted retained draft despite being a materially important qualifier to the overall income-strategy thesis.",
+            "All other requested evidence IDs (k12, k13, k14, k16, k17, k18, k19) are adequately represented by at least one accepted sentence with matching quotes and no material missing sub-points identified.",
+            "k22's realized Palantir put gains and the 'selling puts on companies believed to be great' rationale are entirely absent from the accepted sentence set because both candidate sentences (s18, coverage-5) were rejected for financialFacts quote-matching issues; this material economic detail is currently missing from the accepted brief.",
+            "k29's qualifying detail that early assignments typically occur on large positions is omitted from the accepted set because coverage-12, which contains this nuance, was not included in applicationAcceptedSentenceIds, leaving only the rarity statistic covered via s9.",
+            "k30's specific Google assignment arithmetic ($950K value, $344 spot, $28-30 credit, $340 breakeven) is entirely absent from the accepted sentence set because both candidate sentences (s10, coverage-3) were rejected for unresolved numerical/quote issues, leaving this material financial detail uncovered in the published draft.",
+            "m7's admission of possible mismanagement and the specific 'early assigned yesterday' timing detail have no accepted sentence representation, though s11 partially covers the forward-looking covered-call action from the related m8 evidence.",
+            "Two of the eight requested evidence items concerning realized options gains on QQQ (m9, m15) and Palantir (m10) are entirely absent from the accepted retained draft because their only supporting sentences (s18, coverage-5) were rejected for unquoted financial facts; the underlying qualitative claims (e.g., 'QQQ is one of the best' ETF vehicle, Palantir strike diversity commentary) are also lost, not just the numeric facts.",
+            "The Google assignment narrative (m11, m12, m13) is only partially represented: the core fact of a 13-contract 370-strike assignment survives via s9, but explanatory color — the dedicated 'risk of assignment' framing (m11), the 'pretty large position' characterization and mechanical definition of rolling (m12), and the specific recency wording 'yesterday or two days ago' plus 'huge amount' emphasis (m13) — is not carried into any accepted sentence.",
+            "Microsoft (m16) and Nebus/NBIS (m14) holdings are adequately covered via s19 with matching quotes and figures.",
+            "Because several numeric-fact sentences were rejected on strict quote-matching grounds, the accepted draft systematically under-represents the 'Other Positions and Portfolio Disclosures' topic relative to the full evidence set, leaving a gap in showing the presenter's realized trading performance across QQQ and Palantir simultaneously alongside Google, Microsoft, and Nebus positions.",
+            "The Palantir strike-selection introduction (m17) is entirely absent from accepted content, leaving the setup for the trade example without its originating context.",
+            "The conservative 165-strike put proposal with its $1.85 premium and 153 breakeven (m21) is missing from accepted sentences because its sole carrier (s15) was rejected for a breakeven math discrepancy; this removes a materially different (more conservative) put-selling scenario from the retained draft.",
+            "The detailed Google breakeven arithmetic (average credit vs. 370 strike vs. $344 spot) tied to m23 survives only in rejected sentences, so the accepted draft retains the qualitative repair plan (s11) but loses the quantitative justification for calling the position near breakeven."
+          ],
+          "outputSummary": [
+            "The presenter outlines selling put options to generate weekly income, likening the trade to underwriting insurance where premium is received while bearing the risk of buying shares if the underlying stock drops below the strike.",
+            "The strategy is framed as getting paid to name a purchase price on stocks an investor genuinely desires to own, with a hypothetical example of selling a $190 strike put on a $200 stock to achieve a $10 discount per share.",
+            "A key trade-off of short put and covered call strategies is capped upside limited to the option premium collected, which exposes investors to substantial opportunity cost if the underlying equity rallies strongly.",
+            "The presenter advocates targeting approximately a 30 delta strike for short puts across 30 to 45 days to expiration, citing personal trading experience and an internal 10-year study reviewed while working at Goldman Sachs indicating favorable Sharpe ratios and an estimated 70% win rate.",
+            "When options enter the final week and trade deep in the money with high delta, the risk of early assignment escalates sharply compared to longer-dated positions.",
+            "For managing in-the-money put options, the presenter notes three options: closing the trade, rolling the contracts for a credit to a lower strike and further expiration, or accepting assignment of shares to transition into the wheel strategy via covered calls.",
+            "The presenter reports taking an early assignment on 13 contracts of Google 370 strike put options while utilizing margin, noting that early assignment is rare and has happened fewer than 10 times over 12 years of trading.",
+            "To repair the assigned Google shares which sit roughly 5% underwater relative to strike, the presenter plans to sell covered calls 5% higher to collect additional premium and reach break-even within days.",
+            "The presenter details an earlier roll of Google put contracts from the 380 strike down to 370, buying to close at 19 and selling at 28 to collect roughly $36,000 in gross premium while pushing expiration into the future.",
+            "A hypothetical 90-day roll of an in-the-money 370 strike put expiring September 18 down to a December 360 strike is illustrated to yield a net credit of $227 per contract alongside a $10 reduction in the purchase obligation.",
+            "Turning to Palantir trading near $175, the presenter judges short-term upside as capped, identifying $155 as the lowest expected near-term downside level and advocating selling put options rather than outright equity purchases.",
+            "The presenter notes an invalidation or early exit condition on Palantir: if the stock drops toward $158 and threatens breakeven, the trade can be closed early to retain partial profits rather than holding to expiration.",
+            "Conversely, the presenter notes that when a high-conviction equity trades at 52-week lows and is poised for an aggressive rebound, buying call options is superior to selling puts, referencing a past Palantir trade entered around $109 that rose to $132.",
+            "The presenter also reports holding an in-the-money Microsoft put position expiring September 18 that is down slightly and requires management, an active put trade on Nebus (NBIS) at the 202.5 strike, and an existing Nvidia put position expiring further out in January.",
+            "The presentation recounts a client scenario where ten covered call positions in aggressive growth AI stocks advanced from $200,000 to $215,000 within 30 days for a 7.5% return, but all finished in the money and resulted in client dissatisfaction over missed equity upside.",
+            "For Palantir, the transcript discusses selling a 165 strike put with an asserted $1.85 premium and claims an effective breakeven of 153, though standard breakeven calculation without unmentioned concessions would mathematically equal 163.15.",
+            "The strategy requires underlying assets to possess sufficient implied volatility, as stocks that move little yield inadequate option premium to justify selling puts.",
+            "Selling put options at a 0.35 delta is framed as providing approximately a 65% probability of retaining the full premium and a 35% probability of assignment, which can then be addressed through rolling or covered calls.",
+            "Trade execution guidance emphasizes securing tight bid-ask spreads, warning that wide spreads create direct trading friction and capital loss.",
+            "Evaluating strike delta involves balancing premium against assignment risk: higher deltas such as 39 collect larger premiums but raise assignment likelihood, lower deltas between 185 and 190 increase win probability, while extremely low deltas between 14 and 19 collect insufficient weekly income to be worthwhile.",
+            "Investment approach and risk appetite must align with portfolio horizon, where individuals nearing retirement need to focus on generating weekly income from their capital, while longer horizons allow greater capacity for growth and risk.",
+            "True cash-secured put execution requires maintaining sufficient unencumbered cash and being mentally prepared to take delivery of 100 shares per contract upon assignment rather than writing puts on margin.",
+            "The speaker expresses conviction as a firm believer in Google and views Palantir as a great company, noting that early assignment on short options is rare, has happened fewer than 10 times over 12 years of trading, and typically occurs on large positions."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 27
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:fb769030-8731-4ea3-a262-5cb733b496dc",
+          "runId": "fb769030-8731-4ea3-a262-5cb733b496dc",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T03:03:50.690Z",
+          "updatedAt": "2026-09-27T03:08:47.493Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "7f6ec009411b5cb8e943bb0d1208df7ef305b4168972335330b892be338ebf38",
+          "transcriptSha256": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+          "outputSha256": "8b0beaecd8f2c22ba3f4af786bcb92d829a86e052697759dcf5dd60956f4ae16",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
           },
           "timing": {
             "boundary": "recorded-stage-execution",
@@ -25433,6 +26257,220 @@
           "modelAcceptedDraftSentences": null
         },
         {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:4147c83f-257b-471a-894d-0fa5948ce427",
+          "runId": "4147c83f-257b-471a-894d-0fa5948ce427",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "needs_review",
+          "stage": "complete",
+          "createdAt": "2026-09-27T03:18:55.796Z",
+          "updatedAt": "2026-09-27T03:23:53.044Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "3c241c30414b39f9037123ba681c04478f8bec7c791fdc965e480573da43cef3",
+          "transcriptSha256": null,
+          "outputSha256": "cbe6ca932bef7079a68387d6bfd405d8a6dde29b25fd0e2ce78f6ef46d4b9ca4",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 293.53111975100086,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.94982025,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 19,
+          "coverageFindings": [
+            "c2 and c3 both concern Cabral Gold but the retained draft omits the specific comparative reasoning ('other stocks have bigger upside potential') and the topping-out risk explicitly present in the original evidence quotes, understating the qualifying detail behind the wait-for-pullback stance.",
+            "c5's explicit clarification that New Pacific Metals is a silver stock rather than a gold stock is omitted from the retained sentence, which could affect sector/thesis classification for readers distinguishing gold vs. silver exposure.",
+            "Evidence k3 is only partially represented: the accumulated-portfolio-pricing and 'no perfect entry' framing from its first quoted passage is missing from the retained draft, even though the second half (weakness comes to weakness) is captured via s18.",
+            "All other requested evidence items (c9, c10, k1, k2, k4, k5, k6) are fully covered by their respective accepted sentences with matched conditions, quotes, and scenario/creator-view framing preserved.",
+            "k8's specific creator screening criteria (prioritizing unowned stocks that would cause regret if missed in a no-new-lows rally) is not represented in any accepted sentence, though it is a distinct methodological point separate from the general accumulation framework (s1) and institutional-behavior discussion (s17).",
+            "k13's granular historical detail about Banyan's shallow corrections and the 200-day moving average never being in doubt during the war and June pullbacks is omitted from s5, which only covers the moving-average trend and new-high facts.",
+            "Two evidence items (m3, m4/m5 cluster) reveal a pattern where comparative reasoning between named stocks (Cabral vs. other stocks; 1911 Gold and McEwen vs. Next Gold) is omitted from accepted sentences, even though the underlying technical/positioning facts are captured. This weakens the relative-ranking rationale the creator uses to justify tactical choices across names.",
+            "k15/k16/k17 are fully and accurately represented by single retained sentences without embellishment beyond the original quotes.",
+            "m11's specific institutional-buying rationale for SSRM is not linked to any accepted sentence that cites m11 directly; s17 covers the general institutional-buying theme for other named stocks (m6,m7,m8,m9,m12,m13) but excludes m11 from its evidenceIds, leaving a partial gap for that particular passage.",
+            "No sentence merges or misattributes speaker identity across m6-m13; all are treated as creator commentary without introducing ambiguity.",
+            "The retained draft generally represents each requested evidence item's core technical stance, but two items (m15, m16) show representational discrepancies: m15's specific 250-day moving average reference is altered to 50-day/200-day in s10, and m16's explicit silver-stock clarification is omitted from s11.",
+            "m21's specific creator belief that Banyan will not experience a strong correction, along with its chart-based justification, is not explicitly retained despite the broader wait-for-pullback thesis being covered by s7.",
+            "Two requested evidence items (m24, m25) are only partially represented: the retained draft omits the creator's explicit stated reasoning that other stocks are believed to offer bigger upside potential than Cabral Gold at current levels, and omits the observation that Cabral itself looks extended and possibly topping out in the short term, despite these being material qualifying details in the original quotes.",
+            "No requested evidence item was found missing entirely; m22, m23, m26, m27, and m28 are each represented by at least one accepted sentence without omission of a material point.",
+            "Supplemental audit incomplete; original audited research is retained. Unassessed additions: coverage-1, coverage-2, coverage-3, coverage-4, coverage-5, coverage-6. Provider HTTP 402. No automatic paid retry."
+          ],
+          "outputSummary": [
+            "Strategic investing in volatile mining stocks entails adding to positions step-by-step rather than taking binary all-or-nothing bets.",
+            "The junior gold miners index GDXJ has likely broken its downtrend and is moving upwards alongside an advancing gold price.",
+            "Recent corrections in the price of gold are characterized as typical bull market corrections rather than a severe structural breakdown.",
+            "Critical metals produced in the US command a market premium, whereas gold production location does not matter globally because buyers pay top dollar irrespective of origin.",
+            "Banyan displays strong technical action with rising 50-day and 200-day moving averages and a new high on the close, but the creator currently holds no position.",
+            "Banyan has reached new highs while the gold price is reported down around 8% and approximately $1,200 or 20% off its all-time high.",
+            "The stance on Banyan is to wait for a shallow pullback rather than purchasing at extended levels, even though strong names rarely see deep pullbacks without a gold breakdown toward 4,000.",
+            "The creator is a long-term shareholder in Cabral Gold, noting that its pullbacks have historically been shallow outside of the Iran war outbreak.",
+            "The recommendation for Cabral Gold is to hold existing shares and refrain from adding immediately after the rally, awaiting a pullback or market correction.",
+            "SSR Mining trades in an uptrend above its 50-day and 200-day moving averages and is not super extended, presenting a reasonable entry price.",
+            "New Pacific Metals bounced off its 50-day moving average after breaking a downtrend, offering an attractive swing trade setup with approximately 20% upside potential to prior highs.",
+            "Next Gold Mining broke above its 200-day moving average into a bull flag structure with room to run, though the creator did not get the deeper correction to the 50-day moving average desired to add to their holding.",
+            "The creator executed a strategic buy in 1911 Gold at lower support holding the 50-day moving average, even though it remains weaker under a sideways 200-day moving average in an intact downtrend.",
+            "McEwen Mining is avoided because it exhibits technical weakness, trading below both its 50-day and 200-day moving averages in an intact short-term downtrend.",
+            "Lundin Mining is characterized as weak and trading below its 50-day and 200-day moving averages at the lower end of a sideways channel, meaning there is no reason to buy now.",
+            "If broader equity markets correct or gold softens, Lundin Mining could break support and trigger stop-loss selling, creating an opportunity to purchase it at a significantly cheaper price.",
+            "Institutional investors lack specialized mining knowledge and tend to chase strong trend-following mining stocks first, supporting names like Banyan, Cabral Gold, SSR Mining, GGD, and Artemis.",
+            "If gold declines toward 4,125, weaker mining stocks are expected to drop sharply, allowing investors to acquire them at steep discounts while technically strong names remain resilient.",
+            "An upcoming shift in the mining industry will require adjustments to the accumulation strategy for mining stocks in future discussions."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 19
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:a3b4ec19-1cfc-452e-b3f9-2e66c287609f",
+          "runId": "a3b4ec19-1cfc-452e-b3f9-2e66c287609f",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T03:15:58.974Z",
+          "updatedAt": "2026-09-27T03:18:55.800Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "71a62aa987e51819c0180bc26496492755d5c0f5b7d90e527245568be23aee41",
+          "transcriptSha256": "a6edfbe7dd80798e289e347abbbb5593f03d82dc977e64a0aba3b0cd28c05c53",
+          "outputSha256": "28bb079911541314cdc3bf9df07b763849f1e43e843c01c8b519c66de1d61fb7",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 173.6475776230008,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.49617675,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": 10,
+          "acceptedSentences": null,
+          "coverageFindings": [],
+          "outputSummary": [
+            "Wait to buy Banyan on a shallow pullback rather than purchasing at current extended levels.",
+            "Do not add to Cabral Gold at current extended levels after the rally, but hold existing shares and look to add on a pullback.",
+            "Cabral Gold should not be bought immediately following its recent rally because other stocks offer bigger upside, but it is an attractive purchase on a pullback.",
+            "SSR Mining is in a strong uptrend above its 200-day and 50-day moving averages and is not super extended yet, making it obtainable at a reasonable price.",
+            "New Pacific Metals offers an attractive swing trade setup with approximately 20% upside potential to prior highs after breaking its downtrend and bouncing off the 50-day moving average.",
+            "Hold an existing position in Next Gold Mining after its shallow correction and breakout above the 200-day moving average into a bull flag pattern, with further room to run.",
+            "1911 Gold was bought strategically as an addition at the lower boundary of support holding its 50-day moving average, despite remaining below its 200-day moving average in an intact long-term downtrend.",
+            "Avoid buying McEwen Mining currently because it displays technical weakness, trading below its 50-day and 200-day moving averages in an intact short-term downtrend.",
+            "Avoid purchasing Lundin Mining right now as it trades weakly below its 50-day and 200-day moving averages and struggles at the lower boundary of a sideways channel.",
+            "Do not rush to buy Lundin Mining now; wait to purchase at potentially lower prices if broader market weakness or lower gold prices trigger a breakdown of its sideways support.",
+            "Strategic investing in volatile mining stocks entails adding to positions step-by-step rather than taking binary all-or-nothing bets.",
+            "Gold mining stocks with technical strength tend to experience only shallow corrections unless gold suffers a major breakdown.",
+            "A strategic accumulation strategy prioritizes buying technically strong names that are not extended, while waiting to purchase technically weaker names only if a deep correction causes them to drop heavily.",
+            "Institutional buyers tend to chase strong trend-following mining stocks first because they lack mining-specific knowledge, causing strong stocks like Banyan and Cabral Gold to be well-supported.",
+            "Prioritizing strong mining stocks first before weaker ones aligns with institutional behavior, while waiting to accumulate weaker names at steeper discounts if broader markets decline.",
+            "Weaker mining stocks are expected to drop sharply if gold prices decline toward 4,125, offering better long-term entry prices.",
+            "Gold is in an uptrend, and the junior gold miners index (GDXJ) has likely broken its downtrend and is moving upwards.",
+            "When selecting mining stocks to buy first, the creator prioritizes stocks they do not own yet but would regret missing out on if a rally occurs with no new lows, ahead of analyzing technicals.",
+            "For critical metals investments, the creator favors the 'made in the US' theme.",
+            "Critical metals produced in the US command a market premium, whereas gold production location does not matter globally because gold consistently attracts buyers willing to pay top dollar regardless of whether it originates in Latin America, Africa, Southeastern Europe, or Australia.",
+            "Banyan displays strong technical action, achieving a new high on the close and displaying breakout characteristics, though the creator does not currently hold an investment position in it.",
+            "Banyan is demonstrating strong relative strength by making new highs in 2026, whereas the gold price is down approximately 8% and remains about $1,200 (around 20%) below its all-time high.",
+            "Banyan remains in a clear technical uptrend with both its 50-day and 200-day moving averages rising; its historical corrections have been shallow, with its 200-day moving average never in doubt even during the war and June pullbacks.",
+            "Corrections in Cabral Gold have historically been mild and shallow, except for the broader sell-off during the outbreak of the Iran war, with the stock advancing steadily through August.",
+            "Recent corrections observed in the gold price are normal and typical market behavior rather than a severe breakdown.",
+            "Recent corrections in the price of gold are typical for normal bull market corrections.",
+            "A shift is underway in the mining industry requiring an adjustment in the accumulation strategy for mining stocks."
+          ],
+          "outputKind": "source-claims",
+          "modelAcceptedDraftSentences": null
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h19-audit-recovery-session-1.json:40933a7e-bfe9-4ee5-93c0-116178063e7d",
+          "runId": "40933a7e-bfe9-4ee5-93c0-116178063e7d",
+          "cohort": "readiness-20260927:candidate-h19-audit-recovery-session-1.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T04:28:39.178Z",
+          "updatedAt": "2026-09-27T04:29:51.117Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "d165d6646d9e96bfbeb2b9dab041fd304598c5fc1edc24316a208d486fc58d33",
+          "transcriptSha256": null,
+          "outputSha256": "66e2b4faad8124cb4e5623c672171865dc7c363222b9c6c18c0a9a65ac646088",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h19-audit-recovery-session-1.json",
+            "sha256": "8d7eece7ca5ea046f607866558653c90ea6ccc92428127f9075dbe7a6747a63a"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 71.404950582,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.210954,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits. Research-only import: original source a3b4ec19-1cfc-452e-b3f9-2e66c287609f, source output SHA256 3b3cfd7047d49f5d459d2a89ef197e7b4315c269f3b28fd75b8ec5e031464db4, frozen analysis cutoff 2026-09-19T22:58:44.927Z. Imported source extraction time and historical costs excluded; no fresh source attempt measured. Supplemental audit recovery only: inherited completed jobs from 4147c83f-257b-471a-894d-0fa5948ce427, original artifact SHA256 46e26a219c7ef077c16648afc1807afdc73e4dc348a02e1eda30a8ba7554e926. Timing and cost cover unfinished audit jobs and final publication only; inherited source, search, synthesis and completed audit costs remain on the donor."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 25,
+          "coverageFindings": [
+            "All eight requested creator_call evidence items (c1–c8) are represented in the accepted sentence set with their core stance, conditions, risks, and quoted rationale intact.",
+            "The comparative framing in c8 ('Compare this scenario with what we just talked about with Next Gold') is preserved separately in coverage-6 rather than within s14 itself, but the material technical assertion of c8 is still covered by s14.",
+            "No numerical or conditional details from c1–c8 were found omitted from the accepted sentences; all levels, conditions, and risks fields on these evidence items were empty or fully reflected.",
+            "c10's explicit alternative outcome (a bounce off support rather than a breakdown) is not preserved anywhere in the accepted sentences, leaving an asymmetry in how the conditional scenario's uncertainty is presented.",
+            "k1's dollar-cost-averaging analogy and the 'extra performance' claim are dropped from s1, understating the stated rationale for why strategic accumulation is described as superior to plain DCA.",
+            "k3's second quote contains both an epistemic-humility caveat and an explicit long-term ownership rationale for weaker stocks; neither nuance is retained in the sentences addressing the 4,125 gold-decline scenario, which risks overstating the certainty of the described plan.",
+            "All eight requested evidence items (k7–k14) are represented by at least one accepted sentence capturing their material propositions without contradiction or omission of key quoted details.",
+            "No missing material points were identified across the requested evidence set; coverage-5 specifically closes the gap for k13's historical correction detail beyond the general uptrend claim in s5.",
+            "All eight requested evidence items are represented by at least one accepted sentence with their core factual/technical assertions preserved.",
+            "No missing material points were identified for any requested evidence ID within the applicationAcceptedSentenceIds; however, k16's quote is truncated with a trailing conjunction ('but') whose continuation is not available in evidence, so any further qualifying detail beyond the current sentence coverage remains unknown rather than confirmed present or absent.",
+            "m8 and m9 quotes introduce a distinct selection criterion ('not buying the extended ones, buying the ones that offer more upside') for GGD and Artemis that is not reflected in s17, which only conveys the institutional trend-following rationale; this qualitative screening heuristic is omitted from the retained draft's treatment of GGD and Artemis.",
+            "All eight requested evidence items are represented in the retained draft's accepted sentences, though m15 shows a specific numerical mismatch: the source explicitly cites the 250-day moving average for SSR Mining, while s10 substitutes 50-day and 200-day moving averages, which is not a verified equivalent and should be corrected or flagged as a discrepancy rather than treated as full coverage.",
+            "No other requested evidence items show missing material propositions; conditions, qualitative comparisons, and stated technical reasoning (e.g., Lundin's sideways channel weakness, Banyan's extension and correction expectations, New Pacific's silver classification) are preserved with matching exact quotes in the corresponding sentences.",
+            "m24 is only partially covered: the specific market-capitalization scale detail for Cabral Gold ('about uh 500 Canadian') is omitted from all accepted sentences, though the qualitative extended/topping-out and deferral rationale is preserved.",
+            "All other requested evidence items (m22, m23, m25, m26, m27, m28) have their material propositions represented in the retained accepted sentences without omission of conditions, reasons, or quoted specifics."
+          ],
+          "outputSummary": [
+            "Strategic investing in volatile mining stocks entails adding to positions step-by-step rather than taking binary all-or-nothing bets.",
+            "The junior gold miners index GDXJ has likely broken its downtrend and is moving upwards alongside an advancing gold price.",
+            "Recent corrections in the price of gold are characterized as typical bull market corrections rather than a severe structural breakdown.",
+            "Critical metals produced in the US command a market premium, whereas gold production location does not matter globally because buyers pay top dollar irrespective of origin.",
+            "Banyan displays strong technical action with rising 50-day and 200-day moving averages and a new high on the close, but the creator currently holds no position.",
+            "Banyan has reached new highs while the gold price is reported down around 8% and approximately $1,200 or 20% off its all-time high.",
+            "The stance on Banyan is to wait for a shallow pullback rather than purchasing at extended levels, even though strong names rarely see deep pullbacks without a gold breakdown toward 4,000.",
+            "The creator is a long-term shareholder in Cabral Gold, noting that its pullbacks have historically been shallow outside of the Iran war outbreak.",
+            "The recommendation for Cabral Gold is to hold existing shares and refrain from adding immediately after the rally, awaiting a pullback or market correction.",
+            "SSR Mining trades in an uptrend above its 50-day and 200-day moving averages and is not super extended, presenting a reasonable entry price.",
+            "New Pacific Metals bounced off its 50-day moving average after breaking a downtrend, offering an attractive swing trade setup with approximately 20% upside potential to prior highs.",
+            "Next Gold Mining broke above its 200-day moving average into a bull flag structure with room to run, though the creator did not get the deeper correction to the 50-day moving average desired to add to their holding.",
+            "The creator executed a strategic buy in 1911 Gold at lower support holding the 50-day moving average, even though it remains weaker under a sideways 200-day moving average in an intact downtrend.",
+            "McEwen Mining is avoided because it exhibits technical weakness, trading below both its 50-day and 200-day moving averages in an intact short-term downtrend.",
+            "Lundin Mining is characterized as weak and trading below its 50-day and 200-day moving averages at the lower end of a sideways channel, meaning there is no reason to buy now.",
+            "If broader equity markets correct or gold softens, Lundin Mining could break support and trigger stop-loss selling, creating an opportunity to purchase it at a significantly cheaper price.",
+            "Institutional investors lack specialized mining knowledge and tend to chase strong trend-following mining stocks first, supporting names like Banyan, Cabral Gold, SSR Mining, GGD, and Artemis.",
+            "If gold declines toward 4,125, weaker mining stocks are expected to drop sharply, allowing investors to acquire them at steep discounts while technically strong names remain resilient.",
+            "An upcoming shift in the mining industry will require adjustments to the accumulation strategy for mining stocks in future discussions.",
+            "When selecting initial purchases, the creator prioritizes unowned mining stocks they would regret missing if a sector rally unfolds without making new lows.",
+            "Strategic accumulation aims for an attractive overall average entry price across the entire portfolio rather than attempting to achieve a perfect entry price on single transactions.",
+            "Cabral Gold appears extended and looks like it may top out in the short term, with immediate additions passed over because other stocks are seen as offering larger upside potential.",
+            "The creator clarifies that New Pacific Metals is specifically a silver stock rather than a gold stock.",
+            "Banyan demonstrated historical technical resilience during prior pullbacks when the war started and in June, keeping its rising 200-day moving average intact without severe corrections.",
+            "1911 Gold was noted as appearing technically weaker than Next Gold, and McEwen Mining's downward posture was likewise explicitly contrasted against Next Gold's technical strength."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 25
+        },
+        {
           "id": "data/comparison-20260920/results.json:12af042d-6e1f-4134-82ff-4a4cd2028eae",
           "runId": "12af042d-6e1f-4134-82ff-4a4cd2028eae",
           "cohort": "comparison-20260920:results.json",
@@ -26062,6 +27100,104 @@
           "artifact": {
             "path": "data/readiness-20260927/candidate-h-remaining8-session-1.json",
             "sha256": "46e26a219c7ef077c16648afc1807afdc73e4dc348a02e1eda30a8ba7554e926"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 89.02483608200123,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.25187000000000004,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": 2,
+          "acceptedSentences": null,
+          "coverageFindings": [],
+          "outputSummary": [
+            "Do not aggressively buy silver here, but hold existing silver and mining stock positions through potential high volatility and short-term drawdowns, as medium- to long-term fundamentals and sidelines capital in the US remain supportive.",
+            "Hold existing mining stock positions rather than selling, accepting high volatility and short-term portfolio drawdowns because timing the bottom is difficult.",
+            "Silver is at a critical technical juncture, resting at triple support defined by the lower boundary of its post-July uptrend channel and its 50-day moving average.",
+            "Silver cannot decouple from gold, and gold is under technical pressure as it battles its 50-day moving average, with a potential pullback target around 4,215.",
+            "A strengthening US Dollar breaking out above its short-term downtrend and rising long-term Treasury yields near 5% are creating short-term headwinds for gold and silver.",
+            "The structural macro investment case for gold and silver remains bullish because anticipated US yield curve control will require money printing and devalue the dollar.",
+            "Historically, breaks below the 50-day moving average manifest either as minor fake outs of 4% to 5% that trap bears, or trend changes leading to a 10% to 15% drop down to retest July lows.",
+            "Historical fake-out breakdowns below key moving averages tend to be around 4%, whereas genuine trend changes below the 50-day moving average usually involve declines of around 15%, potentially testing support zones around 59-60 or 54-55.",
+            "Precious metals face near-term pressure in the first half of the week leading into the Fed meeting, with critical directional resolution expected by Friday's close depending on whether buyers step in to stage a bullish reversal.",
+            "The creator holds energy and oil stocks initiated previously, noting comfort with elevated oil prices, but advises favoring short-term market downside and not deploying cash too quickly until conditions change in the second half of the week."
+          ],
+          "outputKind": "source-claims",
+          "modelAcceptedDraftSentences": null
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:6f64bb01-c4a4-4882-b5a5-005841c0b480",
+          "runId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T03:25:25.201Z",
+          "updatedAt": "2026-09-27T04:28:06.678Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "015a02051176d57fa76c652050df94efda7ac26395a7b5791ba31388618fd8d5",
+          "transcriptSha256": null,
+          "outputSha256": "d3a6dcce623beab34a242bb38550422430e82e77ffc3a2bd94bff0e392532b88",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+          },
+          "timing": {
+            "boundary": "recorded-stage-execution",
+            "seconds": 126.70908062600023,
+            "includesQueue": false,
+            "includesBrowser": false
+          },
+          "cost": {
+            "settledUsd": 0.33986975,
+            "unsettledCalls": 0,
+            "scope": "Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits."
+          },
+          "acceptedClaims": null,
+          "acceptedSentences": 10,
+          "coverageFindings": [
+            "Previously identified omissions (title-referenced $54 downside scenario, fake-out vs trend-change magnitude framework, and Fed-week timing narrative) have now been addressed via coverage-1 through coverage-4.",
+            "The retained draft still omits the specific 'liquidity grab'/'bear trap' narrative detail from k5 ('Everybody's going to start talking about $50 silver again... the market fooled a majority of the investors'), which qualifies the 4-5% fake-out scenario as a deliberate stop-hunt narrative rather than a plain technical projection; this nuance is not represented in any retained sentence.",
+            "No sentence explicitly preserves the creator's caveat that gold, not silver, is the primary near-term driver of downside risk transmission ('silver will not be able to decouple itself from gold'), though this is implicit in s4; consider whether the causal directionality (gold leads, silver follows) is fully preserved."
+          ],
+          "outputSummary": [
+            "The speaker reports that silver is testing triple technical support at the lower boundary of its post-July uptrend channel and its 50-day moving average.",
+            "The speaker notes that gold cannot decouple from silver, highlighting gold's test of its 50-day moving average with potential pullback risk toward 4,215.",
+            "The speaker identifies near-term macro headwinds from a rising US Dollar testing its downtrend and long-term Treasury yields testing the 5 percent level on the 10-year.",
+            "The speaker maintains a structural bullish stance on precious metals, expecting eventual yield curve control, debt monetization, and sidelined US investor capital to support prices.",
+            "The speaker states they will hold existing silver and mining stock holdings rather than selling, accepting high volatility and portfolio drawdowns due to bottom-timing difficulty.",
+            "The speaker confirms holding energy and oil equities established previously, remaining comfortable with oil price strength while cautioning against rapid new capital deployment before late-week Fed price action.",
+            "The speaker outlines historical moving-average breakdown patterns, stating fake outs are typically around 4 percent to 5 percent toward approximately 59 to 60, whereas trend changes average around 15 percent.",
+            "Under a 10 percent to 15 percent breakdown scenario below the 50-day moving average and uptrend channel, the speaker notes silver could drop into a retest of July lows around 54 to 53 or 55.",
+            "The speaker anticipates rocky price action in precious metals during the first half of the week leading into the Fed decision, watching for a potential institutional reversal by Friday's close.",
+            "The speaker highlights that market conditions have deteriorated compared to the August rally, warranting a stance that favors downside risk rather than putting cash to work too fast."
+          ],
+          "outputKind": "published-research",
+          "modelAcceptedDraftSentences": 10
+        },
+        {
+          "id": "data/readiness-20260927/candidate-h-remaining8-session-2.json:210a4f30-55bb-46a3-959d-b6ca05f2b0f1",
+          "runId": "210a4f30-55bb-46a3-959d-b6ca05f2b0f1",
+          "cohort": "readiness-20260927:candidate-h-remaining8-session-2.json",
+          "status": "completed",
+          "stage": "complete",
+          "createdAt": "2026-09-27T03:23:53.389Z",
+          "updatedAt": "2026-09-27T03:25:25.205Z",
+          "error": null,
+          "model": "gemini-3.8-flash",
+          "promptVersion": "evidence-first.web.v8",
+          "configSha256": "452dbc55b76db1b78567a3a6cbeecddc995ac74565db0626eddb2d4cda25cd07",
+          "transcriptSha256": "48fd10e2e407eb6527f9051619d41ccc607186988e0e3d260d9859709a0fa9ac",
+          "outputSha256": "3672a8b409bb0fe2fe4439852cce3133350ae9ca21023204a0f768c17be78cdf",
+          "artifact": {
+            "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+            "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
           },
           "timing": {
             "boundary": "recorded-stage-execution",

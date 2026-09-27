@@ -18,6 +18,8 @@ const artifacts=[
  'data/readiness-20260927/candidate-g-session-2.json',
  'data/readiness-20260927/candidate-h-session-1.json',
  'data/readiness-20260927/candidate-h-remaining8-session-1.json',
+ 'data/readiness-20260927/candidate-h-remaining8-session-2.json',
+ 'data/readiness-20260927/candidate-h19-audit-recovery-session-1.json',
  'data/comparison-20260920/results.json','data/recovery-20260920/results.json','data/recovery-final-20260920/results.json',
  'data/research-build-20260920/results.json','data/research-v8-20260920/results.json',
  'data/prod-sample-20260920/results.json','data/prod-resume-20260920/results.json',
@@ -54,6 +56,7 @@ if(process.argv.includes('--validate')){
    const calls=a.calls.filter(x=>x.run_id===r.id);const out=r.output;
    const research=r.input.task==='research-brief';
    const importedSource=research?a.runs.find(source=>source.id===r.input.snapshot?.sourceRunId)?.output.benchmarkSourceImport:null;
+   const auditRecovery=r.input.auditCheckpointRecovery;
    const stageTimings=a.timings?.filter(t=>t.runId===r.id);
    const boundary=stageTimings?.length?'recorded-stage-execution':a.path.startsWith('data/comparison-')?'ingestion-to-terminal':a.path.includes('operational-efficiency')?(research?'research-only':'retained-transcript-to-terminal'):'unknown';
    const published=a.briefs?.find(b=>b.runId===r.id);
@@ -62,7 +65,7 @@ if(process.argv.includes('--validate')){
    return {id:`${a.path}:${r.id}`,runId:r.id,cohort:a.path.split('/')[1]+':'+a.path.split('/').at(-1),status:r.status,stage:r.stage,createdAt:r.createdAt,updatedAt:r.updatedAt,error:r.error??null,model:r.model,promptVersion:r.promptVersion,
     configSha256:digest(r.input),transcriptSha256:out.source?digest(out.source):null,outputSha256:digest(out),artifact:{path:a.path,sha256:a.sha256},
     timing:{boundary,seconds:boundary==='unknown'||!['completed','failed','needs_review'].includes(r.status)?null:stageTimings?.length?stageTimings.reduce((n,t)=>n+t.executionSeconds,0):Math.max(0,elapsed),includesQueue:boundary!=='recorded-stage-execution',includesBrowser:false},
-    cost:{settledUsd:calls.length?calls.reduce((n,x)=>n+(x.status==='completed'?(x.amount??0):0),0):null,unsettledCalls:calls.filter(x=>!['completed','failed','released'].includes(x.status)).length,scope:'Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits.'+(importedSource?` Research-only import: original source ${importedSource.originalSourceRunId}, source output SHA256 ${importedSource.originalSourceOutputSha256}, frozen analysis cutoff ${importedSource.analysisCutoff}. Imported source extraction time and historical costs excluded; no fresh source attempt measured.`:'')},
+    cost:{settledUsd:calls.length?calls.reduce((n,x)=>n+(x.status==='completed'?(x.amount??0):0),0):null,unsettledCalls:calls.filter(x=>!['completed','failed','released'].includes(x.status)).length,scope:'Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits.'+(importedSource?` Research-only import: original source ${importedSource.originalSourceRunId}, source output SHA256 ${importedSource.originalSourceOutputSha256}, frozen analysis cutoff ${importedSource.analysisCutoff}. Imported source extraction time and historical costs excluded; no fresh source attempt measured.`:'')+(auditRecovery?` Supplemental audit recovery only: inherited completed jobs from ${auditRecovery.originalRunId}, original artifact SHA256 ${auditRecovery.originalArtifactSha256}. Timing and cost cover unfinished audit jobs and final publication only; inherited source, search, synthesis and completed audit costs remain on the donor.`:'')},
     acceptedClaims:Array.isArray(out.claims)?out.claims.filter((x:{passed?:boolean})=>x.passed).length:null,
     acceptedSentences:published?published.sentences.length:null,
     modelAcceptedDraftSentences:verdicts?verdicts.filter((x:{accepted?:boolean})=>x.accepted).length:null,

@@ -1,6 +1,6 @@
 # Retained 20-case comparison readiness
 
-Generated 2026-09-27T03:27:57.076Z. This is an offline provenance inventory, not a quality or performance pass.
+Generated 2026-09-27T04:30:50.481Z. This is an offline provenance inventory, not a quality or performance pass.
 
 `node --experimental-strip-types scripts/comparison-readiness.ts --validate` validates the committed artifact without private inputs. Run without the flag to rebuild from the explicit private artifact allowlist. Missing inputs fail the export.
 
@@ -23,11 +23,11 @@ Generated 2026-09-27T03:27:57.076Z. This is an offline provenance inventory, not
 ```json
 {
   "cases": 20,
-  "observations": 257,
-  "uniqueRuns": 230,
+  "observations": 274,
+  "uniqueRuns": 231,
   "failedObservations": 34,
-  "reviewObservations": 3,
-  "knownLedgerUsd": 53.92658694999998,
+  "reviewObservations": 4,
+  "knownLedgerUsd": 54.473002949999966,
   "unsettledCalls": 0,
   "browserMeasuredCases": 0,
   "retainedLeapedgeReports": 20,
@@ -49,14 +49,14 @@ Generated 2026-09-27T03:27:57.076Z. This is an offline provenance inventory, not
 | 10 | zYeJZu1hkdM | 10 | 1 | ready |
 | 11 | ZfOQoh82JTo | 19 | 4 | stopped |
 | 12 | iBMZc7zs_Ew | 12 | 3 | ready |
-| 13 | tUR0w-LDSbU | 10 | 1 | ready |
-| 14 | DuIyF_34ReI | 10 | 1 | ready |
-| 15 | QEwLInO3iZY | 10 | 1 | ready |
-| 16 | IjYr5acuBT4 | 11 | 2 | ready |
-| 17 | pWnu1C8I6Xw | 10 | 1 | ready |
-| 18 | 1WNowIoNgtg | 18 | 3 | ready |
-| 19 | vrTbCxUzRw4 | 13 | 2 | ready |
-| 20 | Dy_0RtmAt1U | 12 | 2 | ready |
+| 13 | tUR0w-LDSbU | 12 | 1 | ready |
+| 14 | DuIyF_34ReI | 12 | 1 | ready |
+| 15 | QEwLInO3iZY | 12 | 1 | ready |
+| 16 | IjYr5acuBT4 | 13 | 2 | ready |
+| 17 | pWnu1C8I6Xw | 12 | 1 | ready |
+| 18 | 1WNowIoNgtg | 20 | 3 | ready |
+| 19 | vrTbCxUzRw4 | 16 | 2 | ready |
+| 20 | Dy_0RtmAt1U | 14 | 2 | ready |
 
 ## Before claiming improvement
 
