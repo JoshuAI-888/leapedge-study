@@ -20,13 +20,13 @@ export function AnalysisPipelines() {
     </section>)}
     <section className="yi-panel">
       <h2>Safeguards in both paths</h2>
-      <p>Full transcript processing, original quotations and timestamps, rejected candidates, uncertainty, provider traces, attempts and costs remain available. Unresolved gaps remain visible. Execution completion is not the same as research acceptance.</p>
+      <p>Extraction processes the transcript; research audits inspect the retained evidence inventory, which can omit material source details. The full retained transcript remains inspectable alongside original quotations and timestamps, rejected candidates, uncertainty, provider traces, attempts and costs. Inventory coverage does not establish full-transcript completeness. Unresolved gaps remain visible. Execution completion is not the same as research acceptance.</p>
       <p>Short- and long-term analysis retain equal weight in separate sections. Video-date research remains distinct from current updates. General research prioritises material developments across companies.</p>
       <h2>What must pass before a default change</h2>
-      <p>A paired 20-video comparison must use the same retained transcripts, external-source snapshots, models and date boundaries, with fresh drafting and auditing. Original transcript passages are the evidence; retained LeapEdge outputs are comparators, not ground truth. Failed attempts and their costs remain in the report.</p>
+      <p>The paired 20-video experiment measures fresh drafting and auditing from identical frozen retrieval results, retained transcripts, evidence inventories, models and date boundaries. Source acquisition, extraction, search and query planning are replayed inputs, excluded from these timing and cost gains; this is not an ingestion-to-display benchmark. Original transcript passages are the evidence; retained LeapEdge outputs are comparators, not ground truth. Failed attempts and their costs remain in the report.</p>
       <ul>
         <li>No unresolved critical errors, known critical failures corrected, and no material coverage regression.</li>
-        <li>At least 30% lower median research-processing time, an improved long-video time, and at least 25% lower median research cost including repairs and retries.</li>
+        <li>At least 30% lower median draft-and-audit processing time, an improved long-video time, and at least 25% lower median draft-and-audit cost including repairs, retries and failures.</li>
         <li>Preserved source drill-down, reliable recovery, desktop and mobile acceptance, and fully cloud deployment acceptance.</li>
       </ul>
       <p>These are experiment targets, not promised savings. Published evidence and explicit approval are required before promotion. The current path will remain selectable afterward.</p>

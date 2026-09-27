@@ -1,6 +1,8 @@
 # Targeted audit experiment contract
 
-This is a non-spending preparation and evidence gate, **not a cloud cohort runner**.
+The preparation and gate commands do not spend. The separate
+`scripts/targeted-audit-paired.ts run --live` command is a cloud-only paired runner
+that can make paid model calls under an explicit frozen budget.
 It never changes application defaults. Even a fully satisfied report returns
 `eligible-for-user-review` with `defaultChangeAuthorized: false`.
 The current audit pipeline remains the default. The legacy offline promotion
@@ -114,11 +116,89 @@ but cannot pass as fresh observations. A 20-pair experiment does not prove
 1. Approve cloud topology/costs and deploy the cloud runner and shared database.
 2. Export complete retained sources and review sections; freeze the actual
    implementation manifests and the identical model/context/source snapshots.
-3. Add cloud admission registry, source import and model-call export adapter.
-   `scripts/run-cohort-durable.mjs` uses a Mac cluster and live retrieval; it is
-   not suitable unchanged and is deliberately not invoked here.
+3. Deploy and verify the new cloud paired runner below. Its admission registry,
+   frozen source import and raw ledger/trace export are implemented, with local
+   fixture tests; real cloud concurrency/restart acceptance remains required.
+   `scripts/run-cohort-durable.mjs` remains unchanged and is not invoked.
 4. Alternate arm admission order, measure real trace and browser events, verify
    no hidden truncation, and reconcile provider billing including failures.
 5. Review source-backed quality independently; retain all20 outcomes and costs.
 6. Run the gate, inspect its evidence, and obtain explicit user approval before
    any default promotion. Preserve legacy selection and rollback.
+
+
+## Portable cloud paired runner
+
+Freeze after code and review-manifest changes are complete; changing any packaged
+implementation file invalidates resume and requires a new explicit experiment.
+Preparation reads only the retained frozen/G/H donors, validates all20 original
+transcript hashes and analysis cutoffs, and creates a portable bundle without
+credentials. By default it uses the first donor's model settings for both arms;
+`--settings` allows an explicit common configuration. `--max-usd` freezes the
+bounded cohort budget. The existing per-video budget is preserved.
+
+```sh
+node --experimental-strip-types scripts/targeted-audit-paired.ts prepare --id targeted_cloud_v1 --max-usd 100 --out /path/bundle.json
+node --experimental-strip-types scripts/targeted-audit-paired.ts prepare-evaluation --bundle /path/bundle.json --dir /path/NEW-evaluation-dir
+```
+
+`prepare-evaluation` freezes actual `source-review-manifest.json` sections after
+checking each donor transcript hash and research-run ID. Quality remains unknown.
+Copy the bundle and evaluation directory to a read-only cloud volume. Package
+all listed implementation files byte-for-byte; the user-owned untracked
+`ResearchBrief (1).tsx` and dotfiles are excluded. Symlinked implementation files
+are rejected. The runner has no Mac filesystem paths.
+
+Cloud execution requires `DATABASE_URL_UNPOOLED` (or direct `DATABASE_URL`) for
+a dedicated migrated `yti_experiment_*` PostgreSQL database, `GEMINI_API_KEY`,
+`OPENROUTER_API_KEY`, and a cloud job/service identity (`CLOUD_RUN_JOB`, `K_SERVICE`
+or explicitly `YTI_CLOUD_EXECUTION=true`). Cloud SQL sockets under `/cloudsql/`
+are supported; local TCP and arbitrary Unix sockets are rejected. Migration is
+a separate provisioning step, not a production database action by this runner.
+
+```sh
+node --experimental-strip-types scripts/targeted-audit-paired.ts run --live --bundle /bundle/bundle.json --evaluation-dir /bundle/evaluation --out /results/session-1.json --max-minutes 180
+# Resume the same immutable bundle/database; use a NEW output name:
+node --experimental-strip-types scripts/targeted-audit-paired.ts run --live --resume --bundle /bundle/bundle.json --evaluation-dir /bundle/evaluation --out /results/session-2.json --max-minutes 180
+```
+
+The cloud job must mount a durable writable results volume or upload its output.
+The database is the durable authority: source/research admission is transactional,
+IDs deterministic, completed/failed attempts never silently replaced, both arms
+alternate order, and one controller holds a direct-connection advisory lock.
+There are no background queue jobs from this admission path. Every call remains
+in the provider ledger and response store. Unsettled outcomes stop execution;
+reconcile them before resume. Normalized-response replay in the existing model
+transport prevents a second payment for a durably received identical response.
+A lost stage checkpoint yields unknown timing after replay, **not invented zero
+or a claimed speed gain**. Test this on real cloud PostgreSQL before acceptance.
+
+Fresh work starts at `research-synthesis`. Original source acquisition,
+extraction, search planning and external retrievals are imported identically and
+excluded from both arms' measured time/cost. The scope label is
+`fresh-draft-audit-from-frozen-retrieval`; mixed-scope comparisons fail. No Exa,
+YouTube or transcript keys are required, and those keys are removed from the
+runner environment as a second guard against live acquisition/search.
+
+**Full-transcript limitation:** the entire transcript is imported for drill-down,
+but the existing research model receives retained evidence/inventory quotations,
+not every transcript segment. Both arms share that limitation. The known case14
+IDIQ qualifier is absent from its retained inventory and remains a blocking
+omission unless shared input preparation or the production pipeline is explicitly
+improved and re-frozen. Do not claim full-transcript semantic coverage from this
+experiment or relabel an omitted fact as fixed by withholding prose.
+
+After downloading retained results, export into the SAME frozen evaluation
+folder (a writable copy is fine). Every export uses a unique suffix:
+
+```sh
+node --experimental-strip-types scripts/targeted-audit-paired.ts export --bundle /path/bundle.json --results /path/session-1.json --dir /path/evaluation --suffix session-1
+node --experimental-strip-types scripts/targeted-audit-experiment.ts gate --input /path/evaluation/session-1-experiment.json --artifact-root /path/evaluation
+```
+
+Export verifies actual run identities, frozen inputs, models, retrievals,
+registered attempts and all costs; orphan costs/attempts are errors, not discarded.
+Raw artifacts retain failures, provider retries and interruptions. Exported
+quality, cloud/UI acceptance and browser-visible latency remain **unknown** until
+independently measured and reviewed. Server completion is not browser display.
+Do not mark the gate passed solely because40 executions completed.

@@ -85,3 +85,7 @@ nobody can see is work that gets built twice.
 `docs/archive/` and `scripts/archive/` hold the v1 evidence trail and retired
 research code. They are exempt from the convention guards and excluded from the
 typecheck and the Vercel bundle. Nothing there describes the current system.
+
+## Latest handoff and hosting decision — 27 September 2026
+
+Read `docs/handoffs/2026-09-27-claude-handoff.md` before continuing. The selected production stack is Vercel + Neon + Vercel Workflows. Google Cloud migration is cancelled; historical Mac-worker permissions are superseded. Current audit remains default until evidence-backed promotion approval. Push verified milestones and preserve the user-owned untracked `ResearchBrief (1).tsx`.

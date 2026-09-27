@@ -1,0 +1,2917 @@
+{
+  "version": "targeted-audit-source-review.v1",
+  "createdAt": "2026-09-27",
+  "status": "prepared-not-reviewed",
+  "denominator": 20,
+  "purpose": "Focused source-backed review of both paired outputs; not a human-verified gold corpus or automatic factual truth test.",
+  "rules": [
+    "Freeze the same original transcript, source metadata, inventory, external source snapshots, video-date/current-update boundaries and model settings for both arms.",
+    "Do not repair caption text without source audio/chart evidence. Keep raw sources and all failed attempts.",
+    "A shared incorrect statement in both arms fails the source check even when LeapEdge agrees.",
+    "Known material omission remains a failure/gap when bad prose is withheld; withholding alone is not complete coverage.",
+    "For uncited effects test new accepted supplement statements against these source passages even when coverageImpact says unaffected.",
+    "Record final prose, typed facts, rejected candidates, readiness labels and exact source drilldown separately.",
+    "No paid model/LeapEdge calls or new provider verification were used to prepare this manifest."
+  ],
+  "artifactAvailability": "Source snapshots are ignored private artifacts; a cloud evaluator must receive these exact bytes or explicit replacement manifest before execution.",
+  "cases": [
+    {
+      "case": 1,
+      "videoId": "SPIRV9UjNYU",
+      "title": "大多头突然改口！我为什么还敢拿着AI股？｜雅德尼下调目标",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "85bf107c-0a7b-4956-83c4-6ac841f8f1ef",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 173,
+      "sourceKind": "google_windowed_asr",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "a9a21faa-dfa2-4c43-b507-97266cda0c49",
+      "evidenceItemCount": 12,
+      "segmentsOutsideInventory": 49,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-0-34",
+            "endId": "asr-0-39",
+            "startIndex": 34,
+            "endIndexInclusive": 39,
+            "startSeconds": 105.74,
+            "endSeconds": 123.46,
+            "text": "那么这群人，那么这群，那么为什么这群人不愿给原来的高价了呢？ 钱变贵了。 呃各位订阅我频道的朋友呢，只有10%打开了这个小铃铛，大家一定要记得打开小铃铛啊， 不然的话你收不到最新的信息啊。 这条线啊 要从油价说起。",
+            "textSha256": "ce118110178f7afc8c6158246690c2773c32be23c0999234b9a16f89739e02a4",
+            "segmentIds": [
+              "asr-0-34",
+              "asr-0-35",
+              "asr-0-36",
+              "asr-0-37",
+              "asr-0-38",
+              "asr-0-39"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-0-86",
+            "endId": "asr-0-89",
+            "startIndex": 86,
+            "endIndexInclusive": 89,
+            "startSeconds": 291.14,
+            "endSeconds": 300,
+            "text": "另一种情况更加麻烦。 啊有人依然看好这些资产，照样必须卖。 为什么呢？ 因为他们买资产的钱是借来的，过去呢有一类的",
+            "textSha256": "2ee4ceab794c29fb7ab424921977499f99a4b0b150d113f2ed8f760a5b0ca198",
+            "segmentIds": [
+              "asr-0-86",
+              "asr-0-87",
+              "asr-0-88",
+              "asr-0-89"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-1-35",
+            "endId": "asr-1-35",
+            "startIndex": 125,
+            "endIndexInclusive": 125,
+            "startSeconds": 448.34,
+            "endSeconds": 452.62,
+            "text": "是不是一起往上走的呢？这个判断要当成一种解释来看。",
+            "textSha256": "096f77858b72e9958b21147b5a1cd8595bb06cdb18a7b1aed0d9c411534a223b",
+            "segmentIds": [
+              "asr-1-35"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 2,
+      "videoId": "J_VpfkM74Wk",
+      "title": "Anthropic突然出大问题了",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "8bf39113-b96c-417e-9923-c8f4155ea8b5",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "6ca4e1517e4a88df1b0de24c8cb86a8ca67b8cd83dc8d684916216d62fe9c1e1",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 326,
+      "sourceKind": "google_windowed_asr",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "25dad422-a31e-4095-a3ae-f2273190094d",
+      "evidenceItemCount": 12,
+      "segmentsOutsideInventory": 73,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-0-65",
+            "endId": "asr-0-69",
+            "startIndex": 65,
+            "endIndexInclusive": 69,
+            "startSeconds": 160.5,
+            "endSeconds": 170.8,
+            "text": "有25个房间啊已经运营了， 然后呢突然跑出去跟别人说， 我接下来要开400多家这个房间， 啊客户我都找好了。 可以啊，生意好，",
+            "textSha256": "365c6592ed75a64c801d08eff1829fc1b94f72005fb0b72963593e1d7e58e924",
+            "segmentIds": [
+              "asr-0-65",
+              "asr-0-66",
+              "asr-0-67",
+              "asr-0-68",
+              "asr-0-69"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-1-43",
+            "endId": "asr-1-43",
+            "startIndex": 153,
+            "endIndexInclusive": 153,
+            "startSeconds": 445.86,
+            "endSeconds": 450.48,
+            "text": "它原本启动上市准备的时候呢，Claude势头非常强，Claude非常强得不得了。",
+            "textSha256": "a273dec9a106a5a5c1e5fad1c2b6ffd86694164a7e59720274f89877990d318b",
+            "segmentIds": [
+              "asr-1-43"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-2-53",
+            "endId": "asr-2-53",
+            "startIndex": 250,
+            "endIndexInclusive": 250,
+            "startSeconds": 723.64,
+            "endSeconds": 725.66,
+            "text": "却很重要的齿轮",
+            "textSha256": "f767cc98dc59b7418a9311a3e7b4dece8fc7da208c93a0fd618dc10d078d1de4",
+            "segmentIds": [
+              "asr-2-53"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 3,
+      "videoId": "9nb3fp76Rz0",
+      "title": "美股：基本上定了。【2026-09-11】",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "cc875d2f-0362-44d0-bcf7-f317665d7503",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "d37408d5e7c4876b9ada6231369515c03c098bfdb9bddffd1193c3eaa6ded03f",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 268,
+      "sourceKind": "google_windowed_asr",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "323cac92-cc10-43d3-a3f4-e747a917e606",
+      "evidenceItemCount": 32,
+      "segmentsOutsideInventory": 51,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-0-53",
+            "endId": "asr-0-53",
+            "startIndex": 53,
+            "endIndexInclusive": 53,
+            "startSeconds": 149.25,
+            "endSeconds": 150.8,
+            "text": "涨幅0.86%",
+            "textSha256": "41f3a4f275ac5536e173f28d8cf9882365197c604f31d50fb095e7ec64787d00",
+            "segmentIds": [
+              "asr-0-53"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-1-49",
+            "endId": "asr-1-50",
+            "startIndex": 151,
+            "endIndexInclusive": 152,
+            "startSeconds": 425.1,
+            "endSeconds": 429.2,
+            "text": "市场已经用脚投票 把无风险利率拱上去了",
+            "textSha256": "941fabf6b535a6f245726d4dbac7463b8d884220c42dd505f9024c88c4d860f5",
+            "segmentIds": [
+              "asr-1-49",
+              "asr-1-50"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "asr-1-113",
+            "endId": "asr-2-0",
+            "startIndex": 215,
+            "endIndexInclusive": 216,
+            "startSeconds": 597,
+            "endSeconds": 603.8,
+            "text": "那半导体是不是还有继续上涨的空间呢 作为行业指数有这样的涨幅已经较为可观。",
+            "textSha256": "800819dc921f7f7f0afe5c754de0e2466615408490118a0b545befb591075eb9",
+            "segmentIds": [
+              "asr-1-113",
+              "asr-2-0"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 4,
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "8b651034-eac1-4c77-a7b1-a4821d84b9c2",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "1036b6c5547bf558272cc967ad3ceb95fbd58c52069b7f24c492937bd5482a3a",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 278,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "824d2d60-0e0c-411b-829d-4646cefc9b39",
+      "evidenceItemCount": 48,
+      "segmentsOutsideInventory": 47,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00056",
+            "endId": "s00057",
+            "startIndex": 55,
+            "endIndexInclusive": 56,
+            "startSeconds": 196.933,
+            "endSeconds": 204.766,
+            "text": "因此盘前原本涨得轰轰烈烈的很多AI硬件股都回吐了大部分涨幅甚至转跌",
+            "textSha256": "381217bfad216e9cdbeb4454ed61265e583a1c658ed4089aeaac857dbecdc05c",
+            "segmentIds": [
+              "s00056",
+              "s00057"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00140",
+            "endId": "s00145",
+            "startIndex": 139,
+            "endIndexInclusive": 144,
+            "startSeconds": 488.133,
+            "endSeconds": 504.833,
+            "text": "大家要感谢LEO欧巴的牺牲话说回来Leo欧巴今天写信给投资者了承诺吸取教训以后再也不会从银行借钱加杠杆炒股了大家也要引以为戒，对杠杆要谨慎",
+            "textSha256": "3ccd209327fec6a15f6f2ab1898274399c5194070b0583be11a4636f3482fe4b",
+            "segmentIds": [
+              "s00140",
+              "s00141",
+              "s00142",
+              "s00143",
+              "s00144",
+              "s00145"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00165",
+            "endId": "s00165",
+            "startIndex": 164,
+            "endIndexInclusive": 164,
+            "startSeconds": 584.233,
+            "endSeconds": 588.0659999999999,
+            "text": "这给多空都带来交易的机会",
+            "textSha256": "7491fd8c096411844a79802e89477acdf83b679cec04a7c2a1aa741aba707b37",
+            "segmentIds": [
+              "s00165"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 5,
+      "videoId": "M1FJ5dNiBEs",
+      "title": "AI Compute Demand Could DOUBLE Again by 2027!!",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-session-1.json",
+        "sha256": "8797bdf169ae72914b9230a2d766029c0f6cdb2aaa4771c9ac7ad8e796071fb0"
+      },
+      "sourceRunId": "63900152-5a86-44f8-b358-ec17b160818e",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 369,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-session-1.json",
+        "sha256": "8797bdf169ae72914b9230a2d766029c0f6cdb2aaa4771c9ac7ad8e796071fb0"
+      },
+      "inventoryResearchRunId": "cb32bd0f-3141-465e-a008-6db8fe37d72e",
+      "evidenceItemCount": 37,
+      "segmentsOutsideInventory": 91,
+      "knownChecks": [
+        {
+          "id": "option-price-role",
+          "severity": "critical",
+          "evidenceIds": [
+            "c1",
+            "m5"
+          ],
+          "criterion": "Preserve the ambiguous at-a-79 wording; do not assert a 70s option strike or a verified underlying price. Keep existing large position and conditional exercise distinct.",
+          "anchors": [
+            {
+              "startId": "s00217",
+              "endId": "s00227",
+              "startIndex": 216,
+              "endIndexInclusive": 226,
+              "startSeconds": 477.28,
+              "endSeconds": 503.44,
+              "text": "players. People don't love Cororeweave, but hey, that's okay. one that I really do enjoy and it's already a big position. Times like this is where I really wouldn't mind selling certain puts because at a 79 selling some puts isn't to me the worst idea and it's a way for me to either reduce cost basis on my positions or if I get exercised it would be exercised at a very low price point uh from where I believe their true",
+              "textSha256": "a958847f847784f00ac751280c1d7124ce70fe3b9b620d63bc3cc9f712070fce",
+              "segmentIds": [
+                "s00217",
+                "s00218",
+                "s00219",
+                "s00220",
+                "s00221",
+                "s00222",
+                "s00223",
+                "s00224",
+                "s00225",
+                "s00226",
+                "s00227"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00070",
+            "endId": "s00070",
+            "startIndex": 69,
+            "endIndexInclusive": 69,
+            "startSeconds": 150.959,
+            "endSeconds": 155.92000000000002,
+            "text": "massive opportunity we see companies",
+            "textSha256": "1deeb789e8fae89a141e4ce11a85a3dc51b0b48d205b63dc8f33d2a5571bd869",
+            "segmentIds": [
+              "s00070"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00185",
+            "endId": "s00186",
+            "startIndex": 184,
+            "endIndexInclusive": 185,
+            "startSeconds": 406.24,
+            "endSeconds": 414.56,
+            "text": "there that to me, I think it's worth every single penny. Now, I also want to",
+            "textSha256": "4de1b0b9050311f6b9347d59b6471b32993be8c5c5505c9916e71616b964904c",
+            "segmentIds": [
+              "s00185",
+              "s00186"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00283",
+            "endId": "s00283",
+            "startIndex": 282,
+            "endIndexInclusive": 282,
+            "startSeconds": 620.56,
+            "endSeconds": 624.2399999999999,
+            "text": "topic I want to take a closer look at is",
+            "textSha256": "567992dc55c95c6b959b096d33d3844a9d378dd9362bc17905cf06173669959c",
+            "segmentIds": [
+              "s00283"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 6,
+      "videoId": "LF7fgz1HAFs",
+      "title": "CoreWeave & Nebius GPU Pricing Just Exploded — Here’s Why",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "6a83a3b9-2907-49fb-8c93-c1d3b623af3e",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "3ad5da8feb0202ebba9a3db7e6374011ef17997e025317b809d9ee578f4c3810",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 345,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "4509b00d-1fdf-484e-ae27-cf9711d3d823",
+      "evidenceItemCount": 15,
+      "segmentsOutsideInventory": 160,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00078",
+            "endId": "s00083",
+            "startIndex": 77,
+            "endIndexInclusive": 82,
+            "startSeconds": 171.44,
+            "endSeconds": 185.2,
+            "text": "some of these short-term contracts, which is pretty pretty exciting. So, these pricings, I don't think should be necessarily new news. It's good to actually see the results and the numbers, but we did hear from",
+            "textSha256": "781df8a9107f9cff305373da3e0c65f22dd39ae061e2776538675c56706d6703",
+            "segmentIds": [
+              "s00078",
+              "s00079",
+              "s00080",
+              "s00081",
+              "s00082",
+              "s00083"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00170",
+            "endId": "s00170",
+            "startIndex": 169,
+            "endIndexInclusive": 169,
+            "startSeconds": 374.479,
+            "endSeconds": 378.08,
+            "text": "already kind of pay themselves and then",
+            "textSha256": "240f0a28983639549bc5ab10c3f3e8f03ab24e39ab6b82a4861745cb0a595bc7",
+            "segmentIds": [
+              "s00170"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00273",
+            "endId": "s00273",
+            "startIndex": 272,
+            "endIndexInclusive": 272,
+            "startSeconds": 605.279,
+            "endSeconds": 610.16,
+            "text": "is punishing. The second thing the",
+            "textSha256": "06fce6c53c7e305d10e327544a96eea5121d9a950f501aea67c6a9ee5231b0f1",
+            "segmentIds": [
+              "s00273"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 7,
+      "videoId": "U32FPvvBaNI",
+      "title": "AMD Stock Is Entering a New Cycle‼️Listen Up",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "61da3563-d48c-4ffe-acce-20bd29de49da",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "e7dfbc3587c28c71e1550a8b848e326fbad9a3b61a37402ba1bf4cad83c64eca",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 563,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "a587937e-deae-417e-ac10-67ac244af899",
+      "evidenceItemCount": 36,
+      "segmentsOutsideInventory": 115,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00104",
+            "endId": "s00104",
+            "startIndex": 103,
+            "endIndexInclusive": 103,
+            "startSeconds": 256.32,
+            "endSeconds": 259.44,
+            "text": "party gets further and further, I'll be",
+            "textSha256": "897db4078a025d8d094876f704a10769bee1e50cc057b9a13e61565400fd89c4",
+            "segmentIds": [
+              "s00104"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00282",
+            "endId": "s00287",
+            "startIndex": 281,
+            "endIndexInclusive": 286,
+            "startSeconds": 633.279,
+            "endSeconds": 649.079,
+            "text": "exactly what I've created with thousandx.com. If you want to apply for access to this, go to the description area of this video. You can click that link and go ahead and apply for access to this. If you don't want to do that,",
+            "textSha256": "8c10c7c5a9d372c99cb9e24e1912696a000b79fdf1a263df27d50b5c4ff8330b",
+            "segmentIds": [
+              "s00282",
+              "s00283",
+              "s00284",
+              "s00285",
+              "s00286",
+              "s00287"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00452",
+            "endId": "s00453",
+            "startIndex": 451,
+            "endIndexInclusive": 452,
+            "startSeconds": 1036.079,
+            "endSeconds": 1043.6,
+            "text": "And so I I I I just also think that one of the things that's he he he did",
+            "textSha256": "07da86e07fde22754d94270a167ebc0f784302bc7f0bf6dcd20433b457d08725",
+            "segmentIds": [
+              "s00452",
+              "s00453"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 8,
+      "videoId": "jPy5aDhMsMY",
+      "title": "Oracle & Adobe Shareholders‼️Brand New Developments",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "c5066d52-8625-4049-b615-48e5985502b8",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "07e4a35ee3be49f95f1b8d06cc281db0dda11718a15c724648516418093c45b7",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 853,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "5bc8c322-7a0a-4033-8218-2b2ce90c7c5e",
+      "evidenceItemCount": 51,
+      "segmentsOutsideInventory": 251,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00164",
+            "endId": "s00164",
+            "startIndex": 163,
+            "endIndexInclusive": 163,
+            "startSeconds": 350.96,
+            "endSeconds": 354.79999999999995,
+            "text": "and get a rerating in regards to the",
+            "textSha256": "1f90886bd3b2e006ca231ac8f2acbc94ee7a52b84b12373e7b0c2e87d1725879",
+            "segmentIds": [
+              "s00164"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00419",
+            "endId": "s00419",
+            "startIndex": 418,
+            "endIndexInclusive": 418,
+            "startSeconds": 872.56,
+            "endSeconds": 876.2399999999999,
+            "text": ">> We've talked a lot every time. I think",
+            "textSha256": "9e487aa699d24ed9aa1dab61b32bd050a80ac73e681ed604dc049f8c0fee7f8e",
+            "segmentIds": [
+              "s00419"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00675",
+            "endId": "s00675",
+            "startIndex": 674,
+            "endIndexInclusive": 674,
+            "startSeconds": 1394.32,
+            "endSeconds": 1398.32,
+            "text": "you on team Lee?",
+            "textSha256": "a21ea28265a93f6f9cd62fc058512c6cf4c0f0b0ce076f199720b067a0b22d08",
+            "segmentIds": [
+              "s00675"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 9,
+      "videoId": "elD62rk5Ijo",
+      "title": "If You Missed NVIDIA Stock, This is Way Bigger.",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "e352b5e3-6dad-43c1-b67a-b008704eb850",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "852c63f02a21adfb749c67716d3ee88f571599c59aec17a9e3e21bda211e877c",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 549,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "c69faf76-63c3-4cdc-bcad-765cb3725942",
+      "evidenceItemCount": 42,
+      "segmentsOutsideInventory": 184,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00107",
+            "endId": "s00107",
+            "startIndex": 106,
+            "endIndexInclusive": 106,
+            "startSeconds": 275.199,
+            "endSeconds": 280.8,
+            "text": "crazy for buying other ADRs, so I",
+            "textSha256": "5b2e810e028d48a5ec5fec7d7f541bf9d5bc3ec7aa12959d3ff3510771874f37",
+            "segmentIds": [
+              "s00107"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00266",
+            "endId": "s00266",
+            "startIndex": 265,
+            "endIndexInclusive": 265,
+            "startSeconds": 667.2,
+            "endSeconds": 671.76,
+            "text": "almost every Wall Street analyst",
+            "textSha256": "5beed625c2878f794e46e759e967ddd6824046b6e2c8d021f902a78826182ae3",
+            "segmentIds": [
+              "s00266"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00439",
+            "endId": "s00444",
+            "startIndex": 438,
+            "endIndexInclusive": 443,
+            "startSeconds": 1081.76,
+            "endSeconds": 1096.799,
+            "text": "everything I've covered. I built it by pulling numbers from each company's latest earnings and I'm showing Skhinx twice because the ADR price is significantly different from their price on the Korea exchange. I tried to make",
+            "textSha256": "693c5bfbeadf548257751fa6893cb3529604ab175f1b1baeba47bbfaa7711333",
+            "segmentIds": [
+              "s00439",
+              "s00440",
+              "s00441",
+              "s00442",
+              "s00443",
+              "s00444"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 10,
+      "videoId": "zYeJZu1hkdM",
+      "title": "These Stocks Will Make Millionaires By 2029",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "sourceRunId": "d652c2bb-dbcb-4900-96f9-c716358e55b9",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "f1c1fee7a07b421ea5e921c2bea3e38b764cb8925395a139fcaff1daad44397e",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 451,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-g-session-2.json",
+        "sha256": "ae7a0db779b20fdc5252e69d2777682ce0d4de0b0c2bc01e4a9375a698d1ecbc"
+      },
+      "inventoryResearchRunId": "a38a3ecf-bdda-43be-9a48-6eeb02406dad",
+      "evidenceItemCount": 41,
+      "segmentsOutsideInventory": 80,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00091",
+            "endId": "s00094",
+            "startIndex": 90,
+            "endIndexInclusive": 93,
+            "startSeconds": 216.64,
+            "endSeconds": 227.04,
+            "text": "convert it back to electricity. I'm making this video right now because something big is happening with these lasers. The big thing that investors",
+            "textSha256": "594a6afd86bd130b7be2ee28138f9684dc1ec011c67538a884f85f8da93dfb7c",
+            "segmentIds": [
+              "s00091",
+              "s00092",
+              "s00093",
+              "s00094"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00244",
+            "endId": "s00245",
+            "startIndex": 243,
+            "endIndexInclusive": 244,
+            "startSeconds": 584.56,
+            "endSeconds": 591.279,
+            "text": "strong signal that demand for indium phosphide lasers is now coming mostly",
+            "textSha256": "d0da4d7c5cf2f439f428843d652f69abb40dd69632f11ad6d8c26ba2e3f34df5",
+            "segmentIds": [
+              "s00244",
+              "s00245"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00315",
+            "endId": "s00315",
+            "startIndex": 314,
+            "endIndexInclusive": 314,
+            "startSeconds": 750.959,
+            "endSeconds": 755.1999999999999,
+            "text": "about a great way to get rich without",
+            "textSha256": "d74936726eab4fac80fc67e33271a145c93865cef401c2f5d29b60561c7a8ca3",
+            "segmentIds": [
+              "s00315"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 11,
+      "videoId": "ZfOQoh82JTo",
+      "title": "Nu Bank's Territorial Expansion; LVMH + Stocks At Cheapest Valuations Ever; Fed Hikes Interest Rates",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-session-1.json",
+        "sha256": "8797bdf169ae72914b9230a2d766029c0f6cdb2aaa4771c9ac7ad8e796071fb0"
+      },
+      "sourceRunId": "b2d18482-5994-4996-af2e-35ac4e8842fd",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 1692,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-session-1.json",
+        "sha256": "8797bdf169ae72914b9230a2d766029c0f6cdb2aaa4771c9ac7ad8e796071fb0"
+      },
+      "inventoryResearchRunId": "d6a67b98-64c0-4719-ae39-59c55a42d388",
+      "evidenceItemCount": 101,
+      "segmentsOutsideInventory": 693,
+      "knownChecks": [
+        {
+          "id": "growth-margin-moat-ownership",
+          "severity": "critical",
+          "evidenceIds": [
+            "k9",
+            "k35",
+            "k36",
+            "m43"
+          ],
+          "criterion": "Do not invent CAGR from five-year growth. Preserve uncertain 25% gross margin, skeptical rather than categorical moat conclusion, cheap-entry AND strong-growth conditions, and explicit no-holding disclosure.",
+          "anchors": [
+            {
+              "startId": "s00621",
+              "endId": "s00664",
+              "startIndex": 620,
+              "endIndexInclusive": 663,
+              "startSeconds": 1436.559,
+              "endSeconds": 1558.24,
+              "text": "Dutch Bros. Yeah, I like the concept. Do I love it? No. And I didn't like management at the IPO, but at the right price. I don't know. We're still at Oh, I believe they have some >> I think operating cash flow was the multiple I used that made the most sense >> cuz it's not capex like uh franchise concept. I believe >> it's franchise concept there. Gross margin is 25%. Maybe that's incorrect. I mean fiveyear revenue growth 36% EV to sales of 4.8 EV to EVA to 28 EV to gross profit 19 still still not cheap. I think the flow through from gross profit to gross profit EV to operating cash flow is 19 times. So I think the flow through from gross profit to cash flow is quite >> narrow. Maybe weird income statement or something. >> Yeah. I just I can't understand how they are competitively differentiated. Like why are they in a world of a billion coffee shops? Why is Dutch Bros the winner? Like >> it's tough market. Yep. They have gone from like 300 locations to,500 over the last five years, but it just I would have a hard time finding any sort of sustainable advantage for Dutch Bros. >> I agree. Like McDonald's comes out with a lot of competitors now. Kind of the drinks with energy drinks. I think yeah, if I was going to buy Dutch Bros, I would have to expect for really nice growth and it's really low starting price because when you're nervous about the moat, you just have to have higher for future growth expectations. >> Let's I don't have any of these.",
+              "textSha256": "9bb448c713a9aabc3f84677f9031ec959253b45b8946199554fbb5f42b20ca60",
+              "segmentIds": [
+                "s00621",
+                "s00622",
+                "s00623",
+                "s00624",
+                "s00625",
+                "s00626",
+                "s00627",
+                "s00628",
+                "s00629",
+                "s00630",
+                "s00631",
+                "s00632",
+                "s00633",
+                "s00634",
+                "s00635",
+                "s00636",
+                "s00637",
+                "s00638",
+                "s00639",
+                "s00640",
+                "s00641",
+                "s00642",
+                "s00643",
+                "s00644",
+                "s00645",
+                "s00646",
+                "s00647",
+                "s00648",
+                "s00649",
+                "s00650",
+                "s00651",
+                "s00652",
+                "s00653",
+                "s00654",
+                "s00655",
+                "s00656",
+                "s00657",
+                "s00658",
+                "s00659",
+                "s00660",
+                "s00661",
+                "s00662",
+                "s00663",
+                "s00664"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        },
+        {
+          "id": "apy-versus-payment-frequency",
+          "severity": "critical",
+          "evidenceIds": [
+            "k5"
+          ],
+          "criterion": "Keep 2.2% APY distinct from daily payment/crediting; ambiguous 3.5% wording must remain qualified, not silently annualized or converted to daily return.",
+          "anchors": [
+            {
+              "startId": "s00295",
+              "endId": "s00318",
+              "startIndex": 294,
+              "endIndexInclusive": 317,
+              "startSeconds": 699.6,
+              "endSeconds": 752.399,
+              "text": "yet. It's New Global. I'll read off the press release because it sounds impressive. New Global is a multicurrency digital account that gives customers with international lifestyles a way to manage their money daily. All deposits are converted into digital dollars in the USDC or digital euros in EURC. stable coins pegged to the US dollar and euro earning a daily yield of three and a half% and 2.2% APY respectively. 2.2% will be euro. The offering is paired with a virtual masterard card that allows customers to spend anywhere in the world at competitive exchange rates with no markups. Beyond daily money management with new global customers can send and receive money across more than 35 countries with fast transfer fees free of charge starting with Europe and Latin America. integrations with Brazil, Colombia, Mexico, and the US are planned for the months ahead.",
+              "textSha256": "e1aaf7c0a8f5ad864b7f3fb9adf429ed51ae66174cd134489f1d8b8ac7cc6f7f",
+              "segmentIds": [
+                "s00295",
+                "s00296",
+                "s00297",
+                "s00298",
+                "s00299",
+                "s00300",
+                "s00301",
+                "s00302",
+                "s00303",
+                "s00304",
+                "s00305",
+                "s00306",
+                "s00307",
+                "s00308",
+                "s00309",
+                "s00310",
+                "s00311",
+                "s00312",
+                "s00313",
+                "s00314",
+                "s00315",
+                "s00316",
+                "s00317",
+                "s00318"
+              ]
+            },
+            {
+              "startId": "s00335",
+              "endId": "s00346",
+              "startIndex": 334,
+              "endIndexInclusive": 345,
+              "startSeconds": 782.8,
+              "endSeconds": 814.32,
+              "text": "they're saying no markups, free of charge. That means it's completely free. So, you're making it all up in yield from the USDC, which you also have to share the unit economics with with Circle. I'm a bit perplexed here, but I also think it illustrates that if you want to speed run, you know, to, for lack of a better term, your way to a global remittance platform, you can use stable coins, but you still have the off-ramp uh issues.",
+              "textSha256": "89c9a99a4bc35dc488443a07c788f0ec8631ad78951cf10deef35d6a93751f65",
+              "segmentIds": [
+                "s00335",
+                "s00336",
+                "s00337",
+                "s00338",
+                "s00339",
+                "s00340",
+                "s00341",
+                "s00342",
+                "s00343",
+                "s00344",
+                "s00345",
+                "s00346"
+              ]
+            },
+            {
+              "startId": "s00381",
+              "endId": "s00384",
+              "startIndex": 380,
+              "endIndexInclusive": 383,
+              "startSeconds": 897.76,
+              "endSeconds": 909.839,
+              "text": "fee free. So there there's kind of a couple different situations. one they put sender limits which I I think is a likely possibility is",
+              "textSha256": "3fb74ade901c230f8102e53bd250082b5974f86d196ae2878ed02ff1a225bcce",
+              "segmentIds": [
+                "s00381",
+                "s00382",
+                "s00383",
+                "s00384"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        },
+        {
+          "id": "hypothetical-short-and-speaker",
+          "severity": "critical",
+          "evidenceIds": [
+            "k21",
+            "m52"
+          ],
+          "criterion": "Preserve explicit not-short disclosure and hypothetical covering; do not combine different turns into hosts actual shared short position or invent speaker mapping.",
+          "anchors": [
+            {
+              "startId": "s01596",
+              "endId": "s01612",
+              "startIndex": 1595,
+              "endIndexInclusive": 1611,
+              "startSeconds": 3693.2,
+              "endSeconds": 3731.9199999999996,
+              "text": "bubble watch I want to look at. There was open door has been crashing shockingly. Uh, someone said, I'm curious your thoughts. Open AI goes public. Open door is going to rise because of the ticker. What do you think? Nice little >> That's honestly not a bad thesis. That's probably a better thesis than anything fundamental for Open Door. Yeah, it I'm not short Open Door, but if I would, I would cover going if I was, I would cover going to the IPO. All right, this is what >> I I will say I am psychologically short. I can't stand that VC that's involved. Sorry.",
+              "textSha256": "358b43116db1e6d03afd1e46fa18530bca5863ebb94578e2b3555b9d74675db7",
+              "segmentIds": [
+                "s01596",
+                "s01597",
+                "s01598",
+                "s01599",
+                "s01600",
+                "s01601",
+                "s01602",
+                "s01603",
+                "s01604",
+                "s01605",
+                "s01606",
+                "s01607",
+                "s01608",
+                "s01609",
+                "s01610",
+                "s01611",
+                "s01612"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00334",
+            "endId": "s00334",
+            "startIndex": 333,
+            "endIndexInclusive": 333,
+            "startSeconds": 780.959,
+            "endSeconds": 784.6389999999999,
+            "text": "the receivers's account ends up because",
+            "textSha256": "a413e39988dd6413ac0806c1162cca25978af2542701a0c6b181a3a1ac88c3c6",
+            "segmentIds": [
+              "s00334"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00840",
+            "endId": "s00840",
+            "startIndex": 839,
+            "endIndexInclusive": 839,
+            "startSeconds": 1989.84,
+            "endSeconds": 1994.72,
+            "text": "The",
+            "textSha256": "b344d80e24a3679999fa964450b34bc24d1578a35509f934c1418b0a20d21a67",
+            "segmentIds": [
+              "s00840"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s01354",
+            "endId": "s01359",
+            "startIndex": 1353,
+            "endIndexInclusive": 1358,
+            "startSeconds": 3146.079,
+            "endSeconds": 3164.6400000000003,
+            "text": ">> Wow. >> Yeah. Pretty good. Do you have any other podcasts or YouTube, Ryan? >> Uh, a couple others that a ditto to most of the ones you listed there. The other ones that I listen to",
+            "textSha256": "2fce5ae40d54bbebb9b4c944515465851c18944f5f719619f7b20c88e1d4fe45",
+            "segmentIds": [
+              "s01354",
+              "s01355",
+              "s01356",
+              "s01357",
+              "s01358",
+              "s01359"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": false,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 12,
+      "videoId": "iBMZc7zs_Ew",
+      "title": "Ian Bezek Returns to Discuss Why Brazilian Bank INTER Is Undervalued + Much More [PODCAST]",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-session-1.json",
+        "sha256": "8797bdf169ae72914b9230a2d766029c0f6cdb2aaa4771c9ac7ad8e796071fb0"
+      },
+      "sourceRunId": "7306a0b9-2689-4f41-99e2-a9927c06067c",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "13dc7fb204d2cc32a63b1df473827e684428fc5b52014ba3fa8b04166ca6f386",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 1335,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-session-1.json",
+        "sha256": "8797bdf169ae72914b9230a2d766029c0f6cdb2aaa4771c9ac7ad8e796071fb0"
+      },
+      "inventoryResearchRunId": "386f608b-03a6-430d-81e9-bd26c4141aab",
+      "evidenceItemCount": 92,
+      "segmentsOutsideInventory": 414,
+      "knownChecks": [
+        {
+          "id": "hypothetical-nim",
+          "severity": "critical",
+          "evidenceIds": [
+            "k2"
+          ],
+          "criterion": "Actual reported 6% NPL must remain distinct from illustrative if 15–20% net interest margin. Do not assert observed Inter NIM from the scenario.",
+          "anchors": [
+            {
+              "startId": "s00164",
+              "endId": "s00174",
+              "startIndex": 163,
+              "endIndexInclusive": 173,
+              "startSeconds": 395.52,
+              "endSeconds": 432.08000000000004,
+              "text": "think it's just kind of baked into the model that we're going to lend at high rates and a lot of people aren't going to pay and uh on ballots it works out because yeah, if you're getting 15 20% net interest margin and then you have a spike in defaults, not really that big of a deal. like interest specifically their their NPLs are 6% now and so if your net interest margins 15 and you lose 6% you lose cost of doing business.",
+              "textSha256": "677caf35f41d9c4fe1cafe868e272408b1cd498d3ea55e6fea31c3c8a6b409bf",
+              "segmentIds": [
+                "s00164",
+                "s00165",
+                "s00166",
+                "s00167",
+                "s00168",
+                "s00169",
+                "s00170",
+                "s00171",
+                "s00172",
+                "s00173",
+                "s00174"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        },
+        {
+          "id": "valuation-thesis",
+          "severity": "material",
+          "evidenceIds": [
+            "k12"
+          ],
+          "criterion": "Retain source valuation bases around 8x current and 5x 2028 earnings with their periods and assumptions; do not silently omit the thesis.",
+          "anchors": [
+            {
+              "startId": "s00518",
+              "endId": "s00528",
+              "startIndex": 517,
+              "endIndexInclusive": 527,
+              "startSeconds": 1240.799,
+              "endSeconds": 1269.76,
+              "text": ">> Why? So, I believe it trades at a earnings multiple of basically eight. >> I can confirm that. Ryan, I'm looking at fiscal AAI right now. I'll mention fiscal.ai/chitat. Use our link. Get 15% off any paid plan. That is correct. only a PE of eight and Ryan I see and maybe in can correct as earnings per share growth as you mentioned it's like 30% over the last five years.",
+              "textSha256": "e9823f80dfadd799cc19154f9e8f63436e92cfed119825faa4eab7f859083a09",
+              "segmentIds": [
+                "s00518",
+                "s00519",
+                "s00520",
+                "s00521",
+                "s00522",
+                "s00523",
+                "s00524",
+                "s00525",
+                "s00526",
+                "s00527",
+                "s00528"
+              ]
+            },
+            {
+              "startId": "s00538",
+              "endId": "s00545",
+              "startIndex": 537,
+              "endIndexInclusive": 544,
+              "startSeconds": 1285.76,
+              "endSeconds": 1308.96,
+              "text": "that uh explains that? Uh yeah, eight times current earnings and then uh I believe based on like the 2028 analyst estimates just if they hit what is currently estimated to be like five times uh 28 earnings. So it's like yeah, why is this business growing at 30% a year and trading at this price? Uh I",
+              "textSha256": "c67bc2ac93cf54ed3e38307c3e16b411311597b5b8823426cf5dfb8c24d902d9",
+              "segmentIds": [
+                "s00538",
+                "s00539",
+                "s00540",
+                "s00541",
+                "s00542",
+                "s00543",
+                "s00544",
+                "s00545"
+              ]
+            },
+            {
+              "startId": "s00577",
+              "endId": "s00582",
+              "startIndex": 576,
+              "endIndexInclusive": 581,
+              "startSeconds": 1378.48,
+              "endSeconds": 1395.3600000000001,
+              "text": "back like Inter doesn't have a buyback and so they do pay they pay like 25% of annual profits out of dividends. So assuming profits keep going up at 30% a year that turns into a meaningful dividend stream over time. But I think",
+              "textSha256": "c75d572ede4b7a900aa409a6316fcc9e7c639607d3dda6948ea6e41d3e513931",
+              "segmentIds": [
+                "s00577",
+                "s00578",
+                "s00579",
+                "s00580",
+                "s00581",
+                "s00582"
+              ]
+            },
+            {
+              "startId": "s00647",
+              "endId": "s00688",
+              "startIndex": 646,
+              "endIndexInclusive": 687,
+              "startSeconds": 1540.24,
+              "endSeconds": 1633.2,
+              "text": ">> Uh yeah, good question. I think I think they're trying to do a lot of stuff with the seven different pillars of the business. Some of the things like like they have a e-commerce like shop with them, get rewards, that sort of thing. I think that stuff cool and certainly helps in terms of customer lock in and so on, but I could see a case where management is trying to do too many things at the same time. There's unclear branding. People don't really know. Uh yeah, it's just it requires a lot of focus when you're trying to do asset management, insurance, and kind of selling all this different stuff to people. Obviously, you can do it well, but you can also have like a a Wells Fargo scenario where you try trying to sell too many products and get into scandals and so so I think there needs to be they need to do a good job u managing kind of all the other pillars of the business like the core banking business is doing great but I don't know like I think the e-commerce platform has been shrinking a little bit and so just kind of making good decisions is is this still a good use of our time and resources and should we trim off some of this stuff that's not working as well. I think the US expansion is a great idea, but obviously it's a risk different market from Brazil. You have much lower interest rates that people will tolerate in Florida versus Brazil. So, you could see it hit overall profitability. Uh just in terms of I don't know how they'll design the loan book and all, but uh I think it's a high risk high reward sort of thing to make that expansion. Um what else do I think could",
+              "textSha256": "6ce122a1e29d8d530f55e7ea59b8fd118225e9055e72d89e0132789555698de8",
+              "segmentIds": [
+                "s00647",
+                "s00648",
+                "s00649",
+                "s00650",
+                "s00651",
+                "s00652",
+                "s00653",
+                "s00654",
+                "s00655",
+                "s00656",
+                "s00657",
+                "s00658",
+                "s00659",
+                "s00660",
+                "s00661",
+                "s00662",
+                "s00663",
+                "s00664",
+                "s00665",
+                "s00666",
+                "s00667",
+                "s00668",
+                "s00669",
+                "s00670",
+                "s00671",
+                "s00672",
+                "s00673",
+                "s00674",
+                "s00675",
+                "s00676",
+                "s00677",
+                "s00678",
+                "s00679",
+                "s00680",
+                "s00681",
+                "s00682",
+                "s00683",
+                "s00684",
+                "s00685",
+                "s00686",
+                "s00687",
+                "s00688"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00268",
+            "endId": "s00273",
+            "startIndex": 267,
+            "endIndexInclusive": 272,
+            "startSeconds": 644.64,
+            "endSeconds": 661.92,
+            "text": "the next few years. Uh if every other digital bank such as new bank, Marcato Libre, even C Limited going in the mix now in Brazil is growing at this rate then is the are the incumbents losing market share that fast. I looked at the",
+            "textSha256": "d3b148ea4df94d95c3090534bc19bd4bdc661c556225f998bd3499d54b5258e7",
+            "segmentIds": [
+              "s00268",
+              "s00269",
+              "s00270",
+              "s00271",
+              "s00272",
+              "s00273"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00646",
+            "endId": "s00646",
+            "startIndex": 645,
+            "endIndexInclusive": 645,
+            "startSeconds": 1538.72,
+            "endSeconds": 1543.679,
+            "text": "scenarios?",
+            "textSha256": "5356bc124762258ac8fd5d39b1be2afce5a33e55d87ce628952e64efd82dd2bd",
+            "segmentIds": [
+              "s00646"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s01064",
+            "endId": "s01064",
+            "startIndex": 1063,
+            "endIndexInclusive": 1063,
+            "startSeconds": 2492.48,
+            "endSeconds": 2497.359,
+            "text": "hyperinflationist era.",
+            "textSha256": "bbc767757074001635ec516f0a1b870547eca764134204ce7f5f85865c5c32bb",
+            "segmentIds": [
+              "s01064"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 13,
+      "videoId": "tUR0w-LDSbU",
+      "title": "Palantir News: Can Palantir Turn $10,000 Into $1,000,000 By 2035?!",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "sourceRunId": "30e86cc6-e009-4a68-ad52-a9a7dcc042dd",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "a2593ce514664ae4e37100873862a50447bb477a7205582c3abfae6a9e50fb85",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 255,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "inventoryResearchRunId": "b13254e5-4fd9-4ee7-aac8-6b7e7f93f844",
+      "evidenceItemCount": 13,
+      "segmentsOutsideInventory": 29,
+      "knownChecks": [
+        {
+          "id": "conditional-valuation-scenarios",
+          "severity": "material",
+          "evidenceIds": [
+            "k8",
+            "m5"
+          ],
+          "criterion": "Separate 100x from current valuation and 100x from 2023 trough. Preserve execution, market, adoption and confidence conditions; approximate source arithmetic stays approximate.",
+          "anchors": [
+            {
+              "startId": "s00223",
+              "endId": "s00251",
+              "startIndex": 222,
+              "endIndexInclusive": 250,
+              "startSeconds": 448.2,
+              "endSeconds": 508.96000000000004,
+              "text": "if investors begin to demand more reasonable valuation multiples. This is a common challenge for high-growth stocks as expectations can sometimes outpace reality. Taking all of these factors into account, it becomes clear that while a 100 times return from the current valuation is highly unlikely, the company still has the potential to deliver strong returns over the long term. Achieving a four times increase in value over the next decade is a more realistic goal, although it will still require significant execution and favorable market conditions. Ultimately, the idea that Palantir could have delivered a 100 times return from the early stages of the artificial intelligence expansion in 2023 through 2035 is not entirely impossible. However, it would require a near-perfect combination of rapid growth, widespread artificial intelligence adoption, and sustained investor confidence. While the path forward will not be easy, the opportunity remains intriguing for those who believe in the long-term potential of artificial intelligence and Palantir's role within that ecosystem.",
+              "textSha256": "b78a0cad09cdd8bd721f5f3283f68a470b22a09611e07c7114c7fba8c9da6155",
+              "segmentIds": [
+                "s00223",
+                "s00224",
+                "s00225",
+                "s00226",
+                "s00227",
+                "s00228",
+                "s00229",
+                "s00230",
+                "s00231",
+                "s00232",
+                "s00233",
+                "s00234",
+                "s00235",
+                "s00236",
+                "s00237",
+                "s00238",
+                "s00239",
+                "s00240",
+                "s00241",
+                "s00242",
+                "s00243",
+                "s00244",
+                "s00245",
+                "s00246",
+                "s00247",
+                "s00248",
+                "s00249",
+                "s00250",
+                "s00251"
+              ]
+            },
+            {
+              "startId": "s00228",
+              "endId": "s00251",
+              "startIndex": 227,
+              "endIndexInclusive": 250,
+              "startSeconds": 457.92,
+              "endSeconds": 508.96000000000004,
+              "text": "factors into account, it becomes clear that while a 100 times return from the current valuation is highly unlikely, the company still has the potential to deliver strong returns over the long term. Achieving a four times increase in value over the next decade is a more realistic goal, although it will still require significant execution and favorable market conditions. Ultimately, the idea that Palantir could have delivered a 100 times return from the early stages of the artificial intelligence expansion in 2023 through 2035 is not entirely impossible. However, it would require a near-perfect combination of rapid growth, widespread artificial intelligence adoption, and sustained investor confidence. While the path forward will not be easy, the opportunity remains intriguing for those who believe in the long-term potential of artificial intelligence and Palantir's role within that ecosystem.",
+              "textSha256": "7de19a588bc088c8054dfc81fc0cd3d9a0644c2d396f3b3c927e6606e28aa0c9",
+              "segmentIds": [
+                "s00228",
+                "s00229",
+                "s00230",
+                "s00231",
+                "s00232",
+                "s00233",
+                "s00234",
+                "s00235",
+                "s00236",
+                "s00237",
+                "s00238",
+                "s00239",
+                "s00240",
+                "s00241",
+                "s00242",
+                "s00243",
+                "s00244",
+                "s00245",
+                "s00246",
+                "s00247",
+                "s00248",
+                "s00249",
+                "s00250",
+                "s00251"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00053",
+            "endId": "s00058",
+            "startIndex": 52,
+            "endIndexInclusive": 57,
+            "startSeconds": 106.36,
+            "endSeconds": 119.04,
+            "text": "result of these strengths, investor enthusiasm surrounding Palantir has reached extremely high levels. Many market participants have viewed the company as one of the most practical and scalable ways to gain exposure to the",
+            "textSha256": "ce0a561edb012ee7ca910b09d38dfa954b15847fcdbe8e151de101e6753799f8",
+            "segmentIds": [
+              "s00053",
+              "s00054",
+              "s00055",
+              "s00056",
+              "s00057",
+              "s00058"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00121",
+            "endId": "s00121",
+            "startIndex": 120,
+            "endIndexInclusive": 120,
+            "startSeconds": 249.2,
+            "endSeconds": 252.32,
+            "text": "reality. The answer to this question",
+            "textSha256": "b19f33469b6f1e49e515c10596fe8d9cb01d708e291dc7450b3a18f12cebe1c2",
+            "segmentIds": [
+              "s00121"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00195",
+            "endId": "s00195",
+            "startIndex": 194,
+            "endIndexInclusive": 194,
+            "startSeconds": 395.16,
+            "endSeconds": 399.20000000000005,
+            "text": "the risks and opportunities associated",
+            "textSha256": "04628ce45bb7b0a5a6901706bcebd92fd4ffe45a22b300894b81fb47c90ed84a",
+            "segmentIds": [
+              "s00195"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 14,
+      "videoId": "DuIyF_34ReI",
+      "title": "This Small Palantir Partner Just Unlocked One Billion Dollars in AI Defense Contracts!",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "sourceRunId": "a9fa2215-367c-4b4f-ab33-1becb1577f53",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "5a59cbf2f0a8969a70b6a01460dda454b8311b847a4af2fff7539a54cd0c0569",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 304,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "inventoryResearchRunId": "f4778ca3-a0b0-43b9-8da5-8600c3f0fb10",
+      "evidenceItemCount": 21,
+      "segmentsOutsideInventory": 112,
+      "knownChecks": [
+        {
+          "id": "idiq-ceiling-not-funded-order",
+          "severity": "critical",
+          "evidenceIds": [],
+          "criterion": "Explicit IDIQ/indefinite-delivery-quantity vehicle access is not funded revenue or guaranteed orders. Original inventory omits this qualifier: inspect full source and report extraction gap.",
+          "anchors": [
+            {
+              "startId": "s00072",
+              "endId": "s00085",
+              "startIndex": 71,
+              "endIndexInclusive": 84,
+              "startSeconds": 148.4,
+              "endSeconds": 180.24,
+              "text": "company currently serves as a prime contractor on more than $1 billion in indefinite delivery and indefinite quantity contracts. These contracts cover a broad range of mission-critical areas, including unmanned aerial systems, counter-drone technologies, weapon system integration, and long-term sustainment services. This existing portfolio provides Ondas with immediate entry into contract vehicles with the United States Army and the United States Special Operations Command that were previously inaccessible. In addition to",
+              "textSha256": "20a29dcd012e8b89774e0c8c4b09be647a9c78b99995d34042a9151fabc70f94",
+              "segmentIds": [
+                "s00072",
+                "s00073",
+                "s00074",
+                "s00075",
+                "s00076",
+                "s00077",
+                "s00078",
+                "s00079",
+                "s00080",
+                "s00081",
+                "s00082",
+                "s00083",
+                "s00084",
+                "s00085"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        },
+        {
+          "id": "expected-orders-source-arithmetic",
+          "severity": "critical",
+          "evidenceIds": [],
+          "criterion": "Distinguish initial $15.8M award, expected >$50M follow-ons, annual revenue and guidance. Source >50M/~31%/$50.7M comparison is inconsistent; expose uncertainty instead of silently fixing it.",
+          "anchors": [
+            {
+              "startId": "s00175",
+              "endId": "s00190",
+              "startIndex": 174,
+              "endIndexInclusive": 189,
+              "startSeconds": 361.84,
+              "endSeconds": 395.24,
+              "text": "Autonomous Systems, pointed to the competitive nature of the tender as proof that the company is capable of executing complex, large-scale operations in highly challenging environments. From a financial perspective, the significance of this demining effort becomes even clearer. The total expected value of over $50 million represents approximately 31% of Ondas's entire 2025 revenue. This means that a single program has the potential to contribute a substantial portion of the company's prior annual revenue, while also serving as a gateway to significantly larger opportunities in",
+              "textSha256": "feb095dee140df255b64f76fc6a5d1caf524e6d1704967835505e2031009b5c7",
+              "segmentIds": [
+                "s00175",
+                "s00176",
+                "s00177",
+                "s00178",
+                "s00179",
+                "s00180",
+                "s00181",
+                "s00182",
+                "s00183",
+                "s00184",
+                "s00185",
+                "s00186",
+                "s00187",
+                "s00188",
+                "s00189",
+                "s00190"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00068",
+            "endId": "s00071",
+            "startIndex": 67,
+            "endIndexInclusive": 70,
+            "startSeconds": 140.04,
+            "endSeconds": 150,
+            "text": "critical milestone for Ondas as it transitions into a much larger role within the defense ecosystem. Expanding further on Mistral's importance, the",
+            "textSha256": "562819a1af2d1856c0dbc4edc8c2dd0f87546b76676b5cebd4110d52d2bd2207",
+            "segmentIds": [
+              "s00068",
+              "s00069",
+              "s00070",
+              "s00071"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00152",
+            "endId": "s00157",
+            "startIndex": 151,
+            "endIndexInclusive": 156,
+            "startSeconds": 315.44,
+            "endSeconds": 329.71999999999997,
+            "text": "of advanced tools, including artificial intelligence-powered robotics, ground-based autonomous systems, aerial drones, and subsurface detection sensors. These capabilities enable the company to identify and safely remove",
+            "textSha256": "a29fc0ee4be7f65b3953b29c74c8234868ba377b79cb55ddc3135d8ad26ff595",
+            "segmentIds": [
+              "s00152",
+              "s00153",
+              "s00154",
+              "s00155",
+              "s00156",
+              "s00157"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00226",
+            "endId": "s00226",
+            "startIndex": 225,
+            "endIndexInclusive": 225,
+            "startSeconds": 462.88,
+            "endSeconds": 467.12,
+            "text": "supporting modern defense requirements.",
+            "textSha256": "5d3f31c25c2cc377101362ab1798e0e657abb7f31cc95c1b70385f8f9ff1615a",
+            "segmentIds": [
+              "s00226"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 15,
+      "videoId": "QEwLInO3iZY",
+      "title": "You're Gambling on Stocks - Stop Losing Money",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "sourceRunId": "447f5dfa-718f-4d3f-9589-639b4a4c76a5",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "203ede23b6ebb3486f7fe122ca081f1b369e28c8756dead04f2419d9a1a60dec",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 19,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "inventoryResearchRunId": "9f8e8d15-a062-4e76-b8ee-761482e834d4",
+      "evidenceItemCount": 1,
+      "segmentsOutsideInventory": 10,
+      "knownChecks": [],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00005",
+            "endId": "s00010",
+            "startIndex": 4,
+            "endIndexInclusive": 9,
+            "startSeconds": 8.36,
+            "endSeconds": 22.68,
+            "text": "researching a stock before they buy. Most of that is staring at the price chart. That is not investing, it's rolling the dice. I spent more than a decade as an analyst. Investing starts with knowing why you own something, not",
+            "textSha256": "84f57b078589fab7453fc18d32f54aa5526b0357373f0ec5c2d83b3042a12f76",
+            "segmentIds": [
+              "s00005",
+              "s00006",
+              "s00007",
+              "s00008",
+              "s00009",
+              "s00010"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00004",
+            "endId": "s00004",
+            "startIndex": 3,
+            "endIndexInclusive": 3,
+            "startSeconds": 6.76,
+            "endSeconds": 10.559999999999999,
+            "text": "investor spends just 6 minutes",
+            "textSha256": "237e9673fd071f85910e529d3dca4ae608843810aaf61a3f847d2fac22723741",
+            "segmentIds": [
+              "s00004"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00003",
+            "endId": "s00003",
+            "startIndex": 2,
+            "endIndexInclusive": 2,
+            "startSeconds": 4.4,
+            "endSeconds": 8.36,
+            "text": "hope is not research. The average",
+            "textSha256": "304a044adae2739e02198a71ebe273840449d6f62d5a742c9e534fdb36ed764a",
+            "segmentIds": [
+              "s00003"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 16,
+      "videoId": "IjYr5acuBT4",
+      "title": "7 Stocks to Buy Heavy Before the Market Takes Off",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "sourceRunId": "599984b0-0f07-49f9-9b25-721a198dd9bf",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "14105dce685d46826942c0cac2f70168ca19fce1ff680cbe8bf80bb641581f78",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 521,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "inventoryResearchRunId": "a76d53a9-c16f-4c41-8347-25461fbc46b0",
+      "evidenceItemCount": 90,
+      "segmentsOutsideInventory": 81,
+      "knownChecks": [
+        {
+          "id": "consumer-warning-priority",
+          "severity": "material",
+          "evidenceIds": [
+            "k20",
+            "m60"
+          ],
+          "criterion": "Preserve importance/severity of travel and consumer warning and conditions before dip-buying. Do not treat a list of returns as full coverage of the warning.",
+          "anchors": [
+            {
+              "startId": "s00469",
+              "endId": "s00484",
+              "startIndex": 468,
+              "endIndexInclusive": 483,
+              "startSeconds": 942.32,
+              "endSeconds": 982.48,
+              "text": "think this is the most important chart of this video. I think all investors need to be watching this part because travel stocks are looking like the next warning that a deep consumer trouble is coming and the group falling as much as 11% last week. Here we have Airbnb, Airbnb down 8%. TCOM, TCOM, that's Trip.com down about 11 12%. American Airlines, the flights there, Expedia down about 12, 13, 14%. Trip Advisor down 17%, Booking.com down 18% and Norwegian Cruise Lines down 24%. Okay, the common denominator within all of these is travel, is the uh, you know, is is the travel and the consumer. Now,",
+              "textSha256": "b626f08084ab80eb8637b37aa5597e7f787525e0d02ce5c8fc16db0460448100",
+              "segmentIds": [
+                "s00469",
+                "s00470",
+                "s00471",
+                "s00472",
+                "s00473",
+                "s00474",
+                "s00475",
+                "s00476",
+                "s00477",
+                "s00478",
+                "s00479",
+                "s00480",
+                "s00481",
+                "s00482",
+                "s00483",
+                "s00484"
+              ]
+            },
+            {
+              "startId": "s00472",
+              "endId": "s00484",
+              "startIndex": 471,
+              "endIndexInclusive": 483,
+              "startSeconds": 946.72,
+              "endSeconds": 982.48,
+              "text": "travel stocks are looking like the next warning that a deep consumer trouble is coming and the group falling as much as 11% last week. Here we have Airbnb, Airbnb down 8%. TCOM, TCOM, that's Trip.com down about 11 12%. American Airlines, the flights there, Expedia down about 12, 13, 14%. Trip Advisor down 17%, Booking.com down 18% and Norwegian Cruise Lines down 24%. Okay, the common denominator within all of these is travel, is the uh, you know, is is the travel and the consumer. Now,",
+              "textSha256": "b9acac3867b2b27c138d5ae6e7a72501b34be7bd6eed98e7b629fa5947be4071",
+              "segmentIds": [
+                "s00472",
+                "s00473",
+                "s00474",
+                "s00475",
+                "s00476",
+                "s00477",
+                "s00478",
+                "s00479",
+                "s00480",
+                "s00481",
+                "s00482",
+                "s00483",
+                "s00484"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00105",
+            "endId": "s00110",
+            "startIndex": 104,
+            "endIndexInclusive": 109,
+            "startSeconds": 220.159,
+            "endSeconds": 233.12,
+            "text": "if we're look if we're targeting those explorers, we can go over here to the eyeshares or the state street sector tracker here. And this one does a little bit better job of actually showing you the stocks in there. So, what we can do",
+            "textSha256": "52bba6a5cd020604cb6b34b3abdec4aa37eaa64c3b81286509e540a7ff39460a",
+            "segmentIds": [
+              "s00105",
+              "s00106",
+              "s00107",
+              "s00108",
+              "s00109",
+              "s00110"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00237",
+            "endId": "s00237",
+            "startIndex": 236,
+            "endIndexInclusive": 236,
+            "startSeconds": 477.36,
+            "endSeconds": 480.639,
+            "text": "those that we want to watch probably",
+            "textSha256": "b7e88347f4d2c511b2cdad0061bea09a691d6535d4b094711df72833076e657c",
+            "segmentIds": [
+              "s00237"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00395",
+            "endId": "s00395",
+            "startIndex": 394,
+            "endIndexInclusive": 394,
+            "startSeconds": 801.92,
+            "endSeconds": 804.959,
+            "text": "to put this together with the valuation",
+            "textSha256": "c1fdcf4ec4c508c4fd25d84e1322cd53842f01dba91817f400356348a5fc42b9",
+            "segmentIds": [
+              "s00395"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 17,
+      "videoId": "pWnu1C8I6Xw",
+      "title": "Superinvestors are buying this stock I added $10,000+ last week",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "sourceRunId": "9d2424eb-1383-4480-b969-eb7b221a0e23",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "6059156a2ce999d8f3fff22a0e1d723e3bec780ff52684f00497749a025a0da0",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 46,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "inventoryResearchRunId": "eb60d694-b38c-4ba9-bba3-92ef8ab82796",
+      "evidenceItemCount": 9,
+      "segmentsOutsideInventory": 2,
+      "knownChecks": [
+        {
+          "id": "actor-specific-purchase-qualification",
+          "severity": "critical",
+          "evidenceIds": [
+            "c1",
+            "k2"
+          ],
+          "criterion": "CEO James Burke 1.1M-share purchase carries last-week/52-week-low qualification. Do not transfer that execution level to creator 100-share purchase without separate evidence.",
+          "anchors": [
+            {
+              "startId": "s00001",
+              "endId": "s00024",
+              "startIndex": 0,
+              "endIndexInclusive": 23,
+              "startSeconds": 0,
+              "endSeconds": 67.08,
+              "text": "Trump, Nancy Pelosi, Peter Thiel, David Tepper, and the company's biggest insiders all bought the stock this year. The CEO as recent as last week. Four of them got me interested. One of them made me buy. Copying trades blindly is how people lose money, but 13Fs are very informative. 13Fs are 45 days stale though, and even great investors can be wrong. So, I did my research here. Trump bought here. Pelosi exercised call options here. Thiel added more here. Tepper doubled his position around here and added more here. And the biggest insider, CEO James Burke, bought 1.1 million shares across three transactions last week near the 52-week low. The stock is Vistra, ticker symbol VST. I just purchased 100 shares myself, and I am now long the stock. It trades at 10 times enterprise value to EBITDA and 16 times 2026 earnings. If you're bullish on AI, energy is going to be in high demand, and Vistra is set to capitalize.",
+              "textSha256": "054e241ba0b851808f9bc46fa82cc561a75e066ea9ee9e5453d4020fcec217ae",
+              "segmentIds": [
+                "s00001",
+                "s00002",
+                "s00003",
+                "s00004",
+                "s00005",
+                "s00006",
+                "s00007",
+                "s00008",
+                "s00009",
+                "s00010",
+                "s00011",
+                "s00012",
+                "s00013",
+                "s00014",
+                "s00015",
+                "s00016",
+                "s00017",
+                "s00018",
+                "s00019",
+                "s00020",
+                "s00021",
+                "s00022",
+                "s00023",
+                "s00024"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00045",
+            "endId": "s00046",
+            "startIndex": 44,
+            "endIndexInclusive": 45,
+            "startSeconds": 107.48,
+            "endSeconds": 113.04,
+            "text": "I'll be sharing more about the stock in my long-form video on YouTube.",
+            "textSha256": "3fd14a5b8051d6d3b416761c38df6eed5965baa4675cb4545f670e87fbcaa147",
+            "segmentIds": [
+              "s00045",
+              "s00046"
+            ]
+          }
+        },
+        {
+          "selection": "outside-known-defect-anchors-only",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00025",
+            "endId": "s00030",
+            "startIndex": 24,
+            "endIndexInclusive": 29,
+            "startSeconds": 65.8,
+            "endSeconds": 79.24,
+            "text": "Here's what I don't like about the company though. Heavy regulatory scrutiny, commoditized markets with real pricing risk, data center delays impacting growth, and weather events can be absolutely catastrophic for the",
+            "textSha256": "f51f824b93e963de25fb80b97b3e222ae05f833630d193da079fe6596f764cf5",
+            "segmentIds": [
+              "s00025",
+              "s00026",
+              "s00027",
+              "s00028",
+              "s00029",
+              "s00030"
+            ]
+          }
+        },
+        {
+          "selection": "outside-known-defect-anchors-only",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00037",
+            "endId": "s00042",
+            "startIndex": 36,
+            "endIndexInclusive": 41,
+            "startSeconds": 88.84,
+            "endSeconds": 105.72,
+            "text": "Tepper's double-down push me over the line. Everyone I named is worth watching, but he's crushed S&P for nearly three decades. Just $10,000 with him when he first started when he closed his public fund in 2019 would be worth",
+            "textSha256": "71405d87d3eac619ad47b39aed0d21d0a3ca1676f24433e87e93054ba427a46f",
+            "segmentIds": [
+              "s00037",
+              "s00038",
+              "s00039",
+              "s00040",
+              "s00041",
+              "s00042"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 18,
+      "videoId": "1WNowIoNgtg",
+      "title": "Generate $3,000 Weekly Passive Income with this Options Strategy",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "sourceRunId": "fb769030-8731-4ea3-a262-5cb733b496dc",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 1030,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "inventoryResearchRunId": "a0b17ec4-fe6f-4885-ab90-f37bf1a1a010",
+      "evidenceItemCount": 54,
+      "segmentsOutsideInventory": 460,
+      "knownChecks": [
+        {
+          "id": "strike-versus-delta",
+          "severity": "critical",
+          "evidenceIds": [
+            "k20"
+          ],
+          "criterion": "Keep 195/190/185 strike examples distinct from 39 delta. Caption 1914 must not become a certain 14–19 delta range without source verification.",
+          "anchors": [
+            {
+              "startId": "s00540",
+              "endId": "s00558",
+              "startIndex": 539,
+              "endIndexInclusive": 557,
+              "startSeconds": 1104.559,
+              "endSeconds": 1146.4,
+              "text": "this out. If you go for a higher delta, say 195, right? If you go for a 195 delta, if you go for 195 strike price on a $200 stock, that delta is going to be higher. So you can see here 39 delta. Yes, you will collect a lot of premium like $800 or more dollars in this example, but you're going to get assigned a little bit more. Here you can see like the green zone, which I'll call the green zone, 190, 185. So lower deltas, lower premium, but higher chance of winning the trade. Then if you go too low and the delta is like 1914 or you know something lower then you're just going to collect a lot less premium and it doesn't really make sense because the weekly income that you're going to make is just probably not going to be enough",
+              "textSha256": "82573b6de03fa9d9898cb282ce1a3d1215f7edad161182ebba8f6e839000563c",
+              "segmentIds": [
+                "s00540",
+                "s00541",
+                "s00542",
+                "s00543",
+                "s00544",
+                "s00545",
+                "s00546",
+                "s00547",
+                "s00548",
+                "s00549",
+                "s00550",
+                "s00551",
+                "s00552",
+                "s00553",
+                "s00554",
+                "s00555",
+                "s00556",
+                "s00557",
+                "s00558"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        },
+        {
+          "id": "expiry-premium-and-breakeven",
+          "severity": "critical",
+          "evidenceIds": [
+            "c2",
+            "m20"
+          ],
+          "criterion": "Retain November 20 expiry and separate 165 strike, 175 at-the-money/$16 example. Expose $1.85 premium/source $153 breakeven inconsistency; do not invent an executed premium from later captions.",
+          "anchors": [
+            {
+              "startId": "s00746",
+              "endId": "s00800",
+              "startIndex": 745,
+              "endIndexInclusive": 799,
+              "startSeconds": 1548.96,
+              "endSeconds": 1670.799,
+              "text": "see there. So, Palunteer. Okay, let's go back to the current example. Palter's at 175. Okay, what I'm going to do is let's go back to the 3-month chart. Stock is up a lot. I don't think it's going to come down back to these levels, but it can absolutely fall like probably to 155 at the lowest. That would be like very very like lowest I can see it going in the shorter term. Let's go for an expiration date. And again, I'm doing this all on the spot, guys. This is not rocket science. Whenever you're selling a put option, I'm going to show you how easy it is. Let's go to November 20, for example. If I sell a 175 put, is this better than buying the stock? Yes or no? Yes, it is. Because if you buy the stock, it's $175.58. Here, at least I'm getting 175 58 cents off. Not to mention the huge premium of $16. So even if you don't know what you're doing, selling puts is already a better strategy to enter a stock than just buying the stock outright. It's already a better strategy just to sell a put to get in. So selling at the money put, this this is called at the money. 175 is at the money. Way better, way better than just buying the stock outright. Okay? Especially for Palunteer, which is tapped out for gains. it is tapped out. I don't see the stock going up that much in the short term. So, because of that, selling puts to me is the number one strategy that I would be using on pound right now. So, 175 better. Yes, it's better. But if we're afraid of some downside risk, go for 165. Guess what? 165 minus the premium that you collect here, which is $1.85 gets you a break even of effectively 153. your break even is lower than that downside price target that I just talked about which is 155 pound here falls to 155 could happen not super likely but could happen well this right here this sell put option protects you against that downside and you get 12 bucks 12 bucks is actually insane it's actually insane premium 10% of 165 is 16 this is 12 so it's not that far off and I have to wait until like November 20th that's not even that much time so let me actually expand this right here you can",
+              "textSha256": "71b74f40a6a4d0e84663ad93e535528a395686a06781949f5ac62eb7a32b1711",
+              "segmentIds": [
+                "s00746",
+                "s00747",
+                "s00748",
+                "s00749",
+                "s00750",
+                "s00751",
+                "s00752",
+                "s00753",
+                "s00754",
+                "s00755",
+                "s00756",
+                "s00757",
+                "s00758",
+                "s00759",
+                "s00760",
+                "s00761",
+                "s00762",
+                "s00763",
+                "s00764",
+                "s00765",
+                "s00766",
+                "s00767",
+                "s00768",
+                "s00769",
+                "s00770",
+                "s00771",
+                "s00772",
+                "s00773",
+                "s00774",
+                "s00775",
+                "s00776",
+                "s00777",
+                "s00778",
+                "s00779",
+                "s00780",
+                "s00781",
+                "s00782",
+                "s00783",
+                "s00784",
+                "s00785",
+                "s00786",
+                "s00787",
+                "s00788",
+                "s00789",
+                "s00790",
+                "s00791",
+                "s00792",
+                "s00793",
+                "s00794",
+                "s00795",
+                "s00796",
+                "s00797",
+                "s00798",
+                "s00799",
+                "s00800"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00207",
+            "endId": "s00212",
+            "startIndex": 206,
+            "endIndexInclusive": 211,
+            "startSeconds": 447.599,
+            "endSeconds": 461.759,
+            "text": "was like, \"I just bought this car today.\" And I was like, \"Oh my goodness, I feel so bad, you know, for for him.\" But it was a funny cuz it was very light damages. And anyways, the insurance company did end up paying for like one",
+            "textSha256": "c0da4e573da94e215f52d169c7e4fe3b7cac185e970064277a0ee76d423717d7",
+            "segmentIds": [
+              "s00207",
+              "s00208",
+              "s00209",
+              "s00210",
+              "s00211",
+              "s00212"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00515",
+            "endId": "s00520",
+            "startIndex": 514,
+            "endIndexInclusive": 519,
+            "startSeconds": 1058,
+            "endSeconds": 1070.64,
+            "text": "understand it. I didn't come out of the gate understanding option trading by the way. I had a internship when I was very young and my very first internship was next to market makers that were trading options. Right? This is way before",
+            "textSha256": "c74dc29f8377fbafb4a5174987c34fc58433586adb469671320d6105076a7429",
+            "segmentIds": [
+              "s00515",
+              "s00516",
+              "s00517",
+              "s00518",
+              "s00519",
+              "s00520"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00824",
+            "endId": "s00829",
+            "startIndex": 823,
+            "endIndexInclusive": 828,
+            "startSeconds": 1714.08,
+            "endSeconds": 1726.3990000000001,
+            "text": "cheaper, right? But anyways, if you feel like you want to get out of the stock, you can. You're still going to be in the green here. You actually have so much green. Like, the majority of the screen is green. Um, but right here at 153 is",
+            "textSha256": "a34f9b82d8158103f7d74a1f39ecff8f5a719a00321c1370651438fdee1139ab",
+            "segmentIds": [
+              "s00824",
+              "s00825",
+              "s00826",
+              "s00827",
+              "s00828",
+              "s00829"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 19,
+      "videoId": "vrTbCxUzRw4",
+      "title": "Why I Buy the Strongest Mining Stocks First — Not the Cheapest",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h19-audit-recovery-session-1.json",
+        "sha256": "8d7eece7ca5ea046f607866558653c90ea6ccc92428127f9075dbe7a6747a63a"
+      },
+      "sourceRunId": "a3b4ec19-1cfc-452e-b3f9-2e66c287609f",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "a6edfbe7dd80798e289e347abbbb5593f03d82dc977e64a0aba3b0cd28c05c53",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 544,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h19-audit-recovery-session-1.json",
+        "sha256": "8d7eece7ca5ea046f607866558653c90ea6ccc92428127f9075dbe7a6747a63a"
+      },
+      "inventoryResearchRunId": "40933a7e-bfe9-4ee5-93c0-116178063e7d",
+      "evidenceItemCount": 55,
+      "segmentsOutsideInventory": 172,
+      "knownChecks": [
+        {
+          "id": "moving-average-caption-ambiguity",
+          "severity": "critical",
+          "evidenceIds": [
+            "c4",
+            "m15"
+          ],
+          "criterion": "Raw 250-day cannot be silently asserted as 50-day plus 200-day or verified 250-day. Require explicit ambiguity without chart/audio confirmation.",
+          "anchors": [
+            {
+              "startId": "s00264",
+              "endId": "s00271",
+              "startIndex": 263,
+              "endIndexInclusive": 270,
+              "startSeconds": 595,
+              "endSeconds": 614.72,
+              "text": "SSR Mining Right? So, same thing, uptrend, 250-day, we're all above it. Love it, love it, love it. Correction. But this one is not super extended yet. This one I can probably get at a reasonable price.",
+              "textSha256": "9d8d36124c3e225b8dc9b26ebcb0d3bc0df1300eb0aef05adf7e5cb027003e59",
+              "segmentIds": [
+                "s00264",
+                "s00265",
+                "s00266",
+                "s00267",
+                "s00268",
+                "s00269",
+                "s00270",
+                "s00271"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        },
+        {
+          "id": "resilience-despite-corrections",
+          "severity": "material",
+          "evidenceIds": [
+            "k13"
+          ],
+          "criterion": "Retain strong war-start correction and tough June correction despite intact 200-day resilience; do not claim absence of severe corrections.",
+          "anchors": [
+            {
+              "startId": "s00152",
+              "endId": "s00154",
+              "startIndex": 151,
+              "endIndexInclusive": 153,
+              "startSeconds": 333.16,
+              "endSeconds": 342.84,
+              "text": "50-day moving up, 200-day moving up, obviously uptrend. But it is a little extended right now. We just made a new",
+              "textSha256": "225334d542c84b3e065747d1147150695d2fe6b8b410705243e040bd593448b5",
+              "segmentIds": [
+                "s00152",
+                "s00153",
+                "s00154"
+              ]
+            },
+            {
+              "startId": "s00177",
+              "endId": "s00186",
+              "startIndex": 176,
+              "endIndexInclusive": 185,
+              "startSeconds": 397.04,
+              "endSeconds": 422.76,
+              "text": "Yeah, we had a strong correction here when the war started. And obviously, the June correction was was tough, but nothing major. 200-day never in doubt, which outstanding. Again, shows us this is a great stock, right? We made a higher low. But, the other corrections pretty shallow, not very deep at all. And that",
+              "textSha256": "f532af0f4e2860b677afa36cef7ada0d37447edf70e28af93b1bd2d7b29b77c3",
+              "segmentIds": [
+                "s00177",
+                "s00178",
+                "s00179",
+                "s00180",
+                "s00181",
+                "s00182",
+                "s00183",
+                "s00184",
+                "s00185",
+                "s00186"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00110",
+            "endId": "s00111",
+            "startIndex": 109,
+            "endIndexInclusive": 110,
+            "startSeconds": 237.16,
+            "endSeconds": 243.28,
+            "text": "And then we look at the technical. We leave out the fundamentals, right? You",
+            "textSha256": "89402185ad6a0f27d32f01f57cade1df87a9d2a574d33af4d44c458ddd363f77",
+            "segmentIds": [
+              "s00110",
+              "s00111"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00263",
+            "endId": "s00263",
+            "startIndex": 262,
+            "endIndexInclusive": 262,
+            "startSeconds": 592.52,
+            "endSeconds": 597.64,
+            "text": "hitting the subscribe button.",
+            "textSha256": "89d14d412b615198fc8b7c64b05864e6f9be0ef6925270852515c0cc5722116b",
+            "segmentIds": [
+              "s00263"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00420",
+            "endId": "s00420",
+            "startIndex": 419,
+            "endIndexInclusive": 419,
+            "startSeconds": 935.92,
+            "endSeconds": 939.4399999999999,
+            "text": "thing.",
+            "textSha256": "96063957faf790c2e4f200b6336f140ae7821c04059469a477f2a327d9835106",
+            "segmentIds": [
+              "s00420"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    },
+    {
+      "case": 20,
+      "videoId": "Dy_0RtmAt1U",
+      "title": "Silver Is at Triple Support — If It Breaks, $54 Is in Play",
+      "sourceArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "sourceRunId": "210a4f30-55bb-46a3-959d-b6ca05f2b0f1",
+      "sourceStatus": "completed",
+      "sourceContentSha256": "48fd10e2e407eb6527f9051619d41ccc607186988e0e3d260d9859709a0fa9ac",
+      "sourceHashEncoding": "UTF-8 JSON.stringify, original parsed key order",
+      "segmentCount": 337,
+      "sourceKind": "native_captions_transcriptapi",
+      "inventoryArtifact": {
+        "path": "data/readiness-20260927/candidate-h-remaining8-session-2.json",
+        "sha256": "cded7a3921510764aee01aaed24e62375e29b0ec5879084d717920a65df50cc7"
+      },
+      "inventoryResearchRunId": "6f64bb01-c4a4-4882-b5a5-005841c0b480",
+      "evidenceItemCount": 19,
+      "segmentsOutsideInventory": 86,
+      "knownChecks": [
+        {
+          "id": "gold-to-silver-direction",
+          "severity": "critical",
+          "evidenceIds": [
+            "k2"
+          ],
+          "criterion": "Preserve source direction: silver cannot decouple from gold; gold support breakdown pressures silver. Do not reverse the attributed relationship.",
+          "anchors": [
+            {
+              "startId": "s00040",
+              "endId": "s00058",
+              "startIndex": 39,
+              "endIndexInclusive": 57,
+              "startSeconds": 116.479,
+              "endSeconds": 185.76,
+              "text": "looks fine. The problem is that silver will not be able to decouple itself from gold. And when we look at gold, we see that the gold price is already way past the danger zone. I mean, it missed the landing platform of the aircraft carrier already. It's fighting with the 50-day moving average. If we lose this average, we are going down, as you know. back to the therapy session of 4,215. If you've been with this channel for a long time, then you know how much we talked about this area right here, including this uptrend. And that would then push significant pressure on silver to go down, break the lower end of the uptrend channel and the 50-day moving average, which as of",
+              "textSha256": "8931ab94742c93490f0d1ae74fc23822b6937c6cbac7d213d5b1b5e94e9582cf",
+              "segmentIds": [
+                "s00040",
+                "s00041",
+                "s00042",
+                "s00043",
+                "s00044",
+                "s00045",
+                "s00046",
+                "s00047",
+                "s00048",
+                "s00049",
+                "s00050",
+                "s00051",
+                "s00052",
+                "s00053",
+                "s00054",
+                "s00055",
+                "s00056",
+                "s00057",
+                "s00058"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        },
+        {
+          "id": "unnamed-recent-purchase",
+          "severity": "material",
+          "evidenceIds": [
+            "c1"
+          ],
+          "criterion": "Retain unnamed position bought yesterday on technicals alongside caution and existing holdings; do not invent instrument or size.",
+          "anchors": [
+            {
+              "startId": "s00205",
+              "endId": "s00214",
+              "startIndex": 204,
+              "endIndexInclusive": 213,
+              "startSeconds": 672.399,
+              "endSeconds": 704.519,
+              "text": "am I now aggressively buying here at the lower end of the uptrend channel? I bought one position yesterday just purely on the technicals. I have to because we have not broken down yet. But it does not look good. I we need to adjust what is happening in the market. The bond market is an issue. There's no sugar coating it.",
+              "textSha256": "a7a26e3b1d221a6308bc89b5ef35bb9700394b248734c8c9bff30e53f6cd68c6",
+              "segmentIds": [
+                "s00205",
+                "s00206",
+                "s00207",
+                "s00208",
+                "s00209",
+                "s00210",
+                "s00211",
+                "s00212",
+                "s00213",
+                "s00214"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        },
+        {
+          "id": "downside-and-failed-recovery",
+          "severity": "critical",
+          "evidenceIds": [
+            "k6"
+          ],
+          "criterion": "Downside scenario requires support/channel breakdown AND no quick improvement. Preserve condition rather than unconditional target; raw 5960/5950-ish precision remains ambiguous.",
+          "anchors": [
+            {
+              "startId": "s00263",
+              "endId": "s00275",
+              "startIndex": 262,
+              "endIndexInclusive": 274,
+              "startSeconds": 863.279,
+              "endSeconds": 899.92,
+              "text": "we know the drill. we break below the 50-day and the lower end of the uptrend channel and things don't improve quickly, we're probably going to go lower. And now we know where we probably going to end up. We're probably going to end up around 5950ish. That's the this silver line here. Let's make it 60 to be easy. and then around 54 55 below that.",
+              "textSha256": "00ca94f27cd9ae16d30d9197d5a54ced18522fa295dad2e33fdf00cb3e62c173",
+              "segmentIds": [
+                "s00263",
+                "s00264",
+                "s00265",
+                "s00266",
+                "s00267",
+                "s00268",
+                "s00269",
+                "s00270",
+                "s00271",
+                "s00272",
+                "s00273",
+                "s00274",
+                "s00275"
+              ]
+            }
+          ],
+          "reviewStatus": "pending-paired-output-review",
+          "audioChartVerified": false
+        }
+      ],
+      "sourceSentinels": [
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00061",
+            "endId": "s00061",
+            "startIndex": 60,
+            "endIndexInclusive": 60,
+            "startSeconds": 188.4,
+            "endSeconds": 193.76000000000002,
+            "text": "influencing gold. And that brings us to",
+            "textSha256": "e4b5e6496e5e60996f40d5183a3b4a6e7f6d22af0de7d19e80bc947fa6fb1c85",
+            "segmentIds": [
+              "s00061"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00182",
+            "endId": "s00187",
+            "startIndex": 181,
+            "endIndexInclusive": 186,
+            "startSeconds": 605.76,
+            "endSeconds": 632,
+            "text": "But let's assume this low holds. So, let's put this in. And I'm gonna make these. Let's do them silver because we're talking about silver. So these are the two zones",
+            "textSha256": "16b0d95e8a311bb59a2de4e90578e0c793291482afa3800afd0e9e670907849d",
+            "segmentIds": [
+              "s00182",
+              "s00183",
+              "s00184",
+              "s00185",
+              "s00186",
+              "s00187"
+            ]
+          }
+        },
+        {
+          "selection": "outside-retained-evidence-inventory",
+          "reviewStatus": "unreviewed",
+          "historicallyUnreviewedClaim": false,
+          "criterion": "Inspect surrounding source for material claims, conditions, ownership, dates and uncertainty absent from both outputs. This is a review sample, not assumed material information or full-transcript recall proof.",
+          "anchor": {
+            "startId": "s00276",
+            "endId": "s00281",
+            "startIndex": 275,
+            "endIndexInclusive": 280,
+            "startSeconds": 897.279,
+            "endSeconds": 921.079,
+            "text": "And that would fake out a lot of people. No doubt about it. But if even if we go down to 54 and nothing happens, what is that really? It's just a kangaroo market, right? We go up, we go down. And that's kind of what I",
+            "textSha256": "e7b748ca9e51cd7ce879a434fb7da362a190640960d2f10389a005c210ba7e6b",
+            "segmentIds": [
+              "s00276",
+              "s00277",
+              "s00278",
+              "s00279",
+              "s00280",
+              "s00281"
+            ]
+          }
+        }
+      ],
+      "leapedgeUsable": true,
+      "reviewStatus": "pending",
+      "limitations": [
+        "Caption/audio correctness and complete transcript availability not independently established.",
+        "Sentinel sampling cannot certify full source recall.",
+        "No known-check entry means no specific retained defect selected here, not a quality pass."
+      ]
+    }
+  ]
+}

@@ -1687,14 +1687,14 @@
     "verification": {
       "implementation": "Current and experimental settings, frozen per-run identity, targeted supplemental coverage audit, legacy checkpoint compatibility and nonspending paired-evaluation gate implemented.",
       "pairedLiveEvaluation": "not-started",
-      "cloudAcceptance": "pending-hosting-decision",
-      "browser": "blocked: automatic approval review refused temporary local fixture preview under cloud-only requirement; cloud preview or explicit test-only exception pending",
-      "targetedTests": "46 passed plus legacy checkpoint and delivery ledger10 passed.",
+      "cloudAcceptance": "User explicitly selected Vercel + Neon only; Google migration cancelled. Vercel-hosted durable worker design pending implementation/acceptance. Google APIs and empty image registry were created; no application/database deployed or credentials transferred.",
+      "browser": "Temporary isolated fixture preview approved. Desktop save/reload and reset-to-current verified; explanation visually inspected at desktop and390px mobile. Run identity/drilldown/cloud checks remain pending.",
+      "targetedTests": "47 cloud/runner/source-review/locks/convention checks passed with zero skips; full integrated rerun pending.",
       "build": "passed",
       "typecheck": "passed",
       "offlineGate": "advisory-only",
       "paidCalls": 0,
-      "fullSuites": "742 tests:741 passed/1 existing skip/0 failures in both default and YTI_DB=pglite; final full runs166.438s and166.285s."
+      "fullSuites": "Expanded checkpoint773tests:772pass/1existing skip/0fail each (234.530s default,235.486s PGlite), before cancelled wake-hook removal and final documentation."
     },
     "report": "docs/reviews/targeted-audit-implementation-20260927.md",
     "inputReadiness": "docs/reviews/targeted-audit-input-readiness-20260927.md",
@@ -1702,7 +1702,18 @@
       "Initial experimental audits split short drafts into bounded jobs and may cost more.",
       "Impact classification still depends on model judgment; indirect relationships need source-backed evaluation.",
       "All20 retained transcript hashes match, but audio completeness is unverified; cases2/3 timestamp coverage incomplete/unknown and18donors retain source-recall warnings.",
-      "No live before/after performance or quality claim. Cloud runner/export adapter and frozen paired bundles remain pending."
-    ]
+      "No live before/after performance or quality claim. Portable paired cloud runner and export guards implemented; paid execution remains pending cloud setup.",
+      "Research audit sees retained evidence inventory, not every source segment. Case14 IDIQ qualifier is absent; unchanged-inventory experiment cannot claim this defect recovered."
+    ],
+    "hostingDecision": {
+      "providers": [
+        "Vercel",
+        "Neon"
+      ],
+      "localProductionWorker": false,
+      "googleMigration": "cancelled by user",
+      "proposedWorker": "Selected by user: Vercel Workflows executing bounded Vercel Function steps; Neon remains database"
+    },
+    "handoff": "docs/handoffs/2026-09-27-claude-handoff.md"
   }
 }

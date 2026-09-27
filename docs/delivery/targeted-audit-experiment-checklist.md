@@ -11,7 +11,7 @@ Authority: user approved implementation on 27 September 2026. This is an experim
 - [ ] Preserve equal short/long horizons, general cross-company materiality, video-date analysis and separate current updates.
 - [ ] Do not improve apparent quality by removing difficult cases, hiding gaps, truncating transcripts or treating completion as acceptance.
 - [ ] Preserve all UI functionality and approved Finradar theme; do not modify the user's untracked ResearchBrief (1).tsx.
-- [ ] Production must be entirely cloud-hosted; local development checks are not cloud acceptance. No cloud purchases/provisioning until topology and costs are approved.
+- [ ] Production must be entirely cloud-hosted; local development checks are not cloud acceptance. Google Cloud topology and temporary isolated fixture preview approved; scoped runtime IAM and secret transfer await the concrete browser-policy confirmation.
 - [ ] No new LeapEdge requests. Use retained reports as comparators, never ground truth. Fifty human-verified cases remain removed; no Finradar integration.
 
 ## Agent lanes and handoffs
@@ -55,3 +55,15 @@ Every agent reads AGENTS.md and applicable skill/spec, writes behavioural tests 
 - [ ] Publish evidence and obtain user approval before default promotion. Maintain legacy choice and operational rollback afterward.
 
 Status: experimental implementation complete under validation; both full suites passed (741 pass,1 existing skip each), typecheck/build passed; offline gate advisory only. Browser, paid paired comparison and cloud acceptance pending. No default promotion. Checked implementation items do not certify live semantic quality.
+
+## Continuation: cloud preparation and adversarial review
+
+- Google Cloud project `leapedgestudy` has billing enabled and deployment APIs enabled; Cloud Run/Cloud SQL target approved. No production acceptance claimed.
+- Isolated fixture settings selection saved and survived reload; restoring Current and reset-to-product-default selection verified. Desktop and390px explanation screenshots captured; no horizontal overflow in the measured390px view. Run evidence/recovery/cloud checks remain open.
+- Portable40-arm runner uses fresh drafting/auditing from frozen retrieval: acquisition, extraction, planning and search are excluded from measured gains.
+- Adversarial exporter checks reject mismatched input identities, mislabeled admissions and unregistered costs.
+- Source audit identified missing case14 IDIQ qualifier. Shared source reconciliation is a separate proposed treatment, not secretly added to the targeted arm. No known omission recovery or quality pass claimed.
+
+## Hosting correction — binding user instruction
+
+Vercel and Neon only. Google Cloud migration is cancelled. Do not provision Google resources, transfer secrets or proceed with pending Google approvals. Proposed worker replacement: Vercel Workflow with bounded Function steps and Neon checkpoints/cost ledger. Existing Google packaging is unaccepted abandoned preparation, not the release target. No local production worker dependency is permitted.

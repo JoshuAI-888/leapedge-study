@@ -1,6 +1,6 @@
 # Standalone completion loop — 19 September 2026
 
-> 27 September 2026: the user now requires cloud-only production, superseding the historical Mac-worker permission below. Targeted audit work follows [the experiment checklist](targeted-audit-experiment-checklist.md). Current audit remains default until measured gates and explicit user approval; no new LeapEdge submissions are authorized for this experiment. Cloud topology/costs and browser preview location are pending user decisions.
+> 27 September 2026: the user now requires cloud-only production, superseding the historical Mac-worker permission below. Targeted audit work follows [the experiment checklist](targeted-audit-experiment-checklist.md). Current audit remains default until measured gates and explicit user approval; no new LeapEdge submissions are authorized for this experiment. Final hosting decision: Vercel + Neon + Vercel Workflows; Google migration cancelled. Temporary isolated local fixture checks permitted. See [Claude handoff](../handoffs/2026-09-27-claude-handoff.md).
 
 > 20 September 2026 update: the user removed the old US$25 cap for a bounded 20-video comparison. That comparison is complete with findings; see [the report](live-comparison-20-20260920.md). Historical budget/status statements below describe the earlier pilot. Finradar integration remains excluded.
 

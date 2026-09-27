@@ -91,3 +91,4 @@ test('candidate requires explicit comparative material coverage review',()=>{
 test('baseline truncated processing is not accepted as a fair completed observation',()=>{
  const f=fixture();f.runs[0].quality.noSilentTruncation.status='failed';assert.equal(evaluateExperiment(f,()=>true).verdict,'not-passed');
 });
+test('fresh frozen-retrieval comparison reports its narrower scope and mixed boundaries fail',()=>{const f=fixture();for(const r of f.runs)r.scope='fresh-draft-audit-from-frozen-retrieval';const good=evaluateExperiment(f,()=>true);assert.equal(good.verdict,'eligible-for-user-review');assert.deepEqual(good.measurementScopes,['fresh-draft-audit-from-frozen-retrieval']);f.runs[0].scope='fresh-research-from-frozen-source';assert.equal(evaluateExperiment(f,()=>true).verdict,'not-passed');});
