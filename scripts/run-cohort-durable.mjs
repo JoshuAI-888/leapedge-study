@@ -39,13 +39,19 @@ export function researchOnlySourceOutput(run,entry){
 }
 /** Account-fatal provider outcomes stop admission; transient and schema failures do not. */
 export function containProviderAccountFailure(control,run,error=run.error){
- const text=typeof error==='string'?error:error?.message??'';
- const status=error?.name==='TransportError'&&[401,402,403].includes(error.status)?error.status:Number(text.match(/\bHTTP(?:\s+status)?\s*[:=]?\s*(401|402|403)\b/i)?.[1]);
- if(![401,402,403].includes(status))return null;
- run.status='failed';
+ const candidates=[{path:'error',error},{path:'output.coverageRepairError',error:run.output?.coverageRepairError},{path:'output.supplementalAuditFailure.reason',error:run.output?.supplementalAuditFailure?.reason}];
+ const failure=candidates.map(item=>{
+  const text=typeof item.error==='string'?item.error:item.error?.message??'';
+  const status=item.error?.name==='TransportError'&&[401,402,403].includes(item.error.status)?item.error.status:Number(text.match(/\bHTTP(?:\s+status)?\s*[:=]?\s*(401|402|403)\b/i)?.[1]);
+  return {...item,status};
+ }).find(item=>[401,402,403].includes(item.status));
+ if(!failure)return null;
+ // Optional repair failure must stop admission, not erase an already published
+ // original brief or relabel its needs_review state as a total research failure.
+ if(failure.path==='error')run.status='failed';
  const item=control.cases.find(c=>c.sourceRunId===run.id||c.researchRunId===run.id);
- if(item)item.state='failed';
- control.providerAccountBlock={runId:run.id,videoId:run.videoId,httpStatus:status,reason:'provider-account-blocked',automaticRetry:false};
+ if(item)item.state=run.status;
+ control.providerAccountBlock={runId:run.id,videoId:run.videoId,httpStatus:failure.status,diagnosticPath:failure.path,reason:'provider-account-blocked',automaticRetry:false};
  return 'provider-account-blocked';
 }
 export function ledgerAccounting(calls){
@@ -118,7 +124,7 @@ export async function main(argv=process.argv.slice(2), testHooks={}){
      try{await step(run,settings);}catch(error){run.status='failed';run.error=error.message;stopReason=containProviderAccountFailure(control,run,error)??stopReason;control.failures.push({runId:run.id,videoId:run.videoId,stage,error:error.message,at:new Date().toISOString()});}
      finally{run.createdAt=actualCreatedAt;}
     }
-    if(run.status==='failed')stopReason=containProviderAccountFailure(control,run)??stopReason;
+    stopReason=containProviderAccountFailure(control,run)??stopReason;
     await testHooks.afterStep?.({run,stage});
     await database.prepare('UPDATE yi_runs SET stage=$1,status=$2,output=$3,title=$4,error=$5,updated_at=$6 WHERE id=$7').run(run.stage,run.status,JSON.stringify(run.output),run.title,run.error??null,new Date().toISOString(),run.id);
     control.timings.push({runId:run.id,stage,executionSeconds:(performance.now()-start)/1000,completedAt:new Date().toISOString()});await checkpoint();await testHooks.afterCheckpoint?.({run,stage});

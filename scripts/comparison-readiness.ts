@@ -16,6 +16,8 @@ const artifacts=[
  'data/readiness-20260927/live-candidate.json',
  ...['b','c','d','e','f'].map(id=>`data/readiness-20260927/candidate-${id}-session-1.json`),
  'data/readiness-20260927/candidate-g-session-2.json',
+ 'data/readiness-20260927/candidate-h-session-1.json',
+ 'data/readiness-20260927/candidate-h-remaining8-session-1.json',
  'data/comparison-20260920/results.json','data/recovery-20260920/results.json','data/recovery-final-20260920/results.json',
  'data/research-build-20260920/results.json','data/research-v8-20260920/results.json',
  'data/prod-sample-20260920/results.json','data/prod-resume-20260920/results.json',
@@ -37,7 +39,9 @@ if(process.argv.includes('--validate')){
  const captures=capturesSchema.parse(JSON.parse(readFileSync('data/comparison-20260920/leapedge-captures.json','utf8')));
  const loaded=artifacts.map(path=>{
   if(!existsSync(path))throw new Error(`Missing retained artifact: ${path}; export would be incomplete.`);
-  const text=readFileSync(path,'utf8');return {path,sha256:digest(text),...artifactSchema.parse(JSON.parse(text))};
+  const text=readFileSync(path,'utf8');const parsed=JSON.parse(text);
+  if(path.includes('/candidate-h-') && (!['finished','paused'].includes(parsed.state)||!parsed.sessions?.at(-1)?.endedAt))throw Error(`H controller has not ended: ${path}; wait for its durable terminal or paused checkpoint. Failed and incomplete paused cohorts remain exportable.`);
+  return {path,sha256:digest(text),...artifactSchema.parse(parsed)};
  });
  const videos=new Set(original.cases.map(c=>c.videoId));
  const runIds=new Set(loaded.flatMap(a=>a.runs.filter(r=>videos.has(r.videoId)).map(r=>r.id)));
@@ -46,9 +50,10 @@ if(process.argv.includes('--validate')){
  for(const a of loaded)for(const c of a.calls)if(runIds.has(c.run_id))ledger.set(c.id,{id:c.id,runId:c.run_id,status:c.status,amount:c.amount});
  const cases=original.cases.map(c=>{
   const capture=captures.captures.filter(r=>r.videoId===c.videoId).at(-1);
-  const attempts:ComparisonAttempt[]=loaded.flatMap(a=>a.runs.filter(r=>r.videoId===c.videoId).map(r=>{
+  const attempts:ComparisonAttempt[]=loaded.flatMap(a=>a.runs.filter(r=>r.videoId===c.videoId&&!r.output.benchmarkSourceImport).map(r=>{
    const calls=a.calls.filter(x=>x.run_id===r.id);const out=r.output;
    const research=r.input.task==='research-brief';
+   const importedSource=research?a.runs.find(source=>source.id===r.input.snapshot?.sourceRunId)?.output.benchmarkSourceImport:null;
    const stageTimings=a.timings?.filter(t=>t.runId===r.id);
    const boundary=stageTimings?.length?'recorded-stage-execution':a.path.startsWith('data/comparison-')?'ingestion-to-terminal':a.path.includes('operational-efficiency')?(research?'research-only':'retained-transcript-to-terminal'):'unknown';
    const published=a.briefs?.find(b=>b.runId===r.id);
@@ -57,7 +62,7 @@ if(process.argv.includes('--validate')){
    return {id:`${a.path}:${r.id}`,runId:r.id,cohort:a.path.split('/')[1]+':'+a.path.split('/').at(-1),status:r.status,stage:r.stage,createdAt:r.createdAt,updatedAt:r.updatedAt,error:r.error??null,model:r.model,promptVersion:r.promptVersion,
     configSha256:digest(r.input),transcriptSha256:out.source?digest(out.source):null,outputSha256:digest(out),artifact:{path:a.path,sha256:a.sha256},
     timing:{boundary,seconds:boundary==='unknown'||!['completed','failed','needs_review'].includes(r.status)?null:stageTimings?.length?stageTimings.reduce((n,t)=>n+t.executionSeconds,0):Math.max(0,elapsed),includesQueue:boundary!=='recorded-stage-execution',includesBrowser:false},
-    cost:{settledUsd:calls.length?calls.reduce((n,x)=>n+(x.status==='completed'?(x.amount??0):0),0):null,unsettledCalls:calls.filter(x=>!['completed','failed','released'].includes(x.status)).length,scope:'Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits.'},
+    cost:{settledUsd:calls.length?calls.reduce((n,x)=>n+(x.status==='completed'?(x.amount??0):0),0):null,unsettledCalls:calls.filter(x=>!['completed','failed','released'].includes(x.status)).length,scope:'Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits.'+(importedSource?` Research-only import: original source ${importedSource.originalSourceRunId}, source output SHA256 ${importedSource.originalSourceOutputSha256}, frozen analysis cutoff ${importedSource.analysisCutoff}. Imported source extraction time and historical costs excluded; no fresh source attempt measured.`:'')},
     acceptedClaims:Array.isArray(out.claims)?out.claims.filter((x:{passed?:boolean})=>x.passed).length:null,
     acceptedSentences:published?published.sentences.length:null,
     modelAcceptedDraftSentences:verdicts?verdicts.filter((x:{accepted?:boolean})=>x.accepted).length:null,
@@ -79,6 +84,9 @@ if(process.argv.includes('--validate')){
   'Unknown recovery boundaries have null duration. Created-to-updated duration includes queue where shown, excludes browser display and may include retries. Research-only and extraction replay are not fresh ingestion measurements.',
   'LeapEdge duration remains null because report timing boundaries were not captured consistently; no speedup ratio is asserted.',
   'Recorded-stage-execution is the sum of retained sequential stage durations for that run; it excludes acquisition, queue, inter-stage persistence and browser display. It is not URL-to-result latency. Failed stages and paid retry costs remain visible. Readiness candidate A uses retained stage durations only because its historical createdAt was overwritten; no elapsed wall-clock claim is made.',
+  'Candidate H contains two distinct treatments: three research-only reruns using imported processed G evidence, and eight frozen-transcript source-plus-research replays. Imported completed source rows are provenance, not new extraction attempts; they are omitted from attempt rows and their historical source costs/times are not charged to H. Research rows retain exact original source ID, source-output hash and historical analysis cutoff in cost scope. Never combine these treatments into a single latency or speed-gain claim.',
+  'An ended controller may be finished or cleanly paused; paused failures and open holds remain visible rather than blocking the comparison export. An actively running snapshot is not exported as a completed evaluation.',
+  'Candidate G account-blocked HTTP 402 attempts remain in the historical denominator. H reruns do not replace them. Published output counts do not establish quality equivalence; all retained LeapEdge timings remain unknown.',
   'All quality checks are unassessed: existing prose assessments are historical findings, not a new pass. Original and latest outputs require source-backed review.',
   'Artifacts are explicit retained exports only; this is not an inventory of every database call ever made. Model/settings/input and output hashes allow configuration/provenance checks without publishing private raw transcripts.',
  ]});

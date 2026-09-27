@@ -4,6 +4,20 @@ const scales:Record<string,number>={ones:1,thousands:1e3,millions:1e6,billions:1
 export function sourceNumericCheck(fact:FinancialFactData,retainedQuotes:string[]) {
  const result=(status:'literal_supported'|'unresolved'|'not_assessed',reason:string)=>({status,reason,original:fact});
  if(!fact.quote?.trim()||!retainedQuotes.some(q=>q.includes(fact.quote)))return result('unresolved','Exact original quote is not anchored.');
+ // A narrowly recognized word amount can prevent a false Arabic-token mismatch.
+ // It does not prove the metric, attribution, qualifier or annual/daily basis.
+ const halfWords:Record<string,number>={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10};
+ const halves=[...fact.quote.matchAll(/\b(one|two|three|four|five|six|seven|eight|nine|ten)[ -]+and[ -]+a[ -]+half\s*(thousand|million|billion|trillion)?\s*(%|percent\b|dollars?\b|shares?\b)?/gi)];
+ const matchingHalf=halves.some(m=>{
+  const suffix=m[3]?.toLowerCase();
+  const tail=fact.quote.slice((m.index??0)+m[0].length);
+  if(/^\s*(?:years?|months?|days?|hours?|minutes?|seconds?)\b/i.test(tail))return false;
+  const rate=suffix==='%'||suffix==='percent';
+  if(rate ? fact.unit!=='percent'||fact.currency!==null||fact.scale!=='ones' : !m[2]||['percent','percentage_points','basis_points'].includes(fact.unit))return false;
+  const magnitude=(halfWords[m[1].toLowerCase()]+0.5)*(scales[m[2]?.toLowerCase()??'ones']??1);
+  return Math.abs(magnitude-fact.value*scales[fact.scale])<=Math.max(1e-8,Math.abs(magnitude)*1e-12);
+ });
+ if(matchingHalf)return result('not_assessed','A recognized English N-and-a-half amount matches the proposed magnitude and scale, so Arabic tokens alone cannot disprove it. Metric, frequency and source fidelity remain independently unassessed; no decimal was guessed or literal verification awarded.');
  const tokens=[...fact.quote.matchAll(/(?:(USD|US\$|\$|EUR|€|GBP|£)\s*)?(-?\d+(?:,\d{3})*(?:\.\d+)?)(?:\s*(thousand|million|billion|trillion|万亿|萬億|万億|萬亿|万|萬|亿|億))?(?:\s*(basis[ -]points?|bps?|percentage[ -]points?|percent|[%％]))?/gi)];
  if(!tokens.length)return result('not_assessed','No Arabic numeric literal parsed; semantic/numeric fidelity still requires audit, not automatic rejection.');
  const proposedMagnitude=fact.value*scales[fact.scale];

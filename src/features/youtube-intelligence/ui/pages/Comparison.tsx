@@ -15,7 +15,7 @@ export function Comparison() {
       <h2>What this evidence establishes</h2>
       <p>{summary.cases} cases · {summary.uniqueRuns} distinct runs · {summary.observations} retained observations · {summary.failedObservations} failed observations · {summary.reviewObservations} needing review.</p>
       <p>Known ledger charges: <strong>{usd(summary.knownLedgerUsd)}</strong> · {summary.unsettledCalls} unsettled calls. Repeated observations are not summed as new charges. Unpriced transcript and other missing charges are excluded.</p>
-      <p>{summary.retainedLeapedgeReports} retained LeapEdge reports · {summary.missingLeapedgeTiming} cases lack comparable LeapEdge timing · {summary.browserMeasuredCases} cases include measured browser display time.</p>
+      <p>{summary.retainedLeapedgeReports} retained LeapEdge captures, including incomplete results · {summary.missingLeapedgeTiming} cases lack comparable LeapEdge timing · {summary.browserMeasuredCases} cases include measured browser display time.</p>
       <div className="yi-warning"><strong>Quality and timing are separate acceptance checks</strong><ul>{manifest.limitations.map((item, i) => <li key={i}>{item}</li>)}</ul></div>
       <p className="yi-muted">Evidence register generated {manifest.generatedAt}. This is a retained release snapshot, not a live status monitor. Failed and review-required attempts remain visible. No new LeapEdge analyses are triggered.</p>
       <Link href="/youtube-intelligence/lab">Back to Lab</Link>

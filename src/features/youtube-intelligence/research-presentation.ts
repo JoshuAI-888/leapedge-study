@@ -1,3 +1,4 @@
+import { semanticBasisIssues } from "./semantic-basis.ts";
 import { mixedTurnAttribution } from "./research-attribution.ts";
 import { externalComparisonEstablished, reviewFinancialFact } from "./research-brief.ts";
 import type { AcceptedSentence } from "./research-brief.ts";
@@ -77,15 +78,22 @@ export function thesisRobustnessLabel(sentence: AssessedSentence & {
 /** Current deterministic checks on retained records; never a replacement audit.
  * Do not modify original prose, facts, source passages or historical verdicts. */
 export function retainedSourceWarnings(
- sentence: Pick<AcceptedSentence,"text"|"speaker"|"evidenceIds"|"financialFacts"|"financialFactChecks">,
+ sentence: Pick<AcceptedSentence,"text"|"speaker"|"evidenceIds"|"financialFacts"|"financialFactChecks"> & Partial<Pick<AcceptedSentence,"calculation">>,
  evidence:{id:string;quotes:{text:string}[]}[],
 ) {
- const warnings: {kind:'quantity_corrected'|'quantity_unresolved'|'attribution_unresolved';label:string;reason:string;evidenceIds:string[]}[]=[];
+ const warnings: {kind:'quantity_corrected'|'quantity_unresolved'|'attribution_unresolved'|'basis_unresolved';label:string;reason:string;evidenceIds:string[]}[]=[];
  for(const row of financialFactRows(sentence,evidence)) {
   if(row.status==='corrected'||row.status==='unresolved')warnings.push({
    kind:row.status==='corrected'?'quantity_corrected':'quantity_unresolved',
    label:row.status==='corrected'?'Typed quantity corrected from source':'Proposed quantity unresolved',
    reason:row.reason,evidenceIds:[row.original.evidenceId],
+  });
+ }
+ const retainedEvidence=evidence.filter(item=>sentence.evidenceIds.includes(item.id));
+ for(const reason of semanticBasisIssues(sentence.text,retainedEvidence.flatMap(item=>item.quotes.map(quote=>quote.text)),sentence.calculation)) {
+  warnings.push({kind:'basis_unresolved',label:'Financial basis unresolved',
+   reason:`${reason} Original wording and historical audit are retained; this source check is not a replacement audit.`,
+   evidenceIds:retainedEvidence.map(item=>item.id),
   });
  }
  const attribution=mixedTurnAttribution({...sentence,speaker:sentence.speaker ?? "unknown"},evidence);

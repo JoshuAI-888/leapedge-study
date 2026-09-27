@@ -1,3 +1,4 @@
+import { financialBasisIssue, semanticBasisIssues } from "./semantic-basis.ts";
 import {mixedTurnAttribution} from './research-attribution.ts';
 import {sourceNumericCheck, numericalSentenceDisposition} from './research-numeric-check.ts';
 import { EvidenceCoverage } from "./research-readiness.ts";
@@ -208,6 +209,8 @@ export function reviewFinancialFact(fact: FinancialFactData, retainedQuotes: str
   const result = (status: "unchanged" | "corrected" | "unresolved", value: FinancialFactData | null, reason: string) => ({fact:value, original:fact, status, reason});
   if (typeof fact.quote !== "string" || !fact.quote.trim() || !retainedQuotes.some(quote => quote.includes(fact.quote)))
     return result("unresolved", null, "Proposed quantity withheld: its exact original quote is not anchored to the sentence’s retained evidence; no figure or unit was confirmed.");
+  const basisIssue = financialBasisIssue(fact, retainedQuotes);
+  if (basisIssue) return result("unresolved", null, basisIssue);
   if (/\b(?:peak|all[ -]time high|record high)\b|高[点點]|峰值/i.test(fact.label) && !/\b(?:peak|all[ -]time high|record high)\b|高[点點]|峰值/i.test(fact.quote))
     return result("unresolved", null, "Proposed quantity withheld: the explicit peak baseline in its label is not established by its original quote; no comparison baseline was inferred.");
   if (/\bconstant[ -]maturity\b|恒定到期|固定期限/i.test(`${fact.label} ${fact.unitDescription ?? ""}`) && !/\bconstant[ -]maturity\b|恒定到期|固定期限/i.test(fact.quote))
@@ -525,6 +528,8 @@ export function validateBrief(
       if (ratio.unresolved)
         draft.omissions.push(`Stock-split ratio direction remains unresolved for ${sentence.id}: the original evidence is ambiguous, missing an explicit direction, or contains multiple ratios. No corrected ratio has been inferred.`);
     }
+    if (options.phase !== "structural_preflight")
+      reasons.push(...semanticBasisIssues(sentence.text, originalQuotes, sentence.calculation));
     if (explicitBasisPointProseConflict(sentence.text, originalQuotes))
       reasons.push("The sentence's explicit rate unit/value conflicts with the original basis-point quantity. Review the prose before publication; correcting a typed field cannot cure this claim.");
     if (sentence.financialFacts.some(f => f.unit === "percent" && explicitPercentagePointConflict(f.value, f.quote)))

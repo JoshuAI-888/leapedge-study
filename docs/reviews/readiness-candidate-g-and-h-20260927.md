@@ -1,6 +1,6 @@
 # Candidate G: failure-inclusive evaluation and candidate H fixes — 27 September 2026
 
-**Release decision: not ready for promotion.** Candidate G (`8b679df`) attempted all 20 frozen cases:9 published,11 failed. Publication is not quality acceptance. Candidate H implementation is under local verification; no live H quality result is asserted. No new LeapEdge calls or production changes.
+**Release decision: not ready for promotion.** Candidate G (`8b679df`) attempted all 20 frozen cases:9 published,11 failed. Publication is not quality acceptance. The later H recovery results, additional safeguards and renewed OpenRouter block are recorded in [the recovery report](readiness-recovery-results-20260927.md). Sections below preserve the pre-rerun plan and G baseline. No new LeapEdge calls or production changes.
 
 ## Recorded results
 

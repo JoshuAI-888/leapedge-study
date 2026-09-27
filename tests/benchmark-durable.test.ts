@@ -56,3 +56,17 @@ test('fatal provider account errors fail current case and preserve untouched coh
  }
  for(const error of ['Schema max 402 exceeded','Provider HTTP 429','Provider HTTP 500','HTTP 4020',new Error('Missing source')])assert.equal(containProviderAccountFailure({cases:[]},{id:'x',status:'failed'},error),null);
 });
+
+test('optional repair billing failure pauses cohort while preserving needs-review original brief',async()=>{
+ const {containProviderAccountFailure}=await import('../scripts/run-cohort-durable.mjs');
+ for(const output of [{coverageRepairError:'Provider HTTP 402. No automatic paid retry.'},{supplementalAuditFailure:{reason:'Supplement critic unavailable: Provider HTTP 403'}}]){
+  const control={cases:[{videoId:'nineteen',researchRunId:'r19',state:'running'},{videoId:'twenty',state:'not-started'}]};
+  const run={id:'r19',videoId:'nineteen',status:'needs_review',error:null,output:{...output,researchBriefId:'r19',researchDraft:{sentences:[{id:'original',text:'Retained independently audited result'}]}}};
+  const original=structuredClone(run.output);
+  assert.equal(containProviderAccountFailure(control,run),'provider-account-blocked');
+  assert.equal(run.status,'needs_review');assert.deepEqual(run.output,original);assert.equal(run.error,null);
+  assert.equal(control.cases[0].state,'needs_review');assert.equal(control.cases[1].state,'not-started');
+ }
+ const run={id:'r',status:'completed',output:{coverageFindings:['Source text mentions HTTP 402'],coverageRepairError:'Schema requires 402 items'}};
+ assert.equal(containProviderAccountFailure({cases:[]},run),null);
+});

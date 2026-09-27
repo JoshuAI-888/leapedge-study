@@ -262,6 +262,7 @@ export function ResearchBrief({
   const unresolved = readiness.coverage.filter((item) => item.status === "unresolved");
   const current = brief.sentences.find((s) => s.id === selected);
   const currentQuantities = current ? financialFactRows(current, brief.evidence) : [];
+  const currentWarnings = retainedWarnings.find(item=>item.sentence.id===selected)?.warnings ?? [];
   const cues = source?.segments ?? [];
   const sentence = (s: AcceptedSentence) => {
     const quantities = financialFactRows(s, brief.evidence);
@@ -296,7 +297,7 @@ export function ResearchBrief({
       )}
       <small>{s.importanceReason}</small>
       <div className="yi-confidence">
-        <span>{s.fidelity}</span>
+        <span>{sourceWarnings.some(warning=>warning.kind!=="quantity_corrected") ? "Source checks need review" : s.fidelity}</span>
         <span>Facts: {factualSupportLabel(s)}</span>
         <span>
           Novelty: {s.novelty?.status.replaceAll("_", " ") ?? "unknown"}
@@ -341,7 +342,7 @@ export function ResearchBrief({
       </div>
       {retainedWarnings.length>0 && <section className="yi-warning" aria-label="Retained source consistency warnings">
         <h3>{retainedWarningCount} current source-consistency warning(s) across {retainedWarnings.length} retained sentence(s)</h3>
-        <p>Current application checks found corrected or unresolved typed quantities, or unresolved speaker attribution. Original prose and audit history remain unchanged. This is not a new research audit or external factual verification; coverage accounting is separate.</p>
+        <p>Current application checks found corrected or unresolved quantities, financial conventions, or speaker attribution. Original prose and audit history remain unchanged. This is not a new research audit or external factual verification; coverage accounting is separate.</p>
         <details><summary>Inspect affected sentences and source passages</summary><ul>{retainedWarnings.map(({sentence,warnings})=><li key={sentence.id}>
           <button className="yi-text-button" onClick={event=>{trigger.current=event.currentTarget;setSelected(sentence.id);}}>{sentence.topic} · {sentence.id}: {warnings.map(warning=>warning.label).join('; ')}</button>
         </li>)}</ul></details>
@@ -515,9 +516,15 @@ export function ResearchBrief({
             <button onClick={closeEvidence}>Close evidence</button>
           </div>
           <p>{current.text}</p>
+          {currentWarnings.length>0 && <section className="yi-warning" aria-label="Current source consistency checks">
+            <h4>Current source checks — review before use</h4>
+            <ul>{currentWarnings.map((warning,index)=><li key={index}><strong>{warning.label}:</strong> {warning.reason}</li>)}</ul>
+            <p>The original sentence and model critique below are retained for audit. These current checks do not establish factual verification.</p>
+          </section>}
           <p>
-            <strong>Independent critique:</strong> {current.auditReason}
+            <strong>Retained model critique (historical assessment):</strong> {current.auditReason}
           </p>
+          <p><strong>Retained source label:</strong> {current.fidelity}. Current source warnings take precedence when present.</p>
           <p><strong>Factual support:</strong> {factualSupportLabel(current)}</p>
           {!!current.externalSupport?.length && <section aria-label="Assertion support">
             <h4>Assertion-level external evidence</h4>
