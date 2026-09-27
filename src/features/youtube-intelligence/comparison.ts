@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 export const comparisonTimingSchema = z.object({
- boundary:z.enum(['ingestion-to-terminal','retained-transcript-to-terminal','recovery-to-terminal','research-only','unknown']),
+ boundary:z.enum(['ingestion-to-terminal','retained-transcript-to-terminal','recovery-to-terminal','research-only','recorded-stage-execution','unknown']),
  seconds:z.number().nonnegative().nullable(), includesQueue:z.boolean(), includesBrowser:z.boolean(),
 });
 export const comparisonAttemptSchema = z.object({

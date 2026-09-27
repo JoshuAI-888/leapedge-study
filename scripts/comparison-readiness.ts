@@ -9,10 +9,13 @@ const record=z.record(z.string(),z.any());
 const rawRun=z.object({id:z.string(),videoId:z.string(),status:z.string(),stage:z.string(),createdAt:z.string(),updatedAt:z.string(),error:z.string().nullable().optional(),model:z.string(),promptVersion:z.string(),input:record,output:record});
 const rawCall=z.object({id:z.string(),run_id:z.string(),status:z.string(),amount:z.coerce.number().nullable()});
 const retainedBrief=z.object({runId:z.string(),sentences:z.array(z.object({text:z.string()}))});
-const artifactSchema=z.object({runs:z.array(rawRun),calls:z.array(rawCall),briefs:z.array(retainedBrief).optional()});
+const artifactSchema=z.object({runs:z.array(rawRun),calls:z.array(rawCall),briefs:z.array(retainedBrief).optional(),timings:z.array(z.union([z.object({runId:z.string(),stage:z.string(),executionSeconds:z.number().nonnegative()}),z.object({run_id:z.string(),stage:z.string(),execution_ms:z.number().nonnegative()}).transform(t=>({runId:t.run_id,stage:t.stage,executionSeconds:t.execution_ms/1000}))])).optional()});
 const originalSchema=z.object({cases:z.array(z.object({case:z.number(),videoId:z.string(),title:z.string(),channel:z.string(),assessment:z.string(),leapedgeStatus:z.string(),leapedgeReport:z.string().nullable(),leapedgeDisplayedUsd:z.number().nullable()}))});
 const capturesSchema=z.object({captures:z.array(z.object({videoId:z.string(),at:z.string(),reportText:z.string()}))});
 const artifacts=[
+ 'data/readiness-20260927/live-candidate.json',
+ ...['b','c','d','e','f'].map(id=>`data/readiness-20260927/candidate-${id}-session-1.json`),
+ 'data/readiness-20260927/candidate-g-session-2.json',
  'data/comparison-20260920/results.json','data/recovery-20260920/results.json','data/recovery-final-20260920/results.json',
  'data/research-build-20260920/results.json','data/research-v8-20260920/results.json',
  'data/prod-sample-20260920/results.json','data/prod-resume-20260920/results.json',
@@ -46,13 +49,14 @@ if(process.argv.includes('--validate')){
   const attempts:ComparisonAttempt[]=loaded.flatMap(a=>a.runs.filter(r=>r.videoId===c.videoId).map(r=>{
    const calls=a.calls.filter(x=>x.run_id===r.id);const out=r.output;
    const research=r.input.task==='research-brief';
-   const boundary=a.path.startsWith('data/comparison-')?'ingestion-to-terminal':a.path.includes('operational-efficiency')?(research?'research-only':'retained-transcript-to-terminal'):'unknown';
+   const stageTimings=a.timings?.filter(t=>t.runId===r.id);
+   const boundary=stageTimings?.length?'recorded-stage-execution':a.path.startsWith('data/comparison-')?'ingestion-to-terminal':a.path.includes('operational-efficiency')?(research?'research-only':'retained-transcript-to-terminal'):'unknown';
    const published=a.briefs?.find(b=>b.runId===r.id);
    const elapsed=(Date.parse(r.updatedAt)-Date.parse(r.createdAt))/1000;
    const verdicts=Array.isArray(out.researchAudit?.verdicts)?out.researchAudit.verdicts:null;
    return {id:`${a.path}:${r.id}`,runId:r.id,cohort:a.path.split('/')[1]+':'+a.path.split('/').at(-1),status:r.status,stage:r.stage,createdAt:r.createdAt,updatedAt:r.updatedAt,error:r.error??null,model:r.model,promptVersion:r.promptVersion,
     configSha256:digest(r.input),transcriptSha256:out.source?digest(out.source):null,outputSha256:digest(out),artifact:{path:a.path,sha256:a.sha256},
-    timing:{boundary,seconds:boundary==='unknown'||!['completed','failed','needs_review'].includes(r.status)?null:Math.max(0,elapsed),includesQueue:true,includesBrowser:false},
+    timing:{boundary,seconds:boundary==='unknown'||!['completed','failed','needs_review'].includes(r.status)?null:stageTimings?.length?stageTimings.reduce((n,t)=>n+t.executionSeconds,0):Math.max(0,elapsed),includesQueue:boundary!=='recorded-stage-execution',includesBrowser:false},
     cost:{settledUsd:calls.length?calls.reduce((n,x)=>n+(x.status==='completed'?(x.amount??0):0),0):null,unsettledCalls:calls.filter(x=>!['completed','failed','released'].includes(x.status)).length,scope:'Cumulative retained ledger for this run observation; do not sum observations. Excludes unpriced transcript credits.'},
     acceptedClaims:Array.isArray(out.claims)?out.claims.filter((x:{passed?:boolean})=>x.passed).length:null,
     acceptedSentences:published?published.sentences.length:null,
@@ -74,6 +78,7 @@ if(process.argv.includes('--validate')){
   'Each duration ends at that run observation, not an entire parent-and-research-child flow. Extraction run timing excludes its separate research child. Recovery/research exports without a controlled start boundary retain null timing, even when creation timestamps exist.',
   'Unknown recovery boundaries have null duration. Created-to-updated duration includes queue where shown, excludes browser display and may include retries. Research-only and extraction replay are not fresh ingestion measurements.',
   'LeapEdge duration remains null because report timing boundaries were not captured consistently; no speedup ratio is asserted.',
+  'Recorded-stage-execution is the sum of retained sequential stage durations for that run; it excludes acquisition, queue, inter-stage persistence and browser display. It is not URL-to-result latency. Failed stages and paid retry costs remain visible. Readiness candidate A uses retained stage durations only because its historical createdAt was overwritten; no elapsed wall-clock claim is made.',
   'All quality checks are unassessed: existing prose assessments are historical findings, not a new pass. Original and latest outputs require source-backed review.',
   'Artifacts are explicit retained exports only; this is not an inventory of every database call ever made. Model/settings/input and output hashes allow configuration/provenance checks without publishing private raw transcripts.',
  ]});

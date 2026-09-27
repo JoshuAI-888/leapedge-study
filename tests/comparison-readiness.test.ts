@@ -54,3 +54,15 @@ test('application-rejected model verdicts are not counted as published research'
  draft.outputKind='model-audited-draft';
  assert.equal(comparisonManifestSchema.safeParse(manifest).success,false);
 });
+
+test('readiness experiments use retained stage durations rather than overwritten historical creation times',()=>{
+ const manifest=comparisonManifestSchema.parse(JSON.parse(readFileSync('docs/delivery/comparison-readiness-20260927.json','utf8')));
+ const observations=manifest.cases.flatMap(c=>c.attempts).filter(a=>a.artifact.path.includes('readiness-20260927'));
+ assert.ok(observations.some(a=>a.artifact.path.endsWith('live-candidate.json')));
+ assert.ok(observations.some(a=>a.artifact.path.endsWith('candidate-g-session-2.json')));
+ for(const a of observations.filter(a=>a.timing.seconds!==null)){
+  assert.equal(a.timing.boundary,'recorded-stage-execution');assert.equal(a.timing.includesQueue,false);assert.equal(a.timing.includesBrowser,false);
+ }
+ const failed=observations.find(a=>a.runId==='bae7c03b-35a1-4a85-8795-55b4a555f689');assert.ok(failed);assert.equal(failed.status,'failed');assert.equal(failed.acceptedSentences,null);assert.ok((failed.cost.settledUsd??0)>0);
+ assert.equal(comparableTiming({boundary:'recorded-stage-execution',seconds:30,includesQueue:false,includesBrowser:false},{boundary:'retained-transcript-to-terminal',seconds:30,includesQueue:false,includesBrowser:false}),false);
+});

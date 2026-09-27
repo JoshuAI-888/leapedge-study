@@ -95,3 +95,8 @@ A legacy printed extraction contract framed output around claims/mentions and om
 
 
 Final candidate-G implementation checks: **607 tests /606 pass /one existing skip /zero failures** in each default and PGlite suite, plus typecheck and production build. Offline promotion remains advisory-only. Source recall policy is version2; older checkpoints retain their paid results and are explicitly incomplete under the new policy, without automatic paid replay. Legacy nonpointer prompts accept omitted context levels and preserve any removed proposals in diagnostics. Claims retain their trade-level contract. Candidate G live cohort validation remains pending; no production release or LeapEdge request.
+
+
+## Candidate G completed; H corrective implementation
+
+See [the failure-inclusive results and corrections](readiness-candidate-g-and-h-20260927.md). G produced9briefs/20, with11failures and US$12.37598425 settled. H addresses bounded audits, support schema, independent repair, quantity/attribution/external-prose checks, failed-attempt visibility and research-only recovery. Live H acceptance remains pending provider account recovery. No promotion or production change.

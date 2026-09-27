@@ -708,6 +708,8 @@ export async function researchSnapshot() {
       .map((r) => ({
         id: r.id,
         task: String(r.input.task),
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
         sourceRunId:
           (r.input.snapshot as { sourceRunId?: string } | undefined)
             ?.sourceRunId ?? null,

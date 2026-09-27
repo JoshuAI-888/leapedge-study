@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel, financialFactRows } from "../src/features/youtube-intelligence/research-presentation.ts";
+import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel, financialFactRows, retainedSourceWarnings } from "../src/features/youtube-intelligence/research-presentation.ts";
 import { FinancialFact, reviewFinancialFact } from "../src/features/youtube-intelligence/research-brief.ts";
 const matched = { metric: "matched", period: "matched", units: "matched", observationBasis: "matched", reason: "Same metric and measurement basis." } as const;
 const support = { relationship: "supports", assertion: "Revenue grew 10 percent.", comparability: matched } as const;
@@ -57,4 +57,21 @@ test("qualitative comparisons accept explicit non-applicable dimensions, never n
   const link={...conflict,assertion:'The company announced a merger.',comparability:{metric:'matched' as const,period:'not_applicable' as const,units:'not_applicable' as const,observationBasis:'not_applicable' as const,reason:'A discrete event, not numeric measurement.'}};
   assert.equal(externalRelationshipLabel(link),'Contradicts · comparable evidence');
   assert.equal(externalRelationshipLabel({...link,assertion:'Revenue was 10 million.'}),'Potential conflict · comparison unverified');
+});
+
+test('retained source warnings distinguish corrections and unresolved facts without rewriting history',()=>{
+ const fact=FinancialFact.parse({label:'Rate hike',value:25,currency:null,unit:'percentage_points',scale:'ones',period:null,basis:'not_stated',nature:'reported',evidenceId:'e1',quote:'加息25个基点'});
+ const sentence={text:'The rate hike was 25 percentage points.',speaker:'unknown',evidenceIds:['e1'],financialFacts:[fact]};
+ const original=JSON.stringify(sentence);
+ const rows=retainedSourceWarnings(sentence,[{id:'e1',quotes:[{text:fact.quote}]}]);
+ assert.equal(rows[0].kind,'quantity_corrected');assert.equal(JSON.stringify(sentence),original);
+ assert.equal(retainedSourceWarnings({...sentence,evidenceIds:[]},[{id:'e1',quotes:[{text:fact.quote}]}])[0].kind,'quantity_unresolved');
+});
+test('retained role attribution is flagged for mixed turns without inferring a speaker identity',()=>{
+ const sentence={text:'The host recommends buying.',speaker:'unknown',evidenceIds:['e1'],financialFacts:[]};
+ const before=JSON.stringify(sentence);const evidence=[{id:'e1',quotes:[{text:'I would buy. >> I disagree.'}]}];
+ assert.equal(retainedSourceWarnings(sentence,evidence)[0].kind,'attribution_unresolved');
+ assert.equal(JSON.stringify(sentence),before);
+ assert.deepEqual(retainedSourceWarnings({...sentence,text:'The discussion includes a buying view and disagreement.'},evidence),[]);
+ assert.deepEqual(retainedSourceWarnings(sentence,[{id:'other',quotes:[{text:'>> unrelated'}]}]),[]);
 });

@@ -59,7 +59,7 @@ for (const efficient of [false, true]) test(`research stages resume paid synthes
               factualStatus: "unverified",
             }] : []),
           ],
-          coverageFindings: ["No valuation data supplied."],
+          evidenceCoverage:[{evidenceId:'c1',status:'covered',sentenceIds:['point'],missingPoints:[],reason:'The single retained fixture proposition is represented.'}], coverageFindings: ["No valuation data supplied."],
         },
         usage: { costUsd: 0.03 },
       },
@@ -449,7 +449,7 @@ for (const efficient of [false, true]) test(`published brief retains determinist
   const quote = '公司拆股比例是1比3。';
   const point = { ...sentence, text: 'The company announced a 1-for-3 stock split.', kind: 'reported_fact' };
   const fake = new FakeModelTransport({ responses: {
-    'critique-research': { json: { verdicts: [{ id: 'point', accepted: true, reason: 'Model accepted the ratio.', factualStatus: 'unverified' }], coverageFindings: [] }, usage: { costUsd: 0.01 } },
+    'critique-research': { json: { verdicts: [{ id: 'point', accepted: true, reason: 'Model accepted the ratio.', factualStatus: 'unverified' }], evidenceCoverage:[{evidenceId:'c1',status:'covered',sentenceIds:['point'],missingPoints:[],reason:'The single retained fixture proposition is represented.'}], coverageFindings: [] }, usage: { costUsd: 0.01 } },
   } });
   const restore = injectTransport(fake);
   try {
@@ -484,7 +484,7 @@ for (const efficient of [false, true]) for (const basis of ["unknown", "matched"
  const comparison={metric:'matched',period:'matched',units:'matched',observationBasis:basis,reason:basis==='matched'?'Same dated constant-maturity closing observation in both passages.':'Intraday traded yield versus constant-maturity daily observation; matching basis not established.'};
  const verdict={id:'point',accepted:true,reason:'Possible convention mismatch, not conclusively a contradiction.',factualStatus:'disputed',robustness:'fragile',robustnessReason:'One basis point discrepancy.',externalSupport:[{externalId:'yield',assertion:text,quote:'10-year constant maturity yield: 4.94%.',relationship:'contradicts',comparability:comparison,reason:'The observation convention may differ.'}]};
  const original=JSON.stringify(verdict);
- const fake=new FakeModelTransport({responses:{'critique-research':{json:{verdicts:[verdict],coverageFindings:[]},usage:{costUsd:.01}}}});const restore=injectTransport(fake);
+ const fake=new FakeModelTransport({responses:{'critique-research':{json:{verdicts:[verdict],evidenceCoverage:[{evidenceId:'c1',status:'covered',sentenceIds:['point'],missingPoints:[],reason:'The single retained fixture proposition is represented.'}], coverageFindings:[]},usage:{costUsd:.01}}}});const restore=injectTransport(fake);
  try{
  const run=await create('yield-comparison',settings.models.extraction.id,{task:'research-brief',efficiencyVersion:efficient?'evidence-efficiency.v1':undefined,teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Treasury yields',context:{videoPublishedAt:'2026-01-01T00:00:00Z',recordedAt:null,analysedAt:'2026-09-27T00:00:00Z',language:'en',videoId:'yield-comparison',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[{id:'c1',kind:'research_context',summary:text,instrument:'Treasury',ticker:null,stance:'neutral',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:'a',endId:'a',text,translation:'',start:0,end:4,hash:null}]}]}},'test');
  run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[point],mainTopics:['Company'],omissions:['Observation time unknown.','Observation time unknown.']};
@@ -528,7 +528,7 @@ for(const efficient of [false,true]) test(`publication normalizes anchored bps w
  const quote='美联储已经加息了25个基点';const fact={label:'Rate hike',value:25,currency:null,unit:'percentage_points',scale:'ones',period:null,basis:'not_stated',nature:'reported',evidenceId:'c1',quote};
  const point={...sentence,text:'The Fed raised rates by 25 basis points.',kind:'reported_fact',financialFacts:[fact]};
  const verdict={id:'point',accepted:true,reason:'Source prose is faithful.',factualStatus:'unverified'};
- const fake=new FakeModelTransport({responses:{'critique-research':{json:{verdicts:[verdict],coverageFindings:[]},usage:{costUsd:.01}}}});const restore=injectTransport(fake);
+ const fake=new FakeModelTransport({responses:{'critique-research':{json:{verdicts:[verdict],evidenceCoverage:[{evidenceId:'c1',status:'covered',sentenceIds:['point'],missingPoints:[],reason:'The single retained fixture proposition is represented.'}], coverageFindings:[]},usage:{costUsd:.01}}}});const restore=injectTransport(fake);
  try{
  const run=await create('unit-normalization',settings.models.extraction.id,{task:'research-brief',efficiencyVersion:efficient?'evidence-efficiency.v1':undefined,teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'original',title:'Rate hike',context:{videoPublishedAt:null,recordedAt:null,analysedAt:'2026-09-27T00:00:00Z',language:'zh',videoId:'unit-normalization',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[{id:'c1',kind:'research_context',summary:point.text,instrument:null,ticker:null,stance:'neutral',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:'a',endId:'a',text:quote,translation:'',start:0,end:4,hash:null}]}]}},'test');
  run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[point],mainTopics:['Company'],omissions:[]};const original=JSON.stringify(run.output.researchDraft);
@@ -571,4 +571,22 @@ test('corrected financial quote receives a new independent verdict while origina
  await researchStep(run);const [brief]=await researchBriefs();assert.equal(brief.sentences.length,1);assert.equal(brief.sentences[0].id,'coverage-1');assert.equal(brief.sentences[0].text,text);assert.match(brief.sentences[0].auditReason,/independently/);assert.equal(brief.rejected[0].sentence.id,'bad');assert.equal(brief.rejected[0].sentence.financialFacts[0].quote,'wrong quote');assert.equal(fake.requestsFor('critique-research-coverage').length,1);assert.equal(brief.modelCostUsd,.05);
  const {docs}=await import('../src/server/youtube-intelligence/research-store.ts');const requests=await docs<{stage:string;payload:{withheldDraftPoints:{sentence:{id:string}}[]}}>('researchRequest');assert.equal(requests.find(r=>r.stage==='synthesis-research-coverage')!.payload.withheldDraftPoints[0].sentence.id,'bad');
  }finally{restore();await db.close();}
+});
+for (const coverageAnswer of ['covered','omitted'] as const) test(`invalid critic quote routes cited evidence to fresh bounded repair without granting coverage (${coverageAnswer})`,async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ const original={...sentence,evidenceIds:['k5'],text:'The BOJ raised its rate by 25 basis points.',topic:'BOJ'};
+ const extra={...original,id:'extra',text:'Watch the pace of subsequent Japanese rate hikes and further yen appreciation.'};
+ const missing={evidenceId:'k5',status:'partial',sentenceIds:['point'],missingPoints:[{point:'Monitor subsequent rate hikes and yen appreciation',quote:'Watch the pace ... further yen appreciation.'}],reason:'Event represented; forward condition omitted.'};
+ const fake=new FakeModelTransport({responses:{
+ 'critique-research':{json:{verdicts:[{id:'point',accepted:true,reason:'Supported event',factualStatus:'unverified'}],coverageFindings:[],evidenceCoverage:[missing]},usage:{costUsd:.01}},
+ 'synthesis-research-coverage':{json:{sentences:[extra],mainTopics:['BOJ'],omissions:[]},usage:{costUsd:.02}},
+ 'critique-research-coverage':{json:{verdicts:[{id:'coverage-1',accepted:true,reason:'Forward condition supported',factualStatus:'unverified'}],coverageFindings:[],evidenceCoverage:coverageAnswer==='omitted'?[]:[{...missing,status:'covered',sentenceIds:['point','coverage-1'],missingPoints:[],reason:'Both event and forward condition represented.'}]},usage:{costUsd:.03}},
+ }});const restore=injectTransport(fake);
+ try {
+ const run=await create('policy-coverage',settings.models.extraction.id,{task:'research-brief',teamPreferencesSnapshot:settings,snapshot:{sourceRunId:'source',title:'Policy',context:{videoPublishedAt:null,recordedAt:null,analysedAt:'2026-09-20T00:00:00Z',language:'en',videoId:'policy-coverage',temporalPolicy:'video-date evidence and later updates are separate'},evidence:[{id:'k5',kind:'research_context',summary:'Policy decision and forward monitoring',instrument:null,ticker:null,stance:'neutral',horizon:null,conditions:[],risks:[],levels:[],trust:'L1',quotes:[{startId:'a',endId:'b',text:original.text+' '+extra.text,translation:'',start:0,end:10,hash:null}]}]}},'test');
+ run.stage='research-audit';run.output.researchBaseline=[];run.output.researchDraft={sentences:[original],mainTopics:['BOJ'],omissions:[]};
+ await researchStep(run);assert.equal(run.stage,'research-audit');assert.deepEqual((run.output.coverageRepair as {missingEvidenceIds:string[]}).missingEvidenceIds,['k5']);
+ await researchStep(run);const [brief]=await researchBriefs();assert.deepEqual(brief.sentences.map(s=>s.text),[original.text,extra.text]);assert.equal(brief.sentences[0].auditReason,'Supported event');assert.equal(brief.evidenceCoverage?.[0].status,coverageAnswer==='covered'?'covered':'partial');assert.equal((run.output.coverageRepair as {originalAudit:{evidenceCoverage:{missingPoints:{quote:string}[]}[]}}).originalAudit.evidenceCoverage[0].missingPoints[0].quote,missing.missingPoints[0].quote);assert.equal(fake.requestsFor('synthesis-research-coverage').length,1);assert.equal(fake.requestsFor('critique-research-coverage').length,1);
+ const {researchReadiness}=await import('../src/features/youtube-intelligence/research-readiness.ts');assert.equal(researchReadiness(brief).status,coverageAnswer==='covered'?'complete':'partial');if(coverageAnswer!=='covered')assert.match(researchReadiness(brief).issues.join(' '),/not assessed/);assert.equal(brief.modelCostUsd,.06);
+ } finally {restore();await db.close();}
 });

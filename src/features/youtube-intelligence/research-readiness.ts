@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import {inspectLimitations} from './limitation-consistency.ts';
 export const EvidenceCoverage = z.object({
  evidenceId:z.string(), status:z.enum(['covered','partial','missing','unknown']),
  sentenceIds:z.array(z.string()),
@@ -25,12 +26,16 @@ export function researchReadiness(raw: unknown) {
   const anchored=assessment?.missingPoints.every(p=>e.quotes.some(q=>q.text.includes(p.quote)));
   const validIds=assessment?.sentenceIds.every(id=>sentenceIds.includes(id));
   const valid=assessment && anchored && validIds && (assessment.status!=='covered'||(assessment.sentenceIds.length>0&&!assessment.missingPoints.length));
-  if(!valid || assessment.status==='unknown') unassessedIds.push(e.id);
+  // Citation accounting and proposition assessment are independent. An invalid
+  // critic quote is retained as diagnostic input, never accepted as source evidence.
+  const assessmentStatus = !matches.length ? 'missing' as const : !valid ? 'invalid' as const : assessment.status === 'unknown' ? 'unknown' as const : 'valid' as const;
+  if(assessmentStatus !== 'valid') unassessedIds.push(e.id);
   const missing=valid && (assessment.status==='partial'||assessment.status==='missing');
   if(missing) assessmentIssues.push(`Missing material detail (${e.id}): ${assessment.missingPoints.map(p=>p.point).join('; ') || assessment.reason}`);
-  return {evidenceId:e.id,topic:e.instrument ?? e.summary,status:sentenceIds.length&&!missing?'represented' as const:'unresolved' as const,sentenceIds};
+  return {evidenceId:e.id,topic:e.instrument ?? e.summary,status:sentenceIds.length&&!missing?'represented' as const:'unresolved' as const,assessmentStatus,repairEligible:!sentenceIds.length || !!missing || assessmentStatus !== 'valid',sentenceIds};
  });
- const issues=[...assessmentIssues,
+ const noteConflicts=inspectLimitations(brief).flatMap(note=>note.warning?[note.warning]:[]);
+ const issues=[...noteConflicts,...assessmentIssues,
  ...(unassessedIds.length?[`Key details not assessed in ${unassessedIds.length} evidence item(s) (${unassessedIds.join(', ')}). Citations alone do not establish that all conditions and warnings are included.`]:[]),
  ...brief.omissions,...brief.coverageFindings,
  ...coverage.filter(c=>c.status==='unresolved').map(c=>`Unresolved coverage: ${c.topic} (${c.evidenceId}).`),

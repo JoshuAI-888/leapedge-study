@@ -38,7 +38,7 @@ test('completed window acquisition preserves fidelity warning through published 
  assert.ok(snapshot.inventoryOmissions.some(x=>/wording and timestamps remain unverified/i.test(x.reason)));
  const point={id:'point',text:'The creator holds shares.',evidenceIds:['c1'],externalIds:[],kind:'holding',horizon:'fundamental',topic:'Company',materiality:2,importanceReason:'Position',speaker:'unknown',timeMode:'video_date',calculation:null};
  run.stage='research-audit'; run.output.researchBaseline=[];run.output.retrievals=[];run.output.researchDraft={sentences:[point],mainTopics:['Company'],omissions:[]};
- const restore=injectTransport(new FakeModelTransport({responses:{'critique-research':{json:{verdicts:[{id:'point',accepted:true,reason:'Supported',factualStatus:'unverified'}],coverageFindings:[]},usage:{costUsd:.01}}}}));
+ const restore=injectTransport(new FakeModelTransport({responses:{'critique-research':{json:{verdicts:[{id:'point',accepted:true,reason:'Supported',factualStatus:'unverified'}],evidenceCoverage:[{evidenceId:"c1",status:"covered",sentenceIds:["point"],missingPoints:[],reason:"The single source holding proposition is represented."}],coverageFindings:[]},usage:{costUsd:.01}}}}));
  try {
   await researchStep(run);
   const [brief]=await researchBriefs();assert.equal(brief.sentences.length,1);

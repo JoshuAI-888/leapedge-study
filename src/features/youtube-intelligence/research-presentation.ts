@@ -1,3 +1,4 @@
+import { mixedTurnAttribution } from "./research-attribution.ts";
 import { externalComparisonEstablished, reviewFinancialFact } from "./research-brief.ts";
 import type { AcceptedSentence } from "./research-brief.ts";
 
@@ -71,4 +72,26 @@ export function thesisRobustnessLabel(sentence: AssessedSentence & {
   if (sentence.factualStatus !== "corroborated" || !links.some(link => link.relationship === "supports"))
     return "Not established · no retained assertion support";
   return "Supported · model assessed";
+}
+
+/** Current deterministic checks on retained records; never a replacement audit.
+ * Do not modify original prose, facts, source passages or historical verdicts. */
+export function retainedSourceWarnings(
+ sentence: Pick<AcceptedSentence,"text"|"speaker"|"evidenceIds"|"financialFacts"|"financialFactChecks">,
+ evidence:{id:string;quotes:{text:string}[]}[],
+) {
+ const warnings: {kind:'quantity_corrected'|'quantity_unresolved'|'attribution_unresolved';label:string;reason:string;evidenceIds:string[]}[]=[];
+ for(const row of financialFactRows(sentence,evidence)) {
+  if(row.status==='corrected'||row.status==='unresolved')warnings.push({
+   kind:row.status==='corrected'?'quantity_corrected':'quantity_unresolved',
+   label:row.status==='corrected'?'Typed quantity corrected from source':'Proposed quantity unresolved',
+   reason:row.reason,evidenceIds:[row.original.evidenceId],
+  });
+ }
+ const attribution=mixedTurnAttribution({...sentence,speaker:sentence.speaker ?? "unknown"},evidence);
+ if(attribution.requiresNeutralRepair)warnings.push({kind:'attribution_unresolved',label:'Speaker attribution unresolved',
+  reason:'The cited passages contain speaker-turn boundaries without reviewed identity mapping. Role-specific wording in this retained sentence is not established by those passages. Original wording is retained; this check has not re-audited it.',
+  evidenceIds:sentence.evidenceIds.filter(id=>evidence.some(e=>e.id===id&&e.quotes.some(q=>q.text.includes('>>')))),
+ });
+ return warnings;
 }

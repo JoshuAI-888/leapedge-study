@@ -1,0 +1,205 @@
+{
+  "provenance": {
+    "path": "data/readiness-20260927/candidate-g-session-2.json",
+    "sha256": "f2c129f4721ed75443d750beb11fcffbd526b9eb31b2e6eb296b63851ce7771b",
+    "identity": {
+      "revision": "8b679df5290b8514ec1afb61fbe487edc3debd56",
+      "implementationSha256": "343124245dcb572855843f7bde32a7ecee7150f3bbd185585d409bc59405868b",
+      "inputSha256": "d43c51bfb6846bcc28afc0a344ccbe0caa97ffd778595ffe4e97dc182ee15551",
+      "settingsSha256": "067863563ef7c9a662423856d7b3ca799b171e3d78128d2a9505afca14a958ca",
+      "maxUsd": 25,
+      "treatment": "conservative-no-overlap-frozen-transcript"
+    }
+  },
+  "brief": {
+    "context": {
+      "videoPublishedAt": "2026-09-18T15:07:06Z",
+      "recordedAt": null,
+      "analysedAt": "2026-09-19T22:41:00.590Z",
+      "language": "en",
+      "videoId": "elD62rk5Ijo",
+      "channelId": "UC7kCeZ53sli_9XwuQeFxLqw",
+      "temporalPolicy": "video-date evidence and later updates are separate"
+    },
+    "sentences": [
+      {
+        "id": "s-11",
+        "text": "Samsung's progress in HBM4 mass production is acknowledged by AMD in external corporate releases as an industry first, confirming its capability to capture advanced memory market share.",
+        "evidenceIds": [
+          "k4"
+        ],
+        "externalIds": [
+          "web-65d78c9726-1"
+        ],
+        "financialFacts": [],
+        "novelty": {
+          "status": "unknown",
+          "baselineIds": [],
+          "reason": "No independently audited, dated comparable baseline."
+        },
+        "calculation": null,
+        "kind": "reported_fact",
+        "horizon": "fundamental",
+        "topic": "Competitive Landscape and Countercase",
+        "materiality": 2,
+        "importanceReason": "Validates the primary competitive risk challenging SK Hynix's market dominance.",
+        "speaker": "unknown",
+        "timeMode": "video_date",
+        "factualStatus": "unverified",
+        "externalSupport": [],
+        "fidelity": "Text-checked source",
+        "robustness": "insufficient",
+        "robustnessReason": "External-verification assessment withheld: no valid assertion-level primary-source passage with established comparability supports the proposed label. The original audit remains in the run trace; source eligibility alone is not corroboration.",
+        "auditReason": "External-verification assessment withheld: no valid assertion-level primary-source passage with established comparability supports the proposed label. The original audit remains in the run trace; source eligibility alone is not corroboration.",
+        "calculationResult": null
+      },
+      {
+        "id": "s-13",
+        "text": "SK Hynix and Nvidia entered a co-development partnership, with SK Hynix expected to supply approximately two-thirds of HBM4 for the Vera Rubin AI platform.",
+        "evidenceIds": [
+          "k9",
+          "k10"
+        ],
+        "externalIds": [],
+        "financialFacts": [
+          {
+            "label": "Share of Vera Rubin HBM4 supply",
+            "value": 0.6667,
+            "currency": null,
+            "unit": "percent",
+            "unitDescription": "portion of HBM4 supply",
+            "relation": "approximate",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k9",
+            "quote": "SKH is expected to supply about 2/3 of the HBM4 for it this year"
+          }
+        ],
+        "novelty": {
+          "status": "unknown",
+          "baselineIds": [],
+          "reason": "No independently audited, dated comparable baseline."
+        },
+        "calculation": null,
+        "kind": "analysis",
+        "horizon": "fundamental",
+        "topic": "Customer Partnerships and Technology Roadmap",
+        "materiality": 2,
+        "importanceReason": "Demonstrates tier-one positioning with the leading GPU manufacturer.",
+        "speaker": "unknown",
+        "timeMode": "video_date",
+        "factualStatus": "unverified",
+        "externalSupport": [],
+        "fidelity": "Text-checked source",
+        "robustness": "insufficient",
+        "robustnessReason": "Forecast figure from creator commentary; no external Nvidia/SK Hynix disclosure cited.",
+        "auditReason": "Matches k9/k10 quotes on Nvidia partnership and ~2/3 HBM4 supply expectation for Vera Rubin, correctly framed as a forecast/expectation rather than a present fact.",
+        "calculationResult": null
+      }
+    ],
+    "evidence": [
+      {
+        "id": "k4",
+        "kind": "research_context",
+        "summary": "SK Hynix's HBM market share dropped from 64% to roughly 50% year-over-year after Samsung became the first to mass-produce HBM4 and increased its market share from 21% to 33%.",
+        "instrument": "SKH Highix",
+        "ticker": null,
+        "stance": "neutral",
+        "horizon": null,
+        "conditions": [],
+        "risks": [
+          "Market share loss in HBM to competitors like Samsung"
+        ],
+        "levels": [],
+        "trust": "L1",
+        "quotes": [
+          {
+            "startId": "s00221",
+            "endId": "s00229",
+            "text": "than Microns. Like I said earlier, about half of every dollar spent on high bandwidth memory goes to SKH Highix today. But you should know that that's down from a 64% market share this time last year since Samsung was actually first to mass-produce HBM4, which caused Samsung's market share to jump from 21% to 33% in a single quarter. Either way,",
+            "translation": "",
+            "start": 556.56,
+            "end": 582.8,
+            "hash": "c15cbe523f29d5da3e5da4cfeb446949c7f0a76d09529099a79a6d71126e4771"
+          }
+        ]
+      },
+      {
+        "id": "k9",
+        "kind": "research_context",
+        "summary": "SK Hynix and Nvidia entered a multi-year co-development partnership across Nvidia AI platforms, with SK Hynix expected to supply approximately two-thirds of HBM4 for the Vera Rubin AI factory.",
+        "instrument": null,
+        "ticker": null,
+        "stance": "neutral",
+        "horizon": null,
+        "conditions": [],
+        "risks": [],
+        "levels": [],
+        "trust": "L1",
+        "quotes": [
+          {
+            "startId": "s00392",
+            "endId": "s00426",
+            "text": "that I want to highlight. On June 7th, Nvidia and SKH Highix announced a multi-year partnership to co-develop next generation memory built around Nvidia's AI roadmap spanning four of their next generation platforms. Vera Rubin AI supercomputers, the Vera CPUs, RTX Spark PCs, and even Jetsenthor for robotics. 6 weeks later, they also signed a letter of intent on a partnership around memory supplies and AI factories. That partnership is valued at over $500 billion. The first Vera Rubin AI factory powered by SKHEX's HBM4 is planned for 2027. And even though Nvidia qualified all three memory makers for Vera Rubin, SKH is expected to supply about 2/3 of the HBM4 for it this year. Here's a funny story from Computex 2026 in Taiwan. Jensen Hang walked up to an HBM4E wafer at the SKH Heinix booth, wrote, \"Please make more on it,\" and signed it. \"Whenever I try to do that, I just get escorted out by security.\" The thing is, this isn't just a vendor filling purchase orders. Vendors can be swapped out on price. This is a long-term co-development partnership where Nvidia designs their chips around what next generation memory can deliver. And SKHX's memory gets designed for Nvidia's road map years before the chips even ship. So SKHEX isn't waiting for Nvidia to hand them a spec sheet. They're helping write it. All right, now",
+            "translation": "",
+            "start": 967.36,
+            "end": 1057.039,
+            "hash": "1885b03ba81043a9761ca75f98ab6d28fc70d585b64e714fa93af0cd8f61498f"
+          }
+        ]
+      },
+      {
+        "id": "k10",
+        "kind": "research_context",
+        "summary": "Nvidia and SK Hynix maintain a long-term co-development partnership, with SK Hynix expected to supply approximately two-thirds of HBM4 memory for Nvidia's Vera Rubin platform this year.",
+        "instrument": null,
+        "ticker": null,
+        "stance": "neutral",
+        "horizon": null,
+        "conditions": [],
+        "risks": [],
+        "levels": [],
+        "trust": "L1",
+        "quotes": [
+          {
+            "startId": "s00406",
+            "endId": "s00409",
+            "text": "is planned for 2027. And even though Nvidia qualified all three memory makers for Vera Rubin, SKH is expected to supply about 2/3 of the HBM4 for it this",
+            "translation": "",
+            "start": 1003.68,
+            "end": 1016.9590000000001,
+            "hash": "da5fca30af178756f93142bdc3016f5efdabbdf02560ac710a21c3dec15d2ae8"
+          },
+          {
+            "startId": "s00418",
+            "endId": "s00425",
+            "text": "swapped out on price. This is a long-term co-development partnership where Nvidia designs their chips around what next generation memory can deliver. And SKHX's memory gets designed for Nvidia's road map years before the chips even ship. So SKHEX isn't waiting for Nvidia to hand them a spec sheet.",
+            "translation": "",
+            "start": 1034.16,
+            "end": 1054.96,
+            "hash": "982d738395579025cab570518f4102ab9676839a9e7a22c048bf42ee0d24c5f7"
+          }
+        ]
+      }
+    ],
+    "external": [
+      {
+        "id": "web-65d78c9726-1",
+        "url": "https://newsroom.amd.com/news/samsung-and-amd-expand-strategic-collaboratio/",
+        "title": "Samsung, AMD Expand Strategic Collaboration on Next-Generation AI Memory Solutions - AMD Newsroom",
+        "text": "Samsung, AMD Expand Strategic Collaboration on Next-Generation AI Memory Solutions - AMD Newsroom\n\n# Samsung, AMD Expand Strategic Collaboration on Next-Generation AI Memory Solutions \n\nThe companies will collaborate on industry-leading HBM4 supply for AMD Instinct MI455X GPUs and next-generation DDR5 solutions for AMD EPYC processors and the AMD Helios platform.\n\n Published March 18, 2026 \n\n The AMD Marks are owned exclusively by Advanced Micro Devices, Inc. (\"AMD\"), protected under relevant trademark and copyright laws around the world, and are provided on an \u201cas is\u201d basis without warranty of any kind, express or implied, for use subject to the terms of this license (\u201cLicense\u201d). AMD hereby grants you (\"Licensee\" or \u201cYou\u201d or \u201cYour\u201d) limited permission to use the AMD Mark(s) solely in connection with the advertising, marketing, promotion, and sale of Licensee products that include an AMD CPU, GPU, APU, or FPGA (each an \u201cAMD Processor\u201d) and in accordance with the AMD Corporate and Product Branding Guidelines, which may be modified by AMD from time to time. You agree to ensure that You are in possession of the latest, updated version. \n\n This grant does not extend to use of AMD Mark(s) on Licensee product packaging or use of AMD Mark(s) on any goods that do not contain an AMD Processor. AMD shall remain the exclusive owner of all rights in the AMD Mark(s), and this License does not grant any other rights with respect to AMD\u2019s Mark(s) trademarks or copyright. You agree that You will not, nor will you help others, contest, attack, or dispute AMD\u2019s rights in the AMD Mark(s). The AMD Mark(s) must be used only in a positive manner and shall not be used in any way that may, in AMD\u2019s sole judgement, disparage AMD\u2019s reputation. \n\n You agree not to use the AMD Mark(s) in a manner to suggest AMD\u2019s endorsement or sponsorship of your goods or services, or in any way that may create confusion as to the source of the goods, and Licensee\u2019s company name, logo or product name shall appear on any products or related materials where an AMD Mark(s) is used. This license may be terminated by AMD at any time, and failure to comply with these terms will result in automatic termination of this License. \n\n Sometimes AMD acquires the right(s) to certain image(s) and includes such image(s) within AMD system(s) (\u201cLicensed Images\u201d). You agree to refrain from using Licensed Images for any reason outside of those directly related to your reason for accessing AMD system(s) contemplated under these Terms and Conditions. Additionally, you agree to comply with all limitation(s) on Licensed Images that are communicated to you by AMD, including but not limited to limitation(s) conveyed to you via notes in a file containing the Licensed Images. \n\n If it is determined by AMD \u2013 in its sole opinion - that You have violated these Terms and Conditions or have otherwise misused Confidential Information, Your access to AMD system(s) may be revoked immediately and without notice. \n\n If you have any questions regarding the terms and conditions of this Agreement, please contact the AMD Law Department at amd.trademarks@amd.com. \n\nNews Highlights\n\nSEOUL, South Korea and SANTA CLARA, Calif. \u2013 March 18, 2026 \u2013 Samsung Electronics Co., Ltd. today announced it has signed a memorandum of understanding (MOU) with AMD to expand their strategic collaboration on next-generation AI memory and computing technologies.\n\nThe signing ceremony was held at Samsung\u2019s most advanced chip manufacturing complex in Pyeongtaek, Korea, attended by Dr. Lisa Su, Chair and CEO of AMD, and Young Hyun Jun, Vice Chairman & CEO of Samsung Electronics.\n\n\"Samsung and AMD share a commitment to advancing AI computing, and this agreement reflects the growing scope of our collaboration,\" said Young Hyun Jun, Vice Chairman & CEO of Samsung Electronics. \"From industry-leading HBM4 and next-generation memory architectures to cutting-edge foundry and advanced packaging, Samsung is uniquely positioned to deliver unrivaled turnkey capabilities that support AMD\u2019s evolving AI roadmap.\"\n\n\"Powering the next generation of AI infrastructure requires deep collaboration across the industry,\" said Dr. Lisa Su, Chair and CEO of AMD. \"We are thrilled to expand our work with Samsung, bringing together their leadership in advanced memory with our Instinct GPUs, EPYC CPUs and rack-scale platforms. Integration across the full computing stack, from silicon to system to rack, is essential to accelerating AI innovation that translates into real-world impact at scale.\u201d\n\nUnder the MOU, Samsung and AMD will align on primary HBM4 supply for the next-generation AMD AI accelerator, the AMD Instinct MI455X GPU, as well as advanced DRAM solutions for 6th Gen AMD EPYC CPUs, codenamed \u201cVenice.\u201d These technologies will support next-generation AI systems combining AMD Instinct GPUs, AMD EPYC CPUs and rack-scale architectures such as the AMD Helios platform.\n\nSamsung and AMD are closely collaborating on advanced memory technologies for AI and data center workloads. As memory bandwidth and power efficiency become increasingly critical to system-level performance, this collaboration will help deliver more optimized AI infrastructure for customers.\n\nAn industry-first to enter mass production, Samsung\u2019s HBM4 is built on its most advanced 6th-generation 10-nanomter (nm)-class DRAM process (1c) and a 4nm logic base die, featuring processing speeds of up to 13 gigabits-per-second (Gbps) and maximum 3.3 terabytes-per-second (TB/s) bandwidth that exceeds industry standards.\n\nPowered by Samsung HBM4\u2019s industry-leading performance, reliability and energy efficiency, the AMD Instinct MI455X GPU is expected to be the optimum solution for high-performance systems handling AI model training and inference.\n\nThe MI455X GPU will serve as a key building block for the AMD Helios rack-scale architecture, designed to deliver the performance and scalability required for next-generation AI infrastructure.\n\nAs part of their collaboration, Samsung and AMD will also work together on high-performance DDR5 memory optimized for the 6th Gen AMD EPYC CPUs. The companies aim to deliver industry-leading DDR5 memory solutions for systems built on the AMD Helios rack-scale architecture.\n\nThe two companies will also discuss opportunities for foundry partnership, through which Samsung would provide foundry services for next-generation AMD products.\n\nSamsung and AMD have collaborated for nearly two decades across graphics, mobile and computing technologies, including Samsung serving as the primary HBM3E partner to AMD, powering the latest AMD Instinct MI350X and MI355X AI accelerators.\n\nAbout Samsung Electronics Co., Ltd.\n\nSamsung inspires the world and shapes the future with transformative ideas and technologies. The company is redefining the worlds of TVs, digital signage, smartphones, wearables, tablets, home appliances and network systems, as well as memory, system LSI and foundry. Samsung is also advancing medical imaging technologies, HVAC solutions and robotics, while creating innovative automotive and audio products through Harman. With its SmartThings ecosystem, open collaboration with partners, and integration of AI across its portfolio, Samsung delivers a seamless and intelligent connected experience. For the latest news, please visit the Samsung Newsroom at news.samsung.com.\n\nCAUTIONARY STATEMENT\n\nThis press release contains forward-looking statements concerning Advanced Micro Devices, Inc. (AMD) and the strategic collaboration with Samsung Electronics, including future plans, beliefs, intentions and anticipated benefits, which are made pursuant to the Safe Harbor provisions of the Private Securities Litigation Reform Act of 1995. Forward-looking statements are commonly identified by words such as \"would,\" \"may,\" \"expects,\" \"believes,\" \"plans,\" \"intends,\" \"projects\" and other terms with similar meaning. Investors are cautioned that the forward-looking statements in this press release are based on current beliefs, assumptions and expectations, speak only as of the date of this press release and involve risks and uncertainties that could cause actual results to differ materially from current expectations. Such statements are subject to certain known and unknown risks and uncertainties, many of which are difficult to predict and are generally beyond AMD's control, that could cause actual results and other future events to differ materially from those expressed in, or implied or projected by, the forward-looking information and statements. Material factors that could cause actual results to differ materially from current expectations include, without limitation, the following: impact of government actions and regulations such as export regulations, import tariffs, trade protection measures, and licensing requirements; competitive markets in which AMD\u2019s products are sold; the cyclical nature of the semiconductor industry; market conditions of the industries in which AMD products are sold; AMD\u2019s ability to introduce products on a timely basis with expected features and performance levels; loss of a significant customer; economic and market uncertainty; quarterly and seasonal sales patterns; AMD's ability to adequately protect its technology or other intellectual property; unfavorable currency exchange rate fluctuations; ability of third party manufacturers to manufacture AMD's products on a timely basis in sufficient quantities and using competitive technologies; availability of essential equipment, materials, substrates or manufacturing processes; ability to achieve expected manufacturing yields for AMD\u2019s products; AMD's ability to generate revenue from its semi-custom SoC products; potential security vulnerabilities; potential security incidents including IT outages, data loss, data breaches and cyberattacks; uncertainties involving the ordering and shipment of AMD\u2019s products; AMD\u2019s reliance on third-party intellectual property to design and introduce new products; AMD's reliance on third-party companies for design, manufacture and supply of motherboards, software, memory and other computer platform components; AMD's reliance on Microsoft and other software vendors' support to design and develop software to run on AMD\u2019s products; AMD\u2019s reliance on third-party distributors and add-in-board partners; impact of modification or interruption of AMD\u2019s internal business processes and information systems; compatibility of AMD\u2019s products with some or all industry-standard software and hardware; costs related to defective products; failure to maintain an efficient supply change as customer demand changes; AMD's ability to rely on third party supply-chain logistics functions; AMD\u2019s ability to effectively control sales of its products on the gray market; impact of climate change on AMD\u2019s business; AMD\u2019s ability to realize its deferred tax assets; potential tax liabilities; current and future claims and litigation; impact of environmental laws, conflict minerals related provisions and other laws or regulations; evolving expectations from governments, investors, customers and other stakeholders regarding corporate responsibility matters; issues related to the responsible use of AI; restrictions imposed by agreements governing AMD\u2019s notes, the guarantees of Xilinx\u2019s notes and the revolving credit agreement; AMD\u2019s ability to satisfy financial obligations under guarantees and other commercial commitments; impact of acquisitions, joint ventures and/or investments on AMD\u2019s business and AMD\u2019s ability to integrate acquired businesses; impact of any impairment of the combined company\u2019s assets; political, legal and economic risks and natural disasters; future impairments of technology license purchases; AMD\u2019s ability to attract and retain key employees; and AMD\u2019s stock price volatility. Investors are urged to review in detail the risks and uncertainties in AMD\u2019s Securities and Exchange Commission filings, including but not limited to AMD\u2019s most re",
+        "publishedAt": "2026-03-18T23:59:59.999Z",
+        "retrievedAt": "2026-09-26T23:27:03.665Z",
+        "publicationConfirmed": true,
+        "dateBasis": "Publication label in retained source; end-of-day cutoff conservatively applied",
+        "sourceClass": "unknown",
+        "hash": "5ef513d74e365af30e7aa9afd0867dc2e8c2a4c9f20daa03b4d7800af69f6548",
+        "query": "HBM market share SK Hynix 50 percent Samsung 33 percent HBM4 mass production 2026",
+        "timeMode": "video_date",
+        "provider": "Exa"
+      }
+    ]
+  }
+}
