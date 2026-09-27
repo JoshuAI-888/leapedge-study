@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import type { ResearchBriefData, AcceptedSentence } from "../research-brief.ts";
+import { researchPipelineLabel } from "../research-pipeline-choice.ts";
 import { prioritiseBriefs } from "../research-brief.ts";
 import { inspectLimitations } from "../limitation-consistency.ts";
 import { researchLifecycle } from "../research-lifecycle.ts";
@@ -211,8 +212,10 @@ export function ResearchBrief({
   );
   const brief = ordered.find((b) => b.id === revision) ?? ordered[0];
   const lifecycle = researchLifecycle(sourceRunId, data?.snapshot.jobs ?? [], briefs, brief?.id ?? null);
+  const selectedResearchJob = data?.snapshot.jobs.find(job => job.id === brief?.runId);
   const lifecyclePanel = <section aria-label="Research attempt status" className={['failed','needs_review','publication_missing','unknown'].includes(lifecycle.state) ? 'yi-warning' : 'yi-current-update'}>
     <h3>{lifecycle.heading}</h3>
+    {brief && <p>Selected brief pipeline: {selectedResearchJob ? researchPipelineLabel(selectedResearchJob.researchPipelineIdentity) : "Pipeline identity not loaded for this revision"}</p>}
     <p>{lifecycle.message}</p>
     {lifecycle.latest && <p>Stage: {lifecycle.latest.stage}</p>}
     {lifecycle.selectedRevisionNotice && <p>{lifecycle.selectedRevisionNotice}</p>}
@@ -222,6 +225,7 @@ export function ResearchBrief({
       <ul>{lifecycle.history.map(attempt => <li key={attempt.id}>
         <strong>{attempt.status} · {attempt.stage}</strong> · {date(attempt.createdAt)}
         <p>Run: {attempt.id} · Updated: {date(attempt.updatedAt)}</p>
+        <p>{researchPipelineLabel(data?.snapshot.jobs.find(job => job.id === attempt.id)?.researchPipelineIdentity)}</p>
         {attempt.error && <pre style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{attempt.error}</pre>}
       </li>)}</ul>
     </details>}

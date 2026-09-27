@@ -1,3 +1,4 @@
+import { researchPipelineIdentityForDisplay } from "../../features/youtube-intelligence/research-pipeline-choice.ts";
 import { assertCriticIndependent, modelFamily } from "./transport/index.ts";
 import { canDropFailedAudit } from "../../features/youtube-intelligence/research-quality.ts";
 import { randomUUID, createHash } from "node:crypto";
@@ -708,6 +709,7 @@ export async function researchSnapshot() {
       .map((r) => ({
         id: r.id,
         task: String(r.input.task),
+        researchPipelineIdentity: researchPipelineIdentityForDisplay(r.input),
         createdAt: r.createdAt,
         updatedAt: r.updatedAt,
         sourceRunId:

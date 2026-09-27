@@ -140,7 +140,9 @@ test("Concurrent create() of the same input yields one row, and the index reject
           "metadata",
           now,
           now,
-          JSON.stringify(input),
+          // Admission freezes the selected pipeline; the duplicate must use
+          // that exact stored identity rather than the pre-admission request.
+          JSON.stringify(made[0].input),
           "{}",
         ),
     /yi_runs_open_dedupe|duplicate key/,

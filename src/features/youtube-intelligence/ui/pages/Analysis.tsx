@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { researchPipelineLabelFromInput } from "../../research-pipeline-choice.ts";
 import { ResearchBrief } from "../ResearchBrief.tsx";
 import type { ResearchBriefData } from "../../research-brief.ts";
 import type { SourceData } from "../../contracts.ts";
@@ -457,6 +458,8 @@ export function Analysis({ id }: { id: string }) {
         <dl>
           <dt>Run</dt>
           <dd>{run.id}</dd>
+          <dt>Frozen analysis pipeline</dt>
+          <dd>{researchPipelineLabelFromInput(run.input)}</dd>
           <dt>Stage</dt>
           <dd>{run.stage}</dd>
           <dt>Measured or reserved cost</dt>

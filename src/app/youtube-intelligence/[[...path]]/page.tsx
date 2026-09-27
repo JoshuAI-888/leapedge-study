@@ -6,6 +6,7 @@ import { Settings } from "../../../features/youtube-intelligence/ui/pages/Settin
 import { Analysis } from "../../../features/youtube-intelligence/ui/pages/Analysis.tsx";
 import { Lab } from "../../../features/youtube-intelligence/ui/pages/Lab.tsx";
 import { Methodology } from "../../../features/youtube-intelligence/ui/pages/Methodology.tsx";
+import { AnalysisPipelines } from "../../../features/youtube-intelligence/ui/pages/AnalysisPipelines.tsx";
 import { ProcessingProfiles } from "../../../features/youtube-intelligence/ui/pages/ProcessingProfiles.tsx";
 import { Comparison } from "../../../features/youtube-intelligence/ui/pages/Comparison.tsx";
 import { Leaderboard } from "../../../features/youtube-intelligence/ui/pages/Leaderboard.tsx";
@@ -25,6 +26,7 @@ export default async function Page({
     saved: Saved,
     settings: Settings,
     "processing-profiles": ProcessingProfiles,
+    "analysis-pipelines": AnalysisPipelines,
     lab: Lab,
     comparison: Comparison,
     methodology: Methodology,

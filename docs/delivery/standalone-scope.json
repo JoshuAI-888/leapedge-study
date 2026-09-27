@@ -68,7 +68,7 @@
     "status": "20-video-comparison-completed-with-findings",
     "apiSpendUsd": null,
     "leapedgeAnalyses": 20,
-    "workerHost": "local Mac; hosted deployment documented, no new hosting subscription",
+    "workerHost": "Cloud-only production required by user on 27 September 2026; previous Mac deployment is historical, not an accepted target.",
     "apiSpendPolicy": "User removed the prior US$25 cap for the 20-test comparison on 20 September 2026. Measure incurred usage including failures; no unbounded channel processing.",
     "comparisonNewLeapEdgeSubmissions": 16
   },

@@ -1,3 +1,4 @@
+import {researchPipelineIdentityFromInput, ResearchPipelineIdentity} from "../../features/youtube-intelligence/research-pipeline-choice.ts";
 import { advanceBoundedResearchAudit } from "./bounded-research-audit.ts";
 import { PRIMARY_DOMAINS } from "./primary-domain-registry.ts";
 import { researchReadiness } from "../../features/youtube-intelligence/research-readiness.ts";
@@ -84,6 +85,7 @@ async function queueSourceBrief(
   source: Run,
   team: Awaited<ReturnType<typeof teamPreferences>>,
   analysedAt: string,
+  inheritedPipeline?: z.infer<typeof ResearchPipelineIdentity>,
 ) {
   const rows = await claimsForRun(source.id);
   const inventory = researchEvidenceInventoryWithDiagnostics(source);
@@ -120,6 +122,7 @@ async function queueSourceBrief(
       criticModel: team.models.critique.id,
       promptSnapshot: await prompt(team.prompts.version),
       pipelineVersion: "research-brief.v1",
+      ...(inheritedPipeline ? {researchPipeline:inheritedPipeline.pipeline,researchPipelineVersion:inheritedPipeline.version,researchPipelineIdentity:inheritedPipeline} : {}),
       efficiencyVersion: source.input.efficiencyVersion,
       speculativeResearch: source.input.speculativeResearch,
       reuseResearchCache: source.input.reuseResearchCache,
@@ -140,12 +143,17 @@ export async function ensureResearchBrief(source: Run) {
     source,
     await runTeamPreferences(source),
     source.createdAt,
+    researchPipelineIdentityFromInput(source.input),
   );
 }
 export async function researchBriefs() {
   return docs<ResearchBriefData>("researchBrief");
 }
 export async function researchStep(run: Run) {
+  const frozenPipeline=researchPipelineIdentityFromInput(run.input);
+  if(run.input.researchPipelineVersion!==undefined&&run.input.researchPipelineVersion!==frozenPipeline.version)throw Error("Unsupported frozen research pipeline version; explicit migration is required.");
+  run.output.researchPipelineIdentity=frozenPipeline;
+  const targeted=frozenPipeline.pipeline==='targeted-experimental';
   const snapshot = Snapshot.parse(run.input.snapshot);
   if (!run.output.researchBaseline) {
     const norm = (v: string) => v.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
@@ -209,6 +217,12 @@ export async function researchStep(run: Run) {
     note: "Query planning inventory only. Original quotations will be supplied to synthesis and independent audit; do not treat summaries as external corroboration.",
   } : snapshot;
   const settings = await runTeamPreferences(run);
+  // Preserve pre-experiment checkpoint hashes. The newly defaulted preference
+  // is not part of the old audit identity, while explicit new-run choices are.
+  const oldProcessing=(run.input.teamPreferencesSnapshot as {processing?:Record<string,unknown>}|undefined)?.processing;
+  const legacyAuditIdentity=!targeted&&run.input.researchPipeline===undefined&&run.input.researchPipelineIdentity===undefined&&oldProcessing?.researchPipeline===undefined;
+  const {researchPipeline:_pipelineChoice,...priorProcessing}=settings.processing;
+  const auditSettings=legacyAuditIdentity?{...settings,processing:priorProcessing}:settings;
   const invoke = async (
     stage: string,
     instructions: string,
@@ -407,7 +421,7 @@ export async function researchStep(run: Run) {
     let repaired: Awaited<ReturnType<typeof reconcileResearchAudit>>;
     let supplementalAuditError: string | null = null;
     try {
-    const useBoundedAudit = auditDraft.sentences.length > 0 && (snapshot.evidence.length > 24 || draft.sentences.length > 12);
+    const useBoundedAudit = targeted || (auditDraft.sentences.length > 0 && (snapshot.evidence.length > 24 || draft.sentences.length > 12));
     const auditInstructions = PRINCIPLES +
           " Independently audit EVERY sentence against all cited original quotes and external source text. Inspect uncited external sources and baseline history for counterevidence as well. External factualStatus requires eligible sources cited by THIS sentence; the presence of other documents is not corroboration. Do not label quantities contradictory unless their observation dates, periods, instruments, units and basis are comparable; distinguish a change over time from disagreement. A small numerical difference is not a proven contradiction when observation conventions are unknown (for example intraday traded Treasury yield versus a daily constant-maturity series). Require a matching observation time and definition; otherwise mark unverified and explain the comparability gap, never call one value the actual figure. Independently inspect every typed financial fact value, unit, scale, denominator, qualifier and comparison baseline against its exact original quote; correct prose does not excuse an incorrect typed field. Check every optional calculation input, units and assumptions against the cited quotes; reject if any input is invented or the periods/scales differ. Accept only if EVERY clause, causal link, quantity, attribution and time boundary is supported or clearly marked grounded inference. Reject unrelated or weak citations. Do not reject cautious next-check questions simply for being questions. factualStatus corroborated requires direct primary-source support of the exact factual assertion, never mere quotation agreement; partial means incomplete external corroboration; disputed requires evidence of contradiction. Creator views and scenarios normally remain unverified. For every external label above unverified, return externalSupport entries mapping the exact assertion substring to an exact passage in a cited primary source, with supports/contradicts relationship and explanation. Corroborated requires support for the complete sentence; partial requires an explicit supported subset. A source discussing the company is not support for an unrelated multiple or quantity. Return exactly one verdict per sentence ID and coverageFindings for missing central themes or unbalanced treatment. Independently return evidenceCoverage for EVERY supplied evidence ID against the entire retained brief. A cited ID or shared topic does NOT establish coverage of its material propositions. Inspect all original quotes, quantities, conditions, risks, valuation qualifications, forward monitoring and invalidation points; mark partial or missing if any material detail is absent. Include each missing point with its exact original quote and an explanation, and list only accepted sentence IDs that actually represent it. Mark covered only when all material propositions are represented. On supplemental audits reassess whole retainedDraft coverage, including previous missing details; never infer coverage from a new citation alone. Assess robustness conservatively: supported requires corroborated primary facts plus explicit cited countercase and invalidation sentence IDs for the same topic, horizon and time boundary; otherwise insufficient or fragile with a concrete reason. Independently verify novelty against the cited baseline text and original evidence, including actor, conditions and horizon; mark noveltyAccepted false when unknown, unmatched, or just wording changes.";
     let bounded: Awaited<ReturnType<typeof advanceBoundedResearchAudit>> | null = null;
@@ -415,7 +429,8 @@ export async function researchStep(run: Run) {
       bounded = await advanceBoundedResearchAudit(run.output, previousAudit ? "supplementAuditBatches" : "researchAuditBatches", {
         draft:auditDraft, retainedDraft:draft, evidence:snapshot.evidence, previousAudit,
         payload:{...snapshot,draft:auditDraft,retainedDraft:draft,external:eligible},
-        instructions:auditInstructions, identity:{settings,preflight},
+        instructions:auditInstructions, identity:{settings:auditSettings,preflight},
+        ...(targeted?{targeted:{previousBasis:previousAudit?run.output.researchCoverageBasis:undefined,context:{snapshot,external:eligible,settings,instructions:auditInstructions}}}:{}),
       }, invoke);
       if (!bounded.done) return;
     }
