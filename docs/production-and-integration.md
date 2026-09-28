@@ -18,7 +18,7 @@ flowchart LR
  W --> R[Resend]
 ```
 
-Vercel serves the UI and Node API. Cron invokes `/api/cron/intelligence` with `CRON_SECRET`. Each invocation processes a bounded window; a stage checkpoints in Postgres. Jobs have ten-minute leases and fencing tokens. Transactional locks protect deduplication, reservations and scheduler claims. Provider responses are retained before publication. An ambiguous network outcome stops paid retry and retains its reservation.
+Vercel serves the UI and Node API. Cron invokes `/api/cron/intelligence` with `CRON_SECRET` each minute; it sweeps, then drains the queue within its 800 s budget. Mutating requests also start an `after()` drain so submitted work begins immediately. Each step checkpoints in Postgres. Jobs have ten-minute leases and fencing tokens. Transactional locks protect deduplication, reservations and scheduler claims. Provider responses are retained before publication. An ambiguous network outcome stops paid retry and retains its reservation.
 
 The app stores sources, reports, prompt snapshots, comparisons, reviews, deliveries, shares, discoveries and performance observations in nine `yi_*` tables. This is a single-workspace lab. Adopt Finradar's owner-scoped auth and platform task/database adapters before multi-user integration.
 

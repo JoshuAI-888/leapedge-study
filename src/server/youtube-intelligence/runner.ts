@@ -226,14 +226,3 @@ export async function sweep() {
     await put("scheduler", "lease", { until: Date.now() + 60000 });
   }
 }
-export async function processWindow(milliseconds = 90000) {
-  const start = Date.now(),
-    jobs = [];
-  while (Date.now() - start < milliseconds) {
-    const job = await processNext();
-    if (!job) break;
-    jobs.push(job);
-    if (job.status === "queued" && job.stage === "source") break;
-  }
-  return jobs;
-}

@@ -78,6 +78,8 @@ const RETIRED_IN_CODE: Record<string, string[] | null> = {
   auditSource: null, // deleted 18 September with evaluations/native-google
   splitExactBoundaryQuotes: null, // superseded by F12 pointer evidence
   promptfoo: null, // deleted 18 September; the gold set is the only evaluation set
+  processWindow: null, // replaced by drain.ts (serverless cron and submit drains), 28 September
+  requestCloudWorkerWake: null, // cancelled Google Cloud worker launcher, 28 September
   "source-repair": [
     // The test whose whole point is asserting the stage F15 removed is gone.
     "tests/critique.test.ts",
