@@ -1,0 +1,342 @@
+{
+  "version": "readiness-candidate-f-quality.v1",
+  "reviewedAt": "2026-09-26T22:32:24.377406+00:00",
+  "snapshotSha256": "ef3c39e72ba03e138759d04525ea6b4b621e475bc06eb1153dc8701cb748f3b5",
+  "revision": "e96111b",
+  "state": "paused",
+  "decision": "failed-first-case-quality-gate",
+  "denominator": 20,
+  "published": 1,
+  "notStarted": 19,
+  "videoId": "SPIRV9UjNYU",
+  "briefId": "ef92c1bd-1f7c-425e-b30e-b6c4504227b4",
+  "accounting": {
+    "settledLedgerUsd": 0.38761045000000016,
+    "settledModelUsd": 0.3176104500000001,
+    "settledExternalUsd": 0.07,
+    "openHolds": [],
+    "note": "Historical ledger prices; excludes unpriced credits. Cumulative snapshots must not be added. Cache consumer donor charges are not added again."
+  },
+  "sessionWallSeconds": 162.92,
+  "recordedExecutionSeconds": 162.59910712700002,
+  "boundary": "Frozen-source synthesis through research checkpoint; no acquisition, ASR or UI display; historical LeapEdge timing noncomparable.",
+  "recallCoverage": {
+    "version": "source-recall.full-chronological.v1",
+    "sourceSegments": 173,
+    "plannedSegments": 173,
+    "totalWindows": 5,
+    "processedWindows": 5,
+    "assessedWindows": 1,
+    "assessment": "incomplete",
+    "semanticCompleteness": "not_established"
+  },
+  "policyExcludedPropositions": [
+    {
+      "summary": "August U.S. inflation data including CPI up 0.4% MoM, gasoline up 3.9%, core CPI up 0.3% MoM and core CPI YoY falling from 2.5% to 2.4%.",
+      "sourceIds": [
+        "asr-0-57",
+        "asr-0-58",
+        "asr-0-59",
+        "asr-0-60",
+        "asr-0-61",
+        "asr-0-62"
+      ],
+      "disposition": "not_material",
+      "existingIds": [],
+      "candidateRefs": [],
+      "reason": "Descriptive macro economic release data cited to support the inflation backdrop without establishing an instrument stance."
+    },
+    {
+      "summary": "Fed policy limits, dot plot projections showing an additional 25 bps rate hike within the year and median rate of around 4.1% next year.",
+      "sourceIds": [
+        "asr-0-63",
+        "asr-0-64",
+        "asr-0-65",
+        "asr-0-66",
+        "asr-0-67",
+        "asr-0-68",
+        "asr-0-69",
+        "asr-0-70"
+      ],
+      "disposition": "not_material",
+      "existingIds": [],
+      "candidateRefs": [],
+      "reason": "Standard macro commentary explaining Federal Reserve rate mechanics and expectations."
+    }
+  ],
+  "rejected": [
+    {
+      "sentence": {
+        "id": "s9",
+        "text": "Risk-free U.S. Treasury yields offering 5% compete directly with richly valued tech companies, constraining valuation multiples despite ongoing order expansion.",
+        "evidenceIds": [
+          "k8",
+          "m5"
+        ],
+        "externalIds": [],
+        "financialFacts": [
+          {
+            "label": "U.S. Treasury yield illustrative benchmark",
+            "value": 5,
+            "currency": null,
+            "unit": "percent",
+            "unitDescription": "annualized yield",
+            "relation": "exact",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "scenario",
+            "evidenceId": "k8",
+            "quote": "假设你面前有一笔收益率5%的美国国债， 另一边呢是一家估值很高的科技公司"
+          }
+        ],
+        "novelty": {
+          "status": "unknown",
+          "baselineIds": [],
+          "reason": "No baseline coverage provided."
+        },
+        "calculation": null,
+        "kind": "analysis",
+        "horizon": "fundamental",
+        "topic": "AI Sector Strategy and Fundamentals",
+        "materiality": 2,
+        "importanceReason": "Explains the discount rate mechanism pressuring high-multiple AI tech equities.",
+        "speaker": "unknown",
+        "timeMode": "video_date"
+      },
+      "reasons": [
+        "A typed financial fact does not quote its cited original evidence.",
+        "A typed financial fact does not quote its cited original evidence."
+      ]
+    }
+  ],
+  "excludedSupplementAdditions": [
+    {
+      "id": "s1",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s2",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s3",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s4",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s5",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s6",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s7",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s8",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s9",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s10",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s11",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    },
+    {
+      "id": "s12",
+      "reason": "Duplicate of an original or earlier supplemental statement."
+    }
+  ],
+  "readiness": {
+    "status": "partial",
+    "label": "Partial research — review gaps",
+    "issues": [
+      "Missing material detail (m5): Comparison of a 5% yielding US Treasury bond against a highly valued tech company as the basis for investor capital reallocation",
+      "Key details not assessed in 1 evidence item(s) (k8). Citations alone do not establish that all conditions and warnings are included.",
+      "Audio and timestamp accuracy have not been independently verified.",
+      "Specific individual corporate tickers and specific holding names were not detailed in the retained transcript.",
+      "External verification sources were unavailable for the post-Fed market data points.",
+      "Optional calculation for s2 withheld: unsupported expression or invalid inputs. The underlying sentence still requires independent review.",
+      "Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+      "Model critique is not human verification.",
+      "This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications.",
+      "Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+      "Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+      "source-0: Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+      "source-1: Model critique is not human verification.",
+      "source-2: This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications.",
+      "source-3: Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+      "source-4: Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+      "Evidence k8 (rationale for why high rates suppress AI stock valuations despite continued chip-order growth, and the Treasury-yield-vs-tech-valuation comparison) is not represented in any retained sentence, leaving the fundamental valuation-mechanism explanation for AI stock pressure incomplete.",
+      "Evidence m5 (the specific 5% Treasury yield comparison point) is not cited by any sentence, overlapping with the k8 gap and further indicating the valuation-comparison rationale underlying the AI thesis is underrepresented in the draft.",
+      "Unresolved coverage: AI股票 (k8).",
+      "Unresolved coverage: 美国国债 (m5).",
+      "1 draft point(s) withheld; their material details may be missing."
+    ],
+    "covered": 12,
+    "total": 14,
+    "coverage": [
+      {
+        "evidenceId": "c1",
+        "topic": "AI",
+        "status": "represented",
+        "sentenceIds": [
+          "s10",
+          "s11"
+        ]
+      },
+      {
+        "evidenceId": "k1",
+        "topic": "标普500",
+        "status": "represented",
+        "sentenceIds": [
+          "s1",
+          "s2"
+        ]
+      },
+      {
+        "evidenceId": "k2",
+        "topic": "Unwinding of yen carry trades following Bank of Japan rate hikes can trigger forced liquidation of overseas assets and stocks regardless of underlying business fundamentals.",
+        "status": "represented",
+        "sentenceIds": [
+          "s6",
+          "s7"
+        ]
+      },
+      {
+        "evidenceId": "k3",
+        "topic": "Good companies can experience short-term selling when holders face liquidity demands and margin pressures, meaning price drops often stem from external capital flows rather than fundamental changes in business operations.",
+        "status": "represented",
+        "sentenceIds": [
+          "s7"
+        ]
+      },
+      {
+        "evidenceId": "k4",
+        "topic": "The Bank of Japan raised its policy rate by 25 basis points to 1.25%, which was largely priced in and led to a weaker yen, averting the disruptive shock that an unexpected 50 basis point hike would have had on the carry trade.",
+        "status": "represented",
+        "sentenceIds": [
+          "s5",
+          "s12"
+        ]
+      },
+      {
+        "evidenceId": "k5",
+        "topic": "U.S. equities rebounded as energy costs and long-term rates eased, showing that continued earnings growth can coexist with valuation compression during a more grinding, protracted market advance.",
+        "status": "represented",
+        "sentenceIds": [
+          "s8",
+          "s11",
+          "s12"
+        ]
+      },
+      {
+        "evidenceId": "k6",
+        "topic": "AI",
+        "status": "represented",
+        "sentenceIds": [
+          "s10"
+        ]
+      },
+      {
+        "evidenceId": "k7",
+        "topic": "布伦特原油",
+        "status": "represented",
+        "sentenceIds": [
+          "s3",
+          "s4"
+        ]
+      },
+      {
+        "evidenceId": "k8",
+        "topic": "AI股票",
+        "status": "unresolved",
+        "sentenceIds": []
+      },
+      {
+        "evidenceId": "m1",
+        "topic": "AI美股",
+        "status": "represented",
+        "sentenceIds": [
+          "s10"
+        ]
+      },
+      {
+        "evidenceId": "m2",
+        "topic": "标普500",
+        "status": "represented",
+        "sentenceIds": [
+          "s1"
+        ]
+      },
+      {
+        "evidenceId": "m3",
+        "topic": "纳斯达克",
+        "status": "represented",
+        "sentenceIds": [
+          "s8"
+        ]
+      },
+      {
+        "evidenceId": "m4",
+        "topic": "布伦特原油",
+        "status": "represented",
+        "sentenceIds": [
+          "s3"
+        ]
+      },
+      {
+        "evidenceId": "m5",
+        "topic": "美国国债",
+        "status": "unresolved",
+        "sentenceIds": []
+      }
+    ]
+  },
+  "checks": [
+    {
+      "criterion": "provider-schema-acceptance",
+      "status": "pass-selected",
+      "finding": "All5 recall requests returned; priorHTTP400 absent."
+    },
+    {
+      "criterion": "Fed25-25-approx4.1-and-CPI",
+      "status": "fail-retention-not-exercised-units",
+      "finding": "Explicit model not_material policy decisions exclude source macro data, despite relevance to discount rates and inflation thesis."
+    },
+    {
+      "criterion": "BOJ-and-Brent-units",
+      "status": "pass-selected",
+      "finding": "BOJ25basis_points and Brent104per_barrel plus100greater_than retained."
+    },
+    {
+      "criterion": "future-yen-monitor",
+      "status": "pass-selected",
+      "sentenceId": "s12"
+    },
+    {
+      "criterion": "yield-comparability",
+      "status": "not-exercised",
+      "finding": "4.93%unverified with no externalSupport."
+    },
+    {
+      "criterion": "exact-duplicate-publication",
+      "status": "pass-selected",
+      "published": 11,
+      "unique": 11
+    }
+  ]
+}

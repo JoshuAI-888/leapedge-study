@@ -39,7 +39,8 @@ export const Env = z.object({
   YTI_HARD_BUDGET_USD_MONTH: amount, // absolute ceiling the UI cannot raise
   RESEND_API_KEY: secret, // optional; digest delivery
   CRON_SECRET: secret, // required when hosted; the cron route rejects without it
-  YTI_ACCESS_TOKEN: secret, // required when hosted; the workspace passcode
+  YTI_ACCESS_TOKEN: secret, // required when hosted; session signing key (and passcode if YTI_PASSCODE is unset)
+  YTI_PASSCODE: secret, // optional; the shared workspace passcode people type
   YTI_APP_ORIGIN: secret, // required when hosted; the canonical origin
   YTI_PREVIEW_READ_ONLY: secret, // optional; "true" stops a preview dispatching
   YTI_EMAIL_TO: secret, // optional; digest recipient

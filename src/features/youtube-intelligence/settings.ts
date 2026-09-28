@@ -1,3 +1,4 @@
+import { ResearchPipelineSetting } from "./research-pipeline-choice.ts";
 import { ProcessingProfileSetting } from "./processing-profiles.ts";
 import { createHash } from "node:crypto";
 import { z } from "zod";
@@ -133,6 +134,7 @@ export const TeamPreferences = z.object({
   processing: z
     .object({
       efficiencyProfile: ProcessingProfileSetting.default("deployment-default"),
+      researchPipeline: ResearchPipelineSetting.default("current"),
       userSubmitted: z.enum(["immediate", "batch"]).default("immediate"),
       channelUploads: z.enum(["immediate", "batch"]).default("batch"),
       contextCaching: z.boolean().default(true),
@@ -143,9 +145,9 @@ export const TeamPreferences = z.object({
     .prefault({}),
   budget: z
     .object({
-      monthlyUsd: z.number().min(0).default(150),
+      monthlyUsd: z.number().min(0).default(750),
       alertAtPercent: z.number().int().min(1).max(100).default(70),
-      perVideoMaxUsd: z.number().min(0).default(1.5),
+      perVideoMaxUsd: z.number().min(0).default(3),
       unknownOutcomeHoldMinutes: z.number().int().min(0).default(60),
     })
     .prefault({}),
@@ -355,6 +357,9 @@ export function hashedConfiguration(team: TeamPreferencesData) {
     sources: team.sources,
     context: team.context,
     processing: {
+      // Preserve historical current-path hashes; targeted work must never reuse them.
+      ...(team.processing.researchPipeline === "targeted-experimental"
+        ? { researchPipeline: team.processing.researchPipeline } : {}),
       contextCaching: team.processing.contextCaching,
       chunkAboveTokens: team.processing.chunkAboveTokens,
     },

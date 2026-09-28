@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { RESEARCH_PIPELINES, ResearchPipelineSetting } from "../../research-pipeline-choice.ts";
 import { PROCESSING_PROFILES, ProcessingProfileSetting } from "../../processing-profiles.ts";
 import { useWorkspace, type Preferences } from "../workspace.tsx";
 import { action } from "../api.ts";
@@ -79,6 +80,7 @@ function ObjectFields({
           [
             "selection",
             "efficiencyProfile",
+            "researchPipeline",
             "context",
             "corpus",
             "sharing",
@@ -442,6 +444,36 @@ export function Settings() {
             Existing results keep their original configuration. The critic must
             always use a different model family from extraction.
           </p>
+          <fieldset className="yi-panel">
+            <legend>Analysis pipeline</legend>
+            <div className="yi-settings-fields">
+              <label>
+                Pipeline for new analyses
+                <select
+                  value={t.processing.researchPipeline ?? "current"}
+                  aria-describedby="yi-research-pipeline-description yi-research-pipeline-scope"
+                  disabled={busy}
+                  onChange={(e) => setTeam({
+                    ...t,
+                    processing: { ...t.processing, researchPipeline: ResearchPipelineSetting.parse(e.target.value) },
+                  })}
+                >
+                  {RESEARCH_PIPELINES.map((pipeline) => (
+                    <option key={pipeline.value} value={pipeline.value}>{pipeline.label}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <p id="yi-research-pipeline-description" className="yi-muted" aria-live="polite">
+              {RESEARCH_PIPELINES.find(pipeline => pipeline.value === (t.processing.researchPipeline ?? "current"))?.description}
+            </p>
+            <p id="yi-research-pipeline-scope" className="yi-muted">
+              Save team configuration to apply this workspace setting to new analyses only.
+              Queued, running and historical analyses retain their original pipeline.
+              This choice is independent of the processing profile below.
+            </p>
+            <Link href="/youtube-intelligence/analysis-pipelines">Compare analysis pipelines and experiment requirements</Link>
+          </fieldset>
           <fieldset className="yi-panel">
             <legend>Processing profile</legend>
             <div className="yi-settings-fields">

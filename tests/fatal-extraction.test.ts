@@ -74,3 +74,21 @@ test('later fatal extraction sibling stops publication, drains paid success, and
     assert.equal(fake.requestsFor('critique').length, 0, 'publication still requires the independent audit');
   } finally { restore(); await db.close(); }
 });
+
+test('a retained extraction plan cannot omit source segments or mutate their text', async () => {
+  await freshDatabase();
+  const source = Source.parse({ segments: [
+    { id: 's1', text: 'First material discussion.', start_seconds: 0, end_seconds: 10 },
+    { id: 's2', text: 'Later material countercase.', start_seconds: 10, end_seconds: 20 },
+  ] });
+  const run = await store.create('plan-gap', 'google/gemini-3.8-flash', {}, 'evidence-first.web.v5');
+  run.stage = 'synthesis'; run.output = { source, extractionPlan: [[source.segments[0]]] };
+  const fake = new FakeModelTransport(); const restore = injectTransport(fake);
+  try {
+    await assert.rejects(step(run), /extraction plan.*source/i);
+    assert.equal(fake.requests.length, 0);
+    run.output.extractionPlan = [[source.segments[0], { ...source.segments[1], text: 'Altered.' }]];
+    await assert.rejects(step(run), /extraction plan.*source/i);
+    assert.equal(fake.requests.length, 0);
+  } finally { restore(); }
+});

@@ -4,7 +4,9 @@ For every update, complete the [release checklist](release-checklist.md), includ
 
 > 20 September 2026 update: the user removed the old US$25 cap for a bounded 20-video comparison. That comparison is complete with findings; see [the report](live-comparison-20-20260920.md). Historical budget/status statements below describe the earlier pilot. Finradar integration remains excluded.
 
-The web app serves UI/API and dispatches jobs. `scripts/worker.ts` executes them from Postgres. The current user-approved host is this Mac. Three login services are installed and running from `~/Library/Application Support/YouTube Intelligence`; the worker is deliberately paused during acceptance. Keep the Mac awake and connected for continuous work. Sleep or shutdown interrupts processing; this is not unattended hosted uptime.
+> 28 September 2026: production work now executes on Vercel. The per-minute cron (`/api/cron/intelligence`) sweeps and then drains the Postgres queue for up to its 800 s budget, and every mutating API request starts an `after()` drain so a submitted video begins at once (`src/server/youtube-intelligence/drain.ts`). The Mac worker below is optional for local development only; stop the Mac services for production. Set `YTI_INLINE_DRAIN=off` to disable submit drains.
+
+Historical (before 28 September): the web app served UI/API and dispatched jobs. `scripts/worker.ts` executed them from Postgres. The user-approved host was this Mac. Three login services are installed and running from `~/Library/Application Support/YouTube Intelligence`; the worker is deliberately paused during acceptance. Keep the Mac awake and connected for continuous work. Sleep or shutdown interrupts processing; this is not unattended hosted uptime.
 
 ## Prepare one environment
 
@@ -22,7 +24,7 @@ Required configuration depends on the work queued:
 | `YOUTUBE_API_KEY`, `TRANSCRIPTAPI_API_KEY` | Metadata and captions |
 | `SUPADATA_API_KEY` | Optional bounded tie-break ASR |
 | `FMP_API_KEY` | Live prices where explicitly requested |
-| `YTI_BUDGET_USD` | Cumulative ledger ceiling; default US$2 |
+| `YTI_BUDGET_USD` | Optional cumulative ledger ceiling; unset means the monthly budget governs |
 | `YTI_HARD_BUDGET_USD_MONTH` | Hard team monthly cap |
 | `YTI_TRANSCRIPT_CREDIT_BUDGET` | Caption-provider request credit ceiling |
 | `YTI_QUEUE_PAUSED` | `true` prevents new claims and scheduler dispatch; active stages drain |
@@ -183,7 +185,7 @@ brief work have priority; eligible jobs gain age priority after 120 seconds.
 Reserving capacity can reduce pure background throughput: the controlled
 100-job fixture took 12% longer while its manual request completed 94% sooner.
 
-See [the before/after report](../reviews/performance-plan-20260920.md). UI activity
+See [the before/after report](../archive/reviews/performance-plan-20260920.md). UI activity
 polls are small, but full retained brief history still loads on terminal changes.
 The 1,000-video/day target needs real-provider quota and soak testing before it
 can be treated as demonstrated capacity. The queue stays paused after deployment.

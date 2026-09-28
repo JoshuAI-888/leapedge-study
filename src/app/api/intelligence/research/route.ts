@@ -8,7 +8,8 @@ import {
   lookup,
   resourceOf,
 } from "../../../../server/youtube-intelligence/actions/index.ts";
-export const maxDuration = 120;
+import { drainAfterResponse } from "../../../../server/youtube-intelligence/drain.ts";
+export const maxDuration = 800;
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 /**
@@ -31,6 +32,8 @@ export async function GET(r: Request) {
 export async function POST(r: Request) {
   try {
     guard(r);
+    // Work a mutation queues starts now rather than at the next cron tick.
+    await drainAfterResponse(maxDuration * 1000);
     const text = await r.text();
     if (text.length > 150000) throw Error("Request too large.");
     const a = z

@@ -1,4 +1,9 @@
+import { financialBasisIssue, semanticBasisIssues } from "./semantic-basis.ts";
+import {mixedTurnAttribution} from './research-attribution.ts';
+import {sourceNumericCheck, numericalSentenceDisposition} from './research-numeric-check.ts';
+import { EvidenceCoverage } from "./research-readiness.ts";
 import { z } from "zod";
+import { stockSplitDirectionCheck, explicitPercentagePointConflict, explicitRateQuantities, explicitBasisPointProseConflict } from "./source-quantity-checks.ts";
 import type { Run, CheckedClaim, SourceData } from "./contracts.ts";
 export const RESEARCH_VERSION = "research-brief.v1";
 export const AnalysisContext = z.object({
@@ -113,6 +118,7 @@ export const ExternalEvidence = z.object({
   publishedAt: z.iso.datetime().nullable(),
   retrievedAt: z.iso.datetime(),
   publicationConfirmed: z.boolean(),
+  publicationPrecision: z.enum(["day", "timestamp"]).optional(),
   dateBasis: z.string(),
   sourceClass: z.enum(["primary", "secondary", "unknown"]),
   hash: z.string(),
@@ -122,17 +128,21 @@ export const ExternalEvidence = z.object({
 });
 export type ExternalEvidenceData = z.infer<typeof ExternalEvidence>;
 export function eligibleExternal(
-  source: Pick<ExternalEvidenceData, "publishedAt" | "publicationConfirmed">,
+  source: Pick<ExternalEvidenceData, "publishedAt" | "publicationConfirmed"> & {publicationPrecision?: "day" | "timestamp"},
   context: AnalysisContextData,
   mode: "video_date" | "current",
 ) {
   if (!source.publicationConfirmed || !source.publishedAt) return false;
-  if (Date.parse(source.publishedAt) > Date.parse(context.analysedAt))
-    return false;
-  if (mode === "current")
-    return Date.parse(source.publishedAt) <= Date.parse(context.analysedAt);
+  const day = source.publishedAt.slice(0,10);
+  const earliest = source.publicationPrecision === "timestamp" ? Date.parse(source.publishedAt) : Date.parse(day+"T00:00:00.000Z");
+  const latest = source.publicationPrecision === "timestamp" ? Date.parse(source.publishedAt) : Date.parse(day+"T23:59:59.999Z");
+  if (latest > Date.parse(context.analysedAt)) return false;
+  if (mode === "current") {
+    const originalCutoff = context.recordedAt ?? context.videoPublishedAt;
+    return !!originalCutoff && earliest > Date.parse(originalCutoff);
+  }
   const cutoff = context.recordedAt ?? context.videoPublishedAt;
-  return !!cutoff && Date.parse(source.publishedAt) <= Date.parse(cutoff);
+  return !!cutoff && latest <= Date.parse(cutoff);
 }
 export const BaselinePoint = z.object({
   id: z.string(),
@@ -162,13 +172,18 @@ export const FinancialFact = z.object({
   unit: z.enum([
     "total",
     "per_share",
+    "per_barrel",
     "percent",
     "percentage_points",
+    "basis_points",
     "multiple",
     "contracts",
+    "shares",
     "capacity",
     "other",
   ]),
+  unitDescription: z.string().max(150).nullable().default(null),
+  relation: z.enum(["exact", "approximate", "greater_than", "less_than", "greater_than_or_equal", "less_than_or_equal", "unknown"]).default("unknown"),
   scale: z.enum(["ones", "thousands", "millions", "billions", "trillions"]),
   period: z.string().nullable(),
   basis: z.enum(["GAAP", "non_GAAP", "not_stated"]),
@@ -186,6 +201,117 @@ export const FinancialFact = z.object({
   evidenceId: z.string(),
   quote: z.string().min(1).max(2000),
 });
+export type FinancialFactData = z.infer<typeof FinancialFact>;
+export function reviewFinancialFact(fact: FinancialFactData, retainedQuotes: string[]): {
+  fact: FinancialFactData | null; original: FinancialFactData;
+  status: "unchanged" | "corrected" | "unresolved"; reason: string;
+} {
+  const result = (status: "unchanged" | "corrected" | "unresolved", value: FinancialFactData | null, reason: string) => ({fact:value, original:fact, status, reason});
+  if (typeof fact.quote !== "string" || !fact.quote.trim() || !retainedQuotes.some(quote => quote.includes(fact.quote)))
+    return result("unresolved", null, "Proposed quantity withheld: its exact original quote is not anchored to the sentence’s retained evidence; no figure or unit was confirmed.");
+  const basisIssue = financialBasisIssue(fact, retainedQuotes);
+  if (basisIssue) return result("unresolved", null, basisIssue);
+  if (/\b(?:peak|all[ -]time high|record high)\b|高[点點]|峰值/i.test(fact.label) && !/\b(?:peak|all[ -]time high|record high)\b|高[点點]|峰值/i.test(fact.quote))
+    return result("unresolved", null, "Proposed quantity withheld: the explicit peak baseline in its label is not established by its original quote; no comparison baseline was inferred.");
+  if (/\bconstant[ -]maturity\b|恒定到期|固定期限/i.test(`${fact.label} ${fact.unitDescription ?? ""}`) && !/\bconstant[ -]maturity\b|恒定到期|固定期限/i.test(fact.quote))
+    return result("unresolved", null, "Proposed quantity withheld: constant-maturity observation convention is not established by the retained original quote; a generic Treasury maturity does not establish a constant-maturity series. No replacement convention was inferred.");
+  const qualifiers = new Set<string>();
+  if (/\b(?:about|approximately|roughly|around)\s+[$¥€£]?\s*\d|(?:大约|大約|约|約)\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*左右|\blike\s+\d+(?:\.\d+)?\s*(?:basis[ -]points?\b|bps?\b|percentage[ -]points?\b|percent\b|%)/i.test(fact.quote)) qualifiers.add("approximate");
+  if (/(?<!no )\b(?:more than|over)\s+[$¥€£]?\s*\d|(?:超过|超過)\s*\d/i.test(fact.quote)) qualifiers.add("greater_than");
+  if (/(?<!no )\b(?:less than|under)\s+[$¥€£]?\s*\d|不到\s*\d/i.test(fact.quote)) qualifiers.add("less_than");
+  if (/\b(?:at least|no less than)\s+[$¥€£]?\s*\d|至少\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*以上/i.test(fact.quote)) qualifiers.add("greater_than_or_equal");
+  if (/\b(?:at most|up to|no more than)\s+[$¥€£]?\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*以下/i.test(fact.quote)) qualifiers.add("less_than_or_equal");
+  if ((qualifiers.size > 0 && (qualifiers.size !== 1 || !qualifiers.has(fact.relation ?? "unknown"))) ||
+      (qualifiers.size === 0 && ["approximate", "greater_than", "less_than", "greater_than_or_equal", "less_than_or_equal"].includes(fact.relation ?? "unknown")))
+    return result("unresolved", null, "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.");
+  const fractions = [...fact.quote.matchAll(/(?<![\w/])(\d+)\s*\/\s*(\d+)(?![\d/])/g)];
+  if (fractions.length && fact.unit === "percent") {
+    const match = fractions[0];
+    const numerator = Number(match[1]), denominator = Number(match[2]);
+    const tail = fact.quote.slice((match.index ?? 0) + match[0].length);
+    const residual = fact.quote.replace(match[0], "").replace(/\b[A-Za-z]+\d+[A-Za-z]*\b/g, "");
+    if (fractions.length !== 1 || denominator === 0 || numerator > denominator || fact.currency !== null || fact.scale !== "ones" ||
+        !/^\s+of\s+(?:the\s+)?/i.test(tail) || !/\b(?:supply|share|portion|proportion|output|revenue|sales|orders|production)\b/i.test(fact.quote) ||
+        /[$€£¥]|\b(?:USD|EUR|GBP|date|dated|January|February|March|April|May|June|July|August|September|October|November|December)\b/i.test(fact.quote) || /\d/.test(residual))
+      return result("unresolved", null, "Fraction-to-percent mapping unresolved: date, currency, mixed numbers or missing proportion context prevents an unambiguous conversion.");
+    const ratio = numerator / denominator, percent = ratio * 100;
+    if (Math.abs(fact.value - percent) <= 0.005)
+      return result("unchanged", fact, "Fraction proportion matches the stated percent within displayed rounding; approximation remains explicit.");
+    if (fact.relation !== "approximate" || Math.abs(fact.value - ratio) > 0.00005)
+      return result("unresolved", null, "Fraction-to-percent mismatch unresolved: no unambiguous approximate ratio-as-percent representation was established.");
+    return result("corrected", {...fact, value:Number(percent.toFixed(4))}, `Typed approximate proportion corrected from ratio ${fact.value} labelled percent to approximately ${Number(percent.toFixed(4))} percent using exact retained ${match[0]}. Original proposal preserved; display rounding is not calculated precision.`);
+  }
+  const barrelPrices = [...fact.quote.matchAll(/每桶\s*(\d+(?:\.\d+)?)\s*美元|(?:USD\s*|US\$)(\d+(?:\.\d+)?)\s*(?:per\s+|a\s+|\/\s*)barrel\b|(\d+(?:\.\d+)?)\s*(?:USD|US dollars?)\s*(?:per\s+|a\s+)barrel\b/gi)];
+  if ((barrelPrices.length || /每桶|\b(?:per|a)\s+barrel\b/i.test(fact.quote)) && ["total", "other", "per_barrel"].includes(fact.unit)) {
+    if (!retainedQuotes.some(quote => quote.includes(fact.quote)) || barrelPrices.length !== 1 || fact.currency !== "USD" || fact.scale !== "ones" || Number(barrelPrices[0][1] ?? barrelPrices[0][2] ?? barrelPrices[0][3]) !== fact.value)
+      return result("unresolved", null, "Per-barrel quantity withheld: source anchor, currency, value or scale is not an unambiguous match.");
+    if (fact.unit === "per_barrel") return result("unchanged", fact, "Per-barrel denomination matches the retained quote.");
+    return result("corrected", {...fact, unit:"per_barrel", unitDescription:"USD per barrel"}, `Typed unit corrected from ${fact.unit} to per_barrel using the exact USD-per-barrel quote. Original model quantity remains in the audit record.`);
+  }
+  const shareMatches = [...fact.quote.matchAll(/(\d+(?:,\d{3})*(?:\.\d+)?)\s*(thousand|million|billion|trillion)?\s*(?:(?:ordinary|common)\s+)?shares?\b|(\d+(?:\.\d+)?)\s*(万|萬|亿|億)?\s*股/gi)];
+  if (shareMatches.length && ["shares", "contracts", "per_share", "other"].includes(fact.unit)) {
+    if (!retainedQuotes.some(quote => quote.includes(fact.quote)))
+      return result("unresolved", null, "Share-count quantity withheld: exact original quote is not anchored to retained evidence.");
+    if (shareMatches.length !== 1 || /\b(?:options?|puts?|calls?|contracts?)\b|\bper[ -]share\b/i.test(fact.quote) || fact.currency !== null)
+      return result("unresolved", null, "Share-count quantity withheld: mixed quantities, option contracts, per-share prices or currency prevent an unambiguous ordinary-share mapping.");
+    const match = shareMatches[0];
+    const multipliers: Record<string, number> = {ones:1,thousands:1e3,millions:1e6,billions:1e9,trillions:1e12,thousand:1e3,million:1e6,billion:1e9,trillion:1e12,"万":1e4,"萬":1e4,"亿":1e8,"億":1e8};
+    const quotedCount = Number((match[1] ?? match[3]).replaceAll(",", "")) * (multipliers[(match[2] ?? match[4] ?? "ones").toLowerCase()] ?? 1);
+    if (Math.abs(quotedCount - fact.value * multipliers[fact.scale]) > 1e-6)
+      return result("unresolved", null, "Share-count quantity withheld: typed value/scale does not match the exact source count; no quantity was inferred.");
+    if (fact.unit === "shares") return result("unchanged", fact, "Share count and scale match the exact retained quote.");
+    return result("corrected", {...fact, unit:"shares"}, `Typed unit corrected from ${fact.unit} to shares using the exact retained ordinary-share count and scale. Original model quantity remains in the audit record.`);
+  }
+  const rates = explicitRateQuantities(fact.quote);
+  const related = fact.unit === "basis_points" || /\bbasis[ -]points?\b|\bbps?\b|基[点點]/i.test(fact.quote);
+  if (!related) {
+    if (["capacity", "other"].includes(fact.unit) && !fact.unitDescription?.trim())
+      return result("unresolved", null, "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label.");
+    const chineseScales = [...fact.quote.matchAll(/(-?\d+(?:,\d{3})*(?:\.\d+)?)\s*([万萬][亿億]|[万萬亿億])/g)];
+    if (chineseScales.length) {
+      const numerals = [...fact.quote.matchAll(/-?\d+(?:,\d{3})*(?:\.\d+)?/g)];
+      const match = chineseScales[0];
+      const denomination = fact.quote.slice((match.index ?? 0) + match[0].length).trimStart();
+      const people = /^(?:人(?:口)?|名)/.test(denomination) && fact.currency === null && fact.unit === "other" && /^(?:people|persons?|population)$/i.test(fact.unitDescription?.trim() ?? "");
+      const namedCurrency=/^美元/.test(denomination)?'USD':/^韩元|^韓元/.test(denomination)?'KRW':/^人民币|^人民幣/.test(denomination)?'CNY':null;
+      const bareYuan=/^元/.test(denomination) && ["total", "other"].includes(fact.unit);
+      const money=namedCurrency!==null && fact.currency===namedCurrency && ["total", "other"].includes(fact.unit);
+      if(chineseScales.length!==1 || numerals.length!==1 || (!people && !money && !bareYuan)) {
+        const literalCheck=sourceNumericCheck(fact,retainedQuotes);
+        if(literalCheck.status!=='unresolved') return result('unchanged',fact,'A matching numeric literal is retained without automatic conversion; association with this metric and currency remains model-assessed, not independently verified.');
+      }
+      if (chineseScales.length !== 1 || numerals.length !== 1 || (!people && !money && !bareYuan))
+        return result("unresolved", null, "Chinese numeric scale withheld: multiple numbers, compound scales or unmatched measurement denomination prevent a unique source mapping; no quantity was guessed.");
+      const multiplier = {ones:1, thousands:1e3, millions:1e6, billions:1e9, trillions:1e12}[fact.scale];
+      const literal = Number(match[1].replaceAll(",", ""));
+      const sourceValue = literal * (/[万萬][亿億]/.test(match[2]) ? 1e12 : /[亿億]/.test(match[2]) ? 1e8 : 1e4);
+      const proposedValue = fact.value * multiplier;
+      if (Math.abs(sourceValue - proposedValue) <= Math.max(1e-8, Math.abs(sourceValue)*1e-12))
+        return result("unchanged", fact, bareYuan ? "Numeric magnitude matches, but bare 元 does not establish the proposed currency; currency remains model-assessed, not independently verified." : "Chinese numeric value and scale match the exact retained literal; other dimensional metadata remains model-assessed.");
+      if (bareYuan || match[2].length > 1 || fact.value !== literal || !Number.isFinite(sourceValue) || Math.abs(sourceValue) > Number.MAX_SAFE_INTEGER)
+        return result("unresolved", null, "Chinese numeric scale withheld: proposed mantissa differs from the exact unique source literal; no number was inferred.");
+      return result("corrected", {...fact, value:sourceValue/multiplier}, `Typed value corrected using exact retained ${match[0]} (${sourceValue} base units), preserving proposed ${fact.scale} scale. Original model value/scale remain in the audit record.`);
+    }
+    const literalCheck=sourceNumericCheck(fact, retainedQuotes);
+    if(literalCheck.status === "unresolved") return result("unresolved", null, literalCheck.reason);
+    return result("unchanged", fact, "No deterministic unit correction applied; qualifier and dimensional metadata are not independent proof of calculation readiness.");
+  }
+  if (!retainedQuotes.some(quote => quote.includes(fact.quote)))
+    return result("unresolved", null, "Basis-point quantity withheld: exact original quote is not anchored to retained evidence.");
+  if (fact.scale !== "ones" || fact.currency !== null)
+    return result("unresolved", null, "Basis-point quantity withheld: non-unit scale or currency on a rate requires review; no scale/currency conversion was inferred.");
+  if (rates.length !== 1)
+    return result("unresolved", null, "Basis-point quantity withheld: mixed or ambiguous rate quantities cannot be mapped to this metric safely.");
+  const rate = rates[0];
+  if (rate.unit === fact.unit && Math.abs(rate.value - fact.value) < 1e-10)
+    return result("unchanged", fact, "Typed quantity matches the exact retained rate quote.");
+  if ((rate.unit === "basis_points" && fact.unit === "percentage_points" && Math.abs(rate.value / 100 - fact.value) < 1e-10) ||
+      (rate.unit === "percentage_points" && fact.unit === "basis_points" && Math.abs(rate.value * 100 - fact.value) < 1e-10))
+    return result("unchanged", fact, "Equivalent conversion confirmed: 100 basis points equals 1 percentage point.");
+  if (rate.unit === "basis_points" && ["percentage_points", "percent", "other"].includes(fact.unit) && rate.value === fact.value)
+    return result("corrected", {...fact, unit:"basis_points"}, `Typed unit corrected from ${fact.unit} to basis_points using the exact retained quote; ${rate.value} basis points equals ${rate.value / 100} percentage points. Original model value and unit remain in the audit record.`);
+  return result("unresolved", null, "Basis-point quantity withheld: typed value or unit does not match the unambiguous original rate; no value was guessed.");
+}
 export const Calculation = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("enterprise_value_bridge"),
@@ -271,10 +397,42 @@ export const ResearchSentence = z.object({
 export type ResearchSentenceData = z.infer<typeof ResearchSentence>;
 export const ResearchDraft = z.object({
   sentences: z.array(ResearchSentence).max(48),
-  mainTopics: z.array(z.string()).max(8),
+  mainTopics: z.array(z.string()).max(100),
   omissions: z.array(z.string()).max(30),
 });
+const ComparisonStatus = z.enum(["matched", "not_applicable", "unknown", "mismatched"]);
+export const ExternalComparability = z.object({
+  metric: ComparisonStatus.default("unknown"),
+  period: ComparisonStatus.default("unknown"),
+  units: ComparisonStatus.default("unknown"),
+  observationBasis: ComparisonStatus.default("unknown"),
+  reason: z.string().min(1).max(1000).default("Comparability has not been established."),
+});
+export const ExternalSupport = z.object({
+  externalId: z.string(),
+  assertion: z.string().min(1).max(4000),
+  quote: z.string().min(1).max(6000),
+  relationship: z.enum(["supports", "contradicts"]),
+  comparability: ExternalComparability.default(() => ExternalComparability.parse({})),
+  reason: z.string().min(1).max(1000),
+});
+// Legacy records without comparison metadata remain readable but cannot
+// establish a contradiction. Shared with presentation so a badge cannot bypass
+// the publication rule merely because a retained link says "contradicts".
+export function externalComparisonEstablished(
+  link: { assertion?: string; comparability?: z.input<typeof ExternalComparability> },
+  hasFinancialFacts = false,
+): boolean {
+  const parsed = ExternalComparability.safeParse(link.comparability ?? {});
+  if (!parsed.success || !link.comparability?.reason?.trim() || parsed.data.reason === "Comparability has not been established.") return false;
+  const comparison = parsed.data;
+  const quantitative = hasFinancialFacts || /[0-9%]|\b(?:yield|margin|revenue|earnings|profit|ratio|multiple|basis points?|percent)\b/i.test(link.assertion ?? "");
+  return comparison.metric === "matched" &&
+    [comparison.period, comparison.units, comparison.observationBasis].every(status =>
+      status === "matched" || (!quantitative && status === "not_applicable"));
+}
 export const ResearchVerdict = z.object({
+  externalSupport: z.array(ExternalSupport).max(16).default([]),
   id: z.string(),
   accepted: z.boolean(),
   reason: z.string(),
@@ -287,13 +445,33 @@ export const ResearchVerdict = z.object({
     .string()
     .max(1000)
     .default("Independent thesis robustness has not been established."),
-  thesisSupportIds: z.array(z.string()).max(8).default([]),
+  // Support references are IDs in the same bounded draft (at most 48 sentences).
+  thesisSupportIds: z.array(z.string()).max(48).default([]),
 });
 export const ResearchAudit = z.object({
   verdicts: z.array(ResearchVerdict).max(48),
   coverageFindings: z.array(z.string()).max(30),
+  evidenceCoverage: z.array(EvidenceCoverage).default([]),
+});
+// New model calls must return explicit comparison assessments. The retained
+// artifact parser above keeps defaults solely for backward compatibility.
+export const ResearchAuditResponse = ResearchAudit.extend({
+  evidenceCoverage: z.array(EvidenceCoverage),
+  verdicts: z.array(ResearchVerdict.extend({
+    externalSupport: z.array(ExternalSupport.extend({
+      comparability: z.object({
+        metric: ComparisonStatus,
+        period: ComparisonStatus,
+        units: ComparisonStatus,
+        observationBasis: ComparisonStatus,
+        reason: z.string().min(1).max(1000),
+      }),
+    })).max(16),
+  })).max(48),
 });
 export type AcceptedSentence = ResearchSentenceData & {
+  financialFactChecks?: ReturnType<typeof reviewFinancialFact>[];
+  externalSupport?: z.infer<typeof ExternalSupport>[];
   factualStatus: "unverified" | "corroborated" | "partial" | "disputed";
   fidelity: string;
   robustness: "insufficient" | "fragile" | "supported";
@@ -308,6 +486,7 @@ export function validateBrief(
   context: AnalysisContextData,
   verdicts: z.input<typeof ResearchVerdict>[],
   baseline: z.input<typeof BaselinePoint>[] = [],
+  options: { phase?: "structural_preflight" | "publication" } = {},
 ) {
   const audits = verdicts.map((v) => ResearchVerdict.parse(v));
   const prior = baseline.map((b) => BaselinePoint.parse(b));
@@ -323,6 +502,7 @@ export function validateBrief(
   const rejected: { sentence: ResearchSentenceData; reasons: string[] }[] = [];
   for (const sentence of draft.sentences) {
     const audit = audits.find((v) => v.id === sentence.id);
+    const originalQuotes = sentence.evidenceIds.flatMap(id => (byId.get(id)?.quotes ?? []).map(q=>q.text));
     const reasons: string[] = [];
     if (!audit?.accepted)
       reasons.push(audit?.reason ?? "No independent audit verdict.");
@@ -340,6 +520,20 @@ export function validateBrief(
       );
     if (sentence.timeMode === "current" && !sentence.externalIds.length)
       reasons.push("A current update requires dated external evidence.");
+    if (sentence.timeMode === "video_date") {
+      const ratio = stockSplitDirectionCheck(sentence.text, sentence.evidenceIds.flatMap(id =>
+        (byId.get(id)?.quotes ?? []).map(quote => quote.text)));
+      if (ratio.conflict)
+        reasons.push("Stock-split ratio direction conflicts with the explicit original share counts. The original evidence and rejected sentence are retained; resolve new shares versus old shares before publication.");
+      if (ratio.unresolved)
+        draft.omissions.push(`Stock-split ratio direction remains unresolved for ${sentence.id}: the original evidence is ambiguous, missing an explicit direction, or contains multiple ratios. No corrected ratio has been inferred.`);
+    }
+    if (options.phase !== "structural_preflight")
+      reasons.push(...semanticBasisIssues(sentence.text, originalQuotes, sentence.calculation));
+    if (explicitBasisPointProseConflict(sentence.text, originalQuotes))
+      reasons.push("The sentence's explicit rate unit/value conflicts with the original basis-point quantity. Review the prose before publication; correcting a typed field cannot cure this claim.");
+    if (sentence.financialFacts.some(f => f.unit === "percent" && explicitPercentagePointConflict(f.value, f.quote)))
+      reasons.push("The cited source uses percentage points, but the typed fact uses percent. Resolve the unit distinction before publication; no corrected value has been inferred.");
     if (sentence.calculation?.expression.kind === "short_put_breakeven") {
       const computed = financialCheck(sentence.calculation.expression).value;
       // Model prose can disagree with its structured calculation even when
@@ -365,15 +559,66 @@ export function validateBrief(
       reasons.push(
         "A typed financial fact does not quote its cited original evidence.",
       );
+    const attribution=mixedTurnAttribution(sentence,evidence);
+    if(attribution.requiresNeutralRepair) reasons.push(attribution.reason);
     if (reasons.length) {
       rejected.push({ sentence, reasons });
       continue;
     }
+    const financialReviews = sentence.financialFacts.map(f => reviewFinancialFact(f,
+      sentence.evidenceIds.includes(f.evidenceId) ? (byId.get(f.evidenceId)?.quotes ?? []).map(q=>q.text) : []));
+    const financialFactChecks = financialReviews.filter(check => check.status !== "unchanged");
+    for (const check of financialFactChecks) draft.omissions.push(`${sentence.id}: ${check.reason}`);
+    const numericDisposition=numericalSentenceDisposition({...sentence, financialFacts:financialReviews.filter(check=>check.status==='unresolved').map(check=>check.original)}, evidence);
     const sources = sentence.externalIds.map((id) => ext.get(id)!);
-    const primary = sources.some((s) => s.sourceClass === "primary");
-    const factualStatus = primary ? audit!.factualStatus : "unverified";
-    const withheldExternalAudit = !primary && audit!.factualStatus !== "unverified";
-    const withheldReason = "External-verification assessment withheld: this sentence has no eligible cited primary evidence. The original audit is retained in the run trace; external corroboration or contradiction has not been established.";
+    // A primary URL is only eligibility. Require the independent critic to
+    // identify the exact assertion and retained supporting/contradicting passage.
+    const externalSupport = audit!.externalSupport.filter(link =>
+      sentence.text.includes(link.assertion) && sources.some(source =>
+        source.id === link.externalId && source.sourceClass === "primary" &&
+        source.text.includes(link.quote)),
+    );
+    const comparableSupport = externalSupport.filter(s => s.relationship === "supports" && externalComparisonEstablished(s, sentence.financialFacts.length > 0));
+    const fullSupport = comparableSupport.some(s => s.assertion === sentence.text);
+    // Retain possible conflicting passages even when their measurements cannot
+    // be compared. A different measurement is not a contradiction.
+    const fullConflict = externalSupport.some(s => s.relationship === "contradicts" && externalComparisonEstablished(s, sentence.financialFacts.length > 0));
+    const unresolvedConflict = externalSupport.some(s => s.relationship === "contradicts" && !externalComparisonEstablished(s, sentence.financialFacts.length > 0));
+    const permitted = audit!.factualStatus === "corroborated" ? fullSupport && !externalSupport.some(s => s.relationship === "contradicts")
+      : audit!.factualStatus === "disputed" ? fullConflict
+      : audit!.factualStatus === "partial" ? comparableSupport.length > 0 : true;
+    const factualStatus = fullConflict ? "disputed" : unresolvedConflict ? "unverified" : permitted ? audit!.factualStatus : "unverified";
+    const disclosedCaptionAmbiguity=/\b(?:caption|transcript|transcription)s?\b/i.test(sentence.text) && /\b(?:ambiguous|ambiguity|decimal|uncertain|error|errors)\b/i.test(sentence.text);
+    const verifiedCaptionExplanation=disclosedCaptionAmbiguity && factualStatus==='corroborated' && fullSupport && !fullConflict && !unresolvedConflict;
+    if(options.phase!=='structural_preflight' && numericDisposition.status==='neutral_repair_required' && !verifiedCaptionExplanation) {
+      rejected.push({sentence,reasons:[numericDisposition.reason, ...numericDisposition.checks.filter(check=>check.status==='unresolved').map(check=>check.reason)]});
+      continue;
+    }
+    const withheldExternalAudit = !fullConflict && (unresolvedConflict || !permitted);
+    const withheldReason = unresolvedConflict
+      ? "External-verification assessment withheld: potential conflict retained, but comparable metric, period, units and observation convention have not been established. A different measurement is not a contradiction. Review the retained passage and comparability reason; the original audit remains in the run trace."
+      : "External-verification assessment withheld: no valid assertion-level primary-source passage with established comparability supports the proposed label. The original audit remains in the run trace; source eligibility alone is not corroboration.";
+    // Only the full independent audit can supply valid externalSupport. Never
+    // preflight-reject this claim before that audit has had an opportunity to run.
+    const confirmationClauses = sentence.text.split(/[;.!?]+|\b(?:but|however|yet)\b/i).filter(clause => {
+      if(!/\b(?:external(?:ly)?|independent(?:ly)?|corporate releases?|press releases?|filings?)\b/i.test(clause)) return false;
+      const verbs=[...clause.matchAll(/\b(?:confirm(?:s|ed|ing)?|corroborat(?:es|ed|ing)|validat(?:es|ed|ing)|acknowledg(?:es|ed|ing)|verif(?:ies|ied|ying)|establish(?:es|ed|ing)?)\b/gi)];
+      return verbs.some(verb=>{
+        const before=clause.slice(0,verb.index);
+        // Negation/modal language must govern the confirmation verb. A negative
+        // object ("confirm no decline") does not negate the claimed verification.
+        const qualified=/\b(?:not|never|cannot|can't|couldn't|isn't|wasn't|aren't|weren't|hasn't|haven't|hadn't|may|might|could|would|should|needs?|requires?|awaits?|pending|whether)\s+(?:(?:to|be|been|being|have|has|independently|externally|yet|fully|directly|actually)\s+){0,5}$/i.test(before);
+        const absentSource=/\bno\s+(?:(?:external|independent|corporate|press)\s+)*(?:filings?|releases?|sources?)\s+(?:(?:have|has)\s+)?$/i.test(before);
+        return !qualified&&!absentSource;
+      });
+    });
+    const claimsExternalConfirmation = confirmationClauses.length > 0;
+    const confirmationCovered = confirmationClauses.every(clause => comparableSupport.some(link => link.assertion.includes(clause.trim())));
+    if (options.phase !== "structural_preflight" && claimsExternalConfirmation &&
+        (!["corroborated", "partial"].includes(factualStatus) || !confirmationCovered || fullConflict || unresolvedConflict)) {
+      rejected.push({sentence, reasons:["Prose asserts external confirmation, but the full audit did not establish exact assertion-level primary support. Original candidate retained; independently audit a neutral source-attributed repair rather than publishing a confirmation claim with an unverified badge."]});
+      continue;
+    }
     const trust = Math.min(
       ...sentence.evidenceIds.map((id) => Number(byId.get(id)!.trust.slice(1))),
     );
@@ -402,7 +647,10 @@ export function validateBrief(
           };
     sentences.push({
       ...sentence,
+      financialFacts: financialReviews.flatMap(check => check.fact ? [check.fact] : []),
+      ...(financialFactChecks.length ? {financialFactChecks} : {}),
       factualStatus,
+      externalSupport,
       novelty,
       fidelity:
         trust >= 3
@@ -657,6 +905,7 @@ export type ResearchBriefData = ReturnType<typeof validateBrief> & {
   evidence: EvidenceRecordData[];
   external: ExternalEvidenceData[];
   coverageFindings: string[];
+  evidenceCoverage?: z.infer<typeof EvidenceCoverage>[];
   retrievalNotes: string[];
   externalCostUsd: number;
   unknownExternalCosts: number;
@@ -714,7 +963,7 @@ export function parseResearchDraft(raw: unknown) {
   // Keep the UI bounded and explicitly disclose any additional retained limitations.
   const draft = ResearchDraft.parse({
     ...envelope,
-    mainTopics: envelope.mainTopics.slice(0, 8),
+    mainTopics: envelope.mainTopics,
     sentences,
     omissions:
       omissions.length > 30
@@ -744,7 +993,7 @@ export function actionRecallWindows(run: Run) {
         for (const c of source.slice(first, last + 1)) covered.add(c.id);
     }
   const expression =
-    /\b(?:I\s*(?:am|'m|’m)\s+(?:(?:not|still|very)\s+)?(?:bullish|bearish|long|short|holding|buying|selling)|I\s+(?:will buy|would buy|own|bought|sold|hold|recommend)|stocks\s+(?:that\s+)?I\s+will\s+buy)\b|我.{0,6}(?:看好|看空|买入|持有|减仓|加仓|卖出)/i;
+    /\b(?:I\s*(?:am|'m|’m)\s+(?:(?:not|still|very)\s+)?(?:bullish|bearish|long|short|holding|buying|selling)|I\s+(?:will buy|would buy|own|bought|sold|hold|recommend)|stocks\s+(?:that\s+)?I\s+will\s+buy)\b|\b(?:valuation|moat|cash.flow|leverage|dilution|entry.price|countercase|not.(?:own|hold|short)|hypothetical|margin.pressure)\b|\b(?:one\s+of\s+my\s+(?:core\s+)?holdings?|my\s+(?:core|largest)\s+(?:holdings?|positions?)|not\s+(?:a|the)\s+sector\s+that\s+I\s+(?:absolutely\s+)?(?:love|like))\b|我.{0,6}(?:看好|看空|买入|持有|减仓|加仓|卖出)|估值|护城河|現金流|现金流|杠杆|槓桿|稀释|稀釋|沒有持倉|没有持仓/i;
   const ranges: { start: number; end: number }[] = [];
   source.forEach((cue, i) => {
     if (

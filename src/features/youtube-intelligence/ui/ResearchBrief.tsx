@@ -2,10 +2,16 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import type { ResearchBriefData, AcceptedSentence } from "../research-brief.ts";
+import { researchPipelineLabel } from "../research-pipeline-choice.ts";
 import { prioritiseBriefs } from "../research-brief.ts";
+import { inspectLimitations } from "../limitation-consistency.ts";
+import { researchLifecycle } from "../research-lifecycle.ts";
+import { researchReadiness } from "../research-readiness.ts";
+import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel, financialFactRows, retainedSourceWarnings } from "../research-presentation.ts";
 import type { SourceData } from "../contracts.ts";
 import { useWorkspace } from "./workspace.tsx";
 import { action } from "./api.ts";
+import { NewsReview } from "./NewsReview.tsx";
 const date = (value: string | null) =>
   value ? new Date(value).toLocaleString() : "Unknown";
 export function ResearchOverview() {
@@ -31,6 +37,7 @@ export function ResearchOverview() {
         : b.context.videoPublishedAt,
     sentences: b.sentences.filter((s) => s.timeMode === timeMode),
     status: "completed",
+    readiness: b.readiness,
   }));
   const ranked = prioritiseBriefs(
     rows.filter((b) => b.sentences.length > 0),
@@ -67,6 +74,15 @@ export function ResearchOverview() {
         Ranked by materiality and the publication date of the selected evidence.
         Processing an old video does not make it new information.
       </p>
+      {rows.some((b) => b.readiness.status !== "complete") && (
+        <div className="yi-warning">
+          <strong>Research needs attention</strong>
+          <ul>{rows.filter((b) => b.readiness.status !== "complete").map((b) => (
+            <li key={b.id}><Link href={`/youtube-intelligence/analysis/${b.sourceRunId}#research-brief`}>{b.title || b.videoId}</Link>: {b.readiness.label} · {b.readiness.issues[0]}</li>
+          ))}</ul>
+          <p>Processing completion does not establish research completeness. Briefs with no accepted points are included here.</p>
+        </div>
+      )}
       {ranked.length ? (
         <>
           <div className="yi-brief-feed">
@@ -82,6 +98,7 @@ export function ResearchOverview() {
                   </span>
                   <small>Published {date(b.publishedAt)}</small>
                 </div>
+                <p className={b.readiness.status === "complete" ? "yi-muted" : "yi-warning"}>{b.readiness.label} · {b.readiness.covered}/{b.readiness.total} retained evidence items represented</p>
                 <h3>
                   <Link
                     href={`/youtube-intelligence/analysis/${b.sourceRunId}#research-brief`}
@@ -119,12 +136,10 @@ export function ResearchOverview() {
                           .sort((a, b) => b.materiality - a.materiality)[0]
                           ?.fidelity ?? "No assessed source"}{" "}
                         · Facts:{" "}
-                        {b.sentences
-                          .filter(
-                            (s) => s.horizon === h || s.horizon === "both",
-                          )
-                          .sort((a, b) => b.materiality - a.materiality)[0]
-                          ?.factualStatus ?? "unverified"}
+                        {(() => {
+                          const point = b.sentences.filter((s) => s.horizon === h || s.horizon === "both").sort((a, b) => b.materiality - a.materiality)[0];
+                          return point ? factualSupportLabel(point) : "Unverified";
+                        })()}
                       </small>
                     </div>
                   ))}
@@ -197,12 +212,25 @@ export function ResearchBrief({
     b.createdAt.localeCompare(a.createdAt),
   );
   const brief = ordered.find((b) => b.id === revision) ?? ordered[0];
-  const pending = data?.snapshot.jobs.find(
-    (r) =>
-      r.task === "research-brief" &&
-      r.sourceRunId === sourceRunId &&
-      ["queued", "running"].includes(r.status),
-  );
+  const lifecycle = researchLifecycle(sourceRunId, data?.snapshot.jobs ?? [], briefs, brief?.id ?? null);
+  const selectedResearchJob = data?.snapshot.jobs.find(job => job.id === brief?.runId);
+  const lifecyclePanel = <section aria-label="Research attempt status" className={['failed','needs_review','publication_missing','unknown'].includes(lifecycle.state) ? 'yi-warning' : 'yi-current-update'}>
+    <h3>{lifecycle.heading}</h3>
+    {brief && <p>Selected brief pipeline: {selectedResearchJob ? researchPipelineLabel(selectedResearchJob.researchPipelineIdentity) : "Pipeline identity not loaded for this revision"}</p>}
+    <p>{lifecycle.message}</p>
+    {lifecycle.latest && <p>Stage: {lifecycle.latest.stage}</p>}
+    {lifecycle.selectedRevisionNotice && <p>{lifecycle.selectedRevisionNotice}</p>}
+    {lifecycle.showEarlierBriefNotice && <p>{lifecycle.earlierBriefNotice}</p>}
+    {lifecycle.history.length > 0 && <details>
+      <summary>Inspect {lifecycle.history.length} research attempt(s) and error details</summary>
+      <ul>{lifecycle.history.map(attempt => <li key={attempt.id}>
+        <strong>{attempt.status} · {attempt.stage}</strong> · {date(attempt.createdAt)}
+        <p>Run: {attempt.id} · Updated: {date(attempt.updatedAt)}</p>
+        <p>{researchPipelineLabel(data?.snapshot.jobs.find(job => job.id === attempt.id)?.researchPipelineIdentity)}</p>
+        {attempt.error && <pre style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{attempt.error}</pre>}
+      </li>)}</ul>
+    </details>}
+  </section>;
   const generate = () =>
     void perform(
       () => action("research", "generateResearchBrief", { sourceRunId }),
@@ -212,13 +240,14 @@ export function ResearchBrief({
     return (
       <section id="research-brief" className="yi-panel">
         <h2>Investment research brief</h2>
+        {lifecyclePanel}
         <p>
           Build a whole-video synthesis from accepted calls and research
           context, with separate tactical and fundamental sections and an
           independent evidence critique.
         </p>
-        <button onClick={generate} disabled={busy || !completed || !!pending}>
-          {pending ? "Research brief in progress…" : "Generate research brief"}
+        <button onClick={generate} disabled={busy || !completed || lifecycle.generationDisabled}>
+          {lifecycle.generationLabel}
         </button>
         <p className="yi-muted">
           Model and external-search usage is recorded. Missing verification
@@ -226,16 +255,38 @@ export function ResearchBrief({
         </p>
       </section>
     );
+  const readiness = researchReadiness(brief);
+  const noteChecks = inspectLimitations(brief).filter(note=>note.warning);
+  const originalDiagnostics = [
+    ...brief.omissions.map((text,index)=>({id:`omission:${index}`,origin:'Original omission',text})),
+    ...brief.coverageFindings.map((text,index)=>({id:`coverage:${index}`,origin:'Original coverage finding',text})),
+    ...brief.retrievalNotes.map((text,index)=>({id:`retrieval:${index}`,origin:'Original retrieval note',text})),
+  ];
+  const retainedWarnings = brief.sentences.map(sentence=>({sentence,warnings:retainedSourceWarnings(sentence,brief.evidence)})).filter(item=>item.warnings.length>0);
+  const retainedWarningCount = retainedWarnings.reduce((count,item)=>count+item.warnings.length,0);
+  const unresolved = readiness.coverage.filter((item) => item.status === "unresolved");
   const current = brief.sentences.find((s) => s.id === selected);
+  const currentQuantities = current ? financialFactRows(current, brief.evidence) : [];
+  const currentWarnings = retainedWarnings.find(item=>item.sentence.id===selected)?.warnings ?? [];
   const cues = source?.segments ?? [];
-  const sentence = (s: AcceptedSentence) => (
+  const sentence = (s: AcceptedSentence) => {
+    const quantities = financialFactRows(s, brief.evidence);
+    const sourceWarnings = retainedWarnings.find(item=>item.sentence.id===s.id)?.warnings ?? [];
+    const corrected = quantities.filter(q=>q.status === "corrected").length;
+    const unresolvedFigures = quantities.filter(q=>q.status === "unresolved").length;
+    return (
     <article
       key={s.id}
       className={`yi-research-point ${selected === s.id ? "is-selected" : ""}`}
     >
       <span className="yi-eyebrow">
-        {s.topic} · {s.kind.replaceAll("_", " ")}
+        {s.topic} · {s.kind === "analysis" ? "Analyst inference" : s.kind === "creator_view" ? "Source view" : s.kind === "reported_fact" ? "Source-reported claim" : s.kind.replaceAll("_", " ")}
       </span>
+      {sourceWarnings.length>0 && <details className="yi-warning">
+        <summary>Source checks: {[...new Set(sourceWarnings.map(w=>w.label))].join("; ")}</summary>
+        <ul>{sourceWarnings.map((warning,index)=><li key={index}>{warning.reason}</li>)}</ul>
+        <small>Original sentence retained below; this is not a new factual verification or audit.</small>
+      </details>}
       <p>{s.text}</p>
       {s.calculationResult && (
         <p className="yi-muted">
@@ -251,16 +302,19 @@ export function ResearchBrief({
       )}
       <small>{s.importanceReason}</small>
       <div className="yi-confidence">
-        <span>{s.fidelity}</span>
-        <span>Facts: {s.factualStatus}</span>
+        <span>{sourceWarnings.some(warning=>warning.kind!=="quantity_corrected") ? "Source checks need review" : s.fidelity}</span>
+        <span>Facts: {factualSupportLabel(s)}</span>
         <span>
           Novelty: {s.novelty?.status.replaceAll("_", " ") ?? "unknown"}
         </span>
         <span>
           Thesis:{" "}
-          {s.robustness === "insufficient" ? "not established" : s.robustness}
+          {thesisRobustnessLabel(s)}
         </span>
       </div>
+      {!!(corrected || unresolvedFigures) && <p className="yi-muted">
+        Financial figures: {corrected} source-based unit correction(s), {unresolvedFigures} unresolved field(s). Inspect the original values and source checks below.
+      </p>}
       <button
         className="yi-text-button"
         aria-expanded={selected === s.id}
@@ -273,9 +327,11 @@ export function ResearchBrief({
         references
       </button>
     </article>
-  );
+    );
+  };
   return (
     <section id="research-brief" className="yi-panel yi-research-brief">
+      {lifecyclePanel}
       <div className="yi-section-title">
         <div>
           <span className="yi-eyebrow">Sceptical investment research</span>
@@ -283,12 +339,59 @@ export function ResearchBrief({
         </div>
         <button
           className="yi-text-button"
-          disabled={busy || !!pending}
+          disabled={busy || lifecycle.generationDisabled}
           onClick={generate}
         >
-          {pending ? "Brief in progress…" : "Refresh as new revision"}
+          {lifecycle.generationLabel}
         </button>
       </div>
+      {retainedWarnings.length>0 && <section className="yi-warning" aria-label="Retained source consistency warnings">
+        <h3>{retainedWarningCount} current source-consistency warning(s) across {retainedWarnings.length} retained sentence(s)</h3>
+        <p>Current application checks found corrected or unresolved quantities, financial conventions, or speaker attribution. Original prose and audit history remain unchanged. This is not a new research audit or external factual verification; coverage accounting is separate.</p>
+        <details><summary>Inspect affected sentences and source passages</summary><ul>{retainedWarnings.map(({sentence,warnings})=><li key={sentence.id}>
+          <button className="yi-text-button" onClick={event=>{trigger.current=event.currentTarget;setSelected(sentence.id);}}>{sentence.topic} · {sentence.id}: {warnings.map(warning=>warning.label).join('; ')}</button>
+        </li>)}</ul></details>
+      </section>}
+      <section aria-label="Research readiness" className={readiness.status === "complete" ? "yi-current-update" : "yi-warning"}>
+        <h3>{readiness.label}</h3>
+        <p>{readiness.covered}/{readiness.total} retained evidence items represented. Coverage measures the retained inventory, not everything said in the video.</p>
+        <p>Readiness is separate from factual confidence. This is research support, not an independently verified investment recommendation.</p>
+        <p>{originalDiagnostics.length} original diagnostic note(s) retained. These may include application checks and model assessments; their wording can be stale or conflicting and is not independently verified fact. Categorizing them does not resolve them or improve readiness. <a href="#research-original-diagnostics">Inspect all original notes</a>.</p>
+        {noteChecks.length > 0 && <details>
+          <summary>{noteChecks.length} recomputed source-consistency check(s) on original limitations</summary>
+          {noteChecks.map(note=><article key={note.index}>
+            <strong>{note.status==='source_conflict'?'Original limitation — ratio conflicts with source':'Original limitation — ratio unresolved'}</strong>
+            <p>{note.warning}</p><blockquote>{note.original}</blockquote>
+            {note.evidenceIds.map(id=>{
+              const item=brief.evidence.find(e=>e.id===id);
+              return item?<div key={id}><p>Source evidence: {id}</p>{item.quotes.map((quote,i)=><div key={i}><blockquote>{quote.text}</blockquote>{quote.start!==null && <button onClick={()=>onSeek(quote.start!)}>Jump to source passage</button>}</div>)}</div>:null;
+            })}
+          </article>)}
+        </details>}
+        {readiness.issues.length > 0 && <ul>{readiness.issues.slice(0, 3).map((issue, i) => <li key={i}>{issue}</li>)}</ul>}
+        {readiness.issues.length > 3 && <details>
+          <summary>{readiness.issues.length - 3} more research gaps or limitations</summary>
+          <ul>{readiness.issues.slice(3).map((issue, i) => <li key={i}>{issue}</li>)}</ul>
+        </details>}
+        {unresolved.length > 0 && <details>
+          <summary>Inspect {unresolved.length} unresolved evidence item{unresolved.length === 1 ? "" : "s"}</summary>
+          <ul>{unresolved.map((item) => {
+            const evidence = brief.evidence.find((e) => e.id === item.evidenceId);
+            return <li key={item.evidenceId}>
+              <strong>{item.topic}</strong> · {item.evidenceId}
+              {evidence && <details><summary>Inspect omitted evidence</summary>
+                <p>{evidence.summary}</p>
+                {evidence.quotes.map((quote, i) => <div key={i}><blockquote>{quote.text}</blockquote>
+                  {quote.translation && <p>{quote.translation}</p>}
+                  <button className="yi-text-button" disabled={quote.start === null} onClick={() => onSeek(quote.start ?? 0)}>Play source · {quote.start ?? "untimed"} seconds</button>
+                  <small> {quote.startId}–{quote.endId} · {quote.hash ?? "No retained hash"}</small>
+                </div>)}
+              </details>}
+            </li>;
+          })}</ul>
+        </details>}
+        <Link href="/youtube-intelligence/comparison">Inspect retained LeapEdge comparisons →</Link>
+      </section>
       <div className="yi-research-dates">
         <span>
           Video published{" "}
@@ -390,17 +493,16 @@ export function ResearchBrief({
             .map(sentence)}
         </div>
       )}
-      <section className="yi-current-update">
-        <h3>Current update · separate from the video-date thesis</h3>
-        {brief.sentences.some((s) => s.timeMode === "current") ? (
-          brief.sentences.filter((s) => s.timeMode === "current").map(sentence)
-        ) : (
-          <p>
-            No eligible, dated external update was established. This does not
-            mean nothing has changed.
-          </p>
-        )}
-      </section>
+      {brief.sentences.some((s) => s.timeMode === "current") && (
+        <section className="yi-current-update">
+          <h3>Current update · separate from the video-date thesis</h3>
+          {brief.sentences.filter((s) => s.timeMode === "current").map(sentence)}
+        </section>
+      )}
+      <NewsReview
+        briefId={brief.id}
+        claims={brief.sentences.filter((s) => s.timeMode === "video_date").map((s) => ({ id: s.id, text: s.text }))}
+      />
       {current && (
         <section
           aria-label="Research evidence"
@@ -418,31 +520,63 @@ export function ResearchBrief({
             <button onClick={closeEvidence}>Close evidence</button>
           </div>
           <p>{current.text}</p>
+          {currentWarnings.length>0 && <section className="yi-warning" aria-label="Current source consistency checks">
+            <h4>Current source checks — review before use</h4>
+            <ul>{currentWarnings.map((warning,index)=><li key={index}><strong>{warning.label}:</strong> {warning.reason}</li>)}</ul>
+            <p>The original sentence and model critique below are retained for audit. These current checks do not establish factual verification.</p>
+          </section>}
           <p>
-            <strong>Independent critique:</strong> {current.auditReason}
+            <strong>Retained model critique (historical assessment):</strong> {current.auditReason}
           </p>
+          <p><strong>Retained source label:</strong> {current.fidelity}. Current source warnings take precedence when present.</p>
+          <p><strong>Factual support:</strong> {factualSupportLabel(current)}</p>
+          {!!current.externalSupport?.length && <section aria-label="Assertion support">
+            <h4>Assertion-level external evidence</h4>
+            {current.externalSupport.map((support, i) => <div key={i}>
+              <p><strong>{externalRelationshipLabel(support, !!current.financialFacts?.length)}:</strong> {support.assertion}</p>
+              <blockquote>{support.quote}</blockquote>
+              <p>{support.reason}</p>
+              <p><strong>Comparison basis:</strong> Metric: {support.comparability?.metric ?? "unknown"} · Period: {support.comparability?.period ?? "unknown"} · Units: {support.comparability?.units ?? "unknown"} · Observation convention: {support.comparability?.observationBasis ?? "unknown"}.</p>
+              <p>{support.comparability?.reason ?? "No comparison assessment was retained. Different measurement dates, units or observation conventions do not establish a contradiction."}</p>
+              <small>Source {support.externalId} · model-assessed relationship; inspect the retained source below.</small>
+            </div>)}
+          </section>}
           <p>
             <strong>Thesis robustness:</strong>{" "}
+            {thesisRobustnessLabel(current)}
+          </p>
+          <p>
+            <strong>Retained audit explanation (historical assessment):</strong>{" "}
             {current.robustnessReason ?? "Not independently established."}
           </p>
           <p>
             <strong>Novelty:</strong>{" "}
             {current.novelty?.reason ?? "No audited comparable baseline."}
           </p>
-          {!!current.financialFacts?.length && (
+          {!!currentQuantities.length && (
             <details>
-              <summary>Typed financial quantities</summary>
-              {current.financialFacts.map((f, i) => (
+              <summary>Financial figures and source checks</summary>
+              <p>These checks preserve source units; they do not independently verify the underlying financial facts.</p>
+              {currentQuantities.map((check, i) => {
+                const f = check.fact ?? check.original;
+                return (
                 <p key={i}>
-                  <strong>{f.label}:</strong> {f.value} {f.scale}{" "}
-                  {f.currency ?? "currency unstated"} ·{" "}
+                  {check.status === "unresolved" && <strong>Unresolved proposed figure — do not use for calculations. </strong>}
+                  <strong>{f.label}:</strong> {f.currency ? `${f.currency} ` : ""}{f.value.toLocaleString(undefined, {maximumFractionDigits: 10})}{f.scale === "ones" ? "" : ` ${f.scale.replace(/s$/, "")}`} ·{" "}
                   {f.unit.replaceAll("_", " ")} ·{" "}
-                  {f.nature.replaceAll("_", " ")} · {f.basis} ·{" "}
+                  {f.nature.replaceAll("_", " ")}{f.basis === "not_stated" ? "" : ` · ${f.basis}`} ·{" "}
                   {f.period ?? "period unstated"}
                   <br />
+                  Dimension: {f.unitDescription ?? (["other", "capacity"].includes(f.unit) ? "not established" : f.unit.replaceAll("_", " "))} · Qualifier: {(f.relation ?? "unknown") === "unknown" ? "not established" : f.relation.replaceAll("_", " ")} (model assessed)
+                  <br />
                   Original: “{f.quote}” ({f.evidenceId})
+                  {check.status !== "unchanged" && <>
+                    <br /><strong>{check.status === "corrected" ? "Source-based correction: " : "Review needed: "}</strong>{check.reason.replaceAll("_", " ")}
+                    <br />Retained model proposal: {check.original.value}{check.original.scale === "ones" ? "" : ` ${check.original.scale.replace(/s$/, "")}`} {check.original.unit.replaceAll("_", " ")}.
+                  </>}
                 </p>
-              ))}
+                );
+              })}
             </details>
           )}
           {(brief.baseline ?? [])
@@ -593,8 +727,9 @@ export function ResearchBrief({
           </p>
         )}
       </details>
-      <details>
-        <summary>Coverage, limitations and cost audit</summary>
+      <details id="research-original-diagnostics">
+        <summary>Original diagnostics ({originalDiagnostics.length}), limitations and cost audit</summary>
+        <p>Historical diagnostics are retained verbatim, including repeated or conflicting notes. A later note saying a gap was addressed does not by itself resolve an earlier warning. Source-anchored structured coverage assessments and recomputed source-consistency checks are shown separately above; note wording alone does not establish its provenance.</p>
         <p>
           Model calls: ${brief.modelCostUsd.toFixed(4)} · External search: $
           {brief.externalCostUsd.toFixed(4)} known charges
@@ -606,12 +741,8 @@ export function ResearchBrief({
           Inspect research processing run →
         </Link>
         <ul>
-          {[
-            ...brief.omissions,
-            ...brief.coverageFindings,
-            ...brief.retrievalNotes,
-          ].map((x, i) => (
-            <li key={i}>{x}</li>
+          {originalDiagnostics.map(note => (
+            <li key={note.id}><strong>{note.origin}</strong> · {note.id}<p>{note.text}</p></li>
           ))}
         </ul>
         <p>{brief.rejected.length} unsupported draft points withheld.</p>

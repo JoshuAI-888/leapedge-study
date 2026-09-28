@@ -68,9 +68,10 @@
     "status": "20-video-comparison-completed-with-findings",
     "apiSpendUsd": null,
     "leapedgeAnalyses": 20,
-    "workerHost": "local Mac; hosted deployment documented, no new hosting subscription",
+    "workerHost": "Vercel Functions (cron drain + after() drain on submit) with existing Neon. Vercel Workflows evaluated and not adopted 28 September 2026 (duplicates the Postgres job queue). No Mac production dependency; Google migration cancelled.",
     "apiSpendPolicy": "User removed the prior US$25 cap for the 20-test comparison on 20 September 2026. Measure incurred usage including failures; no unbounded channel processing.",
     "comparisonNewLeapEdgeSubmissions": 16
   },
-  "completionRule": "Only evidence-backed implemented features count; never mark merged before merge. Build completion and live-provider verification are separate statuses."
+  "completionRule": "Only evidence-backed implemented features count; never mark merged before merge. Build completion and live-provider verification are separate statuses.",
+  "direction": "docs/delivery/current-state.md"
 }

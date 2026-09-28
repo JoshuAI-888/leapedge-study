@@ -10,6 +10,8 @@ import {
   failure,
 } from "../../../../server/youtube-intelligence/http.ts";
 import { queue } from "../../../../server/youtube-intelligence/research-store.ts";
+import { drainAfterResponse } from "../../../../server/youtube-intelligence/drain.ts";
+export const maxDuration = 800;
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function GET(r: Request) {
@@ -28,6 +30,8 @@ export async function GET(r: Request) {
 export async function POST(r: Request) {
   try {
     guard(r);
+    // Work a mutation queues starts now rather than at the next cron tick.
+    await drainAfterResponse(maxDuration * 1000);
     const text = await r.text();
     if (text.length > 2000000)
       throw Error("Transcript exceeds the 2 MB import limit.");

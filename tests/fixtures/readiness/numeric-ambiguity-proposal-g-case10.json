@@ -1,0 +1,154 @@
+{
+  "provenance": {
+    "path": "data/readiness-20260927/candidate-g-session-2.json",
+    "sha256": "2dcb6c1088862052c385062019227243b4aee383d695020b0efebcbebf299d2e",
+    "identity": {
+      "revision": "8b679df5290b8514ec1afb61fbe487edc3debd56",
+      "implementationSha256": "343124245dcb572855843f7bde32a7ecee7150f3bbd185585d409bc59405868b",
+      "inputSha256": "d43c51bfb6846bcc28afc0a344ccbe0caa97ffd778595ffe4e97dc182ee15551",
+      "settingsSha256": "067863563ef7c9a662423856d7b3ca799b171e3d78128d2a9505afca14a958ca",
+      "maxUsd": 25,
+      "treatment": "conservative-no-overlap-frozen-transcript"
+    }
+  },
+  "sentences": [
+    {
+      "id": "s10",
+      "text": "Coherent delivered full-year adjusted earnings per share of $5.61 compared to $3.53 in the preceding year, achieving 59% year-over-year adjusted EPS growth.",
+      "evidenceIds": [
+        "k5"
+      ],
+      "externalIds": [],
+      "financialFacts": [
+        {
+          "label": "Coherent prior year adjusted EPS",
+          "value": 3.53,
+          "currency": "USD",
+          "unit": "per_share",
+          "unitDescription": "USD per share",
+          "relation": "exact",
+          "scale": "ones",
+          "period": "prior fiscal year",
+          "basis": "non_GAAP",
+          "nature": "reported",
+          "evidenceId": "k5",
+          "quote": "versus $353 the year before"
+        }
+      ],
+      "novelty": {
+        "status": "unknown",
+        "baselineIds": [],
+        "reason": "No independently audited, dated comparable baseline."
+      },
+      "calculation": null,
+      "kind": "reported_fact",
+      "horizon": "fundamental",
+      "topic": "Coherent Financial Results",
+      "materiality": 2,
+      "importanceReason": "Measures underlying profitability expansion for Coherent across the fiscal cycle.",
+      "speaker": "unknown",
+      "timeMode": "video_date",
+      "factualStatus": "unverified",
+      "externalSupport": [],
+      "fidelity": "Text-checked source",
+      "robustness": "insufficient",
+      "robustnessReason": "Single creator-narration source, no filing verification.",
+      "auditReason": "Matches k5's adjusted EPS figures and growth rate.",
+      "calculationResult": null
+    },
+    {
+      "id": "s16",
+      "text": "Lumentum posted quarterly adjusted earnings per share of $3.23 compared to $0.88 in the prior-year period, representing 267% earnings growth.",
+      "evidenceIds": [
+        "k18"
+      ],
+      "externalIds": [],
+      "financialFacts": [
+        {
+          "label": "Lumentum prior year adjusted EPS",
+          "value": 0.88,
+          "currency": "USD",
+          "unit": "per_share",
+          "unitDescription": "USD per share",
+          "relation": "exact",
+          "scale": "ones",
+          "period": "last year quarter",
+          "basis": "non_GAAP",
+          "nature": "reported",
+          "evidenceId": "k18",
+          "quote": "versus just 88 a year ago"
+        }
+      ],
+      "novelty": {
+        "status": "unknown",
+        "baselineIds": [],
+        "reason": "No independently audited, dated comparable baseline."
+      },
+      "calculation": null,
+      "kind": "reported_fact",
+      "horizon": "fundamental",
+      "topic": "Lumentum Financial Results",
+      "materiality": 2,
+      "importanceReason": "Demonstrates operating leverage and earnings expansion for Lumentum.",
+      "speaker": "unknown",
+      "timeMode": "video_date",
+      "factualStatus": "unverified",
+      "externalSupport": [],
+      "fidelity": "Text-checked source",
+      "robustness": "insufficient",
+      "robustnessReason": "Single-source creator reporting only.",
+      "auditReason": "Matches k18's EPS figures and growth percentage.",
+      "calculationResult": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "k5",
+      "kind": "research_context",
+      "summary": "Coherent reported $2 billion in revenue last quarter (up 34% year-over-year) with 38.5% gross margin, and adjusted full-year EPS of $5.61 versus $3.53 the prior year, driven primarily by its data center and communications segment.",
+      "instrument": "Coherent",
+      "ticker": null,
+      "stance": "neutral",
+      "horizon": null,
+      "conditions": [],
+      "risks": [],
+      "levels": [],
+      "trust": "L1",
+      "quotes": [
+        {
+          "startId": "s00228",
+          "endId": "s00243",
+          "text": "versus $353 the year before",
+          "translation": "",
+          "start": 542.959,
+          "end": 586.5600000000001,
+          "hash": "fdd2dca1db6d02df7d91a0174c8a6d7157718f5cc93cdd0d980df662bdfecd00"
+        }
+      ]
+    },
+    {
+      "id": "k18",
+      "kind": "research_context",
+      "summary": "Lumentum reported quarterly revenue of $1 billion, up 109% year-over-year, adjusted earnings per share of $3.23 versus $0.88 a year prior (representing 267% EPS growth), and adjusted gross margins of 50.4%, reflecting intense component shortage conditions.",
+      "instrument": "Lumentum",
+      "ticker": "LI T",
+      "stance": "neutral",
+      "horizon": null,
+      "conditions": [],
+      "risks": [],
+      "levels": [],
+      "trust": "L1",
+      "quotes": [
+        {
+          "startId": "s00316",
+          "endId": "s00333",
+          "text": "versus just 88 a year ago",
+          "translation": "",
+          "start": 753.12,
+          "end": 797.68,
+          "hash": "7e52014bba674de604a4245d9646d184f9e6d05cd4672f202bbd2089e10f32c5"
+        }
+      ]
+    }
+  ]
+}

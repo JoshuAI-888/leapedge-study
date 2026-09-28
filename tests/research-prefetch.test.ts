@@ -127,7 +127,7 @@ test('final brief preserves unresolved donor costs without rebuying exact provis
   const { stubFetch } = await import('./helpers/fetch-stub.ts');
   const team = teamDefaults();
   const old = process.env.EXA_API_KEY; process.env.EXA_API_KEY = 'fixture';
-  const fake = new FakeModelTransport({ responses: { 'synthesis-research-plan': { json: { queries: [{ query: 'Company revenue', reason: 'Material' }], coverage: ['Company'] } }, 'synthesis-research': { json: { sentences: [], mainTopics: [], omissions: ['No accepted assertions in this fixture.'] } } } });
+  const fake = new FakeModelTransport({ responses: { 'synthesis-research-plan': { json: { queries: [{ query: 'Company revenue', reason: 'Material' }], coverage: ['Company'] } }, 'synthesis-research': { json: { sentences: [], mainTopics: [], omissions: ['No accepted assertions in this fixture.'] } }, 'synthesis-research-coverage': {json:{sentences:[],mainTopics:[],omissions:['Evidence insufficient in fixture.']}} } });
   const restore = injectTransport(fake);
   const stub = stubFetch([{ url: 'https://api.exa.ai/search', responses: [() => { throw Error('unknown historical charge'); }, () => { throw Error('unknown current charge'); }] }]);
   try {
@@ -150,7 +150,8 @@ test('final brief preserves unresolved donor costs without rebuying exact provis
     await researchStep(final); // sources -> synthesis; no new request
     await researchStep(final); // draft
     await researchStep(final); // audit -> immutable final brief
-    assert.equal(final.status, 'completed');
+    if(final.stage === 'research-audit') await researchStep(final); // bounded coverage attempt remains unusable
+    assert.equal(final.status, 'needs_review');
     const [brief] = await researchBriefs();
     assert.equal(brief.unknownExternalCosts, 2, 'zero consumer spend does not erase unresolved donor charges');
     assert.equal(brief.externalCostUsd, 0);

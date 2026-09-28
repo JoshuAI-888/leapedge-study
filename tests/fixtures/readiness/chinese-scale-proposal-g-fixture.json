@@ -1,0 +1,182 @@
+{
+  "provenance": {
+    "path": "data/readiness-20260927/candidate-g-session-2.json",
+    "sha256": "d7d3d6aa1005f00401b75176911cd379ba9c19ae9ef82c53495ce0085eacb9a0",
+    "identity": {
+      "revision": "8b679df5290b8514ec1afb61fbe487edc3debd56",
+      "implementationSha256": "343124245dcb572855843f7bde32a7ecee7150f3bbd185585d409bc59405868b",
+      "inputSha256": "d43c51bfb6846bcc28afc0a344ccbe0caa97ffd778595ffe4e97dc182ee15551",
+      "settingsSha256": "067863563ef7c9a662423856d7b3ca799b171e3d78128d2a9505afca14a958ca",
+      "maxUsd": 25,
+      "treatment": "conservative-no-overlap-frozen-transcript"
+    }
+  },
+  "population": {
+    "fact": {
+      "label": "U.S. population estimate",
+      "value": 3.49,
+      "currency": null,
+      "unit": "other",
+      "unitDescription": "people",
+      "relation": "exact",
+      "scale": "millions",
+      "period": null,
+      "basis": "not_stated",
+      "nature": "reported",
+      "evidenceId": "k13",
+      "quote": "如果按3.49亿人口规模测算"
+    },
+    "sentence": {
+      "id": "s5",
+      "text": "The speaker argues that per-capita wealth figures of $560,000 based on a 349 million population are heavily distorted by top-heavy wealth concentration, noting prior Fed data placed median household net worth between $190,000 and $210,000 including real estate.",
+      "evidenceIds": [
+        "k13"
+      ],
+      "externalIds": [],
+      "financialFacts": [
+        {
+          "label": "U.S. population estimate",
+          "value": 3.49,
+          "currency": null,
+          "unit": "other",
+          "unitDescription": "people",
+          "relation": "exact",
+          "scale": "millions",
+          "period": null,
+          "basis": "not_stated",
+          "nature": "reported",
+          "evidenceId": "k13",
+          "quote": "如果按3.49亿人口规模测算"
+        },
+        {
+          "label": "Average net worth per person",
+          "value": 560000,
+          "currency": "USD",
+          "unit": "total",
+          "unitDescription": "USD per person",
+          "relation": "exact",
+          "scale": "ones",
+          "period": null,
+          "basis": "not_stated",
+          "nature": "reported",
+          "evidenceId": "k13",
+          "quote": "美国人人均净资产达到了56万美元"
+        },
+        {
+          "label": "Prior Fed median household wealth lower bound",
+          "value": 190000,
+          "currency": "USD",
+          "unit": "total",
+          "unitDescription": "USD per household",
+          "relation": "exact",
+          "scale": "ones",
+          "period": null,
+          "basis": "not_stated",
+          "nature": "reported",
+          "evidenceId": "k13",
+          "quote": "全美家庭的财富中位数是19万到21万之间"
+        },
+        {
+          "label": "Prior Fed median household wealth upper bound",
+          "value": 210000,
+          "currency": "USD",
+          "unit": "total",
+          "unitDescription": "USD per household",
+          "relation": "exact",
+          "scale": "ones",
+          "period": null,
+          "basis": "not_stated",
+          "nature": "reported",
+          "evidenceId": "k13",
+          "quote": "全美家庭的财富中位数是19万到21万之间"
+        }
+      ],
+      "novelty": {
+        "status": "unknown",
+        "baselineIds": [],
+        "reason": "No independently audited, dated comparable baseline."
+      },
+      "calculation": null,
+      "kind": "analysis",
+      "horizon": "fundamental",
+      "topic": "Wealth Concentration Analysis",
+      "materiality": 2,
+      "importanceReason": "Explains why aggregate equity gains benefit wealthy and early investors rather than median households.",
+      "speaker": "unknown",
+      "timeMode": "video_date",
+      "factualStatus": "unverified",
+      "externalSupport": [],
+      "fidelity": "Text-checked source",
+      "robustness": "insufficient",
+      "robustnessReason": "Analytical inference from creator commentary without external corroboration.",
+      "auditReason": "Matches k13 quote on per-capita wealth distortion and median household figures.",
+      "calculationResult": null
+    },
+    "quotes": [
+      "如果按3.49亿人口规模测算 美国人人均净资产达到了56万美元 这个是连小孩子也算上的一个人口数据 所以实际上人均资产还不止56万 算人均的话，马斯克一个人上市了一个SPCX 就可以提高人均资产好几千块了 因此数据不论从总数还是人均数都是有点失真 这个报告并没有披露中位数 也就是大多数人拥有多少资产 更早一些的美联储数据中有披露中位数 全美家庭的财富中位数是19万到21万之间 家庭财富还包括了房产呢 就算股市涨了好了 美国家庭的资产中位数也远不及今天美联储披露的人均资产数字 股市大涨其实赚最多钱的是有钱投资的人 投得多的和投得早的赚得多 没钱人是很难享受到股市上涨的利益的"
+    ]
+  },
+  "convention": {
+    "fact": {
+      "label": "10-year US Treasury constant maturity yield",
+      "value": 4.93,
+      "currency": null,
+      "unit": "percent",
+      "unitDescription": "percent per annum",
+      "relation": "exact",
+      "scale": "ones",
+      "period": "2026-09-17",
+      "basis": "not_stated",
+      "nature": "reported",
+      "evidenceId": "k6",
+      "quote": "与此同时，10年期美债回落到4.93%， 油价也在下跌啊。"
+    },
+    "sentence": {
+      "id": "s6",
+      "text": "Following the Federal Reserve interest rate hike, the 10-year US Treasury yield moderated to 4.93% on September 17, and broader corporate earnings forecasts continued to be upgraded rather than cut.",
+      "evidenceIds": [
+        "k6"
+      ],
+      "externalIds": [],
+      "financialFacts": [
+        {
+          "label": "10-year US Treasury constant maturity yield",
+          "value": 4.93,
+          "currency": null,
+          "unit": "percent",
+          "unitDescription": "percent per annum",
+          "relation": "exact",
+          "scale": "ones",
+          "period": "2026-09-17",
+          "basis": "not_stated",
+          "nature": "reported",
+          "evidenceId": "k6",
+          "quote": "与此同时，10年期美债回落到4.93%， 油价也在下跌啊。"
+        }
+      ],
+      "novelty": {
+        "status": "unknown",
+        "baselineIds": [],
+        "reason": "No independently audited, dated comparable baseline."
+      },
+      "calculation": null,
+      "kind": "reported_fact",
+      "horizon": "tactical",
+      "topic": "Market Reaction and Earnings Trends",
+      "materiality": 2,
+      "importanceReason": "Moderating long-term yields and upward earnings revisions support equity valuations amidst tightening.",
+      "speaker": "unknown",
+      "timeMode": "video_date",
+      "factualStatus": "unverified",
+      "externalSupport": [],
+      "fidelity": "Text-checked source",
+      "robustness": "insufficient",
+      "robustnessReason": "Minor numeric discrepancy with unknown observation basis prevents establishing corroboration; earnings-upgrade claim also lacks independent external verification.",
+      "auditReason": "The Fed rate cut and earnings-upgrade narrative is drawn from k6; the specific 4.93% yield figure has a close but not exactly matching external value (4.94%) with unclear observation-basis comparability, so it cannot be corroborated or disputed with confidence.",
+      "calculationResult": null
+    },
+    "quotes": [
+      "是否开始集中的撤退。美股市场也给出了很有意思的回应， 美联储刚加完息，17日标普500反弹1%， 收在7,600，纳斯达克涨1.7%，与此同时，10年期美债回落到4.93%， 油价也在下跌啊。我们把前面的逻辑连起来呢， 就能理解这个反差，我的理解是呢， 市场一边消化了加息，一边呢重新评估能源压力能不能缓和， 长期利率能不能稳下来，后面这两项有所改善，股票就多了一点喘气的空间， 盈利这一块呢也没有出现全面的下修啊， 反而盈利在被不断地上调，所以呢我看这一次雅德利的调整呢， 最有价值的地方就在这里，公司继续成长， 估值先被压一压，这两件事情没有矛盾。我们如果是长期投资的话， 不用担心一轮上涨可能走得更慢，中间也可能更折磨人， 接下来我们需要防的是成本压力持续的太久，开始侵蚀企业的利润， 那些能提价的公司要看客户还买不买，提了价的公司还得自己扛这个成本， 一旦盈利预期也开始往下瞧，那就从投资人不愿买贵的 变成公司赚的钱变少，这个时候判断的逻辑才需要重新去做。"
+    ]
+  }
+}

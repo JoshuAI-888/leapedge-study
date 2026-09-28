@@ -377,3 +377,26 @@ test("A partially filled gap is checked again until remaining silence is explici
   await windowedAsrStep(run, teamDefaults(), true, call);
   assert.equal(run.stage, "synthesis");
 });
+
+test('implausible English speech density rejects observed compressed cues without retiming',()=>{
+ const text="I think the flow-through from gross profit to Gross profit EV to operating cash flow is 19 times, so I I think the flow-through from gross profit to cash flow is quite Quite good. narrow. Maybe it's, yeah, weird income statement or something. Yeah.";
+ assert.throws(()=>parseWindow({language:'en',segments:[{text,start_seconds:1497.744,end_seconds:1499.705}]},{startSeconds:1300.74,endSeconds:1500.08},15),/implausible English speech density/);
+ const fast=Array.from({length:24},()=> 'word').join(' ');
+ assert.equal(parseWindow({language:'en',segments:[{text:fast,start_seconds:0,end_seconds:2}]},{startSeconds:0,endSeconds:120},0).segments[0].end_seconds,2);
+ assert.equal(parseWindow({language:'en',segments:[{text:'Yes I agree',start_seconds:0,end_seconds:.2}]},{startSeconds:0,endSeconds:120},0).segments.length,1,'short cues are not rejected by this coarse density guard');
+});
+
+test('implausible speech splits a large clip and requires review once the clip is bounded',async()=>{
+ const run:Run={id:'density-fixture',videoId:'density-fixture',url:'https://www.youtube.com/watch?v=density',model:'fixture',promptVersion:'fixture',title:'Fixture',status:'running',stage:'asr-source',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),error:null,input:{},output:{metadata:{duration:120}},cost:0};
+ const reply=async(...args:unknown[])=>{const p=args[4] as {window_start_seconds:number};return {language:'en',segments:[{text:Array.from({length:30},()=> 'word').join(' '),start_seconds:p.window_start_seconds,end_seconds:p.window_start_seconds+1}]};};
+ await windowedAsrStep(run,teamDefaults(),true,reply);
+ assert.equal((run.output.asrPlan as unknown[]).length,2);
+ assert.equal(run.status,'running');
+ await windowedAsrStep(run,teamDefaults(),true,reply);
+ assert.equal((run.output.asrPlan as unknown[]).length,3);
+ await windowedAsrStep(run,teamDefaults(),true,reply);
+ assert.equal(run.status,'needs_review');
+ assert.match(run.error??'',/implausible English speech density/);
+ assert.equal(run.output.source,undefined,'no fake-complete transcript after density failure');
+ assert.equal(run.stage,'asr-source');
+});

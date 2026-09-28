@@ -6,7 +6,8 @@ import {
   dispatch,
   lookup,
 } from "../../../../../server/youtube-intelligence/actions/index.ts";
-export const maxDuration = 120;
+import { drainAfterResponse } from "../../../../../server/youtube-intelligence/drain.ts";
+export const maxDuration = 800;
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ resource: string; action: string }> };
@@ -29,6 +30,8 @@ export async function GET(r: Request, { params }: Context) {
 export async function POST(r: Request, { params }: Context) {
   try {
     guard(r);
+    // Work a mutation queues starts now rather than at the next cron tick.
+    await drainAfterResponse(maxDuration * 1000);
     const { resource, action } = await params;
     if (!lookup(resource, action).mutating)
       throw Error("This action only reads. Request it with GET.");

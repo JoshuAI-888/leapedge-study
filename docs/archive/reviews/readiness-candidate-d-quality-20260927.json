@@ -1,0 +1,182 @@
+{
+  "version": "readiness-candidate-d-quality.v1",
+  "reviewedAt": "2026-09-26T22:06:34.435780+00:00",
+  "snapshotSha256": "24ed29ae1fb55b13eb3fc7b167ad92242865f0b10109c68e7787f45fbe5f918e",
+  "revision": "8b4096c",
+  "state": "paused",
+  "decision": "failed-first-case-gate-do-not-resume",
+  "denominator": 20,
+  "published": 1,
+  "notStarted": 19,
+  "caseVideoId": "SPIRV9UjNYU",
+  "briefId": "c7d442bf-09f9-4d84-9893-d614e7cb82cf",
+  "sourceRunId": "b8b79bc6-30c2-49e0-ba2d-ac52651bb262",
+  "accounting": {
+    "settledLedgerUsd": 0.27890775,
+    "settledModelUsd": 0.22290775,
+    "settledExternalUsd": 0.056,
+    "openHolds": [],
+    "note": "Historical ledger prices; excludes unpriced credits. Cumulative snapshots must not be added. Cache consumer donor charges are not added again."
+  },
+  "sessionWallSeconds": 91.882,
+  "recordedExecutionSeconds": 91.65165775100002,
+  "boundary": "Frozen retained transcript and metadata through research publication/checkpoint. No acquisition or UI display. No new LeapEdge calls; historical timing noncomparable.",
+  "checks": [
+    {
+      "criterion": "BOJ-rate-unit",
+      "status": "pass-selected",
+      "publishedFact": {
+        "label": "BOJ rate hike size",
+        "value": 25,
+        "currency": null,
+        "unit": "basis_points",
+        "unitDescription": "basis points",
+        "relation": "exact",
+        "scale": "ones",
+        "period": null,
+        "basis": "not_stated",
+        "nature": "reported",
+        "evidenceId": "k5",
+        "quote": "加息25个基点"
+      }
+    },
+    {
+      "criterion": "Fed-rate-and-approximation-retention",
+      "status": "fail",
+      "layer": "source-extraction",
+      "finding": "Actual25bps, expected25bps and approximately4.1% omitted from all research inventory quotations; cannot count unit/approximation as passed. No specific omission/rejection warning.",
+      "sourceCues": [
+        {
+          "id": "asr-0-68",
+          "text": "美联储已经加息了25个基点，啊值得注意的是后面的利率预期啊，",
+          "start_seconds": 225.76,
+          "end_seconds": 230.12
+        },
+        {
+          "id": "asr-0-69",
+          "text": "最新点阵图对应年内还要加息25个基点啊，",
+          "start_seconds": 230.4,
+          "end_seconds": 233.94
+        },
+        {
+          "id": "asr-0-70",
+          "text": "明年的中位数也在4.1%左右。",
+          "start_seconds": 234.34,
+          "end_seconds": 236.78
+        }
+      ]
+    },
+    {
+      "criterion": "forward-yen-monitor",
+      "status": "fail",
+      "layer": "research-synthesis",
+      "finding": "k5 summary and quote preserve Japanese hiking pace and continued yen appreciation; all9 final sentences omit future monitor and final coverage findings do not flag it.",
+      "retainedEvidence": {
+        "id": "k5",
+        "kind": "research_context",
+        "summary": "The Bank of Japan raised policy rates by 25 basis points to 1.25%, which avoided the market shock of a 50 bps hike, but investors should monitor rate pace, yen strength, and carry trade unwinding.",
+        "instrument": null,
+        "ticker": null,
+        "stance": "neutral",
+        "horizon": null,
+        "conditions": [],
+        "risks": [
+          "Rapid rate hikes from the Bank of Japan",
+          "Sustained appreciation of the yen",
+          "Concentrated liquidation of leverage and carry trade unwinds"
+        ],
+        "levels": [],
+        "trust": "L1",
+        "quotes": [
+          {
+            "startId": "asr-1-36",
+            "endId": "asr-1-46",
+            "text": "这里刚好有一个新的变化，9月18号日本央行已经公布结果， 加息25个基点，把政策利率提高到1.25， 日元却在决定公布后走弱， 因为这次加息基本符合预期，加上有两名日本央行的委员反对加息， 市场没有得到更强硬的信号。 亚德里在采访里面说的很具体，如果只加息25个基点， 套息交易的退出可能还比较平缓，如果突然加息50个基点呢， 冲击就可能被放大，现在公布的是25， 所以呢眼前啊没有出现雅德里设想的 那个突然加50个基点的冲击。接下来我们要观察的是日本还会加多快， 日元会不会持续的升值，以及借钱买资产的资金",
+            "translation": "There is a new development here: on September 18, the Bank of Japan announced its decision to raise interest rates by 25 basis points, bringing the policy rate to 1.25%. However, the yen weakened after the decision was announced because this rate hike was largely in line with expectations, and with two Bank of Japan board members opposing the hike, the market did not receive a more hawkish signal. Yardeni was very specific in his interview: if they only raise rates by 25 basis points, the exit from the carry trade might be relatively smooth; if they suddenly raise rates by 50 basis points, the shock could be amplified. Now that 25 has been announced, we aren't seeing the shock of a sudden 50-basis-point hike that Yardeni envisioned. Next, we need to observe how fast Japan will continue to raise rates, whether the yen will continue to appreciate, and whether the capital used to borrow and buy assets",
+            "start": 453.22,
+            "end": 501.3,
+            "hash": "037b46c3db184110ba203b22548275441b34205ee9273c351023e344fdaf9cf6"
+          }
+        ]
+      }
+    },
+    {
+      "criterion": "yield-comparability",
+      "status": "not-exercised",
+      "finding": "Final4.93% remains unverified with no externalSupport. H15/default and Treasury retrieved pages lack confirmed publication date, so absence of disputed label does not test dimensional conflict handling.",
+      "publishedSentence": {
+        "id": "s5",
+        "text": "Following the Federal Reserve's rate hike, the S&P 500 gained 1% on the 17th to close at 7,600, while the 10-year US Treasury yield declined to 4.93% and broader earnings estimates continued to be revised upward.",
+        "evidenceIds": [
+          "k6"
+        ],
+        "externalIds": [],
+        "financialFacts": [
+          {
+            "label": "S&P 500 closing level on the 17th",
+            "value": 7600,
+            "currency": null,
+            "unit": "other",
+            "unitDescription": "index points",
+            "relation": "exact",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k6",
+            "quote": "17日标普500反弹1%， 收在7,600"
+          },
+          {
+            "label": "10-year Treasury yield",
+            "value": 4.93,
+            "currency": null,
+            "unit": "percent",
+            "unitDescription": "%",
+            "relation": "exact",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k6",
+            "quote": "与此同时，10年期美债回落到4.93%"
+          }
+        ],
+        "novelty": {
+          "status": "unknown",
+          "baselineIds": [],
+          "reason": "No independently audited, dated comparable baseline."
+        },
+        "calculation": null,
+        "kind": "reported_fact",
+        "horizon": "tactical",
+        "topic": "Market Reaction & Treasury Yields",
+        "materiality": 2,
+        "importanceReason": "Captures the tactical equity rebound and easing long-term Treasury yields.",
+        "speaker": "unknown",
+        "timeMode": "video_date",
+        "factualStatus": "unverified",
+        "externalSupport": [],
+        "fidelity": "Text-checked source",
+        "robustness": "insufficient",
+        "robustnessReason": "No external market-data source cited to verify closing levels or yield figures independently.",
+        "auditReason": "S&P close of 7,600 (+1%) and 10-year yield of 4.93% match k6 quote; 'earnings continued to be revised upward' phrase generally corresponds to k6's 'earnings continuously adjusted upward' statement.",
+        "calculationResult": null
+      }
+    },
+    {
+      "criterion": "exact-duplicate-publication",
+      "status": "pass-selected",
+      "sentences": 9,
+      "uniqueTexts": 9
+    },
+    {
+      "criterion": "source-limitations",
+      "status": "pass-selected",
+      "published": [
+        "source-0: Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+        "source-1: Model critique is not human verification.",
+        "source-2: This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications."
+      ]
+    }
+  ]
+}

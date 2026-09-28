@@ -85,3 +85,10 @@ nobody can see is work that gets built twice.
 `docs/archive/` and `scripts/archive/` hold the v1 evidence trail and retired
 research code. They are exempt from the convention guards and excluded from the
 typecheck and the Vercel bundle. Nothing there describes the current system.
+
+## Current direction — 28 September 2026
+
+Read `docs/delivery/current-state.md` first. It supersedes the 27 September
+handoff (archived) and older hosting text: Vercel Functions + Neon, no Mac worker,
+no Vercel Workflows, no Google Cloud. Web research is on-demand only. Preserve
+the user-owned untracked `ResearchBrief (1).tsx` if present.

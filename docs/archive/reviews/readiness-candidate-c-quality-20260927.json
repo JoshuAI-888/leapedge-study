@@ -1,0 +1,133 @@
+{
+  "version": "readiness-candidate-c-quality.v1",
+  "reviewedAt": "2026-09-26T21:46:40.347204+00:00",
+  "snapshotSha256": "1232560b18bc104a859879e2c3ac2040dcb90f00049693481ca4878ce91e339f",
+  "revision": "9589119",
+  "state": "paused",
+  "denominator": 20,
+  "published": 1,
+  "remainingUnassessed": 19,
+  "caseVideoId": "SPIRV9UjNYU",
+  "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+  "accounting": {
+    "settledLedgerUsd": 0.30625300000000005,
+    "settledModelUsd": 0.236253,
+    "settledExternalUsd": 0.07,
+    "openHolds": [],
+    "note": "Historical ledger prices; excludes unpriced credits. Cumulative snapshots must not be added. Cache consumer donor charges are not added again."
+  },
+  "decision": "do-not-resume-unchanged-candidate",
+  "scope": "Selected retained-source checks only. Frozen transcript and metadata; no acquisition or UI timing and no new LeapEdge. No investment-quality certification.",
+  "checks": [
+    {
+      "criterion": "typed-financial-unit-fidelity",
+      "status": "fail",
+      "finding": "Three published25bps quantities encoded25percentage_points, a100x scale error; sentence prose correctly says basis points.",
+      "publishedFacts": [
+        {
+          "sentenceId": "s4",
+          "fact": {
+            "label": "Fed interest rate hike",
+            "value": 25,
+            "currency": null,
+            "unit": "percentage_points",
+            "scale": "ones",
+            "period": "current",
+            "basis": "not_stated",
+            "nature": "realized",
+            "evidenceId": "k2",
+            "quote": "美联储已经加息了25个基点"
+          }
+        },
+        {
+          "sentenceId": "s4",
+          "fact": {
+            "label": "Expected additional rate hike within year",
+            "value": 25,
+            "currency": null,
+            "unit": "percentage_points",
+            "scale": "ones",
+            "period": "year-end",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "最新点阵图对应年内还要加息25个基点啊"
+          }
+        },
+        {
+          "sentenceId": "s5",
+          "fact": {
+            "label": "BOJ rate hike",
+            "value": 25,
+            "currency": null,
+            "unit": "percentage_points",
+            "scale": "ones",
+            "period": "September 18, 2026",
+            "basis": "not_stated",
+            "nature": "realized",
+            "evidenceId": "k5",
+            "quote": "加息25个基点"
+          }
+        }
+      ]
+    },
+    {
+      "criterion": "exact-duplicate-publication",
+      "status": "pass-selected",
+      "sentenceCount": 11,
+      "uniqueTexts": 11
+    },
+    {
+      "criterion": "yield-comparability-label",
+      "status": "pass-selected",
+      "finalFactualStatus": "unverified",
+      "finalRobustness": "insufficient",
+      "support": [
+        {
+          "externalId": "web-15758f2d0a-1",
+          "assertion": "the 10-year Treasury yield retreated to 4.93%",
+          "quote": "| 10-year | 4.96 | 4.97 | 5.00 | 5.01 | 4.94 |",
+          "relationship": "contradicts",
+          "comparability": {
+            "metric": "matched",
+            "period": "matched",
+            "units": "matched",
+            "observationBasis": "unknown",
+            "reason": "Both figures purport to describe the 10-year US Treasury yield on September 17, 2026, so metric, period, and units align. However, the Federal Reserve H.15 series is a constant-maturity, closing-quote-derived yield, while the creator's spoken 4.93% figure has no stated observation methodology (e.g., intraday trade vs. closing quote), so the observation basis cannot be confirmed as matching, and the 0.01 percentage-point gap could reflect rounding, a different intraday snapshot, or transcription approximation rather than a genuine discrepancy."
+          },
+          "reason": "The primary source shows 4.94% for Sept 17, 2026, one basis point different from the creator's stated 4.93%; given unresolved observation-basis differences, this does not establish a proven contradiction, only an unresolved small numeric gap."
+        }
+      ],
+      "originalAuditFactualStatus": "unverified",
+      "originalAuditRobustness": "insufficient"
+    },
+    {
+      "criterion": "future-yen-monitor",
+      "status": "pass-selected",
+      "publishedText": "Key upcoming monitor points include whether Japanese interest rate hikes accelerate, whether the yen continues appreciating, and whether corporate earnings forecasts face downward revisions.",
+      "sourceEvidenceIds": [
+        "k6",
+        "k7"
+      ],
+      "sourceAnchor": "asr-1 relevant453.22–501.3 passage asks future Japanese hiking pace and whether yen keeps appreciating"
+    },
+    {
+      "criterion": "source-limitations",
+      "status": "pass-selected",
+      "publishedOmissions": [
+        "source-0: Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+        "source-1: Model critique is not human verification.",
+        "source-2: This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications."
+      ]
+    },
+    {
+      "criterion": "remaining-typed-financial-facts",
+      "status": "pass-selected",
+      "finding": "Reviewed all18 final typed facts against their retained original quotes. Apart from three basis-point errors, no additional material value/scale/currency mismatch found. FX150/135 JPY perUSD orientation stays in sentence and labels, but schema unit other is less specific; USD11111 repayment is rounded source example, not independently audited exact calculation. This does not verify external macro facts."
+    }
+  ],
+  "remainingNotStarted": 19,
+  "publishedFinancialFactCount": 18,
+  "recordedExecutionSeconds": 110.436050334,
+  "sessionWallSeconds": 110.718
+}

@@ -67,7 +67,7 @@ test("server monthly ceiling cannot be raised by team configuration and cumulati
     process.env.YTI_BUDGET_USD = "0.05";
     await assert.rejects(
       () => store.reserve(run.id, "cumulative", 0.1),
-      /experiment budget/i,
+      /lifetime budget/i,
     );
   } finally {
     if (prior === undefined) delete process.env.YTI_BUDGET_USD;

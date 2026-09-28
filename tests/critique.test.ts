@@ -266,7 +266,7 @@ test("verdict ids map back to claims, key points and mentions", async () => {
       critique: critic({ reject: ["c2", "m1"], omit: ["k1"], extra: ["c9"] }),
     },
   });
-  await withFake(fake, () => step(run));
+  await assert.rejects(withFake(fake, () => step(run)), /missing verdicts/i);
   const payload = payloadOf(fake.requestsFor("critique")[0]);
   assert.deepEqual(
     payload.claims.map((c) => [c.id, c.kind]),
@@ -292,7 +292,8 @@ test("verdict ids map back to claims, key points and mentions", async () => {
   const points = run.output.keyPoints as CheckedClaim[];
   assert.equal(points[0].passed, false);
   assert.equal(points[0].audit, undefined);
-  assert.match(points[0].reasons[0], /no verdict/i);
+  assert.deepEqual(points[0].reasons, [], "missing audit is not evidence rejection");
+  assert.equal(run.stage, "critique");
   // A rejected mention leaves the sentiment set with its reason recorded.
   assert.deepEqual(
     (run.output.mentions as MentionData[]).map((m) => m.ticker),
@@ -663,4 +664,64 @@ test("GoogleNativeTransport creates, names and deletes an explicit cache; OpenRo
     ).config?.cachedContent,
     undefined,
   );
+});
+
+
+test("explicit audit recovery keeps all evidence and accepted verdicts, and refuses open paid outcomes", async () => {
+  const { db, get, reserve } = await import("../src/server/youtube-intelligence/store.ts");
+  const { continueAfterAuditFailure } = await import("../src/server/youtube-intelligence/research-store.ts");
+  const c1 = item("c1", 1), c2 = item("c2", 2);
+  c1.audit = { verdict: "accept", reason_en: "Exact source support." }; c1.passed = true;
+  const run = await critiqueRun({ claims: [c1, c2] });
+  await (await db()).prepare("UPDATE yi_runs SET stage='critique',status='failed',error=$1,output=$2 WHERE id=$3").run("Critique missing verdicts: c2", JSON.stringify(run.output), run.id);
+  const concurrent = await Promise.allSettled([continueAfterAuditFailure(run.id), continueAfterAuditFailure(run.id)]);
+  assert.equal(concurrent.filter(result => result.status === "fulfilled").length, 1);
+  const recovered = (await get(run.id))!;
+  assert.deepEqual(recovered.output.claims, [c1, c2]);
+  assert.equal(recovered.output.auditRecoveryAttempts, 1);
+  await (await db()).prepare("UPDATE yi_runs SET status='failed',error=$1 WHERE id=$2").run("Critique missing verdicts: c2", run.id);
+  const hold = await reserve(run.id, "critique", 0.01);
+  await assert.rejects(continueAfterAuditFailure(run.id), /open|unknown|uncertain/i);
+  const { release } = await import("../src/server/youtube-intelligence/store.ts");
+  await release(hold, "Fixture confirms no provider request was sent.");
+  await continueAfterAuditFailure(run.id);
+  await (await db()).prepare("UPDATE yi_runs SET status='failed',error=$1 WHERE id=$2").run("Critique missing verdicts: c2", run.id);
+  await assert.rejects(continueAfterAuditFailure(run.id), /two-retry limit/);
+  assert.deepEqual((await get(run.id))!.output.claims, [c1, c2]);
+});
+
+
+test("explicit missing-verdict retry asks only unresolved evidence under a separate paid stage", async () => {
+  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const run = await critiqueRun({ claims: [item("c1", 1), item("c2", 2)], mentions: [mention(4)] });
+  const fake = new FakeModelTransport({ responses: {
+    critique: critic({ omit: ["c2"] }),
+    "critique-repair-1": critic(),
+  } });
+  await assert.rejects(withFake(fake, () => step(run)), /missing verdicts/);
+  const accepted = JSON.stringify((run.output.claims as CheckedClaim[])[0]);
+  run.output.auditRecoveryAttempts = 1;
+  await withFake(fake, () => step(run));
+  assert.equal(run.stage, "publish");
+  assert.equal(JSON.stringify((run.output.claims as CheckedClaim[])[0]), accepted);
+  const retry = payloadOf(fake.requestsFor("critique-repair-1")[0]);
+  assert.deepEqual(retry.claims.map(c => c.id), ["c2"]);
+  assert.deepEqual(retry.mentions, []);
+  assert.equal(fake.requestsFor("critique").length, 1);
+  assert.deepEqual((run.output.critique as { missingVerdicts: string[] }).missingVerdicts, []);
+});
+
+test('a changed mention at the same instrument and source span must receive a fresh audit', async () => {
+  const { step } = await import('../src/server/youtube-intelligence/pipeline.ts');
+  const run = await critiqueRun({ mentions: [mention(4)] });
+  const fake = new FakeModelTransport({ responses: { critique: critic() } });
+  await withFake(fake, () => step(run));
+  assert.equal(fake.requestsFor('critique').length, 1);
+  const changed = (run.output.mentions as MentionData[])[0];
+  changed.stance = 'avoid'; changed.sentiment = 'bearish'; changed.rationale_en = 'Changed material interpretation requires a new independent verdict.';
+  run.stage = 'critique';
+  await withFake(fake, () => step(run));
+  assert.equal(fake.requestsFor('critique').length, 2, 'coarse accepted span must not authorize changed content');
+  const request = payloadOf(fake.requestsFor('critique')[1]);
+  assert.equal(request.mentions[0].mention.stance, 'avoid');
 });

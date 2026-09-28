@@ -1,3 +1,4 @@
+import { researchPipelineIdentityForDisplay } from "../../features/youtube-intelligence/research-pipeline-choice.ts";
 import { assertCriticIndependent, modelFamily } from "./transport/index.ts";
 import { canDropFailedAudit } from "../../features/youtube-intelligence/research-quality.ts";
 import { randomUUID, createHash } from "node:crypto";
@@ -708,6 +709,9 @@ export async function researchSnapshot() {
       .map((r) => ({
         id: r.id,
         task: String(r.input.task),
+        researchPipelineIdentity: researchPipelineIdentityForDisplay(r.input),
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
         sourceRunId:
           (r.input.snapshot as { sourceRunId?: string } | undefined)
             ?.sourceRunId ?? null,
@@ -817,37 +821,33 @@ export async function researchSnapshot() {
     })),
   };
 }
-/**
- * Recovery from a failed critique: drop the first point the critic never
- * answered and requeue the run. Since F15 the critic is asked once for the
- * whole run, so there is no per-claim cursor to advance; the dropped point
- * carries a reason from here, and a reason is what keeps the batched critic
- * from asking about it again.
- */
+/** Explicit, bounded replay of unanswered critique items; never discard evidence. */
 export async function continueAfterAuditFailure(id: string) {
   const r = await get(id);
   if (!r || !canDropFailedAudit(r))
-    throw Error("Only a failed critique can use this recovery.");
-  const all = [
-      ...((r.output.claims || []) as CheckedClaim[]),
-      ...((r.output.keyPoints || []) as CheckedClaim[]),
-    ],
-    index = all.findIndex((c) => !c.audit && !c.reasons.length);
-  if (index < 0 || !all[index])
-    throw Error("No failed point is available to drop.");
-  all[index].passed = false;
-  all[index].reasons.push(
-    `Audit could not finish: ${r.error}. Dropped without retrying the paid call.`,
-  );
-  await (await researchDB())
-    .prepare(
+    throw Error("Only a failed critique within its two-retry limit can use this recovery.");
+  const d = await researchDB();
+  return d.transaction(async () => {
+    // Serialize duplicate clicks with admission and inspect unresolved paid work
+    // before using a new stage identity. Never bypass an uncertain reservation.
+    const row = await d.prepare("SELECT status,stage,error,output FROM yi_runs WHERE id=$1 FOR UPDATE").get(id) as { status: string; stage: string; error: string | null; output: unknown } | undefined;
+    if (!row || row.status !== "failed") throw Error("Run is no longer failed.");
+    const output = json(row.output) as Run["output"];
+    if (!canDropFailedAudit({ ...r, status: row.status as Run["status"], stage: row.stage as Run["stage"], error: row.error, output }))
+      throw Error("Audit recovery is no longer eligible.");
+    const attempt = z.number().int().min(0).max(1).parse(output.auditRecoveryAttempts ?? 0) + 1;
+    if (await d.prepare("SELECT id FROM yi_calls WHERE run_id=$1 AND status IN ('reserved','unknown')").get(id))
+      throw Error("A paid call has an open or unknown outcome; reconcile it before audit recovery.");
+    output.auditRecoveryAttempts = attempt;
+    output.auditRecoveryHistory = [
+      ...((output.auditRecoveryHistory ?? []) as unknown[]),
+      { attempt, reason: row.error, at: new Date().toISOString(), evidencePreserved: true },
+    ];
+    const result = await d.prepare(
       `UPDATE yi_runs SET output=$1,status='queued',error=NULL,lease_until=${lease.released},lease_token=NULL WHERE id=$2 AND status='failed'`,
-    )
-    .run(JSON.stringify(r.output), id);
-  await event("audit_recovery", id, {
-    droppedPoint: all[index].id,
-    reason: r.error,
-    at: new Date().toISOString(),
+    ).run(JSON.stringify(output), id);
+    if (!result.changes) throw Error("Run changed during audit recovery.");
+    await event("audit_recovery", id, { attempt, reason: row.error, evidencePreserved: true });
+    return { id, attempt, evidencePreserved: true };
   });
-  return { id, droppedPoint: all[index].id };
 }

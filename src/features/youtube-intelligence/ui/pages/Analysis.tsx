@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import { researchPipelineLabelFromInput } from "../../research-pipeline-choice.ts";
 import { ResearchBrief } from "../ResearchBrief.tsx";
+import { Timing } from "../Timing.tsx";
+import type { RunTimelineData } from "../../timing.ts";
 import type { ResearchBriefData } from "../../research-brief.ts";
 import type { SourceData } from "../../contracts.ts";
 import { request, action } from "../api.ts";
@@ -160,7 +163,7 @@ export function Analysis({ id }: { id: string }) {
         completed={run.status === "completed"}
       />
       <div className="yi-trust-strip">
-        <span className="yi-chip">{processingState(run.status)}</span>
+        <span className="yi-chip">{run.status === "completed" ? "Source processing complete" : processingState(run.status)}</span>
         {["L0", "L1", "L2", "L3"].map((level) => (
           <span key={level}>
             <TrustBadge level={level} />{" "}
@@ -453,10 +456,13 @@ export function Analysis({ id }: { id: string }) {
           ))}
         </section>
       )}
+      <Timing timeline={run.output.timeline as RunTimelineData | undefined} />
       <Collapsible title="Processing details">
         <dl>
           <dt>Run</dt>
           <dd>{run.id}</dd>
+          <dt>Frozen analysis pipeline</dt>
+          <dd>{researchPipelineLabelFromInput(run.input)}</dd>
           <dt>Stage</dt>
           <dd>{run.stage}</dd>
           <dt>Measured or reserved cost</dt>

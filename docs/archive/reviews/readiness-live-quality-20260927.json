@@ -1,0 +1,1159 @@
+{
+  "version": "readiness-live-quality.v1",
+  "candidateRevision": "ddf1006",
+  "snapshotSha256": "89d7a22210bfc8bdb7c48d1464e76c7813ff5ce2afe321220276db0e47c405ea",
+  "reviewedAt": "2026-09-26T21:40:25.641210+00:00",
+  "cohortState": "finished",
+  "denominator": 20,
+  "casesWithFinalBrief": 12,
+  "casesWithSelectedSourceChecks": 9,
+  "settledLedgerUsd": 7.92614625,
+  "actualNewLeapedgeCalls": 0,
+  "interpretation": "Candidate execution finished; source-quality assessment remains partial. Pass applies only to its explicitly described selected criterion. No case or cohort is certified. All20 admitted cases and all failure costs remain in denominator. Model-accepted drafts are not published briefs. Ledger total includes models and external search exactly once.",
+  "cases": [
+    {
+      "case": 1,
+      "videoId": "SPIRV9UjNYU",
+      "title": "大多头突然改口！我为什么还敢拿着AI股？｜雅德尼下调目标",
+      "candidateRunId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "pass",
+          "finding": "Published s-3/s-7 September17 and s-5 September18 preserve distinct source dates asr-0-46/asr-1-36."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "review_required",
+          "finding": "s-7 disputes a1bp yield difference using H15 constant-maturity series without establishing matching observation convention in creator statement."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "fail",
+          "finding": "Eight exact duplicate texts published as coverage-1..6,8,9 after original s-1..6,8,9."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/SPIRV9UjNYU__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "1eaba3c4413fdc1eec98558254834dc0d4aef26ff3d62e964e3c9da6256bd3c5",
+        "summaryExcerpt": "Ed Yardeni reduced his year-end S&P 500 target to 7,900 due to valuation multiple compression from sustained higher interest rates, elevated energy costs, and Yen carry-trade unwinding rather than falling corporate earnings. The creator argues that despite temporary multiple contraction and macro-driven selling, core AI fundamentals and order growth remain solid, justifying holding long positions through near-term volatility.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 18,
+      "recordedExecutionSeconds": 140.018389208,
+      "settledModelUsd": 0.31763025,
+      "settledExternalUsd": 0.056
+    },
+    {
+      "case": 2,
+      "videoId": "J_VpfkM74Wk",
+      "title": "Anthropic突然出大问题了",
+      "candidateRunId": "52a9bb45-9368-4a72-9e97-d400ef22fb80",
+      "candidatePublication": "failed-no-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "fail",
+          "finding": "Retained research-audit failure: Coverage supplement exceeds bounded repair size; original draft retained. No final brief; unpublished content fidelity unassessed."
+        }
+      ],
+      "overall": "not_certified",
+      "failureStage": "research-audit",
+      "failureAt": "2026-09-26T21:07:33.898Z",
+      "failureError": "Coverage supplement exceeds bounded repair size; original draft retained.",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/J_VpfkM74Wk__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "17989c2b8622af76c2fd5f4bb3e1af88e6fd77814f18b5d7f0fccdafaf2cacf9",
+        "summaryExcerpt": "The AI industry's primary bottleneck has shifted from software demand to the massive capital required to build out physical GPU data centers, as illustrated by nScale filing for IPO with a $44.6 billion Anthropic contract while lacking secured financing. While NVIDIA occupies an advantageous upstream position by helping finance infrastructure providers to secure GPU sales, the broader ecosystem faces severe execution risks if market liquidity dries up. Among specialized AI cloud providers, Nebius currently ",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": null,
+      "recordedExecutionSeconds": 127.61476495899997,
+      "settledModelUsd": 0.31826424999999997,
+      "settledExternalUsd": 0.084
+    },
+    {
+      "case": 3,
+      "videoId": "9nb3fp76Rz0",
+      "title": "美股：基本上定了。【2026-09-11】",
+      "candidateRunId": "8cb67f37-bff2-4b7a-92e8-93e3c1e6a65c",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "pass",
+          "finding": "Selected check only: Dell 640 / backlog 95bn, MSFT 12→38 GW by 2032, portfolio losses/holdings match c1,k6,k7 cited source ranges."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "pass",
+          "finding": "Selected check only: Dell no-buy qualification and external Bloomberg forecast attribution preserved, not company guidance."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "pass",
+          "finding": "All ten sentences remain unverified; missing primary sources and currency ambiguity are visible."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "pass",
+          "finding": "Exact-text check only; does not exclude semantic duplicates."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/9nb3fp76Rz0__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "a2b41f48d375a1bb2b575e92c8b79f2bfae8e7e4a3fcd3945578e1b6be47314e",
+        "summaryExcerpt": "The broader AI-driven bull market remains intact from a multi-year secular perspective, but the market faces short-term consolidation under moving-average resistance ahead of next Wednesday's FOMC rate decision. Even if the Fed delivers a rate hike due to sticky supply-driven inflation, it is expected to be a one-time headwind rather than the start of a prolonged bear market, with AI hardware infrastructure and data center demand sustaining fundamental support.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 10,
+      "recordedExecutionSeconds": 74.62363220699993,
+      "settledModelUsd": 0.18574675,
+      "settledExternalUsd": 0.042
+    },
+    {
+      "case": 4,
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "candidateRunId": "41f41a4c-104f-4015-b833-ce02a7aa0191",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "fail",
+          "finding": "s-6 says 1-for-3 split; source m1 s00006–s00010 says 1股拆3股, meaning 3-for-1. Accepted output reverses direction."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "pass",
+          "finding": "Selected calls s-10/11 VOO-first allocation and s-17 COIN conditional stop 140 / entry 141 agree with source c2,c4,c5; conditionality retained."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "pass",
+          "finding": "All 18 sentences unverified; unmatched Fed FX source not falsely labelled corroboration."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "pass",
+          "finding": "Exact-text check only; does not exclude semantic duplicates."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/3u24qyWjSVM__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "a5fda1406dd81a6c8a4b2feb8dafb20a73568ac9a9aa51a489217ef313014394",
+        "summaryExcerpt": "The U.S. stock market experienced sharp intraday volatility due to news of potential U.S. intervention in the yen currency market, triggering yen carry trade unwinding and pushing 10-year Treasury yields toward 4.75%. Despite technical recoveries in broader indexes while holding short-term moving averages, fundamental strength in AI tech earnings (e.g. Amazon, Google) contrasts with high volatility in single sectors like DRAM. Investors are advised to focus long-term capital on broad index ETFs such as VOO ",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 18,
+      "recordedExecutionSeconds": 123.42373554199997,
+      "settledModelUsd": 0.28402525,
+      "settledExternalUsd": 0.112
+    },
+    {
+      "case": 5,
+      "videoId": "M1FJ5dNiBEs",
+      "title": "AI Compute Demand Could DOUBLE Again by 2027!!",
+      "candidateRunId": "240da5cd-72df-4c78-862e-c838370905d2",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "pass",
+          "finding": "Known regression check: published s-8 Credo under 170 agrees m3 s00209–s00215."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "pass",
+          "finding": "Narrow known regression only: Credo valuation threshold now published; not a complete-video recall pass."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "pass",
+          "finding": "All 14 final sentences unverified; no unsupported corroboration claim."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "pass",
+          "finding": "Exact-text check only; does not exclude semantic duplicates."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/M1FJ5dNiBEs__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "8cd54e853373aee5db7ac691cd010584c006986bb6e1380570e6c1a1aa290dc6",
+        "summaryExcerpt": "Fears of an AI slowdown are overblown as leading frontier labs like OpenAI and Anthropic plan to aggressively expand compute capacity toward 10 gigawatts by 2027 while exploring distributed 20-30 megawatt inference deployments. AI infrastructure plays remain prime beneficiaries, led by Nvidia's upcoming Vera Rubin architecture dominating high-margin agentic workloads and Meta expanding from raw compute into higher-margin intelligence monetization.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 14,
+      "recordedExecutionSeconds": 93.65022887500015,
+      "settledModelUsd": 0.24612175,
+      "settledExternalUsd": 0.098
+    },
+    {
+      "case": 6,
+      "videoId": "LF7fgz1HAFs",
+      "title": "CoreWeave & Nebius GPU Pricing Just Exploded — Here’s Why",
+      "candidateRunId": "94e5391e-293b-407e-9e41-0bee720e538f",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "pass",
+          "finding": "Selected check only: s-2 Nebius 20m/MW sub-2-year; short-term 40m/MW ~1year; s-4 CoreWeave 3–6 month / 40m/MW supported k2 s00065–78/k3 s00184–89."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "pass",
+          "finding": "Selected check only:s-5 bullish CoreWeave 43bn/1GW attribution match k9 s00151–178."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "pass",
+          "finding": "All nine final sentences unverified; absence of external confirmation is not masked."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "pass",
+          "finding": "Exact-text check only; does not exclude semantic duplicates."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/LF7fgz1HAFs__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "e1c1f3374af6658057f1d286bbbcc303d44c07a83022c84dcce3c5c3f7236c7a",
+        "summaryExcerpt": "Surging AI compute demand is enabling neo-cloud providers to aggressively raise on-demand GPU prices and secure lucrative short-term contracts at roughly $40 million per megawatt, drastically reducing payback periods to around one year. While short-term capital raises and dilution create headline volatility, sustained supply-demand imbalances provide long-term revenue tailwinds for providers holding significant active power capacity.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 9,
+      "recordedExecutionSeconds": 74.10497291500016,
+      "settledModelUsd": 0.2030505,
+      "settledExternalUsd": 0.084
+    },
+    {
+      "case": 7,
+      "videoId": "U32FPvvBaNI",
+      "title": "AMD Stock Is Entering a New Cycle‼️Listen Up",
+      "candidateRunId": "73c9dd6b-cd48-4048-9eb8-81c0e16ce700",
+      "candidatePublication": "failed-no-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "fail",
+          "finding": "Retained research-audit failure: Coverage supplement exceeds bounded repair size; original draft retained. No final brief; unpublished content fidelity unassessed."
+        }
+      ],
+      "overall": "not_certified",
+      "failureStage": "research-audit",
+      "failureAt": "2026-09-26T21:15:38.478Z",
+      "failureError": "Coverage supplement exceeds bounded repair size; original draft retained.",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/U32FPvvBaNI__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "82580e3438212eb1b999f07875ccf890cb56bc5200523b9a1cd9f0388c0a034e",
+        "summaryExcerpt": "The creator argues that AMD is entering a major multi-year growth cycle bolstered by price increases and margin expansion, targeting a $1 trillion market cap. Additionally, he anticipates a peak in oil prices and Treasury yields that will catalyze massive rallies in beaten-down, rate-sensitive consumer and luxury plays including Wynn Resorts, American Express, and RH.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": null,
+      "recordedExecutionSeconds": 114.33370904199988,
+      "settledModelUsd": 0.298665,
+      "settledExternalUsd": 0.098
+    },
+    {
+      "case": 8,
+      "videoId": "jPy5aDhMsMY",
+      "title": "Oracle & Adobe Shareholders‼️Brand New Developments",
+      "candidateRunId": "0245d134-dbaf-4194-a2b2-ce422e32d34c",
+      "candidatePublication": "failed-no-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "fail",
+          "finding": "Retained research-audit failure: Coverage supplement exceeds bounded repair size; original draft retained. No final brief; unpublished content fidelity unassessed."
+        }
+      ],
+      "overall": "not_certified",
+      "failureStage": "research-audit",
+      "failureAt": "2026-09-26T21:17:37.930Z",
+      "failureError": "Coverage supplement exceeds bounded repair size; original draft retained.",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/jPy5aDhMsMY__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "7a5fac5daf60dc8882dfa3d6c41b78153a3658b97f91714b854339699f786e88",
+        "summaryExcerpt": "Oracle delivers impressive top-line and operating profit growth but remains weighed down by heavy debt and rising interest expenses, warranting caution and smaller position sizing. Meanwhile, Adobe is trapped in a permanent multiple compression due to long-term generative AI disruption risks, limiting upside return potential. Across the broader market, while near-term sentiment remains cautious, big tech capital expenditure numbers for next year present the most significant fundamental risk.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": null,
+      "recordedExecutionSeconds": 117.55150662500016,
+      "settledModelUsd": 0.35656425,
+      "settledExternalUsd": 0.084
+    },
+    {
+      "case": 9,
+      "videoId": "elD62rk5Ijo",
+      "title": "If You Missed NVIDIA Stock, This is Way Bigger.",
+      "candidateRunId": "7291032d-4300-4b7d-bea5-2e9af094b8ab",
+      "candidatePublication": "failed-no-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "fail",
+          "finding": "Retained research-audit failure: Coverage supplement exceeds bounded repair size; original draft retained. No final brief; unpublished content fidelity unassessed."
+        }
+      ],
+      "overall": "not_certified",
+      "failureStage": "research-audit",
+      "failureAt": "2026-09-26T21:19:40.532Z",
+      "failureError": "Coverage supplement exceeds bounded repair size; original draft retained.",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/elD62rk5Ijo__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "bbcb9d2e6a55f254440e11b600e325b12ed9606ee758ddfcd76aab8d07ef0fed",
+        "summaryExcerpt": "SK hynix holds a dominant position in high-bandwidth memory (HBM) and enterprise SSDs, positioning it as a core beneficiary of multi-year AI data center infrastructure spending and its strategic co-development partnership with NVIDIA. Although the Nasdaq-listed ADR trades at a 40% premium to its domestic Korean shares due to structural supply constraints, the company trades at an attractive valuation discount compared to peers like Micron. The creator recommends acquiring direct Korean shares if possible or",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": null,
+      "recordedExecutionSeconds": 120.40636862400022,
+      "settledModelUsd": 0.337873,
+      "settledExternalUsd": 0.112
+    },
+    {
+      "case": 10,
+      "videoId": "zYeJZu1hkdM",
+      "title": "These Stocks Will Make Millionaires By 2029",
+      "candidateRunId": "6c112e67-882f-4b42-bb60-2f6b13a49c38",
+      "candidatePublication": "failed-no-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "fail",
+          "finding": "Retained research-audit failure: Coverage supplement exceeds bounded repair size; original draft retained. No final brief; unpublished content fidelity unassessed."
+        }
+      ],
+      "overall": "not_certified",
+      "failureStage": "research-audit",
+      "failureAt": "2026-09-26T21:21:26.881Z",
+      "failureError": "Coverage supplement exceeds bounded repair size; original draft retained.",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/zYeJZu1hkdM__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "4c45c04186f893aea8a6dda466558112a6ba83407bf059b81b5b39b21e7294c8",
+        "summaryExcerpt": "The primary AI hardware bottleneck has transitioned from raw compute to networking infrastructure, making optical networking and Indium Phosphide lasers essential to satisfy massive data center bandwidth demands. Coherent (COHR) and Lumentum (LITE) represent the premier plays on this shift, both backed by multi-billion dollar Nvidia partnerships. While the creator is actively buying both names for long-term growth, Coherent is the top choice due to its vertically integrated model and 6-inch wafer manufactur",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": null,
+      "recordedExecutionSeconds": 104.88678837500001,
+      "settledModelUsd": 0.243029,
+      "settledExternalUsd": 0.098
+    },
+    {
+      "case": 11,
+      "videoId": "ZfOQoh82JTo",
+      "title": "Nu Bank's Territorial Expansion; LVMH + Stocks At Cheapest Valuations Ever; Fed Hikes Interest Rates",
+      "candidateRunId": "36b61651-d131-4691-a2c0-770a2a586838",
+      "candidatePublication": "failed-no-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "fail",
+          "finding": "Retained research-audit failure: Coverage supplement exceeds bounded repair size; original draft retained. No final brief; unpublished content fidelity unassessed."
+        }
+      ],
+      "overall": "not_certified",
+      "failureStage": "research-audit",
+      "failureAt": "2026-09-26T21:24:28.344Z",
+      "failureError": "Coverage supplement exceeds bounded repair size; original draft retained.",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/ZfOQoh82JTo__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "79c46db35675479266dbe3c6b52a809064e1ee6f4db777fd90388ba2d3155f31",
+        "summaryExcerpt": null,
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": null,
+      "recordedExecutionSeconds": 177.47866179399938,
+      "settledModelUsd": 0.77530675,
+      "settledExternalUsd": 0.112
+    },
+    {
+      "case": 12,
+      "videoId": "iBMZc7zs_Ew",
+      "title": "Ian Bezek Returns to Discuss Why Brazilian Bank INTER Is Undervalued + Much More [PODCAST]",
+      "candidateRunId": "bfbcb8f9-5ad0-4890-a726-4ea4be817a92",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/iBMZc7zs_Ew__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "22ef9b71b55171438315344fbe5a8c009116d911c0db060fb20c60106cbb8b42",
+        "summaryExcerpt": "Brazilian digital bank Inter & Co (INTR) offers a compelling long opportunity trading at roughly 8x earnings despite 30% annual growth and strong profitability. Unlike pure fintech competitors reliant on unsecured lending, Inter targets wealthier depositors with over half of its loan portfolio secured by collateral or payroll, insulating it from credit cycle risks while it expands into the US expatriate market.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 33,
+      "recordedExecutionSeconds": 213.5156376230002,
+      "settledModelUsd": 0.9949745,
+      "settledExternalUsd": 0.112
+    },
+    {
+      "case": 13,
+      "videoId": "tUR0w-LDSbU",
+      "title": "Palantir News: Can Palantir Turn $10,000 Into $1,000,000 By 2035?!",
+      "candidateRunId": "bea830b5-a068-4116-893d-7a53de639d2c",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/tUR0w-LDSbU__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "e7d419a529e18845d6e07cffd4141cb3817d5f3b9e2e30741435e13f8fcde995",
+        "summaryExcerpt": "Palantir is unlikely to deliver a 100x return from its current $350 billion valuation, as reaching a $35 trillion market cap is unrealistic. However, achieving a 4x return over the next decade to a $1.3 trillion market cap represents a more grounded opportunity if the company sustains rapid earnings growth. Investors must remain mindful of its steep valuation multiple of 232x earnings, which leaves very little room for execution missteps.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 8,
+      "recordedExecutionSeconds": 62.40710141500039,
+      "settledModelUsd": 0.153646,
+      "settledExternalUsd": 0.028
+    },
+    {
+      "case": 14,
+      "videoId": "DuIyF_34ReI",
+      "title": "This Small Palantir Partner Just Unlocked One Billion Dollars in AI Defense Contracts!",
+      "candidateRunId": "ceb56dc4-9630-4e1f-85ee-60b0b086ada3",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "review_required",
+          "finding": "Selected numbers $175M=$122.5M+$52.5M, FY375M/prior50.7M and Q1 38–40M preserved; unclosed merger condition separated from fundamental thesis, creating conditionality risk."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "fail",
+          "finding": "Selected source cues s00072–85 omit IDIQ qualification; s00120–134 initial awarded $15.8M vs expected >$50M follow-ons distinction omitted. Retained LeapEdge summary does not resolve either."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "fail",
+          "finding": "UI-agent selected review: ten exact original/coverage duplicate pairs; 22 final sentences, 12 unique."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/DuIyF_34ReI__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "02760433341509c7ecd42d93539b51e1e89792cb4b4d0514bc8332e6674baa15",
+        "summaryExcerpt": "Ondas Holdings (ONDS) is transforming from a niche tech provider into a full prime defense contractor through its acquisition of Mistral, a strategic partnership with Palantir, and major international contract wins. These catalysts have driven the company to raise full-year 2026 revenue guidance to at least $375 million, representing a sevenfold increase from 2025. Despite small-cap volatility and acquisition execution risks, the company presents a high-upside growth opportunity aligned with multi-domain de",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 22,
+      "recordedExecutionSeconds": 79.17533650000044,
+      "settledModelUsd": 0.202933,
+      "settledExternalUsd": 0.056,
+      "selectedReviewBy": "readiness_ui agent, source-backed selected passages"
+    },
+    {
+      "case": 15,
+      "videoId": "QEwLInO3iZY",
+      "title": "You're Gambling on Stocks - Stop Losing Money",
+      "candidateRunId": "e5e77cb3-94d8-4031-aa00-31029108aee0",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "review_required",
+          "finding": "s-3 narrows invalidation to exact operational or financial conditions; raw s00015–16 only says what would prove you wrong and make you sell."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "pass",
+          "finding": "Selected3 statements preserve discipline, three earnings drivers over5years, prespecified sell rule; not a whole-source recall assessment."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "pass",
+          "finding": "Selected six-minute study statistic remains attributed/unverified with missing-study warning."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/QEwLInO3iZY__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "2e619dcb36c6e9ed366d7bca7959878b752483d5b6bd357f61f4a19d7bbf0f4c",
+        "summaryExcerpt": "The creator argues that buying stocks without rigorous fundamental research and defined thesis invalidation rules is gambling rather than investing. Investors should define three specific drivers for a company's five-year earnings growth and establish explicit selling criteria before entering any position.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 3,
+      "recordedExecutionSeconds": 21.854041582999752,
+      "settledModelUsd": 0.0303015,
+      "settledExternalUsd": 0,
+      "selectedReviewBy": "readiness_ui agent, source-backed selected passages"
+    },
+    {
+      "case": 16,
+      "videoId": "IjYr5acuBT4",
+      "title": "7 Stocks to Buy Heavy Before the Market Takes Off",
+      "candidateRunId": "fced3b74-0b7c-444a-a0ad-4381301a1eae",
+      "candidatePublication": "failed-no-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "fail",
+          "finding": "Retained research-audit failure: Coverage supplement exceeds bounded repair size; original draft retained. No final brief; unpublished content fidelity unassessed."
+        }
+      ],
+      "overall": "not_certified",
+      "failureStage": "research-audit",
+      "failureAt": "2026-09-26T21:33:16.164Z",
+      "failureError": "Coverage supplement exceeds bounded repair size; original draft retained.",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/IjYr5acuBT4__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "ef3fab690cecd41922f5c2597638409a84eecbba6922e8a1118758600c8a32b6",
+        "summaryExcerpt": "The creator argues that the September market pullback provides a major buying opportunity across secular growth themes like cybersecurity, AI infrastructure, and select mispriced software names like ServiceNow and Palantir. Concurrently, investors should capitalize on macro tailwinds in energy and financial insurers while avoiding debt-heavy sectors like real estate, utilities, and consumer discretionary names hit by weakening consumer spend.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": null,
+      "recordedExecutionSeconds": 137.77475145800017,
+      "settledModelUsd": 0.358454,
+      "settledExternalUsd": 0.112
+    },
+    {
+      "case": 17,
+      "videoId": "pWnu1C8I6Xw",
+      "title": "Superinvestors are buying this stock I added $10,000+ last week",
+      "candidateRunId": "61b4c99c-26ec-4a9a-b7b9-3a2ead36e317",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "pass",
+          "finding": "Selected only: 45-day13F caveat, CEO1.1M/three transactions/last week, 100shares and 10xEV EBITDA/16x2026earnings preserved."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "review_required",
+          "finding": "s-4 labels quoted creator valuation as analysis despite explicit According to creator text."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "fail",
+          "finding": "Source s00033–37 (80.64–88.84s): creator sector reservation except core holding Bloom Energy absent from all published/rejected sentences and inventory. LeapEdge excerpt also omits it; agreement does not catch upstream coverage loss."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/pWnu1C8I6Xw__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "022966f56246425c9e257c6b6931c6bd24f323025cdc40e013cfc420400a5caf",
+        "summaryExcerpt": "The creator initiated a long position in Vistra (VST) following significant insider accumulation by CEO James Burke and high-conviction buying from superinvestor David Tepper. The bullish thesis is supported by growing energy demand driven by AI expansion alongside an attractive valuation of 10x EV/EBITDA and 16x 2026 earnings. While risks include heavy regulatory scrutiny, data center delays, and weather exposure, strong macro tailwinds and institutional backing make it an appealing opportunity.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 5,
+      "recordedExecutionSeconds": 36.54091358199972,
+      "settledModelUsd": 0.05651825,
+      "settledExternalUsd": 0.028,
+      "selectedReviewBy": "readiness_ui agent, source-backed selected passages"
+    },
+    {
+      "case": 18,
+      "videoId": "1WNowIoNgtg",
+      "title": "Generate $3,000 Weekly Passive Income with this Options Strategy",
+      "candidateRunId": "866e3d7a-35a2-4bad-abdb-d3362d66376b",
+      "candidatePublication": "failed-no-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "fail",
+          "finding": "Retained research-audit failure: Coverage supplement exceeds bounded repair size; original draft retained. No final brief; unpublished content fidelity unassessed."
+        }
+      ],
+      "overall": "not_certified",
+      "failureStage": "research-audit",
+      "failureAt": "2026-09-26T21:35:46.542Z",
+      "failureError": "Coverage supplement exceeds bounded repair size; original draft retained.",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/1WNowIoNgtg__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "7e4a5dbb52ef29c4241b1c385f71650a0189c23bbf2e43661e3c8e0a5d8d8aec",
+        "summaryExcerpt": "The creator details a cash-secured put selling strategy designed to generate consistent income by functioning similarly to an insurance provider. He recommends targeting fundamentally sound stocks at around a 30 delta with 30 to 45 days to expiration to maximize theta decay while balancing assignment risk.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": null,
+      "recordedExecutionSeconds": 107.74685166699975,
+      "settledModelUsd": 0.46583375,
+      "settledExternalUsd": 0.028
+    },
+    {
+      "case": 19,
+      "videoId": "vrTbCxUzRw4",
+      "title": "Why I Buy the Strongest Mining Stocks First — Not the Cheapest",
+      "candidateRunId": "7371287d-243f-4da6-9587-521ec0d5f5de",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/vrTbCxUzRw4__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "77a71b931fcbc184302bbd1e1b62e96475836737ce98a7d0235ec5bcaad5de12",
+        "summaryExcerpt": "The creator outlines a strategic accumulation framework for precious metals miners that prioritizes buying technically strong leaders in confirmed uptrends rather than cheap, lagging names. Strong stocks trading above upward-sloping 50-day and 200-day moving averages should be bought on orderly pullbacks, while technically weak stocks should be avoided until deep market corrections offer steep discounts.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 13,
+      "recordedExecutionSeconds": 136.59967879300007,
+      "settledModelUsd": 0.3453355,
+      "settledExternalUsd": 0.112
+    },
+    {
+      "case": 20,
+      "videoId": "Dy_0RtmAt1U",
+      "title": "Silver Is at Triple Support — If It Breaks, $54 Is in Play",
+      "candidateRunId": "c0639cc4-cd6d-4d39-ba45-aa5f41546297",
+      "candidatePublication": "retained-final-brief",
+      "criteria": [
+        {
+          "criterion": "numeric_and_condition_fidelity",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "creator_vs_inference",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "material_coverage",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "date_context",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "external_support_labels",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "duplicate_publication",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        },
+        {
+          "criterion": "publication_reliability",
+          "status": "unassessed",
+          "finding": "No source-backed assessment of this criterion in this snapshot."
+        }
+      ],
+      "overall": "not_certified",
+      "retainedLeapedge": {
+        "reportUrl": "https://leapedge.app/analyses/Dy_0RtmAt1U__keypoints.v1-insights.v3-critique.v1",
+        "reportSha256": "4e088db72f5d7a221c9934b69f8c1649fe30381e2ff2782704eaa286cc1d6b3d",
+        "summaryExcerpt": "Silver is testing critical triple support at its 50-day moving average and uptrend channel bottom, pressured by rising bond yields and US Dollar strength ahead of the Fed decision. If this support breaks, silver could drop 4% to 15% toward the $54–$60 area in a potential liquidity grab shakeout. Traders should avoid aggressively buying early in the week and wait to see if institutions spark a reversal by Friday.",
+        "durationSeconds": null
+      },
+      "publishedSentenceCount": 9,
+      "recordedExecutionSeconds": 94.38338254200015,
+      "settledModelUsd": 0.211873,
+      "settledExternalUsd": 0.084
+    }
+  ],
+  "casesWithPublicationFailures": 8,
+  "costScope": "All completed ledger rows, split by external-search stage prefix. Retrieval documents are reconciliation evidence, not additional expense. Open/unknown calls are excluded from settled total.",
+  "casesAdmitted": 20,
+  "settledModelUsd": 6.38614625,
+  "settledExternalUsd": 1.54,
+  "runtimeBoundary": "Frozen retained transcript and metadata; starts at synthesis through research publication/failure. Excludes acquisition and UI display. Historical LeapEdge timing unknown; no speed ratio.",
+  "qualityAssessmentState": "selected-checks-only-not-certified",
+  "sourceChecksIncludingFailedCase": 9,
+  "publishedCasesWithSelectedSourceChecks": 8,
+  "publishedCasesWithoutSourceChecks": 4,
+  "openHolds": [],
+  "settledCallCount": 427,
+  "externalRequestCount": 220,
+  "unknownExternalCosts": 0,
+  "failureTypes": {
+    "Coverage supplement exceeds bounded repair size; original draft retained.": 8
+  }
+}

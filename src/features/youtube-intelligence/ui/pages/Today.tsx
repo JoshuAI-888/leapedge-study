@@ -8,7 +8,8 @@ import { action } from "../api.ts";
 import {
   visibleClaims,
   recoveredRuns,
-  processingState,
+  activityReadiness,
+  latestResearchBySource,
   dateLabel,
   creatorStances,
 } from "../viewmodel.ts";
@@ -73,17 +74,25 @@ export function Today() {
   const across = allCreators.slice(0, 6);
   const shown = claims.slice(0, limit);
   const recovered = recoveredRuns(data.runs);
+  const latestBriefs = latestResearchBySource(data.snapshot.researchBriefs);
   const activityState = (r: (typeof data.runs)[number]) =>
-    recovered.has(r.id) ? "Recovered" : processingState(r.status);
-  const needsReview = data.runs.filter(
-    (r) => activityState(r) === "Needs review",
-  );
+    activityReadiness(r, latestBriefs.get(r.id), recovered.has(r.id));
+  const needsReview = data.runs.filter((r) => activityState(r).needsReview).map((r) => ({
+    id: r.id, title: r.title || r.videoId, label: activityState(r).label,
+  }));
+  // The activity list is paginated; an older source's unresolved brief must not
+  // disappear from the review total merely because its run is not loaded yet.
+  const loadedIds = new Set(data.runs.map((r) => r.id));
+  for (const brief of latestBriefs.values()) {
+    if (!loadedIds.has(brief.sourceRunId) && brief.readiness.status !== "complete")
+      needsReview.push({ id: brief.sourceRunId, title: brief.title || brief.videoId, label: brief.readiness.label });
+  }
   function sortBy(key: string) {
     setSort(key);
     setDescending(sort === key ? !descending : false);
   }
   const runs = data.runs.filter(
-    (r) => status === "all" || activityState(r) === status,
+    (r) => status === "all" || activityState(r).filter === status || (status === "Needs review" && activityState(r).needsReview),
   );
   return (
     <>
@@ -345,7 +354,7 @@ export function Today() {
                     "Recovered",
                   ].map((s) => (
                     <option key={s} value={s}>
-                      {s === "all" ? "All activity" : s}
+                      {s === "all" ? "All activity" : s === "Ready" ? "Analysis complete" : s}
                     </option>
                   ))}
                 </select>
@@ -369,7 +378,7 @@ export function Today() {
                           : undefined
                       }
                     >
-                      {activityState(r)}
+                      {activityState(r).label}
                     </span>
                   </li>
                 ))}
@@ -436,16 +445,18 @@ export function Today() {
                 {needsReview.slice(0, 5).map((r) => (
                   <li key={r.id}>
                     <Link href={`/youtube-intelligence/analysis/${r.id}`}>
-                      {r.title || r.videoId} ↗
+                      {r.title} ↗
                     </Link>
+                    <small>{r.label}</small>
                   </li>
                 ))}
               </ul>
             ) : (
               <p className="yi-muted">
-                No video activity currently needs review.
+                No loaded analysis failures or retained research gaps currently need review.
               </p>
             )}
+            {needsReview.length > 5 && <p className="yi-muted">Showing 5 of {needsReview.length} items. Use the Needs review activity filter and load older activity to inspect more.</p>}
             <Link href="/youtube-intelligence/lab">
               Open diagnostics in Lab →
             </Link>

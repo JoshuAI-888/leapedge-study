@@ -1,5 +1,7 @@
 import { advisoryKey, database, iso, json } from "./database.ts";
 import { TeamPreferences } from "../../features/youtube-intelligence/settings.ts";
+import { ResearchPipelineIdentity, researchPipelineIdentity, researchPipelineIdentityFromInput } from "../../features/youtube-intelligence/research-pipeline-choice.ts";
+import { z } from "zod";
 import { resolveTeam } from "./env.ts";
 import { enqueueJob } from "./repos/jobs.ts";
 import { queuePaused } from "./queue.ts";
@@ -70,9 +72,19 @@ export async function create(
   input: Record<string, unknown>,
   version: string,
 ) {
-  const profile = input.task || input.teamPreferencesSnapshot
-    ? "deployment-default"
-    : (await (await import("./research-store.ts")).teamPreferences()).processing.efficiencyProfile;
+  const workspace = input.task || input.teamPreferencesSnapshot
+    ? null
+    : await (await import("./research-store.ts")).teamPreferences();
+  const profile = workspace?.processing.efficiencyProfile ?? "deployment-default";
+  const frozen = z.object({processing:z.object({researchPipeline:z.unknown().optional()}).optional()})
+    .optional().parse(input.teamPreferencesSnapshot);
+  const identity = input.researchPipelineIdentity !== undefined && input.researchPipeline === undefined
+    ? researchPipelineIdentityFromInput(input)
+    : researchPipelineIdentity(input.researchPipeline ??
+    (input.teamPreferencesSnapshot !== undefined ? frozen?.processing?.researchPipeline ?? "current" : workspace?.processing.researchPipeline ?? "current"));
+  ResearchPipelineIdentity.parse({pipeline:identity.pipeline,version:input.researchPipelineVersion ?? identity.version});
+  input = {...input,researchPipeline:identity.pipeline,researchPipelineVersion:identity.version};
+  researchPipelineIdentityFromInput(input);
   input = (await import("./efficiency.ts")).freezeEfficiency(input, process.env, profile);
   const d = await db();
   const payload = JSON.stringify(input);
@@ -246,14 +258,17 @@ export async function reserve(
         }
       ).total,
     );
-    const limit = Number(process.env.YTI_BUDGET_USD || "2");
+    // Optional lifetime ceiling. Unset means the monthly budget below governs;
+    // a set but unparseable value refuses spend rather than lifting the cap.
+    const lifetime = process.env.YTI_BUDGET_USD;
+    const limit = lifetime ? Number(lifetime) : Infinity;
     if (
       !Number.isFinite(amount) ||
       amount <= 0 ||
-      !Number.isFinite(limit) ||
+      Number.isNaN(limit) ||
       used + amount > limit
     )
-      throw Error("Local experiment budget limit reached.");
+      throw Error("Lifetime budget limit (YTI_BUDGET_USD) reached.");
     // Admission uses current administrative limits, never a run's frozen config.
     // Hold the settings row until commit so an existing limit cannot change
     // halfway through the budget decision. The advisory lock serializes spend.
