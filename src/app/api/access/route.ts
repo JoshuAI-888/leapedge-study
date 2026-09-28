@@ -2,7 +2,7 @@ import {
   constantEqual,
   sessionToken,
   workspaceOrigin,
-} from "../../../server/youtube-intelligence/access";
+} from "../../../server/youtube-intelligence/access.ts";
 export async function POST(r: Request) {
   const configured = workspaceOrigin(),
     key = process.env.YTI_ACCESS_TOKEN;
@@ -15,7 +15,9 @@ export async function POST(r: Request) {
   if (body.length > 1024)
     return new Response("Invalid access code.", { status: 401 });
   const code = new URLSearchParams(body).get("code") || "";
-  if (!constantEqual(code, key))
+  // YTI_PASSCODE is the shared workspace passcode people type. The strong
+  // YTI_ACCESS_TOKEN stays the session signing key; unset, it is also the code.
+  if (!constantEqual(code, process.env.YTI_PASSCODE || key))
     return new Response("Invalid access code.", { status: 401 });
   return new Response(null, {
     status: 303,
