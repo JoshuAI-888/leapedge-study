@@ -1,5 +1,6 @@
 import {researchPipelineIdentityFromInput, ResearchPipelineIdentity} from "../../features/youtube-intelligence/research-pipeline-choice.ts";
 import { advanceBoundedResearchAudit } from "./bounded-research-audit.ts";
+import { faithfulAudit } from "./faithful-audit.ts";
 import { PRIMARY_DOMAINS } from "./primary-domain-registry.ts";
 import { researchReadiness } from "../../features/youtube-intelligence/research-readiness.ts";
 import { reconcileResearchAudit } from "./research-audit-repair.ts";
@@ -159,6 +160,8 @@ export async function researchStep(run: Run) {
   if(run.input.researchPipelineVersion!==undefined&&run.input.researchPipelineVersion!==frozenPipeline.version)throw Error("Unsupported frozen research pipeline version; explicit migration is required.");
   run.output.researchPipelineIdentity=frozenPipeline;
   const targeted=frozenPipeline.pipeline==='targeted-experimental';
+  // Pipeline v3: transcript-only brief checked for fidelity in parallel chunks.
+  const faithful=frozenPipeline.pipeline==='faithful';
   const snapshot = Snapshot.parse(run.input.snapshot);
   if (!run.output.researchBaseline) {
     const norm = (v: string) => v.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
@@ -410,7 +413,7 @@ export async function researchStep(run: Run) {
       ? ResearchAudit.parse((run.output.coverageRepair as {originalAudit:unknown}).originalAudit) : null;
     const previousIds = new Set(previousAudit?.verdicts.map(v=>v.id) ?? []);
     const auditScope = {...draft, sentences:draft.sentences.filter(s=>!previousIds.has(s.id))};
-    const preflight = efficient ? validateBrief(
+    const preflight = efficient || faithful ? validateBrief(
       auditScope, snapshot.evidence, external, snapshot.context,
       auditScope.sentences.map(s => ({id:s.id,accepted:true,reason:"Structural preflight only",factualStatus:"unverified" as const})),
       snapshot.baseline,
@@ -434,6 +437,11 @@ export async function researchStep(run: Run) {
     let repaired: Awaited<ReturnType<typeof reconcileResearchAudit>>;
     let supplementalAuditError: string | null = null;
     try {
+    if (faithful) {
+      const checked = await faithfulAudit({ sentences: auditDraft.sentences, evidence: snapshot.evidence, invoke });
+      run.output.faithfulAudit = { chunks: checked.chunks, failures: checked.failures };
+      repaired = { audit: ResearchAudit.parse({ verdicts: checked.verdicts, coverageFindings: checked.coverageFindings, evidenceCoverage: checked.evidenceCoverage }), attempts: [], missing: [] };
+    } else {
     const useBoundedAudit = targeted || (auditDraft.sentences.length > 0 && (snapshot.evidence.length > 24 || draft.sentences.length > 12));
     const auditInstructions = PRINCIPLES +
           " Independently audit EVERY sentence against all cited original quotes and external source text. Inspect uncited external sources and baseline history for counterevidence as well. External factualStatus requires eligible sources cited by THIS sentence; the presence of other documents is not corroboration. Do not label quantities contradictory unless their observation dates, periods, instruments, units and basis are comparable; distinguish a change over time from disagreement. A small numerical difference is not a proven contradiction when observation conventions are unknown (for example intraday traded Treasury yield versus a daily constant-maturity series). Require a matching observation time and definition; otherwise mark unverified and explain the comparability gap, never call one value the actual figure. Independently inspect every typed financial fact value, unit, scale, denominator, qualifier and comparison baseline against its exact original quote; correct prose does not excuse an incorrect typed field. Check every optional calculation input, units and assumptions against the cited quotes; reject if any input is invented or the periods/scales differ. Accept only if EVERY clause, causal link, quantity, attribution and time boundary is supported or clearly marked grounded inference. Reject unrelated or weak citations. Do not reject cautious next-check questions simply for being questions. factualStatus corroborated requires direct primary-source support of the exact factual assertion, never mere quotation agreement; partial means incomplete external corroboration; disputed requires evidence of contradiction. Creator views and scenarios normally remain unverified. For every external label above unverified, return externalSupport entries mapping the exact assertion substring to an exact passage in a cited primary source, with supports/contradicts relationship and explanation. Corroborated requires support for the complete sentence; partial requires an explicit supported subset. A source discussing the company is not support for an unrelated multiple or quantity. Return exactly one verdict per sentence ID and coverageFindings for missing central themes or unbalanced treatment. Independently return evidenceCoverage for EVERY supplied evidence ID against the entire retained brief. A cited ID or shared topic does NOT establish coverage of its material propositions. Inspect all original quotes, quantities, conditions, risks, valuation qualifications, forward monitoring and invalidation points; mark partial or missing if any material detail is absent. Include each missing point with its exact original quote and an explanation, and list only accepted sentence IDs that actually represent it. Mark covered only when all material propositions are represented. On supplemental audits reassess whole retainedDraft coverage, including previous missing details; never infer coverage from a new citation alone. Assess robustness conservatively: supported requires corroborated primary facts plus explicit cited countercase and invalidation sentence IDs for the same topic, horizon and time boundary; otherwise insufficient or fragile with a concrete reason. Independently verify novelty against the cited baseline text and original evidence, including actor, conditions and horizon; mark noveltyAccepted false when unknown, unmatched, or just wording changes.";
@@ -470,6 +478,7 @@ export async function researchStep(run: Run) {
       invoke(run.output.coverageRepair ? "critique-research-coverage-repair" : "critique-research-repair", PRINCIPLES +
         " Audit ONLY the requested sentence IDs. Return one verdict per requested ID; preserve original evidence, attribution, numerical conditions and time boundaries. For any factual label above unverified, externalSupport must map an exact assertion substring to an exact cited primary-source quote with supports/contradicts relationship and a reason. A URL or related topic is insufficient. Inspect all evidence for countercases and omissions.",
         {...auditPayload, draft:{...auditDraft,sentences:auditDraft.sentences.filter(s=>ids.includes(s.id))}, requestedIds:ids}, ResearchAuditResponse));
+    }
     } catch (error) {
       if (!previousAudit) throw error; // An unaudited original is never publishable.
       const message = error instanceof Error ? error.message : String(error);
@@ -546,7 +555,7 @@ export async function researchStep(run: Run) {
     const readiness = researchReadiness(brief);
     run.output.researchReadiness = readiness;
     const missingEvidence = readiness.coverage.filter(c=>c.repairEligible).map(c=>c.evidenceId);
-    if (!run.output.coverageRepair && missingEvidence.length && draft.sentences.length < 48) {
+    if (!faithful && !run.output.coverageRepair && missingEvidence.length && draft.sentences.length < 48) {
       // Additive and bounded: never replace accepted statements to make room.
       // Both the original attempt and the supplement are retained and paid once.
       const available = Math.min(12, 48 - draft.sentences.length);
@@ -574,7 +583,7 @@ export async function researchStep(run: Run) {
     }
     await putIfAbsent("researchBrief", run.id, brief);
     run.output.researchBriefId = run.id;
-    run.status = readiness.status === "review_required" || run.output.coverageRepairError ? "needs_review" : "completed";
+    run.status = readiness.status === "review_required" || run.output.coverageRepairError || (run.output.faithfulAudit as {failures?:number}|undefined)?.failures ? "needs_review" : "completed";
     run.stage = "complete";
     return;
   }

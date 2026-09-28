@@ -1766,5 +1766,20 @@
       "tests/timing.test.ts"
     ],
     "verification": "Node 24: default and PGlite suites 734 pass/0 fail/1 skip; typecheck, build and offline gate pass. Browser on isolated local Postgres fixture: passcode login (wrong code refused, youtubeintel accepted), Timing and News review panels at 1360x900 and 390x844 with no horizontal overflow after wrapping the table."
+  },
+  "pipelineV3": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Research pipeline \"faithful\" (faithful-v1), selectable in Settings; current stays default until the LeapEdge comparison. Transcript-only draft (1 Gemini call), deterministic structural preflight, then an independent fidelity check (Sonnet) of each sentence against only the quotes it cites, chunked by 12 and run in parallel within one step; evidence no sentence cites is recorded as missing; no repeated coverage audit or repair loop. A failed chunk withholds its sentences and marks the brief needs_review.",
+    "files": [
+      "src/server/youtube-intelligence/faithful-audit.ts",
+      "src/server/youtube-intelligence/research-pipeline.ts",
+      "src/features/youtube-intelligence/research-pipeline-choice.ts"
+    ],
+    "tests": [
+      "tests/faithful-pipeline.test.ts"
+    ],
+    "notYetDone": "Source-recall windows on the analysis side still run one per step (each depends on the prior inventory); measure with live timing before changing. Live paired LeapEdge runs not started.",
+    "verification": "Node 24: default and PGlite suites 737 pass/0 fail/1 skip; typecheck and build pass."
   }
 }

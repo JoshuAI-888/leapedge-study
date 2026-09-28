@@ -1,22 +1,24 @@
 import { z } from "zod";
 
-export const ResearchPipelineSetting = z.enum(["current", "targeted-experimental"]);
+export const ResearchPipelineSetting = z.enum(["current", "targeted-experimental", "faithful"]);
 export type ResearchPipelineSetting = z.infer<typeof ResearchPipelineSetting>;
 
 export const RESEARCH_PIPELINES = [
   { value: "current", label: "Current — full repeated audit", description: "The default research path. Checks statements and evidence coverage, then repeats coverage checks after repair." },
+  { value: "faithful", label: "v3 — faithful brief", description: "Builds the brief from the transcript only and checks every statement against the quotes it cites, in parallel. No repeated coverage audit; gaps are listed. Web research is a separate news review. Candidate default pending the LeapEdge comparison." },
   { value: "targeted-experimental", label: "Experimental — targeted audit", description: "Tests reuse of unchanged coverage checks after repair. Changed or uncertain dependencies are checked again. Quality parity and speed or cost gains have not been established." },
 ] as const;
 
 export const ResearchPipelineIdentity = z.discriminatedUnion("pipeline", [
   z.object({ pipeline: z.literal("current"), version: z.literal("current-v1") }),
   z.object({ pipeline: z.literal("targeted-experimental"), version: z.literal("targeted-experimental-v1") }),
+  z.object({ pipeline: z.literal("faithful"), version: z.literal("faithful-v1") }),
 ]);
 export function researchPipelineIdentity(value: unknown = "current"): z.infer<typeof ResearchPipelineIdentity> {
   const pipeline = ResearchPipelineSetting.parse(value);
-  return pipeline === "current"
-    ? { pipeline, version: "current-v1" }
-    : { pipeline, version: "targeted-experimental-v1" };
+  if (pipeline === "current") return { pipeline, version: "current-v1" };
+  if (pipeline === "faithful") return { pipeline, version: "faithful-v1" };
+  return { pipeline, version: "targeted-experimental-v1" };
 }
 
 /** Display retained identity only; never substitute today's workspace preference. */
