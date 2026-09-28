@@ -1,4 +1,5 @@
 import { queueResearchBrief, researchBriefs } from "../research-pipeline.ts";
+import { queueNewsReview, newsReviews } from "../news-review.ts";
 import { z } from "zod";
 import { researchReadiness } from "../../../features/youtube-intelligence/research-readiness.ts";
 import { seedLists } from "../seed/lists.ts";
@@ -74,6 +75,13 @@ export const research: ActionTable = {
     z.strictObject({ sourceRunId: z.string().min(1) }),
     (v) => queueResearchBrief(v.sourceRunId),
   ),
+  // Web research is analyst-requested only: a cited review of a brief's claims
+  // against dated news. The default brief never searches the web.
+  requestNewsReview: writes(
+    z.strictObject({ briefId: z.string().min(1) }),
+    (v) => queueNewsReview(v.briefId),
+  ),
+  newsReviews: reads(nothing, () => newsReviews()),
   saveIdea: writes(
     z.strictObject({ runId: z.string(), claimId: z.string() }),
     (v) => R.saveIdea(v.runId, v.claimId),

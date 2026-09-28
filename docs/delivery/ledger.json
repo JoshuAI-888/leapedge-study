@@ -1738,5 +1738,19 @@
       "tests/drain.test.ts"
     ],
     "verification": "Node 24: default and PGlite suites 726 pass/0 fail/1 skip each; typecheck and build pass. Live Vercel acceptance (a run completing with the Mac worker stopped) pending deployment."
+  },
+  "newsReview": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Default research briefs are built from the transcript alone (webResearch:false; only the opt-in experimental-overlap profile keeps legacy in-brief search). Analysts request a news review per brief: one Gemini plan (<=6 queries), open-web Exa searches split before/after the video date, one Gemini cited review, deterministic citation checks (claim ids, retrieved sources only, verbatim excerpts, date window), then one independent critic (Sonnet) entailment check. Removed statements are retained and shown with reasons.",
+    "files": [
+      "src/features/youtube-intelligence/news-review.ts",
+      "src/server/youtube-intelligence/news-review.ts",
+      "src/features/youtube-intelligence/ui/NewsReview.tsx"
+    ],
+    "tests": [
+      "tests/news-review.test.ts"
+    ],
+    "verification": "Unit and integration tests with FakeModelTransport and stubbed Exa pass; typecheck and build pass. Live paid run and browser acceptance pending."
   }
 }

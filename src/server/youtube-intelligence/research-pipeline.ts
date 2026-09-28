@@ -122,6 +122,11 @@ async function queueSourceBrief(
       criticModel: team.models.critique.id,
       promptSnapshot: await prompt(team.prompts.version),
       pipelineVersion: "research-brief.v1",
+      // The default brief is built from the transcript alone. Web research is a
+      // separate analyst-requested news review (news-review.ts). Only the opt-in
+      // experimental-overlap profile, which prefetches searches during
+      // extraction, keeps the legacy in-brief search until it is retired.
+      webResearch: source.input.speculativeResearch === true,
       ...(inheritedPipeline ? {researchPipeline:inheritedPipeline.pipeline,researchPipelineVersion:inheritedPipeline.version,researchPipelineIdentity:inheritedPipeline} : {}),
       efficiencyVersion: source.input.efficiencyVersion,
       speculativeResearch: source.input.speculativeResearch,
@@ -270,6 +275,14 @@ export async function researchStep(run: Run) {
       },
     );
   };
+  if (run.stage === "metadata" && run.input.webResearch === false) {
+    run.title = `Research brief · ${snapshot.title}`;
+    run.output.researchPlan = { queries: [], coverage: [] };
+    run.output.retrievals = [];
+    run.output.researchVerificationScope = { queryBudget: 0, topicCount: 0, note: "Web research not requested; the brief is built from the transcript only. An analyst can request a cited news review." };
+    run.stage = "research-synthesis";
+    return;
+  }
   if (run.stage === "metadata") {
     run.title = `Research brief · ${snapshot.title}`;
     const topicCount = new Set(snapshot.evidence.map(e => e.instrument ?? e.summary)).size;

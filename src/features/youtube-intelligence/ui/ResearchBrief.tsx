@@ -11,6 +11,7 @@ import { factualSupportLabel, thesisRobustnessLabel, externalRelationshipLabel, 
 import type { SourceData } from "../contracts.ts";
 import { useWorkspace } from "./workspace.tsx";
 import { action } from "./api.ts";
+import { NewsReview } from "./NewsReview.tsx";
 const date = (value: string | null) =>
   value ? new Date(value).toLocaleString() : "Unknown";
 export function ResearchOverview() {
@@ -492,17 +493,16 @@ export function ResearchBrief({
             .map(sentence)}
         </div>
       )}
-      <section className="yi-current-update">
-        <h3>Current update · separate from the video-date thesis</h3>
-        {brief.sentences.some((s) => s.timeMode === "current") ? (
-          brief.sentences.filter((s) => s.timeMode === "current").map(sentence)
-        ) : (
-          <p>
-            No eligible, dated external update was established. This does not
-            mean nothing has changed.
-          </p>
-        )}
-      </section>
+      {brief.sentences.some((s) => s.timeMode === "current") && (
+        <section className="yi-current-update">
+          <h3>Current update · separate from the video-date thesis</h3>
+          {brief.sentences.filter((s) => s.timeMode === "current").map(sentence)}
+        </section>
+      )}
+      <NewsReview
+        briefId={brief.id}
+        claims={brief.sentences.filter((s) => s.timeMode === "video_date").map((s) => ({ id: s.id, text: s.text }))}
+      />
       {current && (
         <section
           aria-label="Research evidence"

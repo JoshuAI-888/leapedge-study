@@ -868,6 +868,10 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
     const { audioReviewStep } = await import("./audio-review.ts");
     return audioReviewStep(run);
   }
+  if (run.input.task === "news-review") {
+    const { newsReviewStep } = await import("./news-review.ts");
+    return newsReviewStep(run);
+  }
   if (run.input.task === "research-brief") {
     const { researchStep } = await import("./research-pipeline.ts");
     return researchStep(run);

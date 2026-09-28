@@ -88,6 +88,9 @@ const RetrievalInput = z.object({
   since: z.iso.datetime().optional(),
   primaryDomains: z.array(z.string().regex(/^[a-z0-9.-]+$/)).max(100),
   reuseCache: z.boolean().optional(),
+  // "news" searches the open web (primaryDomains then only labels sources);
+  // absent means the original primary-source-restricted search.
+  scope: z.literal("news").optional(),
 }).refine((input) => !input.since || (input.timeMode === "current" && Date.parse(input.since) < Date.parse(input.cutoff)), { message: "since is allowed only for a current interval before cutoff" });
 export async function retrieveResearchSources(input: {
   runId: string;
@@ -97,6 +100,7 @@ export async function retrieveResearchSources(input: {
   since?: string;
   primaryDomains: string[];
   reuseCache?: boolean;
+  scope?: "news";
 }): Promise<RetrievalRecord> {
   input = RetrievalInput.parse(input);
   // The feature toggle is not part of paid-request identity: toggling cannot
@@ -106,6 +110,7 @@ export async function retrieveResearchSources(input: {
   const cacheKey = createHash("sha256").update(JSON.stringify({
     version: "exa-retrieval.v2", registryVersion: PRIMARY_DOMAIN_REGISTRY_VERSION, query: input.query, timeMode: input.timeMode,
     cutoff: input.cutoff, since: input.since ?? null, primaryDomains: [...new Set(input.primaryDomains)].sort(),
+    ...(input.scope ? { scope: input.scope } : {}),
   })).digest("hex");
   const retained = await doc<RetrievalRecord>("researchRetrieval", key);
   if (retained) return reclassifyRetrievalOwnership(RetrievalRecordSchema.parse(retained), input.primaryDomains);
@@ -189,13 +194,15 @@ export async function retrieveResearchSources(input: {
         },
         body: JSON.stringify({
           query:
-            input.query +
-            " primary sources official company investor relations filings",
+            input.scope === "news"
+              ? input.query
+              : input.query +
+                " primary sources official company investor relations filings",
           type: "auto",
-          numResults: 3,
+          numResults: input.scope === "news" ? 5 : 3,
           endPublishedDate: input.cutoff,
           ...(input.since ? { startPublishedDate: input.since } : {}),
-          ...(input.primaryDomains.length ? { includeDomains: [...new Set(input.primaryDomains)].sort() } : {}),
+          ...(input.scope !== "news" && input.primaryDomains.length ? { includeDomains: [...new Set(input.primaryDomains)].sort() } : {}),
           contents: { text: { maxCharacters: 12000 } },
         }),
         signal: AbortSignal.timeout(45000),
