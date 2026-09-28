@@ -196,6 +196,8 @@ const MAY_FETCH: Record<string, string> = {
   "src/server/youtube-intelligence/transport/openrouter.ts":
     "the OpenRouter API",
   "src/server/youtube-intelligence/channels.ts": "the YouTube Data API",
+  "scripts/paired-comparison.ts":
+    "the hosted app's own sign-in and run API, to time paired comparison runs",
   "src/server/youtube-intelligence/transcripts.ts":
     "TranscriptAPI and Supadata",
   "src/server/youtube-intelligence/market.ts": "FMP prices and filings",
