@@ -258,14 +258,17 @@ export async function reserve(
         }
       ).total,
     );
-    const limit = Number(process.env.YTI_BUDGET_USD || "2");
+    // Optional lifetime ceiling. Unset means the monthly budget below governs;
+    // a set but unparseable value refuses spend rather than lifting the cap.
+    const lifetime = process.env.YTI_BUDGET_USD;
+    const limit = lifetime ? Number(lifetime) : Infinity;
     if (
       !Number.isFinite(amount) ||
       amount <= 0 ||
-      !Number.isFinite(limit) ||
+      Number.isNaN(limit) ||
       used + amount > limit
     )
-      throw Error("Local experiment budget limit reached.");
+      throw Error("Lifetime budget limit (YTI_BUDGET_USD) reached.");
     // Admission uses current administrative limits, never a run's frozen config.
     // Hold the settings row until commit so an existing limit cannot change
     // halfway through the budget decision. The advisory lock serializes spend.

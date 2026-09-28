@@ -59,7 +59,8 @@ establishes quality. Agreement with LeapEdge is not independent ground truth.
 
 ## Evidence and deployment
 
-- [Delivery review, 18 September 2026](docs/review/delivery-review-20260918.md)
+- [Current state and direction, 28 September 2026](docs/delivery/current-state.md)
+- [Delivery review, 18 September 2026](docs/archive/reviews/delivery-review-20260918.md)
 - [Spec and build plan](docs/spec/)
 - [Deployment, operation and recovery](docs/production-and-integration.md)
 - [Finradar integration handoff](docs/finradar-module-handoff.md)

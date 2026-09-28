@@ -69,9 +69,9 @@ test("Team and account defaults parse from an empty object and match spec 6.2 / 
     chunkAboveTokens: 700000,
   });
   assert.deepEqual(team.budget, {
-    monthlyUsd: 150,
+    monthlyUsd: 750,
     alertAtPercent: 70,
-    perVideoMaxUsd: 1.5,
+    perVideoMaxUsd: 3,
     unknownOutcomeHoldMinutes: 60,
   });
   assert.equal(team.channels.discovery, "push");

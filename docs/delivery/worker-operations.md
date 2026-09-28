@@ -183,7 +183,7 @@ brief work have priority; eligible jobs gain age priority after 120 seconds.
 Reserving capacity can reduce pure background throughput: the controlled
 100-job fixture took 12% longer while its manual request completed 94% sooner.
 
-See [the before/after report](../reviews/performance-plan-20260920.md). UI activity
+See [the before/after report](../archive/reviews/performance-plan-20260920.md). UI activity
 polls are small, but full retained brief history still loads on terminal changes.
 The 1,000-video/day target needs real-provider quota and soak testing before it
 can be treated as demonstrated capacity. The queue stays paused after deployment.

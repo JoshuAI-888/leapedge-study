@@ -145,9 +145,9 @@ export const TeamPreferences = z.object({
     .prefault({}),
   budget: z
     .object({
-      monthlyUsd: z.number().min(0).default(150),
+      monthlyUsd: z.number().min(0).default(750),
       alertAtPercent: z.number().int().min(1).max(100).default(70),
-      perVideoMaxUsd: z.number().min(0).default(1.5),
+      perVideoMaxUsd: z.number().min(0).default(3),
       unknownOutcomeHoldMinutes: z.number().int().min(0).default(60),
     })
     .prefault({}),

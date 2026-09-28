@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-09-27",
+  "updated": "2026-09-28",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -1305,14 +1305,14 @@
       "tests/runs-api.test.ts"
     ],
     "note": "Seven stopped runs and four quality checks completed; long podcast has no uncovered interval over three seconds. No new LeapEdge calls. Additional API usage $2.75417070. Both full suites: 417 pass, one existing skip, zero failures; typecheck/build pass, offline gate advisory-only. Desktop/mobile browser checks passed, including zero unresolved dashboard runs and retained recovered history. PR #8 records merge/deployment; Mac runtime update preserves its database and paused queue. PR #8 merged after both GitHub verify jobs and Vercel preview passed. Installed Mac worker/web updated and healthy; queue remains paused.",
-    "report": "docs/delivery/recovery-20260920.md",
-    "results": "docs/delivery/recovery-20260920.json",
+    "report": "docs/archive/reviews/recovery-20260920.md",
+    "results": "docs/archive/reviews/recovery-20260920.json",
     "mergeCommit": "b27c9034ff1f2c143106cc91513a4e9a1f9fd2a2",
     "hostedFollowUp": "Access code creation explicitly approved and completed. Production login 303, authenticated status/runs 200, browser login successful. Hosted database has zero runs and no worker/model credentials; local comparison/Mac runtime remain separate. See research review for operational follow-up."
   },
   "researchReview": {
     "status": "implemented-external-verification-pending",
-    "report": "docs/reviews/investment-research-review-20260920.md",
+    "report": "docs/archive/reviews/investment-research-review-20260920.md",
     "scope": "20 retained cases, 19 usable saved LeapEdge references; approved research implementation; zero new LeapEdge calls",
     "preferences": {
       "horizons": "equal tactical and fundamental",
@@ -1330,8 +1330,8 @@
       ],
       "status": "merged",
       "pr": 9,
-      "report": "docs/reviews/research-implementation-20260920.md",
-      "results": "docs/reviews/research-implementation-20260920.json",
+      "report": "docs/archive/reviews/research-implementation-20260920.md",
+      "results": "docs/archive/reviews/research-implementation-20260920.json",
       "checks": {
         "unitAndIntegration": "436 pass, 1 pre-existing skip, 0 failures",
         "pglite": "436 pass, 1 pre-existing skip, 0 failures",
@@ -1386,7 +1386,7 @@
       "incremental-ui"
     ],
     "baselineCommit": "140d6b2",
-    "report": "docs/reviews/performance-plan-20260920.md",
+    "report": "docs/archive/reviews/performance-plan-20260920.md",
     "targetVideosPerDay": 1000,
     "targetBurst": 100,
     "pr": 10,
@@ -1442,8 +1442,8 @@
       "additionalCaptionCredits": 0,
       "earlierCaptionCredits": 3,
       "newLeapEdgeRequests": 0,
-      "report": "docs/reviews/production-resume-20260920.md",
-      "initialBlockedAttempt": "docs/reviews/production-sample-20260920.md",
+      "report": "docs/archive/reviews/production-resume-20260920.md",
+      "initialBlockedAttempt": "docs/archive/reviews/production-sample-20260920.md",
       "remaining": [
         "Credo under-170 explicit preference missed despite identical transcript",
         "Long-podcast main brief omits some covered company topics",
@@ -1452,12 +1452,13 @@
       ],
       "queuePaused": true,
       "concurrencyRestored": 1
-    }
+    },
+    "targetNote": "28 September 2026: 1,000/day is a design ceiling; working volume ~50 videos/day."
   },
   "evidenceEfficiency": {
     "status": "merged",
     "baselineCommit": "a949a8e",
-    "report": "docs/reviews/evidence-efficiency-20260920.md",
+    "report": "docs/archive/reviews/evidence-efficiency-20260920.md",
     "sequence": [
       1,
       2,
@@ -1482,9 +1483,9 @@
     ],
     "rollout": "Installed on Mac: conservative profile, capacity 3, automatic intake paused, speculative overlap disabled",
     "reports": [
-      "docs/reviews/optimization-stage-20260920.md",
-      "docs/reviews/optimization-full-quality-20260920.md",
-      "docs/reviews/optimization-harness-notes-20260920.md"
+      "docs/archive/reviews/optimization-stage-20260920.md",
+      "docs/archive/reviews/optimization-full-quality-20260920.md",
+      "docs/archive/reviews/optimization-harness-notes-20260920.md"
     ],
     "verification": {
       "nodeTests": "484 passed, 1 skipped",
@@ -1562,7 +1563,7 @@
       6,
       7
     ],
-    "report": "docs/reviews/operational-efficiency-20260920.md",
+    "report": "docs/archive/reviews/operational-efficiency-20260920.md",
     "releaseChecklist": "docs/delivery/release-checklist.md",
     "baselineCommit": "e71ca3d",
     "macDeployed": true,
@@ -1591,10 +1592,10 @@
       "afterCompleted": 4
     },
     "reports": [
-      "docs/reviews/operational-metrics-20260920.json",
-      "docs/reviews/operational-quality-20260920.md",
-      "docs/reviews/admission-validation-20260920.md",
-      "docs/reviews/cache-validation-20260920.md"
+      "docs/archive/reviews/operational-metrics-20260920.json",
+      "docs/archive/reviews/operational-quality-20260920.md",
+      "docs/archive/reviews/admission-validation-20260920.md",
+      "docs/archive/reviews/cache-validation-20260920.md"
     ],
     "profilePersistence": "Explicit Standard disabled value survives JSON persistence and changed-default re-admission; regression test passed",
     "mergeCommit": "d39e09dfe113473e53b3a3a70ebf5df4a61586ea",
@@ -1656,9 +1657,9 @@
     }
   },
   "investmentReadiness": {
-    "status": "in-progress",
+    "status": "closed",
     "scope": "Priority 1 and 2 authorised 27 September 2026; no new LeapEdge calls or Finradar integration",
-    "audit": "docs/reviews/adversarial-readiness-20260927.md",
+    "audit": "docs/archive/reviews/adversarial-readiness-20260927.md",
     "implementation": "implemented-under-validation",
     "validation": "Final source-safeguard follow-up:695 tests/694pass/1existing skip/0failures in each default and PGlite full suite in the real Git checkout. Typecheck and production build pass; offline gate advisory-only. Nested optional billing-failure containment regression passes. Actual retained-output replay affects4/83published sentences across5inspected briefs, preserving input hashes; this is not a semantic coverage or new live quality pass. Billingcontinuationexportfollow-up:bothfullsuitesrerun695tests/694pass/1skip/0failures;typecheck/buildpass;comparisonmanifestvalid274observations/231uniqueruns/0unsettledcalls,offlinegateadvisory-only. Incrementalauditrecoverycostscopeexplicit;priorHsnapshotsunchanged.",
     "operations": "Cloud-only production required by user; topology/cost approval and deployment acceptance pending. Local previews are development evidence only; no release installed.",
@@ -1670,16 +1671,17 @@
       "production-path-verification"
     ],
     "pr": 13,
-    "report": "docs/reviews/readiness-recovery-results-20260927.md",
+    "report": "docs/archive/reviews/readiness-recovery-results-20260927.md",
     "browser": "Final integrated read-only build on3026 against retained liveH data: unsupported CAGR warning above unchanged historical model critique; current source-check badge takes precedence, original label and quotes retained. Desktop and390x844mobile inspected, document390px/drawer374px, Escape restores originating evidence-button focus. Screenshots source-guard-final-desktop.png and source-guard-final-mobile.png. Earlier failed-attempt/quantity checks remain in prior report. No production-path acceptance. Fundedcontinuation:3027H20partialresult/evidencedrawer/currentwarninghierarchyandEscapefocuspass;3028isolatedH19recoverypartial51/55/sourcequoteinspection,desktopand390x844mobile(document390/drawer374),Escaperestoresfocus. H19previewdoesnotimportnormalizedclaimtablesororiginalresearchrow;sourceclaimcounts/one-attemptdisplayarenotproductionmigrationevidence. Screenshotsbilling-recovery-h20-*andbilling-recovery-h19-*.",
-    "liveEvaluation": "CandidateA ddf1006 finished20 attempted/12published/8failed, all failures optional-supplement-size errors. US$7.92614625 total ledger =6.38614625 models+1.54 external search; no open holds. CandidateB68eda4d paused after one brief with no duplicate sentences but disputed-label failure. Corrected structured comparability, retention and recall code under validation. No new LeapEdge calls. Candidate C 9589119 paused after first brief: duplicates/comparability improved but three typed 100x rate-unit errors. 110.436s stage execution, $0.306253 total ($0.236253 models + $0.07 search), no open holds. Source-based quantity checks now implemented; candidate D pending. Failed candidates preserved. Candidate D8b4096c failed first-case quality gate: BOJ unit correct, both Fed rate figures/approximate4.1 omitted upstream, forward yen monitoring omitted from accepted evidence downstream. $0.27890775 settled; no open holds. One published/19notstarted, no new LeapEdge calls. Proposition-level and source-window reconciliation follow-up under validation. Candidate E582bbee stopped after3sourceHTTP400failures+1partial/16notstarted/0briefs, $0.359941 models/0search/noholds. Nested JSONSchema metadata leaked into native responseSchema; fixed at composition boundary and wire-tested. First-result wrapper also fixed to stop on source failures. E retained; quality unassessed. Candidate F e96111b:1 published/19 not started, $0.38761045 total ($0.31761045 models+$0.07 search), no holds,162.920s frozen-source wall. All173 cues processed but only1/5 windows accounted; Fed/CPI context explicitly excluded as standard macro/no stance. Partial warnings truthful, not quality pass. Candidate G corrects materiality and independently re-audits corrected rejected statements; all prior evidence retained. Candidate G8b679df finished20attempted:9published/11failed, US$12.37598425 settled=11.11598425models+1.26search, noholds. Cases5/12support schema,11output limit,13\u201320HTTP402. H4f57ed1:3research-only audit failures recovered, $7.214854 settled, partialcoverage persists. Separate8-case frozen-source replay endedpaused:6completed,1needs_review with retained19-sentence original brief after optionalcriticHTTP402,1partial source-complete/research-unfinished. $9.22663450 settled, noholds. CombinednewHcost$16.44148850;9completed+1needs_review+1partial, not a20-case pass. Google recovered; OpenRouter critic spending constraint awaits user action. Controller nested-account containment corrected after measuredH run; originals unchanged. Selected source review still finds conditional-margin, subject association, contract qualification, option-role/expiry and coverage failures. No production release. Later funded continuation: exact174-file4f57ed1 restore resumedH20, adding122.513stage seconds/$0.335462; H8nowfinished$9.56209650 withoriginalH19needs_reviewretained. SeparateH19auditcheckpointrecoveryexecutedonly4unfinishedcriticjobs,71.405s/$0.210954;25sentences,partial51/55,oldbriefand4completedjobsunchanged. All11selectedHcasesnowhavecompletedrecoveryoutput;combinedH$16.98790450,noholds. Addedspend$0.546416. Billinginterruptionsresolved,butH20reversesgold/silverrelationandomitsconditions;H19newadditionoverstatesabsenceofcorrections. Qualitygatefails;noLEcalls/productionrelease. Priorc8ff37fCIandpreviewgreen.",
-    "longVideo": "Two fresh forced-ASR trials of3920s source:300s windows271.737s/$0.592134;120s windows304.936s/$0.52072575. Both finished with no open holds. Selected duplicate/timestamp density defects improved; ownership wording still differs from captions. No semantic-fidelity pass or causal speed claim. See long-asr-fidelity-20260927.md. Gfullpipeline failed mandatoryaudit16koutput cap with101items; new checkpointed1verdict+13coveragebatch plan fixture passes, livequality/fidelity acceptance pending. H4f57ed1 research-only recovery completed15initial+14supplemental batches over101IDs in855.533stage seconds/$3.13389650;24publishedsentences, partial37/101coverage. Faster or semantically complete output is not established; CAGR/attribution safeguards subsequently validated offline."
+    "liveEvaluation": "CandidateA ddf1006 finished20 attempted/12published/8failed, all failures optional-supplement-size errors. US$7.92614625 total ledger =6.38614625 models+1.54 external search; no open holds. CandidateB68eda4d paused after one brief with no duplicate sentences but disputed-label failure. Corrected structured comparability, retention and recall code under validation. No new LeapEdge calls. Candidate C 9589119 paused after first brief: duplicates/comparability improved but three typed 100x rate-unit errors. 110.436s stage execution, $0.306253 total ($0.236253 models + $0.07 search), no open holds. Source-based quantity checks now implemented; candidate D pending. Failed candidates preserved. Candidate D8b4096c failed first-case quality gate: BOJ unit correct, both Fed rate figures/approximate4.1 omitted upstream, forward yen monitoring omitted from accepted evidence downstream. $0.27890775 settled; no open holds. One published/19notstarted, no new LeapEdge calls. Proposition-level and source-window reconciliation follow-up under validation. Candidate E582bbee stopped after3sourceHTTP400failures+1partial/16notstarted/0briefs, $0.359941 models/0search/noholds. Nested JSONSchema metadata leaked into native responseSchema; fixed at composition boundary and wire-tested. First-result wrapper also fixed to stop on source failures. E retained; quality unassessed. Candidate F e96111b:1 published/19 not started, $0.38761045 total ($0.31761045 models+$0.07 search), no holds,162.920s frozen-source wall. All173 cues processed but only1/5 windows accounted; Fed/CPI context explicitly excluded as standard macro/no stance. Partial warnings truthful, not quality pass. Candidate G corrects materiality and independently re-audits corrected rejected statements; all prior evidence retained. Candidate G8b679df finished20attempted:9published/11failed, US$12.37598425 settled=11.11598425models+1.26search, noholds. Cases5/12support schema,11output limit,13–20HTTP402. H4f57ed1:3research-only audit failures recovered, $7.214854 settled, partialcoverage persists. Separate8-case frozen-source replay endedpaused:6completed,1needs_review with retained19-sentence original brief after optionalcriticHTTP402,1partial source-complete/research-unfinished. $9.22663450 settled, noholds. CombinednewHcost$16.44148850;9completed+1needs_review+1partial, not a20-case pass. Google recovered; OpenRouter critic spending constraint awaits user action. Controller nested-account containment corrected after measuredH run; originals unchanged. Selected source review still finds conditional-margin, subject association, contract qualification, option-role/expiry and coverage failures. No production release. Later funded continuation: exact174-file4f57ed1 restore resumedH20, adding122.513stage seconds/$0.335462; H8nowfinished$9.56209650 withoriginalH19needs_reviewretained. SeparateH19auditcheckpointrecoveryexecutedonly4unfinishedcriticjobs,71.405s/$0.210954;25sentences,partial51/55,oldbriefand4completedjobsunchanged. All11selectedHcasesnowhavecompletedrecoveryoutput;combinedH$16.98790450,noholds. Addedspend$0.546416. Billinginterruptionsresolved,butH20reversesgold/silverrelationandomitsconditions;H19newadditionoverstatesabsenceofcorrections. Qualitygatefails;noLEcalls/productionrelease. Priorc8ff37fCIandpreviewgreen.",
+    "longVideo": "Two fresh forced-ASR trials of3920s source:300s windows271.737s/$0.592134;120s windows304.936s/$0.52072575. Both finished with no open holds. Selected duplicate/timestamp density defects improved; ownership wording still differs from captions. No semantic-fidelity pass or causal speed claim. See long-asr-fidelity-20260927.md. Gfullpipeline failed mandatoryaudit16koutput cap with101items; new checkpointed1verdict+13coveragebatch plan fixture passes, livequality/fidelity acceptance pending. H4f57ed1 research-only recovery completed15initial+14supplemental batches over101IDs in855.533stage seconds/$3.13389650;24publishedsentences, partial37/101coverage. Faster or semantically complete output is not established; CAGR/attribution safeguards subsequently validated offline.",
+    "closedNote": "28 September 2026: closed without meeting the quality gate. Default path moves to source-faithful briefs; web research becomes on-demand. See docs/delivery/current-state.md."
   },
   "targetedAuditExperiment": {
-    "status": "implemented-under-validation",
+    "status": "parked",
     "pr": 13,
     "baselineRevision": "e6847e1fab0297fe9d73de8a50be37228dbb6922",
-    "checklist": "docs/delivery/targeted-audit-experiment-checklist.md",
+    "checklist": "docs/archive/reviews/targeted-audit-experiment-checklist.md",
     "defaultPipeline": "current",
     "promotionApproved": false,
     "qualityGate": "Not evaluated; all predefined quality, reliability, timing, cost, UI and cloud gates plus user approval required before changing default.",
@@ -1696,8 +1698,8 @@
       "paidCalls": 0,
       "fullSuites": "Expanded checkpoint773tests:772pass/1existing skip/0fail each (234.530s default,235.486s PGlite), before cancelled wake-hook removal and final documentation."
     },
-    "report": "docs/reviews/targeted-audit-implementation-20260927.md",
-    "inputReadiness": "docs/reviews/targeted-audit-input-readiness-20260927.md",
+    "report": "docs/archive/reviews/targeted-audit-implementation-20260927.md",
+    "inputReadiness": "docs/archive/reviews/targeted-audit-input-readiness-20260927.md",
     "limitations": [
       "Initial experimental audits split short drafts into bounded jobs and may cost more.",
       "Impact classification still depends on model judgment; indirect relationships need source-backed evaluation.",
@@ -1714,6 +1716,14 @@
       "googleMigration": "cancelled by user",
       "proposedWorker": "Selected by user: Vercel Workflows executing bounded Vercel Function steps; Neon remains database"
     },
-    "handoff": "docs/handoffs/2026-09-27-claude-handoff.md"
+    "handoff": "docs/archive/reviews/2026-09-27-claude-handoff.md",
+    "parkedNote": "28 September 2026: parked. Paired runner, source-review manifest and experiment schema archived (docs/archive/targeted-audit/); selector and pipeline code retained. Superseded by pipeline v3 direction in docs/delivery/current-state.md."
+  },
+  "direction": "docs/delivery/current-state.md",
+  "cleanup": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Removed cancelled Google Cloud preparation (Dockerfile, deploy/cloud, cloud-worker-launcher), targeted-audit paired runner and experiment schema, one-off benchmark scripts (scripts/archive). Per-run review documents archived to docs/archive/reviews. Budget defaults: lifetime cap now opt-in via YTI_BUDGET_USD; monthly default US$750; per-video default US$3.",
+    "verification": "Node 24: default and PGlite suites 719 pass/0 fail/1 skip each; typecheck, build, offline gate (advisory-only) and npm audit (0 vulnerabilities) pass."
   }
 }
