@@ -4,6 +4,7 @@ import { claimsForRun } from "../../../../../server/youtube-intelligence/repos/c
 import { spansForClaims } from "../../../../../server/youtube-intelligence/repos/evidence-spans.ts";
 import { docs } from "../../../../../server/youtube-intelligence/research-store.ts";
 import { get } from "../../../../../server/youtube-intelligence/store.ts";
+import { timelineFor } from "../../../../../server/youtube-intelligence/timing.ts";
 import {
   guard,
   failure,
@@ -37,6 +38,7 @@ export async function GET(
             output: {
               ...run.output,
               stageTimings: await database.prepare("SELECT stage,claimed_at,finished_at,queue_ms,execution_ms,checkpoint_ms,outcome FROM yi_stage_timings WHERE run_id=$1 ORDER BY claimed_at LIMIT 1000").all(run.id),
+              timeline: await timelineFor(run),
               entityRegistry: await docs("entity"),
               ...(run.input.task === "research-brief"
                 ? {

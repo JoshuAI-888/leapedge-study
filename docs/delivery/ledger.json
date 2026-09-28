@@ -1752,5 +1752,19 @@
       "tests/news-review.test.ts"
     ],
     "verification": "Unit and integration tests with FakeModelTransport and stubbed Exa pass; typecheck and build pass. Live paid run and browser acceptance pending."
+  },
+  "timing": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Submission-to-result timeline from stored yi_stage_timings rows: first step, analysis finished, research brief finished, end to end, and per-stage execution and queue time; shown on the Analysis page and returned by /api/intelligence/runs/[id] as output.timeline for paired comparison runs.",
+    "files": [
+      "src/features/youtube-intelligence/timing.ts",
+      "src/server/youtube-intelligence/timing.ts",
+      "src/features/youtube-intelligence/ui/Timing.tsx"
+    ],
+    "tests": [
+      "tests/timing.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 734 pass/0 fail/1 skip; typecheck, build and offline gate pass. Browser on isolated local Postgres fixture: passcode login (wrong code refused, youtubeintel accepted), Timing and News review panels at 1360x900 and 390x844 with no horizontal overflow after wrapping the table."
   }
 }
