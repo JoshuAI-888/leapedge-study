@@ -701,12 +701,16 @@ export function Analysis({ id }: { id: string }) {
                 title={
                   working
                     ? "Analysis is still being prepared"
-                    : "No accepted calls in this video"
+                    : stopped
+                      ? "No calls yet: the analysis stopped"
+                      : "No accepted calls in this video"
                 }
               >
                 {working
                   ? "Progress refreshes automatically. You can leave this page and return later."
-                  : "An analysis can finish without finding an actionable call. The key points above and Research context below still come from the video. Processing details retain rejected extractions."}
+                  : stopped
+                    ? "Calls appear here once the analysis finishes. Use Retry above to resume from the step where it stopped."
+                    : "An analysis can finish without finding an actionable call. The key points above and Research context below still come from the video. Processing details retain rejected extractions."}
               </Empty>
               <aside className="yi-evidence yi-panel">
                 <h2>Source</h2>
