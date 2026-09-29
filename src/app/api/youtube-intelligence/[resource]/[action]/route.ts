@@ -10,6 +10,13 @@ import { drainAfterResponse } from "../../../../../server/youtube-intelligence/d
 export const maxDuration = 800;
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+function parseInput(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw Error("The input parameter is not valid JSON.");
+  }
+}
 type Context = { params: Promise<{ resource: string; action: string }> };
 /**
  * The action is the path, so the body is the action's own input rather than a
@@ -22,7 +29,13 @@ export async function GET(r: Request, { params }: Context) {
     const { resource, action } = await params;
     if (lookup(resource, action).mutating)
       throw Error("This action changes data. Send it as POST.");
-    return Response.json(await dispatch(resource, action, undefined));
+    // A read that takes input (the query resource) carries it as JSON in
+    // `?input=`; every other read ignores the parameter's absence as before.
+    const input = new URL(r.url).searchParams.get("input");
+    if (input !== null && input.length > 16000) throw Error("Request too large.");
+    return Response.json(
+      await dispatch(resource, action, input === null ? undefined : parseInput(input)),
+    );
   } catch (e) {
     return failure(e);
   }

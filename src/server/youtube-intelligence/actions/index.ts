@@ -4,6 +4,7 @@ import { briefings } from "./briefings.ts";
 import { channels } from "./channels.ts";
 import { entities } from "./entities.ts";
 import { market } from "./market.ts";
+import { query } from "./query.ts";
 import { research } from "./research.ts";
 import { runs } from "./runs.ts";
 import { settings } from "./settings.ts";
@@ -20,6 +21,7 @@ export const RESOURCES: Record<string, ActionTable> = {
   channels,
   entities,
   market,
+  query,
   research,
   runs,
   settings,
