@@ -8,6 +8,7 @@ import {
   facetView,
   hiddenByTrust,
   highlightParts,
+  instrumentList,
   parseSearchState,
   removalText,
   serialiseSearchState,
@@ -347,4 +348,14 @@ test("A video's verdict line counts ideas and sentiment with glyphs", () => {
   assert.equal(verdictLine({ ideas: 4, sentiment: { bullish: 3, neutral: 1, bearish: 0 } }), "4 ideas · 3 ▲ 1 ●");
   assert.equal(verdictLine({ ideas: 1, sentiment: { bullish: 0, neutral: 0, bearish: 1 } }), "1 idea · 1 ▼");
   assert.equal(verdictLine({ ideas: 0, sentiment: { bullish: 0, neutral: 0, bearish: 0 } }), "No ideas");
+});
+
+test("a video row separates its instruments, so macro labels do not run together (F77)", () => {
+  assert.equal(instrumentList([]), "");
+  assert.equal(instrumentList(["NVDA", "Macro · Rates"]), "NVDA, Macro · Rates");
+  assert.equal(
+    instrumentList(["Macro · Gold", "Macro · Oil", "Macro · USD"]),
+    "Macro · Gold, Macro · Oil, Macro · USD",
+  );
+  assert.equal(instrumentList(["A", "B", "C", "D", "E", "F", "G"]), "A, B, C, D, E +2");
 });

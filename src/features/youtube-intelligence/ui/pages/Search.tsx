@@ -48,6 +48,7 @@ import {
   serialiseSearchState,
   suggestRemoval,
   toggleInstrument,
+  instrumentList,
   verdictLine,
   videosQueryInput,
   windowLabel,
@@ -498,8 +499,7 @@ function VideoResult({ row, q }: { row: VideoRow; q: string }) {
         {row.instrumentLabels.length > 0 && (
           <span className="yi-search-verdict-instruments">
             {" · "}
-            {row.instrumentLabels.slice(0, 5).join(" ")}
-            {row.instrumentLabels.length > 5 ? ` +${row.instrumentLabels.length - 5}` : ""}
+            {instrumentList(row.instrumentLabels)}
           </span>
         )}
         {row.matchingCalls !== row.ideas && row.matchingCalls > 0 && (

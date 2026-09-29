@@ -441,3 +441,13 @@ export function verdictLine(video: {
     .join(" ");
   return `${video.ideas} ${video.ideas === 1 ? "idea" : "ideas"}${counts ? ` · ${counts}` : ""}`;
 }
+/**
+ * A video row's instruments: "NVDA, Macro · Rates +2". Labels are joined with
+ * commas, because a macro or sector label contains spaces and "·" itself, so a
+ * space-joined list ran two instruments together.
+ */
+export function instrumentList(labels: string[], max = 5) {
+  if (!labels.length) return "";
+  const shown = labels.slice(0, max).join(", ");
+  return labels.length > max ? `${shown} +${labels.length - max}` : shown;
+}
