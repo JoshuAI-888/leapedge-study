@@ -8,6 +8,7 @@ import {
   querySeries,
   queryVideos,
 } from "../repos/research-query.ts";
+import { ExportQuery, exportCalls } from "../export.ts";
 import { reads, type ActionTable } from "./types.ts";
 /**
  * F56: the research query API. Every action only reads, so all of them answer
@@ -20,4 +21,6 @@ export const query: ActionTable = {
   videos: reads(VideosQuery, (v) => queryVideos(v)),
   series: reads(SeriesQuery, (v) => querySeries(v)),
   searchIndex: reads(SearchIndexQuery, (v) => querySearchIndex(v)),
+  /** F63: every matching call as one CSV or JSON file, up to 20,000 rows. */
+  export: reads(ExportQuery, (v) => exportCalls(v)),
 };

@@ -25,6 +25,7 @@ import {
   MetricHeading,
 } from "../components.tsx";
 import { HiddenByFilter } from "../HiddenByFilter.tsx";
+import { InlineRetry, MiniProgress } from "../StepProgress.tsx";
 import { hiddenByFilter, trustOptionLabel } from "../foundations.ts";
 export function Today() {
   const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
@@ -176,6 +177,12 @@ export function Today() {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Ticker or thesis"
                 />
+                <Link
+                  className="yi-find-all"
+                  href={`/youtube-intelligence/search${search.trim() ? `?${new URLSearchParams({ q: search.trim() })}` : ""}`}
+                >
+                  Search all calls →
+                </Link>
               </label>
               <label>
                 Minimum trust
@@ -386,6 +393,10 @@ export function Today() {
                         {r.title || `YouTube · ${r.videoId}`}
                       </Link>
                       <small>Processed {dateLabel(r.createdAt)}</small>
+                      <span className="yi-activity-progress">
+                        <MiniProgress run={r} />
+                        <InlineRetry run={r} />
+                      </span>
                     </div>
                     <span
                       className="yi-chip"

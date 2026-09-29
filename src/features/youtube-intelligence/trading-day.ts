@@ -178,6 +178,17 @@ export function sessionsBetween(from: string, to: string): string[] {
     if (isTradingDay(d)) out.push(d);
   return out;
 }
+/**
+ * The instants a session covers, as `sessionFor` assigns them: from the
+ * previous session's close (inclusive) to this session's close (exclusive),
+ * so weekend, holiday and after-close uploads fall inside. ISO strings.
+ */
+export function sessionBounds(date: string): { from: string; to: string } {
+  return {
+    from: marketInstant(previousSession(date), CLOSE_MINUTES).toISOString(),
+    to: marketInstant(date, CLOSE_MINUTES).toISOString(),
+  };
+}
 /** The session a publish instant belongs to, and why. */
 export function sessionFor(instant: Instant): SessionAssignment {
   const et = wallClock(toDate(instant), MARKET_TIME_ZONE);
