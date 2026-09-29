@@ -22,12 +22,13 @@ live. A new database â€” a fresh Neon project, a restored backup, a new branch â
 has to be migrated with `npm run migrate` against its direct endpoint before any
 of them can use it, and every later migration has to be applied the same way.
 
-A database that already carries the baseline schema but no `yi_migrations` row is
-stamped at version 1 rather than re-running `0001`. The stamp trusts the presence
-of `yi_runs` alone, so a database built by an older deployment that is missing
-something `0001` declares keeps missing it, version 1 now being recorded as
-applied: check a database restored or branched from an older schema against
-`0001_baseline.sql` before migrating it.
+A database that already carries the baseline schema but no `yi_migrations` row
+is stamped at version 1 rather than re-running `0001` (whose indexes would fail on
+an older table missing a column). `0008_baseline_columns.sql` then creates any
+missing baseline table, adds any missing column, and only then the indexes, so a
+database built by an older deployment ends up with everything `0001` declares.
+This repaired a production database found without `yi_calls.attempt` on 29
+September.
 
 A preview deployment refuses to migrate the production database: with
 `VERCEL_ENV=preview` the runner compares the host of `DATABASE_URL_UNPOOLED`

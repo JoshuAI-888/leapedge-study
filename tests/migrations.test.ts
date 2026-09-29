@@ -119,9 +119,36 @@ test("A database that already has the baseline is stamped at version 1", async (
     assert.equal(recorded[0].name, "baseline");
     const baseline = (await loadMigrations()).find((m) => m.version === 1)!;
     assert.equal(recorded[0].checksum, baseline.checksum);
-    // 0001 never ran, so the tables it would have created are still absent.
-    assert.equal((await tables(instance)).includes("yi_documents"), false);
+    // 0001 is stamped, not run; 0008 then fills missing tables and columns
+    // without touching existing rows.
+    assert.equal((await tables(instance)).includes("yi_documents"), true);
+    await instance.query("SELECT attempt FROM yi_calls LIMIT 1");
     assert.deepEqual((await migrate(client)).applied, []);
+  } finally {
+    await instance.close();
+  }
+});
+test("A database stamped before the fix gets its missing baseline columns from 0008", async () => {
+  const { instance, client } = await blank();
+  try {
+    await instance.exec(
+      "CREATE TABLE yi_runs(id TEXT PRIMARY KEY,video_id TEXT,model TEXT,prompt_version TEXT,status TEXT,input TEXT,created_at TEXT,updated_at TEXT);CREATE TABLE yi_calls(id TEXT PRIMARY KEY,run_id TEXT,stage TEXT,status TEXT)",
+    );
+    await instance.query("INSERT INTO yi_calls(id,run_id,stage,status) VALUES('old','r','s','completed')");
+    const all = await loadMigrations();
+    const baseline = all.find((m) => m.version === 1)!;
+    // Reproduce the old runner: record version 1 without running it, then apply 2..7.
+    await instance.exec("CREATE TABLE yi_migrations(version integer primary key,name text not null,applied_at timestamptz not null default now(),checksum text not null)");
+    await instance.query("INSERT INTO yi_migrations(version,name,checksum) VALUES(1,'baseline',$1)", [baseline.checksum]);
+    for (const m of all.filter((m) => m.version > 1 && m.version < 8)) {
+      await instance.exec(m.sql);
+      await instance.query("INSERT INTO yi_migrations(version,name,checksum) VALUES($1,$2,$3)", [m.version, m.name, m.checksum]);
+    }
+    await assert.rejects(() => instance.query("SELECT attempt FROM yi_calls"));
+    const result = await migrate(client);
+    assert.deepEqual(result.applied, all.filter((m) => m.version >= 8).map((m) => m.version));
+    const row = (await instance.query<{ attempt: number }>("SELECT attempt FROM yi_calls WHERE id='old'")).rows[0];
+    assert.equal(row.attempt, 1, "existing rows keep their data and take the column default");
   } finally {
     await instance.close();
   }
