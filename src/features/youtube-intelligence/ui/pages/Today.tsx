@@ -4,6 +4,7 @@ import { ResearchOverview } from "../ResearchBrief.tsx";
 import { SentimentPanel } from "../SentimentPanel.tsx";
 import { useState } from "react";
 import { useWorkspace } from "../workspace.tsx";
+import { InstrumentLabel } from "../InstrumentLabel.tsx";
 import { action } from "../api.ts";
 import {
   visibleClaims,
@@ -254,9 +255,7 @@ export function Today() {
                         {shown.map((c) => (
                           <tr key={c.id}>
                             <td>
-                              <strong className="yi-ticker">
-                                {c.ticker ?? c.instrument ?? "Unresolved"}
-                              </strong>
+                              <InstrumentLabel claim={c} />
                               {c.ticker && c.instrument !== c.ticker && (
                                 <small>{c.instrument}</small>
                               )}

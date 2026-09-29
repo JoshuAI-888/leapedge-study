@@ -18,3 +18,42 @@
   color: var(--yi-muted);
   font-variant-numeric: tabular-nums;
 }
+
+/* F59 instrument label (data/extraction lane). Tickers are ink; macro and
+   sector themes use a dashed outline and small caps so they read as a
+   different kind of thing without colour. */
+.yi-instrument {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--yi-ink);
+  white-space: nowrap;
+}
+.yi-workspace a.yi-instrument {
+  color: var(--yi-ink);
+}
+.yi-workspace a.yi-instrument:hover {
+  color: var(--yi-primary);
+}
+.yi-instrument-theme {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  border: 1px dashed var(--yi-muted);
+  border-radius: 5px;
+  padding: 0 6px;
+  line-height: 1.7;
+}
+.yi-instrument-unresolved {
+  font-weight: 600;
+  color: var(--yi-muted);
+  white-space: normal;
+}
+.yi-instrument-hint {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--yi-muted);
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
