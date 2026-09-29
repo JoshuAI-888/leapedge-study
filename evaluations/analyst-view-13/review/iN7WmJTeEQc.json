@@ -1,0 +1,224 @@
+{
+  "videoId": "iN7WmJTeEQc",
+  "language": "zh (mixed Simplified/Traditional script in the transcript)",
+  "mustKnow": [
+    {
+      "item": "The tape on 9/28: indices closed lower, driven by US-Iran headlines. Trump rejected a ceasefire (WSJ); later reports of talks, possible sanctions relief and Iran agreeing to halt enrichment sent oil sharply lower",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "Ours k10 covers it. LeapEdge has one generic line."
+    },
+    {
+      "item": "Oil supply: Saudi east-west pipeline repaired; Aramco weighing about a $9/bbl OSP cut for Gulf of Oman loadings (the premium had been $10-20); US diesel up 70%+ since the conflict; European pump price 1.85 to about 2.2 EUR/L",
+      "ours": "partial",
+      "leapedge": "missed",
+      "note": "Ours has the OSP cut but no diesel +70%."
+    },
+    {
+      "item": "Rates: the 10Y hit 5.274% intraday; risk premium at a 5-month high; no cuts priced before mid-2028. The creator thinks the selloff is overdone (Lagarde dovish, ECB October hike <40%). 5.3% may be a phased top; above it, 5.5%",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge makes the 5-month high the yield's, and omits Lagarde/ECB."
+    },
+    {
+      "item": "Gold plunged (strong USD, higher yields). BTC is range-bound: short-term pullback pressure, medium-term support intact",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "S&P 500: lost its 5-day MA, held its monthly MA. Retail net buying at a 2-year low (Vanda). GS: breadth narrowest since dot-com, median stock 16% below its 52-week high, under half above their 200-day. GS sentiment -0.9 (equal to the March low), historically +0.5% the next month. New highs are possible once yields fall, if rates stop rising",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": "Both omit the -16% median and the 200-day statistic."
+    },
+    {
+      "item": "Midterms: options imply only about 0.8% after the Nov 4 vote (similar to an FOMC day). JPM warns of upside risk that volatility mean-reverts, with October typically the peak",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": ""
+    },
+    {
+      "item": "Semis: SOX -1.6%, ARM -8.7%, QCOM -7%+, INTC -5.7% after OpenAI paused training of its most advanced model. Selling is profit-taking, not shorting. Direction awaits Micron earnings on Wednesday. SK Hynix spin-off worries are noise",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "NVDA: up against the market (with a long upper shadow). Buyback raised by $150B to $235B remaining, to be completed by the end of FY2028. Forward P/E under 17x, a decade low and half of last year: 'no wonder it won't fall'",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Neither gives the $235B total or the FY2028 completion."
+    },
+    {
+      "item": "META: back at its 10-day MA. The bull trend is intact above it; below it, beware a reversal. OpenAI's always-on assistant 'O' at DevDay 9/29 is a competitive risk",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "MDB: -27% intraday, -18.5% close after the CEO left for Meta. $300 is the medium-term bull/bear line: holding it could make a phased bottom, losing it opens $270 or lower",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Regional banks: Apollo warns AI agents will move deposits to high-yield accounts (checking 0.01%, savings 0.04%). The creator's personal advice is to keep deposits at large systemically important banks (BAC, WFC) and avoid small banks",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Only in ours' tickerSentiment, where the deposit advice is misread as bullish BAC/WFC stock views. LeapEdge has a generic keyPoint."
+    },
+    {
+      "item": "SpaceX: Starship reached orbit and deployed 26 Starlink V3 satellites, but the stock slipped below its short-term MAs. A 1.3B-share lockup expiry in early November with Q3 results is the key near-term catalyst",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "TSLA: about -4%; JPM and GS cut Q3 delivery estimates; fuel-efficiency rules loosened. Losing the 50-day MA would trigger a new pullback",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "BA: at a 6-month low; 737 MAX software fault, FAA scrutiny, United and Southwest refusing aircraft, 777X delays hurting cash flow. Likely to retest the 200/250-month MA zone. If you want to bottom-fish, scale in slowly",
+      "ours": "partial",
+      "leapedge": "captured",
+      "note": "Ours k19 drops the retest expectation and the scale-in advice."
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "tickerSentiment 美国银行 / 富国银行 bullish/watch",
+        "transcriptAt": "841s-853s",
+        "problem": "Wrong kind of view. The creator advises where to keep bank deposits (银行尽量开在大银行), not a stock view on BAC or WFC."
+      },
+      {
+        "text": "Two NVDA rows: '英伟达' bullish/neutral and '英偉達' bullish/long, both at 600s",
+        "transcriptAt": "600s-669s",
+        "problem": "A Simplified/Traditional script split creates duplicate instruments with different stances."
+      },
+      {
+        "text": "'英特' as an instrument",
+        "transcriptAt": "582s",
+        "problem": "A truncated ASR name (英特尔 = Intel, INTC) is passed through without resolution."
+      },
+      {
+        "text": "k14/k16 (META) and k15/k17 (SK Hynix) are duplicates",
+        "transcriptAt": "669s-719s",
+        "problem": "Duplicates. The same content appears twice with slightly different wording."
+      },
+      {
+        "text": "k7 '$150 billion buyback authorization'",
+        "transcriptAt": "624s-649s",
+        "problem": "Partial. $150B is the increase; $235B remaining and completion by the end of FY2028 are omitted."
+      },
+      {
+        "text": "k19 Boeing",
+        "transcriptAt": "982s-1004s",
+        "problem": "Drops the creator's forward view (a likely retest of the 200/250-month MA) and the staged-entry advice, the only explicit instruction in the segment."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "'The 10-year US Treasury yield reached a 5-month high of 5.274%'",
+        "transcriptAt": "204s-211s",
+        "problem": "Misattribution. The transcript says the risk premium (风险溢价) rose to a 5-month high, not the yield."
+      },
+      {
+        "text": "MDB tradeIdea: entry '300美元整数关口', target '270美元', stop '失守300美元', stance neutral",
+        "transcriptAt": "763s-781s",
+        "problem": "Incoherent structure. A 'target' below the 'entry', with the entry level also as the stop. The source gives a conditional pivot: hold $300 for a possible bottom, lose it for $270 or lower. This should be support/downside, not entry/target."
+      },
+      {
+        "text": "BA tradeIdea long, 'DCA / scale into long positions'",
+        "transcriptAt": "982s-1004s",
+        "problem": "Overstated. The creator expects further downside to a long-term MA zone and only says 'if you want to buy, take it slowly'. That is conditional, not a long call."
+      },
+      {
+        "text": "NVDA tradeIdea long HIGH 'Hold or accumulate on dips'",
+        "transcriptAt": "600s-669s",
+        "problem": "A false call. The creator describes resilience and cheap valuation ('难怪跌不下去'), and immediately notes valuation compression spreading across semis and caution about the AI capex boom. There is no recommendation."
+      },
+      {
+        "text": "META catalyst 'OpenAI DevDay product announcements'",
+        "transcriptAt": "680s-700s",
+        "problem": "Wrong direction. The creator frames OpenAI's assistant as a competitive threat to Meta, not a catalyst."
+      },
+      {
+        "text": "TSLA stance 'avoid' with stop '50日均线'",
+        "transcriptAt": "931s-942s",
+        "problem": "A stop makes no sense on an avoid. The source is a conditional bearish technical warning."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [
+      "Ours raised no calls because the pipeline failed at the translation step; a fix is pending. Once fixed, the creator's own conditional/technical ideas should appear: MDB $300 pivot / $270 downside (conditional); BA scale in slowly near the 200/250-month MA and expect a retest first (conditional); META holding above the 10-day MA keeps the uptrend (conditional); TSLA losing the 50-day MA means a new pullback (conditional bearish); 10Y 5.3% possible phased top, 5.5% if broken (macro watch); SpaceX 1.3B-share unlock in early November (bearish catalyst)."
+    ],
+    "leapedgeMissed": [
+      "SpaceX lockup-expiry catalyst",
+      "10Y 5.3%/5.5% view as a macro watch (mentioned in keyPoints only)",
+      "Regional banks vs large banks (AI deposit flight)"
+    ],
+    "oursFalse": [],
+    "leapedgeFalse": [
+      "NVDA long HIGH 'hold or accumulate': commentary turned into a call",
+      "BA long/DCA: a conditional, cautious remark turned into a long"
+    ],
+    "oursUnresolvedTickers": [
+      "英伟达/英偉達 -> NVDA",
+      "Meta -> META",
+      "MongoDB -> MDB",
+      "特斯拉 -> TSLA",
+      "波音 -> BA",
+      "美光科技 -> MU",
+      "ARM -> ARM (spoken as ticker, still null)",
+      "高通 -> QCOM",
+      "英特 -> INTC",
+      "SK海力士 -> 000660.KS",
+      "美国银行 -> BAC",
+      "富国银行 -> WFC",
+      "费城半导体指数 -> SOX",
+      "标普500 -> SPX",
+      "波动率指数VIX -> VIX",
+      "现货黄金 -> XAU",
+      "比特币 -> BTC",
+      "原油 -> CL/Brent",
+      "SpaceX -> (listed per source; ticker unknown)"
+    ]
+  },
+  "sentimentIssues": [
+    "Every one of 29 rows has ticker null, including 'ARM', which is spoken as a ticker.",
+    "BAC and WFC bullish is a misclassification of deposit-safety advice (see fidelityErrors).",
+    "NVDA is split across 英伟达 and 英偉達 with different stances (neutral vs long). 'Long' overstates the creator's view, which is observational.",
+    "MDB (3 rows), META (2), TSLA (2) and S&P 500 (3) are duplicated. 美股三大股指 and 美债 are non-instrument rows.",
+    "BA bearish/conditional, META conditional, TSLA bearish/watch and SK Hynix neutral ('noise') are all correct in direction."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 4,
+      "fidelity": 4,
+      "actionability": 1,
+      "clarity": 2,
+      "overall": 2
+    },
+    "leapedge": {
+      "coverage": 3,
+      "fidelity": 3,
+      "actionability": 4,
+      "clarity": 4,
+      "overall": 3
+    }
+  },
+  "verdict": "leapedge better",
+  "why": "Ours failed before producing a brief or calls (a fix is pending), so a PM gets 19 keyPoints (4 duplicates) and 29 unresolved sentiment rows with no ticker. The keyPoints are more complete and more accurate than LeapEdge's: they include oil, gold, BTC, semis, SpaceX and the ECB. LeapEdge delivers 5 usable trade cards with tickers and levels, but 2 of 5 are overstated or false (NVDA, BA), and MDB's entry/target/stop is incoherent. On this run LeapEdge is more usable. Once the fix lands, ours should win if it emits conditional calls with support/resistance roles.",
+  "recommendations": [
+    "Fix the translation-step failure. It should also degrade gracefully: if translation fails, still publish calls and the brief in the source language instead of failing the whole run.",
+    "For daily market-wrap videos, allow 'conditional' technical calls with level roles taken from the quote: MDB {kind:'support', value_original:'300美元'}, {kind:'downside_target_if_broken', value_original:'270美元'}. Never map them to entry/target/stop, which is LeapEdge's MDB error.",
+    "Normalize Traditional to Simplified Chinese (e.g. OpenCC) before ticker resolution and dedup. 英偉達 and 英伟达 must be one instrument.",
+    "Classify advice type: personal-finance or banking advice ('开在大银行') is not an equity stance. Add adviceType: investment | personal_finance | illustrative, and exclude non-investment types from tickerSentiment.",
+    "Ask the extraction prompt for creator forward views on each named stock ('大概率将会再次向下测试200月与250月均线', '有进一步走低的风险'). Ours k19 and k18 recorded the news but dropped the forward view, which is the actionable part."
+  ]
+}

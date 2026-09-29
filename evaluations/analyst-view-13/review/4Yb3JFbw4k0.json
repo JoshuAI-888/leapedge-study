@@ -1,0 +1,157 @@
+{
+  "videoId": "4Yb3JFbw4k0",
+  "language": "zh",
+  "mustKnow": [
+    {
+      "item": "Thesis relayed from Jordi Visser (in conversation with Pomp): Eli Lilly (~$1T) could overtake Nvidia as the world's largest company because AI (10,000+ agents) is accelerating its drug R&D",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": "Both mis-spell Visser (ours: 'Jody Visser' in k1, 'George Wiser' in brief; LeapEdge: 'George Wiser'). Ours is internally inconsistent across keyPoints and brief."
+    },
+    {
+      "item": "History: the 2009-2014 slump came from the patent cliff on antipsychotic drugs, generic competition and slow R&D (11 years per drug). Management kept R&D spending, avoided over-acquiring and paid little dividend, and the company turned around in 2014-15",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": "LeapEdge compresses this to one line and drops the 11-year and 30-year Alzheimer's figures."
+    },
+    {
+      "item": "Valuation snapshot: share price 1,150, P/E 38x, Q2 EPS beat Wall Street by 27%",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge keeps only the 27% beat. It drops the price and P/E, which a PM needs to judge a 'largest company' thesis."
+    },
+    {
+      "item": "Tirzepatide economics: Mounjaro $9.9B per quarter (+91% YoY), Zepbound $4.9B (+46%), company revenue $22.9B per quarter (about $100B annualized and accelerating), tirzepatide about $14B per quarter or about $50B per year",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge gives only the '~$100B annualized' figure, with no product numbers."
+    },
+    {
+      "item": "Efficacy edge: at 72 weeks and the maximum tolerated dose, tirzepatide gives 20% weight loss vs 13.7% for Novo's semaglutide",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": "Ours k6 mistranslates the creator's 斤 illustration as lbs."
+    },
+    {
+      "item": "Zepbound's obesity approval opens the non-diabetic obese market across the US and Europe; before that, non-diabetics could not get Trulicity through normal channels",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Prior franchise: Trulicity $7.5B in 2022, 25% of sales",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "Key risk: Novo Nordisk could catch up by using AI to speed up its own R&D",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge lists only generic 'competition from other pharmaceutical firms'."
+    },
+    {
+      "item": "AI flywheel: patent-protected drugs 'print money', the cash funds AI agents, and AI removes the R&D bottleneck. Many untreated disease markets remain (Alzheimer's, hair loss, myopia, underweight)",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Neither lists the disease-pipeline breadth. Ours drops the 'print money' framing from keyPoints."
+    },
+    {
+      "item": "Creator stance: very excited ('like when I first saw Tesla FSD could work') and will keep tracking the pipeline and AI use. No explicit buy, size, level or horizon",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge turns 'tracking' into 'Initiate long position, HIGH conviction' (see calls)."
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "k6: 'reducing weight down to 160 lbs over 72 weeks vs 180 lbs'",
+        "transcriptAt": "389s-424s",
+        "problem": "Wrong unit. The creator uses 斤 (jin, 0.5 kg) for a 100 kg / 200 jin person, not lbs. k6 also duplicates k5."
+      },
+      {
+        "text": "k1 'Jody Visser' vs brief 'George Wiser'",
+        "transcriptAt": "3s, 684s",
+        "problem": "The name is wrong and inconsistent within one output. The speaker is Jordi Visser, which ours spells correctly in another video (tD-Er2_LQrk title)."
+      },
+      {
+        "text": "k8: 'cash flow ... estimated at around 50 billion annually'",
+        "transcriptAt": "660s-672s",
+        "problem": "The creator derives $50B as tirzepatide revenue (about $14B per quarter x 4) and loosely calls it 赚 (earn). Calling it company cash flow changes the metric, and the currency is missing."
+      },
+      {
+        "text": "All keyPoints have stance 'neutral' and ticker null",
+        "transcriptAt": "174s-189s, 861s-878s",
+        "problem": "This understates the creator's clear bullish view on Lilly, for example 'AI下游非常重要的一家公司' and 'Tesla FSD feeling'."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "tradeIdea action 'Initiate long position for long-term compound growth', conviction HIGH",
+        "transcriptAt": "865s-884s",
+        "problem": "Invented action. The creator says he is excited and 'will keep tracking' the pipeline and AI use. He never says buy or initiate, and gives no horizon."
+      },
+      {
+        "text": "risks: 'Patent expirations', 'Historical R&D bottlenecks'",
+        "transcriptAt": "548s-563s",
+        "problem": "Past causes of the 2009-14 slump are recast as forward risks. The one forward risk the creator named, Novo catching up with AI (487s), is reduced to a generic line."
+      },
+      {
+        "text": "'George Wiser', 'market analyst'",
+        "transcriptAt": "684s",
+        "problem": "Misspelled name copied from the ASR. He is Jordi Visser."
+      },
+      {
+        "text": "quote '他用得非常好处'",
+        "transcriptAt": "26s",
+        "problem": "Garbled quote; the transcript reads '用得非常号'."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [],
+    "leapedgeMissed": [],
+    "oursFalse": [],
+    "leapedgeFalse": [
+      "LLY long / HIGH / 'Initiate long position'. The creator's actual stance is bullish watch/track with no action. The direction is right but the action and conviction are fabricated."
+    ],
+    "oursUnresolvedTickers": [
+      "礼来 -> LLY",
+      "诺和诺德 -> NVO",
+      "英伟达 -> NVDA",
+      "特斯拉 -> TSLA (analogy only)"
+    ]
+  },
+  "sentimentIssues": [
+    "礼来 appears 3 times and 诺和诺德 3 times, with near-identical reasons. They should be merged into one row per instrument with the strongest evidence.",
+    "Every row has ticker null, so none can be joined to a price or portfolio.",
+    "Lilly as bullish/watch is correct. Novo as neutral is defensible: the creator calls it strong but inferior on efficacy, and a potential catch-up threat."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 5,
+      "fidelity": 4,
+      "actionability": 2,
+      "clarity": 2,
+      "overall": 3
+    },
+    "leapedge": {
+      "coverage": 3,
+      "fidelity": 3,
+      "actionability": 3,
+      "clarity": 4,
+      "overall": 3
+    }
+  },
+  "verdict": "ours better",
+  "why": "Ours keeps almost every number (price, P/E, product revenue, Trulicity, trial data) and states the creator's stance accurately as bullish/watch. LeapEdge is cleaner to skim but thinner, and it invents an 'initiate long, HIGH conviction' trade from enthusiasm plus 'I'll keep tracking'. Ours loses points for null tickers, all-neutral keyPoint stances, duplicate keyPoints and sentiment rows, and 10 boilerplate 'omissions' lines. It also cost 12x more ($0.38 vs $0.03) and took 13 minutes.",
+  "recommendations": [
+    "Resolve Chinese company names to tickers deterministically after extraction, with an alias table plus an issuer lookup: 礼来→LLY, 诺和诺德→NVO, 英伟达→NVDA. Keep ticker_explicit=false but fill ticker_resolved, so the prompt rule 'Only populate ticker if explicitly named' stops producing null everywhere.",
+    "Give keyPoints a real stance. k8 ('AI downstream beneficiary... print money') is bullish on LLY, not neutral.",
+    "Remove the pipeline-internal lines from brief.omissions: 's-1..s-6: Proposed quantity withheld...' and 'source-0..5'. Show them in a debug panel instead. A PM reads them as noise, and they make up about 70% of the omissions list here.",
+    "Deduplicate keyPoints (k5/k6, k2/k7) and tickerSentiment (礼来 x3, 诺和诺德 x3) by instrument and meaning.",
+    "Keep the creator's units. Translate 斤 as jin/kg, never lbs. Keep currency on all figures ('$50B', not '50 billion').",
+    "Keep 'watch' as the stance for 'excited, will keep tracking'. This is where ours beats LeapEdge, which fabricated 'Initiate long'. Add a 'bias: bullish' field next to it so the PM still sees the direction."
+  ]
+}

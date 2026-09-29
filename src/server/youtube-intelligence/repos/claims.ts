@@ -18,6 +18,10 @@ export type ClaimRow = {
   instrument: string | null;
   ticker: string | null;
   tickerExplicit: boolean;
+  /** The listing resolved by lookup; derived, recomputable, outside the content digest. */
+  resolvedTicker?: string | null;
+  resolvedName?: string | null;
+  resolvedBy?: string | null;
   stance: string;
   thesisEn: string;
   horizonEn: string | null;
@@ -32,7 +36,7 @@ export type ClaimRow = {
 };
 export type ClaimInput = Omit<ClaimRow, "createdAt"> & { createdAt?: string };
 const COLUMNS =
-  "id,run_id,video_id,channel_id,instrument,ticker,ticker_explicit,stance,thesis_en,horizon_en,conditions_en,risks_en,creator_conviction,trust_level,trust_basis,config_hash,published_at,created_at";
+  "id,run_id,video_id,channel_id,instrument,ticker,ticker_explicit,stance,thesis_en,horizon_en,conditions_en,risks_en,creator_conviction,trust_level,trust_basis,config_hash,published_at,created_at,resolved_ticker,resolved_name,resolved_by";
 function strings(value: unknown): string[] {
   const parsed = json(value);
   return Array.isArray(parsed) ? parsed.map((s) => String(s)) : [];
@@ -50,6 +54,9 @@ function convert(r: Record<string, unknown>): ClaimRow {
     instrument: r.instrument === null ? null : String(r.instrument),
     ticker: r.ticker === null ? null : String(r.ticker),
     tickerExplicit: r.ticker_explicit === true,
+    resolvedTicker: r.resolved_ticker == null ? null : String(r.resolved_ticker),
+    resolvedName: r.resolved_name == null ? null : String(r.resolved_name),
+    resolvedBy: r.resolved_by == null ? null : String(r.resolved_by),
     stance: String(r.stance),
     thesisEn: String(r.thesis_en),
     horizonEn: r.horizon_en === null ? null : String(r.horizon_en),
@@ -147,7 +154,7 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
   };
   const result = await database
     .prepare(
-      `INSERT INTO claims(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16,$17,$18)
+      `INSERT INTO claims(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16,$17,$18,$19,$20,$21)
        ON CONFLICT(id) DO UPDATE SET
          run_id=excluded.run_id,
          video_id=excluded.video_id,
@@ -170,7 +177,10 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
            AND (claims.trust_level <> 'L3' OR excluded.trust_basis->>'latestReviewVerdict'='verified')
            AND excluded.trust_level < claims.trust_level THEN claims.trust_basis ELSE excluded.trust_basis END,
          config_hash=excluded.config_hash,
-         published_at=excluded.published_at`,
+         published_at=excluded.published_at,
+         resolved_ticker=excluded.resolved_ticker,
+         resolved_name=excluded.resolved_name,
+         resolved_by=excluded.resolved_by`,
     )
     .run(
       claim.id,
@@ -191,6 +201,9 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
       claim.configHash,
       claim.publishedAt,
       claim.createdAt ?? new Date().toISOString(),
+      claim.resolvedTicker ?? null,
+      claim.resolvedName ?? null,
+      claim.resolvedBy ?? null,
     );
   return result.changes > 0;
 }

@@ -1,0 +1,57 @@
+{
+  "videoId": "Dy_0RtmAt1U",
+  "language": "en",
+  "mustKnow": [
+    {"item": "Silver is at triple support: the lower end of the uptrend channel from the July lows plus the 50-day MA (predicted ~2 weeks ago); if it fails, silver is 'in real trouble' (42-106s)", "ours": "captured", "leapedge": "captured", "note": ""},
+    {"item": "Silver cannot decouple from gold; gold is 'already way past the danger zone', fighting its 50DMA, and losing it sends gold to 4,215 (116-182s, 359-367s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge omits the 4,215 gold level."},
+    {"item": "The dollar is the biggest worry: breaking the short-term downtrend from June; if the breakout holds it goes at least to its 50DMA, pressuring gold (191-240s)", "ours": "captured", "leapedge": "captured", "note": ""},
+    {"item": "Oil strong but priced in; a Fed rate hike is baked in, so the issue is what comes after; 10y 5% is the 'magical line'; 30y at a new high about to break out; bonds pressure gold short-term (245-307s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge drops 'rate hike baked in' and 'oil priced in', and says the 10y is 'hitting 5%'."},
+    {"item": "Bull case intact: yield curve control is coming, meaning money printing and dollar devaluation, which is good for gold and silver; 'not at all' a switch to a bear case (318-356s)", "ours": "captured", "leapedge": "captured", "note": ""},
+    {"item": "History of 50DMA breaks: fakeouts ~4% and real trend changes ~15%. Levels: a 4-5% fakeout gives ~59.60/60 (bear trap); a 10-15% drop retests the July lows at ~54-53/55 (389-627s, 876-895s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge's key point fabricates '$20-21' and '$18-19' silver prices."},
+    {"item": "Scenario: an early-week undercut then a Friday (second half of the day) reversal would be 'extremely bullish', and 'then we need to be in'; the Fed meeting is mid-week (708-802s)", "ours": "captured", "leapedge": "captured", "note": ""},
+    {"item": "Positioning: bought ONE position yesterday on technicals; overall 'favor the downside', don't put money to work too fast, be quick if things change; will not sell silver or miners and accepts drawdowns (672-690s, 831-869s, 959-993s)", "ours": "partial", "leapedge": "partial", "note": "Ours captures hold/no-aggressive-buying and miners but omits the fresh buy yesterday. LeapEdge labels it 'avoid', omitting both the buy and the refusal to sell."},
+    {"item": "Owns energy and oil stocks since last fall/winter, so is comfortable with oil (812-826s)", "ours": "captured", "leapedge": "missed", "note": ""},
+    {"item": "Medium/long-term factors improving; large sideline buying power in US capital markets, underinvested in precious metals; 'kangaroo market' framing; no $100 silver by year-end (897-1048s)", "ours": "captured", "leapedge": "partial", "note": "Neither uses the 'kangaroo market' framing; both capture the sideline capital."}
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {"text": "k6: '...a late-week liquidity grab and reversal by Friday could produce a bullish turnaround supported by massive sideline capital in the US'", "transcriptAt": "785-802s vs 1027-1048s", "problem": "Conflates two separate arguments. The Friday reversal is a short-term scenario; sideline capital is a medium/long-term argument ('only a question of when')."},
+      {"text": "calls[silver].stance 'hold' with thesis 'avoid aggressive buying'", "transcriptAt": "680-690s", "problem": "Omission rather than contradiction: the creator 'bought one position yesterday just purely on the technicals', which is a new entry, not just a hold."},
+      {"text": "k5 and k4 restate the same fakeout/breakdown statistics", "transcriptAt": "490-505s", "problem": "Redundancy, not an error."},
+      {"text": "brief: 'US dollar index is moving higher'", "transcriptAt": "191-219s", "problem": "The creator says 'the dollar'; DXY is a reasonable but unverified mapping."}
+    ],
+    "leapedge": [
+      {"text": "'a 4-5% move would likely test the $20-21 range (implied as 59-60 in transcript), while a 10-15% move could push prices toward $18-19 (implied as 53-54)'", "transcriptAt": "508-602s", "problem": "Fabricated numbers. The creator says 59.60 and 54-53/55; $20-21 and $18-19 appear nowhere, and 'implied as' openly admits the substitution. A PM acting on this has wrong levels by ~3x."},
+      {"text": "'with the 10-year yield hitting 5%'", "transcriptAt": "287-290s", "problem": "The creator says '5% on the 10-year, that's the magical line', a threshold, not a print. Overstated."},
+      {"text": "tradeIdea SILVER stance 'avoid', target '54-60'", "transcriptAt": "680-690s, 959-968s", "problem": "Misstates direction. The creator bought a position yesterday and will not sell silver or miners; he is cautious about adding, not avoiding. A 'target' of 54-60 on an avoid idea is a downside scenario mislabelled as a target."},
+      {"text": "'clearer market signals emerge after the Fed decision later in the week'", "transcriptAt": "722-732s", "problem": "Roughly right, though the creator specifically flags the second half of Friday's trading session."}
+    ]
+  },
+  "calls": {
+    "oursMissed": ["The fresh silver buy 'yesterday, purely on the technicals' (672-687s)", "Conditional re-entry trigger (an undercut then a Friday reversal candle means 'we need to be in') is not a structured call condition, only prose"],
+    "leapedgeMissed": ["Hold miners (won't sell)", "Hold energy and oil stocks", "Fresh silver buy yesterday", "Gold 50DMA / 4,215 level"],
+    "oursFalse": [],
+    "leapedgeFalse": ["SILVER 'avoid' misrepresents a creator who is long and adding a technical position"],
+    "oursUnresolvedTickers": ["silver -> XAGUSD (or SLV)", "gold -> XAUUSD (or GLD)", "dollar -> DXY", "miners -> SIL/GDX (generic; acceptable as sector)", "energy/oil stocks -> XLE (generic)", "10-year / 30-year -> US10Y / US30Y"]
+  },
+  "sentimentIssues": [
+    "18 tickerSentiment rows with no ticker for any row; silver appears 6 times with stances flipping between bearish/watch, bearish/hold, bullish/watch and bearish/neutral.",
+    "Gold appears 5 times (bearish x3, bullish x2) with no horizon field to explain that bearish is short-term and bullish is medium-term. Add a horizon so the split reads as coherent rather than contradictory.",
+    "The 'precious metals' and 'oil' rows are commentary, not stances. They are fine as context but add noise.",
+    "The silver 'hold' row is sound; it just needs the 'bought one position yesterday' nuance."
+  ],
+  "scores": {
+    "ours": {"coverage": 4, "fidelity": 4, "actionability": 3, "clarity": 3, "overall": 4},
+    "leapedge": {"coverage": 3, "fidelity": 2, "actionability": 3, "clarity": 4, "overall": 2}
+  },
+  "verdict": "ours better",
+  "why": "Ours faithfully records every level (gold 4,215; silver ~60 fakeout and 54-55 breakdown; 10y 5%; 30y breakout), the hold on silver and miners, and the energy holdings. LeapEdge fabricates silver prices ($20-21, $18-19) in a key point and mislabels a long-but-cautious creator as 'avoid'. Ours still misses the fresh technical buy and floods tickerSentiment with 18 unresolved, flip-flopping rows.",
+  "recommendations": [
+    "Resolve macro assets to canonical symbols (silver->XAGUSD, gold->XAUUSD, dollar->DXY, 10y->US10Y) so the rows can join to price data. Currently every row is ticker null.",
+    "Add a horizon to each tickerSentiment row (short-term bearish, medium/long-term bullish) and merge per asset. Gold 'bearish' at 123s and 'bullish' at 317s is one view with two horizons, not two rows.",
+    "Capture fresh position changes explicitly: add action = bought/added/trimmed/holding with a date. 'I bought one position yesterday just purely on the technicals' should appear in the silver call.",
+    "Structure scenario levels as fields: support 'lower channel + 50DMA', fakeout_level ~59.60 (−4-5%), breakdown_level 54-55 (−10-15%), gold_downside 4,215, and a trigger ('Friday afternoon reversal candle -> be in').",
+    "Drop duplicated diagnostic omissions (source-0..4 are printed twice in this brief) and generic filler like 'No external pricing feeds...' from the user-facing brief.",
+    "Keep this strength against LeapEdge: never convert or 'normalise' creator levels. LeapEdge's '$20-21 (implied as 59-60)' is exactly the failure to avoid; add a test that asserts every number in keyPoints appears in the transcript."
+  ]
+}

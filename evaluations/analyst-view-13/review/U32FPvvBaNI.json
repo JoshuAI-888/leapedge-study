@@ -1,0 +1,182 @@
+{
+  "videoId": "U32FPvvBaNI",
+  "language": "en",
+  "mustKnow": [
+    {
+      "item": "AMD: ~10% Q4 price increase (accelerators, GPUs, chipsets) on TSMC wafer costs; creator argues it nets AMD extra margin because TSMC's cost share is small",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "AMD view: $1T+ market cap in Q4 (now just under $900B); 'most exciting' trillion-dollar stock for 2027; Wall Street money inflow; could be $700-900/sh by 2027; holding, and won't even consider trimming below $700+",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge turns the $700 trim-consideration threshold into a price target."
+    },
+    {
+      "item": "Macro trigger: if oil peaks in the next 1-2 months, 2y/10y yields peak and rate-sensitive stocks rip; if oil goes to 150-200 they are not the play",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "WYNN: extremely rate-sensitive; bought $8,400 today at ~$80s; will accumulate over the next few months; rally in Q4 once rates turn; Middle East property opens next year; could be $120 (vs 70s-80s entry); Vegas/Macau strong, Boston decent",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "Ours lacks the $120 figure; LeapEdge lacks the $8,400 purchase and Q4/next-few-months timing."
+    },
+    {
+      "item": "AXP: down 16% YTD, 'one of the best companies'; 400+ once oil/rates peak (view, not a purchase)",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "RH: biggest buy (~$20k today, $100k yesterday, $50k days ago: ~$170k); building to a $250-400k position across portfolios; near-term 120->200 on an oil/rates peak; long-term $400-500 as the business moves to a harvesting cycle 2027-2030; accepts bankruptcy risk",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge lacks the $170k accumulated and the 120->200 near-term leg."
+    },
+    {
+      "item": "Also bought today: NKE (~$35, 'in a depression') and CELH ($11,000)",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge mentions them in keyPoints only; no trade ideas, although they are actual purchases."
+    },
+    {
+      "item": "Fed/inflation (guest clip, Gundlach, and host): one hike at the meeting; guest would have dissented for +50bp, host says +75bp to crush 2y/10y; import/export prices avg 7.8%; core PCE 3.3% vs ~2.6-2.7 pre-COVID; GDPNow inflated by inventory hoarding (Costco Kirkland motor oil); commodity ETF +48% YTD; chair (Warsh) says inflation not falling fast enough",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Ours has the numbers but calls the speaker 'unknown' (name is said at 1269s); LeapEdge has only the hoarding point."
+    },
+    {
+      "item": "Commodities: soybeans, corn, sugar, wheat, cocoa, oats, copper up; lumber down (recessionary); GSG 'ugly'",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "Key risk: oil to 140-150 -> 2y/10y explode -> market 'down Chinatown' over the next few months",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "tickerSentiment AMD at 517s: ticker null, stance 'watch'",
+        "transcriptAt": "508s",
+        "problem": "Wrong stance and missing ticker. AMD is a core long holding ('happy to be positioned'); the passage is a lesson about not waiting. The spoken form is literally 'AMD'."
+      },
+      {
+        "text": "k10 AMD stance 'neutral' vs k11 'long'",
+        "transcriptAt": "176s-220s",
+        "problem": "Inconsistent stance on the same claim. The creator is emphatically bullish."
+      },
+      {
+        "text": "RH sentiment: 'aggressive rally toward $120 to $200'",
+        "transcriptAt": "457s",
+        "problem": "Misstated range. The creator said the stock goes '120 to 200', i.e. from ~120 up to 200. $120 is not a target."
+      },
+      {
+        "text": "k6: 'A more aggressive 75 basis point rate hike would have caused 10-year and 2-year Treasury yields to fall sharply and signaled stronger Fed credibility'",
+        "transcriptAt": "911s",
+        "problem": "The host's opinion is stated as fact, without attribution."
+      },
+      {
+        "text": "Omission: 'Specific speaker names and identities during guest panel clips were not independently established ... remain designated as unknown.'",
+        "transcriptAt": "1269s, 1175s",
+        "problem": "The host names the guest ('Gunlock', i.e. Jeffrey Gundlach) and the chair ('Kevin Worsh'). Ours claims ignorance of available information."
+      },
+      {
+        "text": "Two separate Wynn calls (Q4 rally; $8,400 buy)",
+        "transcriptAt": "367s, 668s",
+        "problem": "Duplicate call for one idea."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "AMD trade idea: target '700 plus', horizon 2027",
+        "transcriptAt": "265s-294s",
+        "problem": "Misframed. $700 is the level below which he won't even consider trimming, not a price target ('even if the stock was 700 today, I might not sell any'). The only price view is $700-900 by 2027."
+      },
+      {
+        "text": "AMD rationale: 'With massive AI and hardware growth expected through 2027'",
+        "transcriptAt": "193s",
+        "problem": "'AI' is never mentioned; the creator says 'insane growth rates' and 'hype'. Unsupported embellishment."
+      },
+      {
+        "text": "WYNN horizon 'long-term'",
+        "transcriptAt": "381s, 719s",
+        "problem": "The creator expects the rip 'in the fourth quarter' and will accumulate 'over the next few months'. 'Long-term' understates the timing."
+      },
+      {
+        "text": "AXP action 'Buy long for momentum upside'",
+        "transcriptAt": "433s",
+        "problem": "Mild overstatement. The creator did not buy AXP; it is a conditional view (after an oil/rates peak), not a current buy. The condition appears only in catalysts."
+      },
+      {
+        "text": "keyPoint: hoarding 'could force the Fed to take more aggressive action'",
+        "transcriptAt": "1109s",
+        "problem": "Inference. The creator says it is what Powell is 'terrified of'; 'force' is not stated."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [
+      "WYNN upside marker ~$120 (vs 70s-80s entries) not captured"
+    ],
+    "leapedgeMissed": [
+      "NKE buy (~$35)",
+      "CELH buy ($11,000)",
+      "RH near-term 120->200 conditional leg",
+      "WYNN $8,400 purchase and accumulate-over-next-few-months plan"
+    ],
+    "oursFalse": [],
+    "leapedgeFalse": [
+      "AMD 'target 700 plus' (trim-consideration threshold turned into a target)"
+    ],
+    "oursUnresolvedTickers": [
+      "Wynn Resorts ('win resorts', 'Winning Resorts') -> WYNN",
+      "American Express -> AXP",
+      "Nike -> NKE",
+      "Celsius Holdings -> CELH",
+      "AMD (literal) emitted with null ticker in one sentiment row",
+      "Palantir/Tesla referenced as lessons (acceptable to leave unscored)"
+    ]
+  },
+  "sentimentIssues": [
+    "AMD 'watch' at 517s is wrong; it is held and bullish.",
+    "RH '$120 to $200' reads as a target band; it should be 'from ~120 to 200'.",
+    "19 sentiment rows for 9 names (AMD x5, AXP x3, RH x4); duplicates with alternating hold/long for AMD.",
+    "The TSM neutral row is correct and useful context. GSG 'bearish' is correct."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 5,
+      "fidelity": 4,
+      "actionability": 4,
+      "clarity": 2,
+      "overall": 4
+    },
+    "leapedge": {
+      "coverage": 3,
+      "fidelity": 3,
+      "actionability": 4,
+      "clarity": 5,
+      "overall": 3
+    }
+  },
+  "verdict": "ours better",
+  "why": "Ours captures every actionable position with sizes: WYNN $8,400, CELH $11,000, NKE ~$35, RH ~$170k -> $250-400k. It also keeps the AMD $700 correctly as a do-not-sell threshold and covers the Fed, inflation and commodities risk section. LeapEdge omits two real purchases (NKE, CELH) as trade ideas, turns the AMD $700 trim threshold into a target, adds 'AI' and misses the whole macro-risk half. Ours still pays the usual tax: WYNN/AXP/NKE/CELH have null tickers, calls and sentiment rows are duplicated, and 16 omission lines are pipeline noise.",
+  "recommendations": [
+    "Add a 'position size / executed today' field to calls. 'Bought $8,400 WYNN', 'bought $11,000 CELH' and 'RH +$20k today, ~$170k total, building to $250-400k' are what a PM wants first.",
+    "Separate 'price target' from 'trim/no-sell threshold' in the schema. Ours got AMD right; make it structural so it stays right.",
+    "Resolve company names to tickers ('win resorts'/'Winning Resorts' -> WYNN, American Express -> AXP, Nike -> NKE, Celsius -> CELH). Never null a literal ticker like 'AMD'.",
+    "Mark conditional views explicitly ('AXP 400+ IF oil/rates peak'; 'RH 120->200 IF oil peaks') and keep ranges' from/to semantics. Ours wrote 'toward $120 to $200'.",
+    "Identify quoted guests when named on air (Gundlach, Fed chair Warsh). Do not write 'speaker identities unknown' when the transcript names them.",
+    "Collapse the two WYNN calls and the two RH calls into one call each, holding near-term trigger, long-term target and size."
+  ]
+}

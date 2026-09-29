@@ -15,6 +15,7 @@ import type {
   Run,
   SourceData,
 } from "../../../features/youtube-intelligence/contracts.ts";
+import { resolveReference } from "../listings/resolve.ts";
 import {
   deleteClaimsForRunExcept,
   upsertClaim,
@@ -114,6 +115,21 @@ function spansOf(
  * pass — while every kept mention becomes a mention row, because the sentiment
  * count is over references, not over calls.
  */
+/** The listing a published claim refers to, from its words, its explicit ticker or the retained model proposal. */
+export function resolvedColumns(run: Run, item: CheckedClaim) {
+  const proposal = ((run.output.tickerProposals ?? []) as { id?: string; proposedTicker?: string }[])
+    .find((p) => p.id === item.id)?.proposedTicker ?? null;
+  const ref = resolveReference(
+    item.claim.instrument_as_spoken ?? item.claim.ticker,
+    item.claim.ticker ?? proposal,
+    { explicit: item.claim.ticker_explicit },
+  );
+  return {
+    resolvedTicker: ref?.symbol ?? null,
+    resolvedName: ref?.name ?? null,
+    resolvedBy: ref?.method ?? null,
+  };
+}
 export function rowsForRun(run: Run): RunRows {
   const metadata = (run.output.metadata ?? {}) as Metadata;
   const channelId = text(metadata.channelId);
@@ -169,6 +185,7 @@ export function rowsForRun(run: Run): RunRows {
       instrument: item.claim.instrument_as_spoken,
       ticker: item.claim.ticker,
       tickerExplicit: item.claim.ticker_explicit,
+      ...resolvedColumns(run, item),
       stance: item.claim.stance,
       thesisEn: item.claim.thesis_en,
       horizonEn: item.claim.horizon_en,
@@ -193,7 +210,10 @@ export function rowsForRun(run: Run): RunRows {
     runId: run.id,
     videoId: run.videoId,
     channelId,
-    ticker: mention.ticker,
+    // Aggregated by listing: a named company counts under its resolved symbol.
+    ticker:
+      resolveReference(mention.instrument_as_spoken, mention.ticker)?.symbol ??
+      mention.ticker,
     stance: mention.stance,
     sentiment: mention.sentiment ?? "neutral",
     isCall: mention.is_call === true,

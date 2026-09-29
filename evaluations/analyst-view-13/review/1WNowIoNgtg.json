@@ -1,0 +1,169 @@
+{
+  "videoId": "1WNowIoNgtg",
+  "language": "en",
+  "mustKnow": [
+    {
+      "item": "Thesis: cash-secured put selling framed as selling insurance; only on stocks you want to own ('get paid to name your price'); not guaranteed, most options traders lose",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": "Both cover the framework well."
+    },
+    {
+      "item": "30-delta sweet spot (Goldman 10-yr put-selling study, Sharpe), ~7/10 expire OTM; 30-45 DTE theta window; early-assignment risk concentrated in final week at high delta",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge has 30 delta and 30-45 DTE but not the early-assignment / last-week risk or the study basis."
+    },
+    {
+      "item": "Checklist: own it anyway, real company, enough IV; tight bid-ask spread",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Risks: assignment (need the cash), capped upside vs rally (covered-call student anecdote, 200k->215k)",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge garbles the upside cap (see fidelity)."
+    },
+    {
+      "item": "Evidence of results: student Denny ~$72k/yr (~$6k/mo) on ~$250k; title claim $3k/month student; creator scaled $100k->$700k",
+      "ours": "partial",
+      "leapedge": "missed",
+      "note": "Ours has Denny numbers; neither mentions the $3k/month student or the $700k account."
+    },
+    {
+      "item": "Live idea PLTR @ ~175 (Nov 20 expiry): sell ATM 175 put (~$16 premium) or 165 put (~$11.85 premium, breakeven ~153, delta 0.35 / 65% OTM); view: PLTR 'tapped out' short term, worst case ~155",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Both have the 165 strike and Nov 20. Ours adds 175 and 153 breakeven but no premiums and invents a 'discrepancy'. LeapEdge has 165 only, no premium, no breakeven, no 155 floor."
+    },
+    {
+      "item": "GOOGL: 370 put ITM, early-assigned on 13 contracts (~$950k notional, margin used), avg credit ~$28, stock ~344, ~at breakeven; plan: covered calls / wheel. Prior roll 380->370 collected ~$36k. Demo roll to Dec 360 put for $227/contract net credit (~$16k claimed benefit)",
+      "ours": "partial",
+      "leapedge": "missed",
+      "note": "Ours has assignment, 344, $28-30 credit, 5% covered calls, but spreads it over 3 duplicate calls, ticker null, and omits contract count/notional and the 380->370 roll."
+    },
+    {
+      "item": "Other live positions: PLTR 120 put (+$739) and 160 put (+$2,700) expiring 9/18; NBIS 202.5 put; QQQ puts +$1,825; MSFT put ITM, to manage today; NVDA puts out to January",
+      "ours": "partial",
+      "leapedge": "missed",
+      "note": "Ours has NBIS, QQQ, MSFT; misses PLTR 120/160 P&L and NVDA."
+    },
+    {
+      "item": "Contrarian rule: at 52-week lows on a great stock, buy calls rather than sell puts (PLTR bought calls ~$109 -> 132)",
+      "ours": "partial",
+      "leapedge": "missed",
+      "note": "Ours states the rule generically (k12) without the PLTR example."
+    },
+    {
+      "item": "ITM management menu: close, roll for credit, or take assignment and wheel",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "Omission: 'the speaker stated a $153 breakeven on a $165 strike put with $1.85 premium; mathematical breakeven is $163.15, indicating an uncorrected source discrepancy.'",
+        "transcriptAt": "1621s-1680s",
+        "problem": "False accusation of the creator. The premium is ~$11.85 ('you get 12 bucks', 'gain of $1,185'), so 165-11.85 = ~153 is right. '$1.85' is an ASR garble. The system flagged a correct number as an error."
+      },
+      {
+        "text": "Call: PLTR 'long', conviction high, 'Continuously sell put options on Palantir as long as the creator favors the stock'",
+        "transcriptAt": "1178s, 1598s",
+        "problem": "Overstates direction. The creator says PLTR is 'tapped out for gains' and he doesn't see it going up much short term. The stance is neutral-to-mildly-bullish income, not a high-conviction long. It also duplicates the Nov-20 call."
+      },
+      {
+        "text": "Three separate Google calls ('conditional', 'medium') describing the same assignment",
+        "transcriptAt": "1208s, 1777s, 1867s",
+        "problem": "Duplicate calls. Commentary on managing an already-assigned position, not a new recommendation, is presented as three calls."
+      },
+      {
+        "text": "tickerSentiment Google: mixed bullish/neutral across 7 entries",
+        "transcriptAt": "1347s",
+        "problem": "Inconsistent stance for one name. The creator is explicit: 'I'm a firm believer in Google.'"
+      },
+      {
+        "text": "MSFT call 'conditional' with horizon 'later today'",
+        "transcriptAt": "1392s",
+        "problem": "False call. The creator only notes an ITM put he will have to manage; there is no thesis."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "'Selling puts limits upside potential, as you do not benefit from stock price appreciation beyond the strike price plus the collected premium.'",
+        "transcriptAt": "726s, 857s",
+        "problem": "Mechanically wrong. A short put's gain is capped at the premium, independent of the strike. 'Beyond strike plus premium' describes a covered call."
+      },
+      {
+        "text": "PLTR trade idea stance 'long', conviction 'high', verdict '1 LONG'",
+        "transcriptAt": "1598s-1621s",
+        "problem": "A short put on a stock the creator calls 'tapped out' is labeled a high-conviction LONG. This overstates directional conviction and hides the instrument; the 'instrument' field is null."
+      },
+      {
+        "text": "Quote '...number one strategy that I would be using on Palantir right now'",
+        "transcriptAt": "1618s",
+        "problem": "Minor. The quote is cleaned up; the transcript reads 'on pound right now'. The meaning is preserved."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [
+      "Google roll demo: close 370 put, open Dec 360 put for ~$227/contract net credit (only in tickerSentiment)",
+      "PLTR ATM 175 put premium ~$16 and 165 put premium ~$11.85 not in structured fields",
+      "NVDA January puts (position only)"
+    ],
+    "leapedgeMissed": [
+      "PLTR ATM 175 put alternative",
+      "GOOGL assignment -> covered calls/wheel plan and Dec 360 roll",
+      "All disclosed live positions (PLTR 120/160 puts, NBIS 202.5 put, QQQ puts, MSFT ITM put, NVDA)",
+      "Premium, breakeven 153 and delta 0.35 on the PLTR 165 put"
+    ],
+    "oursFalse": [
+      "MSFT 'call' (position housekeeping, not an idea)",
+      "Two of the three Google calls are duplicates; all three are position management rather than new ideas",
+      "PLTR 'long high conviction continuously sell puts' (a generic habit, duplicated)"
+    ],
+    "leapedgeFalse": [],
+    "oursUnresolvedTickers": [
+      "Google -> GOOGL (null in 3 calls and 7 sentiment rows)",
+      "Microsoft -> MSFT",
+      "'Palanteer' sentiment row with ticker null (duplicate of PLTR)"
+    ]
+  },
+  "sentimentIssues": [
+    "15 tickerSentiment rows for 6 names; Google appears 7 times with alternating bullish/neutral and long/conditional.",
+    "PLTR is marked 'bullish/long' although the creator says it is 'tapped out' short term. Better: bullish long-term, neutral short-term, expressed via short puts.",
+    "NBIS marked 'bullish/long' only because a short put 'did really well'. That is a P&L remark, not a stated view.",
+    "QQQ 'long' is acceptable, but the view is really 'good put-selling vehicle for ETF-only investors'."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 4,
+      "fidelity": 3,
+      "actionability": 3,
+      "clarity": 2,
+      "overall": 3
+    },
+    "leapedge": {
+      "coverage": 2,
+      "fidelity": 4,
+      "actionability": 2,
+      "clarity": 4,
+      "overall": 3
+    }
+  },
+  "verdict": "ours better",
+  "why": "Ours captures the live position book (GOOGL assignment math, MSFT, NBIS, QQQ), the early-assignment risk and the 175/165 alternatives, and LeapEdge reports none of that. Ours is still only narrowly better. It fabricates a numeric 'discrepancy' against the creator, leaves GOOGL/MSFT unresolved, splits one GOOGL situation into three calls, and buries the content under 11 pipeline-housekeeping omissions. LeapEdge is clean but thin: one PLTR idea without premium, breakeven or delta.",
+  "recommendations": [
+    "Add explicit option fields to calls: instrument ('short put'), strike, expiry, premium, breakeven, delta. The PLTR idea should read: 'Sell PLTR Nov-20 165P @ ~$11.85, breakeven ~153, delta 0.35; alt ATM 175P @ ~$16'.",
+    "Do not second-guess numbers with an ASR-naive calculator. Before publishing a 'discrepancy', cross-check other mentions ('12 bucks', '$1,185'). The '$1.85 -> 163.15' omission is an error by ours, not by the source.",
+    "Separate 'existing position management' (GOOGL assigned, MSFT ITM, NBIS/QQQ expiring) into a 'Disclosed positions' table, not calls. Keep calls for forward-looking ideas.",
+    "Deduplicate calls and tickerSentiment per ticker: one row per name with a consolidated stance and the strongest quote.",
+    "Resolve common company names deterministically (Google->GOOGL, Microsoft->MSFT, Palanteer/Palunteer->PLTR) before emitting; never emit ticker null for mega-caps.",
+    "Stance for short puts should be 'bullish-income / neutral', not 'long high conviction', when the creator says upside is 'tapped out'.",
+    "Remove pipeline-internal text from brief.omissions ('source-0: Full-source recall is a bounded model review...', 'Optional calculation for s13 withheld'). A PM sees noise, not omissions."
+  ]
+}

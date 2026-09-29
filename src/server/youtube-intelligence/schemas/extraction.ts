@@ -4,8 +4,10 @@ import {
   type RangeSelectedClaimData,
 } from "../../../features/youtube-intelligence/evidence-selection.ts";
 import {
+  ACTIONS,
   MARKETS,
   Mention,
+  OWNERS,
   SENTIMENTS,
 } from "../../../features/youtube-intelligence/contracts.ts";
 /**
@@ -138,6 +140,66 @@ const researchContextSchema = {
   required: claimSchema.required.filter(key=>key!=="levels"),
   additionalProperties: false,
 };
+/**
+ * Prompt v9 asks for structured ideas: what the creator did, whose view it is,
+ * option terms, size, conditional levels and dated catalysts. Earlier prompt
+ * versions keep the schema above, so their requests are unchanged.
+ */
+const levelKinds = [...claimSchema.properties.levels.items.properties.kind.enum, "threshold"];
+const structuredClaimSchema = {
+  ...claimSchema,
+  properties: {
+    ...claimSchema.properties,
+    levels: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          kind: { type: "string", enum: levelKinds },
+          value_original: { type: "string" },
+          condition_en: stringOrNull,
+        },
+        required: ["kind", "value_original", "condition_en"],
+      },
+    },
+    action: { type: "string", enum: [...ACTIONS] },
+    owner: { type: "string", enum: [...OWNERS] },
+    owner_name: stringOrNull,
+    option: {
+      type: "object",
+      nullable: true,
+      properties: {
+        right: { type: "string", enum: ["call", "put"] },
+        side: { type: "string", enum: ["long", "short"] },
+        strike_original: stringOrNull,
+        expiry_original: stringOrNull,
+        premium_original: stringOrNull,
+      },
+      required: ["right", "side", "strike_original", "expiry_original", "premium_original"],
+    },
+    size_original: stringOrNull,
+    catalysts: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: { text_en: { type: "string" }, date_original: stringOrNull },
+        required: ["text_en", "date_original"],
+      },
+    },
+  },
+  required: [...claimSchema.required, "action", "owner", "owner_name", "option", "size_original", "catalysts"],
+};
+const transcriptionDoubtSchema = {
+  type: "object",
+  properties: {
+    start_id: { type: "string", minLength: 1 },
+    end_id: { type: "string", minLength: 1 },
+    heard: { type: "string", minLength: 1 },
+    likely: { type: "string", minLength: 1 },
+    reason_en: { type: "string", minLength: 1 },
+  },
+  required: ["start_id", "end_id", "heard", "likely", "reason_en"],
+};
 export const extractionResponseSchema = {
   type: "object",
   properties: {
@@ -147,6 +209,20 @@ export const extractionResponseSchema = {
   },
   required: ["claims", "key_points", "mentions"],
 };
+export const structuredExtractionResponseSchema = {
+  type: "object",
+  properties: {
+    claims: { type: "array", maxItems: 40, items: structuredClaimSchema },
+    key_points: { type: "array", maxItems: 30, items: researchContextSchema },
+    mentions: { type: "array", maxItems: 200, items: mentionSchema },
+    transcription_doubts: { type: "array", maxItems: 30, items: transcriptionDoubtSchema },
+  },
+  required: ["claims", "key_points", "mentions", "transcription_doubts"],
+};
+/** The response schema a prompt version asks for. */
+export function extractionSchemaFor(prompts: { structuredIdeas?: boolean }) {
+  return prompts.structuredIdeas ? structuredExtractionResponseSchema : extractionResponseSchema;
+}
 /**
  * The same mention contract on the way back in. `ranges` carries no minimum
  * here on purpose: a mention that cites nothing is rejected one mention at a
@@ -168,6 +244,19 @@ export const PointerExtraction = z.object({
   claims: z.array(RangeSelectedClaim).max(40),
   key_points: z.array(RangeSelectedClaim.extend({levels:RangeSelectedClaim.shape.levels.default([])})).max(30).default([]),
   mentions: z.array(MentionExtraction).max(200).default([]),
+  /** Prompt v9: words that look misheard, with what was likely said. Shown as a doubt, never applied. */
+  transcription_doubts: z
+    .array(
+      z.object({
+        start_id: z.string().min(1),
+        end_id: z.string().min(1),
+        heard: z.string().min(1),
+        likely: z.string().min(1),
+        reason_en: z.string().min(1),
+      }),
+    )
+    .max(30)
+    .default([]),
 });
 export type PointerExtractionData = z.infer<typeof PointerExtraction>;
 export type { RangeSelectedClaimData };

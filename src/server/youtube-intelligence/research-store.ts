@@ -45,6 +45,8 @@ export const PromptVersion = z.object({
   translation: z.string().min(20).max(30000).optional(),
   pointerEvidence: z.boolean().optional(),
   temporalResearch: z.boolean().optional(),
+  // Prompt v9: structured idea fields and transcription doubts in extraction.
+  structuredIdeas: z.boolean().optional(),
 });
 export const Preferences = z.object({
   timezone: z.string().refine((v) => {
@@ -284,6 +286,7 @@ async function insertPrompt(input: unknown) {
           ...(p.pointerEvidence === undefined ? [] : [p.pointerEvidence]),
           ...(p.translation === undefined ? [] : [p.translation]),
           ...(p.temporalResearch === undefined ? [] : [p.temporalResearch]),
+          ...(p.structuredIdeas === undefined ? [] : [p.structuredIdeas]),
         ]),
       )
       .digest("hex");

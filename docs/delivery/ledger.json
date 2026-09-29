@@ -1794,7 +1794,7 @@
     "verification": "Node 24: default and PGlite suites 741 pass/0 fail/1 skip; typecheck and build pass. Workspace settings aligned on 29 Sep: models reset to defaults (Gemini native extraction, Sonnet critic), prompt version v8, research pipeline faithful."
   },
   "captionCoverage20260929": {
-    "status": "in-review",
+    "status": "merged",
     "date": "2026-09-29",
     "scope": "The 13-video rerun left 2 Chinese videos in review: fetched captions scored 86% timed coverage because the pauses between caption lines counted as missing speech. Coverage now treats a gap of up to 2 s between consecutive segments as a pause; a longer gap still counts. Fetched captions that still fall short go to windowed audio transcription (unless ASR is on demand or off) instead of stopping. A translation reply that answers a span twice keeps the first answer instead of failing the run; the copied original is still re-hashed.",
     "tests": [
@@ -1802,5 +1802,27 @@
       "tests/selective-translation.test.ts"
     ],
     "verification": "Node 24: default and PGlite suites 744+ pass/0 fail; typecheck, build and offline promotion gate pass."
+  },
+  "listingResolution20260929": {
+    "status": "in-review",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 1 (docs/delivery/analyst-view-plan.md). Named companies were left without tickers (Celsius, Amazon, 英伟达, even a spoken AMD), so calls showed no symbol and sentiment dropped them. A server-side resolver maps a spoken name to a listing by: spoken ticker, curated alias, a model proposal whose SEC-registered name matches, or an exact SEC name of two words or more; otherwise it stays unresolved. SEC snapshot committed (refresh script needs an operator contact). Claims store resolved_ticker/name/by (migration 0009) outside the review digest; published mentions aggregate under the resolved symbol; mentions link to calls by listing. Backfill action market/resolveListings. Benchmark frozen in evaluations/analyst-view-13.",
+    "tests": [
+      "tests/listing-resolution.test.ts",
+      "tests/listing-backfill.test.ts",
+      "tests/mentions.test.ts",
+      "tests/actions.test.ts"
+    ],
+    "verification": "Node 24 default suite 756 pass/0 fail; benchmark replay 251/268 references resolved."
+  },
+  "structuredIdeas20260929": {
+    "status": "in-review",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 2 (docs/delivery/analyst-view-plan.md). Prompt evidence-first.web.v9 (structuredIdeas) asks each claim for action (bought, sold, holding, plan_buy, plan_sell, watch, research, avoid, view), owner (creator, guest, third_party with owner_name), option terms, size, threshold and conditional levels, and dated catalysts, all copied from the cited ranges, plus transcription doubts that are shown but never applied. Only v9 uses the new response schema; v8 requests are unchanged. Detail not present verbatim in the evidence is removed and recorded (ideaDetailRemovals); the idea is kept. A doubt is kept only when its range contains the misheard words. The critic rejects overstated actions and third-party views recorded as the creator's.",
+    "tests": [
+      "tests/idea-detail.test.ts",
+      "tests/structured-ideas.test.ts"
+    ],
+    "verification": "Pending live check on 3 benchmark videos before the workspace moves to v9."
   }
 }

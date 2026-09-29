@@ -1,0 +1,69 @@
+{
+  "videoId": "S53iIEnGogw",
+  "language": "zh",
+  "mustKnow": [
+    {"item": "Rates shock: 10y UST at 5.135%, highest since Jul 2007; trigger was the Sep flash composite PMI at 58.4 (vs 56 in Aug, 5-year high); October hike odds 55%->73%; bets on 3 more hikes before June; 2y ~4.945% (18-106s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge omits the PMI value, the 2y yield and the 55% baseline."},
+    {"item": "$70B 5-year auction tailed: 5.033% (highest since 2006) vs 5.002% WI; 11th straight weak auction; bid-to-cover 2.21 vs 2.33 average; dealers took 15.8% (2-year high) (109-208s)", "ours": "partial", "leapedge": "partial", "note": "Ours omits '11th consecutive' and bid-to-cover 2.21; LeapEdge omits the yields, bid-to-cover and dealer share."},
+    {"item": "Equities down (NVDA, GOOGL, AMZN led; tech and consumer weak, software up); banks fell the day before as a lead indicator; TLT slid; Bessent announced $4-6B long-bond buybacks Thursday, which the creator dismissed as far too small (217-264s)", "ours": "captured", "leapedge": "missed", "note": ""},
+    {"item": "Positioning: Citi says index flows are new shorts, not long liquidation; all remaining Russell 2000 longs are underwater; SPX/NDX resilient on short covering. JPM says the equity pain point moved from 5% to 5.5-6%, and some funds are rotating into bonds (264-346s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge attributes the JPM view to generic 'Wall Street analysts' and omits the Russell 2000 point."},
+    {"item": "Oil and Iran: normally oil eases before Trump's Middle East trip, pulling yields lower; but the IRGC-controlled media attack on FM Araghchi for contacting envoy Witkoff shows a split regime, so any oil decline is limited (346-453s)", "ours": "captured", "leapedge": "missed", "note": ""},
+    {"item": "GME: +~32% month to date; Ryan Cohen bought $26.4M (largest insider buy in company history) and $46.8M this month (~9% stake); 3 other directors bought; speculators positioning for an announcement. Reported, not recommended (453-505s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge turns it into a 'Buy' trade idea."},
+    {"item": "Michael Burry added large shorts on MU, NBIS, PLTR and SOXX (thesis: memory shortage comes from capacity shifting, so DRAM prices fall once supply returns). MU back at its highest since early July; earnings Wed Sep 30; consensus FQ4 adj EPS $31.43 (+~940%), NTM EPS $144.94; creator calls the short very bold, maybe betting on pre-earnings profit-taking; aside about someone's ('Leopard') Oct 2 short-dated calls being deep in profit (505-585s)", "ours": "partial", "leapedge": "partial", "note": "Ours has the Burry short (twice) but omits MU earnings on Sep 30 and the EPS figures, and never emits MU, NBIS or PLTR tickers. LeapEdge misattributes the short to 'Andrew MacKenzie' and drops NBIS."},
+    {"item": "IONQ +~11% premarket on an 'industry-first end-to-end real-time quantum error correction' claim, gains faded in the risk-off, tight-liquidity tape (585-624s)", "ours": "captured", "leapedge": "missed", "note": ""},
+    {"item": "Apollo (APO): 5% redemption cap on flagship private-credit fund for the 3rd straight quarter vs ~3x demand; Atlas fund faces up to GBP 860M (~$1.1B) potential loss; AI-infra 'shadow bank' financiers are battered (624-682s)", "ours": "captured", "leapedge": "missed", "note": ""},
+    {"item": "AI hardware split: SNDK, INTC, AMD and LITE are near or at highs (core compute). Second-tier physical-infra names are still down: STRL -56% from its ~$1,000 peak, LGN halved from $107 (May), MOD halved. Reason: valuations ran several-fold to 10x+ and overdrew years of earnings; physical bottlenecks cap the story. Warning against averaging down; price can fall while growth is still accelerating (682-927s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge writes 'SMOD' for MOD and drops the core-hardware leaders."},
+    {"item": "Housing and lenders: RKT falling; 30y mortgage >7% (highest since 2024); refi applications -62% YoY (lowest since Feb 2025). ACTION: keep lenders on the watchlist and buy only once expectations shift from hikes to cuts (927-1012s)", "ours": "captured", "leapedge": "captured", "note": "Ours' call omits the 7% and -62% numbers."},
+    {"item": "Consumer: MCD down >20% (technical bear market), 3 years of gains erased; CEO says weak traffic and high inflation are the new normal; NRA data shows traffic falling almost every month Aug 2025-Jul 2026. Closing view: nothing to own except AI (and occasionally bitcoin-related stocks) because the economy and markets are propped up by AI (1014-1080s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge omits the closing 'only AI' stance."}
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {"text": "k5 and k9 both describe Burry's shorts (k9 says 'initiated', k5 says 'increased')", "transcriptAt": "505-534s", "problem": "Duplicate, and 'initiated' is wrong: the transcript says 加码做空, meaning he added to existing shorts."},
+      {"text": "k10: 'AI infrastructure shadow-banking and secondary physical infrastructure contractors (like STRL, LGN, and MOD) experienced steep valuation drawdowns of over 50% due to physical buildout bottlenecks'", "transcriptAt": "731-829s", "problem": "Wrong causation and conflation. The creator attributes the drawdown to prior valuation overshoot, which overdrew years of earnings, followed by institutional profit-taking; bottlenecks explain why the narrative cannot be stretched further. Shadow banks (Apollo) are a separate point. LGN and MOD are 'halved', so 'over 50%' overstates slightly."},
+      {"text": "k17: '...whereas secondary physical infrastructure contractors lack pricing power'", "transcriptAt": "690-792s", "problem": "Pricing power is not mentioned; the transcript's contrast is about position in the chain (indirect beneficiaries) and valuation."},
+      {"text": "k7: '...maintains upward pressure on bond yields'", "transcriptAt": "357-453s", "problem": "An extrapolation: the creator only concludes that oil's downside is limited. Minor."},
+      {"text": "tickerSentiment SOXX stance 'avoid'", "transcriptAt": "505-523s", "problem": "Misattribution: the SOXX short is Burry's position; the creator expresses no view and calls shorting MU 'very bold'."},
+      {"text": "tickerSentiment TLT stance 'avoid'", "transcriptAt": "245s", "problem": "False stance: TLT's decline is reported as market news, not a recommendation."},
+      {"text": "brief.omissions: 'Omitted IONQ premarket rally ... due to brevity threshold'", "transcriptAt": "585s", "problem": "Self-contradictory: IONQ is in keyPoint k14. The omissions list does not reflect the actual output."},
+      {"text": "brief.omissions: 'Omitted geopolitical discussion of UN General Assembly meetings'", "transcriptAt": "368-453s", "problem": "The Iran split is the creator's reason oil's downside is limited, so it is material. It appears in k7 but is dropped from the brief."}
+    ],
+    "leapedge": [
+      {"text": "'Short seller Andrew MacKenzie has taken a significant short position in Micron, Palantir, and the SOXX ETF'", "transcriptAt": "505-523s", "problem": "Misattribution: the transcript names Michael Burry. The item also drops NBIS."},
+      {"text": "'AI infrastructure secondary stocks (STRL, LGN, SMOD)'", "transcriptAt": "769s", "problem": "Wrong ticker: MOD (Modine), not SMOD."},
+      {"text": "GME trade idea: 'Buy for a speculative long position tracking insider accumulation'", "transcriptAt": "486-505s", "problem": "False call: the creator reports insider buying and that speculators are following; she makes no recommendation."},
+      {"text": "ES trade idea, entry 7650-7660, target 7800, stop below 7650, 'Hold long bias or range-trade'; key points on S&P 7800 resistance and 7650 support, positive gamma", "transcriptAt": "59-106s and 157-208s (transcript gaps)", "problem": "Not verifiable: these levels are absent from the provided transcript, which has gaps where they may have been spoken. Even if spoken, turning support and resistance levels into a 'hold long bias' trade with a target and stop is a manufactured call; the creator's tone is bearish on rates."},
+      {"text": "'A failed 5-year US Treasury auction'", "transcriptAt": "109s", "problem": "The auction was weak (暴雷, a tail), not failed. Overstated."},
+      {"text": "RKT conviction 'high'", "transcriptAt": "1002-1012s", "problem": "The stance is 'keep on watchlist'; 'avoid/high' overstates it slightly."},
+      {"text": "'Despite high yields, short sellers are actively covering positions in the S&P 500 and Nasdaq'", "transcriptAt": "264-296s", "problem": "Omits the main Citi point: flows are new shorts, and all Russell 2000 longs are underwater. Partial rather than wrong."}
+    ]
+  },
+  "calls": {
+    "oursMissed": ["None of the creator's own calls is missed (RKT/lenders watch-until-cuts is captured). Soft stance missed: 'only AI, occasionally bitcoin stocks' as the actionable allocation view is a keyPoint, not a call. Soft warning missed: don't average down in STRL/LGN/MOD-type names."],
+    "leapedgeMissed": ["'Only own AI (and occasionally bitcoin-related) stocks' allocation view", "Avoid averaging down in secondary AI-infra names"],
+    "oursFalse": [],
+    "leapedgeFalse": ["GME 'Buy' (reported insider activity turned into a buy)", "ES 'hold long bias' with target and stop (levels not in the provided transcript; commentary turned into a trade)"],
+    "oursUnresolvedTickers": ["麦当劳 -> MCD", "LGN (spoken 'LGN', ticker null in one of two rows)", "英伟达 -> NVDA", "谷歌 -> GOOGL", "亚马逊 -> AMZN", "阿波罗 -> APO", "闪迪 -> SNDK", "英特 -> INTC", "AMD (spoken 'AMD', ticker null)", "美光 -> MU (absent from tickerSentiment entirely)", "NBIS (absent)", "Palantir -> PLTR (absent)", "Russell 2000 -> IWM/RUT (absent)"]
+  },
+  "sentimentIssues": [
+    "MU is entirely missing from tickerSentiment despite a Burry short, earnings on Sep 30 and consensus EPS $31.43 / NTM $144.94; the creator's stance (a short here is 'very bold') leans bullish or neutral on MU.",
+    "SOXX 'bearish/avoid' and TLT 'bearish/avoid' attribute third-party or market moves to the creator.",
+    "Resolution failures on obvious Latin tickers: spoken 'AMD' gets ticker null, and 'LGN' is null in one row and resolved in the other. Chinese names (麦当劳, 英伟达, 谷歌, 亚马逊, 阿波罗, 闪迪) are never mapped.",
+    "Duplicate rows: STRL x2 (avoid vs neutral), TLT x2 (avoid vs neutral), IONQ x2, LGN x2.",
+    "STRL/LGN/MOD bearish is correct; 'avoid' is defensible given the warning against averaging down, but stances differ across duplicate rows.",
+    "GME bullish/watch is right: reported, not recommended."
+  ],
+  "scores": {
+    "ours": {"coverage": 4, "fidelity": 4, "actionability": 3, "clarity": 2, "overall": 4},
+    "leapedge": {"coverage": 2, "fidelity": 2, "actionability": 3, "clarity": 4, "overall": 2}
+  },
+  "verdict": "ours better",
+  "why": "Ours covers nearly every segment (rates, auction, Bessent buyback, Citi/JPM, Iran/oil, GME, Burry, IONQ, Apollo, AI hardware split, RKT, MCD) with accurate numbers, and it keeps the one real call (RKT watch until cuts) correctly as a watch. LeapEdge misattributes Burry's short to 'Andrew MacKenzie', writes SMOD for MOD, invents a GME buy and an ES long trade, and misses IONQ, Apollo, Iran and the Bessent buyback. Ours' main weaknesses: MU earnings (Sep 30, EPS $31.43/$144.94) are omitted, the Burry item is duplicated, there are 19 keyPoints and 20 sentiment rows with many null tickers, and two stances wrongly attribute market or third-party moves to the creator.",
+  "recommendations": [
+    "Add a Chinese-name ticker lexicon plus a Latin-token pass: 麦当劳->MCD, 英伟达->NVDA, 谷歌->GOOGL, 亚马逊->AMZN, 阿波罗->APO, 闪迪->SNDK, 英特(尔)->INTC, 美光->MU. Any spoken all-caps token such as 'AMD' or 'LGN' that matches a listed symbol must never be null.",
+    "Add a 'holder' field to sentiment rows (creator / third party / market). 'Burry 加码做空 SOXX' should read holder=Michael Burry, stance=short, not creator 'avoid'. 'TLT大跌' is a market move, not a stance.",
+    "Add an 'upcoming catalysts' block that always extracts dated events and consensus numbers: 'MU earnings Wed 9/30, FQ4 adj EPS est $31.43 (+940%), NTM EPS $144.94'. Ours dropped this entirely.",
+    "Cap keyPoints at ~8-10 and dedupe semantically (k5/k9 Burry, k15/k16 Apollo); rank by materiality. Nineteen points is not skimmable.",
+    "Make omissions truthful: generate them by diffing the transcript against the output, and drop items like 'Omitted IONQ...' when IONQ is in k14.",
+    "Do not add causal glue that the creator did not say: the STRL/LGN/MOD drawdown is 'valuation overdrew future earnings, plus institutional profit-taking', not 'due to physical buildout bottlenecks'. Add a critique check that flags 'due to/because' clauses without a transcript anchor.",
+    "Detect transcript gaps (this one skips 66-106s and 157-208s) and surface them, so users know that levels LeapEdge reports (S&P 7650/7800) may exist in audio we did not transcribe."
+  ]
+}

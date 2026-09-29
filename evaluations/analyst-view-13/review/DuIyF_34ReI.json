@@ -1,0 +1,57 @@
+{
+  "videoId": "DuIyF_34ReI",
+  "language": "en",
+  "mustKnow": [
+    {"item": "Single-stock bull narrative on Ondas Holdings (ONDS), framed by Trump's proposed $1.5T US defense spending expansion and the shift to autonomy, AI and multi-domain operations (0-43s)", "ours": "partial", "leapedge": "captured", "note": "Ours never resolves ONDS anywhere: keyPoints, tickerSentiment and calls are all null. For a single-stock video that is the headline failure."},
+    {"item": "Palantir (PLTR) strategic collaboration to embed AI across Ondas drone and robotic platforms (47-57s, 449-457s)", "ours": "captured", "leapedge": "captured", "note": "Ours leaves the PLTR ticker null."},
+    {"item": "Mistral merger: all-stock $175M ($122.5M stock upfront plus installments, $52.5M escrow); Bethesda-based prime with Army and SOCOM; >$1B IDIQ contracts (UAS, counter-drone, weapons integration, sustainment); US manufacturing; expected close Q2 2026; NOT yet closed (101-191s, 410-414s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge omits the deal structure (stock/escrow split) and the customers."},
+    {"item": "FY2026 revenue guide raised (March update) to at least $375M vs 2025 $50.7M (~7x); more than doubles the prior outlook, which excluded acquisitions (211-233s)", "ours": "partial", "leapedge": "partial", "note": "Neither notes that the raise is acquisition-driven (the previous outlook 'did not account for acquisitions'), which matters for organic vs inorganic growth."},
+    {"item": "4M Defense: competitive $15.8M initial award, ~741 acres of Israel-Syria border demining; follow-on >$50M (~31% of 2025 revenue); work starting within weeks; AI robotics, drones, subsurface sensors (242-340s, 373-402s)", "ours": "captured", "leapedge": "partial", "note": "Neither mentions the 31%-of-2025-revenue framing; LeapEdge also drops the acreage."},
+    {"item": "Israel Eastern Border Security Barrier Initiative: $1.7B, ~500 km from the Dead Sea to the Golan Heights (282-309s)", "ours": "captured", "leapedge": "captured", "note": ""},
+    {"item": "Q1 2026 revenue guide $38-40M, ~+820% YoY (498-511s)", "ours": "captured", "leapedge": "captured", "note": ""},
+    {"item": "Peer contrast with AeroVironment (AVAV): steadier, slower growth vs ONDS acceleration (523-562s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge folds it into the volatility risk only. Ours leaves the AVAV ticker null."},
+    {"item": "Risks: the merger has not closed, integration execution, timing of the international program, small-cap volatility; watch upcoming earnings and backlog updates (408-426s, 587-608s)", "ours": "captured", "leapedge": "captured", "note": ""},
+    {"item": "Nature of the content: promotional narrative with no explicit buy recommendation, no price, no target, and no position disclosed by the narrator (whole video)", "ours": "captured", "leapedge": "missed", "note": "Ours correctly emits zero calls (1 rejected). LeapEdge produces a 'long, high conviction' trade."}
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {"text": "tickerSentiment 'Palantir Technologies' sentiment 'bullish' (449s)", "transcriptAt": "449-457s", "problem": "Palantir is described only as a partner providing its AI platform; there is no stance on PLTR stock. Other Palantir rows say neutral, so the rows are inconsistent."},
+      {"text": "k1: '...providing access to over $1 billion in IDIQ contracts'", "transcriptAt": "136-176s, 410-414s", "problem": "Mild overstatement: the access is contingent on a merger that 'has not yet closed'. The transcript itself says 'effectively grants', so this is a borderline error."},
+      {"text": "brief.omissions 'Specific speaker identity was not determinable...' and 'Numerical historical comparables prior to 2025 were not provided'", "transcriptAt": "n/a", "problem": "Not fidelity errors, but filler: neither is a meaningful omission for an analyst."},
+      {"text": "No staleness flag: guidance and 'close in Q2 2026' are presented as current", "transcriptAt": "136-140s, 211-218s", "problem": "Today is late September 2026, so the Q2 close date has passed and the video's facts may be stale. Neither system flags this."}
+    ],
+    "leapedge": [
+      {"text": "tradeIdea quote: 'In short, Ondas moves from niche technology provider to full prime participant in multi-year DoD programs.'", "transcriptAt": "n/a", "problem": "Fabricated quote: the sentence does not appear in the transcript (nearest: 71s 'move beyond being a niche technology supplier', 201-207s 'full-scale prime contractor capable of leading multi-year Department of Defense programs')."},
+      {"text": "ONDS trade idea stance 'long', conviction 'high', action 'Long ONDS...'", "transcriptAt": "whole", "problem": "False call and overstated conviction: the narrator never recommends buying and repeatedly hedges ('has not yet closed', 'execution risks', 'may still experience volatility')."},
+      {"text": "summary 'These catalysts have driven the company to raise full-year 2026 revenue guidance'", "transcriptAt": "211-233s", "problem": "Loose causation: the raise came in March and reflects acquisitions; the Palantir, demining and Mistral catalysts are not stated as its drivers."},
+      {"text": "catalyst 'Rollout of $15.8M initial order and expansion of Israel border demining initiative'", "transcriptAt": "250-280s", "problem": "Supported, no error."}
+    ]
+  },
+  "calls": {
+    "oursMissed": [],
+    "leapedgeMissed": [],
+    "oursFalse": [],
+    "leapedgeFalse": ["ONDS long / high conviction: a narrative profile was turned into a trade, with a fabricated supporting quote"],
+    "oursUnresolvedTickers": ["Ondas Holdings / Ondas -> ONDS (4 rows + all keyPoints)", "Palantir Technologies -> PLTR (3 rows)", "AeroVironment -> AVAV (2 rows)"]
+  },
+  "sentimentIssues": [
+    "9 tickerSentiment rows for 3 entities, all with ticker null: Ondas x4, Palantir x3, AeroVironment x2.",
+    "Ondas stance flips between 'watch' and 'neutral' while sentiment stays bullish; it should be one row, bullish/watch (no call).",
+    "Palantir moves from neutral/neutral to neutral/watch to bullish/neutral although the video expresses no stance on PLTR stock; it should be one row, 'mentioned as partner'.",
+    "Missing: a distinction between the subject company and mentioned companies. PLTR and AVAV are context, not sentiment targets."
+  ],
+  "scores": {
+    "ours": {"coverage": 5, "fidelity": 4, "actionability": 2, "clarity": 3, "overall": 3},
+    "leapedge": {"coverage": 4, "fidelity": 3, "actionability": 4, "clarity": 5, "overall": 3}
+  },
+  "verdict": "tie",
+  "why": "Ours is more complete (deal structure, acreage, the peer contrast) and more honest: it emits no call for a video that makes none. However, it never resolves ONDS in a single-stock video, and its 9 sentiment rows are noisy. LeapEdge is tighter and skimmable with the ticker, catalysts and risks, but it invents a high-conviction long and supports it with a quote that is not in the transcript. On balance, one is faithful but unusable and the other is usable but embellished.",
+  "recommendations": [
+    "Hard requirement: when a video's subject is one listed company, resolve it (Ondas Holdings -> ONDS) and stamp it on every keyPoint. Fail QA when the most-mentioned entity has ticker null.",
+    "Add a 'subject' block for single-name videos: {ticker: ONDS, creatorStance: bullish, explicitRecommendation: false, catalysts: [Mistral close Q2'26, Q1 rev $38-40M, demining follow-on >$50M], risks: [...]}. This gives the PM LeapEdge's skimmability without inventing a trade.",
+    "Label mentioned-only companies as role:'partner'/'peer' (PLTR partner, AVAV peer) instead of giving them sentiment rows, and collapse the rows to one per entity.",
+    "Add a staleness check that compares dated claims with the publish or current date ('closing ... anticipated in the second quarter of 2026' vs today, 2026-09-29) and flags them.",
+    "Flag inorganic growth: 'previous outlook did not account for acquisitions' should become a note that the 7x guide is acquisition-driven.",
+    "Keep the zero-call behaviour and advertise it: show 'No explicit recommendation; bullish narrative' so the PM sees why ours has no trade while LeapEdge shows one."
+  ]
+}
