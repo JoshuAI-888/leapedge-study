@@ -386,6 +386,11 @@
 .yi-workspace .yi-trends > * {
   margin: 0;
 }
+/* The Chart · Table switch sits in the section title here; the Today calls
+   panel's absolute placement would lift it out of the Trends panel. */
+.yi-trends-chart .yi-view-switch {
+  position: static;
+}
 .yi-trends-chart h3,
 .yi-trends-price h3 {
   font-size: 13px;
