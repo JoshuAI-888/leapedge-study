@@ -142,6 +142,8 @@ const FILTER_SHAPE = {
   /** The date expiry windows count from; the server's UTC date when absent. */
   today: z.iso.date().optional(),
   canonicalOnly: z.boolean().default(true),
+  /** Only these calls (by claim id); an empty list matches nothing. Used to export a saved list. */
+  claimIds: z.array(z.string().trim().min(1).max(200)).max(2000).optional(),
 };
 type FilterInput = z.output<z.ZodObject<typeof FILTER_SHAPE>>;
 /** The shared filter fields plus `extra`, strict, with the window check. */
@@ -286,6 +288,7 @@ function callConditions(
 ) {
   const where: string[] = [];
   if (f.canonicalOnly) where.push(`${a}.run_id IN (SELECT id FROM canon)`);
+  if (f.claimIds) where.push(`${a}.id = ANY(${p.add(f.claimIds)}::text[])`);
   if (f.instrumentPairs && o.skip !== "instrument")
     where.push(`${PAIR(a)} = ANY(${p.add(f.instrumentPairs)}::text[])`);
   if (f.kindPairs && o.skip !== "kind")

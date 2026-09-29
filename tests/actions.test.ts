@@ -72,6 +72,7 @@ test("Every action resolves in exactly one resource table and the legacy set is 
     "saveSelection",
     "seedCatalog",
     "deleteIdea",
+    "retry",
   ];
   for (const action of mutating)
     assert.ok(

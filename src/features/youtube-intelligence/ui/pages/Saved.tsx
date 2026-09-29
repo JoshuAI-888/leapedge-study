@@ -14,6 +14,7 @@ import {
   TrustBadge,
 } from "../components.tsx";
 import { InstrumentLabel } from "../InstrumentLabel.tsx";
+import { ExportMenu } from "../ExportMenu.tsx";
 import { TradingDay } from "../TradingDay.tsx";
 import { useUrlState } from "../url-state.ts";
 import { dateLabel } from "../viewmodel.ts";
@@ -485,11 +486,11 @@ export function Saved() {
             <option value="expiry">Expiring soonest</option>
           </select>
         </label>
-        {/*
-          EXPORT SLOT (F63): ui/ExportMenu.tsx is not on this branch yet. When
-          it lands, render it here over `shown` — the current tab after the
-          search — with the scope line "N saved calls in <tab>".
-        */}
+        <ExportMenu
+          input={{ claimIds: shown.map((c) => String(c.idea.id)), canonicalOnly: false }}
+          total={shown.length}
+          filtered={false}
+        />
       </Filters>
       {hiddenBySearch > 0 && (
         <p className="yi-muted">

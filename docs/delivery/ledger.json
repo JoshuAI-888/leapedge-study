@@ -1422,20 +1422,22 @@
       "lane": "analysis-ui",
       "title": "Analysis page verdict box, summary paragraph and numbered key points; tabs for calls, brief and details",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F47",
         "F60"
       ],
       "files": [
+        "src/features/youtube-intelligence/verdict.ts",
         "src/features/youtube-intelligence/ui/Verdict.tsx",
         "src/features/youtube-intelligence/ui/pages/Analysis.tsx"
       ],
       "tests": [
         "tests/verdict.test.ts"
       ],
-      "note": "Gap 5. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F61). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Header, verdict box, summary (derived from stored output, no new model call), numbered key points with seek, Calls/Research brief/Processing details tabs, no-ideas state, VerdictLine export, F74 reused chip and in-page re-run confirmation. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F61).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F62",
@@ -1443,7 +1445,7 @@
       "lane": "research-ui",
       "title": "Search page: faceted filters with counts, calls and videos results, filtered-set summary, URL state, paging",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F56",
         "F57",
@@ -1451,13 +1453,17 @@
         "F59"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/pages/Search.tsx"
+        "src/features/youtube-intelligence/ui/pages/Search.tsx",
+        "src/features/youtube-intelligence/ui/search-state.ts",
+        "src/features/youtube-intelligence/ui/use-query-pages.ts",
+        "src/features/youtube-intelligence/ui/focus-trap.ts"
       ],
       "tests": [
         "tests/search-page.test.ts"
       ],
-      "note": "Gap 2. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F62). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Faceted Search with URL state, live counts, Calls/Videos tabs with paging, filtered-set summary, chips, hidden-by-trust notice, best-single-removal empty state, phone filter sheet; F59 instrument kinds and F60 has-levels/expires-within filters in the query layer. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F62).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F63",
@@ -1465,19 +1471,21 @@
       "lane": "research-ui",
       "title": "CSV and JSON export of calls, videos and daily reports with stated scope",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F56"
       ],
       "files": [
         "src/server/youtube-intelligence/export.ts",
+        "src/features/youtube-intelligence/export-columns.ts",
         "src/features/youtube-intelligence/ui/ExportMenu.tsx"
       ],
       "tests": [
         "tests/export.test.ts"
       ],
-      "note": "Gap 10. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F63). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "RFC 4180 CSV with formula-injection guard and # footer, JSON with nested evidence, query/export up to 20,000 rows, ExportMenu with stated scope. Wired on Search and Saved (via a claimIds query filter; GET input cap limits one export to roughly 250 saved calls). Channel page and report wiring land with those pages. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F63).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F64",
@@ -1633,19 +1641,21 @@
       "lane": "analysis-ui",
       "title": "Follow-channel prompt with cost projection on analyses from unfollowed channels",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F45",
         "F47"
       ],
       "files": [
+        "src/features/youtube-intelligence/follow-prompt.ts",
         "src/features/youtube-intelligence/ui/FollowPrompt.tsx"
       ],
       "tests": [
         "tests/follow-prompt.test.ts"
       ],
-      "note": "Gap 19. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F71). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Banner on analyses from unfollowed channels with uploads/week, projected monthly cost and remaining budget; discover-only when over budget; Not now hides it for 30 days on this browser. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F71).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F72",
@@ -1653,20 +1663,23 @@
       "lane": "analysis-ui",
       "title": "Live step progress while running and a general Retry that resumes from checkpoints",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F27",
         "F47"
       ],
       "files": [
+        "src/features/youtube-intelligence/progress-steps.ts",
         "src/features/youtube-intelligence/ui/StepProgress.tsx",
-        "src/features/youtube-intelligence/progress-steps.ts"
+        "src/server/youtube-intelligence/run-progress.ts",
+        "src/server/youtube-intelligence/actions/runs.ts"
       ],
       "tests": [
         "tests/progress-steps.test.ts"
       ],
-      "note": "Gap 12. Decision D1 limits the stepper to running runs. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F72). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Five plain steps shown only while queued/running (D1), typical duration and 3x slow notice, failure banner with Retry from the stopped step (resume without re-reserving completed steps), Transcribe audio instead, Retry the check; mini progress and Retry on Today activity rows. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F72).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F73",
@@ -1674,19 +1687,22 @@
       "lane": "analysis-ui",
       "title": "Per-call token, cache, time and cost table in Processing details",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F17b",
         "F47"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/CallUsageTable.tsx"
+        "src/features/youtube-intelligence/call-usage.ts",
+        "src/features/youtube-intelligence/ui/CallUsageTable.tsx",
+        "src/features/youtube-intelligence/ui/pages/Lab.tsx"
       ],
       "tests": [
         "tests/call-usage.test.ts"
       ],
-      "note": "Gap 20. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F73). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Row per paid model call (retries marked) with input/cached/output tokens, time and cost plus totals; raw JSON behind Show raw data; Lab per-step aggregate; registry-backed headings. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F73).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F74",
@@ -1740,19 +1756,21 @@
       "lane": "research-ui",
       "title": "Quick search palette (Cmd/Ctrl+K) over instruments, channels, videos and actions",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F56",
         "F62"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/CommandPalette.tsx"
+        "src/features/youtube-intelligence/ui/CommandPalette.tsx",
+        "src/features/youtube-intelligence/ui/command-palette.ts"
       ],
       "tests": [
         "tests/command-palette.test.ts"
       ],
-      "note": "Gap 16. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F76). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Cmd/Ctrl+K palette over instruments, channels, videos, pages and an analyse action for pasted links; CJK substring matching; recent searches; combobox ARIA. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F76).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F77",
