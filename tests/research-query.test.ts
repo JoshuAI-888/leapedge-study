@@ -650,3 +650,13 @@ test("Instrument kind is derived from the ticker and the spoken name", () => {
   assert.equal(instrumentKind(null, "Some private startup"), "unresolved");
   assert.equal(instrumentKind(null, null), "unresolved");
 });
+
+test("A claim-id filter selects exactly the named calls, so a saved list can be exported", async () => {
+  const named = await queryCalls({ claimIds: ["r6a:c9", "r1old:c1"], canonicalOnly: false });
+  assert.deepEqual(named.rows.map((r) => r.id).sort(), ["r1old:c1", "r6a:c9"]);
+  assert.equal(named.total, 2);
+  // Canonical-only still applies when asked, so the superseded call drops out.
+  assert.deepEqual((await queryCalls({ claimIds: ["r6a:c9", "r1old:c1"] })).rows.map((r) => r.id), ["r6a:c9"]);
+  assert.equal((await queryCalls({ claimIds: [], canonicalOnly: false })).total, 0, "an empty list matches nothing");
+  await assert.rejects(() => queryCalls({ claimIds: [""] }));
+});

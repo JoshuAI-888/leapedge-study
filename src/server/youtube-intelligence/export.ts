@@ -207,6 +207,7 @@ export function describeFilters(input: Record<string, unknown>): string {
   if (input.pinnedOnly === true) parts.push("pinned only");
   if (input.hasLevels === true) parts.push("has levels");
   if (typeof input.expiresWithin === "number") parts.push(`expires within ${input.expiresWithin} days`);
+  if (Array.isArray(input.claimIds)) parts.push(`${input.claimIds.length} selected ${input.claimIds.length === 1 ? "call" : "calls"}`);
   if (input.canonicalOnly === false) parts.push("every run, not only the published one");
   if (!parts.length) return "None (every canonical call)";
   const [first, ...rest] = parts;
