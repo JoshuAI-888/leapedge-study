@@ -407,6 +407,30 @@ const usageEntries: MetricEntry[] = usageFigures.map(
 );
 export const registry: MetricEntry[] = [
   ...channelListMetrics,
+  // F65: the Trends period table.
+  ...(
+    [
+      ["period", "Period", "The US trading session, or the Monday-to-Sunday week of sessions, the row counts."],
+      ["bullish", "▲ Bullish", "Calls in the period whose stance maps to bullish (long or buy)."],
+      ["neutral", "● Neutral", "Calls in the period whose stance maps to neutral (watch, hold or no clear direction)."],
+      ["bearish", "▼ Bearish", "Calls in the period whose stance maps to bearish (short, sell or avoid)."],
+      ["calls", "Calls", "All calls in the period, whatever their sentiment."],
+    ] as const
+  ).map(([key, label, definition]): MetricEntry => ({
+    id: `trends.${key}`,
+    label,
+    definition,
+    steps: [
+      "Select canonical calls matching the view's instrument, channel or sentiment and the trust filter.",
+      "Assign each call to the US session its publish time falls in: after the 4 pm ET close, weekends and holidays roll into the next session.",
+      key === "period"
+        ? "Group sessions into weeks starting Monday for ranges longer than seven days."
+        : "Count the calls in each period; a period with no calls shows zero.",
+    ],
+    inputs: [{ table: "claims", columns: ["stance", "published_at", "created_at", "trust_level"] }],
+    settingsUsed: [],
+    implementation: () => null,
+  })),
   ...(
     [
       [

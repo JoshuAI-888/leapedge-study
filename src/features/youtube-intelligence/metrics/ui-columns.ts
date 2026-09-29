@@ -14,6 +14,18 @@ export type UiColumn = {
 };
 export const uiColumns: UiColumn[] = [
   ...channelListColumns,
+  // F65: the Trends period table.
+  { surface: "trends.periods", column: "Period", metricId: "trends.period" },
+  { surface: "trends.periods", column: "▲ Bullish", metricId: "trends.bullish" },
+  { surface: "trends.periods", column: "● Neutral", metricId: "trends.neutral" },
+  { surface: "trends.periods", column: "▼ Bearish", metricId: "trends.bearish" },
+  { surface: "trends.periods", column: "Calls", metricId: "trends.calls" },
+  // F64: the daily report's calls table.
+  { surface: "report.calls", column: "Instrument", metricId: "today.instrument" },
+  { surface: "report.calls", column: "Stance", metricId: "today.stance" },
+  { surface: "report.calls", column: "Thesis & conditions", metricId: "today.thesis" },
+  { surface: "report.calls", column: "Channel", metricId: "channel.title" },
+  { surface: "report.calls", column: "Trust", metricId: "today.trust" },
   { surface: "today.calls", column: "Creators", metricId: "today.creators" },
   {
     surface: "today.calls",
