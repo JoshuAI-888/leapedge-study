@@ -575,6 +575,10 @@ export async function saveIdea(runId: string, claimId: string) {
         channel?: string;
       }
     )?.channel,
+    // F75: the video's publish time, so Saved groups by the call's session.
+    publishedAt:
+      (r.output.metadata as { publishedAt?: string } | undefined)
+        ?.publishedAt ?? null,
     claim: c.claim,
     sourceHash: r.output.sourceHash,
     analysisAt: r.createdAt,
