@@ -446,3 +446,14 @@
     flex-basis: 100%;
   }
 }
+/* Registry column headings (MetricHeading) in every table: plain text in both
+   themes (the dark-theme button fill must not reach them), and full contrast
+   when the column is not sortable (its button is disabled, not faded). */
+.yi-workspace table thead th button[type] {
+  background: none;
+  color: inherit;
+}
+.yi-workspace table thead th button[type]:disabled {
+  opacity: 1;
+  cursor: help;
+}
