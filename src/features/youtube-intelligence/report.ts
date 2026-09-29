@@ -261,7 +261,11 @@ export function verdictLine(video: {
   const parts = REPORT_SENTIMENTS.filter((s) => video.sentiment[s] > 0).map(
     (s) => `${video.sentiment[s]} ${s === "bullish" ? "▲" : s === "neutral" ? "●" : "▼"}`,
   );
-  const names = video.instruments.slice(0, 3).join(" ");
+  // Instruments arrive as grouping keys ("Rates"); show them as their labels.
+  const names = video.instruments
+    .slice(0, 3)
+    .map((key) => describeInstrument({ ticker: key, macroTheme: key }).text)
+    .join(" ");
   return [plural(video.ideas, "idea"), parts.join(" "), names]
     .filter(Boolean)
     .join(" · ");
