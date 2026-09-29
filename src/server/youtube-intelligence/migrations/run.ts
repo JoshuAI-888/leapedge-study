@@ -115,8 +115,9 @@ async function apply(
   );
   let recorded = await recordedVersions(c);
   let stamped = false;
-  // A database that predates this runner already carries the baseline schema:
-  // record version 1 instead of running it.
+  // A database that predates this runner already carries a form of the baseline
+  // schema: record version 1 instead of running it. 0008 then fills any table,
+  // column or index an older form lacks, in an order that cannot fail.
   if (recorded.size === 0 && (await tableExists(c, BASELINE_TABLE))) {
     const baseline = files.find((f) => f.version === 1);
     if (!baseline)

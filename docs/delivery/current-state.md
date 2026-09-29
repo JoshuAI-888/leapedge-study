@@ -20,6 +20,16 @@ reasons first; calls and leaderboard second. Improve on LeapEdge for this audien
 | Benchmark | Faster and more faithful than LeapEdge on the same fresh videos (up to 20 paired runs) |
 | Auth | One shared workspace passcode (`YTI_PASSCODE`); no per-user accounts in the POC |
 
+## Deployment (29 September)
+
+- **Live app:** Vercel project `youtube-intelligence`, https://youtube-intelligence-two.vercel.app,
+  deployed from GitHub `main`, with its original Neon database (earlier runs retained). Shared
+  passcode `YTI_PASSCODE`; previews read-only; cron verified returning 200 each minute.
+- **All-time cap** `YTI_BUDGET_USD` = US$50 (user decision, 29 Sep); monthly budget US$750.
+- The second project `youtube-intel` (youtube-intel-delta) was created 20 Sep with blank secrets and
+  is to be deleted once `youtube-intelligence` is linked to GitHub.
+- `GEMINI_API_KEY` and `EXA_API_KEY` still need values on `youtube-intelligence`.
+
 ## Decisions
 
 - **Hosting: Vercel Functions + Neon only; no Mac worker.** The Postgres job queue
