@@ -3,6 +3,11 @@ import { createHash } from "node:crypto";
 import { spansForClaim, type EvidenceSpanRow } from "./evidence-spans.ts";
 import { SignedReview } from "../../../features/youtube-intelligence/trust.ts";
 import { reviewsForClaim } from "./reviews.ts";
+import { z } from "zod";
+import {
+  parseLevel,
+  type ParsedLevel,
+} from "../../../features/youtube-intelligence/level-parse.ts";
 /**
  * The only door to the `claims` table (spec 8). The row id is
  * `<run id>:<claim id within the run>`, so re-publishing a run rewrites the
@@ -29,10 +34,42 @@ export type ClaimRow = {
   configHash: string | null;
   publishedAt: string | null;
   createdAt: string | null;
+  // Call fields v2 (F60, migration 0010). Optional on the type so rows built
+  // before them still type-check; every row read from the table carries them.
+  levels?: StoredLevel[];
+  catalystsEn?: string[];
+  actionEn?: string | null;
+  expiryDate?: string | null;
+  expiryOriginal?: string | null;
+  macroTheme?: string | null;
 };
+/** A level as the creator said it, plus the application's parse (or null). */
+export type StoredLevel = {
+  kind: string;
+  valueOriginal: string;
+  parsed: ParsedLevel | null;
+};
+const StoredLevels = z.array(
+  z.object({
+    kind: z.string().min(1),
+    valueOriginal: z.string(),
+    parsed: z.unknown(),
+  }),
+);
+/** Stored levels, re-parsed from the original wording so the parse is never stale. */
+function levels(value: unknown): StoredLevel[] {
+  const parsed = StoredLevels.safeParse(json(value) ?? []);
+  return parsed.success
+    ? parsed.data.map((l) => ({
+        kind: l.kind,
+        valueOriginal: l.valueOriginal,
+        parsed: parseLevel(l.valueOriginal),
+      }))
+    : [];
+}
 export type ClaimInput = Omit<ClaimRow, "createdAt"> & { createdAt?: string };
 const COLUMNS =
-  "id,run_id,video_id,channel_id,instrument,ticker,ticker_explicit,stance,thesis_en,horizon_en,conditions_en,risks_en,creator_conviction,trust_level,trust_basis,config_hash,published_at,created_at";
+  "id,run_id,video_id,channel_id,instrument,ticker,ticker_explicit,stance,thesis_en,horizon_en,conditions_en,risks_en,creator_conviction,trust_level,trust_basis,config_hash,published_at,created_at,levels,catalysts_en,action_en,expiry_date,expiry_original,macro_theme";
 function strings(value: unknown): string[] {
   const parsed = json(value);
   return Array.isArray(parsed) ? parsed.map((s) => String(s)) : [];
@@ -61,9 +98,24 @@ function convert(r: Record<string, unknown>): ClaimRow {
     configHash: r.config_hash === null ? null : String(r.config_hash),
     publishedAt: iso(r.published_at),
     createdAt: iso(r.created_at),
+    levels: levels(r.levels),
+    catalystsEn: strings(r.catalysts_en),
+    actionEn: r.action_en == null ? null : String(r.action_en),
+    // date columns come back as a string from pg (parser) and PGlite.
+    expiryDate:
+      r.expiry_date == null
+        ? null
+        : String(iso(r.expiry_date) ?? r.expiry_date).slice(0, 10),
+    expiryOriginal: r.expiry_original == null ? null : String(r.expiry_original),
+    macroTheme: r.macro_theme == null ? null : String(r.macro_theme),
   };
 }
-/** Reviews bind semantic content and the exact cited source, never only a stable row id. */
+/**
+ * Reviews bind semantic content and the exact cited source, never only a
+ * stable row id. The F60 call fields are deliberately outside the digest:
+ * they were added after reviews were signed, and folding them in would revoke
+ * every existing signature on a republish.
+ */
 export function claimContentDigest(
   claim: ClaimInput | ClaimRow,
   spans: EvidenceSpanRow[],
@@ -147,7 +199,7 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
   };
   const result = await database
     .prepare(
-      `INSERT INTO claims(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16,$17,$18)
+      `INSERT INTO claims(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16,$17,$18,$19::jsonb,$20,$21,$22,$23,$24)
        ON CONFLICT(id) DO UPDATE SET
          run_id=excluded.run_id,
          video_id=excluded.video_id,
@@ -170,7 +222,13 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
            AND (claims.trust_level <> 'L3' OR excluded.trust_basis->>'latestReviewVerdict'='verified')
            AND excluded.trust_level < claims.trust_level THEN claims.trust_basis ELSE excluded.trust_basis END,
          config_hash=excluded.config_hash,
-         published_at=excluded.published_at`,
+         published_at=excluded.published_at,
+         levels=excluded.levels,
+         catalysts_en=excluded.catalysts_en,
+         action_en=excluded.action_en,
+         expiry_date=excluded.expiry_date,
+         expiry_original=excluded.expiry_original,
+         macro_theme=excluded.macro_theme`,
     )
     .run(
       claim.id,
@@ -191,6 +249,18 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
       claim.configHash,
       claim.publishedAt,
       claim.createdAt ?? new Date().toISOString(),
+      JSON.stringify(
+        (claim.levels ?? []).map((l) => ({
+          kind: l.kind,
+          valueOriginal: l.valueOriginal,
+          parsed: l.parsed,
+        })),
+      ),
+      claim.catalystsEn ?? [],
+      claim.actionEn ?? null,
+      claim.expiryDate ?? null,
+      claim.expiryOriginal ?? null,
+      claim.macroTheme ?? null,
     );
   return result.changes > 0;
 }

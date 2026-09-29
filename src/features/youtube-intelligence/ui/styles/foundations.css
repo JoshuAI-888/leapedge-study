@@ -57,3 +57,108 @@
   text-decoration: underline dotted;
   text-underline-offset: 2px;
 }
+
+/* F60 call card v2 and level chips (data/extraction lane). */
+.yi-card2 h3 {
+  margin: 10px 0 6px;
+}
+.yi-card2-line1 {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.yi-card2-when {
+  margin-left: auto;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--yi-muted);
+}
+.yi-card2-when > span + span::before {
+  content: "· ";
+}
+.yi-card2-expiry-soon,
+.yi-card2-expiry-expired {
+  color: #805300;
+  font-weight: 650;
+}
+.yi-card2-action {
+  margin: 0 0 8px;
+}
+.yi-card2-action > span,
+.yi-card2-catalysts > span:first-child {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--yi-muted);
+  margin-right: 6px;
+}
+.yi-card2-levels {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 0;
+}
+.yi-card2-level {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  border: 1px solid var(--yi-line);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+.yi-card2-level em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--yi-muted);
+}
+.yi-card2-unparsed > span {
+  text-decoration: underline dotted var(--yi-muted);
+  text-underline-offset: 3px;
+}
+.yi-card2-catalysts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+.yi-card2-more {
+  margin: 8px 0 4px;
+  font-size: 13px;
+}
+.yi-card2-more summary {
+  cursor: pointer;
+  color: var(--yi-muted);
+}
+.yi-card2-more h4 {
+  margin: 8px 0 2px;
+  font-size: 12px;
+}
+.yi-card2-more ul {
+  margin: 0;
+  padding-left: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) .yi-card2-expiry-soon,
+  .yi-workspace:not([data-theme="light"]) .yi-card2-expiry-expired {
+    color: #ecd097;
+  }
+}
+.yi-workspace[data-theme="dark"] .yi-card2-expiry-soon,
+.yi-workspace[data-theme="dark"] .yi-card2-expiry-expired {
+  color: #ecd097;
+}
+@media (max-width: 600px) {
+  .yi-card2-when {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

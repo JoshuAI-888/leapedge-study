@@ -34,6 +34,7 @@ import { recoverEvidenceRanges } from "../../features/youtube-intelligence/evide
 import { sentimentFromStance } from "../../features/youtube-intelligence/sentiment.ts";
 import {
   extractionResponseSchema,
+  extractionResponseSchemaV2,
   parsePointerExtraction,
   MENTION_OUTPUT_FORMAT,
   POINTER_EVIDENCE_FORMAT,
@@ -1176,7 +1177,16 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           settings: team,
           reasoningEffort: "low",
           maxOutputTokens: 24000,
-          ...(pointer ? { responseSchema: extractionResponseSchema } : {}),
+          ...(pointer
+            ? {
+                // F60: a version that asks for call fields gets the v2
+                // schema; every earlier version keeps its request bytes.
+                responseSchema: (prompts as { callFields?: boolean })
+                  .callFields
+                  ? extractionResponseSchemaV2
+                  : extractionResponseSchema,
+              }
+            : {}),
         },
       );
     };

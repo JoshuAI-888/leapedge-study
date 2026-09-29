@@ -45,6 +45,9 @@ export const PromptVersion = z.object({
   translation: z.string().min(20).max(30000).optional(),
   pointerEvidence: z.boolean().optional(),
   temporalResearch: z.boolean().optional(),
+  // F60: claims also carry action, catalysts, expiry and a macro theme, and
+  // extraction uses the v2 response schema.
+  callFields: z.boolean().optional(),
 });
 export const Preferences = z.object({
   timezone: z.string().refine((v) => {
@@ -284,6 +287,7 @@ async function insertPrompt(input: unknown) {
           ...(p.pointerEvidence === undefined ? [] : [p.pointerEvidence]),
           ...(p.translation === undefined ? [] : [p.translation]),
           ...(p.temporalResearch === undefined ? [] : [p.temporalResearch]),
+          ...(p.callFields === undefined ? [] : [p.callFields]),
         ]),
       )
       .digest("hex");

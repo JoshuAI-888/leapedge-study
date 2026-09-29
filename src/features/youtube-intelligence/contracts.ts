@@ -94,6 +94,23 @@ export const Claim = z.object({
       value_original: z.string(),
     }),
   ),
+  /**
+   * Call fields v2 (F60, prompt evidence-first.web.v9). All optional so every
+   * stored claim still parses; older claims simply lack them. A malformed
+   * expiry date degrades to null rather than rejecting the extraction, and
+   * the original wording is always kept. macro_theme is normalised to the
+   * fixed vocabulary (instrument-kind.ts) when the claim is published.
+   */
+  catalysts_en: z.array(englishOutput).optional(),
+  action_en: englishOutput.nullable().optional(),
+  expiry: z
+    .object({
+      date: z.iso.date().nullable().catch(null),
+      original: z.string().min(1),
+    })
+    .nullable()
+    .optional(),
+  macro_theme: z.string().nullable().optional(),
   evidence: z
     .array(
       z.object({

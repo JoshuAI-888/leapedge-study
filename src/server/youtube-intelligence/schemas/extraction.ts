@@ -8,6 +8,11 @@ import {
   Mention,
   SENTIMENTS,
 } from "../../../features/youtube-intelligence/contracts.ts";
+import {
+  GICS_SECTORS,
+  MACRO_THEMES,
+  SECTOR_SUBTHEMES,
+} from "../../../features/youtube-intelligence/instrument-kind.ts";
 /**
  * The extraction output contract as a provider response schema (spec 4.2).
  *
@@ -146,6 +151,45 @@ export const extractionResponseSchema = {
     mentions: { type: "array", maxItems: 200, items: mentionSchema },
   },
   required: ["claims", "key_points", "mentions"],
+};
+/**
+ * Call fields v2 (F60): the same contract plus catalysts, recommended action,
+ * expiry and a macro/sector theme on each claim. Used only by prompt versions
+ * that declare `callFields`, so every earlier version keeps its request bytes.
+ * The new properties are optional; the application parses levels itself.
+ */
+const claimSchemaV2 = {
+  ...claimSchema,
+  properties: {
+    ...claimSchema.properties,
+    catalysts_en: { type: "array", items: { type: "string" } },
+    action_en: stringOrNull,
+    expiry: {
+      type: "object",
+      nullable: true,
+      properties: {
+        date: stringOrNull,
+        original: { type: "string", minLength: 1 },
+      },
+      required: ["date", "original"],
+    },
+    macro_theme: {
+      type: "string",
+      nullable: true,
+      enum: [
+        ...MACRO_THEMES,
+        ...GICS_SECTORS,
+        ...SECTOR_SUBTHEMES.map((s) => `${s.sector} / ${s.name}`),
+      ],
+    },
+  },
+};
+export const extractionResponseSchemaV2 = {
+  ...extractionResponseSchema,
+  properties: {
+    ...extractionResponseSchema.properties,
+    claims: { type: "array", maxItems: 40, items: claimSchemaV2 },
+  },
 };
 /**
  * The same mention contract on the way back in. `ranges` carries no minimum
