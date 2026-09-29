@@ -432,6 +432,11 @@
   .yi-follow {
     padding: 12px 14px;
   }
+  /* All three tab labels fit at 390 px instead of "Processing d…" scrolling off. */
+  .yi-workspace .yi-an-tab {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
 }
 /* Numeric column headings line up with their right-aligned figures. */
 .yi-usage-table thead th {
