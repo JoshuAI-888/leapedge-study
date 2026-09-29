@@ -80,4 +80,38 @@ export const uiColumns: UiColumn[] = [
     column: "Evidence",
     metricId: "board.status",
   },
+  // F73: Processing details, one row per model call.
+  ...(
+    [
+      ["Step", "usage.step"],
+      ["Model", "usage.model"],
+      ["Input tokens", "usage.inputTokens"],
+      ["Cached", "usage.cachedTokens"],
+      ["Output tokens", "usage.outputTokens"],
+      ["Time", "usage.seconds"],
+      ["Cost", "usage.costUsd"],
+    ] as const
+  ).map(([column, metricId]) => ({
+    surface: "analysis.modelCalls",
+    column,
+    metricId,
+  })),
+  // F73: Lab cost diagnostics, the same columns per step.
+  ...(
+    [
+      ["Step", "usage.step"],
+      ["Calls", "usage.calls"],
+      ["Analyses", "usage.runs"],
+      ["Input tokens", "usage.inputTokens"],
+      ["Cached", "usage.cachedTokens"],
+      ["Output tokens", "usage.outputTokens"],
+      ["Time", "usage.seconds"],
+      ["Cost", "usage.costUsd"],
+      ["Cost per analysis", "usage.costPerRun"],
+    ] as const
+  ).map(([column, metricId]) => ({
+    surface: "lab.stepUsage",
+    column,
+    metricId,
+  })),
 ];

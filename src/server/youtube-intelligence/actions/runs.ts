@@ -5,6 +5,7 @@ import { startExperiment } from "../experiments.ts";
 import { managedTranscript, SourcePending } from "../transcripts.ts";
 import { videoId } from "../../../features/youtube-intelligence/contracts.ts";
 import { analyseVideo } from "../reuse.ts";
+import { retryRun } from "../run-progress.ts";
 import { writes, type ActionTable } from "./types.ts";
 const CaptionProbe = z.strictObject({
   videoId: z.string().regex(/^[\w-]{11}$/),
@@ -77,5 +78,7 @@ export const runs: ActionTable = {
     (v) => startExperiment(v),
   ),
   recoverAudit: writes(z.string(), (id) => R.continueAfterAuditFailure(id)),
+  // F72: resume a failed or stalled analysis from its checkpoint.
+  retry: writes(z.string(), (id) => retryRun(id)),
   publishRun: writes(z.string(), (id) => R.publishRun(id)),
 };

@@ -232,7 +232,8 @@ export function Leaderboard() {
         title="Leaderboard"
         description="A track record needs time, enough calls, and a fair benchmark."
       >
-        <Link href="/youtube-intelligence/methodology">Read methodology ↗</Link>
+        <Link href="/youtube-intelligence/methodology">Read methodology ↗</Link>{" "}
+        <Link href={`/youtube-intelligence/search?trust=${trust}`}>See all calls →</Link>
       </PageTitle>
       <div className="yi-tabs" role="tablist" aria-label="Leaderboard view">
         {(["ticker", "creator", "changes"] as const).map((v) => (

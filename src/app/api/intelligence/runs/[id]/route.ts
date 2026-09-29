@@ -5,6 +5,7 @@ import { spansForClaims } from "../../../../../server/youtube-intelligence/repos
 import { docs } from "../../../../../server/youtube-intelligence/research-store.ts";
 import { get } from "../../../../../server/youtube-intelligence/store.ts";
 import { timelineFor } from "../../../../../server/youtube-intelligence/timing.ts";
+import { progressContext } from "../../../../../server/youtube-intelligence/run-progress.ts";
 import {
   guard,
   failure,
@@ -33,6 +34,28 @@ export async function GET(
           ),
           evidenceSpans: await spansForClaims(claims.map((c) => c.id)),
           reviewerConfigured: Boolean(process.env.YTI_REVIEWER_ACCOUNT_ID),
+          // F74: how often a resubmission was answered by this analysis.
+          reuse: await database
+            .prepare(
+              "SELECT count(*)::int AS count,max(at) AS last_at FROM yi_events WHERE kind='analysis_reused' AND entity_id=$1",
+            )
+            .get(run.id),
+          // F73: the paid-call ledger rows of this run, one per attempt.
+          calls: await database
+            .prepare(
+              "SELECT id,run_id,stage,status,amount,attempt,metrics FROM yi_calls WHERE run_id=$1 ORDER BY stage,attempt LIMIT 500",
+            )
+            .all(run.id),
+          // F72: typical duration and per-step spend, for an unfinished run.
+          progress:
+            run.status === "completed" || run.input.task
+              ? null
+              : await progressContext(
+                  Number(
+                    (run.output.metadata as { duration?: unknown } | undefined)
+                      ?.duration,
+                  ) || null,
+                ),
           run: {
             ...run,
             output: {

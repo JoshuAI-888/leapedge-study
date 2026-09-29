@@ -314,6 +314,97 @@ const costEntries: MetricEntry[] = costFigures.map(
     implementation: (ctx) => (ctx.cost ? compute(ctx.cost) : null),
   }),
 );
+/**
+ * Token counts per model call (F73). Each figure is read from one paid-call
+ * ledger row (yi_calls, one row per attempt) by call-usage.ts; they are row
+ * values, not aggregates of the metric context, so the context has none.
+ */
+const usageFigures = [
+  [
+    "usage.step",
+    "Step",
+    "The plain-language step a model call served: Title, Transcript, Extract, Check or Publish.",
+    ["stage"],
+    "Map the call's stage onto the five steps by its prefix; chunk, window and repair suffixes share their step; a stage outside video analysis reads Other.",
+  ],
+  [
+    "usage.model",
+    "Model",
+    "The model the provider reported for this call.",
+    ["metrics.model"],
+    "Read the model name the settled call recorded; a call that recorded none shows a dash.",
+  ],
+  [
+    "usage.inputTokens",
+    "Input tokens",
+    "Prompt tokens the provider reported for this call.",
+    ["metrics.tokens.inputTokens", "metrics.usage.prompt_tokens"],
+    "Read the transport's normalised input count, else the provider's own prompt count; nothing is estimated, so a missing count shows a dash.",
+  ],
+  [
+    "usage.cachedTokens",
+    "Cached",
+    "Prompt tokens the provider served from its cache for this call, as it reported them.",
+    ["metrics.usage.prompt_tokens_details.cached_tokens", "metrics.tokens.cachedTokens"],
+    "Read the cached-token count from the provider's usage report; a provider that reports none shows a dash, not zero.",
+  ],
+  [
+    "usage.outputTokens",
+    "Output tokens",
+    "Completion tokens the provider reported for this call.",
+    ["metrics.tokens.outputTokens", "metrics.usage.completion_tokens"],
+    "Read the transport's normalised output count, else the provider's completion count; a missing count shows a dash.",
+  ],
+  [
+    "usage.seconds",
+    "Time",
+    "Wall-clock seconds from sending the request to receiving the response.",
+    ["metrics.seconds"],
+    "Read the seconds the call recorded when it settled; a call that never settled shows a dash.",
+  ],
+  [
+    "usage.costUsd",
+    "Cost",
+    "What the call cost: the settled amount, zero for a released (failed, not charged) attempt, or the amount still held for an open or unknown outcome.",
+    ["status", "amount"],
+    "Use the ledger amount for completed, reserved and unknown calls, and zero for released calls; the total adds every recorded amount.",
+  ],
+  [
+    "usage.calls",
+    "Calls",
+    "Model calls in a step across analyses, retries included.",
+    ["stage", "attempt"],
+    "Count ledger rows per step; a second or later attempt at the same stage counts as a retry.",
+  ],
+  [
+    "usage.runs",
+    "Analyses",
+    "Distinct analyses that made at least one model call in the step.",
+    ["run_id"],
+    "Count distinct run ids among the step's ledger rows.",
+  ],
+  [
+    "usage.costPerRun",
+    "Cost per analysis",
+    "The step's total cost divided by the analyses that paid for it.",
+    ["run_id", "amount"],
+    "Divide the step's summed cost by its distinct analyses; unknown when no call recorded an amount.",
+  ],
+] as const;
+const usageEntries: MetricEntry[] = usageFigures.map(
+  ([id, label, definition, columns, step]) => ({
+    id,
+    label,
+    definition,
+    steps: [
+      "Read the paid-call ledger rows of the analysis (or, in the Lab, of every analysis), one row per attempt.",
+      step,
+    ],
+    inputs: [{ table: "yi_calls", columns: [...columns] }],
+    settingsUsed: [],
+    implementation: () => null,
+  }),
+);
 export const registry: MetricEntry[] = [
   ...channelListMetrics,
   ...(
@@ -794,6 +885,7 @@ export const registry: MetricEntry[] = [
     "Human-verified",
     "meaning a named reviewer listened to the cited span and signed the claim",
   ),
+  ...usageEntries,
 ];
 const byId = new Map(registry.map((m) => [m.id, m]));
 export function metric(id: string): MetricEntry {

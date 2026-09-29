@@ -9,6 +9,7 @@ import {
   querySeries,
   querySearchIndex,
   instrumentKind,
+  instrumentOf,
   likePattern,
 } from "../src/server/youtube-intelligence/repos/research-query.ts";
 import { dispatch } from "../src/server/youtube-intelligence/actions/index.ts";
@@ -486,7 +487,7 @@ test("The series buckets calls by ISO week or day, with capped points reported a
 test("The quick-search index lists instruments, channels and recent videos", async () => {
   const index = await querySearchIndex({ videos: 3 });
   assert.equal(index.instruments.length, 9);
-  assert.deepEqual(index.instruments[0], { instrument: "SPY", kind: "stock", calls: 53 });
+  assert.deepEqual(index.instruments[0], { instrument: "SPY", label: "SPY", kind: "stock", calls: 53 });
   assert.ok(index.instruments.some((i) => i.instrument === "Gold" && i.kind === "macro"));
   assert.deepEqual(
     index.channels.map((c) => [c.channelId, c.title, c.calls]),
@@ -565,6 +566,75 @@ test("The query resource is read-only and answers GET with its input in the URL"
     if (prior === undefined) delete process.env.YTI_PREVIEW_READ_ONLY;
     else process.env.YTI_PREVIEW_READ_ONLY = prior;
   }
+});
+
+test("Instruments group by the F59 vocabulary, so a label's link finds its calls", async () => {
+  // InstrumentLabel links a macro theme as ?kind=macro&instrument=Rates.
+  const rates = await queryCalls({ kinds: ["macro"], instruments: ["Rates"] });
+  assert.deepEqual(rates.rows.map((r) => r.id), ["r2:c5"]);
+  assert.equal(rates.rows[0].instrumentKey, "Rates");
+  assert.equal(rates.rows[0].instrumentLabel, "MACRO · RATES");
+  // The spoken name still works, and matching ignores case.
+  assert.equal((await queryCalls({ instruments: ["us interest rates"] })).total, 1);
+  const semis = await queryCalls({ instruments: ["Information Technology / Semiconductors"] });
+  assert.deepEqual(semis.rows.map((r) => r.id), ["r3:c8"]);
+  const all = await queryCalls({});
+  const facet = all.facets.instrument.find((f) => f.value === "Rates");
+  assert.deepEqual(facet && [facet.count, facet.label], [1, "MACRO · RATES"]);
+  assert.equal(count(all.facets.instrument, "US interest rates"), 0, "grouped under Rates");
+  const top = all.aggregates.topInstruments.find((i) => i.instrument === "Rates");
+  assert.deepEqual(top && [top.kind, top.label, top.calls, top.bearish], ["macro", "MACRO · RATES", 1, 1]);
+  const videos = await queryVideos({ text: "黄金" });
+  assert.deepEqual(videos.rows[0].instruments, ["Gold", "Rates"]);
+  assert.deepEqual(videos.rows[0].instrumentLabels, ["MACRO · GOLD", "MACRO · RATES"]);
+  const index = await querySearchIndex({});
+  assert.ok(index.instruments.some((i) => i.instrument === "Rates" && i.label === "MACRO · RATES"));
+  assert.equal(index.totals.instruments, 9);
+});
+
+test("Calls carry the F60 fields and filter by stated levels and expiry window", async () => {
+  await database
+    .prepare(
+      `UPDATE claims SET levels=$1::jsonb, action_en='Buy on dips', catalysts_en=ARRAY['Earnings','Capex guide'],
+        expiry_date='2026-09-20', expiry_original='by the 20th' WHERE id='r1:c1'`,
+    )
+    .run(JSON.stringify([{ kind: "target", valueOriginal: "$150", parsed: null }]));
+  await database
+    .prepare("UPDATE claims SET expiry_date='2026-11-30', expiry_original='end of November' WHERE id='r3:c6'")
+    .run();
+  const today = "2026-09-15";
+  const withLevels = await queryCalls({ hasLevels: true, today });
+  assert.deepEqual(withLevels.rows.map((r) => r.id), ["r1:c1"]);
+  const nvda = withLevels.rows[0];
+  assert.equal(nvda.action, "Buy on dips");
+  assert.deepEqual(nvda.catalysts, ["Earnings", "Capex guide"]);
+  assert.equal(nvda.expiryDate, "2026-09-20");
+  assert.equal(nvda.expiryOriginal, "by the 20th");
+  assert.deepEqual(
+    nvda.levels.map((l) => [l.kind, l.valueOriginal, l.parsed?.low]),
+    [["target", "$150", 150]],
+    "the parse comes from the original wording",
+  );
+  assert.deepEqual((await queryCalls({ expiresWithin: 7, today })).rows.map((r) => r.id), ["r1:c1"]);
+  assert.deepEqual(
+    (await queryCalls({ expiresWithin: 90, today })).rows.map((r) => r.id).sort(),
+    ["r1:c1", "r3:c6"],
+  );
+  assert.equal((await queryCalls({ expiresWithin: 7, today: "2026-09-21" })).total, 0, "an expired call is not expiring");
+  const all = await queryCalls({ today });
+  assert.deepEqual(all.facets.levels, [{ value: "with", count: 1 }]);
+  assert.deepEqual(
+    all.facets.expiry.map((e) => [e.value, e.count]),
+    [["7", 1], ["30", 1], ["90", 2]],
+  );
+  // Each facet ignores its own filter.
+  assert.equal(count((await queryCalls({ hasLevels: true, today })).facets.levels, "with"), 1);
+  assert.equal(count((await queryCalls({ expiresWithin: 7, today })).facets.expiry, "90"), 2);
+  const plain = (await queryCalls({ text: "实际利率" })).rows[0];
+  assert.deepEqual([plain.action, plain.levels, plain.catalysts, plain.expiryDate], [null, [], [], null]);
+  await assert.rejects(() => queryCalls({ expiresWithin: 14 }));
+  // A model-chosen macro theme (prompt v9) decides the grouping.
+  assert.equal(instrumentOf(null, "chip names", "Information Technology / Semiconductors").key, "Information Technology / Semiconductors");
 });
 
 test("Instrument kind is derived from the ticker and the spoken name", () => {
