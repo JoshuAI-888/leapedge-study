@@ -548,6 +548,9 @@
     min-width: 0;
   }
   .yi-watchlist-rows {
+    /* The containing block for the tiles' screen-reader text, so it scrolls
+       with them instead of widening the page (F77: page overflow at 390). */
+    position: relative;
     display: flex;
     gap: 10px;
     overflow-x: auto;
