@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { ResearchOverview } from "../ResearchBrief.tsx";
 import { SentimentPanel } from "../SentimentPanel.tsx";
+import { Watchlist } from "../Watchlist.tsx";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "../workspace.tsx";
@@ -421,6 +422,7 @@ export function Today() {
           </section>
         </div>
         <aside className="yi-today-rail" aria-label="Research context">
+          <Watchlist />
           <SentimentPanel />
           <section className="yi-panel">
             <h2>Across creators</h2>

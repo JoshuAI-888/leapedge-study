@@ -176,7 +176,7 @@
   gap: 6px;
   white-space: nowrap;
 }
-.yi-workspace .yi-channel-status-live {
+.yi-workspace .yi-chip.yi-channel-status-live {
   background: var(--yi-selected);
   color: var(--yi-live);
 }
@@ -197,7 +197,7 @@
     animation: none;
   }
 }
-.yi-workspace .yi-channel-status-warn {
+.yi-workspace .yi-chip.yi-channel-status-warn {
   background: var(--yi-warn-bg);
   color: var(--yi-warn-ink);
   box-shadow: inset 0 0 0 1px var(--yi-warn-line);
@@ -223,7 +223,7 @@
   flex-shrink: 0;
   text-decoration: none;
 }
-.yi-workspace a.yi-upload-failed {
+.yi-workspace a.yi-chip.yi-upload-failed {
   background: var(--yi-warn-bg);
   color: var(--yi-warn-ink);
 }
@@ -362,4 +362,220 @@
 }
 .yi-drawer-catalogue summary {
   cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+   F68 — Watchlist (Today rail) and the pin toggle
+   --------------------------------------------------------------------------- */
+.yi-watchlist .yi-section-title {
+  margin-bottom: 8px;
+}
+.yi-watchlist-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--yi-line);
+  margin-bottom: 4px;
+}
+.yi-workspace .yi-watchlist-tabs button {
+  background: none;
+  color: var(--yi-muted);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  min-height: 34px;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.yi-workspace .yi-watchlist a.yi-instrument {
+  color: var(--yi-ink);
+  font-size: 13px;
+}
+.yi-watchlist-name .yi-instrument {
+  flex-shrink: 0;
+}
+.yi-watchlist-name .yi-instrument-theme,
+.yi-watchlist-name .yi-instrument-unresolved {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-watchlist .yi-instrument-hint {
+  display: none;
+}
+.yi-workspace .yi-watchlist a.yi-instrument:hover {
+  color: var(--yi-primary);
+}
+.yi-workspace .yi-watchlist-tabs button[aria-selected="true"] {
+  color: var(--yi-ink);
+  border-bottom-color: var(--yi-primary);
+}
+.yi-workspace .yi-watchlist-tabs button:focus-visible {
+  outline: 2px solid var(--yi-primary);
+  outline-offset: -2px;
+}
+.yi-watchlist-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--yi-muted);
+  background: var(--yi-page);
+  border-radius: 10px;
+  padding: 0 6px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-watchlist-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.yi-watchlist-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "name spark change"
+    "mentions flag flag";
+  align-items: center;
+  gap: 4px 8px;
+  padding: 9px 0;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-watchlist-row:first-child {
+  border-top: 0;
+}
+.yi-watchlist-name {
+  grid-area: name;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+.yi-watchlist-row .yi-sparkline {
+  grid-area: spark;
+  color: var(--yi-muted);
+}
+.yi-watchlist-change,
+.yi-watchlist-noprice {
+  grid-area: change;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.yi-watchlist-noprice {
+  grid-column: 2 / 4;
+  font-weight: 500;
+  color: var(--yi-muted);
+}
+.yi-watchlist-mentions {
+  grid-area: mentions;
+  font-size: 11px;
+  color: var(--yi-muted);
+  display: inline-flex;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-watchlist-closes {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--yi-muted);
+}
+.yi-watchlist-glyph {
+  font-weight: 600;
+}
+.yi-watchlist-bullish {
+  color: var(--yi-bullish);
+}
+.yi-watchlist-neutral {
+  color: var(--yi-neutral);
+}
+.yi-watchlist-bearish {
+  color: var(--yi-bearish);
+}
+.yi-workspace .yi-chip.yi-watchlist-flag {
+  grid-area: flag;
+  justify-self: end;
+  font-size: 10px;
+  padding: 1px 7px;
+  background: var(--yi-warn-bg);
+  color: var(--yi-warn-ink);
+  box-shadow: inset 0 0 0 1px var(--yi-warn-line);
+  cursor: help;
+}
+.yi-today-rail .yi-watchlist-empty {
+  margin: 10px 0;
+}
+.yi-today-rail .yi-watchlist-foot {
+  font-size: 11px;
+  color: var(--yi-muted);
+  margin: 8px 0 0;
+}
+.yi-workspace button.yi-pin {
+  background: none;
+  border: 0;
+  color: var(--yi-muted);
+  min-height: 28px;
+  min-width: 28px;
+  padding: 0 4px;
+  font-size: 15px;
+  line-height: 1;
+}
+.yi-workspace button.yi-pin[aria-pressed="true"] {
+  color: var(--yi-ink);
+}
+.yi-workspace button.yi-pin:hover {
+  color: var(--yi-primary);
+}
+.yi-workspace .yi-pin:focus-visible {
+  outline: 2px solid var(--yi-primary);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+/* Phone: the watchlist moves above the calls as a horizontal tile scroller. */
+@media (max-width: 720px) {
+  .yi-today-rail:has(> .yi-watchlist) {
+    display: contents;
+  }
+  .yi-today-rail > .yi-watchlist {
+    order: -1;
+    min-width: 0;
+  }
+  .yi-watchlist-rows {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: 0 -18px;
+    padding: 2px 18px 6px;
+  }
+  .yi-watchlist-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name change"
+      "spark spark"
+      "mentions mentions"
+      "flag flag";
+    align-content: start;
+    flex: 0 0 min(220px, 72%);
+    scroll-snap-align: start;
+    border: 1px solid var(--yi-line);
+    border-radius: 10px;
+    padding: 10px;
+  }
+  .yi-watchlist-row:first-child {
+    border-top: 1px solid var(--yi-line);
+  }
+  .yi-watchlist-noprice {
+    grid-column: 2;
+  }
+  .yi-workspace .yi-chip.yi-watchlist-flag {
+    justify-self: start;
+  }
 }
