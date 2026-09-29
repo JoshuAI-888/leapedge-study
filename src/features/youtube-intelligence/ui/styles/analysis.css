@@ -225,3 +225,39 @@
     padding: 12px 14px;
   }
 }
+
+/* F71 — follow prompt banner. */
+.yi-follow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 18px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  border: 1px dashed var(--yi-line);
+  border-radius: 12px;
+  background: var(--yi-page);
+}
+.yi-follow-text {
+  min-width: 0;
+  flex: 1 1 320px;
+}
+.yi-follow-text p {
+  margin: 0 0 4px;
+}
+.yi-follow-text .yi-muted {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-workspace .yi-follow-process {
+  font-size: 13px;
+  margin-top: 6px;
+}
+.yi-follow-note {
+  font-size: 12px;
+  color: var(--yi-muted);
+}
+.yi-follow-actions {
+  flex: none;
+}

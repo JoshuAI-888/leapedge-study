@@ -21,6 +21,7 @@ import { useWorkspace } from "../workspace.tsx";
 import { useUrlState } from "../url-state.ts";
 import { TradingDay } from "../TradingDay.tsx";
 import { KeyPoints, VerdictBox } from "../Verdict.tsx";
+import { FollowPrompt } from "../FollowPrompt.tsx";
 import {
   briefCostEstimate,
   clock,
@@ -372,6 +373,9 @@ export function Analysis({ id }: { id: string }) {
         </section>
       ) : (
         <VerdictBox claims={claims} />
+      )}
+      {channelId && (
+        <FollowPrompt channelId={channelId} channelTitle={channelTitle} />
       )}
       {summary ? (
         <p className="yi-an-summary">{summary.text}</p>
