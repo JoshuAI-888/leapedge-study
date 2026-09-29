@@ -1560,7 +1560,7 @@
       "lane": "sources-ui",
       "title": "Channels list as a sortable table with activity, lean and status; add-channels drawer",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F45",
         "F56",
@@ -1568,13 +1568,16 @@
       ],
       "files": [
         "src/features/youtube-intelligence/ui/pages/Channels.tsx",
-        "src/server/youtube-intelligence/channel-stats.ts"
+        "src/server/youtube-intelligence/channel-stats.ts",
+        "src/features/youtube-intelligence/channel-list.ts",
+        "src/features/youtube-intelligence/metrics/channel-columns.ts"
       ],
       "tests": [
         "tests/channel-stats.test.ts"
       ],
-      "note": "Gap 11. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F67). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Followed channels first as a registry-backed sortable table (status, last video, 7-day count, top instrument, lean, record), sort presets, filter, cards on phone, Add channels drawer holding Follow/Discover/catalogue/cost preview, status chip replacing the pseudo-button, silent-channel flag. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F67).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F68",
@@ -1582,19 +1585,23 @@
       "lane": "today-ui",
       "title": "Watchlist: pinned and mentioned-today tickers with sparkline, 1-day change and divergence flag",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F25",
         "F57"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/Watchlist.tsx"
+        "src/features/youtube-intelligence/ui/Watchlist.tsx",
+        "src/features/youtube-intelligence/ui/PinButton.tsx",
+        "src/features/youtube-intelligence/watchlist.ts",
+        "src/server/youtube-intelligence/watchlist.ts"
       ],
       "tests": [
         "tests/watchlist.test.ts"
       ],
-      "note": "Gap 8. Existing price data only. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F68). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Today rail watchlist with Pinned and Mentioned today tabs, 20-session sparkline, signed 1-day change in ink, mention sentiment, close date, creators-vs-price divergence flag, No price state, team PinButton, phone tile scroller. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F68).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F69",
@@ -1602,19 +1609,22 @@
       "lane": "today-ui",
       "title": "24-hour trending window on the sentiment panel, session-aligned, as view state",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F38",
         "F58"
       ],
       "files": [
+        "src/features/youtube-intelligence/metrics/sentiment-window.ts",
+        "src/features/youtube-intelligence/metrics/sentiment-shift.ts",
         "src/features/youtube-intelligence/ui/SentimentPanel.tsx"
       ],
       "tests": [
         "tests/sentiment-window.test.ts"
       ],
-      "note": "Gap 15. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F69). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "24h/7d/14d/30d segments as URL view state; 24h runs from the previous US close (holiday and DST aware) against the session before; rows with split bar, creators and change; window-named empty state. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F69).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F70",
@@ -1622,18 +1632,20 @@
       "lane": "today-ui",
       "title": "Per-browser unread markers and new-since-last-visit group",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F44"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/unread.ts"
+        "src/features/youtube-intelligence/ui/unread.ts",
+        "src/features/youtube-intelligence/ui/UnreadDot.tsx"
       ],
       "tests": [
         "tests/unread.test.ts"
       ],
-      "note": "Gap 18. Shared passcode: labelled as tracked on this browser. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F70). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Per-browser seen ids and last visit (try/catch; blocked storage shows nothing), New since group with Mark all as seen on Today, N new beside Today in the sidebar with Tracked on this browser. Also Today's optional Levels column (F60). Unread dots on channel pages and Search videos wired with those pages. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F70).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F71",
