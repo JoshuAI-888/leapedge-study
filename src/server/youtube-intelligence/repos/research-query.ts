@@ -1,11 +1,17 @@
 import { z } from "zod";
-import { database, iso } from "../database.ts";
+import { database, iso, json } from "../database.ts";
+import { parseLevel } from "../../../features/youtube-intelligence/level-parse.ts";
+import type { StoredLevel } from "./claims.ts";
 import {
   Claim,
   SENTIMENTS,
   type SentimentData,
 } from "../../../features/youtube-intelligence/contracts.ts";
 import { STANCE_SENTIMENT } from "../../../features/youtube-intelligence/sentiment.ts";
+import {
+  describeInstrument,
+  type InstrumentKind as VocabularyKind,
+} from "../../../features/youtube-intelligence/instrument-kind.ts";
 /**
  * F56: paged, server-side queries over calls (the `claims` table) and videos
  * (runs), so a surface never has to read the capped workspace snapshot to
@@ -40,34 +46,69 @@ export type InstrumentKind = (typeof INSTRUMENT_KINDS)[number];
 export const MAX_PAGE = 100;
 
 // ---------------------------------------------------------------------------
-// Instrument kind. The extraction lane (F59) owns the fixed vocabulary in
-// `features/youtube-intelligence/instrument-kind.ts`; until that lands the kind
-// is derived here from what a stored call already carries. Point
-// `instrumentKind` at that module when it exists: every query goes through it.
+// Instrument kind and grouping key. The fixed vocabulary lives in
+// `features/youtube-intelligence/instrument-kind.ts` (F59); every query goes
+// through `instrumentOf`, so a call is classified and grouped exactly as its
+// instrument label shows it. F59 names listed equities "equity"; this API has
+// always called them "stock", so the value is mapped rather than renamed.
+//
+// The grouping key is the vocabulary's canonical label: "US interest rates"
+// and "the Fed" are both "Rates", a sector sub-theme is "Information
+// Technology / Semiconductors". A name the vocabulary cannot resolve keeps its
+// ticker or spoken name, so nothing is merged by guesswork.
 // ---------------------------------------------------------------------------
-const CRYPTO_TICKER =
-  /^(BTC|ETH|SOL|XRP|DOGE|ADA|BNB|AVAX|DOT|LINK|LTC|TRX|TON|SHIB|MATIC|USDT|USDC)(-?USDT?|-?USD|-?USDC)?$/;
-const CRYPTO_NAME =
-  /\b(bitcoin|ethereum|ether|solana|crypto(currenc(y|ies))?|altcoins?|dogecoin|stablecoins?)\b/i;
-const MACRO_TICKER = /(=F|=X)$|^\^(TNX|TYX|FVX|IRX|VIX|DXY)$|^DX-Y\.NYB$/;
-const MACRO_NAME =
-  /\b(rates?|yields?|treasur(y|ies)|bonds?|fed|federal reserve|fomc|inflation|cpi|pce|deflation|usd|dollar|dxy|currenc(y|ies)|fx|oil|crude|brent|wti|gold|silver|commodit(y|ies)|growth|gdp|recession|economy|liquidity|credit|spreads?|jobs|labou?r market|unemployment)\b/i;
-const SECTOR_NAME =
-  /\b(sector|energy|materials|industrials|consumer discretionary|consumer staples|health ?care|financials|banks|information technology|tech(nology)? stocks|communication services|utilities|real estate|reits?|semiconductors?|semis|biotech)\b/i;
+const QUERY_KIND: Record<VocabularyKind, InstrumentKind> = {
+  equity: "stock",
+  crypto: "crypto",
+  macro: "macro",
+  sector: "sector",
+  unresolved: "unresolved",
+};
+/** The query API's kind for one of F59's kinds. */
+export function queryKind(kind: VocabularyKind): InstrumentKind {
+  return QUERY_KIND[kind];
+}
+export type InstrumentIdentity = {
+  /** The grouping key: ticker, crypto symbol or vocabulary label; null when nothing was named. */
+  key: string | null;
+  /** What the instrument label shows ("NVDA", "MACRO · RATES"). */
+  label: string | null;
+  kind: InstrumentKind;
+};
+const identities = new Map<string, InstrumentIdentity>();
+/**
+ * Classify one stored instrument: its ticker, spoken name and the macro theme
+ * the model chose (F60, prompt v9 onwards). Memoised, since the vocabulary
+ * match is not free.
+ */
+export function instrumentOf(
+  ticker: string | null,
+  instrument: string | null,
+  macroTheme: string | null = null,
+): InstrumentIdentity {
+  const cacheKey = pairKey(ticker, instrument, macroTheme);
+  const known = identities.get(cacheKey);
+  if (known) return known;
+  const d = describeInstrument({ ticker, instrument, macroTheme });
+  const raw = ticker?.trim() || instrument?.trim() || null;
+  const identity: InstrumentIdentity = {
+    key: d.canonical ?? raw,
+    label: d.kind === "unresolved" ? raw : d.text,
+    kind: QUERY_KIND[d.kind],
+  };
+  if (identities.size > 20_000) identities.clear();
+  identities.set(cacheKey, identity);
+  return identity;
+}
 export function instrumentKind(
   ticker: string | null,
   instrument: string | null,
 ): InstrumentKind {
-  const symbol = ticker?.trim().toUpperCase() || null;
-  const name = instrument?.trim() || "";
-  if ((symbol && CRYPTO_TICKER.test(symbol)) || CRYPTO_NAME.test(name))
-    return "crypto";
-  if (symbol && MACRO_TICKER.test(symbol)) return "macro";
-  if (symbol) return "stock";
-  if (/\bsector\b/i.test(name)) return "sector";
-  if (MACRO_NAME.test(name)) return "macro";
-  if (SECTOR_NAME.test(name)) return "sector";
-  return "unresolved";
+  return instrumentOf(ticker, instrument).kind;
+}
+/** The identity of a row that selected ticker, instrument and macro_theme. */
+function identityOf(r: Record<string, unknown>) {
+  return instrumentOf(str(r.ticker), str(r.instrument), str(r.macro_theme));
 }
 
 // ---------------------------------------------------------------------------
@@ -94,10 +135,17 @@ const FILTER_SHAPE = {
   /** Case-insensitive substring over title, thesis, instrument, quote and translation. */
   text: z.string().max(200).optional(),
   pinnedOnly: z.boolean().default(false),
+  /** Only calls that state at least one price level (F60). */
+  hasLevels: z.boolean().default(false),
+  /** Only calls whose stated expiry falls from `today` to `today` + N days, inclusive (F60). */
+  expiresWithin: z.union([z.literal(7), z.literal(30), z.literal(90)]).optional(),
+  /** The date expiry windows count from; the server's UTC date when absent. */
+  today: z.iso.date().optional(),
   canonicalOnly: z.boolean().default(true),
 };
 type FilterInput = z.output<z.ZodObject<typeof FILTER_SHAPE>>;
-function withFilters<S extends Record<string, z.ZodType>>(extra: S) {
+/** The shared filter fields plus `extra`, strict, with the window check. */
+export function withFilters<S extends Record<string, z.ZodType>>(extra: S) {
   return z.preprocess(
     (v) => v ?? {},
     z
@@ -182,10 +230,13 @@ const CANONICAL = `SELECT DISTINCT ON (r.video_id) r.id
 const PINNED = `SELECT upper(id) FROM yi_documents WHERE kind='watchlist' AND (payload::jsonb->>'enabled')='true'`;
 const KEY = (a: string) => `COALESCE(${a}.ticker,${a}.instrument)`;
 const AT = (a: string) => `COALESCE(${a}.published_at,${a}.created_at)`;
+/** The stored instrument as one text value: ticker, spoken name, macro theme. */
 const PAIR = (a: string) =>
-  `(COALESCE(${a}.ticker,'') || chr(31) || COALESCE(${a}.instrument,''))`;
-const pairKey = (ticker: string | null, instrument: string | null) =>
-  `${ticker ?? ""}\u001f${instrument ?? ""}`;
+  `(COALESCE(${a}.ticker,'') || chr(31) || COALESCE(${a}.instrument,'') || chr(31) || COALESCE(${a}.macro_theme,''))`;
+const pairKey = (ticker: string | null, instrument: string | null, theme: string | null) =>
+  `${ticker ?? ""}\u001f${instrument ?? ""}\u001f${theme ?? ""}`;
+/** The columns every instrument grouping selects. */
+const IDENTITY = (a: string) => `${a}.ticker,${a}.instrument,${a}.macro_theme`;
 
 type Facet =
   | "instrument"
@@ -194,7 +245,15 @@ type Facet =
   | "stance"
   | "sentiment"
   | "conviction"
-  | "trust";
+  | "trust"
+  | "levels"
+  | "expiry";
+export const EXPIRY_WINDOWS = [7, 30, 90] as const;
+const utcToday = () => new Date().toISOString().slice(0, 10);
+/** Stated expiry within `days` of `today`, both ends inclusive. */
+function expirySql(a: string, today: string, days: number) {
+  return `(${a}.expiry_date >= '${today}'::date AND ${a}.expiry_date <= '${today}'::date + ${days})`;
+}
 function params() {
   const values: unknown[] = [];
   return {
@@ -210,6 +269,8 @@ type Resolved = FilterInput & {
   text?: string;
   /** Instrument pair keys the kinds filter admits, resolved once per request. */
   kindPairs?: string[];
+  /** Instrument pair keys the instruments filter admits. */
+  instrumentPairs?: string[];
 };
 /**
  * The conditions a call must meet, over the claims alias `a`. `titleSql` is the
@@ -225,10 +286,8 @@ function callConditions(
 ) {
   const where: string[] = [];
   if (f.canonicalOnly) where.push(`${a}.run_id IN (SELECT id FROM canon)`);
-  if (f.instruments?.length && o.skip !== "instrument")
-    where.push(
-      `upper(${KEY(a)}) = ANY(${p.add(f.instruments.map((i) => i.toUpperCase()))}::text[])`,
-    );
+  if (f.instrumentPairs && o.skip !== "instrument")
+    where.push(`${PAIR(a)} = ANY(${p.add(f.instrumentPairs)}::text[])`);
   if (f.kindPairs && o.skip !== "kind")
     where.push(`${PAIR(a)} = ANY(${p.add(f.kindPairs)}::text[])`);
   if (f.channels?.length && o.skip !== "channel" && !o.callOnly)
@@ -242,6 +301,10 @@ function callConditions(
   if (f.minTrust && f.minTrust !== "L0" && o.skip !== "trust")
     where.push(`${a}.trust_level >= ${p.add(f.minTrust)}`);
   if (f.pinnedOnly) where.push(`upper(${a}.ticker) IN (${PINNED})`);
+  if (f.hasLevels && o.skip !== "levels")
+    where.push(`jsonb_array_length(${a}.levels) > 0`);
+  if (f.expiresWithin && o.skip !== "expiry")
+    where.push(expirySql(a, f.today ?? utcToday(), f.expiresWithin));
   if (!o.callOnly) {
     if (f.from) where.push(`${AT(a)} >= ${p.add(lower(f.from))}::timestamptz`);
     if (f.to) where.push(`${AT(a)} < ${p.add(upper(f.to))}::timestamptz`);
@@ -265,22 +328,50 @@ function withCanon(f: Resolved, sql: string) {
 async function rows(sql: string, values: unknown[]) {
   return (await database.prepare(sql).all(...values)) as Record<string, unknown>[];
 }
-/** Resolve the kinds filter to the (ticker, instrument) pairs it admits. */
+/**
+ * Resolve the kinds and instruments filters to the (ticker, instrument) pairs
+ * they admit. An instrument matches by its grouping key ("Rates") or by the
+ * ticker or spoken name it was stored with ("US interest rates"), ignoring case.
+ */
 async function resolve(input: FilterInput): Promise<Resolved> {
   const text = input.text?.trim() || undefined;
   const f: Resolved = { ...input, text };
+  if (!input.kinds?.length && !input.instruments?.length) return f;
+  const pairs = (
+    await rows("SELECT DISTINCT ticker,instrument,macro_theme FROM claims", [])
+  ).map((r) => [str(r.ticker), str(r.instrument), str(r.macro_theme)] as const);
   if (input.kinds?.length) {
     const kinds = new Set(input.kinds);
-    const pairs = await rows(
-      "SELECT DISTINCT ticker,instrument FROM claims",
-      [],
-    );
     f.kindPairs = pairs
-      .map((r) => [str(r.ticker), str(r.instrument)] as const)
-      .filter(([t, i]) => kinds.has(instrumentKind(t, i)))
-      .map(([t, i]) => pairKey(t, i));
+      .filter(([t, i, m]) => kinds.has(instrumentOf(t, i, m).kind))
+      .map(([t, i, m]) => pairKey(t, i, m));
+  }
+  if (input.instruments?.length) {
+    const wanted = new Set(input.instruments.map((i) => i.toUpperCase()));
+    f.instrumentPairs = pairs
+      .filter(([t, i, m]) => {
+        const key = instrumentOf(t, i, m).key;
+        const raw = t ?? i;
+        return (
+          (key !== null && wanted.has(key.toUpperCase())) ||
+          (raw !== null && wanted.has(raw.toUpperCase()))
+        );
+      })
+      .map(([t, i, m]) => pairKey(t, i, m));
   }
   return f;
+}
+/** Fold rows grouped by (ticker, instrument) into their grouping keys. */
+function byInstrument<R extends Record<string, unknown>>(found: R[]) {
+  const groups = new Map<string, { identity: InstrumentIdentity; rows: R[] }>();
+  for (const r of found) {
+    const identity = identityOf(r);
+    if (identity.key === null) continue;
+    const group = groups.get(identity.key) ?? { identity, rows: [] };
+    group.rows.push(r);
+    groups.set(identity.key, group);
+  }
+  return groups;
 }
 const str = (v: unknown) => (v === null || v === undefined ? null : String(v));
 const num = (v: unknown) => Number(v ?? 0);
@@ -288,7 +379,13 @@ const num = (v: unknown) => Number(v ?? 0);
 // ---------------------------------------------------------------------------
 // Calls
 // ---------------------------------------------------------------------------
-export type FacetValue = { value: string; count: number; label?: string | null };
+export type FacetValue = {
+  value: string;
+  count: number;
+  label?: string | null;
+  /** Instrument facet only: the kind of the grouped instrument. */
+  kind?: InstrumentKind;
+};
 export type CallRow = {
   id: string;
   runId: string;
@@ -298,7 +395,10 @@ export type CallRow = {
   channelTitle: string | null;
   instrument: string | null;
   ticker: string | null;
+  /** The grouping key: ticker, crypto symbol or vocabulary label ("Rates"). */
   instrumentKey: string | null;
+  /** What the instrument label shows ("NVDA", "MACRO · RATES"). */
+  instrumentLabel: string | null;
   kind: InstrumentKind;
   stance: string;
   sentiment: SentimentData;
@@ -310,6 +410,13 @@ export type CallRow = {
   risks: string[];
   publishedAt: string | null;
   createdAt: string | null;
+  /** Call fields v2 (F60); empty or null on calls extracted before them. */
+  action: string | null;
+  levels: StoredLevel[];
+  catalysts: string[];
+  expiryDate: string | null;
+  expiryOriginal: string | null;
+  macroTheme: string | null;
   evidence: {
     ordinal: number;
     startSeconds: number | null;
@@ -320,7 +427,9 @@ export type CallRow = {
 };
 type SentimentSplit = Record<SentimentData, { calls: number; creators: number }>;
 export type InstrumentAggregate = {
+  /** The grouping key. */
   instrument: string;
+  label: string | null;
   kind: InstrumentKind;
   calls: number;
   creators: number;
@@ -343,6 +452,20 @@ const TOP = 10;
 function strings(value: unknown): string[] {
   return Array.isArray(value) ? value.map(String) : [];
 }
+const StoredLevels = z.array(
+  z.object({ kind: z.string().min(1), valueOriginal: z.string() }).loose(),
+);
+/** Stored levels, re-parsed from the original wording as repos/claims.ts does. */
+function storedLevels(value: unknown): StoredLevel[] {
+  const parsed = StoredLevels.safeParse(json(value) ?? []);
+  return parsed.success
+    ? parsed.data.map((l) => ({
+        kind: l.kind,
+        valueOriginal: l.valueOriginal,
+        parsed: parseLevel(l.valueOriginal),
+      }))
+    : [];
+}
 async function channelTitles(ids: string[]) {
   if (!ids.length) return new Map<string, string | null>();
   const found = await rows("SELECT id,title FROM channels WHERE id = ANY($1::text[])", [ids]);
@@ -360,11 +483,37 @@ function open(counts: Map<string, number>, selected: string[] = []): FacetValue[
       result.push({ value, count: 0 });
   return result.sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
 }
-async function facetCounts(f: Resolved, facet: Facet) {
+async function facetCounts(
+  f: Resolved,
+  facet: Facet,
+  labels?: Map<string, InstrumentIdentity>,
+) {
   const p = params();
   const where = and(callConditions(f, p, "c", { skip: facet, titleSql: "r.title" }));
-  const group: Record<Exclude<Facet, "kind">, string> = {
-    instrument: KEY("c"),
+  if (facet === "levels" || facet === "expiry") {
+    // Counts for each option of a yes/window filter, not a GROUP BY.
+    const today = f.today ?? utcToday();
+    const columns =
+      facet === "levels"
+        ? `count(*) FILTER (WHERE jsonb_array_length(c.levels) > 0) AS "with"`
+        : EXPIRY_WINDOWS.map((d) => `count(*) FILTER (WHERE ${expirySql("c", today, d)}) AS "${d}"`).join(",");
+    const [found] = await rows(withCanon(f, `SELECT ${columns} ${CALLS_FROM} WHERE ${where}`), p.values);
+    return new Map(Object.entries(found ?? {}).map(([k, v]) => [k, num(v)]));
+  }
+  if (facet === "instrument") {
+    // Grouped by pair and folded here, so every spoken form of a theme counts once.
+    const found = await rows(
+      withCanon(f, `SELECT ${IDENTITY("c")},count(*) AS n ${CALLS_FROM} WHERE ${where} GROUP BY 1,2,3`),
+      p.values,
+    );
+    const counts = new Map<string, number>();
+    for (const [key, group] of byInstrument(found)) {
+      counts.set(key, group.rows.reduce((n, r) => n + num(r.n), 0));
+      labels?.set(key, group.identity);
+    }
+    return counts;
+  }
+  const group: Record<Exclude<Facet, "kind" | "instrument" | "levels" | "expiry">, string> = {
     channel: "c.channel_id",
     stance: "c.stance",
     sentiment: sentimentSql("c.stance"),
@@ -375,12 +524,12 @@ async function facetCounts(f: Resolved, facet: Facet) {
     // A facet over the kind has to see the kind filter's own values, so the
     // pairs are grouped here and classified in one place.
     const found = await rows(
-      withCanon(f, `SELECT c.ticker,c.instrument,count(*) AS n ${CALLS_FROM} WHERE ${where} GROUP BY 1,2`),
+      withCanon(f, `SELECT ${IDENTITY("c")},count(*) AS n ${CALLS_FROM} WHERE ${where} GROUP BY 1,2,3`),
       p.values,
     );
     const counts = new Map<string, number>();
     for (const r of found) {
-      const kind = instrumentKind(str(r.ticker), str(r.instrument));
+      const kind = identityOf(r).kind;
       counts.set(kind, (counts.get(kind) ?? 0) + num(r.n));
     }
     return counts;
@@ -393,9 +542,8 @@ async function facetCounts(f: Resolved, facet: Facet) {
     found.filter((r) => r.value !== null).map((r) => [String(r.value), num(r.n)]),
   );
 }
-export async function queryCalls(input: unknown) {
-  const q = CallsQuery.parse(input);
-  const f = await resolve(q);
+/** One page of calls, mapped to rows with their evidence spans. */
+async function callPage(f: Resolved, q: z.output<typeof CallsQuery>) {
   const p = params();
   const where = and(callConditions(f, p, "c", { titleSql: "r.title" }));
   const order =
@@ -422,64 +570,105 @@ export async function queryCalls(input: unknown) {
         [page.map((r) => String(r.id))],
       )
     : [];
-  const facetNames: Facet[] = ["instrument", "kind", "channel", "stance", "sentiment", "conviction", "trust"];
+  return page.map((r): CallRow => {
+    const ticker = str(r.ticker),
+      instrument = str(r.instrument);
+    const identity = identityOf(r);
+    return {
+      id: String(r.id),
+      runId: String(r.run_id),
+      videoId: String(r.video_id),
+      videoTitle: str(r.video_title),
+      channelId: str(r.channel_id),
+      channelTitle: str(r.channel_title),
+      instrument,
+      ticker,
+      instrumentKey: identity.key,
+      instrumentLabel: identity.label,
+      kind: identity.kind,
+      stance: String(r.stance),
+      sentiment: (STANCE_SENTIMENT[r.stance as keyof typeof STANCE_SENTIMENT] ?? "neutral") as SentimentData,
+      conviction: String(r.creator_conviction),
+      trustLevel: String(r.trust_level),
+      thesis: String(r.thesis_en),
+      horizon: str(r.horizon_en),
+      conditions: strings(r.conditions_en),
+      risks: strings(r.risks_en),
+      publishedAt: iso(r.published_at),
+      createdAt: iso(r.created_at),
+      action: str(r.action_en),
+      levels: storedLevels(r.levels),
+      catalysts: strings(r.catalysts_en),
+      expiryDate: r.expiry_date == null ? null : String(iso(r.expiry_date) ?? r.expiry_date).slice(0, 10),
+      expiryOriginal: str(r.expiry_original),
+      macroTheme: str(r.macro_theme),
+      evidence: spans
+        .filter((s) => s.claim_id === r.id)
+        .map((s) => ({
+          ordinal: num(s.ordinal),
+          startSeconds: s.start_seconds === null ? null : num(s.start_seconds),
+          endSeconds: s.end_seconds === null ? null : num(s.end_seconds),
+          textOriginal: String(s.text_original),
+          translationEn: str(s.translation_en),
+        })),
+    };
+  });
+}
+/**
+ * Rows and the exact total only, without facets or aggregates: what a caller
+ * that walks every page (Export, F63) needs, at a fraction of the cost.
+ */
+export async function queryCallsPage(input: unknown) {
+  const q = CallsQuery.parse(input);
+  const f = await resolve(q);
+  const p = params();
+  const where = and(callConditions(f, p, "c", { titleSql: "r.title" }));
+  const [page, counted] = await Promise.all([
+    callPage(f, q),
+    rows(withCanon(f, `SELECT count(*) AS n ${CALLS_FROM} WHERE ${where}`), p.values),
+  ]);
+  const total = num(counted[0]?.n);
+  return {
+    rows: page,
+    total,
+    nextOffset: q.offset + page.length < total ? q.offset + page.length : null,
+  };
+}
+export async function queryCalls(input: unknown) {
+  const q = CallsQuery.parse(input);
+  const f = await resolve(q);
+  const page = await callPage(f, q);
+  const facetNames: Facet[] = ["instrument", "kind", "channel", "stance", "sentiment", "conviction", "trust", "levels", "expiry"];
+  const instrumentLabels = new Map<string, InstrumentIdentity>();
   const [aggregates, ...facetMaps] = await Promise.all([
     callAggregates(f),
-    ...facetNames.map((facet) => facetCounts(f, facet)),
+    ...facetNames.map((facet) => facetCounts(f, facet, instrumentLabels)),
   ]);
   const facet = Object.fromEntries(facetNames.map((n, i) => [n, facetMaps[i]])) as Record<Facet, Map<string, number>>;
   const channelFacet = open(facet.channel, q.channels);
   const titles = await channelTitles(channelFacet.map((c) => c.value));
   const total = aggregates.calls;
   return {
-    rows: page.map((r): CallRow => {
-      const ticker = str(r.ticker),
-        instrument = str(r.instrument);
-      return {
-        id: String(r.id),
-        runId: String(r.run_id),
-        videoId: String(r.video_id),
-        videoTitle: str(r.video_title),
-        channelId: str(r.channel_id),
-        channelTitle: str(r.channel_title),
-        instrument,
-        ticker,
-        instrumentKey: ticker ?? instrument,
-        kind: instrumentKind(ticker, instrument),
-        stance: String(r.stance),
-        sentiment: (STANCE_SENTIMENT[r.stance as keyof typeof STANCE_SENTIMENT] ?? "neutral") as SentimentData,
-        conviction: String(r.creator_conviction),
-        trustLevel: String(r.trust_level),
-        thesis: String(r.thesis_en),
-        horizon: str(r.horizon_en),
-        conditions: strings(r.conditions_en),
-        risks: strings(r.risks_en),
-        publishedAt: iso(r.published_at),
-        createdAt: iso(r.created_at),
-        evidence: spans
-          .filter((s) => s.claim_id === r.id)
-          .map((s) => ({
-            ordinal: num(s.ordinal),
-            startSeconds: s.start_seconds === null ? null : num(s.start_seconds),
-            endSeconds: s.end_seconds === null ? null : num(s.end_seconds),
-            textOriginal: String(s.text_original),
-            translationEn: str(s.translation_en),
-          })),
-      };
-    }),
+    rows: page,
     total,
     limit: q.limit,
     offset: q.offset,
     nextOffset: q.offset + page.length < total ? q.offset + page.length : null,
     sort: q.sort,
     facets: {
-      instrument: open(facet.instrument, q.instruments),
+      instrument: open(facet.instrument, q.instruments).map((v) => ({
+        ...v,
+        label: instrumentLabels.get(v.value)?.label ?? null,
+        kind: instrumentLabels.get(v.value)?.kind,
+      })),
       kind: closed(INSTRUMENT_KINDS, facet.kind),
       channel: channelFacet.map((c) => ({ ...c, label: titles.get(c.value) ?? null })),
       stance: closed(STANCES, facet.stance),
       sentiment: closed(SENTIMENTS, facet.sentiment),
       conviction: closed(CONVICTIONS, facet.conviction),
       trust: closed(TRUST_LEVELS, facet.trust),
+      levels: closed(["with"], facet.levels),
+      expiry: closed(EXPIRY_WINDOWS.map(String), facet.expiry),
     },
     aggregates,
   };
@@ -493,10 +682,9 @@ async function callAggregates(f: Resolved) {
     run(`SELECT count(*) AS calls,count(DISTINCT c.video_id) AS videos,count(DISTINCT c.channel_id) AS creators ${CALLS_FROM} WHERE ${where}`),
     run(`SELECT ${sentimentSql("c.stance")} AS sentiment,count(*) AS calls,count(DISTINCT c.channel_id) AS creators ${CALLS_FROM} WHERE ${where} GROUP BY 1`),
     run(`SELECT c.creator_conviction AS conviction,count(*) AS calls ${CALLS_FROM} WHERE ${where} GROUP BY 1`),
-    run(`SELECT ${KEY("c")} AS instrument,max(c.ticker) AS ticker,max(c.instrument) AS spoken,
-        count(*) AS calls,count(DISTINCT c.channel_id) AS creators,${SPLIT("c")}
+    run(`SELECT ${IDENTITY("c")},c.channel_id,${sentimentSql("c.stance")} AS sentiment,count(*) AS calls
         ${CALLS_FROM} WHERE ${where} AND ${KEY("c")} IS NOT NULL
-        GROUP BY 1 ORDER BY calls DESC,1 LIMIT ${TOP}`),
+        GROUP BY 1,2,3,4,5`),
     run(`SELECT c.channel_id,max(ch.title) AS title,count(*) AS calls,${SPLIT("c")}
         ${CALLS_FROM} LEFT JOIN channels ch ON ch.id=c.channel_id
         WHERE ${where} AND c.channel_id IS NOT NULL
@@ -517,17 +705,25 @@ async function callAggregates(f: Resolved) {
     creators: num(totals[0]?.creators),
     sentiment,
     conviction,
-    topInstruments: instruments.map(
-      (r): InstrumentAggregate => ({
-        instrument: String(r.instrument),
-        kind: instrumentKind(str(r.ticker), str(r.spoken)),
-        calls: num(r.calls),
-        creators: num(r.creators),
-        bullish: num(r.bullish),
-        neutral: num(r.neutral),
-        bearish: num(r.bearish),
-      }),
-    ),
+    topInstruments: [...byInstrument(instruments)]
+      .map(([key, { identity, rows: found }]): InstrumentAggregate => {
+        const split = { bullish: 0, neutral: 0, bearish: 0 };
+        const creators = new Set<string>();
+        for (const r of found) {
+          split[r.sentiment as SentimentData] += num(r.calls);
+          if (r.channel_id !== null) creators.add(String(r.channel_id));
+        }
+        return {
+          instrument: key,
+          label: identity.label,
+          kind: identity.kind,
+          calls: split.bullish + split.neutral + split.bearish,
+          creators: creators.size,
+          ...split,
+        };
+      })
+      .sort((a, b) => b.calls - a.calls || (a.instrument < b.instrument ? -1 : a.instrument > b.instrument ? 1 : 0))
+      .slice(0, TOP),
     topChannels: channels.map(
       (r): ChannelAggregate => ({
         channelId: String(r.channel_id),
@@ -583,7 +779,10 @@ export type VideoRow = {
   ideas: number;
   matchingCalls: number;
   sentiment: Record<SentimentData, number>;
+  /** Grouping keys, most-called first. */
   instruments: string[];
+  /** What each instrument's label shows, in the same order. */
+  instrumentLabels: string[];
 };
 export async function queryVideos(input: unknown) {
   const q = VideosQuery.parse(input);
@@ -635,8 +834,8 @@ export async function queryVideos(input: unknown) {
   const ids = page.map((r) => String(r.id));
   const verdicts = ids.length
     ? await rows(
-        `SELECT run_id,${KEY("x")} AS instrument,${sentimentSql("x.stance")} AS sentiment,count(*) AS n
-         FROM claims x WHERE x.run_id = ANY($1::text[]) GROUP BY 1,2,3`,
+        `SELECT run_id,${IDENTITY("x")},${sentimentSql("x.stance")} AS sentiment,count(*) AS n
+         FROM claims x WHERE x.run_id = ANY($1::text[]) GROUP BY 1,2,3,4,5`,
         [ids],
       )
     : [];
@@ -645,12 +844,14 @@ export async function queryVideos(input: unknown) {
     rows: page.map((r): VideoRow => {
       const mine = verdicts.filter((v) => v.run_id === r.id);
       const sentiment = { bullish: 0, neutral: 0, bearish: 0 };
-      const byInstrument = new Map<string, number>();
-      for (const v of mine) {
-        sentiment[v.sentiment as SentimentData] += num(v.n);
-        if (v.instrument !== null)
-          byInstrument.set(String(v.instrument), (byInstrument.get(String(v.instrument)) ?? 0) + num(v.n));
-      }
+      for (const v of mine) sentiment[v.sentiment as SentimentData] += num(v.n);
+      const instruments = [...byInstrument(mine)]
+        .map(([key, g]) => ({
+          key,
+          label: g.identity.label ?? key,
+          n: g.rows.reduce((n, v) => n + num(v.n), 0),
+        }))
+        .sort((a, b) => b.n - a.n || a.key.localeCompare(b.key));
       return {
         runId: String(r.id),
         videoId: String(r.video_id),
@@ -663,9 +864,8 @@ export async function queryVideos(input: unknown) {
         ideas: num(r.ideas),
         matchingCalls: num(r.matching),
         sentiment,
-        instruments: [...byInstrument]
-          .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-          .map(([i]) => i),
+        instruments: instruments.map((i) => i.key),
+        instrumentLabels: instruments.map((i) => i.label),
       };
     }),
     total,
@@ -744,7 +944,7 @@ export async function querySeries(input: unknown) {
     rows(
       withCanon(
         f,
-        `SELECT c.id,c.run_id,${KEY("c")} AS instrument,c.stance,c.creator_conviction,c.trust_level,c.thesis_en,c.channel_id,
+        `SELECT c.id,c.run_id,${IDENTITY("c")},c.stance,c.creator_conviction,c.trust_level,c.thesis_en,c.channel_id,
           ch.title AS channel_title,to_char(${AT("c")} AT TIME ZONE 'UTC','YYYY-MM-DD') AS day,${AT("c")} AS at
          ${CALLS_FROM} LEFT JOIN channels ch ON ch.id=c.channel_id
          WHERE ${where} ORDER BY ${AT("c")} DESC,c.id DESC LIMIT ${cap}`,
@@ -794,7 +994,7 @@ export async function querySeries(input: unknown) {
           id: String(r.id),
           runId: String(r.run_id),
           date: String(r.day),
-          instrument: str(r.instrument),
+          instrument: identityOf(r).key,
           stance: String(r.stance),
           sentiment: (STANCE_SENTIMENT[r.stance as keyof typeof STANCE_SENTIMENT] ?? "neutral") as SentimentData,
           conviction: String(r.creator_conviction),
@@ -819,17 +1019,13 @@ export async function querySeries(input: unknown) {
  */
 export async function querySearchIndex(input: unknown) {
   const q = SearchIndexQuery.parse(input);
-  const f: Resolved = { pinnedOnly: false, canonicalOnly: true };
+  const f: Resolved = { pinnedOnly: false, hasLevels: false, canonicalOnly: true };
   const canon = `WITH canon AS MATERIALIZED (${CANONICAL})`;
-  const [instruments, instrumentTotal, calls, channels, videos, videoTotal] = await Promise.all([
+  const [pairs, calls, channels, videos, videoTotal] = await Promise.all([
     rows(
-      `${canon} SELECT ${KEY("c")} AS instrument,max(c.ticker) AS ticker,max(c.instrument) AS spoken,count(*) AS calls
+      `${canon} SELECT ${IDENTITY("c")},count(*) AS calls
        FROM claims c WHERE c.run_id IN (SELECT id FROM canon) AND ${KEY("c")} IS NOT NULL
-       GROUP BY 1 ORDER BY calls DESC,1 LIMIT $1`,
-      [q.instruments],
-    ),
-    rows(
-      `${canon} SELECT count(DISTINCT ${KEY("c")}) AS n FROM claims c WHERE c.run_id IN (SELECT id FROM canon)`,
+       GROUP BY 1,2,3`,
       [],
     ),
     rows(
@@ -849,12 +1045,16 @@ export async function querySearchIndex(input: unknown) {
   const byChannel = new Map(calls.map((r) => [String(r.channel_id), r]));
   const known = new Map(channels.map((r) => [String(r.id), r]));
   const channelIds = [...new Set([...known.keys(), ...byChannel.keys()])];
+  const instruments = [...byInstrument(pairs)]
+    .map(([key, g]) => ({
+      instrument: key,
+      label: g.identity.label,
+      kind: g.identity.kind,
+      calls: g.rows.reduce((n, r) => n + num(r.calls), 0),
+    }))
+    .sort((a, b) => b.calls - a.calls || (a.instrument < b.instrument ? -1 : a.instrument > b.instrument ? 1 : 0));
   return {
-    instruments: instruments.map((r) => ({
-      instrument: String(r.instrument),
-      kind: instrumentKind(str(r.ticker), str(r.spoken)),
-      calls: num(r.calls),
-    })),
+    instruments: instruments.slice(0, q.instruments),
     channels: channelIds
       .map((id) => ({
         channelId: id,
@@ -872,7 +1072,7 @@ export async function querySearchIndex(input: unknown) {
       publishedAt: iso(r.published_at),
     })),
     totals: {
-      instruments: num(instrumentTotal[0]?.n),
+      instruments: instruments.length,
       channels: channelIds.length,
       videos: num(videoTotal[0]?.n),
     },

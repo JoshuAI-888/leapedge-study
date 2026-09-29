@@ -177,6 +177,12 @@ export function Today() {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Ticker or thesis"
                 />
+                <Link
+                  className="yi-find-all"
+                  href={`/youtube-intelligence/search${search.trim() ? `?${new URLSearchParams({ q: search.trim() })}` : ""}`}
+                >
+                  Search all calls →
+                </Link>
               </label>
               <label>
                 Minimum trust

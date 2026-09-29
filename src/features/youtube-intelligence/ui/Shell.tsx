@@ -23,9 +23,9 @@ import { WorkspaceProvider, useWorkspace } from "./workspace.tsx";
 import {
   NAV_GROUPS,
   PHONE_TABS,
-  QUICK_SEARCH_HREF,
   isCurrentRoute,
 } from "./navigation.ts";
+import { CommandPalette, QuickSearchButton } from "./CommandPalette.tsx";
 const icons: Record<string, LucideIcon> = {
   today: Sun,
   report: Newspaper,
@@ -67,6 +67,7 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
           </details>
         </nav>
         <span className="yi-top-label">YouTube · standalone</span>
+        <QuickSearchButton variant="icon" onOpen={() => setOpen(false)} />
         <button
           className="yi-menu"
           aria-expanded={open}
@@ -102,16 +103,7 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
           className={`yi-sidebar ${open ? "yi-open" : ""}`}
           id="yi-navigation"
         >
-          <Link
-            className="yi-quick-search-slot"
-            href={QUICK_SEARCH_HREF}
-            title="Search tickers, channels, videos"
-            onClick={() => setOpen(false)}
-          >
-            <Search size={15} aria-hidden="true" />
-            <span>Search tickers, channels, videos</span>
-            <kbd aria-hidden="true">⌘K</kbd>
-          </Link>
+          <QuickSearchButton variant="sidebar" onOpen={() => setOpen(false)} />
           <nav aria-label="Research navigation" className="yi-nav-groups">
             {NAV_GROUPS.map((group, index) => (
               <div className="yi-nav-group" key={group.label}>
@@ -189,6 +181,7 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
           )}
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 }
