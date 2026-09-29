@@ -340,3 +340,223 @@
     grid-column: 1 / -1;
   }
 }
+
+
+/* F65 — Trends: filter row, range chips and the hand-written SVG charts (ui/charts.tsx). */
+.yi-workspace .yi-trends-filters label:first-child {
+  flex: 0 1 160px;
+}
+.yi-trends-filters label {
+  flex: 0 1 220px;
+}
+.yi-workspace .yi-range-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.yi-range-chips legend {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 6px;
+  width: 100%;
+}
+.yi-workspace .yi-range-chips button {
+  background: var(--yi-surface);
+  color: var(--yi-ink);
+  border: 1px solid var(--yi-line);
+  min-height: 36px;
+  min-width: 44px;
+  padding: 6px 10px;
+  font-weight: 550;
+}
+.yi-workspace .yi-range-chips button[aria-pressed="true"] {
+  background: var(--yi-selected);
+  color: var(--yi-primary);
+  border-color: var(--yi-primary);
+}
+.yi-trends {
+  display: grid;
+  gap: 20px;
+  transition: opacity 0.15s;
+}
+.yi-workspace .yi-trends > * {
+  margin: 0;
+}
+.yi-trends-chart h3,
+.yi-trends-price h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 18px 0 6px;
+}
+.yi-chart {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+.yi-chart svg {
+  display: block;
+  overflow: visible;
+}
+.yi-chart svg:focus-visible {
+  outline: 3px solid #7096ff;
+  outline-offset: 2px;
+}
+.yi-chart-grid line,
+.yi-chart-axis line {
+  stroke: var(--yi-line);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.yi-chart-grid line.yi-chart-zero {
+  stroke: var(--yi-muted);
+}
+.yi-chart-grid text,
+.yi-chart-axis text {
+  fill: var(--yi-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-chart-direct {
+  fill: var(--yi-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.yi-mark-bullish {
+  fill: var(--yi-bullish);
+}
+.yi-mark-neutral {
+  fill: var(--yi-neutral);
+}
+.yi-mark-bearish {
+  fill: var(--yi-bearish);
+}
+.yi-chart-dim {
+  opacity: 0.35;
+}
+.yi-chart-crosshair {
+  stroke: var(--yi-ink);
+  stroke-width: 1;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.yi-chart-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+.yi-chart-line {
+  fill: none;
+  stroke: var(--yi-ink);
+  stroke-opacity: 0.7;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.yi-chart-ring {
+  stroke: var(--yi-surface);
+  stroke-width: 2;
+}
+.yi-chart-dot {
+  cursor: pointer;
+  outline: none;
+}
+.yi-chart-dot-hit {
+  fill: transparent;
+}
+.yi-chart-dot:hover .yi-chart-ring,
+.yi-chart-dot:focus-visible .yi-chart-ring {
+  stroke: var(--yi-ink);
+}
+.yi-chart-dot:focus-visible .yi-chart-dot-hit {
+  stroke: #7096ff;
+  stroke-width: 2;
+}
+.yi-chart-tooltip {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  gap: 2px;
+  width: max-content;
+  max-width: 220px;
+  padding: 8px 10px;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  background: var(--yi-surface);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.12);
+  font-size: 12px;
+  line-height: 1.45;
+  pointer-events: none;
+}
+.yi-tip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-key {
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.yi-chart-legend .yi-key {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.yi-key-bullish {
+  background: var(--yi-bullish);
+}
+.yi-key-neutral {
+  background: var(--yi-neutral);
+}
+.yi-key-bearish {
+  background: var(--yi-bearish);
+}
+.yi-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+.yi-chart-note {
+  font-size: 12px;
+  margin: 6px 0 0;
+}
+.yi-trends-calls {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.yi-trends-call {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--yi-line);
+}
+.yi-trends-call .yi-muted {
+  font-size: 12px;
+}
+@media (max-width: 720px) {
+  .yi-trends-filters label,
+  .yi-workspace .yi-trends-filters label:first-child {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}
+/* A split bar inside a stat tile wraps its counts under the bar on a phone. */
+.yi-stat-value .yi-split {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+.yi-stat-value .yi-split-counts {
+  white-space: normal;
+  font-size: 13px;
+}

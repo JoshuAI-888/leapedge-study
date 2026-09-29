@@ -6,6 +6,8 @@ import {
   type SentimentData,
 } from "../../../features/youtube-intelligence/contracts.ts";
 import { STANCE_SENTIMENT } from "../../../features/youtube-intelligence/sentiment.ts";
+import { sessionFor } from "../../../features/youtube-intelligence/trading-day.ts";
+import { bucketBySession } from "../../../features/youtube-intelligence/trends-series.ts";
 /**
  * F56: paged, server-side queries over calls (the `claims` table) and videos
  * (runs), so a surface never has to read the capped workspace snapshot to
@@ -123,6 +125,12 @@ export const VideosQuery = withFilters({
 export const SeriesQuery = withFilters({
   bucket: z.enum(["day", "week"]).default("week"),
   pointCap: z.number().int().min(0).max(5000).default(1000),
+  /**
+   * F65: bucket by US trading session instead of UTC day: "day" is one
+   * session, "week" the Monday-to-Sunday week of sessions. A Friday-evening
+   * or weekend upload counts in the next session (`trading-day.ts`).
+   */
+  sessions: z.boolean().default(false),
 });
 export const SearchIndexQuery = z.preprocess(
   (v) => v ?? {},
@@ -683,6 +691,8 @@ export async function queryVideos(input: unknown) {
 // ---------------------------------------------------------------------------
 export type SeriesBucket = {
   start: string;
+  /** Last calendar day of the period, inclusive (session bucketing only). */
+  end?: string;
   label: string;
   calls: number;
   bullish: number;
@@ -701,6 +711,10 @@ export type SeriesPoint = {
   thesis: string;
   channelId: string | null;
   channelTitle: string | null;
+  /** Publish instant (analysis time as a fallback). */
+  at: string;
+  /** The US trading session the call belongs to. */
+  session: string;
 };
 /** ISO 8601 week label for a Monday (UTC). */
 function isoWeek(monday: string) {
@@ -730,6 +744,24 @@ function startOf(bound: string, bucket: "day" | "week") {
  * Points are the newest `pointCap` calls, returned oldest first; `truncated`
  * says when there were more.
  */
+function point(r: Record<string, unknown>): SeriesPoint {
+  const at = iso(r.at) ?? String(r.day);
+  return {
+    id: String(r.id),
+    runId: String(r.run_id),
+    date: String(r.day),
+    instrument: str(r.instrument),
+    stance: String(r.stance),
+    sentiment: (STANCE_SENTIMENT[r.stance as keyof typeof STANCE_SENTIMENT] ?? "neutral") as SentimentData,
+    conviction: String(r.creator_conviction),
+    trustLevel: String(r.trust_level),
+    thesis: String(r.thesis_en),
+    channelId: str(r.channel_id),
+    channelTitle: str(r.channel_title),
+    at,
+    session: sessionFor(at).session,
+  };
+}
 export async function querySeries(input: unknown) {
   const q = SeriesQuery.parse(input);
   const f = await resolve(q);
@@ -754,6 +786,59 @@ export async function querySeries(input: unknown) {
       p.values,
     ),
   ]);
+  if (q.sessions) {
+    // Group by UTC hour: the 16:00 ET close is on the hour in both EST and
+    // EDT, so an hour never straddles it and maps to one session.
+    const hourly = await rows(
+      withCanon(
+        f,
+        `SELECT to_char(date_trunc('hour', ${AT("c")} AT TIME ZONE 'UTC'),'YYYY-MM-DD"T"HH24":00:00Z"') AS hour,${SPLIT("c")} ${CALLS_FROM} WHERE ${where} GROUP BY 1 ORDER BY 1`,
+      ),
+      p.values.slice(0, -1),
+    );
+    const unit = q.bucket === "week" ? "week" : "session";
+    const edge = (bound: string | undefined, end: boolean) => {
+      if (!bound) return null;
+      if (bound.length === 10) {
+        const d = end ? `${bound}T23:59:59.999Z` : `${bound}T00:00:00.000Z`;
+        return sessionFor(d).session;
+      }
+      // `to` is exclusive: the last instant inside the window decides.
+      return sessionFor(end ? Date.parse(bound) - 1 : bound).session;
+    };
+    const buckets = bucketBySession(
+      hourly.map((r) => ({
+        session: sessionFor(String(r.hour)).session,
+        bullish: num(r.bullish),
+        neutral: num(r.neutral),
+        bearish: num(r.bearish),
+      })),
+      unit,
+      edge(q.from, false),
+      edge(q.to, true),
+      MAX_FILLED_BUCKETS,
+    );
+    const total = buckets.reduce((n, b) => n + b.calls, 0);
+    return {
+      bucket: q.bucket,
+      sessions: true,
+      buckets: buckets.map(
+        (b): SeriesBucket => ({
+          start: b.start,
+          end: b.end,
+          label: b.start,
+          calls: b.calls,
+          bullish: b.bullish,
+          neutral: b.neutral,
+          bearish: b.bearish,
+        }),
+      ),
+      filled: buckets.length < MAX_FILLED_BUCKETS,
+      total,
+      points: points.map(point).reverse(),
+      truncated: total > points.length,
+    };
+  }
   const observed = new Map(
     counts.map((r) => [
       String(r.start),
@@ -790,23 +875,7 @@ export async function querySeries(input: unknown) {
     ),
     filled: filled.length <= MAX_FILLED_BUCKETS,
     total,
-    points: points
-      .map(
-        (r): SeriesPoint => ({
-          id: String(r.id),
-          runId: String(r.run_id),
-          date: String(r.day),
-          instrument: str(r.instrument),
-          stance: String(r.stance),
-          sentiment: (STANCE_SENTIMENT[r.stance as keyof typeof STANCE_SENTIMENT] ?? "neutral") as SentimentData,
-          conviction: String(r.creator_conviction),
-          trustLevel: String(r.trust_level),
-          thesis: String(r.thesis_en),
-          channelId: str(r.channel_id),
-          channelTitle: str(r.channel_title),
-        }),
-      )
-      .reverse(),
+    points: points.map(point).reverse(),
     truncated: total > points.length,
   };
 }
