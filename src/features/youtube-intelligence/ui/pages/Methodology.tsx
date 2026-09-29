@@ -1,5 +1,6 @@
 import { registry, renderSteps } from "../../metrics/registry.ts";
 import { PageTitle } from "../components.tsx";
+import { EXPORT_CAP, EXPORT_COLUMNS } from "../../export-columns.ts";
 export function Methodology() {
   return (
     <>
@@ -40,6 +41,29 @@ export function Methodology() {
           )}
         </section>
       ))}
+      <section id="export-columns" className="yi-panel">
+        <h2>Export columns</h2>
+        <p>
+          Search exports every call matching its filters as CSV or JSON, up to{" "}
+          {EXPORT_CAP.toLocaleString("en-US")} calls; a longer set is cut and the
+          file says so. The CSV has one row per call in this column order, then
+          lines starting with # that state the filters, the trust basis and that
+          trust describes the evidence, not investment quality. Cells that a
+          spreadsheet would run as a formula start with an apostrophe. The JSON
+          holds the same facts and nests each call&apos;s evidence spans with
+          their timestamped links.
+        </p>
+        <dl className="yi-export-columns">
+          {EXPORT_COLUMNS.map((c) => (
+            <div key={c.id}>
+              <dt>
+                <code>{c.id}</code>
+              </dt>
+              <dd>{c.description}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
     </>
   );
 }

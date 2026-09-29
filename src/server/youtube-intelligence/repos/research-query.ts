@@ -144,7 +144,8 @@ const FILTER_SHAPE = {
   canonicalOnly: z.boolean().default(true),
 };
 type FilterInput = z.output<z.ZodObject<typeof FILTER_SHAPE>>;
-function withFilters<S extends Record<string, z.ZodType>>(extra: S) {
+/** The shared filter fields plus `extra`, strict, with the window check. */
+export function withFilters<S extends Record<string, z.ZodType>>(extra: S) {
   return z.preprocess(
     (v) => v ?? {},
     z
@@ -541,9 +542,8 @@ async function facetCounts(
     found.filter((r) => r.value !== null).map((r) => [String(r.value), num(r.n)]),
   );
 }
-export async function queryCalls(input: unknown) {
-  const q = CallsQuery.parse(input);
-  const f = await resolve(q);
+/** One page of calls, mapped to rows with their evidence spans. */
+async function callPage(f: Resolved, q: z.output<typeof CallsQuery>) {
   const p = params();
   const where = and(callConditions(f, p, "c", { titleSql: "r.title" }));
   const order =
@@ -570,6 +570,74 @@ export async function queryCalls(input: unknown) {
         [page.map((r) => String(r.id))],
       )
     : [];
+  return page.map((r): CallRow => {
+    const ticker = str(r.ticker),
+      instrument = str(r.instrument);
+    const identity = identityOf(r);
+    return {
+      id: String(r.id),
+      runId: String(r.run_id),
+      videoId: String(r.video_id),
+      videoTitle: str(r.video_title),
+      channelId: str(r.channel_id),
+      channelTitle: str(r.channel_title),
+      instrument,
+      ticker,
+      instrumentKey: identity.key,
+      instrumentLabel: identity.label,
+      kind: identity.kind,
+      stance: String(r.stance),
+      sentiment: (STANCE_SENTIMENT[r.stance as keyof typeof STANCE_SENTIMENT] ?? "neutral") as SentimentData,
+      conviction: String(r.creator_conviction),
+      trustLevel: String(r.trust_level),
+      thesis: String(r.thesis_en),
+      horizon: str(r.horizon_en),
+      conditions: strings(r.conditions_en),
+      risks: strings(r.risks_en),
+      publishedAt: iso(r.published_at),
+      createdAt: iso(r.created_at),
+      action: str(r.action_en),
+      levels: storedLevels(r.levels),
+      catalysts: strings(r.catalysts_en),
+      expiryDate: r.expiry_date == null ? null : String(iso(r.expiry_date) ?? r.expiry_date).slice(0, 10),
+      expiryOriginal: str(r.expiry_original),
+      macroTheme: str(r.macro_theme),
+      evidence: spans
+        .filter((s) => s.claim_id === r.id)
+        .map((s) => ({
+          ordinal: num(s.ordinal),
+          startSeconds: s.start_seconds === null ? null : num(s.start_seconds),
+          endSeconds: s.end_seconds === null ? null : num(s.end_seconds),
+          textOriginal: String(s.text_original),
+          translationEn: str(s.translation_en),
+        })),
+    };
+  });
+}
+/**
+ * Rows and the exact total only, without facets or aggregates: what a caller
+ * that walks every page (Export, F63) needs, at a fraction of the cost.
+ */
+export async function queryCallsPage(input: unknown) {
+  const q = CallsQuery.parse(input);
+  const f = await resolve(q);
+  const p = params();
+  const where = and(callConditions(f, p, "c", { titleSql: "r.title" }));
+  const [page, counted] = await Promise.all([
+    callPage(f, q),
+    rows(withCanon(f, `SELECT count(*) AS n ${CALLS_FROM} WHERE ${where}`), p.values),
+  ]);
+  const total = num(counted[0]?.n);
+  return {
+    rows: page,
+    total,
+    nextOffset: q.offset + page.length < total ? q.offset + page.length : null,
+  };
+}
+export async function queryCalls(input: unknown) {
+  const q = CallsQuery.parse(input);
+  const f = await resolve(q);
+  const page = await callPage(f, q);
   const facetNames: Facet[] = ["instrument", "kind", "channel", "stance", "sentiment", "conviction", "trust", "levels", "expiry"];
   const instrumentLabels = new Map<string, InstrumentIdentity>();
   const [aggregates, ...facetMaps] = await Promise.all([
@@ -581,49 +649,7 @@ export async function queryCalls(input: unknown) {
   const titles = await channelTitles(channelFacet.map((c) => c.value));
   const total = aggregates.calls;
   return {
-    rows: page.map((r): CallRow => {
-      const ticker = str(r.ticker),
-        instrument = str(r.instrument);
-      const identity = identityOf(r);
-      return {
-        id: String(r.id),
-        runId: String(r.run_id),
-        videoId: String(r.video_id),
-        videoTitle: str(r.video_title),
-        channelId: str(r.channel_id),
-        channelTitle: str(r.channel_title),
-        instrument,
-        ticker,
-        instrumentKey: identity.key,
-        instrumentLabel: identity.label,
-        kind: identity.kind,
-        stance: String(r.stance),
-        sentiment: (STANCE_SENTIMENT[r.stance as keyof typeof STANCE_SENTIMENT] ?? "neutral") as SentimentData,
-        conviction: String(r.creator_conviction),
-        trustLevel: String(r.trust_level),
-        thesis: String(r.thesis_en),
-        horizon: str(r.horizon_en),
-        conditions: strings(r.conditions_en),
-        risks: strings(r.risks_en),
-        publishedAt: iso(r.published_at),
-        createdAt: iso(r.created_at),
-        action: str(r.action_en),
-        levels: storedLevels(r.levels),
-        catalysts: strings(r.catalysts_en),
-        expiryDate: r.expiry_date == null ? null : String(iso(r.expiry_date) ?? r.expiry_date).slice(0, 10),
-        expiryOriginal: str(r.expiry_original),
-        macroTheme: str(r.macro_theme),
-        evidence: spans
-          .filter((s) => s.claim_id === r.id)
-          .map((s) => ({
-            ordinal: num(s.ordinal),
-            startSeconds: s.start_seconds === null ? null : num(s.start_seconds),
-            endSeconds: s.end_seconds === null ? null : num(s.end_seconds),
-            textOriginal: String(s.text_original),
-            translationEn: str(s.translation_en),
-          })),
-      };
-    }),
+    rows: page,
     total,
     limit: q.limit,
     offset: q.offset,

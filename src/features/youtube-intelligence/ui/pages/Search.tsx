@@ -26,6 +26,7 @@ import { trapFocus } from "../focus-trap.ts";
 import { INSTRUMENT_KINDS } from "../../instrument-kind.ts";
 import { SENTIMENT_GLYPH, sentimentOf, trustOptionLabel } from "../foundations.ts";
 import { useQueryPages } from "../use-query-pages.ts";
+import { ExportMenu } from "../ExportMenu.tsx";
 import {
   CONVICTION_OPTIONS,
   EXPIRY_WINDOWS,
@@ -222,6 +223,7 @@ function SearchPage() {
               ))}
             </div>
             <div className="yi-search-tools">
+              <ExportMenu input={base} total={calls.stale ? 0 : total} />
               <label>
                 <span className="yi-sr-only">Sort</span>
                 <select

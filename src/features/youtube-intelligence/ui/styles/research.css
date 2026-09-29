@@ -488,3 +488,93 @@
   background: #194df4;
   border-color: #194df4;
 }
+
+/* F63 Export menu */
+.yi-export {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.yi-export-button {
+  min-height: 36px;
+  white-space: nowrap;
+}
+.yi-export-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  min-width: 240px;
+  padding: 6px;
+  background: var(--yi-surface);
+  color: var(--yi-ink);
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.16);
+}
+.yi-export-scope {
+  margin: 4px 8px 6px;
+  font-size: 0.85rem;
+  color: var(--yi-muted);
+}
+.yi-workspace .yi-export-menu [role="menuitem"] {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  align-items: baseline;
+  padding: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--yi-ink);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.yi-workspace .yi-export-menu [role="menuitem"]:hover,
+.yi-workspace .yi-export-menu [role="menuitem"]:focus-visible {
+  background: var(--yi-selected);
+  outline: none;
+}
+.yi-workspace .yi-export-menu [role="menuitem"] .yi-muted {
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+.yi-export-status:empty {
+  display: none;
+}
+.yi-export-status {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  width: max-content;
+  max-width: 280px;
+  font-size: 0.8rem;
+  color: var(--yi-muted);
+}
+.yi-export-columns {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.yi-export-columns > div {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: 12px;
+}
+.yi-export-columns dd {
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .yi-export-menu,
+  .yi-export-status {
+    left: 0;
+    right: auto;
+  }
+  .yi-export-columns > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
