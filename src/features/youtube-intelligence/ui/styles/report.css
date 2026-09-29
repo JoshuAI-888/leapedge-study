@@ -429,6 +429,12 @@
   fill: var(--yi-muted);
   font-size: 11px;
   font-weight: 600;
+  /* A halo in the panel colour keeps the lane label legible where the first
+     column is drawn under it. */
+  paint-order: stroke;
+  stroke: var(--yi-surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
 }
 .yi-mark-bullish {
   fill: var(--yi-bullish);
