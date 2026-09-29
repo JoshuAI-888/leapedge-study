@@ -20,6 +20,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { WorkspaceProvider, useWorkspace } from "./workspace.tsx";
+import { UnreadCount } from "./UnreadDot.tsx";
 import {
   NAV_GROUPS,
   PHONE_TABS,
@@ -124,6 +125,7 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
                         >
                           <Icon size={17} />
                           {label}
+                          {route === "today" && <UnreadCount />}
                         </Link>
                       </li>
                     );

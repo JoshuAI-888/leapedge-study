@@ -801,3 +801,137 @@
   cursor: pointer;
   color: var(--yi-muted);
 }
+
+/* ---------------------------------------------------------------------------
+   F70 — unread markers (this browser only) and the Levels column menu.
+   --------------------------------------------------------------------------- */
+.yi-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.yi-unread-dot {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--yi-live);
+  vertical-align: middle;
+}
+.yi-nav-new {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--yi-live);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.yi-unread-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+.yi-unread-head .yi-text-button {
+  margin-left: auto;
+}
+.yi-workspace .yi-list li.yi-activity-new {
+  font-weight: 500;
+}
+.yi-column-menu {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: flex-end;
+  font-size: 12px;
+}
+.yi-column-menu summary {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  box-sizing: border-box;
+  cursor: pointer;
+  padding: 0 10px;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  list-style: none;
+}
+.yi-column-menu summary::-webkit-details-marker {
+  display: none;
+}
+.yi-column-menu summary::after {
+  content: " ▾";
+  color: var(--yi-muted);
+}
+.yi-workspace .yi-calls-panel .yi-filters .yi-column-menu[open] > label,
+.yi-column-menu[open] > label {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  top: calc(100% + 4px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  background: var(--yi-surface);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 12%);
+  white-space: nowrap;
+  flex-direction: row;
+  min-width: 0;
+  font-size: 13px;
+}
+.yi-column-menu[open] > label input {
+  min-height: 0;
+  width: auto;
+  margin: 0;
+}
+.yi-levels-cell .yi-card2-levels {
+  margin: 0;
+  flex-wrap: wrap;
+}
+.yi-levels-cell .yi-card2-level {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.yi-levels-cell .yi-card2-level > :first-child {
+  white-space: nowrap;
+}
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) .yi-nav-new {
+    color: #0d1424;
+  }
+}
+.yi-workspace[data-theme="dark"] .yi-nav-new {
+  color: #0d1424;
+}
+/* With the optional Levels column the thesis gives up the room. */
+.yi-call-table.yi-with-levels th:nth-child(1) {
+  width: 13%;
+}
+.yi-call-table.yi-with-levels th:nth-child(2) {
+  width: 10%;
+}
+.yi-call-table.yi-with-levels th:nth-child(3) {
+  width: 32%;
+}
+.yi-call-table.yi-with-levels th:nth-child(4) {
+  width: 13%;
+}
+.yi-call-table.yi-with-levels th:nth-child(5) {
+  width: 12%;
+}
+.yi-call-table.yi-with-levels th:nth-child(6) {
+  width: 20%;
+}

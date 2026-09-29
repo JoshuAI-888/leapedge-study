@@ -49,6 +49,7 @@ import {
   visibleClaims,
   localClaimId,
 } from "../viewmodel.ts";
+import { useMarkSeen } from "../unread.ts";
 const TABS = [
   { id: "calls", label: "Calls" },
   { id: "brief", label: "Research brief" },
@@ -65,6 +66,7 @@ type Metadata = {
 };
 export function Analysis({ id }: { id: string }) {
   const { data, perform, busy } = useWorkspace();
+  useMarkSeen(id); // F70: opening an analysis marks it seen on this browser.
   const router = useRouter();
   const [view, setView] = useUrlState(TabState, { tab: "calls" });
   const [briefs, setBriefs] = useState<ResearchBriefData[]>([]);

@@ -439,6 +439,12 @@ export const registry: MetricEntry[] = [
         "The stored evidence trust level, with any signed rejection shown explicitly.",
         "trust_level",
       ],
+      [
+        "levels",
+        "Levels",
+        "Price levels the creator stated for this call (entry, target, stop), as said and as the application read them. Optional column, off by default.",
+        "levels",
+      ],
     ] as const
   ).map(([key, label, definition, column]): MetricEntry => ({
     id: `today.${key}`,

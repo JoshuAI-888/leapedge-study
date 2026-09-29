@@ -3,6 +3,10 @@ import Link from "next/link";
 import { ResearchOverview } from "../ResearchBrief.tsx";
 import { SentimentPanel } from "../SentimentPanel.tsx";
 import { Watchlist } from "../Watchlist.tsx";
+import { UnreadDot, runsForUnread } from "../UnreadDot.tsx";
+import { TRACKED_HINT, useTodayVisit, useUnread } from "../unread.ts";
+import { useTeamTimeZone } from "../TradingDay.tsx";
+import { localTime } from "../../trading-day.ts";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "../workspace.tsx";
@@ -24,6 +28,7 @@ import {
   TrustBadge,
   SaveCallButton,
   MetricHeading,
+  LevelChips,
 } from "../components.tsx";
 import { HiddenByFilter } from "../HiddenByFilter.tsx";
 import { InlineRetry, MiniProgress } from "../StepProgress.tsx";
@@ -40,7 +45,13 @@ export function Today() {
     [view, setView] = useState("table"),
     [sort, setSort] = useState("default"),
     [descending, setDescending] = useState(false),
-    [limit, setLimit] = useState(5);
+    [limit, setLimit] = useState(5),
+    // Extra table columns, off by default (F60 Levels).
+    [levelsColumn, setLevelsColumn] = useState(false);
+  // F70: unread markers, kept on this browser only.
+  const unread = useUnread(),
+    lastVisit = useTodayVisit(),
+    timeZone = useTeamTimeZone();
   if (!data) return null;
   const defaultTrust =
     (
@@ -98,9 +109,14 @@ export function Today() {
     setSort(key);
     setDescending(sort === key ? !descending : false);
   }
-  const runs = data.runs.filter(
+  const filteredRuns = data.runs.filter(
     (r) => status === "all" || activityState(r).filter === status || (status === "Needs review" && activityState(r).needsReview),
   );
+  const fresh = new Set(unread.unread(runsForUnread(filteredRuns)).map((r) => r.id));
+  const runs = [
+    ...filteredRuns.filter((r) => fresh.has(r.id)),
+    ...filteredRuns.filter((r) => !fresh.has(r.id)),
+  ];
   return (
     <>
       <PageTitle
@@ -220,6 +236,19 @@ export function Today() {
               >
                 Reset sort
               </button>
+              {view === "table" && (
+                <details className="yi-column-menu">
+                  <summary>Columns</summary>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={levelsColumn}
+                      onChange={(e) => setLevelsColumn(e.target.checked)}
+                    />
+                    Levels
+                  </label>
+                </details>
+              )}
             </Filters>
             <HiddenByFilter
               count={hiddenByFilter(
@@ -248,7 +277,7 @@ export function Today() {
             {claims.length ? (
               <>
                 {view === "table" && (
-                  <div className="yi-call-table">
+                  <div className={`yi-call-table${levelsColumn ? " yi-with-levels" : ""}`}>
                     <table>
                       <caption className="yi-sr-only">
                         Creator calls with stance, thesis and evidence trust
@@ -261,11 +290,12 @@ export function Today() {
                             "thesis",
                             "trust",
                             "creators",
+                            ...(levelsColumn ? ["levels"] : []),
                           ].map((key) => (
                             <MetricHeading
                               key={key}
                               id={`today.${key}`}
-                              onSort={() => sortBy(key)}
+                              onSort={key === "levels" ? undefined : () => sortBy(key)}
                               direction={
                                 sort === key
                                   ? descending
@@ -327,6 +357,15 @@ export function Today() {
                               </strong>
                               <small>Dated creators</small>
                             </td>
+                            {levelsColumn && (
+                              <td className="yi-levels-cell">
+                                {c.levels?.length ? (
+                                  <LevelChips levels={c.levels} />
+                                ) : (
+                                  <span className="yi-muted">None stated</span>
+                                )}
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
@@ -385,11 +424,33 @@ export function Today() {
                 </select>
               </label>
             </div>
+            {fresh.size > 0 && unread.state && (
+              <div
+                className="yi-unread-head"
+                title={`${TRACKED_HINT}.${lastVisit ? ` Last visit ${localTime(lastVisit, timeZone)}.` : ""}`}
+              >
+                <strong>
+                  New since {localTime(unread.state.since, timeZone)}
+                </strong>
+                <span className="yi-muted">{fresh.size}</span>
+                <button
+                  type="button"
+                  className="yi-text-button"
+                  onClick={unread.markAllSeen}
+                >
+                  Mark all as seen
+                </button>
+              </div>
+            )}
             {runs.length ? (
               <ul className="yi-list">
                 {runs.map((r) => (
-                  <li key={r.id}>
+                  <li
+                    key={r.id}
+                    className={fresh.has(r.id) ? "yi-activity-new" : undefined}
+                  >
                     <div>
+                      <UnreadDot run={{ id: r.id, status: r.status, at: r.updatedAt }} />
                       <Link href={`/youtube-intelligence/analysis/${r.id}`}>
                         {r.title || `YouTube · ${r.videoId}`}
                       </Link>

@@ -27,6 +27,7 @@ export const uiColumns: UiColumn[] = [
     metricId: "today.thesis",
   },
   { surface: "today.calls", column: "Trust", metricId: "today.trust" },
+  { surface: "today.calls", column: "Levels", metricId: "today.levels" },
   { surface: "standalone.ticker", column: "Ticker", metricId: "ticker.symbol" },
   {
     surface: "standalone.ticker",
