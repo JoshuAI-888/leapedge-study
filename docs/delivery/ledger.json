@@ -1781,5 +1781,16 @@
     ],
     "notYetDone": "Source-recall windows on the analysis side still run one per step (each depends on the prior inventory); measure with live timing before changing. Live paired LeapEdge runs not started.",
     "verification": "Node 24: default and PGlite suites 737 pass/0 fail/1 skip; typecheck and build pass."
+  },
+  "liveFixes20260929": {
+    "status": "in-review",
+    "date": "2026-09-29",
+    "scope": "First live runs on Vercel exposed: (1) strict JSON parsing failed on fenced model replies; parseModelJson accepts fenced or prose-wrapped JSON only. (2) Source recall ran ~13 windows one per step (~4.5 of 5.6 min on a short video); new runs freeze the recall inventory, request up to 24 windows per step 4 at a time, and apply them in order. (3) Calls on companies named but not ticker-spoken (\"Vistra\" drafted as VST) were rejected in the caption-alignment path; the symbol is now a retained proposal in both evidence modes.",
+    "tests": [
+      "tests/model-json.test.ts",
+      "tests/source-recall.test.ts",
+      "tests/ticker-proposal.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 741 pass/0 fail/1 skip; typecheck and build pass. Workspace settings aligned on 29 Sep: models reset to defaults (Gemini native extraction, Sonnet critic), prompt version v8, research pipeline faithful."
   }
 }
