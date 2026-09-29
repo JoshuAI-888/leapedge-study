@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { database, json } from "./database.ts";
+import { database, iso, json } from "./database.ts";
 import { enqueueJob } from "./repos/jobs.ts";
 import { event } from "./research-store.ts";
 import {
@@ -38,8 +38,8 @@ export async function timingHistory(): Promise<TimingSample[]> {
     )
     .all(HISTORY_LIMIT)) as Record<string, unknown>[];
   return rows.flatMap((r) => {
-    const start = Date.parse(String(r.created_at));
-    const end = r.finished ? new Date(r.finished as string).getTime() : NaN;
+    const start = Date.parse(iso(r.created_at) ?? "");
+    const end = Date.parse(iso(r.finished) ?? "");
     const duration = Number(r.duration);
     const elapsed = (end - start) / 1000;
     return Number.isFinite(elapsed) && elapsed > 0
