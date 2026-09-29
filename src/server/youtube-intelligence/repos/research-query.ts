@@ -172,7 +172,7 @@ const CONVICTION_RANK = `(CASE c.creator_conviction WHEN 'high' THEN 3 WHEN 'med
  * reads only `input` (a small document) and the publication rows, never the
  * run output.
  */
-const CANONICAL = `SELECT DISTINCT ON (r.video_id) r.id
+export const CANONICAL = `SELECT DISTINCT ON (r.video_id) r.id
   FROM yi_runs r
   LEFT JOIN yi_documents p ON p.kind='publication' AND p.id=r.video_id
   WHERE r.status='completed' AND (r.input::jsonb->>'task') IS NULL

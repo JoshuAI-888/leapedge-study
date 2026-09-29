@@ -4,6 +4,7 @@
  * column headings read their hover text from that entry. Add a row here when a
  * column is added; the test fails until the registry can explain it.
  */
+import { channelListColumns } from "./channel-columns.ts";
 export type UiColumn = {
   /** Surface id: <page>.<table>. */
   surface: string;
@@ -12,6 +13,7 @@ export type UiColumn = {
   metricId: string;
 };
 export const uiColumns: UiColumn[] = [
+  ...channelListColumns,
   { surface: "today.calls", column: "Creators", metricId: "today.creators" },
   {
     surface: "today.calls",

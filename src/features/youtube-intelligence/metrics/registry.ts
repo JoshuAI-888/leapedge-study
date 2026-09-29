@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { CostContext, costProjection, budgetMeter } from "./cost.ts";
 import { summarizeScores, type scoreCall } from "../performance.ts";
+import { channelListMetrics } from "./channel-columns.ts";
 /**
  * Metrics registry (spec section 4.11). One entry per figure the product shows.
  * The hover text, the Methodology page and the CI test all read these entries,
@@ -314,6 +315,7 @@ const costEntries: MetricEntry[] = costFigures.map(
   }),
 );
 export const registry: MetricEntry[] = [
+  ...channelListMetrics,
   ...(
     [
       [
