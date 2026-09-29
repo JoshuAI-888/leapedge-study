@@ -1316,20 +1316,30 @@
       "lane": "ui-kit",
       "title": "UX foundations: sentiment palette and split bar, URL filter state, hidden-by-filter notice, grouped sidebar, audit fixes",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F43"
       ],
       "files": [
         "src/features/youtube-intelligence/ui/SplitBar.tsx",
+        "src/features/youtube-intelligence/ui/StatTiles.tsx",
+        "src/features/youtube-intelligence/ui/Sparkline.tsx",
+        "src/features/youtube-intelligence/ui/HiddenByFilter.tsx",
+        "src/features/youtube-intelligence/ui/foundations.ts",
         "src/features/youtube-intelligence/ui/url-state.ts",
-        "src/features/youtube-intelligence/ui/Shell.tsx"
+        "src/features/youtube-intelligence/ui/url-state-core.ts",
+        "src/features/youtube-intelligence/ui/navigation.ts",
+        "src/features/youtube-intelligence/ui/layout-hooks.ts",
+        "src/features/youtube-intelligence/ui/Shell.tsx",
+        "src/features/youtube-intelligence/ui/styles/foundations.css",
+        "src/features/youtube-intelligence/stance-sentiment.ts"
       ],
       "tests": [
         "tests/ui-foundations.test.ts"
       ],
-      "note": "Includes the screenshot-audit fixes (empty-by-default trust filter, short-page centring, evidence panel scroll box, trust naming, internal text). Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F57). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Split bar, tiles, sparkline, URL view state (D4 for the sentiment panel), grouped sidebar (D2), routes with placeholder pages for Report/Search/Trends/Channel, audit fixes (hidden-by-filter, top-aligned main, sticky evidence panel with phone placement, trust names, catalogue provenance behind a disclosure, Settings anchors and sticky save bar). Leaderboard change-window controls still save settings (D4 follow-up). Visual check so far on an empty database; the fixture-data browser check is part of F77. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F57).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F58",
