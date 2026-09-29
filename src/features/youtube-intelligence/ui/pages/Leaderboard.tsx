@@ -8,6 +8,7 @@ import {
   type BoardOptions,
 } from "../../leaderboard.ts";
 import { useWorkspace } from "../workspace.tsx";
+import { TradingDay } from "../TradingDay.tsx";
 import { action } from "../api.ts";
 import {
   BenchmarkSelector,
@@ -431,7 +432,7 @@ export function Leaderboard() {
       </Collapsible>
       <div className="yi-section-title">
         <p className="yi-muted">
-          As of {snapshot.asOf} · {record} observations
+          As of <TradingDay at={snapshot.asOf} /> · {record} observations
         </p>
         <button className="yi-secondary" onClick={exportRows}>
           Export CSV

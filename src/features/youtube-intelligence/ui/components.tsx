@@ -7,6 +7,7 @@ import { renderHover, metric } from "../metrics/registry.ts";
 import { trustNames, localClaimId } from "./viewmodel.ts";
 import { useWorkspace } from "./workspace.tsx";
 import { action } from "./api.ts";
+import { InstrumentLabel } from "./InstrumentLabel.tsx";
 export function Empty({
   title,
   children,
@@ -121,12 +122,12 @@ export function ClaimCard({
   return (
     <article className={`yi-claim ${selected ? "yi-selected" : ""}`}>
       <div className="yi-row">
-        <span className="yi-ticker">
-          {listing?.ticker ??
-            claim.ticker ??
-            claim.instrument ??
-            "Unresolved instrument"}
-        </span>
+        <InstrumentLabel
+          claim={{
+            ticker: listing?.ticker ?? claim.ticker,
+            instrument: claim.instrument,
+          }}
+        />
         <span className={`yi-chip yi-stance-${claim.stance}`}>
           {claim.stance}
         </span>
