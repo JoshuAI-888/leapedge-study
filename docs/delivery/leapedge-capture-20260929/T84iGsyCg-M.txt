@@ -1,0 +1,196 @@
+←
+TODAY
+/
+T84IGSYC
+READY
+$0.040
+🚨 Investors Do This NOW! Stock Market EMERGENCY
+MT
+Miles Talks Finance
+☆
+watch on youtube
+↗
+VERDICT
+5 ideas
+MEDconviction
+5 LONG
+AMZN
+CELH
+HIMS
+SOFI
+UBER
+
+SUMMARY
+
+Despite macroeconomic pressures from rising oil prices, geopolitical conflict, and inflation, massive AI infrastructure spending continues to bolster big tech and the broader market. The creator advocates building long positions in resilient mega-cap names and heavily beaten-down, high-growth growth stocks at attractive entry valuations. Key tactical positions include long-term holdings in Celsius and SoFi, along with swing option calls on Uber.
+
+KEY POINTS
+
+01
+
+The October 2, 2026 U.S. employment report is a critical test for Wall Street and the Federal Reserve's interest rate path.
+
+02
+
+Micron Technology (MU) is viewed as being in a valuation bubble due to its low forward P/E ratio, despite massive recent growth.
+
+03
+
+Oil prices, specifically tracked via USO, are rising due to geopolitical tensions in the Strait of Hormuz, which may persist for a long time.
+
+04
+
+Artificial Intelligence infrastructure spending by major tech companies is currently offsetting the negative economic impacts of inflation and high oil prices.
+
+05
+
+Amazon is suggested as an inflation-resistant stock due to its robust AWS cloud revenue segment.
+
+06
+
+The creator is actively increasing positions in Hims & Hers Health (HIMS), viewing it as a long-term growth play with a solid business model.
+
+07
+
+An Uber (UBER) January $70 call option has been purchased, anticipating a price recovery from current lows.
+
+08
+
+SoFi Technologies (SOFI) is identified as a strong long-term conviction holding that performs well in high-interest-rate environments.
+
+09
+
+The strategy involves accumulating currently 'hated' stocks that have high future growth potential, while maintaining proper diversification.
+
+10
+
+For volatile individual stocks, entry price matters significantly more than it does for broad market index funds.
+
+COLLAPSE ALL
+UBER
+LONG
+MEDIUM
+JANUARY OF NEXT YEAR
+▾
+
+Uber is trading at an attractive low valuation level relative to historical ranges, setting up a sharp mean-reversion rally.
+
+VERBATIM · SUPPORTING QUOTE
+
+“So, I actually bought a $70 call on Uber. It's expiring in not very, I think it's 120 days, it's expiring in January of next year”
+
+⏱
+EXPIRES: JANUARY OF NEXT YEAR
+
+ACTION
+
+Buy January $70 call options
+
+SAVE TO TRADE
+SOFI
+LONG
+HIGH
+LONG-TERM
+▾
+
+The company has cut its share price in half despite robust EPS growth, healthy margins, and proven performance in high-interest-rate environments.
+
+VERBATIM · SUPPORTING QUOTE
+
+“SoFi, this one's trading at $16 right now. This was a $32 stock not too long ago. I mean this stock has been completely cut in half”
+
+ENTRY
+$16
+TARGET
+30
+STOP
+—
+
+ACTION
+
+Accumulate shares around $16
+
+SAVE TO TRADE
+CELH
+LONG
+HIGH
+LONG-TERM
+▾
+
+High shipping and oil expenses alongside international expansion costs are already heavily priced into Celsius, creating an asymmetric upside opportunity in an unloved growth leader.
+
+VERBATIM · SUPPORTING QUOTE
+
+“I know everything that this stock has going on, like the back of my hand and I feel very confident that it is my top holding in my portfolio.”
+
+CATALYSTS
+International expansion
+
+ACTION
+
+Hold and accumulate as a core long holding
+
+RISKS
+
+—
+high shipping costs
+—
+oil prices
+—
+international expansion costs
+SAVE TO TRADE
+HIMS
+LONG
+MEDIUM
+LONG-TERM
+▾
+
+Hims & Hers features an ambitious leadership team and an agile business model that can compound independently of high inflation.
+
+VERBATIM · SUPPORTING QUOTE
+
+“This is one that I own in my portfolio, I've been actively adding to this position, you know, not insane, I'm not throwing all my money at this one”
+
+ACTION
+
+Gradually accumulate shares on weakness
+
+RISKS
+
+—
+macroeconomic pressures
+SAVE TO TRADE
+AMZN
+LONG
+MEDIUM
+LONG-TERM
+▾
+
+Amazon remains a resilient mega-cap choice because its core profits stem from AWS, which shields it from inflationary pressures impacting other sectors.
+
+VERBATIM · SUPPORTING QUOTE
+
+“Amazon makes basically all of its money, not all of it, makes a lot of it from people buying things which people are still going to buy. But pretty much all of its money that's actually made, the profit that Amazon makes is from AWS.”
+
+CATALYSTS
+AWS AI demand
+
+ACTION
+
+Hold as an inflation-resistant mega-cap holding
+
+RISKS
+
+—
+inflation
+—
+macroeconomic pressures
+SAVE TO TRADE
+▾
+PIPELINE METADATA
+PROMPT
+keypoints.v1-insights.v3-critique.v1
+TOKENS
+84.3k
+MODELS
+gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite · gemini-3.1-flash-lite

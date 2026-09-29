@@ -1,0 +1,212 @@
+←
+TODAY
+/
+U32FPVVB
+READY
+$0.050
+AMD Stock Is Entering a New Cycle‼️Listen Up
+JL
+Jeremy Lefebvre Clips
+watch on youtube
+↗
+VERDICT
+4 ideas
+HIGHconviction
+4 LONG
+AMD
+AXP
+RH
+WYNN
+
+SUMMARY
+
+The creator argues that AMD is entering a major multi-year growth cycle bolstered by price increases and margin expansion, targeting a $1 trillion market cap. Additionally, he anticipates a peak in oil prices and Treasury yields that will catalyze massive rallies in beaten-down, rate-sensitive consumer and luxury plays including Wynn Resorts, American Express, and RH.
+
+KEY POINTS
+
+01
+
+AMD is reportedly preparing a 10% price increase for its products due to rising TSMC wafer costs, which will likely result in a margin advantage for AMD.
+
+02
+
+AMD is projected to reach a $1 trillion market cap by the fourth quarter of this year.
+
+03
+
+AMD is viewed as an exceptionally high-growth stock that is expected to be a premier trillion-dollar company by 2027.
+
+04
+
+The creator does not plan to consider selling AMD shares until the price reaches at least $700.
+
+05
+
+A peak in oil prices is expected to trigger a peak in 2-year and 10-year Treasury yields, which will act as a major catalyst for rate-sensitive stocks.
+
+06
+
+Wynn Resorts, American Express, and RH are identified as primary beneficiaries that will rally once oil and interest rates peak.
+
+07
+
+The upcoming opening of a Middle East property makes Wynn Resorts a critical stock to be positioned in before potential positive business news causes the price to surge.
+
+08
+
+The creator recently initiated or increased positions in Wynn Resorts, Nike, Celsius Holdings, and specifically RH, where they aim for a total position size of $250,000 to $400,000.
+
+09
+
+There is a warning that RH carries a bankruptcy risk if macroeconomic conditions remain poor, making it a high-risk, high-reward bet on long-term margin and balance sheet improvement.
+
+10
+
+Consumer hoarding behavior, like the reported example of Costco motor oil, is a dangerous inflationary signal that could force the Fed to take more aggressive action.
+
+COLLAPSE ALL
+AMD
+LONG
+HIGH
+2027
+▾
+
+AMD is implementing a 10% price increase tied to rising TSMC wafer costs, which will net favorable margin expansion. With massive AI and hardware growth expected through 2027, the company is poised to reach a $1 trillion market cap in Q4.
+
+VERBATIM · SUPPORTING QUOTE
+
+“I need AMD minimum 700 plus to even consider, consider cashing on some shares, uh, in the public account.”
+
+ENTRY
+—
+TARGET
+700 plus
+STOP
+—
+CATALYSTS
+Q4 price increase implementation
+Q4 $1T market cap milestone
+2027 earnings growth ramp
+
+⏱
+EXPIRES: 2027
+
+ACTION
+
+Buy and hold shares long; hold through the upcoming cycle without selling until price is at least $700
+
+RISKS
+
+—
+TSMC wafer cost increases
+—
+Memory price increases
+SAVE TO TRADE
+WYNN
+LONG
+HIGH
+LONG-TERM
+▾
+
+Wynn Resorts is heavily suppressed by high interest rates and oil prices but generates strong numbers across Las Vegas, Macau, and Boston. A peak in rates along with the catalyst of an upcoming Middle East resort opening makes the stock extremely attractive in the $80s.
+
+VERBATIM · SUPPORTING QUOTE
+
+“you better positioned in before that middle east property opens because you don't want to all sudden hear that business is crazy”
+
+ENTRY
+70s or the 80s
+TARGET
+120
+STOP
+—
+CATALYSTS
+Peak in oil prices and Treasury yields
+Opening of the Middle East property next year
+
+ACTION
+
+Accumulate shares in the 70s to 80s range ahead of the Middle East property opening
+
+RISKS
+
+—
+High interest rates
+—
+Oil price volatility
+SAVE TO TRADE
+RH
+LONG
+HIGH
+2027-2030
+▾
+
+RH is positioned for a violent upside rally once interest rates and oil peak and real estate demand picks up. As the company transitions from an intensive investment cycle to a cash-harvesting cycle toward 2027-2030, margins and balance sheet strength are expected to rebound significantly.
+
+VERBATIM · SUPPORTING QUOTE
+
+“I would like to build it out into probably a quarter million to maybe $400,000 position across all my portfolios in total”
+
+ENTRY
+—
+TARGET
+400s or the 500s
+STOP
+—
+CATALYSTS
+Peak in interest rates and Treasury yields
+Real estate market recovery
+Harvesting cycle in 2027-2030
+
+ACTION
+
+Scale into a long position to build a total portfolio allocation between $250,000 and $400,000
+
+RISKS
+
+—
+Bankruptcy if business deteriorates
+—
+Persistent high interest rates
+SAVE TO TRADE
+AXP
+LONG
+MEDIUM
+LONG-TERM
+▾
+
+American Express will see huge momentum as soon as oil and yields peak.
+
+VERBATIM · SUPPORTING QUOTE
+
+“American Express will be seeing with huge momentum, next thing you know they see that stock with the 4 handle on it, 400 plus.”
+
+ENTRY
+—
+TARGET
+400 plus
+STOP
+—
+CATALYSTS
+Peak in oil prices
+Peak in 2-year and 10-year Treasury yields
+
+ACTION
+
+Buy long for momentum upside following rate and oil peak
+
+RISKS
+
+—
+Oil price increases
+—
+Treasury yield increases
+SAVE TO TRADE
+▾
+PIPELINE METADATA
+PROMPT
+keypoints.v1-insights.v3-critique.v1
+TOKENS
+148.6k
+MODELS
+gemini-3.1-flash-lite · gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite

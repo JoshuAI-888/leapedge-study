@@ -1,0 +1,169 @@
+{
+  "videoId": "dhYuN3Oopss",
+  "youtubeUrl": "https://www.youtube.com/watch?v=dhYuN3Oopss",
+  "leapedgeUrl": "https://leapedge.app/analyses/dhYuN3Oopss__keypoints.v1-insights.v3-critique.v1",
+  "capturedAt": "2026-09-29T09:39:00.300Z",
+  "video": {
+    "title": "TSLA的风险回报比已经（悄悄地）变了...",
+    "channel": "霍比特小灰",
+    "publishedAt": null,
+    "duration": null,
+    "language": null
+  },
+  "run": {
+    "submittedAt": null,
+    "firstContentAt": null,
+    "finalAt": null,
+    "totalSeconds": null,
+    "status": "ready",
+    "failureText": null,
+    "timeline": [],
+    "displayedCost": "$0.030",
+    "displayedTokens": "85.4k",
+    "models": [
+      "gemini-3.1-flash-lite",
+      "gemini-3.1-flash-lite",
+      "gemini-3.7-flash",
+      "gemini-3.1-flash-lite"
+    ],
+    "promptVersion": "keypoints.v1-insights.v3-critique.v1",
+    "stepLabels": []
+  },
+  "summary": "Tesla's risk-reward ratio has become significantly more attractive as execution risks around FSD and Cybercab continue to decrease while the underlying commercial value remains massive. With production and operational costs drastically undercut compared to competitors like Waymo, Tesla is building a scalable autonomous flywheel that positions the stock for substantial upside toward a $475 target by 2026.",
+  "keyPoints": [
+    {
+      "order": 1,
+      "text": "The risk-reward ratio for Tesla has improved significantly as the inherent risks of FSD and Cybercab technology have decreased while the potential value remains high.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 2,
+      "text": "Morgan Stanley has set a 2026 target price of $475 for Tesla, assuming the successful operation of Cybercab.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 3,
+      "text": "Tesla's competitive advantage over Waymo lies in lower production costs, as Cybercab is designed to cost under $20,000 to manufacture.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 4,
+      "text": "Unlike Waymo, which relies on high-cost components like LiDAR and high-definition maps, Tesla utilizes a pure vision approach that scales more efficiently.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 5,
+      "text": "Tesla's ability to rapidly deploy vehicles—growing from zero to nearly 70 units in Austin in just over a year—creates a scalable business flywheel that outpaces competitors.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 6,
+      "text": "Waymo's corporate structure and reliance on Google funding may limit its ability to compete aggressively against Tesla's leaner, high-risk-tolerance model.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 7,
+      "text": "Elon Musk's strategy of 'risk addiction' involves raising capital based on forward-looking goals to fund the R&D necessary to make those goals a reality, a model that characterizes him as a 'builder'.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 8,
+      "text": "Despite Tesla's success in maturing its FSD technology, the stock price has remained relatively range-bound compared to its 2021 highs, offering a better entry point given the reduced execution risk.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    }
+  ],
+  "tradeIdeas": [
+    {
+      "order": 1,
+      "ticker": "TSLA",
+      "instrument": null,
+      "stance": "long",
+      "conviction": "high",
+      "entry": null,
+      "target": "475美元",
+      "stop": null,
+      "horizon": "long-term",
+      "action": "buy TSLA shares",
+      "rationale": "Tesla's risk-reward profile has improved because execution risks for FSD and Cybercab have decreased while the potential market value remains high, supported by lower manufacturing costs and faster scaling capability compared to competitors like Waymo.",
+      "catalysts": [
+        "FSD technical progress",
+        "Cybercab fleet scaling in Austin",
+        "cost advantage over Waymo"
+      ],
+      "risks": [
+        "Robotaxi operational failure",
+        "execution risks",
+        "regulatory or scaling hurdles"
+      ],
+      "conditions": [],
+      "quotes": [
+        {
+          "text": "“你这个风险降低了，为什么它更加值得买入，就是在这里，风险降低了，如果它风险还提高了，价值降低了，反而就不应该买入了”",
+          "translation": null,
+          "timestamp": null,
+          "speaker": null
+        }
+      ],
+      "otherFields": {
+        "expires": "expires: 2026年年底"
+      }
+    }
+  ],
+  "reasoning": [],
+  "otherSections": [
+    {
+      "heading": "verdict",
+      "text": "VERDICT\n1 idea\nHIGHconviction\n1 LONG\nTSLA"
+    },
+    {
+      "heading": "direction mix",
+      "text": "Direction mix: 1 long"
+    },
+    {
+      "heading": "pipeline metadata",
+      "text": "prompt: keypoints.v1-insights.v3-critique.v1\ntokens: 85.4k\nmodels: gemini-3.1-flash-lite · gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite"
+    }
+  ],
+  "linksInPage": [
+    {
+      "text": "←today/dhYuN3Oo",
+      "href": "https://leapedge.app/today"
+    },
+    {
+      "text": "",
+      "href": "https://www.youtube.com/watch?v=dhYuN3Oopss"
+    },
+    {
+      "text": "霍比特小灰",
+      "href": "https://leapedge.app/channels/UCq_uARg8CRY2YeV2loQ7O_A?src=analysis"
+    },
+    {
+      "text": "watch on youtube↗",
+      "href": "https://www.youtube.com/watch?v=dhYuN3Oopss"
+    }
+  ]
+}

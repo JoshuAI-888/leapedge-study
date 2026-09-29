@@ -1,0 +1,182 @@
+←
+TODAY
+/
+CKAVFGL6
+READY
+$0.030
+3 Stocks To Buy Now (Best Investments September 2026)
+MT
+Miles Talks Finance
+☆
+watch on youtube
+↗
+VERDICT
+3 ideas
+HIGHconviction
+3 LONG
+AMZN
+ELF
+HIMS
+
+SUMMARY
+
+The creator presents a bullish outlook on high-growth compounders that offer compelling risk-reward setups amid cooling oil prices and broader macroeconomic stabilization. He highlights Hims & Hers, Amazon, and Elf Beauty as his top three conviction stock buys with significant multi-year upside potential.
+
+KEY POINTS
+
+01
+
+The market remains in a flat, uneventful trading environment, with tech gains offsetting weaknesses in financials and industrials.
+
+02
+
+Oil prices are cooling down, dropping 9% in the past week, which serves as a positive catalyst for the broader market.
+
+03
+
+Geopolitical tensions involving Iran and the UN should be treated with skepticism regarding their impact on oil prices due to past false signaling.
+
+04
+
+SoFi stock is viewed as an inverse of the federal funds rate and moves based on investor hopes for interest rate cuts.
+
+05
+
+Hims & Hers (HIMS) is a primary buy despite its negative PE ratio, driven by 19% year-over-year subscriber growth and massive international revenue expansion.
+
+06
+
+The potential growth of peptide treatments is predicted to eventually surpass that of GPUs in terms of market impact.
+
+07
+
+Amazon remains a core accumulation target due to its strong AWS performance, which accounts for over half of its operating income.
+
+08
+
+Amazon's massive capital expenditure is a necessary investment for long-term growth and will likely pay off once CAPEX spending cycles moderate.
+
+09
+
+Elf Beauty is considered undervalued, with projections of 18-20% net sales growth through 2027 and a successful shift in manufacturing away from China.
+
+10
+
+The creator predicts HIMS as a $100 long-term stock, Amazon reaching over $300 soon, and Elf Beauty as a potential $400 stock over 3-7 years.
+
+COLLAPSE ALL
+HIMS
+LONG
+HIGH
+THREE TO SEVEN YEARS
+▾
+
+Hims & Hers is experiencing explosive international growth (+1,641% revenue outside the US) and 19% subscriber expansion. Long-term upside is driven by massive untapped addressable markets in Europe and Canada, alongside the emerging multi-billion dollar peptide market opportunity.
+
+VERBATIM · SUPPORTING QUOTE
+
+“My overall thoughts for these stocks is that HIMS is a $100 long-term stock.”
+
+ENTRY
+—
+TARGET
+$100
+STOP
+—
+CATALYSTS
+International expansion into mental health and lab services in Europe/Canada
+Peptide and weight-loss market expansion
+FDA regulatory approvals
+
+⏱
+EXPIRES: THREE TO SEVEN YEARS
+
+ACTION
+
+accumulate at current levels
+
+RISKS
+
+—
+negative PE ratio
+—
+FDA regulatory reliance
+SAVE TO TRADE
+AMZN
+LONG
+HIGH
+BEFORE THE END OF THIS YEAR, MAYBE AT THE BEGINNING OF NEXT YEAR
+▾
+
+Amazon is deceptively cheap relative to AWS strength, which accounts for over half of operating income and is growing net sales at 37% year-over-year. Current high CAPEX spending is building long-term growth assets that will yield strong returns once the spending cycle moderates.
+
+VERBATIM · SUPPORTING QUOTE
+
+“Amazon is very close to that big run that brings it to $300 plus.”
+
+ENTRY
+—
+TARGET
+$300 plus
+STOP
+—
+CATALYSTS
+CAPEX slowdown announcement
+Sustained AWS revenue and operating income growth
+
+⏱
+EXPIRES: BEFORE THE END OF THIS YEAR, MAYBE AT THE BEGINNING OF NEXT YEAR
+
+ACTION
+
+accumulate quickly at current prices
+
+RISKS
+
+—
+High CAPEX spending
+—
+Debt
+SAVE TO TRADE
+ELF
+LONG
+HIGH
+3 TO 7 YEARS
+▾
+
+Elf Beauty is undervalued for a company growing net sales at 18-20% and successfully shifting manufacturing out of China to boost margins.
+
+VERBATIM · SUPPORTING QUOTE
+
+“And also very bold take, the boldest out of the three is that Elf is a $400 stock long term.”
+
+ENTRY
+—
+TARGET
+$400
+STOP
+—
+CATALYSTS
+Cooling oil prices
+International expansion
+Revenue growth
+
+ACTION
+
+buy and hold
+
+RISKS
+
+—
+market volatility
+—
+high forward PE
+SAVE TO TRADE
+▾
+PIPELINE METADATA
+PROMPT
+keypoints.v1-insights.v3-critique.v1
+TOKENS
+96.6k
+MODELS
+gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite

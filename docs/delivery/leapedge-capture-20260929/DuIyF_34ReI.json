@@ -1,0 +1,187 @@
+{
+  "videoId": "DuIyF_34ReI",
+  "youtubeUrl": "https://www.youtube.com/watch?v=DuIyF_34ReI",
+  "leapedgeUrl": "https://leapedge.app/analyses/DuIyF_34ReI__keypoints.v1-insights.v3-critique.v1",
+  "capturedAt": "2026-09-29T09:39:34.140Z",
+  "video": {
+    "title": "This Small Palantir Partner Just Unlocked One Billion Dollars in AI Defense Contracts!",
+    "channel": null,
+    "publishedAt": null,
+    "duration": null,
+    "language": null
+  },
+  "run": {
+    "submittedAt": null,
+    "firstContentAt": null,
+    "finalAt": null,
+    "totalSeconds": null,
+    "status": "ready",
+    "failureText": null,
+    "timeline": [],
+    "displayedCost": "$0.030",
+    "displayedTokens": "67.5k",
+    "models": [
+      "gemini-3.7-flash",
+      "gemini-3.1-flash-lite",
+      "gemini-3.1-flash-lite",
+      "gemini-3.1-flash-lite"
+    ],
+    "promptVersion": "keypoints.v1-insights.v3-critique.v1",
+    "stepLabels": []
+  },
+  "summary": "Ondas Holdings (ONDS) is transforming from a niche tech provider into a full prime defense contractor through its acquisition of Mistral, a strategic partnership with Palantir, and major international contract wins. These catalysts have driven the company to raise full-year 2026 revenue guidance to at least $375 million, representing a sevenfold increase from 2025. Despite small-cap volatility and acquisition execution risks, the company presents a high-upside growth opportunity aligned with multi-domain defense priorities.",
+  "keyPoints": [
+    {
+      "order": 1,
+      "text": "Ondas Holdings (ONDS) is positioned to benefit from increased US defense spending on autonomous systems.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 2,
+      "text": "Ondas announced a strategic partnership with Palantir to integrate AI across its drone and robot platforms.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 3,
+      "text": "Ondas entered a definitive agreement to acquire Mistral, a defense prime contractor, providing access to over $1 billion in existing IDIQ contract vehicles.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 4,
+      "text": "The Mistral acquisition is valued at $175 million and is expected to close in the second quarter of 2026.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 5,
+      "text": "Ondas raised its 2026 revenue guidance to at least $375 million, representing a sevenfold increase from 2025 levels.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 6,
+      "text": "Ondas' subsidiary 4M Defense won an initial $15.8 million order for border demining in Israel, with total program value expected to exceed $50 million.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 7,
+      "text": "The demining contract is part of Israel's $1.7 billion Eastern Border Security Barrier Initiative.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 8,
+      "text": "The integration of Mistral, Palantir's AI, and Ondas' hardware aims to address the DoD's preference for multi-domain, AI-driven defense systems.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 9,
+      "text": "Ondas forecasts 2026 Q1 revenue between $38 million and $40 million, an 820% year-over-year increase.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 10,
+      "text": "Risks to the thesis include execution challenges regarding the Mistral acquisition and potential milestone delays in international programs.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 11,
+      "text": "Ondas' small market capitalization makes the stock susceptible to higher volatility compared to larger, more established defense contractors like AeroVironment.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    }
+  ],
+  "tradeIdeas": [
+    {
+      "order": 1,
+      "ticker": "ONDS",
+      "instrument": null,
+      "stance": "long",
+      "conviction": "high",
+      "entry": null,
+      "target": null,
+      "stop": null,
+      "horizon": "long-term",
+      "action": "Long ONDS to capture high-upside growth from contract backlog expansion and prime DoD contractor access",
+      "rationale": "Ondas is rapidly scaling from a speculative hardware firm into an integrated prime contractor by acquiring Mistral (gaining access to over $1 billion in DoD IDIQ contracts), integrating Palantir AI across its platforms, and winning a border demining program in Israel expected to exceed $50 million. This structural pivot supports forecasted Q1 2026 revenue growth of ~820% YoY and full-year guidance of at least $375 million.",
+      "catalysts": [
+        "Closing of Mistral acquisition in Q2 2026",
+        "Rollout of $15.8M initial order and expansion of Israel border demining initiative",
+        "Q1 2026 earnings release"
+      ],
+      "risks": [
+        "acquisition execution risks",
+        "international milestone timing shifts",
+        "small-cap stock volatility"
+      ],
+      "conditions": [],
+      "quotes": [
+        {
+          "text": "“In short, Ondas moves from niche technology provider to full prime participant in multi-year DoD programs.”",
+          "translation": null,
+          "timestamp": null,
+          "speaker": null
+        }
+      ],
+      "otherFields": {}
+    }
+  ],
+  "reasoning": [],
+  "otherSections": [
+    {
+      "heading": "verdict",
+      "text": "VERDICT\n1 idea\nHIGHconviction\n1 LONG\nONDS"
+    },
+    {
+      "heading": "direction mix",
+      "text": "Direction mix: 1 long"
+    },
+    {
+      "heading": "pipeline metadata",
+      "text": "prompt: keypoints.v1-insights.v3-critique.v1\ntokens: 67.5k\nmodels: gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite · gemini-3.1-flash-lite"
+    }
+  ],
+  "linksInPage": [
+    {
+      "text": "←today/DuIyF_34",
+      "href": "https://leapedge.app/today"
+    },
+    {
+      "text": "",
+      "href": "https://www.youtube.com/watch?v=DuIyF_34ReI"
+    },
+    {
+      "text": "watch on youtube↗",
+      "href": "https://www.youtube.com/watch?v=DuIyF_34ReI"
+    }
+  ]
+}

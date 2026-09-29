@@ -1,0 +1,207 @@
+{
+  "videoId": "tD-Er2_LQrk",
+  "youtubeUrl": "https://www.youtube.com/watch?v=tD-Er2_LQrk",
+  "leapedgeUrl": "https://leapedge.app/analyses/tD-Er2_LQrk__keypoints.v1-insights.v3-critique.v1",
+  "capturedAt": "2026-09-29T09:38:50.733Z",
+  "video": {
+    "title": "华尔街开始FOMO了！加密下一轮造富，散户还有先手？｜Jordi Vissel",
+    "channel": "霍比特小灰",
+    "publishedAt": null,
+    "duration": null,
+    "language": null
+  },
+  "run": {
+    "submittedAt": null,
+    "firstContentAt": null,
+    "finalAt": null,
+    "totalSeconds": null,
+    "status": "ready",
+    "failureText": null,
+    "timeline": [],
+    "displayedCost": "$0.030",
+    "displayedTokens": "91.4k",
+    "models": [
+      "gemini-3.1-flash-lite",
+      "gemini-3.7-flash",
+      "gemini-3.1-flash-lite",
+      "gemini-3.1-flash-lite"
+    ],
+    "promptVersion": "keypoints.v1-insights.v3-critique.v1",
+    "stepLabels": []
+  },
+  "summary": "Wall Street fund managers struggling to beat the S&P 500 are experiencing crypto FOMO and seeking asset tokenization opportunities. The crypto sector is currently at its 'iPhone moment,' where autonomous AI agents provide the killer utility layer to utilize previously built blockchain rails and infrastructure. Because Wall Street research is not projected to fully cover individual crypto tokens until approximately 2027, retail investors retain a rare structural advantage to position ahead of institutional capital.",
+  "keyPoints": [
+    {
+      "order": 1,
+      "text": "Wall Street fund managers are experiencing FOMO regarding crypto assets as they struggle to outperform the S&P 500 index.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 2,
+      "text": "Institutional investors are actively seeking ways to implement asset tokenization to find new alpha-generating opportunities.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 3,
+      "text": "Bitcoin's price action demonstrated significant resilience to bad news, such as failed legislation and interest rate hikes, signaling a cycle bottom.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 4,
+      "text": "The 2021-2022 crypto boom is compared to the dot-com bubble, which successfully built the essential infrastructure that is now ready for mass adoption.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 5,
+      "text": "AI agents are identified as the 'iPhone moment' for crypto, providing the necessary utility layer to drive demand for existing blockchain infrastructure.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 6,
+      "text": "Retail investors hold a competitive advantage by researching and positioning in specific tokens that Wall Street institutions do not yet cover with formal research.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 7,
+      "text": "Significant institutional coverage and capital allocation into specific altcoins are unlikely to reach maturity until approximately 2027.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 8,
+      "text": "The shift toward a digital economy means companies that fail to adopt AI and integrate with new technology rails face long-term obsolescence.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    },
+    {
+      "order": 9,
+      "text": "Privacy-focused coins may see increased demand as AI agents require confidential transaction methods when interacting with one another.",
+      "quote": null,
+      "quoteTranslation": null,
+      "timestamp": null,
+      "tags": []
+    }
+  ],
+  "tradeIdeas": [
+    {
+      "order": 1,
+      "ticker": "macro",
+      "instrument": null,
+      "stance": "long",
+      "conviction": "high",
+      "entry": null,
+      "target": null,
+      "stop": null,
+      "horizon": "long-term",
+      "action": "front-run institutional capital by researching and accumulating leading crypto infrastructure rails before 2027",
+      "rationale": "Crypto infrastructure has completed its post-bubble buildout and entered its 'iPhone moment,' where autonomous AI agents will generate real transaction utility across blockchain rails. Retail investors hold a structural edge to position early because institutional Wall Street desks do not yet provide research coverage on individual tokens.",
+      "catalysts": [
+        "AI agent deployment driving on-chain utility",
+        "Wall Street asset tokenization initiatives",
+        "institutional coverage expanding toward 2027"
+      ],
+      "risks": [
+        "Infrastructure adoption delay",
+        "Institutional shift in research coverage"
+      ],
+      "conditions": [],
+      "quotes": [
+        {
+          "text": "“The beauty of this is Wall Street doesn't cover tokens in crypto, they're starting to get involved in the rails, but they don't cover individual tokens.”",
+          "translation": null,
+          "timestamp": null,
+          "speaker": null
+        }
+      ],
+      "otherFields": {
+        "expires": "expires: 2027"
+      }
+    },
+    {
+      "order": 2,
+      "ticker": "ZEC",
+      "instrument": null,
+      "stance": "long",
+      "conviction": "medium",
+      "entry": null,
+      "target": null,
+      "stop": null,
+      "horizon": "long-term",
+      "action": "Hold or accumulate ZEC as privacy-oriented AI agents emerge",
+      "rationale": "As autonomous AI agents transact and interact with one another, some will prioritize privacy to obscure their transaction history, driving demand for privacy-focused blockchains.",
+      "catalysts": [
+        "Growth of autonomous AI agent interactions",
+        "Rising demand for on-chain transaction privacy"
+      ],
+      "risks": [
+        "Regulatory scrutiny of privacy tokens",
+        "Adoption latency of AI agents"
+      ],
+      "conditions": [],
+      "quotes": [
+        {
+          "text": "“And some agent, he said I don't want you to know my, I don't want you to know you find out who I transacted with. So we go to privacy coins, we go to ZEC. And then ZEC takes off.”",
+          "translation": null,
+          "timestamp": null,
+          "speaker": null
+        }
+      ],
+      "otherFields": {}
+    }
+  ],
+  "reasoning": [],
+  "otherSections": [
+    {
+      "heading": "verdict",
+      "text": "VERDICT\n2 ideas\nHIGHconviction\n2 LONG\nZEC"
+    },
+    {
+      "heading": "direction mix",
+      "text": "Direction mix: 2 long"
+    },
+    {
+      "heading": "pipeline metadata",
+      "text": "prompt: keypoints.v1-insights.v3-critique.v1\ntokens: 91.4k\nmodels: gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite"
+    }
+  ],
+  "linksInPage": [
+    {
+      "text": "←today/tD-Er2_L",
+      "href": "https://leapedge.app/today"
+    },
+    {
+      "text": "",
+      "href": "https://www.youtube.com/watch?v=tD-Er2_LQrk"
+    },
+    {
+      "text": "霍比特小灰",
+      "href": "https://leapedge.app/channels/UCq_uARg8CRY2YeV2loQ7O_A?src=analysis"
+    },
+    {
+      "text": "watch on youtube↗",
+      "href": "https://www.youtube.com/watch?v=tD-Er2_LQrk"
+    }
+  ]
+}
