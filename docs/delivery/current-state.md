@@ -67,3 +67,10 @@ reasons first; calls and leaderboard second. Improve on LeapEdge for this audien
    brief synthesis → one cross-family faithfulness check. ~3–5 calls.
 5. Up to 20 fresh paired runs against LeapEdge: latency, fidelity, cost; feed
    prompt improvements.
+
+## Added 29 September 2026
+
+The user added 19 LeapEdge-gap features (daily report, search, trends, channel pages, richer calls
+and more) as phase 5, F56–F77. See `leapedge-gap-decisions-20260929.md` for scope and
+`leapedge-gap-ux-proposals-20260929.md` for the UI/UX requirements. The morning email digest stays
+in phase 4 (excluded).

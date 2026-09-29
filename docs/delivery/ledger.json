@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-09-28",
+  "updated": "2026-09-29",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -1288,6 +1288,482 @@
       ],
       "tests": [],
       "note": "What a fresh session reads before it touches anything."
+    },
+    {
+      "id": "F56",
+      "phase": 5,
+      "lane": "query",
+      "title": "Research query API: paged server-side calls and videos queries with facet counts and set aggregates",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F24",
+        "F30"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/repos/research-query.ts",
+        "src/server/youtube-intelligence/actions/query.ts"
+      ],
+      "tests": [
+        "tests/research-query.test.ts"
+      ],
+      "note": "Foundation for search, trends, channel pages, report archive, export and quick search; replaces reliance on the capped snapshot. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F56). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F57",
+      "phase": 5,
+      "lane": "ui-kit",
+      "title": "UX foundations: sentiment palette and split bar, URL filter state, hidden-by-filter notice, grouped sidebar, audit fixes",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/SplitBar.tsx",
+        "src/features/youtube-intelligence/ui/url-state.ts",
+        "src/features/youtube-intelligence/ui/Shell.tsx"
+      ],
+      "tests": [
+        "tests/ui-foundations.test.ts"
+      ],
+      "note": "Includes the screenshot-audit fixes (empty-by-default trust filter, short-page centring, evidence panel scroll box, trust naming, internal text). Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F57). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F58",
+      "phase": 5,
+      "lane": "time",
+      "title": "US trading-day sessions (ET, holiday-aware) and team time zone setting",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F05"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/trading-day.ts",
+        "src/features/youtube-intelligence/ui/TradingDay.tsx"
+      ],
+      "tests": [
+        "tests/trading-day.test.ts"
+      ],
+      "note": "Gap 14. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F58). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F59",
+      "phase": 5,
+      "lane": "extraction",
+      "title": "Macro, theme and sector views with a fixed vocabulary, instrument label and type filter",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F19",
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/instrument-kind.ts",
+        "src/features/youtube-intelligence/ui/InstrumentLabel.tsx"
+      ],
+      "tests": [
+        "tests/instrument-kind.test.ts"
+      ],
+      "note": "Gap 13. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F59). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F60",
+      "phase": 5,
+      "lane": "extraction",
+      "title": "Richer call fields: catalysts, expiry, action, parsed levels; prompt/schema bump; call card v2",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F19",
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/level-parse.ts",
+        "src/features/youtube-intelligence/ui/components.tsx",
+        "src/server/youtube-intelligence/prompts.ts"
+      ],
+      "tests": [
+        "tests/level-parse.test.ts"
+      ],
+      "note": "Gap 6. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F60). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F61",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Analysis page verdict box, summary paragraph and numbered key points; tabs for calls, brief and details",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F47",
+        "F60"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/Verdict.tsx",
+        "src/features/youtube-intelligence/ui/pages/Analysis.tsx"
+      ],
+      "tests": [
+        "tests/verdict.test.ts"
+      ],
+      "note": "Gap 5. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F61). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F62",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Search page: faceted filters with counts, calls and videos results, filtered-set summary, URL state, paging",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Search.tsx"
+      ],
+      "tests": [
+        "tests/search-page.test.ts"
+      ],
+      "note": "Gap 2. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F62). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F63",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "CSV and JSON export of calls, videos and daily reports with stated scope",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F56"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/export.ts",
+        "src/features/youtube-intelligence/ui/ExportMenu.tsx"
+      ],
+      "tests": [
+        "tests/export.test.ts"
+      ],
+      "note": "Gap 10. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F63). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F64",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Daily report page and archive: themes with citations, in-focus ranking, disagreements, sources; Today summary card",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Report.tsx",
+        "src/server/youtube-intelligence/daily-report.ts"
+      ],
+      "tests": [
+        "tests/daily-report.test.ts"
+      ],
+      "note": "Gap 1. Builds on briefings.ts and briefing-pipeline.ts; email delivery stays in F54. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F64). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F65",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Trends page: headline tiles, weekly sentiment columns, price-aligned call timeline, drill list",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F25"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Trends.tsx",
+        "src/features/youtube-intelligence/ui/charts.tsx"
+      ],
+      "tests": [
+        "tests/trends-series.test.ts"
+      ],
+      "note": "Gap 3. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F65). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F66",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Channel detail page: stats, lean, record vs benchmark, calls over time, analyses list",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F56",
+        "F65",
+        "F36"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Channel.tsx"
+      ],
+      "tests": [
+        "tests/channel-page.test.ts"
+      ],
+      "note": "Gap 4. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F66). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F67",
+      "phase": 5,
+      "lane": "sources-ui",
+      "title": "Channels list as a sortable table with activity, lean and status; add-channels drawer",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F45",
+        "F56",
+        "F57"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Channels.tsx",
+        "src/server/youtube-intelligence/channel-stats.ts"
+      ],
+      "tests": [
+        "tests/channel-stats.test.ts"
+      ],
+      "note": "Gap 11. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F67). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F68",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Watchlist: pinned and mentioned-today tickers with sparkline, 1-day change and divergence flag",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F25",
+        "F57"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/Watchlist.tsx"
+      ],
+      "tests": [
+        "tests/watchlist.test.ts"
+      ],
+      "note": "Gap 8. Existing price data only. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F68). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F69",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "24-hour trending window on the sentiment panel, session-aligned, as view state",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F38",
+        "F58"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/SentimentPanel.tsx"
+      ],
+      "tests": [
+        "tests/sentiment-window.test.ts"
+      ],
+      "note": "Gap 15. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F69). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F70",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Per-browser unread markers and new-since-last-visit group",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F44"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/unread.ts"
+      ],
+      "tests": [
+        "tests/unread.test.ts"
+      ],
+      "note": "Gap 18. Shared passcode: labelled as tracked on this browser. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F70). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F71",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Follow-channel prompt with cost projection on analyses from unfollowed channels",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F45",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/FollowPrompt.tsx"
+      ],
+      "tests": [
+        "tests/follow-prompt.test.ts"
+      ],
+      "note": "Gap 19. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F71). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F72",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Live step progress while running and a general Retry that resumes from checkpoints",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F27",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/StepProgress.tsx",
+        "src/features/youtube-intelligence/progress-steps.ts"
+      ],
+      "tests": [
+        "tests/progress-steps.test.ts"
+      ],
+      "note": "Gap 12. Decision D1 limits the stepper to running runs. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F72). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F73",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Per-call token, cache, time and cost table in Processing details",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F17b",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/CallUsageTable.tsx"
+      ],
+      "tests": [
+        "tests/call-usage.test.ts"
+      ],
+      "note": "Gap 20. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F73). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F74",
+      "phase": 5,
+      "lane": "queue",
+      "title": "Reuse a completed run for the same video and pipeline version; explicit paid re-run",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F26"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/reuse.ts"
+      ],
+      "tests": [
+        "tests/run-reuse.test.ts"
+      ],
+      "note": "Gap 7. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F74). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F75",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Saved calls: status tabs with counts, grouping by session, call card v2, permanent delete",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F48",
+        "F60",
+        "F58"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Saved.tsx"
+      ],
+      "tests": [
+        "tests/saved-calls.test.ts"
+      ],
+      "note": "Gap 17. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F75). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F76",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Quick search palette (Cmd/Ctrl+K) over instruments, channels, videos and actions",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F56",
+        "F62"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/CommandPalette.tsx"
+      ],
+      "tests": [
+        "tests/command-palette.test.ts"
+      ],
+      "note": "Gap 16. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F76). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
+    },
+    {
+      "id": "F77",
+      "phase": 5,
+      "lane": "gate",
+      "title": "Phase-5 gate run: browser and visual matrix for the LeapEdge-gap surfaces, registry CI, conformance",
+      "spec": "7.6",
+      "status": "todo",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59",
+        "F60",
+        "F61",
+        "F62",
+        "F63",
+        "F64",
+        "F65",
+        "F66",
+        "F67",
+        "F68",
+        "F69",
+        "F70",
+        "F71",
+        "F72",
+        "F73",
+        "F74",
+        "F75",
+        "F76"
+      ],
+      "files": [
+        "docs/gates/phase-5-baseline.json"
+      ],
+      "tests": [
+        "tests/phase-5-gate.test.ts"
+      ],
+      "note": "Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F77). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
+      "planned": true
     }
   ],
   "executionScope": "docs/delivery/standalone-scope.json",

@@ -5,8 +5,9 @@ against this repository at `main` on the same day. The user decided each gap one
 Billing, quotas, auth, public share links, social sharing, favourites and marketing pages
 were excluded by default (the product is not sold).
 
-These decisions are **scope, not delivery**. Nothing here is built yet. Each accepted item still
-needs a ledger feature entry (`docs/delivery/ledger.json`) before work starts.
+These decisions are **scope, not delivery**. Nothing here is built yet. The accepted items are
+build-plan phase 5 in the ledger (F56–F77); their UI/UX requirements are in
+`leapedge-gap-ux-proposals-20260929.md`, with wireframes in `docs/spec/mockups/LeapEdgeGaps.html`.
 
 ## Already present — no work
 
@@ -22,28 +23,41 @@ needs a ledger feature entry (`docs/delivery/ledger.json`) before work starts.
 
 ## Decisions
 
-| # | Gap | Decision | Scope agreed |
-|---|---|---|---|
-| 1 | Daily cross-creator report page + archive | **In** | Page with themed narrative, ranked in-focus tickers with source counts, direction split, source runs; archive of past days. Builds on `briefings.ts` / `briefing-pipeline.ts`. |
-| 2 | Faceted search / archive | **In** | Facets (ticker, channel, direction, conviction, window, title) with live counts; aggregate panel; URL-persisted filters; pagination; substring title match. |
-| 3 | Trends dashboard | **In** | View by channel / ticker / direction; 1d–1y/all; KPI tiles; calls-over-time scatter; drill list; state in URL. |
-| 4 | Per-channel page | **In** | Streams, calls, lean, typical conviction, top tickers, benchmark record, analyses list, link to filtered search. |
-| 5 | Verdict box, summary, numbered key points | **In** | On the analysis page and compactly on list cards; explicit "no investable ideas" state. |
-| 6 | Richer call fields | **In** | Catalysts, expiry, recommended action, numeric level parsing (original text kept); levels shown on cards. Prompt/schema version bump. |
-| 7 | Reuse completed analyses | **In** | Same video + pipeline/prompt version returns the finished run at $0; explicit Re-run forces a paid run. |
-| 8 | Watchlist with price context | **In** | Today panel: today's tickers + pinned tickers, sparkline, % change, mention count; existing price source. |
-| 9 | Morning email digest | **Out** | Stays in F54 (phase 4). |
-| 10 | CSV / JSON export | **In** | From search (filtered set), channel page and daily report. |
-| 11 | Channels list stats | **In** | Last pull, pulls/7d, top ticker, lean bar, live "analysing" status; sort by activity / recently added. |
-| 12 | Live stage stepper + general Retry | **In** | Stepper with elapsed time; Retry resumes from last checkpoint without duplicate spend. |
-| 13 | Macro / theme / sector views | **In** | Labelled (e.g. MACRO: rates, SECTOR: semis) and aggregated in report, search, trends, trending. |
-| 14 | US trading day + team timezone | **In** | Daily boundaries by US trading day (ET, holiday-aware); display timezone set in Settings. |
-| 15 | 24h trending | **In** | 24h window on the existing sentiment panel, vs prior 24h. |
-| 16 | Cmd/Ctrl+K quick search | **In** | Global palette over tickers, channels, titles (substring). |
-| 17 | Saved ideas improvements | **In** | Group by call date, show levels/catalysts/expiry, hard delete. |
-| 18 | Unread markers | **In** | Per-browser (shared passcode, no per-user accounts) unread dots and "new since last visit" count. |
-| 19 | Follow-channel prompt on analysis | **In** | Banner on analyses from unfollowed channels, with cost projection before confirming. |
-| 20 | Token disclosure | **In** | Per-stage input/output tokens and the model-call list in Processing details. |
+| # | Gap | Decision | Scope agreed | Ledger |
+|---|---|---|---|---|
+| 1 | Daily cross-creator report page + archive | **In** | Page with themed narrative, ranked in-focus tickers with source counts, direction split, source runs; archive of past days. Builds on `briefings.ts` / `briefing-pipeline.ts`. | F64 |
+| 2 | Faceted search / archive | **In** | Facets (ticker, channel, direction, conviction, window, title) with live counts; aggregate panel; URL-persisted filters; pagination; substring title match. | F62 |
+| 3 | Trends dashboard | **In** | View by channel / ticker / direction; 1d–1y/all; KPI tiles; calls-over-time scatter; drill list; state in URL. | F65 |
+| 4 | Per-channel page | **In** | Streams, calls, lean, typical conviction, top tickers, benchmark record, analyses list, link to filtered search. | F66 |
+| 5 | Verdict box, summary, numbered key points | **In** | On the analysis page and compactly on list cards; explicit "no investable ideas" state. | F61 |
+| 6 | Richer call fields | **In** | Catalysts, expiry, recommended action, numeric level parsing (original text kept); levels shown on cards. Prompt/schema version bump. | F60 |
+| 7 | Reuse completed analyses | **In** | Same video + pipeline/prompt version returns the finished run at $0; explicit Re-run forces a paid run. | F74 |
+| 8 | Watchlist with price context | **In** | Today panel: today's tickers + pinned tickers, sparkline, % change, mention count; existing price source. | F68 |
+| 9 | Morning email digest | **Out** | Stays in F54 (phase 4). | — |
+| 10 | CSV / JSON export | **In** | From search (filtered set), channel page and daily report. | F63 |
+| 11 | Channels list stats | **In** | Last pull, pulls/7d, top ticker, lean bar, live "analysing" status; sort by activity / recently added. | F67 |
+| 12 | Live stage stepper + general Retry | **In** | Stepper with elapsed time; Retry resumes from last checkpoint without duplicate spend. | F72 |
+| 13 | Macro / theme / sector views | **In** | Labelled (e.g. MACRO: rates, SECTOR: semis) and aggregated in report, search, trends, trending. | F59 |
+| 14 | US trading day + team timezone | **In** | Daily boundaries by US trading day (ET, holiday-aware); display timezone set in Settings. | F58 |
+| 15 | 24h trending | **In** | 24h window on the existing sentiment panel, vs prior 24h. | F69 |
+| 16 | Cmd/Ctrl+K quick search | **In** | Global palette over tickers, channels, titles (substring). | F76 |
+| 17 | Saved ideas improvements | **In** | Group by call date, show levels/catalysts/expiry, hard delete. | F75 |
+| 18 | Unread markers | **In** | Per-browser (shared passcode, no per-user accounts) unread dots and "new since last visit" count. | F70 |
+| 19 | Follow-channel prompt on analysis | **In** | Banner on analyses from unfollowed channels, with cost projection before confirming. | F71 |
+| 20 | Token disclosure | **In** | Per-stage input/output tokens and the model-call list in Processing details. | F73 |
+
+Foundations added with them: F56 (research query API), F57 (UX foundations and screenshot-audit
+fixes). Gate: F77.
+
+## UX decisions D1–D4 (accepted 29 September 2026)
+
+After reviewing the UX proposals the user answered "Yes" to recording them and adding the features
+to the ledger, which accepts the four recommended resolutions (spec §7.6):
+
+- **D1** Step progress only while a run is working; finished runs keep the four states.
+- **D2** Grouped module sidebar; quick search in the side panel, not Finradar's top bar.
+- **D3** "Material developments" moves from Today to the Daily report page.
+- **D4** Periods, ranges and filters are URL view state and never write a setting.
 
 ## Suggested build order
 

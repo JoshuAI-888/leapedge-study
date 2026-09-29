@@ -1,10 +1,11 @@
 {
   "version": "standalone-build-scope.v1",
   "decidedAt": "2026-09-19",
-  "objective": "Complete Phase 2 and Phase 3 as a standalone YouTube Intelligence app; stop before Phase 4 and Finradar integration.",
+  "objective": "Complete Phases 2, 3 and 5 as a standalone YouTube Intelligence app; Phase 4 (Finradar integration, context, corpus, sharing, digest) stays excluded.",
   "phases": [
     2,
-    3
+    3,
+    5
   ],
   "stopBeforePhase": 4,
   "features": [
@@ -29,7 +30,29 @@
     "F46",
     "F47",
     "F48",
-    "F49"
+    "F49",
+    "F56",
+    "F57",
+    "F58",
+    "F59",
+    "F60",
+    "F61",
+    "F62",
+    "F63",
+    "F64",
+    "F65",
+    "F66",
+    "F67",
+    "F68",
+    "F69",
+    "F70",
+    "F71",
+    "F72",
+    "F73",
+    "F74",
+    "F75",
+    "F76",
+    "F77"
   ],
   "excludedFeatures": [
     "F50",
@@ -73,5 +96,11 @@
     "comparisonNewLeapEdgeSubmissions": 16
   },
   "completionRule": "Only evidence-backed implemented features count; never mark merged before merge. Build completion and live-provider verification are separate statuses.",
-  "direction": "docs/delivery/current-state.md"
+  "direction": "docs/delivery/current-state.md",
+  "phase5": {
+    "decidedAt": "2026-09-29",
+    "source": "docs/delivery/leapedge-gap-decisions-20260929.md",
+    "requirements": "docs/delivery/leapedge-gap-ux-proposals-20260929.md",
+    "note": "The user added 19 LeapEdge-gap features after a one-by-one review; F56-F57 are their foundations and F77 their gate. Morning email digest (F54) stays excluded with the rest of phase 4."
+  }
 }
