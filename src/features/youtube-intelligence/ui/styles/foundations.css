@@ -283,6 +283,7 @@
 }
 .yi-provenance p {
   font-size: 12px;
+}
 /* F58 trading-day label and market status (data/extraction lane). */
 .yi-trading-day {
   white-space: nowrap;

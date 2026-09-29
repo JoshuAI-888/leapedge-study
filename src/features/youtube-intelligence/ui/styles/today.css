@@ -577,5 +577,155 @@
   }
   .yi-workspace .yi-chip.yi-watchlist-flag {
     justify-self: start;
+/* F75 — Saved calls (saved lane). Price moves are ink text; colour means sentiment only. */
+.yi-saved-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.yi-saved-count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  border-radius: 999px;
+  padding: 0 7px;
+  background: var(--yi-line);
+  color: var(--yi-ink);
+}
+.yi-saved-count.yi-saved-zero {
+  background: transparent;
+  color: var(--yi-muted);
+}
+.yi-saved-group + .yi-saved-group {
+  margin-top: 24px;
+}
+.yi-workspace .yi-saved-heading {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 650;
+  cursor: help;
+}
+.yi-workspace .yi-saved-tabs button[role="tab"] {
+  background: transparent;
+  color: var(--yi-muted);
+}
+.yi-workspace .yi-saved-tabs button[role="tab"][aria-selected="true"] {
+  background: var(--yi-selected);
+  color: var(--yi-primary);
+}
+.yi-workspace .yi-saved-card footer.yi-row {
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-workspace .yi-saved-card footer .yi-text-button,
+.yi-workspace .yi-saved-card footer a {
+  font-size: 13px;
+}
+.yi-workspace .yi-saved-card :is(footer, .yi-saved-confirm) .yi-secondary,
+.yi-workspace .yi-saved-confirm .yi-saved-danger {
+  font-size: 13px;
+  min-height: 36px;
+  padding: 6px 14px;
+}
+.yi-workspace .yi-saved-card footer .yi-text-button:last-child {
+  margin-left: auto;
+}
+.yi-saved-card h3 {
+  margin: 10px 0 6px;
+}
+.yi-saved-expiry {
+  font-size: 12px;
+}
+.yi-saved-expiry-soon,
+.yi-saved-expiry-expired {
+  color: #805300;
+  font-weight: 650;
+}
+.yi-saved-since {
+  margin: 8px 0 4px;
+  color: var(--yi-ink);
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+.yi-saved-since > span {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--yi-muted);
+  margin-right: 6px;
+}
+.yi-saved-meta {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+.yi-saved-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--yi-line);
+  border-radius: 9px;
+  background: var(--yi-page);
+}
+.yi-saved-confirm p {
+  flex-basis: 100%;
+  margin: 0;
+  font-weight: 600;
+}
+/* Destructive controls are ink, not red: red reads as bearish on this page. */
+.yi-workspace .yi-saved-confirm .yi-saved-danger,
+.yi-workspace[data-theme] .yi-saved-confirm .yi-saved-danger {
+  background: var(--yi-ink);
+  color: var(--yi-surface);
+}
+.yi-workspace .yi-text-button.yi-saved-delete,
+.yi-workspace[data-theme] .yi-text-button.yi-saved-delete {
+  background: none;
+  color: var(--yi-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) .yi-saved-expiry-soon,
+  .yi-workspace:not([data-theme="light"]) .yi-saved-expiry-expired {
+    color: #ecd097;
+  }
+}
+.yi-workspace[data-theme="dark"] .yi-saved-expiry-soon,
+.yi-workspace[data-theme="dark"] .yi-saved-expiry-expired {
+  color: #ecd097;
+}
+@media (max-width: 600px) {
+  .yi-saved-tabs {
+    overflow-x: auto;
+  }
+  .yi-saved-tabs button {
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+}
+.yi-workspace .yi-saved-card footer .yi-saved-removed {
+  margin-left: auto;
+  font-size: 13px;
+}
+@media (max-width: 600px) {
+  .yi-workspace .yi-saved-tabs {
+    gap: 2px;
+  }
+  .yi-workspace .yi-saved-tabs button[role="tab"] {
+    padding: 8px 4px;
+    font-size: 14px;
+    gap: 4px;
+  }
+  .yi-workspace .yi-saved-tabs .yi-saved-count {
+    padding: 0 5px;
   }
 }
