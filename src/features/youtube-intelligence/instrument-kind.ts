@@ -282,6 +282,13 @@ function matchWhole<T>(
 }
 /** The macro theme or sector a phrase names, or null. */
 export function themeFor(text: string | null | undefined): Theme | null {
+  // A canonical label ("Information Technology / Semiconductors", which the
+  // v9 prompt's enum returns) is itself, before any phrase matching.
+  const exact = text?.trim().toLowerCase();
+  const canonical = THEME_ENTRIES.find(
+    (e) => e.theme && e.theme.canonical.toLowerCase() === exact,
+  )?.theme;
+  if (canonical) return canonical;
   return matchWhole(text, THEME_ENTRIES, (t) => t.canonical) ?? null;
 }
 /**

@@ -8,6 +8,12 @@ import { countClaims } from "../repos/claims.ts";
 import { countMentions } from "../repos/mentions.ts";
 import type { performance } from "../market.ts";
 import { reads, writes, nothing, type ActionTable } from "./types.ts";
+import {
+  DeleteIdeaInput,
+  SavedSinceInput,
+  deleteIdea,
+  savedSince,
+} from "../saved-calls.ts";
 /**
  * The snapshot reads claims and mentions under a repo row limit, so it reports
  * what it returned beside what exists. A caller that sees `truncated` knows the
@@ -94,6 +100,10 @@ export const research: ActionTable = {
     }),
     (v) => R.changeIdea(v),
   ),
+  // F75: permanent delete, only for a call already in Removed.
+  deleteIdea: writes(DeleteIdeaInput, (v) => deleteIdea(v.id)),
+  // F75: "since saved" price moves from the stored prices table.
+  savedSince: reads(SavedSinceInput, (v) => savedSince(v.calls)),
   watch: writes(
     z.strictObject({
       ticker: z

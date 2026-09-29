@@ -37,3 +37,15 @@ export const action = <T = unknown>(
   name: string,
   body?: unknown,
 ) => request<T>(`/api/youtube-intelligence/${resource}/${name}`, body);
+/** A read that takes input: GET with the input as JSON in `?input=` (F75). */
+export const readAction = <T = unknown>(
+  resource: string,
+  name: string,
+  input: unknown,
+  signal?: AbortSignal,
+) =>
+  request<T>(
+    `/api/youtube-intelligence/${resource}/${name}?input=${encodeURIComponent(JSON.stringify(input))}`,
+    undefined,
+    signal,
+  );

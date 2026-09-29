@@ -19,6 +19,7 @@ import {
   ClaimCard,
   Collapsible,
   Empty,
+  LevelChips,
   PageTitle,
   TrustBadge,
 } from "../components.tsx";
@@ -329,14 +330,7 @@ export function Analysis({ id }: { id: string }) {
             {original?.claim.levels.length ? (
               <>
                 <h3>Levels mentioned</h3>
-                <dl className="yi-levels">
-                  {original.claim.levels.map((l, i) => (
-                    <div key={i}>
-                      <dt>{l.kind}</dt>
-                      <dd>{l.value_original}</dd>
-                    </div>
-                  ))}
-                </dl>
+                <LevelChips levels={original.claim.levels} />
               </>
             ) : null}
             {current?.risksEn.length ? (

@@ -1395,21 +1395,26 @@
       "lane": "extraction",
       "title": "Richer call fields: catalysts, expiry, action, parsed levels; prompt/schema bump; call card v2",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F19",
         "F43"
       ],
       "files": [
         "src/features/youtube-intelligence/level-parse.ts",
+        "src/features/youtube-intelligence/contracts.ts",
         "src/features/youtube-intelligence/ui/components.tsx",
-        "src/server/youtube-intelligence/prompts.ts"
+        "src/server/youtube-intelligence/migrations/0010_call_fields.sql",
+        "src/server/youtube-intelligence/prompt-versions.json",
+        "src/server/youtube-intelligence/repos/claims.ts",
+        "src/server/youtube-intelligence/repos/publish.ts"
       ],
       "tests": [
         "tests/level-parse.test.ts"
       ],
-      "note": "Gap 6. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F60). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Prompt evidence-first.web.v9 (action, catalysts, expiry without inferred dates, macro theme; v1-v8 request bytes pinned). New teams default to v9; a stored v8 team setting stays v8 until changed. Migration 0010 adds claims.levels/catalysts_en/action_en/expiry_date/expiry_original/macro_theme and mentions.instrument (SCHEMA_VERSION 10; 0009 unused). Levels parsed by the app on read, never by the model. New fields excluded from the review digest. Call card v2. Claims published before 0010 show levels after republish or documents:migrate. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F60).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F61",
@@ -1711,20 +1716,23 @@
       "lane": "today-ui",
       "title": "Saved calls: status tabs with counts, grouping by session, call card v2, permanent delete",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F48",
         "F60",
         "F58"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/pages/Saved.tsx"
+        "src/features/youtube-intelligence/ui/pages/Saved.tsx",
+        "src/features/youtube-intelligence/saved-calls.ts",
+        "src/server/youtube-intelligence/saved-calls.ts"
       ],
       "tests": [
         "tests/saved-calls.test.ts"
       ],
-      "note": "Gap 17. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F75). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Open/Reviewed/Removed/All tabs with counts (URL state), session grouping by video publish date (else saved date, stated on hover), expiring-soonest sort, card fields, since-saved price change from stored prices, delete only for Removed calls (research/deleteIdea, row-locked, evented). Export slot wired when F63 merges. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F75).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F76",
