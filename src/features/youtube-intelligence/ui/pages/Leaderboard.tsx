@@ -609,7 +609,15 @@ export function Leaderboard() {
                   <td>
                     <details>
                       <summary>
-                        <strong>{r.label}</strong>
+                        <strong>
+                          {r.id.startsWith("unknown:") ? (
+                            r.label
+                          ) : (
+                            <Link href={`/youtube-intelligence/channels/${encodeURIComponent(r.id)}`}>
+                              {r.label}
+                            </Link>
+                          )}
+                        </strong>
                       </summary>
                       <p>
                         95% win interval:{" "}

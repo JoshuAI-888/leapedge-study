@@ -9,6 +9,7 @@ import { Empty, MetricHeading, PageTitle } from "../components.tsx";
 import { SplitBar } from "../SplitBar.tsx";
 import { StatTiles } from "../StatTiles.tsx";
 import { HiddenByFilter } from "../HiddenByFilter.tsx";
+import { ExportMenu } from "../ExportMenu.tsx";
 import { InstrumentLabel } from "../InstrumentLabel.tsx";
 import { TradingDay } from "../TradingDay.tsx";
 import { trustOptionLabel } from "../foundations.ts";
@@ -364,7 +365,10 @@ export function TrendsView({
         ]}
       />}
       {state === "chart" ? (
-        <section className="yi-panel yi-trends-chart" aria-labelledby="yi-trends-chart">
+        <section
+          className={embedded ? "yi-trends-chart yi-trends-embedded" : "yi-panel yi-trends-chart"}
+          aria-labelledby="yi-trends-chart"
+        >
           <div className="yi-section-title">
             <h2 id="yi-trends-chart">
               Calls per {unit === "week" ? "week" : "session"} by sentiment
@@ -437,7 +441,7 @@ export function TrendsView({
         </section>
       ) : state === "thin" ? (
         <p className="yi-notice">
-          Only {now.calls} call{now.calls === 1 ? "" : "s"} in this range, too few to chart. They are listed below.
+          Only {now.calls} call{now.calls === 1 ? "" : "s"} in this range, too few to chart.{embedded ? "" : " They are listed below."}
         </p>
       ) : (
         <Empty title="No calls in this range">
@@ -457,7 +461,14 @@ export function TrendsView({
                 Show the whole range
               </button>
             )}
-            {/* TODO(F63): Export menu here once ui/ExportMenu.tsx is on this branch (scope: these calls). */}
+            <ExportMenu
+              input={{
+                ...filter,
+                minTrust: trust,
+                ...(period ? periodInstants(period) : sessionInstants(span.from, span.to)),
+              }}
+              total={list.total}
+            />
           </div>
           <ul className="yi-trends-calls">
             {list.rows.map((c) => (
