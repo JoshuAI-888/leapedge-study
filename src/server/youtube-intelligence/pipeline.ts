@@ -1023,6 +1023,19 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       ).duration,
     );
     run.output.coverage = c;
+    if (c.status === "incomplete_or_unknown" && supplied && !run.input.source) {
+      // Fetched captions with a real gap: transcribe the audio instead, as when
+      // no captions exist, unless audio transcription is on demand or off.
+      const sources = (await prefs()).sources;
+      if (sources.asr === "gemini-windowed" && sources.asrPolicy !== "on-demand") {
+        run.output.captionCoverage = c;
+        delete run.output.source;
+        delete run.output.sourceHash;
+        delete run.output.coverage;
+        run.stage = "asr-source";
+        return;
+      }
+    }
     if (c.status === "incomplete_or_unknown") {
       /**
        * There is no second paid transcription pass (spec 4.3): the repair stage
