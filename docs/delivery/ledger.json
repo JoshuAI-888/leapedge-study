@@ -1295,20 +1295,23 @@
       "lane": "query",
       "title": "Research query API: paged server-side calls and videos queries with facet counts and set aggregates",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F24",
         "F30"
       ],
       "files": [
         "src/server/youtube-intelligence/repos/research-query.ts",
-        "src/server/youtube-intelligence/actions/query.ts"
+        "src/server/youtube-intelligence/actions/query.ts",
+        "src/server/youtube-intelligence/actions/index.ts",
+        "src/app/api/youtube-intelligence/[resource]/[action]/route.ts"
       ],
       "tests": [
         "tests/research-query.test.ts"
       ],
-      "note": "Foundation for search, trends, channel pages, report archive, export and quick search; replaces reliance on the capped snapshot. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F56). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "query/calls, query/videos, query/series, query/searchIndex: paged, exact totals, facets excluding their own filter, aggregates, CJK-safe ILIKE text match, canonical runs, pinned-only. GET reads accept ?input= JSON (16 kB cap). Offset paging; series buckets in UTC (trading sessions come from F58). No migration (0009 unused). Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F56).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F57",
@@ -1682,18 +1685,21 @@
       "lane": "queue",
       "title": "Reuse a completed run for the same video and pipeline version; explicit paid re-run",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F26"
       ],
       "files": [
-        "src/server/youtube-intelligence/reuse.ts"
+        "src/server/youtube-intelligence/reuse.ts",
+        "src/server/youtube-intelligence/research-store.ts",
+        "src/server/youtube-intelligence/actions/runs.ts"
       ],
       "tests": [
         "tests/run-reuse.test.ts"
       ],
-      "note": "Gap 7. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F74). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Completed canonical run with the same extraction/critic/transcription models, prompt, pipeline version and windowed-ASR setting is reused with no job or spend; force queues a fresh run recorded as rerun_requested. Legacy /api/intelligence/runs submissions never reuse (explicit model/transcript requests). Today shows the reuse notice; re-run confirmation and the Reused header chip land with the analysis UI (F61/F72). Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F74).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F75",
