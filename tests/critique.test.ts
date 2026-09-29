@@ -381,10 +381,18 @@ test("the transcript is cached once per run, reused by a later pass and released
     ["c2"],
     "an already audited claim is not sent again",
   );
+  // A cache past its lifetime (a recovery an hour later) is replaced, not reused.
+  (run.output.contextCache as { createdAt: string }).createdAt = new Date(Date.now() - 3600_000).toISOString();
+  (run.output.claims as CheckedClaim[]).push(item("c3", 3));
+  run.stage = "critique";
+  await withFake(fake, () => step(run, settings));
+  assert.equal(fake.caches.length, 2, "an expired cache is recreated");
+  assert.equal(fake.requestsFor("critique")[2].cachedContent, fake.caches[1].name);
+  const renewed = fake.caches[1];
   // Publishing releases it; the run records that it was released.
   assert.equal(run.stage, "publish");
   await withFake(fake, () => step(run, settings));
-  assert.deepEqual(fake.deletedCaches, [cache.name]);
+  assert.deepEqual(fake.deletedCaches, [renewed.name]);
   assert.ok((run.output.contextCache as { deletedAt?: string }).deletedAt);
   assert.equal(run.status, "completed");
 });

@@ -240,28 +240,63 @@ export const MentionExtraction = Mention.omit({
 });
 export type MentionExtractionData = z.infer<typeof MentionExtraction>;
 /** The same contract on the way back in: ranges, never quotes. */
+const KeyPointExtraction = RangeSelectedClaim.extend({ levels: RangeSelectedClaim.shape.levels.default([]) });
+const TranscriptionDoubt = z.object({
+  start_id: z.string().min(1),
+  end_id: z.string().min(1),
+  heard: z.string().min(1),
+  likely: z.string().min(1),
+  reason_en: z.string().min(1),
+});
 export const PointerExtraction = z.object({
   claims: z.array(RangeSelectedClaim).max(40),
-  key_points: z.array(RangeSelectedClaim.extend({levels:RangeSelectedClaim.shape.levels.default([])})).max(30).default([]),
+  key_points: z.array(KeyPointExtraction).max(30).default([]),
   mentions: z.array(MentionExtraction).max(200).default([]),
   /** Prompt v9: words that look misheard, with what was likely said. Shown as a doubt, never applied. */
-  transcription_doubts: z
-    .array(
-      z.object({
-        start_id: z.string().min(1),
-        end_id: z.string().min(1),
-        heard: z.string().min(1),
-        likely: z.string().min(1),
-        reason_en: z.string().min(1),
-      }),
-    )
-    .max(30)
-    .default([]),
+  transcription_doubts: z.array(TranscriptionDoubt).max(30).default([]),
 });
 export type PointerExtractionData = z.infer<typeof PointerExtraction>;
 export type { RangeSelectedClaimData };
 export function parsePointerExtraction(raw: unknown): PointerExtractionData {
   return PointerExtraction.parse(raw);
+}
+export type DroppedExtractionItem = { kind: string; index: number; item: unknown; reason: string };
+/**
+ * Parse an extraction reply, keeping every valid item when some are not. One
+ * malformed field (say Chinese text in an English field) used to fail the
+ * whole reply and so the whole run; now only that item is dropped, with the
+ * reason. A reply whose shape is wrong, or that exceeds the item limits, still
+ * fails as before.
+ */
+export function salvagePointerExtraction(raw: unknown): { extraction: PointerExtractionData; dropped: DroppedExtractionItem[] } {
+  const strict = PointerExtraction.safeParse(raw);
+  if (strict.success) return { extraction: strict.data, dropped: [] };
+  const envelope = z
+    .object({
+      claims: z.array(z.unknown()).max(40),
+      key_points: z.array(z.unknown()).max(30).default([]),
+      mentions: z.array(z.unknown()).max(200).default([]),
+      transcription_doubts: z.array(z.unknown()).max(30).default([]),
+    })
+    .safeParse(raw);
+  if (!envelope.success) throw strict.error;
+  const dropped: DroppedExtractionItem[] = [];
+  const keep = <T,>(schema: z.ZodType<T>, items: unknown[], kind: string) =>
+    items.flatMap((item, index) => {
+      const parsed = schema.safeParse(item);
+      if (parsed.success) return [parsed.data];
+      dropped.push({ kind, index, item, reason: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ") });
+      return [];
+    });
+  return {
+    extraction: {
+      claims: keep(RangeSelectedClaim, envelope.data.claims, "claim"),
+      key_points: keep(KeyPointExtraction, envelope.data.key_points, "key_point"),
+      mentions: keep(MentionExtraction, envelope.data.mentions, "mention"),
+      transcription_doubts: keep(TranscriptionDoubt, envelope.data.transcription_doubts, "transcription_doubt"),
+    },
+    dropped,
+  };
 }
 /** The instruction that accompanies the schema; the payload shape is unchanged. */
 export const POINTER_EVIDENCE_FORMAT =
