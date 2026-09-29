@@ -22,6 +22,8 @@ import { useUrlState } from "../url-state.ts";
 import { TradingDay } from "../TradingDay.tsx";
 import { KeyPoints, VerdictBox } from "../Verdict.tsx";
 import { FollowPrompt } from "../FollowPrompt.tsx";
+import { FailureBanner, StepProgress } from "../StepProgress.tsx";
+import type { Typical } from "../../progress-steps.ts";
 import {
   briefCostEstimate,
   clock,
@@ -81,6 +83,10 @@ export function Analysis({ id }: { id: string }) {
       last_at: null,
     }),
     [confirmRerun, setConfirmRerun] = useState(false),
+    [progress, setProgress] = useState<{
+      typical: Typical;
+      stepCostUsd: Record<string, number>;
+    } | null>(null),
     [thumbFailed, setThumbFailed] = useState(false),
     [scrollRequest, setScrollRequest] = useState(0);
   // A key point or brief reference was played: bring the player into view
@@ -115,6 +121,7 @@ export function Analysis({ id }: { id: string }) {
       claims: ClaimRow[];
       reviewerConfigured: boolean;
       reuse?: { count: number; last_at: string | null };
+      progress?: { typical: Typical; stepCostUsd: Record<string, number> } | null;
     }>(
       `/api/intelligence/runs/${encodeURIComponent(id)}`,
       undefined,
@@ -127,6 +134,7 @@ export function Analysis({ id }: { id: string }) {
         setStoredClaims(x.claims ?? []);
         setReviewerConfigured(x.reviewerConfigured);
         setReuse(x.reuse ?? { count: 0, last_at: null });
+        setProgress(x.progress ?? null);
         const hash = decodeURIComponent(window.location.hash.slice(1));
         if (!run || run.id !== id) {
           const ordered = visibleClaims(x.claims ?? [], "", "L0");
@@ -212,6 +220,17 @@ export function Analysis({ id }: { id: string }) {
   // Live status from the activity poll when it is newer than the detail.
   const status = live && live.updatedAt >= run.updatedAt ? live.status : run.status;
   const working = status === "queued" || status === "running";
+  // F72: a failed or held analysis shows the failure banner in place of the verdict.
+  const stopped =
+    (status === "failed" || status === "needs_review") && !run.input.task;
+  const liveRun = {
+    ...run,
+    status,
+    stage: live && live.updatedAt >= run.updatedAt ? live.stage : run.stage,
+  };
+  const durationSeconds =
+    Number((run.output.metadata as { duration?: unknown } | undefined)?.duration) ||
+    null;
   const metadata = (run.output.metadata ?? {}) as Metadata;
   const source = run.output.source as SourceData | undefined;
   const channelId = metadata.channelId;
@@ -231,7 +250,8 @@ export function Analysis({ id }: { id: string }) {
   const briefEstimate = briefCostEstimate(data.snapshot.researchBriefs);
   const rerunEstimate = data.cost.projection.measuredCostPerVideoUsd;
   const remaining = data.cost.budget.remainingUsd;
-  const canRerun = !working && !run.input.task;
+  // A stopped run offers Retry from its step instead (F72).
+  const canRerun = !working && !stopped && !run.input.task;
   const seekTo = (to: number, note: string) => {
     setSeconds(to);
     setSeekNote(note);
@@ -362,15 +382,13 @@ export function Analysis({ id }: { id: string }) {
         </section>
       )}
       {working ? (
-        <section className="yi-verdict yi-verdict-working" aria-label="Progress">
-          {/* F72 replaces this with the step progress bar. */}
-          <strong>{processingState(status)}</strong>
-          <span className="yi-muted">
-            {" "}
-            · The verdict appears when the analysis finishes. You can leave
-            this page.
-          </span>
-        </section>
+        <StepProgress
+          run={liveRun}
+          typical={progress?.typical ?? null}
+          durationSeconds={durationSeconds}
+        />
+      ) : stopped ? (
+        <FailureBanner run={liveRun} stepCostUsd={progress?.stepCostUsd ?? null} />
       ) : (
         <VerdictBox claims={claims} />
       )}
@@ -403,7 +421,7 @@ export function Analysis({ id }: { id: string }) {
           before relying on omitted details.
         </p>
       )}
-      {run.error && (
+      {run.error && !stopped && (
         <p className="yi-warning" role="alert">
           This analysis needs attention. {run.error}
         </p>

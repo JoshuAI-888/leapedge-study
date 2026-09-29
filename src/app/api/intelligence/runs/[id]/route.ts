@@ -5,6 +5,7 @@ import { spansForClaims } from "../../../../../server/youtube-intelligence/repos
 import { docs } from "../../../../../server/youtube-intelligence/research-store.ts";
 import { get } from "../../../../../server/youtube-intelligence/store.ts";
 import { timelineFor } from "../../../../../server/youtube-intelligence/timing.ts";
+import { progressContext } from "../../../../../server/youtube-intelligence/run-progress.ts";
 import {
   guard,
   failure,
@@ -39,6 +40,16 @@ export async function GET(
               "SELECT count(*)::int AS count,max(at) AS last_at FROM yi_events WHERE kind='analysis_reused' AND entity_id=$1",
             )
             .get(run.id),
+          // F72: typical duration and per-step spend, for an unfinished run.
+          progress:
+            run.status === "completed" || run.input.task
+              ? null
+              : await progressContext(
+                  Number(
+                    (run.output.metadata as { duration?: unknown } | undefined)
+                      ?.duration,
+                  ) || null,
+                ),
           run: {
             ...run,
             output: {

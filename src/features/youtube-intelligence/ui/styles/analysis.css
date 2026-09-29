@@ -261,3 +261,153 @@
 .yi-follow-actions {
   flex: none;
 }
+
+/* F72 — step progress, failure banner, mini progress and inline retry. */
+.yi-progress {
+  padding: 14px 18px;
+  border: 1px solid var(--yi-line);
+  border-radius: 14px;
+  background: var(--yi-surface);
+  margin-bottom: 14px;
+}
+.yi-progress-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+.yi-progress-head p {
+  margin: 0;
+}
+.yi-progress-elapsed {
+  font-variant-numeric: tabular-nums;
+  color: var(--yi-muted);
+}
+.yi-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  padding: 0;
+  margin: 10px 0 6px;
+}
+.yi-step {
+  font-size: 12px;
+  color: var(--yi-muted);
+  min-width: 0;
+}
+.yi-step i {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--yi-line);
+  margin-bottom: 4px;
+}
+.yi-step span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-step-done i {
+  background: var(--yi-primary);
+}
+.yi-step-current i {
+  background: linear-gradient(90deg, var(--yi-primary) 50%, var(--yi-line) 50%);
+}
+.yi-step-current span,
+.yi-step-failed span {
+  color: var(--yi-ink);
+  font-weight: 600;
+}
+.yi-step-failed i {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--yi-ink) 0 4px,
+    transparent 4px 8px
+  );
+}
+.yi-progress-note {
+  font-size: 12px;
+  margin: 0;
+}
+.yi-progress-stuck {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-top: 10px;
+}
+.yi-progress-stuck p {
+  margin: 0;
+  font-weight: 600;
+}
+.yi-failure {
+  margin-bottom: 14px;
+}
+.yi-failure p {
+  margin: 0 0 6px;
+}
+.yi-failure .yi-steps {
+  margin: 8px 0 10px;
+}
+.yi-failure-cost {
+  font-size: 13px;
+}
+.yi-failure-details {
+  margin-top: 8px;
+  font-size: 12px;
+}
+.yi-failure-details p {
+  overflow-wrap: anywhere;
+}
+.yi-mini-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--yi-muted);
+  white-space: nowrap;
+}
+.yi-mini-steps {
+  display: inline-grid;
+  grid-template-columns: repeat(5, 10px);
+  gap: 2px;
+}
+.yi-mini-steps i {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--yi-line);
+}
+.yi-mini-steps .yi-step-done {
+  background: var(--yi-primary);
+}
+.yi-mini-steps .yi-step-current {
+  background: linear-gradient(90deg, var(--yi-primary) 50%, var(--yi-line) 50%);
+}
+.yi-workspace .yi-inline-retry {
+  font-size: 12px;
+  min-height: 24px;
+  padding: 0 6px;
+}
+@media (max-width: 640px) {
+  .yi-step {
+    font-size: 11px;
+  }
+  .yi-progress,
+  .yi-follow {
+    padding: 12px 14px;
+  }
+}
+.yi-activity-progress {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+.yi-activity-progress:empty {
+  display: none;
+}
+.yi-workspace .yi-activity-progress .yi-inline-retry {
+  padding: 0;
+}
