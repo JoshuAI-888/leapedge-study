@@ -33,6 +33,12 @@ export async function GET(
           ),
           evidenceSpans: await spansForClaims(claims.map((c) => c.id)),
           reviewerConfigured: Boolean(process.env.YTI_REVIEWER_ACCOUNT_ID),
+          // F74: how often a resubmission was answered by this analysis.
+          reuse: await database
+            .prepare(
+              "SELECT count(*)::int AS count,max(at) AS last_at FROM yi_events WHERE kind='analysis_reused' AND entity_id=$1",
+            )
+            .get(run.id),
           run: {
             ...run,
             output: {

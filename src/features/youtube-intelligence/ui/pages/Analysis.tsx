@@ -1,6 +1,9 @@
 "use client";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
 import { useMediaQuery, useStickyTop } from "../layout-hooks.ts";
 import { researchPipelineLabelFromInput } from "../../research-pipeline-choice.ts";
 import { ResearchBrief } from "../ResearchBrief.tsx";
@@ -15,24 +18,54 @@ import type { Run, CheckedClaim } from "../../contracts.ts";
 import { Agreement } from "../../agreement.ts";
 import { SourcePlayer } from "../../SourcePlayer.tsx";
 import { useWorkspace } from "../workspace.tsx";
+import { useUrlState } from "../url-state.ts";
+import { TradingDay } from "../TradingDay.tsx";
+import { KeyPoints, VerdictBox } from "../Verdict.tsx";
+import {
+  briefCostEstimate,
+  clock,
+  keyPointItems,
+  keyPointsOf,
+  sourceKindText,
+  sourceLanguageLabel,
+  summaryOf,
+} from "../../verdict.ts";
 import {
   ClaimCard,
   Collapsible,
   Empty,
   LevelChips,
-  PageTitle,
   TrustBadge,
 } from "../components.tsx";
 import {
+  dateLabel,
   money,
   processingState,
   visibleClaims,
   localClaimId,
 } from "../viewmodel.ts";
+const TABS = [
+  { id: "calls", label: "Calls" },
+  { id: "brief", label: "Research brief" },
+  { id: "processing", label: "Processing details" },
+] as const;
+const TabState = z.object({
+  tab: z.enum(["calls", "brief", "processing"]),
+});
+type Metadata = {
+  channel?: string;
+  channelId?: string;
+  publishedAt?: string;
+  language?: string;
+};
 export function Analysis({ id }: { id: string }) {
   const { data, perform, busy } = useWorkspace();
+  const router = useRouter();
+  const [view, setView] = useUrlState(TabState, { tab: "calls" });
   const [briefs, setBriefs] = useState<ResearchBriefData[]>([]);
-  const [researchSeek, setResearchSeek] = useState(false);
+  // Why the player is not at the selected call's evidence: a research-brief
+  // reference or a key point was played instead.
+  const [seekNote, setSeekNote] = useState("");
   const [run, setRun] = useState<Run | null>(null),
     [error, setError] = useState(""),
     [selected, setSelected] = useState(""),
@@ -41,7 +74,23 @@ export function Analysis({ id }: { id: string }) {
     [listened, setListened] = useState(false),
     [spans, setSpans] = useState<EvidenceSpanRow[]>([]),
     [storedClaims, setStoredClaims] = useState<ClaimRow[]>([]),
-    [reviewerConfigured, setReviewerConfigured] = useState(false);
+    [reviewerConfigured, setReviewerConfigured] = useState(false),
+    [reuse, setReuse] = useState<{ count: number; last_at: string | null }>({
+      count: 0,
+      last_at: null,
+    }),
+    [confirmRerun, setConfirmRerun] = useState(false),
+    [thumbFailed, setThumbFailed] = useState(false),
+    [scrollRequest, setScrollRequest] = useState(0);
+  // A key point or brief reference was played: bring the player into view
+  // once the Calls tab (which holds it) has rendered.
+  useEffect(() => {
+    if (!scrollRequest || view.tab !== "calls") return;
+    document
+      .getElementById("source-player")
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setScrollRequest(0);
+  }, [scrollRequest, view.tab]);
   // Below 900 px the evidence panel is portalled into a slot directly under
   // the selected card; above, it is a sticky column whose top keeps a tall
   // panel fully reachable without an internal scroll box.
@@ -51,8 +100,11 @@ export function Analysis({ id }: { id: string }) {
   const evidenceTop = useStickyTop(
     evidenceRef,
     76,
-    !narrow && !!run && !!data && storedClaims.length > 0,
+    !narrow && !!run && !!data && storedClaims.length > 0 && view.tab === "calls",
   );
+  // The activity poll updates the loaded summary's stage and status; refetch
+  // the detail when either moves so a running analysis stays current.
+  const live = data?.runs.find((r) => r.id === id);
   useEffect(() => {
     const controller = new AbortController();
     request<{
@@ -61,6 +113,7 @@ export function Analysis({ id }: { id: string }) {
       evidenceSpans: EvidenceSpanRow[];
       claims: ClaimRow[];
       reviewerConfigured: boolean;
+      reuse?: { count: number; last_at: string | null };
     }>(
       `/api/intelligence/runs/${encodeURIComponent(id)}`,
       undefined,
@@ -72,6 +125,7 @@ export function Analysis({ id }: { id: string }) {
         setSpans(x.evidenceSpans ?? []);
         setStoredClaims(x.claims ?? []);
         setReviewerConfigured(x.reviewerConfigured);
+        setReuse(x.reuse ?? { count: 0, last_at: null });
         const hash = decodeURIComponent(window.location.hash.slice(1));
         if (!run || run.id !== id) {
           const ordered = visibleClaims(x.claims ?? [], "", "L0");
@@ -82,7 +136,8 @@ export function Analysis({ id }: { id: string }) {
             .map((s) => s.startSeconds!);
           setSeconds(starts.length ? Math.min(...starts) : 0);
           setListened(false);
-          setResearchSeek(false);
+          setSeekNote("");
+          setConfirmRerun(false);
         }
         setError("");
       })
@@ -90,7 +145,13 @@ export function Analysis({ id }: { id: string }) {
         if (!controller.signal.aborted) setError(e.message);
       });
     return () => controller.abort();
-  }, [id, data?.snapshot.runs, data?.snapshot.researchBriefs]);
+  }, [
+    id,
+    data?.snapshot.runs,
+    data?.snapshot.researchBriefs,
+    live?.stage,
+    live?.status,
+  ]);
   if (error)
     return (
       <div role="alert" className="yi-warning">
@@ -147,11 +208,184 @@ export function Analysis({ id }: { id: string }) {
     | undefined;
   const placeEvidence = (panel: ReactNode) =>
     narrow && evidenceSlot ? createPortal(panel, evidenceSlot) : panel;
+  // Live status from the activity poll when it is newer than the detail.
+  const status = live && live.updatedAt >= run.updatedAt ? live.status : run.status;
+  const working = status === "queued" || status === "running";
+  const metadata = (run.output.metadata ?? {}) as Metadata;
+  const source = run.output.source as SourceData | undefined;
+  const channelId = metadata.channelId;
+  const channelTitle =
+    data.snapshot.channels.find((c) => c.id === channelId)?.title ||
+    metadata.channel;
+  const language = sourceLanguageLabel(source?.language ?? metadata.language);
+  const summary = summaryOf({ briefs, extractionSummary: run.output.summary });
+  const pointItems = keyPointItems({
+    runId: id,
+    keyPoints: run.output.keyPoints,
+    checkedClaims: run.output.claims,
+    acceptedClaimIds: storedClaims.map((c) => c.id),
+    spans,
+  });
+  const points = keyPointsOf(pointItems);
+  const briefEstimate = briefCostEstimate(data.snapshot.researchBriefs);
+  const rerunEstimate = data.cost.projection.measuredCostPerVideoUsd;
+  const remaining = data.cost.budget.remainingUsd;
+  const canRerun = !working && !run.input.task;
+  const seekTo = (to: number, note: string) => {
+    setSeconds(to);
+    setSeekNote(note);
+    setListened(false);
+    setReviewNote("");
+    if (view.tab !== "calls") setView({ tab: "calls" });
+    setScrollRequest((n) => n + 1);
+  };
+  const player = (
+    <div id="source-player">
+      {seekNote && (
+        <p className="yi-warning">
+          {seekNote} The call details below refer to the selected creator call.
+        </p>
+      )}
+      <SourcePlayer videoId={run.videoId} seconds={seconds} />
+    </div>
+  );
+  const rerun = () =>
+    void perform(
+      async () => {
+        const result = await action<{ runId: string }>("runs", "analyse", {
+          url: run.url || `https://www.youtube.com/watch?v=${run.videoId}`,
+          force: true,
+        });
+        setConfirmRerun(false);
+        router.push(
+          `/youtube-intelligence/analysis/${encodeURIComponent(result.runId)}`,
+        );
+        return result;
+      },
+      "Re-run queued with the current pipeline. The earlier analysis stays available.",
+    );
   return (
     <>
-      <PageTitle
-        title={run.title || "Video analysis"}
-        description="Read the research brief, inspect its evidence, and listen to the original source."
+      <header className="yi-an-header">
+        {thumbFailed ? (
+          <span className="yi-an-thumb yi-an-thumb-empty" aria-hidden="true">
+            ▶
+          </span>
+        ) : (
+          <img
+            className="yi-an-thumb"
+            src={`https://i.ytimg.com/vi/${encodeURIComponent(run.videoId)}/mqdefault.jpg`}
+            alt=""
+            width={160}
+            height={90}
+            loading="lazy"
+            onError={() => setThumbFailed(true)}
+          />
+        )}
+        <div className="yi-an-head-text">
+          <p className="yi-eyebrow">VIDEO ANALYSIS</p>
+          <h1>{run.title || "Video analysis"}</h1>
+          <p className="yi-an-meta">
+            {channelId ? (
+              <Link
+                href={`/youtube-intelligence/channels/${encodeURIComponent(channelId)}`}
+              >
+                {channelTitle || "Channel"}
+              </Link>
+            ) : (
+              <span>{channelTitle || "Channel unknown"}</span>
+            )}
+            <span aria-hidden="true"> · </span>
+            <TradingDay at={metadata.publishedAt ?? null} />
+            {language && (
+              <>
+                <span aria-hidden="true"> · </span>
+                <span>{language}</span>
+              </>
+            )}
+          </p>
+          <div className="yi-an-chips">
+            {reuse.count > 0 && (
+              <span
+                className="yi-chip"
+                title={`A later submission of this video opened this analysis instead of starting a paid run${reuse.last_at ? ` (last on ${dateLabel(reuse.last_at)})` : ""}.`}
+              >
+                Reused · analysed {dateLabel(run.updatedAt)}
+              </span>
+            )}
+            {Boolean(run.input.rerun) && (
+              <span className="yi-chip">Re-run of an earlier analysis</span>
+            )}
+            {canRerun && !confirmRerun && (
+              <button
+                type="button"
+                className="yi-secondary yi-an-rerun"
+                disabled={busy}
+                onClick={() => setConfirmRerun(true)}
+              >
+                Re-run with current pipeline
+              </button>
+            )}
+          </div>
+        </div>
+      </header>
+      {confirmRerun && (
+        <section
+          className="yi-panel yi-an-confirm"
+          role="group"
+          aria-label="Confirm re-run"
+        >
+          <p>
+            <strong>Re-run this video with the current pipeline?</strong> This
+            starts a new paid analysis. The earlier one stays available.
+          </p>
+          <p className="yi-muted">
+            Estimated cost:{" "}
+            {rerunEstimate === null
+              ? "not yet measured"
+              : `about ${money(rerunEstimate)} (average measured cost per video)`}
+            {" · "}Budget left this month: {money(remaining)}
+          </p>
+          <div className="yi-row">
+            <button type="button" disabled={busy} onClick={rerun}>
+              Re-run now
+            </button>
+            <button
+              type="button"
+              className="yi-secondary"
+              onClick={() => setConfirmRerun(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </section>
+      )}
+      {working ? (
+        <section className="yi-verdict yi-verdict-working" aria-label="Progress">
+          {/* F72 replaces this with the step progress bar. */}
+          <strong>{processingState(status)}</strong>
+          <span className="yi-muted">
+            {" "}
+            · The verdict appears when the analysis finishes. You can leave
+            this page.
+          </span>
+        </section>
+      ) : (
+        <VerdictBox claims={claims} />
+      )}
+      {summary ? (
+        <p className="yi-an-summary">{summary.text}</p>
+      ) : (
+        !working && (
+          <p className="yi-muted yi-an-summary-empty">
+            Summary appears after the research brief is generated.
+          </p>
+        )
+      )}
+      <KeyPoints
+        points={points}
+        total={pointItems.length}
+        onSeek={(to) => seekTo(to, `Playing the key point at ${clock(to)}.`)}
       />
       {(run.output.coverage as { status?: string } | undefined)?.status ===
         "incomplete_or_unknown" && (
@@ -165,384 +399,458 @@ export function Analysis({ id }: { id: string }) {
           before relying on omitted details.
         </p>
       )}
-      <ResearchBrief
-        key={id}
-        sourceRunId={briefs[0]?.sourceRunId ?? id}
-        briefs={briefs}
-        source={run.output.source as SourceData | undefined}
-        onSeek={(seconds) => {
-          setSeconds(seconds);
-          setResearchSeek(true);
-          setListened(false);
-          setReviewNote("");
-        }}
-        completed={run.status === "completed"}
-      />
-      <div className="yi-trust-strip">
-        <span className="yi-chip">{run.status === "completed" ? "Source processing complete" : processingState(run.status)}</span>
-        {["L0", "L1", "L2", "L3"].map((level) => {
-          const count = claims.filter((c) => c.trustLevel === level).length;
-          return (
-            <span key={level} className={count ? undefined : "yi-trust-zero"}>
-              <TrustBadge level={level} /> {count}
-            </span>
-          );
-        })}
-        <span className="yi-muted">
-          Source:{" "}
-          {String(
-            (run.output.source as { source_kind?: string } | undefined)
-              ?.source_kind ?? "See evidence details",
-          )}
-        </span>
-      </div>
       {run.error && (
         <p className="yi-warning" role="alert">
           This analysis needs attention. {run.error}
         </p>
       )}
-      {claims.length ? (
-        <div className="yi-analysis-grid">
-          <section className="yi-claim-stack">
-            {claims.map((c) => {
-              const pressed = current?.id === c.id;
-              const select = () => {
-                setSelected(c.id);
-                setResearchSeek(false);
-                setListened(false);
-                setReviewNote("");
-                const matched = checked.find(
-                  (x) => x.id === localClaimId(c.id, id),
-                );
-                setSeconds(
-                  matched?.claim.evidence[0]?.source_span?.start_seconds ?? 0,
-                );
-              };
+      <div className="yi-an-tabs" role="tablist" aria-label="Analysis sections">
+        {TABS.map((t, i) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            id={`yi-an-tab-${t.id}`}
+            aria-selected={view.tab === t.id}
+            aria-controls={`yi-an-panel-${t.id}`}
+            tabIndex={view.tab === t.id ? 0 : -1}
+            className="yi-an-tab"
+            onClick={() => setView({ tab: t.id })}
+            onKeyDown={(e) => {
+              if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+              e.preventDefault();
+              const next =
+                TABS[(i + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length];
+              setView({ tab: next.id });
+              document.getElementById(`yi-an-tab-${next.id}`)?.focus();
+            }}
+          >
+            {t.label}
+            {t.id === "calls" ? ` (${claims.length})` : ""}
+          </button>
+        ))}
+      </div>
+      {view.tab === "calls" && (
+        <div
+          role="tabpanel"
+          id="yi-an-panel-calls"
+          aria-labelledby="yi-an-tab-calls"
+          className="yi-an-panel"
+        >
+          <div className="yi-trust-strip">
+            <span className="yi-chip">
+              {status === "completed"
+                ? "Source processing complete"
+                : processingState(status)}
+            </span>
+            {["L0", "L1", "L2", "L3"].map((level) => {
+              const count = claims.filter((c) => c.trustLevel === level).length;
               return (
-                <Fragment key={c.id}>
-                  <div
-                    id={c.id}
-                    className="yi-claim-select"
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={pressed}
-                    aria-label={`Show evidence for ${c.ticker || c.instrument || "this call"}: ${c.thesisEn}`}
-                    onClick={(e) => {
-                      // Save and other controls inside the card act on their own.
-                      const control = (e.target as HTMLElement).closest(
-                        "button, input, select, textarea, summary, [role=button]",
-                      );
-                      if (control && control !== e.currentTarget) return;
-                      select();
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.target !== e.currentTarget) return;
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        select();
-                      }
-                    }}
-                  >
-                    <ClaimCard claim={c} selected={pressed} />
-                  </div>
-                  {narrow && pressed && (
-                    <div className="yi-evidence-slot" ref={setEvidenceSlot} />
-                  )}
-                </Fragment>
+                <span key={level} className={count ? undefined : "yi-trust-zero"}>
+                  <TrustBadge level={level} /> {count}
+                </span>
               );
             })}
-          </section>
-          {placeEvidence(
-          <aside
-            className="yi-evidence yi-panel"
-            ref={evidenceRef}
-            style={narrow ? undefined : { top: evidenceTop }}
-          >
-            <h2>Evidence · {current?.ticker || current?.instrument}</h2>
-            <div id="source-player">
-              {researchSeek && (
-                <p className="yi-warning">
-                  Playing the research-brief reference at{" "}
-                  {Math.floor(seconds / 60)}:
-                  {String(Math.floor(seconds % 60)).padStart(2, "0")}. The call
-                  details below refer to the selected creator call.
-                </p>
-              )}
-              <SourcePlayer videoId={run.videoId} seconds={seconds} />
-            </div>
-            {evidence.length ? (
-              evidence.map((e, i) => (
-                <div className="yi-evidence-pair" key={i}>
-                  <button
-                    className="yi-text-button"
-                    onClick={() =>
-                      setSeconds(e.source_span?.start_seconds ?? 0)
-                    }
-                  >
-                    ▶ Listen from{" "}
-                    {e.source_span?.start_seconds == null
-                      ? "video start (timestamp unavailable)"
-                      : `${Math.floor(e.source_span.start_seconds / 60)}:${String(Math.floor(e.source_span.start_seconds % 60)).padStart(2, "0")}`}
-                  </button>
-                  <h3>What the creator said</h3>
-                  <blockquote>{e.quote_original}</blockquote>
-                  <h3>English translation</h3>
-                  <p>{e.quote_translation_en || (
-                    /^(?:asr-)?(?:en(?:[-_].*)?|eng|english)$/i.test(String((run.output.source as SourceData | undefined)?.language ?? "")) && !/\p{Script=Han}/u.test(e.quote_original)
-                      ? "Original evidence is already in English."
-                      : "Translation unavailable"
-                  )}</p>
-                  <p className="yi-muted">
-                    Span agreement:{" "}
-                    {agreements[i]
-                      ? `${Math.round(agreements[i].agreementScore * 100)}%${agreements[i].agreed ? " · agreed" : " · needs review"}`
-                      : "Not measured"}
-                  </p>
-                  {agreements[i]?.referenceText &&
-                    agreements[i].referenceText !== e.quote_original && (
-                      <>
-                        <h3>What we heard</h3>
-                        <blockquote>{agreements[i].referenceText}</blockquote>
-                      </>
-                    )}
-                </div>
-              ))
-            ) : (
-              <p className="yi-warning">
-                Copied source evidence is unavailable for this call.
-              </p>
-            )}
-            {current && (
-              <>
-                <h3>Evidence basis</h3>
-                <p>
-                  Trust:{" "}
-                  <TrustBadge
-                    level={current.trustLevel}
-                    basis={current.trustBasis}
-                  />
-                </p>
-                <Collapsible title="How this trust level was assigned">
-                  <pre>{JSON.stringify(current.trustBasis, null, 2)}</pre>
-                </Collapsible>
-              </>
-            )}
-            {original?.claim.levels.length ? (
-              <>
-                <h3>Levels mentioned</h3>
-                <LevelChips levels={original.claim.levels} />
-              </>
-            ) : null}
-            {current?.risksEn.length ? (
-              <>
-                <h3>Risks mentioned</h3>
-                <ul>
-                  {current.risksEn.map((r) => (
-                    <li key={r}>{r}</li>
-                  ))}
-                </ul>
-              </>
-            ) : null}
-            <Collapsible title="Review this evidence">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (current)
-                    void perform(
-                      () =>
-                        action("trust", "signClaimReview", {
-                          claimId: current.id,
-                          verdict: "verified",
-                          note: reviewNote,
-                          listenedSpan: { startSeconds, endSeconds },
-                        }),
-                      "Your signed review was recorded.",
-                    ).then((ok) => {
-                      if (ok) {
-                        setListened(false);
-                        setReviewNote("");
-                      }
-                    });
-                }}
-              >
-                <p>
-                  A verified badge requires your signed review of all cited
-                  audio.
-                </p>
-                <label className="yi-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={listened}
-                    onChange={(e) => setListened(e.target.checked)}
-                  />
-                  I listened to every cited span and verified this call.
-                </label>
-                <label>
-                  Review note
-                  <textarea
-                    required
-                    maxLength={4000}
-                    value={reviewNote}
-                    onChange={(e) => setReviewNote(e.target.value)}
-                  />
-                </label>
-                <button
-                  disabled={
-                    busy ||
-                    !listened ||
-                    !timed ||
-                    !reviewNote.trim() ||
-                    !reviewerConfigured
-                  }
+            <span className="yi-muted">
+              Source: {sourceKindText(source?.source_kind)}
+            </span>
+          </div>
+          {claims.length ? (
+            <div className="yi-analysis-grid">
+              <section className="yi-claim-stack">
+                {claims.map((c) => {
+                  const pressed = current?.id === c.id;
+                  const select = () => {
+                    setSelected(c.id);
+                    setSeekNote("");
+                    setListened(false);
+                    setReviewNote("");
+                    const matched = checked.find(
+                      (x) => x.id === localClaimId(c.id, id),
+                    );
+                    setSeconds(
+                      matched?.claim.evidence[0]?.source_span?.start_seconds ??
+                        0,
+                    );
+                  };
+                  return (
+                    <Fragment key={c.id}>
+                      <div
+                        id={c.id}
+                        className="yi-claim-select"
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={pressed}
+                        aria-label={`Show evidence for ${c.ticker || c.instrument || "this call"}: ${c.thesisEn}`}
+                        onClick={(e) => {
+                          // Save and other controls inside the card act on their own.
+                          const control = (e.target as HTMLElement).closest(
+                            "button, input, select, textarea, summary, [role=button]",
+                          );
+                          if (control && control !== e.currentTarget) return;
+                          select();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.target !== e.currentTarget) return;
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            select();
+                          }
+                        }}
+                      >
+                        <ClaimCard claim={c} selected={pressed} />
+                      </div>
+                      {narrow && pressed && (
+                        <div
+                          className="yi-evidence-slot"
+                          ref={setEvidenceSlot}
+                        />
+                      )}
+                    </Fragment>
+                  );
+                })}
+              </section>
+              {placeEvidence(
+                <aside
+                  className="yi-evidence yi-panel"
+                  ref={evidenceRef}
+                  style={narrow ? undefined : { top: evidenceTop }}
                 >
-                  Sign as verified
-                </button>
-                {!reviewerConfigured && (
-                  <p className="yi-warning">
-                    A signed-in reviewer identity must be configured before
-                    signing.
-                  </p>
-                )}
-                {!timed && (
-                  <p className="yi-warning">
-                    Every cited span needs a timestamp before it can be signed.
-                  </p>
-                )}
-              </form>
-            </Collapsible>
-          </aside>,
-          )}
-        </div>
-      ) : (
-        <Empty
-          title={
-            run.status === "completed"
-              ? "No accepted calls in this video"
-              : "Analysis is still being prepared"
-          }
-        >
-          {run.status === "completed"
-            ? "An analysis can finish without finding an actionable call. Any accepted background analysis appears in Research context below. Processing details retain rejected extractions."
-            : "Progress refreshes automatically. You can leave this page and return later."}
-        </Empty>
-      )}
-      {context.length > 0 && (
-        <section className="yi-panel" aria-label="Research context">
-          <h2>Research context · {context.length} points</h2>
-          <p className="yi-muted">
-            Background, risks and scenarios from the video, with supporting
-            evidence.
-          </p>
-          {context.map((point) => (
-            <Collapsible key={point.id} title={point.claim.thesis_en}>
-              {point.claim.horizon_en && (
-                <p>
-                  <strong>Timeframe:</strong> {point.claim.horizon_en}
-                </p>
-              )}
-              {point.claim.conditions_en.length > 0 && (
-                <p>
-                  <strong>Conditions:</strong>{" "}
-                  {point.claim.conditions_en.join(" · ")}
-                </p>
-              )}
-              {point.claim.risks_en.length > 0 && (
-                <p>
-                  <strong>Risks:</strong> {point.claim.risks_en.join(" · ")}
-                </p>
-              )}
-              {point.claim.levels.length > 0 && (
-                <dl className="yi-levels">
-                  {point.claim.levels.map((level, index) => (
-                    <div key={index}>
-                      <dt>{level.kind}</dt>
-                      <dd>{level.value_original}</dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-              {point.claim.evidence.map((e, index) => {
-                const start = e.source_span?.start_seconds;
-                return (
-                  <div key={`${point.id}-${index}`}>
-                    <p>
-                      <strong>Original evidence</strong>
-                    </p>
-                    <blockquote>{e.quote_original}</blockquote>
-                    {e.quote_translation_en &&
-                      e.quote_translation_en !== e.quote_original && (
+                  <h2>Evidence · {current?.ticker || current?.instrument}</h2>
+                  {player}
+                  {evidence.length ? (
+                    evidence.map((e, i) => (
+                      <div className="yi-evidence-pair" key={i}>
+                        <button
+                          className="yi-text-button"
+                          onClick={() => {
+                            setSeekNote("");
+                            setSeconds(e.source_span?.start_seconds ?? 0);
+                          }}
+                        >
+                          ▶ Listen from{" "}
+                          {e.source_span?.start_seconds == null
+                            ? "video start (timestamp unavailable)"
+                            : clock(e.source_span.start_seconds)}
+                        </button>
+                        <h3>What the creator said</h3>
+                        <blockquote>{e.quote_original}</blockquote>
+                        <h3>English translation</h3>
                         <p>
-                          <strong>English translation:</strong>{" "}
-                          {e.quote_translation_en}
+                          {e.quote_translation_en ||
+                            (/^(?:asr-)?(?:en(?:[-_].*)?|eng|english)$/i.test(
+                              String(source?.language ?? ""),
+                            ) && !/\p{Script=Han}/u.test(e.quote_original)
+                              ? "Original evidence is already in English."
+                              : "Translation unavailable")}
+                        </p>
+                        <p className="yi-muted">
+                          Span agreement:{" "}
+                          {agreements[i]
+                            ? `${Math.round(agreements[i].agreementScore * 100)}%${agreements[i].agreed ? " · agreed" : " · needs review"}`
+                            : "Not measured"}
+                        </p>
+                        {agreements[i]?.referenceText &&
+                          agreements[i].referenceText !== e.quote_original && (
+                            <>
+                              <h3>What we heard</h3>
+                              <blockquote>{agreements[i].referenceText}</blockquote>
+                            </>
+                          )}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="yi-warning">
+                      Copied source evidence is unavailable for this call.
+                    </p>
+                  )}
+                  {current && (
+                    <>
+                      <h3>Evidence basis</h3>
+                      <p>
+                        Trust:{" "}
+                        <TrustBadge
+                          level={current.trustLevel}
+                          basis={current.trustBasis}
+                        />
+                      </p>
+                      <Collapsible title="How this trust level was assigned">
+                        <pre>{JSON.stringify(current.trustBasis, null, 2)}</pre>
+                      </Collapsible>
+                    </>
+                  )}
+                  {original?.claim.levels.length ? (
+                    <>
+                      <h3>Levels mentioned</h3>
+                      <LevelChips levels={original.claim.levels} />
+                    </>
+                  ) : null}
+                  {current?.risksEn.length ? (
+                    <>
+                      <h3>Risks mentioned</h3>
+                      <ul>
+                        {current.risksEn.map((r) => (
+                          <li key={r}>{r}</li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
+                  <Collapsible title="Review this evidence">
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (current)
+                          void perform(
+                            () =>
+                              action("trust", "signClaimReview", {
+                                claimId: current.id,
+                                verdict: "verified",
+                                note: reviewNote,
+                                listenedSpan: { startSeconds, endSeconds },
+                              }),
+                            "Your signed review was recorded.",
+                          ).then((ok) => {
+                            if (ok) {
+                              setListened(false);
+                              setReviewNote("");
+                            }
+                          });
+                      }}
+                    >
+                      <p>
+                        A verified badge requires your signed review of all
+                        cited audio.
+                      </p>
+                      <label className="yi-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={listened}
+                          onChange={(e) => setListened(e.target.checked)}
+                        />
+                        I listened to every cited span and verified this call.
+                      </label>
+                      <label>
+                        Review note
+                        <textarea
+                          required
+                          maxLength={4000}
+                          value={reviewNote}
+                          onChange={(e) => setReviewNote(e.target.value)}
+                        />
+                      </label>
+                      <button
+                        disabled={
+                          busy ||
+                          !listened ||
+                          !timed ||
+                          !reviewNote.trim() ||
+                          !reviewerConfigured
+                        }
+                      >
+                        Sign as verified
+                      </button>
+                      {!reviewerConfigured && (
+                        <p className="yi-warning">
+                          A signed-in reviewer identity must be configured
+                          before signing.
                         </p>
                       )}
-                    {start != null && (
-                      <a
-                        href={`https://www.youtube.com/watch?v=${encodeURIComponent(run.videoId)}&t=${Math.floor(start)}s`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Open source at {Math.floor(start / 60)}:
-                        {String(Math.floor(start % 60)).padStart(2, "0")}
-                      </a>
-                    )}
-                  </div>
-                );
-              })}
-            </Collapsible>
-          ))}
-        </section>
-      )}
-      <Timing timeline={run.output.timeline as RunTimelineData | undefined} />
-      <Collapsible title="Processing details">
-        <dl>
-          <dt>Run</dt>
-          <dd>{run.id}</dd>
-          <dt>Frozen analysis pipeline</dt>
-          <dd>{researchPipelineLabelFromInput(run.input)}</dd>
-          <dt>Stage</dt>
-          <dd>{run.stage}</dd>
-          <dt>Measured or reserved cost</dt>
-          <dd>{money(run.cost)}</dd>
-          <dt>Model</dt>
-          <dd>{run.model}</dd>
-        </dl>
-        <pre>
-          {JSON.stringify(
-            {
-              stageTimings: run.output.stageTimings,
-              coverage: run.output.coverage,
-              audioTrust: audio,
-              transcriptionCompleteness: run.output.transcriptionCompleteness,
-              rejectedEvidence: run.output.rejectedEvidence,
-              tickerProposals: run.output.tickerProposals,
-              rejected: checked.filter((c) => !c.passed),
-            },
-            null,
-            2,
+                      {!timed && (
+                        <p className="yi-warning">
+                          Every cited span needs a timestamp before it can be
+                          signed.
+                        </p>
+                      )}
+                    </form>
+                  </Collapsible>
+                </aside>,
+              )}
+            </div>
+          ) : (
+            <div className="yi-analysis-grid">
+              <Empty
+                title={
+                  working
+                    ? "Analysis is still being prepared"
+                    : "No accepted calls in this video"
+                }
+              >
+                {working
+                  ? "Progress refreshes automatically. You can leave this page and return later."
+                  : "An analysis can finish without finding an actionable call. The key points above and Research context below still come from the video. Processing details retain rejected extractions."}
+              </Empty>
+              <aside className="yi-evidence yi-panel">
+                <h2>Source</h2>
+                {player}
+              </aside>
+            </div>
           )}
-        </pre>
-        <button
-          disabled={
-            busy ||
-            !(
-              run.status === "completed" ||
-              (["needs_review", "failed"].includes(run.status) &&
-                ["metadata", "source", "asr-source"].includes(run.stage))
-            )
-          }
-          onClick={() =>
-            void perform(
-              () => action("trust", "requestAudioTrust", { runId: id }),
-              "Audio review queued.",
-            )
-          }
+          {context.length > 0 && (
+            <section className="yi-panel" aria-label="Research context">
+              <h2>
+                Research context · {context.length}{" "}
+                {context.length === 1 ? "point" : "points"}
+              </h2>
+              <p className="yi-muted">
+                Background, risks and scenarios from the video, with supporting
+                evidence.
+              </p>
+              {context.map((point) => (
+                <Collapsible key={point.id} title={point.claim.thesis_en}>
+                  {point.claim.horizon_en && (
+                    <p>
+                      <strong>Timeframe:</strong> {point.claim.horizon_en}
+                    </p>
+                  )}
+                  {point.claim.conditions_en.length > 0 && (
+                    <p>
+                      <strong>Conditions:</strong>{" "}
+                      {point.claim.conditions_en.join(" · ")}
+                    </p>
+                  )}
+                  {point.claim.risks_en.length > 0 && (
+                    <p>
+                      <strong>Risks:</strong> {point.claim.risks_en.join(" · ")}
+                    </p>
+                  )}
+                  {point.claim.levels.length > 0 && (
+                    <dl className="yi-levels">
+                      {point.claim.levels.map((level, index) => (
+                        <div key={index}>
+                          <dt>{level.kind}</dt>
+                          <dd>{level.value_original}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                  {point.claim.evidence.map((e, index) => {
+                    const start = e.source_span?.start_seconds;
+                    return (
+                      <div key={`${point.id}-${index}`}>
+                        <p>
+                          <strong>Original evidence</strong>
+                        </p>
+                        <blockquote>{e.quote_original}</blockquote>
+                        {e.quote_translation_en &&
+                          e.quote_translation_en !== e.quote_original && (
+                            <p>
+                              <strong>English translation:</strong>{" "}
+                              {e.quote_translation_en}
+                            </p>
+                          )}
+                        {start != null && (
+                          <button
+                            type="button"
+                            className="yi-text-button"
+                            onClick={() =>
+                              seekTo(start, `Playing research context at ${clock(start)}.`)
+                            }
+                          >
+                            ▶ Play from {clock(start)}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </Collapsible>
+              ))}
+            </section>
+          )}
+        </div>
+      )}
+      {view.tab === "brief" && (
+        <div
+          role="tabpanel"
+          id="yi-an-panel-brief"
+          aria-labelledby="yi-an-tab-brief"
+          className="yi-an-panel yi-an-brief-tab"
         >
-          {run.status !== "completed"
-            ? "Transcribe audio & resume"
-            : "Request audio review"}
-        </button>
-      </Collapsible>
+          <p className="yi-muted">
+            A research brief is optional: a whole-video synthesis with an
+            independent evidence critique.{" "}
+            {briefEstimate
+              ? `Generating one has cost about ${money(briefEstimate.averageUsd)} on average (${briefEstimate.samples} earlier ${briefEstimate.samples === 1 ? "brief" : "briefs"}).`
+              : "No cost estimate yet: no earlier brief recorded its cost."}{" "}
+            Budget left this month: {money(remaining)}.
+          </p>
+          <ResearchBrief
+            key={id}
+            sourceRunId={briefs[0]?.sourceRunId ?? id}
+            briefs={briefs}
+            source={source}
+            onSeek={(to) =>
+              seekTo(to, `Playing the research-brief reference at ${clock(to)}.`)
+            }
+            completed={status === "completed"}
+          />
+        </div>
+      )}
+      {view.tab === "processing" && (
+        <div
+          role="tabpanel"
+          id="yi-an-panel-processing"
+          aria-labelledby="yi-an-tab-processing"
+          className="yi-an-panel"
+        >
+          <section className="yi-panel">
+            <h2>Processing details</h2>
+            <dl>
+              <dt>Run</dt>
+              <dd>{run.id}</dd>
+              <dt>Frozen analysis pipeline</dt>
+              <dd>{researchPipelineLabelFromInput(run.input)}</dd>
+              <dt>Stage</dt>
+              <dd>{run.stage}</dd>
+              <dt>Measured or reserved cost</dt>
+              <dd>{money(run.cost)}</dd>
+              <dt>Model</dt>
+              <dd>{run.model}</dd>
+            </dl>
+            <Timing
+              timeline={run.output.timeline as RunTimelineData | undefined}
+            />
+            <Collapsible title="Show raw data">
+              <pre>
+                {JSON.stringify(
+                  {
+                    stageTimings: run.output.stageTimings,
+                    coverage: run.output.coverage,
+                    audioTrust: audio,
+                    transcriptionCompleteness:
+                      run.output.transcriptionCompleteness,
+                    rejectedEvidence: run.output.rejectedEvidence,
+                    tickerProposals: run.output.tickerProposals,
+                    rejected: checked.filter((c) => !c.passed),
+                  },
+                  null,
+                  2,
+                )}
+              </pre>
+            </Collapsible>
+            <button
+              className="yi-secondary"
+              disabled={
+                busy ||
+                !(
+                  status === "completed" ||
+                  (["needs_review", "failed"].includes(status) &&
+                    ["metadata", "source", "asr-source"].includes(run.stage))
+                )
+              }
+              onClick={() =>
+                void perform(
+                  () => action("trust", "requestAudioTrust", { runId: id }),
+                  "Audio review queued.",
+                )
+              }
+            >
+              {status !== "completed"
+                ? "Transcribe audio & resume"
+                : "Request audio review"}
+            </button>
+          </section>
+        </div>
+      )}
     </>
   );
 }
