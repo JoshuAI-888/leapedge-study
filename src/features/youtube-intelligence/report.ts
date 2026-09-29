@@ -251,7 +251,7 @@ export function deterministicHeadline(split: Split, creators: number) {
           : "Creators are split";
   return `${lean}: ${splitText(split)} across ${plural(creators, "creator")}`;
 }
-/** "4 ideas · 3 ▲ 1 ● · NVDA AVGO TSM" (F61's verdict line, until that lane's shared part lands). */
+/** "4 ideas · 3 ▲ 1 ● · NVDA, AVGO, TSM" (F61's verdict line, until that lane's shared part lands). */
 export function verdictLine(video: {
   ideas: number;
   sentiment: Split;
@@ -265,7 +265,8 @@ export function verdictLine(video: {
   const names = video.instruments
     .slice(0, 3)
     .map((key) => describeInstrument({ ticker: key, macroTheme: key }).text)
-    .join(" ");
+    // Commas: a macro or sector label ("MACRO · RATES") contains spaces itself.
+    .join(", ");
   return [plural(video.ideas, "idea"), parts.join(" "), names]
     .filter(Boolean)
     .join(" · ");

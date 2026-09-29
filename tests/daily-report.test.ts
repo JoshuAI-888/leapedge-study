@@ -335,7 +335,7 @@ test("Headline, verdict line and timestamp wording", () => {
   assert.equal(deterministicHeadline({ bullish: 0, neutral: 0, bearish: 0 }, 0), "No creator calls in this session");
   assert.equal(
     verdictLine({ ideas: 4, sentiment: { bullish: 3, neutral: 1, bearish: 0 }, instruments: ["NVDA", "AVGO", "TSM", "AMD"] }),
-    "4 ideas · 3 ▲ 1 ● · NVDA AVGO TSM",
+    "4 ideas · 3 ▲ 1 ● · NVDA, AVGO, TSM",
   );
   assert.equal(verdictLine({ ideas: 0, sentiment: { bullish: 0, neutral: 0, bearish: 0 }, instruments: [] }), "No investable ideas");
   // F77: macro and sector keys read as their instrument labels, as everywhere else.
@@ -345,7 +345,7 @@ test("Headline, verdict line and timestamp wording", () => {
       sentiment: { bullish: 2, neutral: 1, bearish: 0 },
       instruments: ["NVDA", "Rates", "Information Technology / Semiconductors"],
     }),
-    "3 ideas · 2 ▲ 1 ● · NVDA MACRO · RATES SECTOR · SEMIS",
+    "3 ideas · 2 ▲ 1 ● · NVDA, MACRO · RATES, SECTOR · SEMIS",
   );
   assert.equal(timestamp(252), "4:12");
   assert.equal(timestamp(3725), "1:02:05");
