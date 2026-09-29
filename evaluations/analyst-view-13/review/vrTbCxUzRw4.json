@@ -1,0 +1,189 @@
+{
+  "videoId": "vrTbCxUzRw4",
+  "language": "en",
+  "mustKnow": [
+    {
+      "item": "Thesis: 'strategic investing' in miners = scale in step by step (better than DCA); buy technically strong but not-extended names first ('strength comes to strength', institutions buy trend); wait on extended leaders for shallow dips; wait on weak names for a correction, when they fall hardest; aim for a good blended portfolio entry",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": "Both get the framework."
+    },
+    {
+      "item": "Context: gold rising, GDXJ likely broke its downtrend; gold correction is typical for a bull market; gold ~20% ($1,200) below ATH; a drop to 4,000 (~9.5%) is unlikely; stress scenario gold ~4,125",
+      "ours": "partial",
+      "leapedge": "missed",
+      "note": "Ours has GDXJ and the 'normal correction' point but explicitly drops the 4,125 and 4,000 levels as 'ambiguous'."
+    },
+    {
+      "item": "Activity this week: bought 3 positions, 4th only 50% filled",
+      "ours": "missed",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "BUY / accumulate now: SSR Mining (SSRM; uptrend, not super extended), New Pacific Metals (NUAG, silver; bounced off 50-day, ~20% to old highs), GoGold (GGD) and Artemis Gold (ARTG) named as the upside names he is buying",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Ours has SSR as 'watch' (should be buy) and GGD/Artemis only in sentiment. LeapEdge has SSRM and New Pacific with a wrong ticker, and misses GGD/Artemis."
+    },
+    {
+      "item": "Bought: 1911 Gold (added at lower end of support, held 50-day; still below 200-day, long-term downtrend intact)",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": "An actual purchase that LeapEdge omits."
+    },
+    {
+      "item": "Next Gold Mining (NexGold): owned; wanted to add but no pullback to the 50-day came; broke above the 200-day, bull flag, 'a lot of room to run'",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge has a keyPoint but no idea."
+    },
+    {
+      "item": "WAIT for shallow pullback (love, extended): Banyan Gold (not owned) and Cabral Gold (owned, ~C$500M cap, may be topping)",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge has Banyan only."
+    },
+    {
+      "item": "WAIT for correction (weak): McEwen Mining (below 50/200, downtrend) and Lundin Mining ('dud', likely to break support and see stop cascades in a sell-off)",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge has McEwen only."
+    },
+    {
+      "item": "Risks: broad market correction, dollar 'to the moon', gold pullback -> weak miners hit hardest",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": ""
+    },
+    {
+      "item": "Teaser: a coming 'change in the mining industry' will alter the accumulation strategy (VIP video)",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "k2: 'Gold mining stock selection focuses on technicals over fundamentals because gold has universal global demand...'",
+        "transcriptAt": "235s-292s",
+        "problem": "Wrong causality. He leaves fundamentals out because this video is 'purely strategic'. The global-demand point only says jurisdiction (made-in-US) doesn't matter for gold, unlike critical metals."
+      },
+      {
+        "text": "SSR Mining 'in an uptrend above its 250-day moving average'",
+        "transcriptAt": "598s",
+        "problem": "Repeats an ASR garble ('250-day' = '200, 50-day'). LeapEdge read it correctly."
+      },
+      {
+        "text": "SSR Mining call stance 'watch'",
+        "transcriptAt": "572s-598s",
+        "problem": "Understated. It sits under 'The stocks that I will buy right now'; it is a buy."
+      },
+      {
+        "text": "Omissions: drops 'gold down to 4,125' as ambiguous units, and Cabral '~500 Canadian' mcap",
+        "transcriptAt": "1018s, 472s",
+        "problem": "Over-cautious. Gold at 4,125 is an unambiguous gold-price scenario (the 'therapy session' is an ASR artifact). The omission note removes a key stress level."
+      },
+      {
+        "text": "Lundin: one call 'watch' and one call 'avoid'; Banyan sentiment rows: neutral/avoid, bullish/watch, bullish/avoid",
+        "transcriptAt": "1043s, 296s-465s",
+        "problem": "Contradictory duplicate stances for the same name."
+      },
+      {
+        "text": "k8 and k9 are near-identical ('Recent corrections in the price of gold are typical...')",
+        "transcriptAt": "664s",
+        "problem": "Duplicate key point."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "New Pacific Metals ticker 'NEWP'",
+        "transcriptAt": "616s",
+        "problem": "Wrong ticker. New Pacific Metals trades as NUAG (NYSE American/TSX)."
+      },
+      {
+        "text": "'Ignore fundamentals for gold stocks, as gold is a global commodity with high liquidity regardless of the production location.'",
+        "transcriptAt": "235s-292s",
+        "problem": "Same causality error as ours, stated as a general rule. The creator never says to ignore fundamentals in general; he loves Cabral 'fundamentally'."
+      },
+      {
+        "text": "All four ideas horizon 'swing'",
+        "transcriptAt": "159s, 994s",
+        "problem": "The video is about strategic long-term accumulation ('I believe in them long-term'). Only New Pacific is framed as a swing."
+      },
+      {
+        "text": "Banyan idea stance 'long', counted in verdict '3 LONG'",
+        "transcriptAt": "349s",
+        "problem": "Overstated. He is explicitly not buying and does not own it; this is a watch/wait-for-dip."
+      },
+      {
+        "text": "New Pacific conviction 'high'",
+        "transcriptAt": "616s",
+        "problem": "Mild overstatement. 'Even better', 'a lot of potential'; he does not say he bought it."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [
+      "GoGold (GGD) and Artemis Gold as buys (appear only in tickerSentiment)",
+      "SSR Mining as a buy (labeled watch)"
+    ],
+    "leapedgeMissed": [
+      "1911 Gold (actual add this week)",
+      "Next Gold Mining (owned, wants to add)",
+      "Cabral Gold (hold/wait for pullback)",
+      "Lundin Mining (wait for breakdown)",
+      "GGD and Artemis (buying)"
+    ],
+    "oursFalse": [],
+    "leapedgeFalse": [
+      "Banyan as a LONG idea (it is a no-buy-now watch)"
+    ],
+    "oursUnresolvedTickers": [
+      "Banyan Gold -> BYN (TSXV)",
+      "Cabral Gold -> CBR (TSXV)",
+      "SSR Mining -> SSRM (null in call; resolved only when spoken as 'SSRM')",
+      "New Pacific Metals -> NUAG",
+      "NexGold Mining -> NEXG (TSXV)",
+      "1911 Gold -> AUMB (TSXV)",
+      "McEwen Mining -> MUX",
+      "Lundin Mining -> LUN (TSX)",
+      "GoGold Resources -> GGD (TSX)",
+      "Artemis Gold -> ARTG (TSXV)"
+    ]
+  },
+  "sentimentIssues": [
+    "26 rows for 12 names; Banyan x4 with three different stances, Cabral x3, Lundin x2 (neutral and bearish), gold x3.",
+    "SSR Mining is 'watch' in call and sentiment although it is in the buy-now bucket.",
+    "GGD/Artemis are 'watch' in one row and 'long' in another; they should be long (buying).",
+    "Rows for the spoken commodity 'gold' with ticker null add noise. Either map to XAU/GLD or drop them.",
+    "The GDXJ row appears twice (long and neutral)."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 5,
+      "fidelity": 4,
+      "actionability": 3,
+      "clarity": 2,
+      "overall": 4
+    },
+    "leapedge": {
+      "coverage": 3,
+      "fidelity": 3,
+      "actionability": 3,
+      "clarity": 4,
+      "overall": 3
+    }
+  },
+  "verdict": "ours better",
+  "why": "Ours maps the creator's full watch-list triage (buy now / wait for dip / wait for correction) across all ten names, including the actual 1911 Gold add. LeapEdge covers only four names, has the wrong ticker for New Pacific (NEWP), files the do-not-buy Banyan as a LONG, and calls a long-term accumulation plan 'swing'. Ours' weaknesses are real, though: every junior miner has a null ticker, which the omissions justify as a policy. SSR is mislabeled 'watch', stances contradict across duplicates, and the gold 4,000/4,125 levels were dropped out of over-caution.",
+  "recommendations": [
+    "Group the output by the creator's own buckets. This video is a triage: 'Buy now: SSRM, NUAG, GGD, ARTG (+ added AUMB)'; 'Wait for shallow dip: BYN, CBR, NEXG'; 'Wait for correction: MUX, LUN'. A single structured 'action bucket' field would beat LeapEdge's 4 cards.",
+    "Resolve small-cap and TSX/TSXV miners with exchange suffixes. Remove the policy line 'Specific ticker symbols are omitted where not explicitly stated'; the PM needs BYN, CBR, NEXG, AUMB, NUAG, LUN, GGD, ARTG.",
+    "Promote names that appear only in tickerSentiment (GGD, Artemis) to calls when the creator says 'we're buying'.",
+    "Normalize ASR garbles before extraction ('250-day' -> '200/50-day'; '4,125 therapy session' -> gold $4,125) instead of dropping the number to omissions.",
+    "Enforce one stance per ticker per video, or an explicit time-ordered change. Banyan must not be neutral/avoid, bullish/watch and bullish/avoid at once.",
+    "Capture trade-activity facts ('bought 3 positions this week, 4th only 50% filled') and the gold reference levels (20% below ATH; 4,000 = -9.5%)."
+  ]
+}

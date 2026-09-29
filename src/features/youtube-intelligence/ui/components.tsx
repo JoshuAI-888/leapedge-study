@@ -124,6 +124,7 @@ export function ClaimCard({
         <span className="yi-ticker">
           {listing?.ticker ??
             claim.ticker ??
+            claim.resolvedTicker ??
             claim.instrument ??
             "Unresolved instrument"}
         </span>
@@ -141,6 +142,19 @@ export function ClaimCard({
           <a href={listing.sourceUrl} target="_blank" rel="noreferrer">
             Identity source
           </a>
+        </p>
+      )}
+      {!listing && !claim.ticker && claim.resolvedTicker && (
+        <p className="yi-muted">
+          Said as “{claim.instrument}”; listed as {claim.resolvedName} (
+          {claim.resolvedBy === "alias"
+            ? "curated name"
+            : claim.resolvedBy === "registry_name"
+              ? "SEC registered name"
+              : claim.resolvedBy === "verified_proposal"
+                ? "proposed ticker checked against SEC listing"
+                : "ticker spoken"}
+          ).
         </p>
       )}
       <h3>{claim.thesisEn}</h3>

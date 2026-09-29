@@ -1,0 +1,169 @@
+{
+  "videoId": "tD-Er2_LQrk",
+  "language": "zh (with an embedded English clip of Jordi Visser)",
+  "mustKnow": [
+    {
+      "item": "BTC rose from about 58-64k to about 84-84.5k after the creator's earlier Visser video (roughly +40%, per the creator's own rough estimate)",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": "Ours repeats the ASR's 'Joe Dispenza' (0s) as fact. It is almost certainly a mis-hearing of Jordi Visser, the video's subject."
+    },
+    {
+      "item": "Visser's profile (ex-Morgan Stanley, spans Wall Street, AI and crypto): former colleagues running $50-100B+ are asking how to 'play' crypto and tokenization. Wall Street is FOMO-ing late, after retail",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": ""
+    },
+    {
+      "item": "Bottom signal: BTC did not fall on bad news (rate hikes, falling odds for the CLARITY Act and its eventual failure, a cold-wallet incident). A small positive (Trump: don't fall behind China, possibly legitimize Hyperliquid) sent it from 64k to 75k and then 84.5k",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge has no levels and no Trump or Hyperliquid catalyst. Ours drops the Hyperliquid-legalization point."
+    },
+    {
+      "item": "Macro: the Fed hiked and the dot plot implies another +25bp this year; BTC still didn't fall",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": ""
+    },
+    {
+      "item": "Flows: Wall Street missed Micron and semis. Pomp's scenario has allocations moving from 1% test positions to $10-20B+",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "Why institutions come: fewer stocks are rising; Nasdaq has outperformed small caps since the iPhone; AI disruption (a Kodak analogy); diversified funds are stuck in laggard stocks",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Neither has Kodak or the point about diversified funds holding laggards. LeapEdge's 'struggle to outperform the S&P 500' is an inference."
+    },
+    {
+      "item": "2021-22 crypto was crypto's dot-com bubble; it left rails (L1, L2, Hyperliquid). AI agents are the 'iPhone moment' that will use them, so ETH, BTC, SOL and HYPE rise",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Privacy: agents that want confidentiality choose ZEC, which 'rose 10x+'",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Actionable conclusion (Peter Lynch): Wall Street doesn't cover individual tokens, and Visser expects broad institutional coverage beyond BTC and ETH around 2027. The retail edge is to research ZEC, SOL and Hyperliquid before 2027",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Ours states it in k6 and the brief but raises no call. LeapEdge raises calls but upgrades 'research' to 'accumulate' and uses the ticker 'macro'."
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "k8: 'following earlier commentary on Joe Dispenza'",
+        "transcriptAt": "0s",
+        "problem": "ASR artifact repeated as fact. The context (the title and 24s on) is Jordi Visser. It should be flagged as likely mis-transcription, not asserted."
+      },
+      {
+        "text": "brief: 'Jody Visser expects...'",
+        "transcriptAt": "24s",
+        "problem": "The name is misspelled; the title has 'Jordi Vissel' and the transcript 'Jordi Visser'."
+      },
+      {
+        "text": "k1: 'failure of regulatory clarity legislation'",
+        "transcriptAt": "324s-355s",
+        "problem": "Loses the proper noun, the CLARITY Act, so a PM can't look it up."
+      },
+      {
+        "text": "keyPoints stance all 'neutral' while tickerSentiment marks everything bullish",
+        "transcriptAt": "passim",
+        "problem": "Inconsistent. The video is uniformly bullish on crypto."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "tradeIdea ticker 'macro', long, HIGH, 'accumulating leading crypto infrastructure rails'",
+        "transcriptAt": "714s-801s",
+        "problem": "No instrument. The creator's instruction is to research (研究清楚) specific tokens before 2027, not to accumulate. Conviction HIGH is not stated."
+      },
+      {
+        "text": "ZEC 'Hold or accumulate', long",
+        "transcriptAt": "690s-699s",
+        "problem": "This is an illustrative mechanism (agents choose privacy coins, 'ZEC不就起来了吗'), not a recommendation. The better stance is watch or research."
+      },
+      {
+        "text": "ZEC quote in English: 'So we go to privacy coins, we go to ZEC. And then ZEC takes off.'",
+        "transcriptAt": "679s-699s",
+        "problem": "The creator's paraphrase is in Chinese. Presenting a back-translation as a verbatim English quote fabricates a quote."
+      },
+      {
+        "text": "macro quote: 'Wall Street doesn't cover tokens in crypto, they're starting to get involved in the rails, but they don't cover individual tokens.'",
+        "transcriptAt": "295s-301s",
+        "problem": "The transcript breaks off at 'Wall Street doesn't cover'. The rest cannot be verified from the source."
+      },
+      {
+        "text": "risk 'Regulatory scrutiny of privacy tokens'",
+        "transcriptAt": "n/a",
+        "problem": "Not in the transcript."
+      },
+      {
+        "text": "'as they struggle to outperform the S&P 500 index'",
+        "transcriptAt": "589s-601s",
+        "problem": "An inference. The source says diversified funds hold laggard stocks and does not mention an S&P 500 benchmark."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [
+      "Watch/research ZEC, SOL and Hyperliquid (HYPE) before 2027 institutional coverage (the creator's explicit closing takeaway, 771s-801s). It should be a 'watch' call with horizon 'before 2027'. Ours has ZEC as 'watch' only in tickerSentiment."
+    ],
+    "leapedgeMissed": [
+      "SOL and Hyperliquid are named explicitly as research targets but are folded into 'macro'."
+    ],
+    "oursFalse": [],
+    "leapedgeFalse": [
+      "'macro' long HIGH: no instrument, and the action is upgraded from research to accumulation.",
+      "ZEC long 'hold or accumulate': the source supports watch/research, not long."
+    ],
+    "oursUnresolvedTickers": [
+      "比特币/Bitcoin -> BTC",
+      "Ethereum -> ETH (resolved only when spoken as 'ETH')",
+      "Solana -> SOL",
+      "Hyperliquid -> HYPE",
+      "ZEC -> ZEC (spoken as a ticker yet still null)",
+      "美光半导体 -> MU"
+    ]
+  },
+  "sentimentIssues": [
+    "15 rows for 7 assets: 比特币 x4 plus 'Bitcoin' x1, Ethereum x2 plus ETH x1, Solana x2, Hyperliquid x2. Chinese and English aliases are not merged.",
+    "ZEC is spoken literally as 'ZEC' yet has ticker null, which shows the resolver is not even taking tickers spoken outright.",
+    "'加密' (crypto, the asset class) is listed as a ticker row.",
+    "Stances are inconsistent: sentiment is bullish while stance is 'neutral' for most crypto rows, and Hyperliquid is bullish at 666s but neutral at 745s.",
+    "Direction is right: the whole video is bullish on crypto."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 4,
+      "fidelity": 4,
+      "actionability": 2,
+      "clarity": 2,
+      "overall": 3
+    },
+    "leapedge": {
+      "coverage": 3,
+      "fidelity": 2,
+      "actionability": 3,
+      "clarity": 4,
+      "overall": 3
+    }
+  },
+  "verdict": "tie",
+  "why": "Ours is more faithful and keeps the levels (58-64k, 75k, 84.5k), flows ($10-20B) and catalysts, but it raises zero calls on a video that ends with a clear directive (research ZEC, SOL and HYPE before 2027). It is too strict here. LeapEdge surfaces the idea but distorts it: the ticker is 'macro', 'research' becomes 'accumulate', conviction is HIGH, and it shows a fabricated English quote. Neither is investment-grade on the call. Ours would win clearly with a watch call and resolved tickers.",
+  "recommendations": [
+    "Let 'watch' and 'research' directives with a horizon become calls. The extraction prompt says to extract 'watch' stances, but critique rejects or drops them when there is no buy verb. Add an explicit rule: 'A creator directive to research, monitor or position before a dated catalyst (e.g. before 2027 institutional coverage) is a watch call with that horizon.'",
+    "Take tickers spoken outright (ZEC, ETH, BTC) and resolve crypto names (比特币→BTC, 以太坊/Ethereum→ETH, Solana→SOL, Hyperliquid→HYPE) with a crypto alias table. None needs model inference.",
+    "Detect likely ASR name errors ('Joe Dispenza' in a Jordi Visser video) by checking names against the title and channel metadata. Flag them in omissions instead of asserting them.",
+    "Merge sentiment rows across Chinese and English aliases (比特币 = Bitcoin = BTC) and across scripts, and drop asset-class rows such as '加密'.",
+    "Keep proper nouns for legislation (CLARITY Act) and people (Pomp, Peter Lynch) in keyPoints."
+  ]
+}

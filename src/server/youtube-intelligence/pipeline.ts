@@ -30,6 +30,7 @@ import {
 } from "../../features/youtube-intelligence/contracts.ts";
 import { normalizeReferences } from "../../features/youtube-intelligence/claim-references.ts";
 import { resolveListing } from "../../features/youtube-intelligence/identity.ts";
+import { resolveReference } from "./listings/resolve.ts";
 import { recoverEvidenceRanges } from "../../features/youtube-intelligence/evidence-selection.ts";
 import { sentimentFromStance } from "../../features/youtube-intelligence/sentiment.ts";
 import {
@@ -652,12 +653,26 @@ function materializeMentions(
       const range = draft.ranges[0];
       if (!range) throw Error("Mention cites no source range.");
       const derived = deriveEvidence(source, range);
-      const call = draft.ticker
-        ? claims.find(
-            (c) =>
-              c.claim.ticker?.toLowerCase() === draft.ticker!.toLowerCase(),
-          )
-        : undefined;
+      // A mention belongs to a call on the same instrument: the same literal
+      // ticker, or the same resolved listing when a company was only named.
+      const listed = resolveReference(draft.instrument_as_spoken, draft.ticker);
+      const call =
+        (draft.ticker
+          ? claims.find(
+              (c) =>
+                c.claim.ticker?.toLowerCase() === draft.ticker!.toLowerCase(),
+            )
+          : undefined) ??
+        (listed?.symbol
+          ? claims.find(
+              (c) =>
+                resolveReference(
+                  c.claim.instrument_as_spoken ?? c.claim.ticker,
+                  c.claim.ticker,
+                  { explicit: c.claim.ticker_explicit },
+                )?.symbol === listed.symbol,
+            )
+          : undefined);
       const stance = call ? call.claim.stance : draft.stance;
       const mention = Mention.parse({
         ...draft,

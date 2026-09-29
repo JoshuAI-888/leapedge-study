@@ -28,7 +28,8 @@ an older table missing a column). `0008_baseline_columns.sql` then creates any
 missing baseline table, adds any missing column, and only then the indexes, so a
 database built by an older deployment ends up with everything `0001` declares.
 This repaired a production database found without `yi_calls.attempt` on 29
-September.
+September. `0009_resolved_listing.sql` adds the derived listing columns to
+`claims`.
 
 A preview deployment refuses to migrate the production database: with
 `VERCEL_ENV=preview` the runner compares the host of `DATABASE_URL_UNPOOLED`

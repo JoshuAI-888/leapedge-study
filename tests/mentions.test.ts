@@ -338,3 +338,42 @@ test("a mention whose span does not resolve is rejected and recorded, never stor
   assert.match(rejected[2].reason, /cites no source range/);
   await db().close();
 });
+
+test("a named instrument without a spoken ticker links its mention to its call and publishes under its listing", async () => {
+  const longGold = {
+    ...shortSpy,
+    thesis_en: "Gold keeps grinding higher.",
+    instrument_as_spoken: "Gold",
+    ticker: null,
+    ticker_explicit: false,
+    stance: "long" as const,
+    levels: [],
+    evidence_ranges: [{ start_id: "d", end_id: "d" }],
+  };
+  const goldMention = {
+    ticker: null,
+    instrument_as_spoken: "gold",
+    market: "other",
+    stance: "neutral",
+    sentiment: "neutral",
+    rationale_en: "Gold is described as grinding higher.",
+    ranges: [{ start_id: "d", end_id: "d" }],
+  };
+  const { run } = await runSynthesis(
+    { claims: [longGold], key_points: [], mentions: [goldMention] },
+    "resolved-listing-run",
+  );
+  const [mention] = run.output.mentions as Awaited<ReturnType<typeof Mention.parse>>[];
+  assert.equal(mention.is_call, true, "linked by resolved listing, not literal ticker");
+  assert.equal(mention.claim_id, "c1");
+  assert.equal(mention.sentiment, "bullish");
+  assert.equal(mention.ticker, null, "the literal ticker field is not rewritten");
+  const { rowsForRun } = await import("../src/server/youtube-intelligence/repos/publish.ts");
+  const checked = run.output.claims as { passed: boolean; reasons: string[] }[];
+  for (const c of checked) { c.passed = true; c.reasons = []; }
+  const rows = rowsForRun(run);
+  assert.equal(rows.claims[0]?.resolvedTicker, "GOLD");
+  assert.equal(rows.claims[0]?.resolvedBy, "alias");
+  assert.equal(rows.claims[0]?.ticker, null);
+  assert.equal(rows.mentions[0]?.ticker, "GOLD");
+});

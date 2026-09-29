@@ -1,0 +1,456 @@
+{
+ "status": "completed",
+ "title": "3 Stocks To Buy Now (Best Investments September 2026)",
+ "costUsd": 0.40363299999999996,
+ "endToEndSeconds": 586.051,
+ "analysisSeconds": 377.578,
+ "keyPoints": [
+  {
+   "id": "k1",
+   "text": "The S&P 500 finished essentially flat as gains in the technology sector balanced declines across financial and industrial stocks amid declining oil prices.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k2",
+   "text": "Sofi tends to trade inversely with the federal funds rate, reflecting macroeconomic interest rate cut or hike expectations rather than being directly driven by oil prices.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k3",
+   "text": "The creator suggests that industry demand and run-up for peptides could eventually surpass GPUs because of their broad healthcare and weight-loss potential.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k4",
+   "text": "A company's executive leadership is a critical investment factor that is often overlooked in traditional financial analysis.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k5",
+   "text": "E.L.F. Beauty has shifted about 60% of its manufacturing outside of China and benefits from expanding international sales penetration.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k6",
+   "text": "Elevated oil prices create mounting macroeconomic problems, leading to more extreme control measures, with expectations that oil prices will decline significantly towards the 130 range by the end of next week.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k7",
+   "text": "Celsius is up over 5% including overnight trading as dropping oil prices benefit the company, making it the largest position in the public portfolio.",
+   "ticker": null,
+   "stance": "hold"
+  },
+  {
+   "id": "k8",
+   "text": "The creator highlights a 35% gain over the past month in Meta Platforms after buying it when it was cheap, emphasizing that buying blue-chip stocks at cheap valuations historically minimizes downside.",
+   "ticker": null,
+   "stance": "long"
+  },
+  {
+   "id": "k9",
+   "text": "Hims & Hers carries a $7 billion market capitalization, a 52-week range of $13 to $65, and a negative P/E ratio, sitting around the midpoint of its 52-week range.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k10",
+   "text": "Hims & Hers is expanding internationally with rest-of-the-world revenue up 1,641%, subscriber count up 19% year-over-year, and monthly revenue per average subscriber increasing 21%, though its negative P/E ratio makes it more speculative.",
+   "ticker": "HIMS",
+   "stance": "neutral"
+  },
+  {
+   "id": "k11",
+   "text": "Hims & Hers has significant international TAM expansion potential across Europe (200M+ people for mental health and labs), Canada (30M+ people), Australia (20M+), and Japan, making the risk-to-reward favorable despite currently lower international margins due to operational costs.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k12",
+   "text": "Hims & Hers is building out operational infrastructure to capture future growth in peptides and non-weight-loss healthcare categories, including a 503B outsourcing facility in California, 503A facilities in Arizona and Ohio, and an at-home lab testing facility in New Jersey.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k13",
+   "text": "Amazon's AWS net sales are up 37% year-over-year and operating income is up 64%, driven by heavy capital investments into long-term growth assets that are expected to yield higher returns over time before spending slows down.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k14",
+   "text": "E.L.F. is projected to achieve 18% to 20% net sales growth by 2027, and given its track record of beating earnings, sustained 20% growth warrants an expansion of its forward P/E from 28.59 into the 30s.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k15",
+   "text": "ServiceNow corrected its valuation to a forward P/E in the 30s reflecting its low 20% year-over-year revenue growth.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k16",
+   "text": "Anthony Noto has transformed SoFi from nothing to significant achievements, and despite the current share price not reflecting this progress, share appreciation is anticipated soon.",
+   "ticker": null,
+   "stance": "long"
+  },
+  {
+   "id": "k17",
+   "text": "Falling oil prices and CEO leadership are expected to boost ELF's share price, and its international sales penetration could reach 42% over the next 6 years if historical doubling trends continue.",
+   "ticker": null,
+   "stance": "long"
+  }
+ ],
+ "calls": [
+  {
+   "instrument": "Hims and Hers",
+   "ticker": "HIMS",
+   "stance": "long",
+   "thesis": "The creator is actively buying shares of Hims & Hers, viewing the stock's risk-to-reward ratio as highly attractive driven by international expansion and long-term peptide opportunities despite a negative P/E ratio.",
+   "horizon": null,
+   "conviction": "high",
+   "conditions": [],
+   "risks": [
+    "Company currently has a negative P/E ratio",
+    "Higher operational risk and lower margins associated with international expansion"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Amazon",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "The creator is accumulating shares of Amazon rapidly, viewing it as deceivingly cheap and well positioned for future growth led by AWS, despite elevated capital expenditures.",
+   "horizon": null,
+   "conviction": "high",
+   "conditions": [],
+   "risks": [
+    "Massive capital expenditure and potential debt taken on to fund rapid growth"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "E.L.F. Beauty",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "The creator holds a decent portfolio allocation in E.L.F. Beauty after re-entering the position, considering the stock severely undervalued with substantial ongoing runway for growth and a tendency to beat earnings expectations.",
+   "horizon": null,
+   "conviction": "high",
+   "conditions": [],
+   "risks": [
+    "Forward P/E ratio is somewhat elevated at 28.59"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "ELF",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "Maintains a heavy portfolio investment in E.L.F. Beauty, considering it severely undervalued with strong runway for growth and forecasting it to become a $400 stock over the long term (a 4x gain in 3 to 7 years).",
+   "horizon": "3 to 7 years",
+   "conviction": "high",
+   "conditions": [],
+   "risks": [],
+   "trust": "L1"
+  },
+  {
+   "instrument": "HIMS",
+   "ticker": "HIMS",
+   "stance": "long",
+   "thesis": "Projects Hims & Hers to reach $100 over a long-term 3 to 7 year horizon despite anticipated near-term volatility and regulatory dependency, actively investing heavily.",
+   "horizon": "3 to 7 years",
+   "conviction": "high",
+   "conditions": [],
+   "risks": [
+    "High volatility",
+    "Dependence on FDA approvals and external factors"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Amazon",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "Expects Amazon to stage a rapid rally to $300 plus once it announces a slowdown in capital expenditures while sustaining its growth rates.",
+   "horizon": "short to medium term",
+   "conviction": "high",
+   "conditions": [
+    "Amazon announces a slowdown in Capex and sustains current growth rates"
+   ],
+   "risks": [],
+   "trust": "L1"
+  }
+ ],
+ "rejectedCalls": [],
+ "tickerSentiment": [
+  {
+   "ticker": null,
+   "spoken": "Celsius",
+   "sentiment": "bullish",
+   "stance": "hold",
+   "why": "Celsius is up over 5% and serves as the largest position in the public account.",
+   "at": 119.52
+  },
+  {
+   "ticker": null,
+   "spoken": "Meta",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker celebrates a 35% gain over one month after purchasing the stock when it was cheap.",
+   "at": 164.239
+  },
+  {
+   "ticker": "HIMS",
+   "spoken": "Hims and Hers",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker is actively buying Hims and Hers as a growing portfolio position due to international growth and peptide potential.",
+   "at": 196.08
+  },
+  {
+   "ticker": null,
+   "spoken": "Amazon",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker is accumulating Amazon rapidly, highlighting AWS growth and attractive valuation.",
+   "at": 424.319
+  },
+  {
+   "ticker": null,
+   "spoken": "E.L.F. Beauty",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker re-entered E.L.F. Beauty after previously trimming, maintaining a sizable position due to belief that it remains severely undervalued.",
+   "at": 527.6
+  },
+  {
+   "ticker": null,
+   "spoken": "Amazon",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker expresses high confidence, anticipates a rapid rally to $300 plus upon Capex deceleration, and is investing heavily.",
+   "at": 519.919
+  },
+  {
+   "ticker": null,
+   "spoken": "ELF Beauty",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker views the company as severely undervalued with substantial growth runway and targets a long-term share price of $400.",
+   "at": 527.6
+  },
+  {
+   "ticker": null,
+   "spoken": "Service Now",
+   "sentiment": "neutral",
+   "stance": "neutral",
+   "why": "The creator cites ServiceNow as a benchmark example of a company fairly valued with a forward P/E in the 30s matching its low 20% revenue growth.",
+   "at": 602.48
+  },
+  {
+   "ticker": null,
+   "spoken": "SoFi",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker praises CEO Anthony Noto for building the company and expects the stock's price appreciation to appear very soon.",
+   "at": 638.399
+  },
+  {
+   "ticker": null,
+   "spoken": "Celsius",
+   "sentiment": "bullish",
+   "stance": "hold",
+   "why": "The creator notes that Celsius is up over 5% as oil drops and highlights it as the largest holding in their public account.",
+   "at": 117.439
+  },
+  {
+   "ticker": null,
+   "spoken": "ELF Beauty",
+   "sentiment": "neutral",
+   "stance": "hold",
+   "why": "The creator introduces ELF Beauty and mentions having trimmed the position.",
+   "at": 152.319
+  },
+  {
+   "ticker": null,
+   "spoken": "ELF Beauty",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator notes that they trimmed ELF Beauty, but it has returned to an uptrend and looks very promising.",
+   "at": 152.319
+  },
+  {
+   "ticker": null,
+   "spoken": "Meta",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator is very happy with a 35% run-up in Meta over the past month, calling it an amazing buy when it was cheap.",
+   "at": 162.319
+  },
+  {
+   "ticker": "Hims",
+   "spoken": "Hims and Hers",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator identifies Hims and Hers as the number three stock they are still actively buying and making a bigger position in their public portfolio.",
+   "at": 196.08
+  },
+  {
+   "ticker": "HIMS",
+   "spoken": "HIMS and hers",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker views the risk-to-reward ratio on Hims & Hers as very attractive despite a negative P/E, highlighted by 19% subscriber growth, 21% monthly revenue per subscriber growth, and 1,641% rest-of-world international revenue expansion.",
+   "at": 222.879
+  },
+  {
+   "ticker": null,
+   "spoken": "Hims and Hers",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator argues that Hims and Hers' international addressable market and expansion potential make the stock's risk-to-reward worth investing at these levels.",
+   "at": 309.039
+  },
+  {
+   "ticker": null,
+   "spoken": "hims and hers",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator reiterates that at current levels the risk-to-reward ratio for Hims and Hers is very much worth it given its expansion and peptide infrastructure.",
+   "at": 370.08
+  },
+  {
+   "ticker": null,
+   "spoken": "Amazon",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator identifies Amazon as deceivingly cheap and their top radar stock that they are quickly accumulating.",
+   "at": 424.319
+  },
+  {
+   "ticker": null,
+   "spoken": "Amazon",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator feels very confident taking the risk on Amazon as it invests heavily into long-term growth assets that will return more money over time.",
+   "at": 503.52
+  },
+  {
+   "ticker": null,
+   "spoken": "E.L.F. Beauty",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator considers E.L.F. Beauty very undervalued with growth runway intact, holding a decent amount of their portfolio in it after getting back in.",
+   "at": 527.6
+  },
+  {
+   "ticker": null,
+   "spoken": "E.L.F.",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker holds a decent portfolio allocation in ELF, considers it cheap and severely undervalued at a forward P/E of 28.59, and expects it to rally when oil drops.",
+   "at": 551.839
+  },
+  {
+   "ticker": null,
+   "spoken": "him and hers",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker praises the CEO of Hims & Hers as robust, young, and actively executing on ambitious company growth.",
+   "at": 655.12
+  },
+  {
+   "ticker": null,
+   "spoken": "ELF",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker expects ELF stock to rise as oil falls, highlighting strong leadership and runway for international sales penetration to reach 42%.",
+   "at": 660.48
+  },
+  {
+   "ticker": "HIMS",
+   "spoken": "HIMS",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator views Hims & Hers as a long-term $100 stock over a 3 to 7 year horizon despite high volatility and FDA approval risks.",
+   "at": 702.48
+  },
+  {
+   "ticker": null,
+   "spoken": "Amazon",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator expects Amazon to stage a rapid run past $300 once it slows down Capex and sustains its growth rates.",
+   "at": 725.68
+  },
+  {
+   "ticker": null,
+   "spoken": "ELF",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator states as a bold call that ELF is a $400 stock long-term, providing portfolio diversity and strong growth rates.",
+   "at": 685.6
+  },
+  {
+   "ticker": null,
+   "spoken": "ELF",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker considers the stock a great diversification play with compounding growth potential of 20% to 40% annually and notes heavy active investing.",
+   "at": 752
+  }
+ ],
+ "brief": {
+  "mainTopics": [
+   "Market Context & Macro Trends",
+   "Celsius Holding",
+   "Meta Platforms Review",
+   "Hims & Hers Analysis",
+   "Amazon Analysis",
+   "E.L.F. Beauty Analysis",
+   "SoFi & Management Quality"
+  ],
+  "sentences": [
+   "The speaker notes that the S&P 500 index finished flat at 0% as technology gains offset declines across financial and industrial sectors amid falling oil prices.",
+   "The speaker discusses expectations that oil prices could decline towards the 130 range by the end of next week as control measures intensify.",
+   "Celsius is held as the largest position in the public portfolio and gained over 5% including overnight trading, supported by dropping oil prices.",
+   "The speaker notes a 35% gain over the past month in Meta Platforms after buying it when cheap, arguing that purchasing blue-chip stocks at cheap valuations historically limits downside.",
+   "The speaker identifies Hims & Hers as the number three stock they are actively purchasing and building into a larger public portfolio position, despite an 8% year-to-date decline and a negative P/E ratio.",
+   "Hims & Hers has a market capitalization of $7 billion, with a 52-week trading range between $13 and $65.",
+   "For Hims & Hers, subscriber count grew 19% year-over-year, monthly revenue per average subscriber increased 21%, and rest-of-the-world international revenue expanded 1,641%.",
+   "The international expansion potential for Hims & Hers includes target populations of over 200 million people for mental health and lab services in Europe, over 30 million in Canada, and over 20 million in Australia.",
+   "Hims & Hers has established specialized facilities, including a 503B peptide outsourcing facility in California, 503A sites in Arizona and Ohio, and an at-home lab testing facility in New Jersey.",
+   "The speaker projects Hims & Hers to reach $100 over a 3 to 7 year horizon, while acknowledging heightened volatility and reliance on FDA approvals.",
+   "The speaker designates Amazon as deceptively cheap at a market capitalization of $2.75 trillion and is accumulating shares quickly.",
+   "Amazon's AWS unit posted a 37% year-over-year increase in net sales and a 64% increase in operating income, which the speaker attributes to massive capital spending that will yield higher long-term returns.",
+   "The speaker expects Amazon to stage a rapid rally past $300 once the company announces a slowdown in capital expenditures while sustaining current growth rates.",
+   "E.L.F. Beauty projects 18% to 20% net sales growth for 2027, which the speaker believes supports a valuation multiple expanding into a forward P/E in the 30s.",
+   "The speaker points to ServiceNow as a comparable valuation benchmark trading at a forward P/E in the 30s on low-20% revenue growth.",
+   "E.L.F. Beauty has shifted approximately 60% of its manufacturing outside of China and grew its international sales penetration from 10% in 2020 to 21% in 2026.",
+   "The speaker presents a bold long-term price target of $400 for E.L.F. Beauty, representing an estimated 4x gain over 3 to 7 years with compounding annual growth between 20% and 40%.",
+   "The speaker notes that SoFi's stock tends to trade inversely with the federal funds rate and anticipates share appreciation under CEO Anthony Noto."
+  ],
+  "omissions": [
+   "External primary filing verification for Hims & Hers subscriber counts and segment revenue",
+   "Specific balance sheet liabilities and off-balance sheet lease commitments for Amazon AWS capex",
+   "Independent corroboration of E.L.F. Beauty international sales penetration data",
+   "s2: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s5: Proposed numeric value/unit is not supported by the original rate literal; no decimal or unit inferred.",
+   "s13: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s15: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "source-0: Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+   "source-1: Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+   "source-2: Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+   "source-3: Model critique is not human verification.",
+   "source-4: This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications."
+  ],
+  "rejectedCount": 1
+ }
+}

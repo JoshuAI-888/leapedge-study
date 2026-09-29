@@ -21,6 +21,7 @@ export function visibleClaims<
     trustLevel: string;
     creatorConviction: string;
     ticker: string | null;
+    resolvedTicker?: string | null;
     instrument?: string | null;
     thesisEn: string;
   },
@@ -36,7 +37,7 @@ export function visibleClaims<
     .filter(
       (c) =>
         rank(c.trustLevel) >= rank(minimum) &&
-        `${c.ticker ?? ""} ${c.instrument ?? ""} ${resolveListing(c.instrument ?? null, c.ticker)?.ticker ?? ""} ${c.thesisEn}`
+        `${c.ticker ?? ""} ${c.instrument ?? ""} ${c.resolvedTicker ?? ""} ${resolveListing(c.instrument ?? null, c.ticker)?.ticker ?? ""} ${c.thesisEn}`
           .toLowerCase()
           .includes(search.trim().toLowerCase()),
     )

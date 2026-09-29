@@ -1,0 +1,398 @@
+{
+ "status": "completed",
+ "title": "AMD Stock Is Entering a New Cycle‼️Listen Up",
+ "costUsd": 0.48220224999999994,
+ "endToEndSeconds": 616.005,
+ "analysisSeconds": 495.809,
+ "keyPoints": [
+  {
+   "id": "k1",
+   "text": "AMD reportedly plans roughly a 10% price increase starting in Q4 across accelerators, consumer GPUs, and motherboard chipsets due to rising TSMC wafer costs, which could mathematically result in net margin expansion for AMD.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k2",
+   "text": "If crude oil peaks in the next month or two, 2-year and 10-year Treasury yields are likely to peak as well, setting up rate-sensitive equities for strong upside rallies.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k3",
+   "text": "Waiting for growth metrics to look great or for a company to reach full profitability often causes investors to miss massive multi-bagger upside, as illustrated by historical moves in Palantir and Tesla.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k4",
+   "text": "A guest commentator argues the Fed should have implemented a 50 basis point hike as a 'stun and done' move because inflation numbers are not decreasing quickly enough, while the host notes a 75 basis point hike would have driven Treasury yields down aggressively.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k5",
+   "text": "The commentator highlights that unadjusted import and export price averages sit at 7.8%, reflecting stubborn underlying inflation without artificial quality or seasonal adjustments.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k6",
+   "text": "A more aggressive 75 basis point rate hike would have caused 10-year and 2-year Treasury yields to fall sharply and signaled stronger Fed credibility, despite likely triggering a steeper equity market drop.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k7",
+   "text": "Import and export prices, averaging 7.8%, serve as a measure of underlying inflation without seasonal or quality adjustments, while core PCE at 3.3% is trending higher above its pre-COVID baseline.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k8",
+   "text": "Apparent economic strength in GDP Now models may reflect inventory accumulation driven by fear of rising prices and consumer or retailer hoarding rather than genuine underlying demand.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k9",
+   "text": "A severe broader stock market decline over the next few months would likely require the 10-year and 2-year Treasury yields to surge higher, catalyzed by crude oil advancing toward $140 to $150 per barrel.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k10",
+   "text": "AMD is projected to reach a $1 trillion-plus market cap in Q4 this year (currently just under $900 billion) as its 'ripper rally' continues, and is described as the most exciting stock on track to be a trillion-dollar company in 2027.",
+   "ticker": "AMD",
+   "stance": "neutral"
+  },
+  {
+   "id": "k11",
+   "text": "The speaker projects AMD will become a trillion-dollar company by 2027, driven by high growth rates, intense hype, and significant upcoming Wall Street capital inflows.",
+   "ticker": "AMD",
+   "stance": "long"
+  },
+  {
+   "id": "k12",
+   "text": "Commodity inflation is widespread outside of oil, with soybeans, corn, sugar, wheat, cocoa, oats, and copper all showing significant price increases, whereas lumber raw prices are down significantly in a manner that appears recessionary.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k13",
+   "text": "Broad commodity baskets like GSG are flashing warning signs, while severe market downside would require 10-year and 2-year Treasury yields to explode much higher.",
+   "ticker": "GSG",
+   "stance": "neutral"
+  }
+ ],
+ "calls": [
+  {
+   "instrument": "AMD",
+   "ticker": "AMD",
+   "stance": "hold",
+   "thesis": "The speaker plans to hold AMD shares and will not consider selling any shares in the public account until the stock reaches at least 700 plus, believing AMD is poised to become a trillion-dollar company.",
+   "horizon": "through 2027",
+   "conviction": "high",
+   "conditions": [
+    "AMD reaches 700 plus before considering selling"
+   ],
+   "risks": [],
+   "trust": "L1"
+  },
+  {
+   "instrument": "win resorts",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "The speaker is currently building positions in rate-sensitive stocks like Wynn Resorts, which is expected to experience a strong rally in the fourth quarter once oil and interest rates peak.",
+   "horizon": "Q4",
+   "conviction": "medium",
+   "conditions": [
+    "oil and interest rates peak and start heading down"
+   ],
+   "risks": [
+    "oil continues higher toward 150-200, driving 2-year and 10-year rates higher"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "American Express",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "American Express is expected to see huge momentum and reach 400 plus once oil prices and interest rates peak.",
+   "horizon": null,
+   "conviction": "medium",
+   "conditions": [
+    "oil and interest rates peak"
+   ],
+   "risks": [
+    "higher oil prices and higher bond yields"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "RH",
+   "ticker": "RH",
+   "stance": "long",
+   "thesis": "RH is expected to stage an aggressive upside rally from 120 to 200 once oil prices and interest rates peak.",
+   "horizon": null,
+   "conviction": "medium",
+   "conditions": [
+    "oil and interest rates officially peak"
+   ],
+   "risks": [
+    "oil reaches all-time highs, pushing 2-year and 10-year yields higher"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Winning Resorts",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "Bought $8,400 worth of Wynn Resorts shares today and intends to continue accumulating shares over the next few months, believing the stock trading in the $80s is ridiculously low given strong performance in Las Vegas and Macau, decent Boston results, and the upcoming opening of a Middle East property.",
+   "horizon": "next few months",
+   "conviction": "high",
+   "conditions": [],
+   "risks": [
+    "Caught up in negative sentiment around higher interest rates"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Nike",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "Purchased Nike shares, viewing the stock as extremely depressed and wrecked at around $35.",
+   "horizon": null,
+   "conviction": "high",
+   "conditions": [],
+   "risks": [
+    "Stock is in an extended depression"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Celsius Holdings",
+   "ticker": null,
+   "stance": "long",
+   "thesis": "Bought $11,000 worth of Celsius Holdings shares today.",
+   "horizon": null,
+   "conviction": "high",
+   "conditions": [],
+   "risks": [],
+   "trust": "L1"
+  },
+  {
+   "instrument": "RH",
+   "ticker": "RH",
+   "stance": "long",
+   "thesis": "Bought almost $20,000 more of RH today (bringing recent purchases to around $170,000) and plans to build it out into a $250,000 to $400,000 position across portfolios, targeting the stock to reach the $400s or $500s into 2027–2030 during a business harvesting cycle.",
+   "horizon": "2027 to 2030",
+   "conviction": "high",
+   "conditions": [
+    "Interest rates calm down eventually",
+    "Real estate activity picks up",
+    "Company transitions from an investment cycle to a harvesting cycle in 2027-2030"
+   ],
+   "risks": [
+    "Company bankruptcy resulting in a total loss of the invested position"
+   ],
+   "trust": "L1"
+  }
+ ],
+ "rejectedCalls": [],
+ "tickerSentiment": [
+  {
+   "ticker": null,
+   "spoken": "American Express",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker views American Express as a world-class company down 16% this year that will rally to 400 plus once oil and rates peak.",
+   "at": 433.759
+  },
+  {
+   "ticker": "RH",
+   "spoken": "RH",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker anticipates RH will have a severe rally to the upside toward 200 once oil and rates peak.",
+   "at": 455.44
+  },
+  {
+   "ticker": null,
+   "spoken": "AMD",
+   "sentiment": "bullish",
+   "stance": "watch",
+   "why": "The creator suggests AMD could reach $700 to $900 by 2027 and that waiting for growth to materialize would mean missing the buy opportunity at lower prices.",
+   "at": 517.599
+  },
+  {
+   "ticker": null,
+   "spoken": "Winning Resorts",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The creator bought $8,400 of Wynn Resorts shares, citing beaten-down valuation in the $80s despite solid casino properties and upcoming expansion.",
+   "at": 668.88
+  },
+  {
+   "ticker": null,
+   "spoken": "win resorts",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker argues that Wynn Resorts will go through an absolute ripper rally once oil and interest rates peak, and traders should position in before its Middle East property opens.",
+   "at": 367.919
+  },
+  {
+   "ticker": null,
+   "spoken": "Nike",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker bought Nike stock after it dropped into the 30s.",
+   "at": 724.32
+  },
+  {
+   "ticker": null,
+   "spoken": "Celsius Holdings",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker purchased $11,000 worth of Celsius Holdings shares today.",
+   "at": 740.639
+  },
+  {
+   "ticker": "RH",
+   "spoken": "RH",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker bought almost $20,000 more of RH today, bringing recent purchases to about $170,000, and plans to build out a $250,000 to $400,000 total position targeting a rise into the 400s or 500s into 2027–2030.",
+   "at": 757.92
+  },
+  {
+   "ticker": "GSG",
+   "spoken": "GSG",
+   "sentiment": "bearish",
+   "stance": "neutral",
+   "why": "The speaker views the broad commodity basket chart of GSG as looking ugly and problematic.",
+   "at": 1268.64
+  },
+  {
+   "ticker": "AMD",
+   "spoken": "AMD",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker projects AMD will reach a $1 trillion plus market cap in Q4 and calls it the most exciting stock to be a trillion-dollar-plus company by 2027.",
+   "at": 176.239
+  },
+  {
+   "ticker": "TSM",
+   "spoken": "TSM",
+   "sentiment": "neutral",
+   "stance": "neutral",
+   "why": "TSM is referenced strictly as a foundry supplier whose wafer production price increase to AMD leaves margin expansion for AMD.",
+   "at": 103.68
+  },
+  {
+   "ticker": "AMD",
+   "spoken": "AMD",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker views AMD as the most exciting prospective trillion-dollar company by 2027 with substantial upside and incoming Wall Street inflows.",
+   "at": 197.84
+  },
+  {
+   "ticker": "AMD",
+   "spoken": "AMD",
+   "sentiment": "bullish",
+   "stance": "hold",
+   "why": "The speaker affirms being very bullish on AMD and reiterates they will not consider selling any shares in the public account until the stock reaches 700 plus.",
+   "at": 271.12
+  },
+  {
+   "ticker": null,
+   "spoken": "American Express",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker characterizes American Express as one of the best companies in the world that will absolutely rip once oil and interest rates peak.",
+   "at": 433.759
+  },
+  {
+   "ticker": null,
+   "spoken": "American Express",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker predicts American Express will gain huge momentum and rip past $400 once oil and rates peak.",
+   "at": 446.72
+  },
+  {
+   "ticker": "RH",
+   "spoken": "RH",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker projects RH will undergo an aggressive rally toward $120 to $200 once oil and interest rates peak.",
+   "at": 460.16
+  },
+  {
+   "ticker": "AMD",
+   "spoken": "AMD",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker emphasizes building positions early in AMD before it reaches $700, $800, or $900 a share by 2027.",
+   "at": 507.039
+  },
+  {
+   "ticker": null,
+   "spoken": "Winning Resorts",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker bought $8,400 of Wynn Resorts stock today and plans to continue accumulating shares over the next few months.",
+   "at": 668.88
+  },
+  {
+   "ticker": null,
+   "spoken": "Celsius",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker notes that Celsius was an $11,000 buy today.",
+   "at": 744.079
+  }
+ ],
+ "brief": {
+  "mainTopics": [
+   "AMD Pricing and Valuation",
+   "Interest Rate Sensitive Equities",
+   "RH Allocation and Strategy",
+   "Portfolio Purchases",
+   "Macroeconomic and Inflation Environment"
+  ],
+  "sentences": [
+   "AMD reportedly plans a roughly 10% price increase in Q4 across accelerators, consumer GPUs, and motherboard chipsets due to rising TSMC wafer costs.",
+   "The creator argues that mathematically passing along a 10% price increase while TSMC production cost increases represent a smaller dollar amount could lead to net margin expansion for AMD.",
+   "The creator expects AMD to reach a $1 trillion-plus market capitalization in Q4 and by 2027, noting current market cap is just under $900 billion.",
+   "The creator states a personal holding strategy of not considering selling AMD shares in the public account until the stock reaches at least 700 plus.",
+   "The creator purchased $8,400 of Wynn Resorts shares and plans to accumulate more over the next few months while the stock trades in the $80s.",
+   "The creator expects Wynn Resorts to stage a strong rally in the fourth quarter once crude oil and interest rates peak, highlighting operational strength in Las Vegas and Macau and an upcoming Middle East opening next year.",
+   "American Express is reported down 16% this year, with the creator projecting it will gain momentum and surpass $400 once oil and rates crest.",
+   "The creator bought almost $20,000 of RH today, bringing recent purchases to approximately $170,000, and plans to build a $250,000 to $400,000 total position.",
+   "The creator targets RH reaching $400 to $500 per share between 2027 and 2030 during a business harvesting cycle, but explicitly notes the downside risk of potential bankruptcy that could wipe out the investment.",
+   "The creator also executed purchases in Nike, noting it is depressed around $35, and bought $11,000 of Celsius Holdings.",
+   "A commentator cites unadjusted import and export price averages at 7.8% as evidence of persistent underlying inflation, alongside core PCE trending higher at 3.3%.",
+   "The source analysis notes that a broader equity selloff would require crude oil surging to $140 or $150 per barrel and triggering an explosion in 2-year and 10-year Treasury yields, while lumber prices are down in a manner that appears recessionary."
+  ],
+  "omissions": [
+   "Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+   "Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+   "Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+   "Model critique is not human verification.",
+   "This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications.",
+   "Specific speaker names and identities during guest panel clips were not independently established from source metadata and remain designated as unknown.",
+   "s-3: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s-4: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s-7: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s-8: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s-10: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "source-0: Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+   "source-1: Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+   "source-2: Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+   "source-3: Model critique is not human verification.",
+   "source-4: This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications."
+  ],
+  "rejectedCount": 1
+ }
+}

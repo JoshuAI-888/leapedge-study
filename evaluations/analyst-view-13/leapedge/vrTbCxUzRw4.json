@@ -1,0 +1,105 @@
+{
+ "summary": "The creator outlines a strategic accumulation framework for precious metals miners that prioritizes buying technically strong leaders in confirmed uptrends rather than cheap, lagging names. Strong stocks trading above upward-sloping 50-day and 200-day moving averages should be bought on orderly pullbacks, while technically weak stocks should be avoided until deep market corrections offer steep discounts.",
+ "keyPoints": [
+  "Adopt a strategic, incremental approach to buying mining stocks rather than a binary buy-or-sell mentality.",
+  "Prioritize buying technically strong mining stocks that are already in clear uptrends with 50-day and 200-day moving averages pointed upward.",
+  "Avoid chasing stocks like Banyan Gold that are extended; wait for shallow pullbacks even if they are fundamentally sound.",
+  "Utilize the 'strength comes to strength' principle, as institutional investors tend to favor stocks with established positive momentum.",
+  "New Pacific Metals is highlighted as an attractive swing trade because it recently bounced off its 50-day moving average.",
+  "Avoid buying stocks that are currently below their 200-day and 50-day moving averages, such as McEwen Mining, as 'weakness comes to weakness'.",
+  "Nexgold Mining is identified as a strong performer that formed a bull flag and maintained strength during recent gold corrections.",
+  "Delay purchases of weaker stocks until a market correction occurs, as they typically drop harder than strong stocks during downturns.",
+  "Ignore fundamentals for gold stocks, as gold is a global commodity with high liquidity regardless of the production location.",
+  "Perfect market entries are rare and often lucky; aim for an attractive average entry price across your entire mining portfolio."
+ ],
+ "tradeIdeas": [
+  {
+   "ticker": "NEWP",
+   "instrument": null,
+   "stance": "long",
+   "conviction": "high",
+   "entry": "50-day moving average bounce",
+   "target": "to the old highs is 20%",
+   "stop": null,
+   "horizon": "swing",
+   "action": "Buy on the bounce off the 50-day moving average",
+   "rationale": "New Pacific Metals pulled back cleanly to its 50-day moving average and broke out of its short-term downtrend, presenting an attractive swing trade with upside toward prior highs.",
+   "catalysts": [
+    "Downtrend breakout",
+    "50-day MA bounce"
+   ],
+   "risks": [],
+   "quotes": [
+    "“Came all the way back down to the 50-day, so this one is really clean, just broke the downtrend, bounces off the 50-day.”"
+   ]
+  },
+  {
+   "ticker": "SSRM",
+   "instrument": null,
+   "stance": "long",
+   "conviction": "medium",
+   "entry": "post-correction price levels",
+   "target": null,
+   "stop": null,
+   "horizon": "swing",
+   "action": "Buy around current levels following the recent correction",
+   "rationale": "SSR Mining remains in a healthy technical uptrend above both its 50-day and 200-day moving averages and is currently trading at a reasonable price following a mild correction rather than being overextended.",
+   "catalysts": [],
+   "risks": [],
+   "quotes": [
+    "“SSR Mining, right? So, same thing, uptrend, 200-day 50-day, we're all above it, love it, love it, love it. Correction, but this one is not super extended yet.”"
+   ]
+  },
+  {
+   "ticker": "MUX",
+   "instrument": null,
+   "stance": "avoid",
+   "conviction": "high",
+   "entry": null,
+   "target": null,
+   "stop": null,
+   "horizon": "swing",
+   "action": "Avoid buying now; delay entries until a broader market correction brings the stock to heavily discounted prices",
+   "rationale": "McEwen Mining is technically broken, trading below both its 50-day and 200-day moving averages in an intact downtrend. Underperforming stocks tend to fall hardest during gold pullbacks, so buying now carries poor risk/reward.",
+   "catalysts": [],
+   "risks": [],
+   "quotes": [
+    "“Look at this, below the 200, below the 50-day, below the uptrends, no strength.”"
+   ]
+  },
+  {
+   "ticker": "BYN",
+   "instrument": null,
+   "stance": "long",
+   "conviction": "medium",
+   "entry": "shallow correction",
+   "target": null,
+   "stop": null,
+   "horizon": "swing",
+   "action": "Wait for a shallow pullback before entering",
+   "rationale": "Banyan Gold is in a very strong uptrend with upward-sloping 50-day and 200-day moving averages, but it is currently overextended.",
+   "catalysts": [],
+   "risks": [
+    "stock is overextended"
+   ],
+   "quotes": [
+    "“I probably need to wait for a shallow correction, but those always come, right?”"
+   ]
+  }
+ ],
+ "otherSections": [
+  {
+   "heading": "verdict",
+   "text": "VERDICT\n4 ideas\nHIGHconviction\n3 LONG\n1 AVOID\nBYN\nMUX\nNEWP\nSSRM"
+  },
+  {
+   "heading": "direction mix",
+   "text": "Direction mix: 3 long, 1 avoid"
+  },
+  {
+   "heading": "pipeline metadata",
+   "text": "prompt: keypoints.v1-insights.v3-critique.v1\ntokens: 134.3k\nmodels: gemini-3.7-flash · gemini-3.1-flash-lite · gemini-3.1-flash-lite · gemini-3.1-flash-lite"
+  }
+ ],
+ "cost": "$0.040"
+}

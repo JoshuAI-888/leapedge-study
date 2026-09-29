@@ -1,0 +1,66 @@
+{
+  "videoId": "T84iGsyCg-M",
+  "language": "en",
+  "mustKnow": [
+    {"item": "Macro setup: S&P +12% YTD despite Iran war and oil spike; BLS jobs report Oct 2 2026 after prior +162k vs 53-60k expected; creator wants a weak print because a hot one raises odds of another rate hike before year-end (59-108s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge keeps the date but drops the 162k vs 53-60k numbers, the rate-hike mechanism and S&P +12%."},
+    {"item": "Micron (MU) earnings Wednesday as an AI-demand read; +262% YTD, forward P/E 6.87; creator calls it a bubble (revenue >4x, margin expansion, flat opex, pricing power) that will 'pop eventually', though the memory cycle could run longer; no trade (109-223s)", "ours": "partial", "leapedge": "partial", "note": "Ours has all numbers but keyPoint k2 ticker is null and tickerSentiment marks MU 'neutral/watch', understating an explicit bubble call. LeapEdge says bubble 'due to its low forward P/E', which reverses the creator's logic."},
+    {"item": "Oil/USO up 2% overnight 'back in the $150 range'; Polymarket gives 5% chance Strait of Hormuz traffic normalises within a month (15-20% in August), 22% by 2027 (~100% in July), ~1% by Oct 1; oil shock may last much longer than expected (223-350s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge has no probabilities or USO move."},
+    {"item": "Core thesis: AI capex (AMZN, META, GOOGL, MSFT spending on NVDA, AMD, MU) is offsetting oil and inflation drag (238-264s)", "ours": "partial", "leapedge": "captured", "note": "Ours mentions the offset only in passing in k3 and never names NVDA or AMD as the beneficiaries."},
+    {"item": "Celsius (CELH): top portfolio holding; contrarian long-term long; oil, shipping and international-expansion costs already priced in; could run 20-30% in 2-3 months once sentiment turns (352-381s, 564-570s)", "ours": "captured", "leapedge": "captured", "note": "Ours leaves the ticker null in calls and tickerSentiment. LeapEdge resolves CELH but invents 'accumulate' and lists international expansion as a catalyst when the creator framed it as a cost."},
+    {"item": "e.l.f. Beauty (ELF): 'very heavily invested', +30% YTD, peaked ~$115, now just below $100, market still doubts it (382-401s)", "ours": "captured", "leapedge": "missed", "note": "LeapEdge drops one of the creator's two largest disclosed positions. Ours leaves the ticker null."},
+    {"item": "Amazon as an inflation-resistant name (profit from AWS, AI) and Mag-7 (META, GOOGL, MSFT) as rate-insensitive; phrased as 'you could invest in', not a disclosed position (402-452s)", "ours": "captured", "leapedge": "captured", "note": "LeapEdge turns it into a trade idea ('Hold as...'), which implies a holding that was never disclosed. Ours leaves AMZN, META, GOOGL and MSFT tickers null."},
+    {"item": "Hims & Hers (HIMS): actively adding, 'not insane', position just below five figures; ambitious CEO; explicitly a risky, risk-on name (456-484s, 594-611s)", "ours": "captured", "leapedge": "partial", "note": "LeapEdge drops the position size and the risk caveat. Ours splits HIMS into two contradictory calls (long with high conviction, and hold)."},
+    {"item": "UBER: already bought a few $70 calls expiring January (~120 days) because the stock trades cheap versus its usual range; small 'exposure' bet, not a large share position (485-525s)", "ours": "partial", "leapedge": "captured", "note": "In ours the $70 strike appears only in brief and tickerSentiment; the call object has instrument 'Uber', ticker null, no strike, and conviction 'high'. LeapEdge puts the strike and expiry in the action but leaves the instrument null."},
+    {"item": "SOFI: $16 now, down from $32; strong long-term conviction; works in high-rate regimes; margins and EPS growth; 'when it hits $20 it'll very quickly hit 30'; illustration of buying at $16 vs $32 with the stock at $60 (527-645s)", "ours": "captured", "leapedge": "captured", "note": "Ours has the levels only in prose; its call objects have no entry or target fields, and the call is duplicated. LeapEdge maps the $20-to-$30 conditional into target '30'."},
+    {"item": "Strategy: load up on hated stocks, match your risk profile (biotech too risky for him), entry price matters more for single stocks than for indexes, DCA (560-658s)", "ours": "captured", "leapedge": "captured", "note": ""}
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {"text": "brief.omissions: 'Prior baseline claims regarding Google's Waymo vs. Tesla autonomous competition were not referenced or re-evaluated in this video run.'", "transcriptAt": "n/a", "problem": "Contamination from another video or run. Waymo and Tesla never appear in this transcript."},
+      {"text": "calls[Uber].conviction = 'high'", "transcriptAt": "496-517s", "problem": "Overstates conviction. The creator says 'I'm not throwing a ton of money into shares. I kind of just want to get some exposure to this run-up if it does have it which I think it might.'"},
+      {"text": "calls[Hims & Hers #1].conviction = 'high'", "transcriptAt": "460-467s", "problem": "Overstated. The creator says 'not insane. I'm not throwing all of my money at this one' and later calls it 'very much so a risky stock'."},
+      {"text": "calls[Hims & Hers #2] stance 'hold' next to calls[Hims & Hers #1] stance 'long'", "transcriptAt": "456-611s", "problem": "Contradictory duplicate call for one ticker; the second call has ticker null."},
+      {"text": "tickerSentiment MU sentiment 'neutral' (twice)", "transcriptAt": "205-217s", "problem": "Understated. The creator says 'Micron is in a bubble. We're going to see this pop eventually.' That is a cautionary or bearish valuation view, not neutral."},
+      {"text": "tickerSentiment 'biotech stocks' sentiment 'bearish' / stance 'avoid'", "transcriptAt": "617-620s", "problem": "Misreads a personal risk-tolerance remark as a bearish sector view."},
+      {"text": "tickerSentiment SOFI 'perfect entry point at $16' (at 525s)", "transcriptAt": "527s vs 575s", "problem": "Minor conflation: the $16 price is stated 50 seconds after the 'perfect entry point' remark. Acceptable, but the timestamp anchors the wrong sentence."}
+    ],
+    "leapedge": [
+      {"text": "'Micron Technology (MU) is viewed as being in a valuation bubble due to its low forward P/E ratio'", "transcriptAt": "150-216s", "problem": "Reverses the causation. The creator says the low P/E means little growth is priced in; the bubble evidence is revenue >4x, margin expansion and monopoly-like pricing."},
+      {"text": "CELH action 'Hold and accumulate'; catalysts ['International expansion']", "transcriptAt": "357-381s", "problem": "No accumulation is stated for Celsius. International expansion is framed as a cost headwind ('It's going to be expensive'), not a catalyst."},
+      {"text": "HIMS action 'Gradually accumulate shares on weakness'", "transcriptAt": "460s", "problem": "'On weakness' is invented; the creator is simply adding."},
+      {"text": "AMZN trade idea 'Hold as an inflation-resistant mega-cap holding'", "transcriptAt": "402-432s", "problem": "False call: this is a suggestion ('you could invest in'), with no disclosed position and no action."},
+      {"text": "SOFI target '30'", "transcriptAt": "583-588s", "problem": "The creator's line is conditional sentiment talk ('when ... it hits $20, it'll very quickly hit 30'), not a stated price target; $60 is also used as an illustration. Labelling 30 as the target overstates precision."},
+      {"text": "SOFI rationale 'The company has cut its share price in half'", "transcriptAt": "577-581s", "problem": "Garbled: the stock fell by half; the company did nothing."}
+    ]
+  },
+  "calls": {
+    "oursMissed": ["No call-level strike on UBER: the $70 strike and January expiry live only in prose, and the call object has ticker null", "SOFI $20 to $30 path and $16 entry are not in structured fields", "No structured ELF position size ('very heavily invested')"],
+    "leapedgeMissed": ["ELF (heavily invested long) entirely missing", "MU bubble view (no call, but a material view)"],
+    "oursFalse": ["Duplicate SOFI call (two identical long calls)", "Duplicate or contradictory HIMS call (long high + hold)"],
+    "leapedgeFalse": ["AMZN 'Hold' trade idea: a suggestion was turned into a position"],
+    "oursUnresolvedTickers": ["Celsius -> CELH", "Elf Beauty -> ELF", "Uber -> UBER", "Amazon -> AMZN", "Meta -> META", "Google -> GOOGL", "Microsoft -> MSFT", "Hims & Hers (second call and tickerSentiment rows) -> HIMS", "SoFi (tickerSentiment rows at 540s, 575s, 629s) -> SOFI", "Micron in keyPoint k2 -> MU", "Nvidia/AMD not extracted at all"]
+  },
+  "sentimentIssues": [
+    "24 tickerSentiment rows for ~10 names: SOFI appears 6 times, HIMS 4, Celsius 3, Amazon 2, MU 2. A PM cannot read this as a table.",
+    "Same name resolved in some rows and null in others (SOFI, HIMS), which shows resolution is per-mention, not per-entity.",
+    "MU neutral/watch understates an explicit 'Micron is in a bubble ... going to pop eventually'.",
+    "USO 'bullish' is a description of the oil move, not an investment stance; 'watch' is fine, but 'bullish' implies a recommendation.",
+    "Biotech 'bearish/avoid' misreads the creator's personal risk tolerance as a sector view.",
+    "Meta, Google and Microsoft 'bullish/watch' are fine, but tickers are null."
+  ],
+  "scores": {
+    "ours": {"coverage": 5, "fidelity": 3, "actionability": 3, "clarity": 2, "overall": 3},
+    "leapedge": {"coverage": 3, "fidelity": 3, "actionability": 4, "clarity": 4, "overall": 3}
+  },
+  "verdict": "ours better",
+  "why": "Ours is the only one that retains ELF (a heavily held position), the jobs-report numbers, the MU figures, the Hormuz probabilities and the $70 UBER strike in its brief, and its brief sentences are accurate. It is badly let down by structure: tickers are unresolved for CELH, ELF, UBER and AMZN; SOFI and HIMS calls are duplicated or contradictory; conviction is inflated on UBER and HIMS; tickerSentiment has 24 rows of repetition; and one omission line comes from another video (Waymo/Tesla). LeapEdge is cleaner and easier to skim, but it misses ELF, reverses the MU bubble logic and adds an AMZN 'hold'. The win for ours comes from content, not presentation.",
+  "recommendations": [
+    "Deduplicate calls and tickerSentiment by resolved entity: one row per ticker, merging evidence timestamps. Here SOFI x6 and HIMS x4 (long vs hold) should each collapse to one row.",
+    "Run a ticker resolver after extraction for every named company: 'Celsius'->CELH, 'Elf Beauty'->ELF, 'Uber'->UBER, 'Amazon'->AMZN, and keyPoint k2 'Micron Technology'->MU. Block publishing a call with ticker null when a company is named.",
+    "Add structured instrument fields to calls (instrument_type: option/share, right: call, strike: 70, expiry: 'Jan 2027', dte≈120) and price fields (entry: 16, conditional_target: '20 -> 30'). Today the $70 strike exists only in brief prose.",
+    "Calibrate conviction from hedging language: 'not throwing a ton of money', 'I think it might', 'not insane' should cap conviction at medium. Add a rubric to the calls prompt.",
+    "Add a position_disclosure field (owns / adding / bought options / suggests only) so AMZN 'you could invest in' is not treated like HIMS 'actively adding, just below five figures'.",
+    "Purge cross-video context from omissions: 'Prior baseline claims regarding Google's Waymo vs. Tesla' must never appear. Strip the pipeline diagnostics ('s4: Proposed quantity withheld...', 'source-0..4') from the user-facing brief and move them to a debug panel.",
+    "Treat a creator's 'bubble' or 'will pop' as a bearish or cautionary valuation stance in tickerSentiment, not neutral."
+  ]
+}
