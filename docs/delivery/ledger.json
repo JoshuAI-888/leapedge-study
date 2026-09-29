@@ -1814,5 +1814,15 @@
       "tests/actions.test.ts"
     ],
     "verification": "Node 24 default suite 756 pass/0 fail; benchmark replay 251/268 references resolved."
+  },
+  "structuredIdeas20260929": {
+    "status": "in-review",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 2 (docs/delivery/analyst-view-plan.md). Prompt evidence-first.web.v9 (structuredIdeas) asks each claim for action (bought, sold, holding, plan_buy, plan_sell, watch, research, avoid, view), owner (creator, guest, third_party with owner_name), option terms, size, threshold and conditional levels, and dated catalysts, all copied from the cited ranges, plus transcription doubts that are shown but never applied. Only v9 uses the new response schema; v8 requests are unchanged. Detail not present verbatim in the evidence is removed and recorded (ideaDetailRemovals); the idea is kept. A doubt is kept only when its range contains the misheard words. The critic rejects overstated actions and third-party views recorded as the creator's.",
+    "tests": [
+      "tests/idea-detail.test.ts",
+      "tests/structured-ideas.test.ts"
+    ],
+    "verification": "Pending live check on 3 benchmark videos before the workspace moves to v9."
   }
 }

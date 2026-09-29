@@ -63,6 +63,20 @@ const englishOutput = z
     (s) => !/\p{Script=Han}/u.test(s),
     "Research display and translations must be English; preserve original language only in source fields.",
   );
+/** What the creator did or will do (prompt v9): an executed trade, a plan, or a view. */
+export const ACTIONS = [
+  "bought",
+  "sold",
+  "holding",
+  "plan_buy",
+  "plan_sell",
+  "watch",
+  "research",
+  "avoid",
+  "view",
+] as const;
+/** Whose view a claim is: the creator's own, a guest's, or a third party the creator reports. */
+export const OWNERS = ["creator", "guest", "third_party"] as const;
 export const Claim = z.object({
   thesis_en: englishOutput.refine((s) => s.trim().length > 0),
   instrument_as_spoken: z.string().nullable(),
@@ -90,10 +104,35 @@ export const Claim = z.object({
         "support",
         "resistance",
         "strike",
+        "threshold",
       ]),
       value_original: z.string(),
+      /** What the level is conditional on, when the creator attached a trigger (prompt v9). */
+      condition_en: englishOutput.nullable().optional(),
     }),
   ),
+  /**
+   * Structured idea fields (prompt v9). Optional so earlier runs still parse;
+   * each value copied from speech must appear in the cited evidence, or the
+   * pipeline removes it and records why (normalizeIdeaDetail).
+   */
+  action: z.enum(ACTIONS).optional(),
+  owner: z.enum(OWNERS).optional(),
+  owner_name: z.string().nullable().optional(),
+  option: z
+    .object({
+      right: z.enum(["call", "put"]),
+      side: z.enum(["long", "short"]),
+      strike_original: z.string().nullable(),
+      expiry_original: z.string().nullable(),
+      premium_original: z.string().nullable(),
+    })
+    .nullable()
+    .optional(),
+  size_original: z.string().nullable().optional(),
+  catalysts: z
+    .array(z.object({ text_en: englishOutput, date_original: z.string().nullable() }))
+    .optional(),
   evidence: z
     .array(
       z.object({

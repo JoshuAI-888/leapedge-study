@@ -27,11 +27,11 @@ ledger, open the PR, merge only on the user's instruction.
 - Moved to PR 3: one row per instrument and one card per idea, where the analyst view uses them.
 
 ### PR 2 — extraction prompt v9 (structured ideas)
-- [ ] Read the v8 prompt, the claim schema and its validators.
-- [ ] Fields: `action` (bought, adding, holding, trimming, sold, watch, research, avoid), `owner` (creator, guest, third party), typed levels (entry, target, stop, support, resistance, no-sell-below) with condition, option (right, strike, expiry, premium), size, conviction quote, transcription doubts.
-- [ ] Every new field is backed by a quote the validators check.
-- [ ] Register v9; keep v8 selectable.
-- [ ] Live run on 3 benchmark videos before merging.
+- [x] Read the v8 prompt, the claim schema, the extraction and recall response schemas and the validators.
+- [x] Fields: `action` (bought, sold, holding, plan_buy, plan_sell, watch, research, avoid, view), `owner` (creator, guest, third_party) with `owner_name`, levels gain `threshold` and `condition_en`, `option` (right, side, strike, expiry, premium), `size_original`, `catalysts`; top-level `transcription_doubts`.
+- [x] Every copied value must appear verbatim in the cited evidence; otherwise it is removed and recorded and the idea kept (`normalizeIdeaDetail`). Doubts are kept only when their range contains the misheard words.
+- [x] Registered `evidence-first.web.v9`; v8 and its schema unchanged; the default stays v8 until the live check.
+- [ ] Live run on 3 benchmark videos, then switch the workspace to v9.
 
 ### PR 3 — AnalystView and the Analysis page
 - [ ] Pure `buildAnalystView` with a zod contract: headline, stance, idea cards, ticker sentiment, themes, numbers and catalysts, watch-outs.

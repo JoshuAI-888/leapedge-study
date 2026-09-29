@@ -1,4 +1,4 @@
-import {sourceRecallResponseSchema} from "./schemas/source-recall.ts";
+import {sourceRecallSchemaFor} from "./schemas/source-recall.ts";
 import {SOURCE_RECALL_VERSION, sourceRecallPlan, sourceRecallInventory, assessRecallReconciliation, RECALL_RECONCILIATION_INSTRUCTIONS} from "../../features/youtube-intelligence/source-recall.ts";
 import { withProviderSlot } from "./provider-limits.ts";
 import { boundedSettled, isFatalAccountError } from "./bounded-parallel.ts";
@@ -29,13 +29,15 @@ import {
   type CheckedClaim,
 } from "../../features/youtube-intelligence/contracts.ts";
 import { normalizeReferences } from "../../features/youtube-intelligence/claim-references.ts";
+import { normalizeIdeaDetail } from "../../features/youtube-intelligence/idea-detail.ts";
 import { resolveListing } from "../../features/youtube-intelligence/identity.ts";
 import { resolveReference } from "./listings/resolve.ts";
 import { recoverEvidenceRanges } from "../../features/youtube-intelligence/evidence-selection.ts";
 import { sentimentFromStance } from "../../features/youtube-intelligence/sentiment.ts";
 import {
-  extractionResponseSchema,
+  extractionSchemaFor,
   parsePointerExtraction,
+  type PointerExtractionData,
   MENTION_OUTPUT_FORMAT,
   POINTER_EVIDENCE_FORMAT,
   FINANCIAL_SEMANTICS,
@@ -637,6 +639,41 @@ type RejectedMention = {
  * A non-call keeps the sentiment the model assigned, which is why its rationale
  * is required.
  */
+/** Structured detail (prompt v9) that was not said is removed and recorded; the idea is kept. */
+function keepSaidDetail(run: Run, id: string, claim: ClaimData) {
+  const { claim: kept, removed } = normalizeIdeaDetail(claim);
+  if (removed.length)
+    run.output.ideaDetailRemovals = [
+      ...((run.output.ideaDetailRemovals ?? []) as unknown[]),
+      ...removed.map((r) => ({ id, ...r })),
+    ];
+  return kept;
+}
+/**
+ * A doubt about a misheard word (prompt v9) is kept only when its range exists
+ * and contains the words said to be misheard. It is shown as a doubt beside the
+ * transcript; nothing in the record is corrected.
+ */
+function keepTranscriptionDoubts(
+  run: Run,
+  doubts: PointerExtractionData["transcription_doubts"],
+  source: SourceData,
+) {
+  const kept = (run.output.transcriptionDoubts ?? []) as Record<string, unknown>[];
+  const seen = new Set(kept.map((d) => `${d.start_id}|${d.end_id}|${d.heard}`));
+  for (const doubt of doubts) {
+    try {
+      const derived = deriveEvidence(source, { start_id: doubt.start_id, end_id: doubt.end_id });
+      const key = `${doubt.start_id}|${doubt.end_id}|${doubt.heard}`;
+      if (!derived.quote_original.includes(doubt.heard) || seen.has(key)) continue;
+      seen.add(key);
+      kept.push({ ...doubt, start_seconds: derived.start_seconds, quote_original: derived.quote_original });
+    } catch {
+      continue;
+    }
+  }
+  if (kept.length) run.output.transcriptionDoubts = kept;
+}
 function materializeMentions(
   run: Run,
   drafts: { mentions?: MentionExtractionData[] }[],
@@ -1223,7 +1260,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           settings: team,
           reasoningEffort: "low",
           maxOutputTokens: 24000,
-          ...(pointer ? { responseSchema: extractionResponseSchema } : {}),
+          ...(pointer ? { responseSchema: extractionSchemaFor(prompts) } : {}),
         },
       );
     };
@@ -1274,6 +1311,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       ? (() => {
           const context = normalizeResearchContextLevels(parsePointerExtraction(raw));
           const pointed = context.extraction;
+          keepTranscriptionDoubts(run, pointed.transcription_doubts, source);
           if(context.diagnostics.length) run.output.contextLevelNormalizations = [...((run.output.contextLevelNormalizations??[]) as unknown[]),...context.diagnostics.map(item=>({stage:`synthesis-chunk-${chunkIndex}`,...item}))];
           const copy = (items: typeof pointed.claims, kind: string) =>
             items.flatMap((c, index) => {
@@ -1358,7 +1396,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           },
         ];
       }
-      const anchored = references.claim;
+      const anchored = keepSaidDetail(run, `${prefix}${i + 1}`, references.claim);
       return {
         id: `${prefix}${i + 1}`,
         claim: anchored,
@@ -1714,7 +1752,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           false,
           {
             settings,
-            responseSchema: sourceRecallResponseSchema,
+            responseSchema: sourceRecallSchemaFor(prompts),
             maxOutputTokens: 12000,
             reasoningEffort: "low",
           },
@@ -1740,6 +1778,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         const raw = prefetched.has(index) ? prefetched.get(index) : await recallCall(index);
         const contextNormalization = normalizeResearchContextLevels(parsePointerExtraction(raw));
         const pointed = contextNormalization.extraction;
+        keepTranscriptionDoubts(run, pointed.transcription_doubts, source);
         if(contextNormalization.diagnostics.length) run.output.contextLevelNormalizations = [...((run.output.contextLevelNormalizations??[]) as unknown[]),...contextNormalization.diagnostics.map(item=>({stage:`synthesis-recall-${index}`,...item}))];
         const review = assessRecallReconciliation((raw as {reconciliation?:unknown})?.reconciliation,chunks[index],run,{claims:pointed.claims.length,key_points:pointed.key_points.length,mentions:pointed.mentions.length});
         const existing = (run.output.claims ?? []) as CheckedClaim[];
@@ -1758,10 +1797,11 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
           })),
         ]) {
           try {
-            const claim = normalizeReferences(
-              recoverEvidenceRanges(candidate, source),
-              source,
-            ).claim;
+            const claim = keepSaidDetail(
+              run,
+              `recall:${isContext ? "k" : "c"}${candidateIndex + 1}`,
+              normalizeReferences(recoverEvidenceRanges(candidate, source), source).claim,
+            );
             const inventory = isContext ? context : existing;
             const additions = isContext ? addedContext : added;
             if (
