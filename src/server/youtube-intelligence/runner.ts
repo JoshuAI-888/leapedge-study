@@ -68,12 +68,19 @@ export async function dispatchOpenRuns() {
   const rows = await db()
     .prepare("SELECT id FROM yi_runs WHERE status IN ('queued','running')")
     .all();
-  for (const row of rows)
-    await enqueueJob({
-      id: `analyze:${row.id}`,
-      kind: "analyze",
-      payload: { runId: String(row.id) },
-    });
+  for (const row of rows) {
+    const id = `analyze:${row.id}`;
+    if (await enqueueJob({ id, kind: "analyze", payload: { runId: String(row.id) } })) continue;
+    // A run put back in the queue (an audit recovery, a resumed failure) keeps
+    // its job id, whose earlier job already finished: enqueueing is then a
+    // no-op, so reopen that finished job or the run is never picked up.
+    const now = new Date().toISOString();
+    await db()
+      .prepare(
+        "UPDATE jobs SET status='queued',error=NULL,run_after=$1,lease_until=NULL,lease_token=NULL,updated_at=$1 WHERE id=$2 AND status IN ('completed','failed')",
+      )
+      .run(now, id);
+  }
 }
 export async function processNext(executeStage: typeof step = step) {
   await heartbeat();

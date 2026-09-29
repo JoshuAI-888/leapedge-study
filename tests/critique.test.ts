@@ -266,7 +266,9 @@ test("verdict ids map back to claims, key points and mentions", async () => {
       critique: critic({ reject: ["c2", "m1"], omit: ["k1"], extra: ["c9"] }),
     },
   });
-  await assert.rejects(withFake(fake, () => step(run)), /missing verdicts/i);
+  await withFake(fake, () => step(run));
+  assert.equal(run.stage, "critique", "a skipped id is asked again, not failed");
+  assert.equal(run.output.auditRecoveryAttempts, 1);
   const payload = payloadOf(fake.requestsFor("critique")[0]);
   assert.deepEqual(
     payload.claims.map((c) => [c.id, c.kind]),
@@ -698,9 +700,10 @@ test("explicit missing-verdict retry asks only unresolved evidence under a separ
     critique: critic({ omit: ["c2"] }),
     "critique-repair-1": critic(),
   } });
-  await assert.rejects(withFake(fake, () => step(run)), /missing verdicts/);
+  await withFake(fake, () => step(run));
+  assert.equal(run.stage, "critique");
+  assert.equal(run.output.auditRecoveryAttempts, 1, "the retry is automatic");
   const accepted = JSON.stringify((run.output.claims as CheckedClaim[])[0]);
-  run.output.auditRecoveryAttempts = 1;
   await withFake(fake, () => step(run));
   assert.equal(run.stage, "publish");
   assert.equal(JSON.stringify((run.output.claims as CheckedClaim[])[0]), accepted);
@@ -709,6 +712,26 @@ test("explicit missing-verdict retry asks only unresolved evidence under a separ
   assert.deepEqual(retry.mentions, []);
   assert.equal(fake.requestsFor("critique").length, 1);
   assert.deepEqual((run.output.critique as { missingVerdicts: string[] }).missingVerdicts, []);
+});
+
+test("ids the critic never answers are withheld after two retries and the run goes on", async () => {
+  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const run = await critiqueRun({ claims: [item("c1", 1), item("c2", 2)], mentions: [mention(4), mention(5)] });
+  const fake = new FakeModelTransport({ responses: {
+    critique: critic({ omit: ["c2", "m2"] }),
+    "critique-repair-1": critic({ omit: ["c2", "m2"] }),
+    "critique-repair-2": critic({ omit: ["c2", "m2"] }),
+  } });
+  for (let i = 0; i < 3; i++) await withFake(fake, () => step(run));
+  assert.equal(run.stage, "publish");
+  const [c1, c2] = run.output.claims as CheckedClaim[];
+  assert.equal(c1.passed, true);
+  assert.equal(c2.passed, false);
+  assert.match(c2.reasons.join(" "), /No critic verdict after 3 attempts/);
+  assert.deepEqual((run.output.mentions as MentionData[]).map((m) => m.ticker), ["N4"]);
+  assert.match(JSON.stringify(run.output.rejectedMentions), /No critic verdict/);
+  assert.deepEqual(run.output.auditWithheld, ["c2", "m2"]);
+  assert.equal(fake.requestsFor("critique-repair-2").length, 1);
 });
 
 test('a changed mention at the same instrument and source span must receive a fresh audit', async () => {

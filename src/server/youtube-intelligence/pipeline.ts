@@ -753,6 +753,8 @@ function mentionAuditAccepted(run: Run, mention: MentionData) {
   return (run.output.mentionChecks as Record<string, boolean> | undefined)?.[key] === true &&
     (run.output.mentionAuditIdentities as Record<string, string> | undefined)?.[key] === modelCallFingerprint(mention);
 }
+/** Automatic re-asks of a critic that skipped ids, before those ids are withheld. */
+export const MAX_AUDIT_RETRIES = 2;
 /** How long an explicit context cache is held: one run's critique, not a day of storage. */
 export const CONTEXT_CACHE_TTL_SECONDS = 1800;
 /** What the run records about the cache it holds, so a later step can reuse or release it. */
@@ -1702,8 +1704,34 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       ],
       ...(crossClaimNotes.length ? { crossClaimNotes } : {}),
     };
-    if (missing.length)
-      throw Error(`Critique missing verdicts: ${missing.join(", ")}. Evidence retained; explicit audit recovery required.`);
+    if (missing.length) {
+      // A critic that skipped some ids is asked again, for those ids only,
+      // twice. Past that, the unanswered items are withheld with the reason
+      // recorded: never published unaudited, and never the whole run lost.
+      const attempt = Number(run.output.auditRecoveryAttempts ?? 0);
+      if (attempt < MAX_AUDIT_RETRIES) {
+        run.output.auditRecoveryAttempts = attempt + 1;
+        run.output.auditRecoveryHistory = [
+          ...((run.output.auditRecoveryHistory ?? []) as unknown[]),
+          { attempt: attempt + 1, reason: `Critique missing verdicts: ${missing.join(", ")}.`, at: new Date().toISOString(), evidencePreserved: true, automatic: true },
+        ];
+        return;
+      }
+      const reason = `No critic verdict after ${MAX_AUDIT_RETRIES + 1} attempts; withheld unaudited.`;
+      const unanswered = new Set(missing);
+      for (const { item } of pending)
+        if (unanswered.has(item.id) && !item.reasons.includes(reason)) item.reasons.push(reason);
+      const mentionIds = new Map(mentions.map(({ id, mention }) => [mention, id]));
+      const withheld = ((run.output.mentions ?? []) as MentionData[]).filter((m) => unanswered.has(mentionIds.get(m) ?? ""));
+      if (withheld.length) {
+        run.output.mentions = ((run.output.mentions ?? []) as MentionData[]).filter((m) => !withheld.includes(m));
+        run.output.rejectedMentions = [
+          ...((run.output.rejectedMentions ?? []) as unknown[]),
+          ...withheld.map((mention) => ({ mention, reason, kind: "critic" })),
+        ];
+      }
+      run.output.auditWithheld = [...((run.output.auditWithheld ?? []) as string[]), ...missing];
+    }
     run.stage = "publish";
     } finally {
       await prefetch;

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { researchPipelineLabelFromInput } from "../../research-pipeline-choice.ts";
 import { ResearchBrief } from "../ResearchBrief.tsx";
 import { Timing } from "../Timing.tsx";
+import { AnalystViewPanel } from "../AnalystView.tsx";
+import type { AnalystViewData } from "../../analyst-view.ts";
 import type { RunTimelineData } from "../../timing.ts";
 import type { ResearchBriefData } from "../../research-brief.ts";
 import type { SourceData } from "../../contracts.ts";
@@ -38,6 +40,7 @@ export function Analysis({ id }: { id: string }) {
     [listened, setListened] = useState(false),
     [spans, setSpans] = useState<EvidenceSpanRow[]>([]),
     [storedClaims, setStoredClaims] = useState<ClaimRow[]>([]),
+    [analyst, setAnalyst] = useState<{ view: AnalystViewData; note: string } | null>(null),
     [reviewerConfigured, setReviewerConfigured] = useState(false);
   useEffect(() => {
     const controller = new AbortController();
@@ -47,6 +50,8 @@ export function Analysis({ id }: { id: string }) {
       evidenceSpans: EvidenceSpanRow[];
       claims: ClaimRow[];
       reviewerConfigured: boolean;
+      analystView?: AnalystViewData | null;
+      analystNote?: string | null;
     }>(
       `/api/intelligence/runs/${encodeURIComponent(id)}`,
       undefined,
@@ -57,6 +62,7 @@ export function Analysis({ id }: { id: string }) {
         setBriefs(x.researchBriefs ?? []);
         setSpans(x.evidenceSpans ?? []);
         setStoredClaims(x.claims ?? []);
+        setAnalyst(x.analystView && x.analystNote ? { view: x.analystView, note: x.analystNote } : null);
         setReviewerConfigured(x.reviewerConfigured);
         const hash = decodeURIComponent(window.location.hash.slice(1));
         if (!run || run.id !== id) {
@@ -149,19 +155,38 @@ export function Analysis({ id }: { id: string }) {
           before relying on omitted details.
         </p>
       )}
-      <ResearchBrief
-        key={id}
-        sourceRunId={briefs[0]?.sourceRunId ?? id}
-        briefs={briefs}
-        source={run.output.source as SourceData | undefined}
-        onSeek={(seconds) => {
-          setSeconds(seconds);
-          setResearchSeek(true);
-          setListened(false);
-          setReviewNote("");
-        }}
-        completed={run.status === "completed"}
-      />
+      {analyst && (
+        <AnalystViewPanel
+          view={analyst.view}
+          note={analyst.note}
+          onSeek={(s) => {
+            setSeconds(s);
+            setResearchSeek(true);
+            setListened(false);
+            setReviewNote("");
+            document.getElementById("source-player")?.scrollIntoView({ behavior: "smooth", block: "center" });
+          }}
+        />
+      )}
+      {(() => {
+        const brief = (
+          <ResearchBrief
+            key={id}
+            sourceRunId={briefs[0]?.sourceRunId ?? id}
+            briefs={briefs}
+            source={run.output.source as SourceData | undefined}
+            onSeek={(seconds) => {
+              setSeconds(seconds);
+              setResearchSeek(true);
+              setListened(false);
+              setReviewNote("");
+            }}
+            completed={run.status === "completed"}
+          />
+        );
+        // With the analyst view above, the full audited brief is reference material.
+        return analyst ? <Collapsible title="Full research brief and its evidence">{brief}</Collapsible> : brief;
+      })()}
       <div className="yi-trust-strip">
         <span className="yi-chip">{run.status === "completed" ? "Source processing complete" : processingState(run.status)}</span>
         {["L0", "L1", "L2", "L3"].map((level) => (
