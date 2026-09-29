@@ -173,7 +173,12 @@ export function Settings() {
         title="Settings"
         description="Your view preferences and the team's processing controls."
       />
-      <section className="yi-panel">
+      <nav className="yi-settings-anchors" aria-label="Settings sections">
+        <a href="#settings-budget">Monthly budget</a>
+        <a href="#settings-preferences">Leaderboard and sentiment</a>
+        <a href="#settings-team">Team configuration</a>
+      </nav>
+      <section className="yi-panel yi-settings-section" id="settings-budget">
         <div className="yi-section-title">
           <h2>Monthly budget</h2>
           <strong>
@@ -222,7 +227,8 @@ export function Settings() {
         )}
       </section>
       <form
-        className="yi-panel"
+        className="yi-panel yi-settings-section"
+        id="settings-preferences"
         onSubmit={(e) => {
           e.preventDefault();
           void perform(
@@ -437,7 +443,7 @@ export function Settings() {
           });
         }}
       >
-        <section className="yi-panel">
+        <section className="yi-panel yi-settings-section" id="settings-team">
           <h2>Team configuration</h2>
           <p className="yi-muted">
             Changing providers, models or prompts affects newly queued analyses.
@@ -514,7 +520,7 @@ export function Settings() {
             value={t as unknown as Record<string, unknown>}
             onChange={(v) => setTeam(v as unknown as Preferences["team"])}
           />
-          <div className="yi-sticky-actions">
+          <div className="yi-sticky-actions yi-settings-savebar">
             <button
               type="button"
               className="yi-secondary"

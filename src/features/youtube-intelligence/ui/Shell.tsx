@@ -14,16 +14,30 @@ import {
   Menu,
   X,
   BookOpen,
+  Newspaper,
+  Search,
+  TrendingUp,
+  type LucideIcon,
 } from "lucide-react";
 import { WorkspaceProvider, useWorkspace } from "./workspace.tsx";
-const navigation = [
-  ["today", "Today", Sun],
-  ["channels", "Channels", Users],
-  ["leaderboard", "Leaderboard", BarChart3],
-  ["saved", "Saved calls", Bookmark],
-  ["lab", "Lab", FlaskConical],
-  ["settings", "Settings", Settings],
-] as const;
+import {
+  NAV_GROUPS,
+  PHONE_TABS,
+  QUICK_SEARCH_HREF,
+  isCurrentRoute,
+} from "./navigation.ts";
+const icons: Record<string, LucideIcon> = {
+  today: Sun,
+  report: Newspaper,
+  search: Search,
+  trends: TrendingUp,
+  leaderboard: BarChart3,
+  channels: Users,
+  saved: Bookmark,
+  lab: FlaskConical,
+  settings: Settings,
+  methodology: BookOpen,
+};
 function WorkspaceShell({ children }: { children: ReactNode }) {
   const path = usePathname(),
     [open, setOpen] = useState(false);
@@ -51,8 +65,6 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
             </summary>
             <Link href="/youtube-intelligence/today">YouTube intelligence</Link>
           </details>
-          <Link href="/youtube-intelligence/saved">Saved calls</Link>
-          <Link href="/youtube-intelligence/settings">Settings</Link>
         </nav>
         <span className="yi-top-label">YouTube · standalone</span>
         <button
@@ -66,11 +78,11 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
         </button>
       </header>
       <nav className="yi-mobile-nav" aria-label="Quick navigation">
-        {navigation.slice(0, 3).map(([route, label]) => (
+        {PHONE_TABS.map(({ route, label, href }) => (
           <Link
             key={route}
-            href={`/youtube-intelligence/${route}`}
-            aria-current={path.includes(`/${route}`) ? "page" : undefined}
+            href={href}
+            aria-current={isCurrentRoute(path, href) ? "page" : undefined}
             onClick={() => setOpen(false)}
           >
             {label}
@@ -90,28 +102,45 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
           className={`yi-sidebar ${open ? "yi-open" : ""}`}
           id="yi-navigation"
         >
-          <p className="yi-eyebrow">YOUTUBE INTELLIGENCE</p>
-          <nav aria-label="Research navigation">
-            {navigation.map(([route, label, Icon]) => (
-              <Link
-                key={route}
-                href={`/youtube-intelligence/${route}`}
-                aria-current={path.includes(`/${route}`) ? "page" : undefined}
-                onClick={() => setOpen(false)}
-              >
-                <Icon size={18} />
-                {label}
-              </Link>
+          <Link
+            className="yi-quick-search-slot"
+            href={QUICK_SEARCH_HREF}
+            title="Search tickers, channels, videos"
+            onClick={() => setOpen(false)}
+          >
+            <Search size={15} aria-hidden="true" />
+            <span>Search tickers, channels, videos</span>
+            <kbd aria-hidden="true">⌘K</kbd>
+          </Link>
+          <nav aria-label="Research navigation" className="yi-nav-groups">
+            {NAV_GROUPS.map((group, index) => (
+              <div className="yi-nav-group" key={group.label}>
+                <p className="yi-nav-group-label" id={`yi-nav-group-${index}`}>
+                  {group.label}
+                </p>
+                <ul aria-labelledby={`yi-nav-group-${index}`}>
+                  {group.items.map(({ route, label, href }) => {
+                    const Icon = icons[route] ?? Sun;
+                    return (
+                      <li key={route}>
+                        <Link
+                          href={href}
+                          aria-current={
+                            isCurrentRoute(path, href) ? "page" : undefined
+                          }
+                          onClick={() => setOpen(false)}
+                        >
+                          <Icon size={17} />
+                          {label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             ))}
           </nav>
           <div className="yi-sidebar-bottom">
-            <Link
-              href="/youtube-intelligence/methodology"
-              onClick={() => setOpen(false)}
-            >
-              <BookOpen size={17} />
-              Methodology
-            </Link>
             <p>
               Source-led research.
               <br />

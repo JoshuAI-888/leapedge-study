@@ -1,5 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import { useMediaQuery, useStickyTop } from "../layout-hooks.ts";
 import { researchPipelineLabelFromInput } from "../../research-pipeline-choice.ts";
 import { ResearchBrief } from "../ResearchBrief.tsx";
 import { Timing } from "../Timing.tsx";
@@ -39,6 +41,17 @@ export function Analysis({ id }: { id: string }) {
     [spans, setSpans] = useState<EvidenceSpanRow[]>([]),
     [storedClaims, setStoredClaims] = useState<ClaimRow[]>([]),
     [reviewerConfigured, setReviewerConfigured] = useState(false);
+  // Below 900 px the evidence panel is portalled into a slot directly under
+  // the selected card; above, it is a sticky column whose top keeps a tall
+  // panel fully reachable without an internal scroll box.
+  const narrow = useMediaQuery("(max-width: 899.98px)");
+  const [evidenceSlot, setEvidenceSlot] = useState<HTMLElement | null>(null);
+  const evidenceRef = useRef<HTMLElement>(null);
+  const evidenceTop = useStickyTop(
+    evidenceRef,
+    76,
+    !narrow && !!run && !!data && storedClaims.length > 0,
+  );
   useEffect(() => {
     const controller = new AbortController();
     request<{
@@ -131,6 +144,8 @@ export function Analysis({ id }: { id: string }) {
   const audio = run.output.audioTrust as
     | { windows?: unknown[]; agreement?: unknown }
     | undefined;
+  const placeEvidence = (panel: ReactNode) =>
+    narrow && evidenceSlot ? createPortal(panel, evidenceSlot) : panel;
   return (
     <>
       <PageTitle
@@ -164,12 +179,14 @@ export function Analysis({ id }: { id: string }) {
       />
       <div className="yi-trust-strip">
         <span className="yi-chip">{run.status === "completed" ? "Source processing complete" : processingState(run.status)}</span>
-        {["L0", "L1", "L2", "L3"].map((level) => (
-          <span key={level}>
-            <TrustBadge level={level} />{" "}
-            {claims.filter((c) => c.trustLevel === level).length}
-          </span>
-        ))}
+        {["L0", "L1", "L2", "L3"].map((level) => {
+          const count = claims.filter((c) => c.trustLevel === level).length;
+          return (
+            <span key={level} className={count ? undefined : "yi-trust-zero"}>
+              <TrustBadge level={level} /> {count}
+            </span>
+          );
+        })}
         <span className="yi-muted">
           Source:{" "}
           {String(
@@ -186,35 +203,60 @@ export function Analysis({ id }: { id: string }) {
       {claims.length ? (
         <div className="yi-analysis-grid">
           <section className="yi-claim-stack">
-            {claims.map((c) => (
-              <div
-                id={c.id}
-                key={c.id}
-                onClick={() => {
-                  setSelected(c.id);
-                  setResearchSeek(false);
-                  setListened(false);
-                  setReviewNote("");
-                  const matched = checked.find(
-                    (x) => x.id === localClaimId(c.id, id),
-                  );
-                  setSeconds(
-                    matched?.claim.evidence[0]?.source_span?.start_seconds ?? 0,
-                  );
-                }}
-              >
-                <button
-                  className="yi-text-button"
-                  aria-pressed={current?.id === c.id}
-                  onClick={() => setSelected(c.id)}
-                >
-                  Select {c.ticker || "call"} evidence
-                </button>
-                <ClaimCard claim={c} selected={current?.id === c.id} />
-              </div>
-            ))}
+            {claims.map((c) => {
+              const pressed = current?.id === c.id;
+              const select = () => {
+                setSelected(c.id);
+                setResearchSeek(false);
+                setListened(false);
+                setReviewNote("");
+                const matched = checked.find(
+                  (x) => x.id === localClaimId(c.id, id),
+                );
+                setSeconds(
+                  matched?.claim.evidence[0]?.source_span?.start_seconds ?? 0,
+                );
+              };
+              return (
+                <Fragment key={c.id}>
+                  <div
+                    id={c.id}
+                    className="yi-claim-select"
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={pressed}
+                    aria-label={`Show evidence for ${c.ticker || c.instrument || "this call"}: ${c.thesisEn}`}
+                    onClick={(e) => {
+                      // Save and other controls inside the card act on their own.
+                      const control = (e.target as HTMLElement).closest(
+                        "button, input, select, textarea, summary, [role=button]",
+                      );
+                      if (control && control !== e.currentTarget) return;
+                      select();
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.target !== e.currentTarget) return;
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        select();
+                      }
+                    }}
+                  >
+                    <ClaimCard claim={c} selected={pressed} />
+                  </div>
+                  {narrow && pressed && (
+                    <div className="yi-evidence-slot" ref={setEvidenceSlot} />
+                  )}
+                </Fragment>
+              );
+            })}
           </section>
-          <aside className="yi-evidence yi-panel">
+          {placeEvidence(
+          <aside
+            className="yi-evidence yi-panel"
+            ref={evidenceRef}
+            style={narrow ? undefined : { top: evidenceTop }}
+          >
             <h2>Evidence · {current?.ticker || current?.instrument}</h2>
             <div id="source-player">
               {researchSeek && (
@@ -374,7 +416,8 @@ export function Analysis({ id }: { id: string }) {
                 )}
               </form>
             </Collapsible>
-          </aside>
+          </aside>,
+          )}
         </div>
       ) : (
         <Empty

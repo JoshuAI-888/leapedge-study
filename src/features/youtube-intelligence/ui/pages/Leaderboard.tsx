@@ -19,6 +19,8 @@ import {
 } from "../components.tsx";
 import { sentimentShift } from "../../metrics/sentiment-shift.ts";
 import { csv, percent, sortTickerRows } from "../viewmodel.ts";
+import { HiddenByFilter } from "../HiddenByFilter.tsx";
+import { hiddenByFilter, trustOptionLabel } from "../foundations.ts";
 export function Leaderboard() {
   const { data, perform, busy } = useWorkspace();
   const [snapshot, setSnapshot] = useState<BoardSnapshot | null>(null),
@@ -82,6 +84,15 @@ export function Leaderboard() {
       market === "all" ? data.preferences.resolved.marketFilter : [market],
   };
   const board = boardAsOf(snapshot, options);
+  // Scoring always needs audio-agreed evidence; a stricter view filter hides
+  // more. Count both so an empty board says why (F57).
+  const scoringBoard =
+    trust === "L3" ? boardAsOf(snapshot, { ...options, minimumTrust: "L2" }) : board;
+  const settled = (b: typeof board) =>
+    b.tickers.reduce((sum, row) => sum + row.n, 0);
+  const notScored = scoringBoard.excluded.filter(
+    (row) => row.reason === "Audio agreement required",
+  ).length;
   const before = boardAsOf(snapshot, {
     ...options,
     asOf:
@@ -281,7 +292,9 @@ export function Leaderboard() {
           Minimum trust
           <select value={trust} onChange={(e) => setTrust(e.target.value)}>
             {["L0", "L1", "L2", "L3"].map((v) => (
-              <option key={v}>{v}</option>
+              <option key={v} value={v}>
+                {trustOptionLabel(v)}
+              </option>
             ))}
           </select>
         </label>
@@ -339,6 +352,22 @@ export function Leaderboard() {
           </label>
         )}
       </Filters>
+      <HiddenByFilter
+        count={hiddenByFilter(settled(scoringBoard), settled(board))}
+        filter="the Human-verified trust filter"
+        noun="settled calls"
+        onReveal={() => setTrust("L2")}
+        revealLabel="Show audio-agreed calls"
+      />
+      {tab !== "changes" &&
+        !(tab === "ticker" ? board.tickers.length : board.creators.length) &&
+        notScored > 0 && (
+          <p className="yi-hidden-by-filter">
+            {notScored} {notScored === 1 ? "call is" : "calls are"} not scored
+            because the leaderboard needs audio-agreed evidence.{" "}
+            <Link href="/youtube-intelligence/today">Browse them on Today</Link>
+          </p>
+        )}
       <Collapsible title="Refresh external price data">
         <p>
           This fetches prices for{" "}

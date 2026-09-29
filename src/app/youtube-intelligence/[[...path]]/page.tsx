@@ -10,6 +10,11 @@ import { AnalysisPipelines } from "../../../features/youtube-intelligence/ui/pag
 import { ProcessingProfiles } from "../../../features/youtube-intelligence/ui/pages/ProcessingProfiles.tsx";
 import { Comparison } from "../../../features/youtube-intelligence/ui/pages/Comparison.tsx";
 import { Leaderboard } from "../../../features/youtube-intelligence/ui/pages/Leaderboard.tsx";
+import { Report } from "../../../features/youtube-intelligence/ui/pages/Report.tsx";
+import { Search } from "../../../features/youtube-intelligence/ui/pages/Search.tsx";
+import { Trends } from "../../../features/youtube-intelligence/ui/pages/Trends.tsx";
+import { Channel } from "../../../features/youtube-intelligence/ui/pages/Channel.tsx";
+import { resolveRoute } from "../../../features/youtube-intelligence/ui/navigation.ts";
 export default async function Page({
   params,
 }: {
@@ -17,11 +22,15 @@ export default async function Page({
 }) {
   const { path = [] } = await params;
   if (!path.length) redirect("/youtube-intelligence/today");
-  if (path[0] === "analysis" && path.length === 2)
-    return <Analysis id={path[1]} />;
-  if (path.length !== 1) notFound();
+  const route = resolveRoute(path);
+  if (!route) notFound();
+  if (route.page === "analysis") return <Analysis id={route.id} />;
+  if (route.page === "channel") return <Channel id={route.id} />;
+  if (route.page === "report") return <Report date={route.date} />;
   const pages = {
     today: Today,
+    search: Search,
+    trends: Trends,
     channels: Channels,
     saved: Saved,
     settings: Settings,
@@ -31,8 +40,7 @@ export default async function Page({
     comparison: Comparison,
     methodology: Methodology,
     leaderboard: Leaderboard,
-  };
-  const Component = pages[path[0] as keyof typeof pages];
-  if (!Component) notFound();
+  } satisfies Record<typeof route.page, unknown>;
+  const Component = pages[route.page];
   return <Component />;
 }

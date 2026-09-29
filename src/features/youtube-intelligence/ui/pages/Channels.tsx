@@ -106,9 +106,22 @@ export function Channels() {
                   : `${source.count} confirmed channel IDs · ${source.installedCount} added`}
               </span>
             </div>
-            <p className="yi-muted">{source.note}</p>
           </div>
         ))}
+        {seedSources.some((source) => source.note) && (
+          <details className="yi-provenance">
+            <summary>Where this list comes from</summary>
+            {seedSources.map((source) => (
+              <p className="yi-muted" key={source.source}>
+                <strong>
+                  {source.source === "truealpha" ? "TrueAlphaData" : "LeapEdge"}
+                  :
+                </strong>{" "}
+                {source.note}
+              </p>
+            ))}
+          </details>
+        )}
       </section>
       <div className="yi-two-col">
         <form

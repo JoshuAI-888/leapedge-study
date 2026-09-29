@@ -22,6 +22,8 @@ import {
   SaveCallButton,
   MetricHeading,
 } from "../components.tsx";
+import { HiddenByFilter } from "../HiddenByFilter.tsx";
+import { hiddenByFilter, trustOptionLabel } from "../foundations.ts";
 export function Today() {
   const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
     useWorkspace();
@@ -194,24 +196,24 @@ export function Today() {
                 Reset sort
               </button>
             </Filters>
-            {minimum !== "L1" &&
-              (minimum || defaultTrust) !== "L0" &&
-              visibleClaims(
-                data.snapshot.claims.filter((c) => canonical.has(c.runId)),
-                search,
-                "L1",
-              ).length > eligible.length && (
-                <p className="yi-muted">
-                  Some text-checked calls are hidden by the current trust
-                  filter.{" "}
-                  <button
-                    className="yi-text-button"
-                    onClick={() => setMinimum("L1")}
-                  >
-                    Show text-checked calls
-                  </button>
-                </p>
+            <HiddenByFilter
+              count={hiddenByFilter(
+                visibleClaims(
+                  data.snapshot.claims.filter((c) => canonical.has(c.runId)),
+                  search,
+                  "L0",
+                ).length,
+                eligible.length,
               )}
+              filter={`the ${trustOptionLabel(minimum || defaultTrust)} trust filter`}
+              onReveal={() => setMinimum("L0")}
+            />
+            <HiddenByFilter
+              count={hiddenByFilter(eligible.length, claims.length)}
+              filter={`the ${stance} stance filter`}
+              onReveal={() => setStance("all")}
+              revealLabel="Show all stances"
+            />
             {data.snapshot.counts.claims.truncated && (
               <p className="yi-warning">
                 Showing {data.snapshot.counts.claims.returned} of{" "}
