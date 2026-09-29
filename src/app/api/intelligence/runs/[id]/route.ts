@@ -5,6 +5,7 @@ import { spansForClaims } from "../../../../../server/youtube-intelligence/repos
 import { docs } from "../../../../../server/youtube-intelligence/research-store.ts";
 import { get } from "../../../../../server/youtube-intelligence/store.ts";
 import { timelineFor } from "../../../../../server/youtube-intelligence/timing.ts";
+import { analystViewFor } from "../../../../../server/youtube-intelligence/analyst-view.ts";
 import {
   guard,
   failure,
@@ -25,12 +26,28 @@ export async function GET(
     guard(r);
     const run = await get((await params).id);
     const claims = run ? await claimsForRun(run.id) : [];
+    const briefs = run
+      ? (await researchBriefs()).filter(
+          (b) => b.sourceRunId === run.id || b.runId === run.id,
+        )
+      : [];
+    // The analyst view is a convenience over the retained output: a run whose
+    // output it cannot read (older or partial formats) still opens, without it.
+    let analyst: ReturnType<typeof analystViewFor> | null = null;
+    let analystViewError: string | null = null;
+    if (run && !run.input.task && run.status === "completed")
+      try {
+        analyst = analystViewFor(run, briefs[0] ?? null);
+      } catch (error) {
+        analystViewError = error instanceof Error ? error.message : String(error);
+      }
     return run
       ? Response.json({
           claims,
-          researchBriefs: (await researchBriefs()).filter(
-            (b) => b.sourceRunId === run.id || b.runId === run.id,
-          ),
+          researchBriefs: briefs,
+          analystView: analyst?.view ?? null,
+          analystNote: analyst?.note ?? null,
+          analystViewError,
           evidenceSpans: await spansForClaims(claims.map((c) => c.id)),
           reviewerConfigured: Boolean(process.env.YTI_REVIEWER_ACCOUNT_ID),
           run: {

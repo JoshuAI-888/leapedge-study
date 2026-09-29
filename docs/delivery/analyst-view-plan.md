@@ -31,13 +31,17 @@ ledger, open the PR, merge only on the user's instruction.
 - [x] Fields: `action` (bought, sold, holding, plan_buy, plan_sell, watch, research, avoid, view), `owner` (creator, guest, third_party) with `owner_name`, levels gain `threshold` and `condition_en`, `option` (right, side, strike, expiry, premium), `size_original`, `catalysts`; top-level `transcription_doubts`.
 - [x] Every copied value must appear verbatim in the cited evidence; otherwise it is removed and recorded and the idea kept (`normalizeIdeaDetail`). Doubts are kept only when their range contains the misheard words.
 - [x] Registered `evidence-first.web.v9`; v8 and its schema unchanged; the default stays v8 until the live check.
-- [ ] Live run on 3 benchmark videos, then switch the workspace to v9.
+- [x] Live run on 3 benchmark videos (U32FPvvBaNI, 1WNowIoNgtg, 78RL-h4FB3s): fields correct; workspace switched to v9 on 29 Sep.
 
 ### PR 3 — AnalystView and the Analysis page
-- [ ] Pure `buildAnalystView` with a zod contract: headline, stance, idea cards, ticker sentiment, themes, numbers and catalysts, watch-outs.
-- [ ] Pipeline diagnostics out of the brief's omissions; into a collapsed panel.
-- [ ] Page order: headline → idea cards → sentiment table → themes → numbers and catalysts → brief (collapsed) → watch-outs → diagnostics (collapsed). Copy-as-note.
-- [ ] Browser check at desktop and phone width.
+- [x] Pure `buildAnalystView` with a zod contract: summary, stance, idea cards (one per instrument and owner), ticker sentiment (one row per instrument), themes, key points (≤ 10), numbers, not-stated gaps, watch-outs. Code only, no model call; the headline call was dropped in favour of the audited brief's top sentences.
+- [x] Pipeline notes and name-spelling doubts out of the page, into a collapsed processing panel (allowlist: only gaps in what the creator said are shown).
+- [x] Page order: summary and stance → idea cards → sentiment table → key points → numbers → watch-outs → processing notes; the full brief collapsed below. Copy as note.
+- [x] Browser check at 1366 and 390 px on a local copy of a v9 run.
+- [x] Critic ids left unanswered are re-asked twice, then withheld with the reason, instead of failing the run.
+
+### Iteration 2 candidates (from the live check; confirm against scorecard #1)
+- The critic rejects a whole call when only its conviction is overstated (1WNowIoNgtg QQQ and MSFT short puts): lower the conviction and keep the call.
 
 ### PR 4 — scorecard
 - [ ] Deterministic checks as a test: resolved ≥ 95%, no duplicate instruments, levels typed, no pipeline text, ≤ 10 key points, every card quoted.

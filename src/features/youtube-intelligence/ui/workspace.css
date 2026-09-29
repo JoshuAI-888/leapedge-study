@@ -1650,3 +1650,89 @@
   margin: 12px 0;
   flex-wrap: wrap;
 }
+/* Analyst view (PR 3): the PM-facing summary above the evidence tools. */
+.yi-av {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.yi-av-h {
+  margin: 8px 0 0;
+}
+.yi-av-summary {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  font-size: 15px;
+}
+.yi-av-summary li {
+  margin-bottom: 6px;
+}
+.yi-av-idea h3 {
+  margin: 10px 0;
+}
+.yi-av-third {
+  border-style: dashed;
+}
+.yi-av-name {
+  margin: 4px 0 0;
+  font-size: 12px;
+}
+.yi-av-theme {
+  background: transparent;
+  border: 1px solid var(--yi-line);
+  font-weight: 500;
+}
+.yi-av-quote {
+  margin: 12px 0 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--yi-line);
+  font-size: 13px;
+}
+.yi-av-at {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.yi-workspace td.yi-av-wrap {
+  white-space: normal;
+  min-width: 260px;
+}
+.yi-av-facts > div,
+.yi-av .yi-levels > div {
+  display: grid;
+  grid-template-columns: minmax(84px, max-content) 1fr;
+  justify-content: start;
+  align-items: baseline;
+  gap: 12px;
+}
+.yi-av .yi-levels dt {
+  overflow-wrap: normal;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+.yi-av .yi-levels dd {
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .yi-av .yi-table-wrap table,
+  .yi-av .yi-table-wrap tbody,
+  .yi-av .yi-table-wrap tr,
+  .yi-av .yi-table-wrap td {
+    display: block;
+    width: 100%;
+  }
+  .yi-av .yi-table-wrap thead {
+    display: none;
+  }
+  .yi-av .yi-table-wrap tr {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--yi-line);
+  }
+  .yi-av .yi-table-wrap td {
+    border: 0;
+    padding: 2px 0;
+    white-space: normal;
+  }
+  .yi-workspace .yi-av td.yi-av-wrap {
+    min-width: 0;
+  }
+}
