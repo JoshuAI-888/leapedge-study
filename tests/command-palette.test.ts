@@ -73,9 +73,12 @@ test("Groups are capped and ordered, and Trends is offered for the best instrume
   for (const g of results) assert.ok(g.items.length <= GROUP_CAPS[g.group], g.group);
   assert.deepEqual(
     results.map((g) => g.group),
-    ["Actions", "Instruments", "Channels", "Videos", "Pages"].filter((n) => results.some((g) => g.group === n)),
+    ["Instruments", "Channels", "Videos", "Pages", "Actions"].filter((n) => results.some((g) => g.group === n)),
   );
   const tsla = paletteResults(index, pages, "tsla");
+  // F77: a typed ticker's first row is the instrument, so Enter opens Search (⌘Enter, Trends).
+  assert.equal(tsla[0].group, "Instruments");
+  assert.equal(tsla[0].items[0].href, "/youtube-intelligence/search?ticker=TSLA");
   assert.equal(group(tsla, "Actions")[0].label, "See trends for TSLA");
   assert.equal(group(tsla, "Actions")[0].href, "/youtube-intelligence/trends?by=ticker&value=TSLA");
   assert.deepEqual(group(paletteResults(index, pages, "search"), "Pages").map((p) => p.href), ["/youtube-intelligence/search"]);

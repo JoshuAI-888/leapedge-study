@@ -13,7 +13,12 @@ export type PaletteIndex = {
   channels: { channelId: string; title: string | null; handle: string | null; calls: number; videos: number }[];
   videos: { runId: string; videoId: string; title: string | null; channelId: string | null; publishedAt: string | null }[];
 };
-export const GROUPS = ["Recent", "Actions", "Instruments", "Channels", "Videos", "Pages"] as const;
+/**
+ * Group order, as the requirements list them: a typed ticker's first row is
+ * the instrument, so Enter opens Search. A pasted link has only its Actions
+ * row, which is then first.
+ */
+export const GROUPS = ["Recent", "Instruments", "Channels", "Videos", "Pages", "Actions"] as const;
 export type PaletteGroup = (typeof GROUPS)[number];
 export type PaletteItem = {
   id: string;
