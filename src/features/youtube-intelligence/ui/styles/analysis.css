@@ -390,6 +390,40 @@
   min-height: 24px;
   padding: 0 6px;
 }
+
+/* F73 — model-call usage tables. */
+.yi-usage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.yi-usage-table th,
+.yi-usage-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--yi-line);
+  text-align: left;
+  vertical-align: top;
+}
+.yi-usage-table .yi-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.yi-usage-table tfoot th,
+.yi-usage-table tfoot td {
+  font-weight: 600;
+  border-bottom: 0;
+  border-top: 2px solid var(--yi-line);
+}
+.yi-usage-flag {
+  color: var(--yi-muted);
+  font-size: 12px;
+}
+.yi-usage-note {
+  display: block;
+  color: var(--yi-muted);
+  font-size: 11px;
+}
 @media (max-width: 640px) {
   .yi-step {
     font-size: 11px;
@@ -398,6 +432,14 @@
   .yi-follow {
     padding: 12px 14px;
   }
+}
+/* Numeric column headings line up with their right-aligned figures. */
+.yi-usage-table thead th {
+  text-align: right;
+}
+.yi-usage-table thead th:first-child,
+.yi-usage-calls thead th:nth-child(2) {
+  text-align: left;
 }
 .yi-activity-progress {
   display: flex;

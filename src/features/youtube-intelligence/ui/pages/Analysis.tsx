@@ -8,6 +8,8 @@ import { useMediaQuery, useStickyTop } from "../layout-hooks.ts";
 import { researchPipelineLabelFromInput } from "../../research-pipeline-choice.ts";
 import { ResearchBrief } from "../ResearchBrief.tsx";
 import { Timing } from "../Timing.tsx";
+import { CallUsageTable } from "../CallUsageTable.tsx";
+import type { LedgerRow } from "../../call-usage.ts";
 import type { RunTimelineData } from "../../timing.ts";
 import type { ResearchBriefData } from "../../research-brief.ts";
 import type { SourceData } from "../../contracts.ts";
@@ -83,6 +85,7 @@ export function Analysis({ id }: { id: string }) {
       last_at: null,
     }),
     [confirmRerun, setConfirmRerun] = useState(false),
+    [calls, setCalls] = useState<LedgerRow[]>([]),
     [progress, setProgress] = useState<{
       typical: Typical;
       stepCostUsd: Record<string, number>;
@@ -122,6 +125,7 @@ export function Analysis({ id }: { id: string }) {
       reviewerConfigured: boolean;
       reuse?: { count: number; last_at: string | null };
       progress?: { typical: Typical; stepCostUsd: Record<string, number> } | null;
+      calls?: LedgerRow[];
     }>(
       `/api/intelligence/runs/${encodeURIComponent(id)}`,
       undefined,
@@ -135,6 +139,7 @@ export function Analysis({ id }: { id: string }) {
         setReviewerConfigured(x.reviewerConfigured);
         setReuse(x.reuse ?? { count: 0, last_at: null });
         setProgress(x.progress ?? null);
+        setCalls(x.calls ?? []);
         const hash = decodeURIComponent(window.location.hash.slice(1));
         if (!run || run.id !== id) {
           const ordered = visibleClaims(x.claims ?? [], "", "L0");
@@ -828,9 +833,16 @@ export function Analysis({ id }: { id: string }) {
               <dt>Model</dt>
               <dd>{run.model}</dd>
             </dl>
-            <Timing
+            <CallUsageTable
+              calls={calls}
               timeline={run.output.timeline as RunTimelineData | undefined}
+              finished={!working}
             />
+            <Collapsible title="Timing by pipeline stage">
+              <Timing
+                timeline={run.output.timeline as RunTimelineData | undefined}
+              />
+            </Collapsible>
             <Collapsible title="Show raw data">
               <pre>
                 {JSON.stringify(

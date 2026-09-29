@@ -40,6 +40,12 @@ export async function GET(
               "SELECT count(*)::int AS count,max(at) AS last_at FROM yi_events WHERE kind='analysis_reused' AND entity_id=$1",
             )
             .get(run.id),
+          // F73: the paid-call ledger rows of this run, one per attempt.
+          calls: await database
+            .prepare(
+              "SELECT id,run_id,stage,status,amount,attempt,metrics FROM yi_calls WHERE run_id=$1 ORDER BY stage,attempt LIMIT 500",
+            )
+            .all(run.id),
           // F72: typical duration and per-step spend, for an unfinished run.
           progress:
             run.status === "completed" || run.input.task
