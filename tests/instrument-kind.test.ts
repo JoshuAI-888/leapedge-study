@@ -93,6 +93,12 @@ test("Sector synonyms map to a GICS sector, with a sub-theme where one is named"
   assert.equal(normaliseMacro("utilities"), "Utilities");
   assert.equal(normaliseMacro("REITs"), "Real Estate");
   assert.equal(normaliseMacro("Information Technology"), "Information Technology");
+  // Every canonical label, as the v9 prompt's enum returns it, maps to itself.
+  for (const sub of SECTOR_SUBTHEMES) {
+    const label = `${sub.sector} / ${sub.name}`;
+    assert.equal(normaliseMacro(label), label);
+  }
+  for (const sector of GICS_SECTORS) assert.equal(normaliseMacro(sector), sector);
 });
 
 test("Unknown, empty or ambiguous text is not given a theme", () => {

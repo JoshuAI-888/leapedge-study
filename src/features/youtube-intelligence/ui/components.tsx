@@ -8,6 +8,12 @@ import { trustNames, localClaimId } from "./viewmodel.ts";
 import { useWorkspace } from "./workspace.tsx";
 import { action } from "./api.ts";
 import { InstrumentLabel } from "./InstrumentLabel.tsx";
+import {
+  expiryStatus,
+  formatLevel,
+  parseLevel,
+  type ParsedLevel,
+} from "../level-parse.ts";
 export function Empty({
   title,
   children,
@@ -109,6 +115,96 @@ export function MetricHeading({
 export function Filters({ children }: { children: ReactNode }) {
   return <div className="yi-filters">{children}</div>;
 }
+const LEVEL_KINDS: Record<string, string> = {
+  entry: "Entry",
+  target: "Target",
+  stop: "Stop",
+  support: "Support",
+  resistance: "Resistance",
+  strike: "Strike",
+};
+type LevelInput = {
+  kind: string;
+  value_original?: string;
+  valueOriginal?: string;
+  parsed?: ParsedLevel | null;
+};
+/**
+ * Level chips (F60): the kind and the application's reading of the number,
+ * with the creator's wording in the hover. A level the parser could not read
+ * shows the original text with a dotted underline; no number is invented.
+ * A kind said more than once is numbered ("Target 1", "Target 2").
+ */
+export function LevelChips({ levels }: { levels: LevelInput[] }) {
+  if (!levels.length) return null;
+  const totals = new Map<string, number>();
+  for (const l of levels) totals.set(l.kind, (totals.get(l.kind) ?? 0) + 1);
+  const seen = new Map<string, number>();
+  return (
+    <ul className="yi-card2-levels" aria-label="Levels">
+      {levels.map((l, i) => {
+        const original = l.valueOriginal ?? l.value_original ?? "";
+        const parsed =
+          l.parsed === undefined ? parseLevel(original) : l.parsed;
+        const n = (seen.get(l.kind) ?? 0) + 1;
+        seen.set(l.kind, n);
+        const kind = `${LEVEL_KINDS[l.kind] ?? l.kind}${(totals.get(l.kind) ?? 0) > 1 ? ` ${n}` : ""}`;
+        return (
+          <li
+            key={i}
+            className={`yi-card2-level${parsed ? "" : " yi-card2-unparsed"}`}
+            title={
+              parsed
+                ? `Said as "${original}" · read as ${formatLevel(parsed)}`
+                : `Said as "${original}" · no number could be read from this wording`
+            }
+          >
+            <em>{kind}</em>
+            <span>{parsed ? formatLevel(parsed) : original}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+function todayLocal() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+/** "expires 31 Oct (32 days)", amber within 7 days, "expired" once past. */
+export function ExpiryBadge({
+  date,
+  original,
+}: {
+  date: string | null | undefined;
+  original: string | null | undefined;
+}) {
+  const status = expiryStatus(date, todayLocal());
+  if (!status)
+    return original ? (
+      <span className="yi-card2-expiry" title="Expiry as the creator said it">
+        expires: {original}
+      </span>
+    ) : null;
+  const shown = new Date(`${date}T00:00:00Z`).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
+  const text =
+    status.state === "expired"
+      ? `expired ${shown}`
+      : `expires ${shown} (${status.days === 0 ? "today" : `${status.days} day${status.days === 1 ? "" : "s"}`})`;
+  return (
+    <span
+      className={`yi-card2-expiry yi-card2-expiry-${status.state}`}
+      title={original ? `Said as "${original}"` : undefined}
+      suppressHydrationWarning
+    >
+      {text}
+    </span>
+  );
+}
 export function ClaimCard({
   claim,
   selected = false,
@@ -119,19 +215,33 @@ export function ClaimCard({
   onSelect?: () => void;
 }) {
   const listing = resolveListing(claim.instrument, claim.ticker);
+  const levels = claim.levels ?? [];
+  const catalysts = claim.catalystsEn ?? [];
+  const extras = claim.risksEn.length + claim.conditionsEn.length;
   return (
-    <article className={`yi-claim ${selected ? "yi-selected" : ""}`}>
-      <div className="yi-row">
+    <article className={`yi-claim yi-card2 ${selected ? "yi-selected" : ""}`}>
+      <div className="yi-row yi-card2-line1">
         <InstrumentLabel
           claim={{
             ticker: listing?.ticker ?? claim.ticker,
             instrument: claim.instrument,
+            macroTheme: claim.macroTheme,
           }}
         />
         <span className={`yi-chip yi-stance-${claim.stance}`}>
           {claim.stance}
         </span>
+        <ConvictionChip value={claim.creatorConviction} />
         <TrustBadge level={claim.trustLevel} basis={claim.trustBasis} />
+        {(claim.horizonEn || claim.expiryDate || claim.expiryOriginal) && (
+          <span className="yi-card2-when">
+            {claim.horizonEn && <span>{claim.horizonEn}</span>}
+            <ExpiryBadge
+              date={claim.expiryDate}
+              original={claim.expiryOriginal}
+            />
+          </span>
+        )}
       </div>
       {listing && listing.ticker !== claim.ticker && (
         <p className="yi-muted">
@@ -145,16 +255,57 @@ export function ClaimCard({
         </p>
       )}
       <h3>{claim.thesisEn}</h3>
-      <div className="yi-row">
-        <ConvictionChip value={claim.creatorConviction} />
-        <span className="yi-muted">
-          {claim.horizonEn || "Horizon not specified"}
-        </span>
-      </div>
-      {claim.conditionsEn.length > 0 && (
-        <p>
-          <strong>Conditions:</strong> {claim.conditionsEn.join(" · ")}
+      {claim.actionEn && (
+        <p className="yi-card2-action">
+          <span>Action</span> {claim.actionEn}
         </p>
+      )}
+      <LevelChips levels={levels} />
+      {catalysts.length > 0 && (
+        <div className="yi-card2-catalysts">
+          <span>Catalysts</span>
+          {catalysts.map((c, i) => (
+            <span key={i} className="yi-chip">
+              {c}
+            </span>
+          ))}
+        </div>
+      )}
+      {extras > 0 && (
+        <details className="yi-card2-more">
+          <summary>
+            {[
+              claim.risksEn.length
+                ? `Risks (${claim.risksEn.length})`
+                : "",
+              claim.conditionsEn.length
+                ? `Conditions (${claim.conditionsEn.length})`
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </summary>
+          {claim.risksEn.length > 0 && (
+            <>
+              <h4>Risks</h4>
+              <ul>
+                {claim.risksEn.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {claim.conditionsEn.length > 0 && (
+            <>
+              <h4>Conditions</h4>
+              <ul>
+                {claim.conditionsEn.map((c, i) => (
+                  <li key={i}>{c}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </details>
       )}
       <footer>
         <Link

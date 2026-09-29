@@ -25,6 +25,10 @@ const FROZEN_HASHES: Record<string, string> = {
     "3659a534418d264f5b7fafa02c4929a4691e7f9910377e5e001a22b48e56b7eb",
   "evidence-first.web.v6":
     "aa552a96126ce52f1bdf54e1656b29e51d82119aacc9d12fe0e80f4f406c3f70",
+  "evidence-first.web.v7":
+    "b8fb36aba4e9cd672d4f4952bfb6800427aa7747ec88389cd770e358c57b6c40",
+  "evidence-first.web.v8":
+    "27cfc0c23ad50c75a901afaaff1b3e559bb0bbddf2d679da44bcf870c350ea99",
 };
 test("Prompt v7 carries the pointer flag through the registry and leaves every shipped hash alone", async () => {
   const versions = await R.promptVersions(),
@@ -77,9 +81,41 @@ test("Seeding the bundled versions is idempotent and new teams use pointer evide
     "a bundled version was seeded twice",
   );
   // Standalone completion defaults new teams to the pointer-evidence prompt.
-  assert.equal(teamDefaults().prompts.version, "evidence-first.web.v8");
+  assert.equal(teamDefaults().prompts.version, "evidence-first.web.v9");
   // The compatibility preferences document keeps its historical default.
   assert.equal((await R.preferences()).promptVersion, "evidence-first.web.v5");
+});
+test("v9 asks for catalysts, action, expiry and a macro theme under the v2 schema", async () => {
+  const { MACRO_THEMES, GICS_SECTORS } = await import(
+    "../src/features/youtube-intelligence/instrument-kind.ts"
+  );
+  const versions = await R.promptVersions();
+  const v9 = versions.find((v: { id: string }) => v.id === "evidence-first.web.v9") as
+    | { hash: string; callFields?: boolean }
+    | undefined;
+  assert.ok(v9, "evidence-first.web.v9 is not seeded");
+  assert.equal(v9!.callFields, true);
+  assert.notEqual(v9!.hash, FROZEN_HASHES["evidence-first.web.v8"]);
+  const p = (await R.prompt("evidence-first.web.v9")) as Awaited<
+    ReturnType<typeof R.prompt>
+  > & { callFields?: boolean };
+  assert.equal(p.callFields, true);
+  assert.equal(p.pointerEvidence, true);
+  assert.equal(p.temporalResearch, true);
+  for (const field of ["catalysts_en", "action_en", "expiry", "macro_theme"])
+    assert.match(p.extraction, new RegExp(field));
+  for (const theme of [...MACRO_THEMES, ...GICS_SECTORS])
+    assert.ok(p.extraction.includes(theme), `${theme} missing from the prompt`);
+  // The model copies level wording; the application parses the number.
+  assert.match(p.extraction, /value_original/);
+  assert.match(p.extraction, /never infer a year/i);
+  assert.match(p.critique, /catalysts_en/);
+  // v8's text is carried forward unchanged, so v9 only adds.
+  const v8 = await R.prompt("evidence-first.web.v8");
+  assert.ok(p.extraction.startsWith(v8.extraction));
+  assert.ok(p.critique.startsWith(v8.critique));
+  assert.equal(p.synthesis, v8.synthesis);
+  assert.equal(p.transcribe, v8.transcribe);
 });
 test("v7 asks for pointer evidence, sentiment-bearing mentions and a calibrated conviction", async () => {
   const p = await R.prompt("evidence-first.web.v7");
