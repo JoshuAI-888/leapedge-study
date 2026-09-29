@@ -305,6 +305,8 @@ export function validateClaim(
     reasons.push("Ticker is not explicit in its evidence.");
   return [...reasons, ...levelQualifierIssues(claim)];
 }
+/** Longest gap between consecutive timed segments treated as a pause. */
+export const PAUSE_SECONDS = 2;
 export function coverage(source: SourceData, duration: number) {
   const spans = source.segments
     .filter((s) => s.start_seconds !== null && s.end_seconds !== null)
@@ -314,7 +316,10 @@ export function coverage(source: SourceData, duration: number) {
     end = 0;
   for (const [a, b] of spans) {
     if (b > a) {
-      covered += Math.max(0, b - Math.max(a, end));
+      // A pause of up to PAUSE_SECONDS between caption lines is speech timing,
+      // not missing content; a longer gap still counts as uncovered.
+      const from = end > 0 && a > end && a - end <= PAUSE_SECONDS ? end : a;
+      covered += Math.max(0, b - Math.max(from, end));
       end = Math.max(end, b);
     }
   }

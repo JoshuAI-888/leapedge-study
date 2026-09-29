@@ -1783,7 +1783,7 @@
     "verification": "Node 24: default and PGlite suites 737 pass/0 fail/1 skip; typecheck and build pass."
   },
   "liveFixes20260929": {
-    "status": "in-review",
+    "status": "merged",
     "date": "2026-09-29",
     "scope": "First live runs on Vercel exposed: (1) strict JSON parsing failed on fenced model replies; parseModelJson accepts fenced or prose-wrapped JSON only. (2) Source recall ran ~13 windows one per step (~4.5 of 5.6 min on a short video); new runs freeze the recall inventory, request up to 24 windows per step 4 at a time, and apply them in order. (3) Calls on companies named but not ticker-spoken (\"Vistra\" drafted as VST) were rejected in the caption-alignment path; the symbol is now a retained proposal in both evidence modes.",
     "tests": [
@@ -1792,5 +1792,15 @@
       "tests/ticker-proposal.test.ts"
     ],
     "verification": "Node 24: default and PGlite suites 741 pass/0 fail/1 skip; typecheck and build pass. Workspace settings aligned on 29 Sep: models reset to defaults (Gemini native extraction, Sonnet critic), prompt version v8, research pipeline faithful."
+  },
+  "captionCoverage20260929": {
+    "status": "in-review",
+    "date": "2026-09-29",
+    "scope": "The 13-video rerun left 2 Chinese videos in review: fetched captions scored 86% timed coverage because the pauses between caption lines counted as missing speech. Coverage now treats a gap of up to 2 s between consecutive segments as a pause; a longer gap still counts. Fetched captions that still fall short go to windowed audio transcription (unless ASR is on demand or off) instead of stopping. A translation reply that answers a span twice keeps the first answer instead of failing the run; the copied original is still re-hashed.",
+    "tests": [
+      "tests/caption-coverage.test.ts",
+      "tests/selective-translation.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 744+ pass/0 fail; typecheck, build and offline promotion gate pass."
   }
 }

@@ -193,7 +193,7 @@ function spanText(source: SourceData, span: SourceSpanData) {
 }
 /**
  * Write the returned translations onto their spans. Every requested id must be
- * answered exactly once and no other id may appear: a partly translated run is
+ * answered (a repeat keeps the first answer) and no other id may appear: a partly translated run is
  * a failed run, not a run with blank evidence. An echoed `text_original` that
  * does not hash to the copied span fails here, before anything is written.
  */
@@ -205,10 +205,9 @@ export function applyTranslations(
   const byText = new Map<string, string>();
   const byId = new Map<string, TranslationEntryData>();
   for (const entry of entries) {
-    if (byId.has(entry.id))
-      throw Error(
-        `Translation returned two translations for span "${entry.id}".`,
-      );
+    // A span answered twice keeps its first translation. The translation is a
+    // reading aid; the copied original is the record and is re-hashed below.
+    if (byId.has(entry.id)) continue;
     byId.set(entry.id, entry);
   }
   for (const target of unique) {
