@@ -49,7 +49,7 @@ type Workspace = {
   notice: string;
   perform: (
     operation: () => Promise<unknown>,
-    success: string,
+    success: string | ((result: unknown) => string),
   ) => Promise<boolean>;
 };
 const Context = createContext<Workspace | null>(null);
@@ -244,13 +244,16 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       if (alive.current) setLoadingMoreRuns(false);
     }
   }
-  async function perform(operation: () => Promise<unknown>, success: string) {
+  async function perform(
+    operation: () => Promise<unknown>,
+    success: string | ((result: unknown) => string),
+  ) {
     setBusy(true);
     setNotice("");
     setActionError("");
     try {
-      await operation();
-      setNotice(success);
+      const result = await operation();
+      setNotice(typeof success === "function" ? success(result) : success);
       await refresh();
       return true;
     } catch (e) {

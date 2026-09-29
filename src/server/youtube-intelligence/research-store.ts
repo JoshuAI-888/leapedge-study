@@ -414,19 +414,36 @@ export async function runAudioTrustPreferences(
     ? TeamPreferences.parse(run.input.audioTrustConfig)
     : runTeamPreferences(run, override);
 }
+type QueueConfig = Omit<Partial<PreferencesData>, "model" | "criticModel"> & {
+  model?: string;
+  criticModel?: string;
+};
+type QueueOptions = {
+  origin?: "channel" | "manual";
+  record?: "historical" | "forward";
+  processingMode?: "batch" | "immediate";
+};
 export async function queue(
   videoId: string,
   source?: unknown,
-  config?: Omit<Partial<PreferencesData>, "model" | "criticModel"> & {
-    model?: string;
-    criticModel?: string;
-  },
+  config?: QueueConfig,
   experiment = false,
-  options: {
-    origin?: "channel" | "manual";
-    record?: "historical" | "forward";
-    processingMode?: "batch" | "immediate";
-  } = {},
+  options: QueueOptions = {},
+) {
+  const plan = await queuePlan(source, config, experiment, options);
+  return await create(videoId, plan.model, plan.input, plan.promptVersion);
+}
+/**
+ * What queue() would create for a video under today's settings, without
+ * creating it: the extraction model, the frozen run input and the prompt
+ * version. Reuse (F74) compares this against a finished run before paying for
+ * a second one.
+ */
+export async function queuePlan(
+  source?: unknown,
+  config?: QueueConfig,
+  experiment = false,
+  options: QueueOptions = {},
 ) {
   const origin = z
     .object({
@@ -458,10 +475,10 @@ export async function queue(
   if (experiment) effective.models.critique.requireDifferentFamily = true;
   assertCriticIndependent(effective);
   const snapshot = await prompt(p.promptVersion);
-  return await create(
-    videoId,
-    p.model,
-    {
+  return {
+    model: p.model,
+    promptVersion: p.promptVersion,
+    input: {
       ...(source ? { source } : {}),
       teamPreferencesSnapshot: TeamPreferences.parse(effective),
       origin: origin.origin,
@@ -482,9 +499,8 @@ export async function queue(
       },
       transcriptionWindowSeconds: p.windowedTranscription ? 600 : 0,
       nativeGoogleExperimental: p.nativeGoogleExperimental,
-    },
-    p.promptVersion,
-  );
+    } as Record<string, unknown>,
+  };
 }
 export function accepted(r: Run): CheckedClaim[] {
   return r.status === "completed"

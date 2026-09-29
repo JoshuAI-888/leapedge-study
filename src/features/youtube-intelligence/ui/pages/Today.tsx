@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ResearchOverview } from "../ResearchBrief.tsx";
 import { SentimentPanel } from "../SentimentPanel.tsx";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useWorkspace } from "../workspace.tsx";
 import { action } from "../api.ts";
 import {
@@ -27,6 +28,7 @@ import { hiddenByFilter, trustOptionLabel } from "../foundations.ts";
 export function Today() {
   const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
     useWorkspace();
+  const router = useRouter();
   const [url, setUrl] = useState(""),
     [search, setSearch] = useState(""),
     [minimum, setMinimum] = useState(""),
@@ -106,10 +108,24 @@ export function Today() {
           className="yi-quick-analyse"
           onSubmit={(e) => {
             e.preventDefault();
-            void perform(async () => {
-              await action("runs", "analyse", { url });
-              setUrl("");
-            }, "Video queued. Its progress appears below.");
+            void perform(
+              async () => {
+                const { result } = await action<{
+                  result: { reused?: boolean; runId?: string; analysedAt?: string | null };
+                }>("runs", "analyse", { url });
+                setUrl("");
+                // A finished analysis on the current pipeline is opened, not paid for again (F74).
+                if (result.reused && result.runId)
+                  router.push(`/youtube-intelligence/analysis/${encodeURIComponent(result.runId)}`);
+                return result;
+              },
+              (result) => {
+                const r = result as { reused?: boolean; analysedAt?: string | null };
+                return r.reused
+                  ? `Already analysed ${dateLabel(r.analysedAt)} with the current pipeline. Opened it, no new cost.`
+                  : "Video queued. Its progress appears below.";
+              },
+            );
           }}
         >
           <label htmlFor="video-url">Analyse a YouTube video</label>
