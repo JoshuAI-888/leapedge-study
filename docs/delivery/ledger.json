@@ -1350,19 +1350,22 @@
       "lane": "time",
       "title": "US trading-day sessions (ET, holiday-aware) and team time zone setting",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F05"
       ],
       "files": [
         "src/features/youtube-intelligence/trading-day.ts",
-        "src/features/youtube-intelligence/ui/TradingDay.tsx"
+        "src/features/youtube-intelligence/ui/TradingDay.tsx",
+        "src/features/youtube-intelligence/settings.ts",
+        "src/features/youtube-intelligence/ui/pages/Settings.tsx"
       ],
       "tests": [
         "tests/trading-day.test.ts"
       ],
-      "note": "Gap 14. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F58). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "America/New_York sessions with a static NYSE 2025-2027 closure table (16:00:00 rolls forward, weekends and holidays roll to the next session), labels with assignment-reason hover, market status. Team display time zone (default Pacific/Auckland) in Settings; account digest zone follows it unless set. Leaderboard As-of is a session label. Market status line and non-trading-day date pickers are placed by the page lanes. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F58).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F59",
@@ -1370,7 +1373,7 @@
       "lane": "extraction",
       "title": "Macro, theme and sector views with a fixed vocabulary, instrument label and type filter",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F19",
         "F43"
@@ -1382,8 +1385,9 @@
       "tests": [
         "tests/instrument-kind.test.ts"
       ],
-      "note": "Gap 13. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F59). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Fixed macro vocabulary and GICS sectors with sub-themes, EN/ZH synonym normalisation that refuses ambiguous phrases, instrumentKind/describeInstrument, InstrumentLabel on ClaimCard and Today. The prompt field macro_theme ships with F60's prompt version; Type filter and aggregation are wired by the Search/Trends/report lanes. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F59).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F60",
