@@ -1493,7 +1493,7 @@
       "lane": "research-ui",
       "title": "Daily report page and archive: themes with citations, in-focus ranking, disagreements, sources; Today summary card",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F56",
         "F57",
@@ -1502,13 +1502,17 @@
       ],
       "files": [
         "src/features/youtube-intelligence/ui/pages/Report.tsx",
-        "src/server/youtube-intelligence/daily-report.ts"
+        "src/server/youtube-intelligence/daily-report.ts",
+        "src/server/youtube-intelligence/actions/report.ts",
+        "src/features/youtube-intelligence/report.ts",
+        "src/features/youtube-intelligence/ui/ReportSummaryCard.tsx"
       ],
       "tests": [
         "tests/daily-report.test.ts"
       ],
-      "note": "Gap 1. Builds on briefings.ts and briefing-pipeline.ts; email delivery stays in F54. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F64). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Daily report per US session built on the briefing code: deterministic headline and split, cited themes, in-focus ranking with change vs the previous session, disagreements, video briefs (moved from Today, D3), sources with verdict lines, critic-removed points kept visible; archive; session navigation skipping non-trading days; report/session and report/archive reads and the existing synthesis as the spending action. ReportSummaryCard placed on Today. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F64).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F65",
@@ -1516,7 +1520,7 @@
       "lane": "research-ui",
       "title": "Trends page: headline tiles, weekly sentiment columns, price-aligned call timeline, drill list",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F56",
         "F57",
@@ -1525,13 +1529,15 @@
       ],
       "files": [
         "src/features/youtube-intelligence/ui/pages/Trends.tsx",
+        "src/features/youtube-intelligence/trends-series.ts",
         "src/features/youtube-intelligence/ui/charts.tsx"
       ],
       "tests": [
         "tests/trends-series.test.ts"
       ],
-      "note": "Gap 3. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F65). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Trends by ticker, channel or sentiment over session-bucketed series: tiles, weekly/daily bullish-above bearish-below columns, price chart on the same x axis with its own scale and conviction-sized call dots, lane timeline for channel/sentiment views, crosshair tooltip, 24px dot targets, chart/table toggle, drill list with Export. market/priceSeries read. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F65).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F66",
@@ -1539,20 +1545,22 @@
       "lane": "research-ui",
       "title": "Channel detail page: stats, lean, record vs benchmark, calls over time, analyses list",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F56",
         "F65",
         "F36"
       ],
       "files": [
-        "src/features/youtube-intelligence/ui/pages/Channel.tsx"
+        "src/features/youtube-intelligence/ui/pages/Channel.tsx",
+        "src/features/youtube-intelligence/channel-page.ts"
       ],
       "tests": [
         "tests/channel-page.test.ts"
       ],
-      "note": "Gap 4. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F66). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Channel page with follow/process controls, tiles (videos, calls per video, lean, record vs benchmark using the leaderboard minimum), calls over time, most-discussed instruments, recent analyses with verdict lines, collapsed Processing. Leaderboard creator names link here. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F66).",
+      "planned": true,
+      "pr": 19
     },
     {
       "id": "F67",

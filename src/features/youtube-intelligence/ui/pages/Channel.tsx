@@ -1,4 +1,5 @@
 "use client";
+import { UnreadDot } from "../UnreadDot.tsx";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { z } from "zod";
@@ -267,6 +268,7 @@ function ChannelPage({ id }: { id: string }) {
             <ul className="yi-report-sources">
               {videos.rows.map((v) => (
                 <li key={v.runId}>
+                  <UnreadDot run={{ id: v.runId, status: v.status, at: v.createdAt }} />
                   <Link href={`/youtube-intelligence/analysis/${encodeURIComponent(v.runId)}`}>{v.title || v.videoId}</Link>
                   <span className="yi-muted">
                     <TradingDay at={v.publishedAt} />

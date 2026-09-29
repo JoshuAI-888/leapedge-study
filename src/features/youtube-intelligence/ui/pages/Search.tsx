@@ -26,6 +26,7 @@ import { trapFocus } from "../focus-trap.ts";
 import { INSTRUMENT_KINDS } from "../../instrument-kind.ts";
 import { SENTIMENT_GLYPH, sentimentOf, trustOptionLabel } from "../foundations.ts";
 import { useQueryPages } from "../use-query-pages.ts";
+import { UnreadDot } from "../UnreadDot.tsx";
 import { ExportMenu } from "../ExportMenu.tsx";
 import {
   CONVICTION_OPTIONS,
@@ -479,6 +480,7 @@ function CallResult({
 function VideoResult({ row, q }: { row: VideoRow; q: string }) {
   return (
     <li className="yi-search-video">
+      <UnreadDot run={{ id: row.runId, status: row.status, at: row.createdAt }} />
       <Link className="yi-search-video-title" href={`${BASE}/analysis/${encodeURIComponent(row.runId)}`}>
         <Highlight text={row.title ?? row.videoId} q={q} />
       </Link>

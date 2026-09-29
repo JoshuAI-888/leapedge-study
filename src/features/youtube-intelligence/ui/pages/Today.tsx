@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ResearchOverview } from "../ResearchBrief.tsx";
+import { ReportSummaryCard } from "../ReportSummaryCard.tsx";
 import { SentimentPanel } from "../SentimentPanel.tsx";
 import { Watchlist } from "../Watchlist.tsx";
 import { UnreadDot, runsForUnread } from "../UnreadDot.tsx";
@@ -89,7 +89,6 @@ export function Today() {
         a.id.localeCompare(b.id)
       );
     });
-  const across = allCreators.slice(0, 6);
   const shown = claims.slice(0, limit);
   const recovered = recoveredRuns(data.runs);
   const latestBriefs = latestResearchBySource(data.snapshot.researchBriefs);
@@ -162,7 +161,7 @@ export function Today() {
           </div>
         </form>
       </PageTitle>
-      <ResearchOverview />
+      <ReportSummaryCard />
       <div className="yi-today-layout">
         <div className="yi-today-primary">
           <section className="yi-panel yi-calls-panel">
@@ -496,36 +495,6 @@ export function Today() {
         <aside className="yi-today-rail" aria-label="Research context">
           <Watchlist />
           <SentimentPanel />
-          <section className="yi-panel">
-            <h2>Across creators</h2>
-            {across.length ? (
-              <ul className="yi-list">
-                {across.map((row) => (
-                  <li key={row.ticker}>
-                    <strong>{row.ticker}</strong>
-                    <div className="yi-row">
-                      {Object.entries(row.stances).map(([direction, count]) => (
-                        <span
-                          key={direction}
-                          className={`yi-chip yi-stance-${direction}`}
-                        >
-                          {count} {direction}
-                        </span>
-                      ))}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="yi-muted">
-                No dated creator calls match this view.
-              </p>
-            )}
-            <p className="yi-muted">
-              Latest dated stance per known creator among calls matching search
-              and trust. Agreement is not proof a thesis is correct.
-            </p>
-          </section>
           <section className="yi-panel">
             <h2>
               Needs your review{" "}
