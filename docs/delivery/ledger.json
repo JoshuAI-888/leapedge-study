@@ -1828,10 +1828,12 @@
   "analystView20260929": {
     "status": "in-review",
     "date": "2026-09-29",
-    "scope": "Analyst view PR 3 (docs/delivery/analyst-view-plan.md), iteration 1. buildAnalystView assembles, by code only, the page a PM reads: summary from the highest-materiality brief sentences, creator stance counts, idea cards (one per resolved instrument and owner; executed trades first, third parties last; levels, option, size, catalysts merged; a quote excerpt of whole sentences naming the instrument, with timestamp), one sentiment row per instrument (critic-rejected mentions dropped, disagreement shown as mixed), themes, key points (10 at most), numbers, content gaps the creator did not state, and misheard numbers; pipeline notes and name-spelling doubts go to a collapsed processing panel. Served with the run as analystView and analystNote (copy as note, also what the benchmark judge reads). The full brief is collapsed below. Also: a critic that skips ids is re-asked for those ids twice automatically; still-unanswered items are withheld with the reason instead of failing the run (1WNowIoNgtg failed this way on 29 Sep).",
+    "scope": "Analyst view PR 3 (docs/delivery/analyst-view-plan.md), iteration 1. buildAnalystView assembles, by code only, the page a PM reads: summary from the highest-materiality brief sentences, creator stance counts, idea cards (one per resolved instrument and owner; executed trades first, third parties last; levels, option, size, catalysts merged; a quote excerpt of whole sentences naming the instrument, with timestamp), one sentiment row per instrument (critic-rejected mentions dropped, disagreement shown as mixed), themes, key points (10 at most), numbers, content gaps the creator did not state, and misheard numbers; pipeline notes and name-spelling doubts go to a collapsed processing panel. Served with the run as analystView and analystNote (copy as note, also what the benchmark judge reads). The full brief is collapsed below. Also: a critic that skips ids is re-asked for those ids twice automatically; still-unanswered items are withheld with the reason instead of failing the run (1WNowIoNgtg failed this way on 29 Sep). And: a run put back in the queue after its job had finished (runs/recoverAudit) was never picked up, because re-enqueueing the same job id is a no-op; the sweep now reopens that job (1WNowIoNgtg sat queued on 29 Sep).",
     "tests": [
+      "tests/activity-performance.test.ts",
       "tests/analyst-view.test.ts",
-      "tests/critique.test.ts"
+      "tests/critique.test.ts",
+      "tests/drain.test.ts"
     ],
     "verification": "Browser check on a local Postgres copy of the v9 U32FPvvBaNI run at 1366 and 390 px: 6 idea cards, 11 sentiment rows, brief collapsed, no horizontal overflow."
   }
