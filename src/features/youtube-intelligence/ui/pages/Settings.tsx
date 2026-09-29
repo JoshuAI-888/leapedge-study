@@ -7,6 +7,11 @@ import { useWorkspace, type Preferences } from "../workspace.tsx";
 import { action } from "../api.ts";
 import { money } from "../viewmodel.ts";
 import { PageTitle } from "../components.tsx";
+import {
+  DEFAULT_TIME_ZONE,
+  isValidTimeZone,
+  timeZoneOptions,
+} from "../../trading-day.ts";
 const labels: Record<string, string> = {
   monthlyUsd: "Monthly budget (US$)",
   perVideoMaxUsd: "Maximum per video (US$)",
@@ -90,6 +95,7 @@ function ObjectFields({
             "defaultSelection",
             "autoAnalyzeNewChannels",
             "requireDifferentFamily",
+            "display",
           ].includes(key)
         )
           return null;
@@ -162,7 +168,8 @@ function ObjectFields({
 export function Settings() {
   const { data, busy, perform } = useWorkspace();
   const [team, setTeam] = useState<Preferences["team"] | null>(null),
-    [account, setAccount] = useState<Preferences["account"] | null>(null);
+    [account, setAccount] = useState<Preferences["account"] | null>(null),
+    [zoneText, setZoneText] = useState<string | null>(null);
   if (!data) return null;
   const t = team ?? data.preferences.team,
     a = account ?? data.preferences.account,
@@ -433,7 +440,10 @@ export function Settings() {
             () => action("settings", "saveTeam", t),
             "Team configuration saved. New analyses use this version.",
           ).then((ok) => {
-            if (ok) setTeam(null);
+            if (ok) {
+              setTeam(null);
+              setZoneText(null);
+            }
           });
         }}
       >
@@ -444,6 +454,44 @@ export function Settings() {
             Existing results keep their original configuration. The critic must
             always use a different model family from extraction.
           </p>
+          <fieldset className="yi-panel" id="yi-team-time-zone">
+            <legend>Time zone</legend>
+            <div className="yi-settings-fields">
+              <label>
+                Team time zone
+                <input
+                  list="yi-time-zone-options"
+                  required
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={zoneText ?? t.display?.timezone ?? DEFAULT_TIME_ZONE}
+                  aria-describedby="yi-time-zone-description"
+                  aria-invalid={zoneText !== null && !isValidTimeZone(zoneText)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setZoneText(value);
+                    if (isValidTimeZone(value))
+                      setTeam({ ...t, display: { ...t.display, timezone: value } });
+                  }}
+                />
+                <datalist id="yi-time-zone-options">
+                  {timeZoneOptions().map((zone) => (
+                    <option key={zone} value={zone} />
+                  ))}
+                </datalist>
+              </label>
+            </div>
+            <p id="yi-time-zone-description" className="yi-muted">
+              Publish times display on this clock for everyone. Days are
+              always US trading sessions (New York), and the digest uses this
+              zone unless an account sets its own.
+            </p>
+            {zoneText !== null && !isValidTimeZone(zoneText) && (
+              <p className="yi-warning" role="alert">
+                Choose a time zone from the list, for example Pacific/Auckland.
+              </p>
+            )}
+          </fieldset>
           <fieldset className="yi-panel">
             <legend>Analysis pipeline</legend>
             <div className="yi-settings-fields">
@@ -518,16 +566,30 @@ export function Settings() {
             <button
               type="button"
               className="yi-secondary"
-              onClick={() => setTeam(data.preferences.defaults)}
+              onClick={() => {
+                setTeam(data.preferences.defaults);
+                setZoneText(null);
+              }}
             >
               Reset to product defaults
             </button>
-            <button disabled={busy || !team}>Save team configuration</button>
+            <button
+              disabled={
+                busy ||
+                !team ||
+                (zoneText !== null && !isValidTimeZone(zoneText))
+              }
+            >
+              Save team configuration
+            </button>
             <button
               className="yi-secondary"
               type="button"
               disabled={!team}
-              onClick={() => setTeam(null)}
+              onClick={() => {
+                setTeam(null);
+                setZoneText(null);
+              }}
             >
               Discard changes
             </button>

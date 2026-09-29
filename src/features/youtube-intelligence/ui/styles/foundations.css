@@ -1,1 +1,20 @@
 /* Phase 5 (foundations lane). Global classes use the yi- prefix and the --yi-* tokens from workspace.css. */
+
+/* F58 trading-day label and market status (data/extraction lane). */
+.yi-trading-day {
+  white-space: nowrap;
+  cursor: help;
+  text-decoration: underline dotted var(--yi-line);
+  text-underline-offset: 3px;
+}
+.yi-trading-day:focus-visible {
+  outline: 2px solid var(--yi-primary);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.yi-market-status {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--yi-muted);
+  font-variant-numeric: tabular-nums;
+}
