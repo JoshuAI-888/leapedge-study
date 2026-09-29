@@ -149,6 +149,11 @@ function marketInstant(date: string, minutes: number): Date {
   return new Date(at);
 }
 
+/** The instant of a session's regular 16:00 New York close (F69's 24h window). */
+export function sessionClose(date: string): Date {
+  parseDay(date);
+  return marketInstant(date, CLOSE_MINUTES);
+}
 export function holidayName(date: string): string | null {
   parseDay(date);
   return NYSE_HOLIDAYS[date] ?? null;

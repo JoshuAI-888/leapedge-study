@@ -577,6 +577,9 @@
   }
   .yi-workspace .yi-chip.yi-watchlist-flag {
     justify-self: start;
+  }
+}
+
 /* F75 — Saved calls (saved lane). Price moves are ink text; colour means sentiment only. */
 .yi-saved-tabs button {
   display: inline-flex;
@@ -728,4 +731,73 @@
   .yi-workspace .yi-saved-tabs .yi-saved-count {
     padding: 0 5px;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   F69 — Sentiment panel: 24h · 7d · 14d · 30d segments and trending rows
+   --------------------------------------------------------------------------- */
+.yi-sentiment-panel .yi-segmented button {
+  padding: 5px 9px;
+}
+.yi-sentiment-rows {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.yi-sentiment-rows > li {
+  padding: 9px 0;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-sentiment-rows > li:first-child {
+  border-top: 0;
+}
+.yi-sentiment-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "name creators change"
+    "split split split";
+  align-items: center;
+  gap: 5px 10px;
+}
+.yi-sentiment-row > .yi-instrument {
+  grid-area: name;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-workspace .yi-sentiment-row > a.yi-instrument {
+  color: var(--yi-ink);
+  font-size: 13px;
+}
+.yi-sentiment-row .yi-instrument-hint {
+  display: none;
+}
+.yi-sentiment-row > .yi-split {
+  grid-area: split;
+}
+.yi-sentiment-creators,
+.yi-sentiment-change {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.yi-sentiment-creators {
+  grid-area: creators;
+  color: var(--yi-muted);
+}
+.yi-sentiment-change {
+  grid-area: change;
+  font-weight: 600;
+  text-align: right;
+  cursor: help;
+}
+.yi-sentiment-evidence {
+  margin-top: 4px;
+  font-size: 12px;
+}
+.yi-sentiment-evidence summary {
+  cursor: pointer;
+  color: var(--yi-muted);
 }
