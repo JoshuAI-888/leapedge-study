@@ -198,6 +198,20 @@ export function sessionFor(instant: Instant): SessionAssignment {
   };
 }
 
+/**
+ * The instants a session covers, as `sessionFor` assigns them: from the
+ * previous session's 16:00 ET close (inclusive) to this session's 16:00 ET
+ * close (exclusive), so weekends and holidays fall inside the next session.
+ * F64 queries a report's calls with this window.
+ */
+export function sessionWindow(date: string): { from: string; to: string } {
+  if (!isTradingDay(date)) throw new RangeError(`Not a trading day: ${date}`);
+  return {
+    from: marketInstant(previousSession(date), CLOSE_MINUTES).toISOString(),
+    to: marketInstant(date, CLOSE_MINUTES).toISOString(),
+  };
+}
+
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",

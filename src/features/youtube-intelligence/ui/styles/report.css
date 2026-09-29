@@ -1,1 +1,342 @@
 /* Phase 5 (report lane). Global classes use the yi- prefix and the --yi-* tokens from workspace.css. */
+
+/* F64 — daily report. Main column plus the archive on the right (desktop). */
+.yi-report-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 20px;
+  align-items: start;
+  transition: opacity 0.15s;
+}
+.yi-report-main {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.yi-workspace .yi-report-main > *,
+.yi-workspace .yi-report-briefs > .yi-panel {
+  margin: 0;
+}
+/* Refetch keeps the frame: the previous render stays, dimmed. */
+.yi-refetching {
+  opacity: 0.6;
+}
+.yi-report-header h2.yi-report-headline {
+  font-size: 21px;
+  line-height: 1.35;
+  font-weight: 650;
+  margin: 6px 0 10px;
+}
+.yi-report-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.yi-report-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--yi-line);
+  border-radius: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.yi-workspace a.yi-report-step:hover {
+  text-decoration: none;
+  background: var(--yi-selected);
+}
+.yi-report-date {
+  flex: 0 1 190px;
+}
+.yi-report-meta {
+  font-size: 12.5px;
+  margin: 8px 0 0;
+}
+.yi-report-state p {
+  margin: 0 0 6px;
+}
+.yi-report-state .yi-row {
+  margin-top: 10px;
+}
+.yi-report-state .yi-row .yi-muted {
+  font-size: 12px;
+  flex: 1 1 260px;
+}
+.yi-report-removed h2 {
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+.yi-report-removed ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+.yi-report-removed li p {
+  margin: 0 0 4px;
+}
+.yi-report-removed li {
+  margin-bottom: 10px;
+}
+
+/* Themes and citation chips: "Macro Mike ▶ 4:12" opens the analysis there. */
+.yi-report-themes {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+}
+.yi-cite-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  vertical-align: middle;
+}
+.yi-workspace a.yi-cite {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 1px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--yi-line);
+  background: var(--yi-page);
+  color: var(--yi-ink);
+  font-size: 11.5px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+.yi-workspace a.yi-cite:hover {
+  border-color: var(--yi-primary);
+  text-decoration: none;
+}
+
+/* In focus: one expandable row per instrument. */
+.yi-focus-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-focus-list > li {
+  border-bottom: 1px solid var(--yi-line);
+}
+.yi-focus-list summary {
+  display: grid;
+  grid-template-columns: 22px minmax(90px, 150px) 88px minmax(170px, 210px) 76px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 10px 4px;
+  cursor: pointer;
+  list-style: none;
+}
+.yi-focus-list summary::-webkit-details-marker {
+  display: none;
+}
+.yi-focus-list summary:hover {
+  background: var(--yi-page);
+}
+.yi-focus-rank {
+  color: var(--yi-muted);
+  font-variant-numeric: tabular-nums;
+}
+.yi-focus-creators,
+.yi-focus-change {
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-focus-reason {
+  font-size: 13px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-focus-list details[open] .yi-focus-reason {
+  white-space: normal;
+}
+.yi-report-calls {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px 12px 34px;
+  display: grid;
+  gap: 10px;
+}
+.yi-report-call p {
+  margin: 4px 0;
+}
+.yi-report-call blockquote {
+  margin: 4px 0 0;
+  padding-left: 10px;
+  border-left: 2px solid var(--yi-line);
+  font-size: 12.5px;
+}
+
+/* Where creators disagree: the two sides side by side. */
+.yi-disagree-list {
+  display: grid;
+  gap: 16px;
+}
+.yi-disagree h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+.yi-disagree-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.yi-disagree-sides h4 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--yi-muted);
+}
+.yi-disagree-sides .yi-report-calls {
+  padding: 0;
+}
+
+/* Sources with their verdict line. */
+.yi-report-sources {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.yi-report-sources li {
+  display: grid;
+  gap: 2px;
+}
+.yi-report-sources .yi-muted {
+  font-size: 12px;
+}
+.yi-verdict-line {
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-report-thesis {
+  white-space: normal !important;
+  min-width: 260px;
+}
+.yi-report-all-calls > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 6px 0;
+}
+
+/* Archive of past sessions. */
+.yi-report-archive h2 {
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+.yi-report-archive ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.yi-report-archive li {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 9px;
+}
+.yi-report-archive li a {
+  display: grid;
+  gap: 1px;
+  color: var(--yi-ink);
+}
+.yi-report-archive li a span {
+  font-size: 12px;
+  color: var(--yi-muted);
+  line-height: 1.4;
+}
+.yi-report-archive li:has(a[aria-current="page"]) {
+  background: var(--yi-selected);
+}
+.yi-report-archive .yi-split-counts {
+  font-size: 11px;
+}
+
+/* Today's summary card. */
+.yi-report-summary-headline {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+.yi-report-summary-focus {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.yi-report-summary-focus li {
+  display: grid;
+  grid-template-columns: minmax(80px, 140px) 80px auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12.5px;
+}
+
+@media (max-width: 1150px) {
+  .yi-report-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .yi-focus-list summary {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rank instrument change"
+      "rank creators split"
+      "rank reason reason";
+    row-gap: 6px;
+  }
+  .yi-focus-rank {
+    grid-area: rank;
+    align-self: start;
+  }
+  .yi-focus-instrument {
+    grid-area: instrument;
+  }
+  .yi-focus-creators {
+    grid-area: creators;
+  }
+  .yi-focus-split {
+    grid-area: split;
+    justify-self: end;
+  }
+  .yi-focus-change {
+    grid-area: change;
+    justify-self: end;
+  }
+  .yi-focus-reason {
+    grid-area: reason;
+    white-space: normal;
+  }
+}
+@media (max-width: 720px) {
+  .yi-report-nav .yi-report-step span {
+    display: none;
+  }
+  .yi-disagree-sides {
+    grid-template-columns: 1fr;
+  }
+  .yi-report-calls {
+    padding-left: 4px;
+  }
+  .yi-report-header h2.yi-report-headline {
+    font-size: 18px;
+  }
+  .yi-report-summary-focus li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .yi-report-summary-focus li .yi-split {
+    grid-column: 1 / -1;
+  }
+}

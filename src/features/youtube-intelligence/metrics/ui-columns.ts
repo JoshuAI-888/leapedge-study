@@ -12,6 +12,12 @@ export type UiColumn = {
   metricId: string;
 };
 export const uiColumns: UiColumn[] = [
+  // F64: the daily report's calls table.
+  { surface: "report.calls", column: "Instrument", metricId: "today.instrument" },
+  { surface: "report.calls", column: "Stance", metricId: "today.stance" },
+  { surface: "report.calls", column: "Thesis & conditions", metricId: "today.thesis" },
+  { surface: "report.calls", column: "Channel", metricId: "channel.title" },
+  { surface: "report.calls", column: "Trust", metricId: "today.trust" },
   { surface: "today.calls", column: "Creators", metricId: "today.creators" },
   {
     surface: "today.calls",

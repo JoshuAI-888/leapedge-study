@@ -179,6 +179,8 @@ const CANONICAL = `SELECT DISTINCT ON (r.video_id) r.id
     AND CASE WHEN p.id IS NOT NULL THEN (p.payload::jsonb->>'runId')=r.id
       ELSE COALESCE(r.input::jsonb->>'experiment','false')<>'true' END
   ORDER BY r.video_id, r.created_at DESC, r.id DESC`;
+/** The canonical run ids as SQL, for other read paths (the daily report, F64). */
+export const CANONICAL_RUNS_SQL = CANONICAL;
 const PINNED = `SELECT upper(id) FROM yi_documents WHERE kind='watchlist' AND (payload::jsonb->>'enabled')='true'`;
 const KEY = (a: string) => `COALESCE(${a}.ticker,${a}.instrument)`;
 const AT = (a: string) => `COALESCE(${a}.published_at,${a}.created_at)`;
