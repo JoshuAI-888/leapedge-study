@@ -566,7 +566,8 @@ export async function health() {
     workerLastSeen: Number(at) || null,
     hasYouTubeKey: !!process.env.YOUTUBE_API_KEY,
     hasModelKey: !!process.env.OPENROUTER_API_KEY,
-    budgetUsd: Number(process.env.YTI_BUDGET_USD || "2"),
+    // Optional all-time ceiling; null when unset (the monthly budget governs).
+    budgetUsd: process.env.YTI_BUDGET_USD ? Number(process.env.YTI_BUDGET_USD) : null,
     spentOrReservedUsd: (
       (await (
         await db()
