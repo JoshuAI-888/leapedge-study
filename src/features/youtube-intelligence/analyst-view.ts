@@ -210,34 +210,11 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
       claimIds: sorted.map((m) => m.id),
     };
   });
-  // A value the transcript flags as probably misheard is shown with the likely
-  // reading beside it, never as a plain fact ("$1.85 (likely $11.85)").
-  const misheard = new Map(
-    input.transcriptionDoubts.filter((d) => /\d/.test(d.heard)).map((d) => [d.heard.trim(), d.likely.trim()]),
-  );
-  const flag = (v: string | null) => (v && misheard.has(v.trim()) ? `${v} (likely ${misheard.get(v.trim())})` : v);
-  for (const idea of ideas) {
-    idea.size = flag(idea.size);
-    idea.levels = idea.levels.map((l) => ({ ...l, value: flag(l.value)! }));
-    if (idea.option) idea.option = { ...idea.option, strike: flag(idea.option.strike), expiry: flag(idea.option.expiry), premium: flag(idea.option.premium) };
-  }
   // One third party's view on several instruments is one card, not one per
   // ticker (a fund manager's four shorts), so the creator's own ideas lead.
   const ideaKeys = new Set(ideas.map((i) => i.key.split("|")[0]));
   const merged: IdeaCardData[] = [];
   for (const idea of ideas) {
-    // Someone else's view on an instrument the creator has a card for is a
-    // credited line on that card, not a second card for the same call.
-    const own = idea.owner !== "creator"
-      ? ideas.find((m) => m.owner === "creator" && m.key.split("|")[0] === idea.key.split("|")[0])
-      : undefined;
-    if (own) {
-      const who = `${idea.ownerName ?? (idea.owner === "guest" ? "A guest" : "A third party")} (${idea.owner === "guest" ? "guest" : "third party"})`;
-      const levels = idea.levels.map((l) => `${l.kind} ${l.value}${l.condition ? ` (${l.condition})` : ""}`).join("; ");
-      own.also.push(`${who}: ${idea.thesis}${levels ? ` Levels: ${levels}.` : ""}`);
-      own.claimIds.push(...idea.claimIds);
-      continue;
-    }
     const twin = idea.owner !== "creator" && idea.ownerName
       ? merged.find((m) => m.owner === idea.owner && m.ownerName === idea.ownerName && m.stance === idea.stance)
       : undefined;
@@ -432,7 +409,6 @@ export function analystNote(v: AnalystViewData): string {
         i.conditions.length && `If: ${i.conditions.join("; ")}`,
         i.catalysts.length && `Catalysts: ${i.catalysts.map((k) => `${k.text}${k.date ? ` (${k.date})` : ""}`).join("; ")}`,
         i.risks.length && `Risks: ${i.risks.join("; ")}`,
-        ...i.also.map((a) => `Also: ${a}`),
       ].filter(Boolean);
       lines.push(...facts.map((f) => `- ${f}`));
       // A PM reads the checked English; the original words stay on the page.
