@@ -240,7 +240,13 @@ test("OpenRouter transport refuses to run without a key and classifies HTTP fail
         );
         assert.equal(error.kind, kind);
         assert.equal(error.status, status);
-        if (status)
+        if (status === 400)
+          assert.equal(
+            error.message,
+            "Provider HTTP 400. No automatic paid retry. Provider said: nope",
+            "a rejected request keeps the provider's reason",
+          );
+        else if (status)
           assert.equal(
             error.message,
             `Provider HTTP ${status}. No automatic paid retry.`,

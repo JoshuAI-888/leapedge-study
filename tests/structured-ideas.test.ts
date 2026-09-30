@@ -61,6 +61,7 @@ const teslaTarget = {
   catalysts: [],
 };
 
+let runCount = 0;
 async function run(structuredIdeas: boolean, reply: unknown) {
   const snapshot = {
     id: structuredIdeas ? "structured.test.v9" : "structured.test.v8",
@@ -72,7 +73,7 @@ async function run(structuredIdeas: boolean, reply: unknown) {
     pointerEvidence: true,
     ...(structuredIdeas ? { structuredIdeas: true } : {}),
   };
-  const r = await create(`structured-${structuredIdeas}`, "google/gemini-3.8-flash", { promptSnapshot: snapshot }, snapshot.id);
+  const r = await create(`structured-${structuredIdeas}-${++runCount}`, "google/gemini-3.8-flash", { promptSnapshot: snapshot }, snapshot.id);
   r.stage = "synthesis";
   r.output.metadata = { duration: 18 };
   r.output.source = source;
@@ -119,4 +120,16 @@ test("earlier prompt versions keep the earlier schema and output", async () => {
   assert.deepEqual(fake.requestsFor("synthesis")[0].responseSchema, extractionResponseSchema);
   assert.equal(r.output.transcriptionDoubts, undefined);
   assert.equal(r.output.ideaDetailRemovals, undefined);
+});
+
+test("one malformed item drops that item with its reason instead of failing the extraction", async () => {
+  const badKeyPoint = { ...teslaTarget, horizon_en: "长期", action: undefined, owner: undefined, owner_name: undefined, option: undefined, size_original: undefined, catalysts: undefined, levels: [] };
+  const { r } = await run(true, { claims: [uberCall], key_points: [badKeyPoint], mentions: [], transcription_doubts: [] });
+  assert.equal(r.status === "failed", false);
+  assert.equal(r.stage, "critique");
+  assert.equal((r.output.claims as unknown[]).length, 1);
+  const dropped = r.output.rejectedEvidence as { kind: string; reason: string }[];
+  assert.equal(dropped.length, 1);
+  assert.equal(dropped[0].kind, "key_point");
+  assert.match(dropped[0].reason, /horizon_en.*English/);
 });
