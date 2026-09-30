@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildAnalystView, analystNote, excerpt, type AnalystViewInput } from "../src/features/youtube-intelligence/analyst-view.ts";
+import { buildAnalystView, analystNote, atAGlance, excerpt, type AnalystViewInput } from "../src/features/youtube-intelligence/analyst-view.ts";
 import type { CheckedClaim, ClaimData, MentionData } from "../src/features/youtube-intelligence/contracts.ts";
 import type { ListingRefData } from "../src/features/youtube-intelligence/listing-ref.ts";
 
@@ -149,8 +149,9 @@ test("pipeline bookkeeping goes to processing notes; content gaps and misheard n
 test("the note a PM copies has the ideas and none of the pipeline text", () => {
   const note = analystNote(buildAnalystView(input()));
   assert.match(note, /### WYNN \(WYNN RESORTS LTD\) · Bought · long · conviction high/);
-  assert.match(note, /At a glance: Bought: WYNN · Watching: CELH · Third-party view: TSLA/);
-  assert.doesNotMatch(note, /Creator stance|## Numbers|## Themes/);
+  assert.match(note, /## Summary\nWynn is the main new buy\. Rates are the key macro risk\.\n/, "the summary is one paragraph");
+  assert.doesNotMatch(note, /At a glance|Also discussed|Also mentioned|Watch-outs|Creator stance|## Numbers|## Themes/, "the note is summary, ideas and context only");
+  assert.equal(atAGlance(buildAnalystView(input())), "Bought: WYNN · Watching: CELH · Third-party view: TSLA", "the page keeps the glance line");
   assert.match(note, /- Size: \$8,400/);
   assert.match(note, /third party: Morgan Stanley/);
   assert.match(note, /> "I bought \$8,400 of Winning Resorts here today\." \[10:00\]/);
@@ -184,4 +185,26 @@ test("one third party's views on several tickers are one card, and a translation
   const only = buildAnalystView({ ...base, claims: [base.claims[0]] }).ideas[0];
   assert.equal(only.quote?.text, "存款利率只有0.01%");
   assert.equal(only.quote?.translation, null, "0.07% is not what was said");
+});
+
+test("key points never cite a card's evidence, filler conditions go, the creator leads, and the quote fits the thesis", () => {
+  const base = input();
+  base.claims[2].claim.action = "bought"; // a third party's executed trade still ranks after the creator's ideas
+  base.claims[1].claim.conditions_en = ["if long-term", "Oil prices peak and rates start heading down"];
+  base.claims[1].claim.evidence = [
+    { segment_id: "s0", quote_original: "The chart colours are green today.", quote_translation_en: "The chart colours are green today." },
+    ...base.claims[1].claim.evidence,
+  ];
+  const brief = base.brief!;
+  brief.sentences = [
+    ...brief.sentences,
+    { ...brief.sentences[1], id: "s3", text: "The creator repeats the Wynn purchase in other words.", kind: "analysis", evidenceIds: ["c2"] },
+  ] as never;
+  const v = buildAnalystView(base);
+  assert.equal(v.ideas.at(-1)?.owner, "third_party");
+  const wynn = v.ideas.find((i) => i.ticker === "WYNN")!;
+  assert.deepEqual(wynn.conditions, ["Oil prices peak and rates start heading down"]);
+  assert.match(wynn.quote!.text, /bought \$8,400/);
+  assert.ok(!v.keyPoints.some((k) => /repeats the Wynn purchase/.test(k.text)));
+  assert.doesNotMatch(analystNote(v), /## Key points[\s\S]*\[\d+:\d{2}\]\n?$/, "key points carry no approximate timestamps");
 });

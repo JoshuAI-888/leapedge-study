@@ -44,6 +44,8 @@ variation (about ±0.3).
 | Baseline (non-blind, raw output) | v8, no analyst view | 2.22 | 4.11 | 2.78 | 3.22 | 3.44 | 2.78 |
 | 1 | v9 structured ideas + analyst view | 2.33 | 3.78 | 3.44 | 2.44 | 3.33 | 2.22 |
 | 2A | page only: no repeats, card-free sentiment list, glance line, shorter | 2.78 | 3.78 | 3.11 | 2.78 | 3.11 | 2.11 |
+| 2B (13 videos) | prompt v10, critic lowers conviction, page fixes | 2.77 | 3.69 | 3.00 | 2.85 | 3.38 | 2.85 |
+| 2C (13 videos) | note = summary paragraph, ideas, key points only | 3.23 | 3.54 | 2.77 | 2.77 | 3.08 | 2.77 |
 
 ## Target
 

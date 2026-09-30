@@ -123,8 +123,17 @@ export function excerpt(text: string, names: string[], limit = 180) {
 }
 /** The numbers written in a text, compared as digit strings so a translation cannot change one. */
 const digits = (t: string) => (t.match(/\d+(?:[.,]\d+)*/g) ?? []).map((n) => n.replace(/,/g, "")).sort().join("|");
+const words = (t: string) => new Set(t.toLowerCase().match(/[\p{L}\p{N}$%.]{3,}/gu) ?? []);
 function quoteOf(claim: ClaimData, names: string[]): z.infer<typeof Quote> | null {
-  const e = claim.evidence[0];
+  // The quote shown is the cited passage that best matches the thesis wording
+  // (in English, through its translation), not just the first range cited.
+  const thesis = words(claim.thesis_en);
+  const overlap = (e: ClaimData["evidence"][number]) => {
+    let n = 0;
+    for (const w of words(`${e.quote_translation_en || ""} ${e.quote_original}`)) if (thesis.has(w)) n++;
+    return n;
+  };
+  const e = [...claim.evidence].sort((a, b) => overlap(b) - overlap(a))[0];
   if (!e) return null;
   // A translation whose numbers differ from the original is not shown: the
   // quote is evidence, and a changed figure inside quotation marks misleads.
@@ -189,7 +198,10 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
         ? { right: option.right, side: option.side, strike: option.strike_original, expiry: option.expiry_original, premium: option.premium_original }
         : null,
       size: all.find((x) => x.size_original)?.size_original ?? null,
-      conditions: unique(all.flatMap((x) => x.conditions_en), (s) => s).slice(0, 2),
+      // A condition of three words or fewer, or one that restates the horizon, is filler.
+      conditions: unique(all.flatMap((x) => x.conditions_en), (s) => s)
+        .filter((t) => t.trim().split(/\s+/).length > 3 && !(c.horizon_en && t.toLowerCase().includes(c.horizon_en.toLowerCase())))
+        .slice(0, 2),
       risks: unique(all.flatMap((x) => x.risks_en), (s) => s).slice(0, 2),
       catalysts: dropContained(unique(all.flatMap((x) => (x.catalysts ?? []).map((k) => ({ text: k.text_en, date: k.date_original }))), (k) => k.text)),
       quote: quoteOf(c, [c.instrument_as_spoken ?? "", c.ticker ?? "", lead.ref?.symbol ?? ""]),
@@ -218,8 +230,8 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   ideas.push(...merged);
   ideas.sort(
     (a, b) =>
-      (ACTION_RANK[a.action ?? ""] ?? 4) - (ACTION_RANK[b.action ?? ""] ?? 4) ||
       OWNER_RANK[a.owner] - OWNER_RANK[b.owner] ||
+      (ACTION_RANK[a.action ?? ""] ?? 4) - (ACTION_RANK[b.action ?? ""] ?? 4) ||
       (CONVICTION_RANK[a.conviction] ?? 9) - (CONVICTION_RANK[b.conviction] ?? 9) ||
       (a.quote?.at ?? Infinity) - (b.quote?.at ?? Infinity),
   );
@@ -285,23 +297,37 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const ranked = sentences
     .map((s, order) => ({ s, order }))
     .sort((a, b) => b.s.materiality - a.s.materiality || a.order - b.order);
-  // The summary is the creator's own view first, three sentences that read on
-  // their own (not one that opens by contrasting another), in video order.
-  const KIND_RANK: Record<string, number> = { creator_view: 0, action: 1, holding: 2, analysis: 3, countercase: 4 };
+  // The summary is the video's takeaway: the creator's own view on the brief's
+  // main topics first, sentences that read on their own, most important first.
+  // Kind is a preference, not a filter: a video of reported facts still gets
+  // a three-sentence summary of what it is about.
+  const KIND_BONUS: Record<string, number> = {
+    creator_view: 4, action: 3, holding: 2, analysis: 1, reported_fact: 0,
+    third_party_forecast: -1, countercase: -1, invalidation: -1, next_check: -2, scenario: -3, education: -5,
+  };
   const CONNECTIVE = /^(In contrast|However|Meanwhile|Additionally|Also|Similarly|Conversely|On the other hand|Furthermore|Moreover|By contrast)\b/i;
+  const mainTopics = new Set((input.brief?.mainTopics ?? []).slice(0, 3).map((t) => t.toLowerCase()));
+  const summaryScore = (x: { materiality: number; kind: string; topic: string }) =>
+    x.materiality * 10 + (mainTopics.has(x.topic.toLowerCase()) ? 5 : 0) + (KIND_BONUS[x.kind] ?? -2);
   const summary = ranked
-    .filter(({ s }) => s.kind in KIND_RANK && !CONNECTIVE.test(s.text))
-    .sort((a, b) => b.s.materiality - a.s.materiality || KIND_RANK[a.s.kind] - KIND_RANK[b.s.kind] || a.order - b.order)
+    .filter(({ s }) => (KIND_BONUS[s.kind] ?? -2) > -3 && !CONNECTIVE.test(s.text))
+    .sort((a, b) => summaryScore(b.s) - summaryScore(a.s) || a.order - b.order)
     .slice(0, 3)
-    .sort((a, b) => a.order - b.order)
     .map(({ s }) => ({ text: s.text, at: evidenceAt(s.evidenceIds) }));
   const inSummary = new Set(summary.map((x) => x.text));
-  // With idea cards on the page, the brief's action and holding sentences
-  // would repeat them; key points keep the context around the ideas.
+  // Key points carry the context around the ideas: never a sentence already in
+  // the summary, an action or holding the cards show, or one about an
+  // instrument that has a card.
   const cardKinds = ideas.length ? new Set(["action", "holding"]) : new Set<string>();
+  const cardEvidence = new Set(ideas.flatMap((i) => i.claimIds));
+  const cardNames = ideas
+    .flatMap((i) => [i.ticker, i.spoken, i.name.split(/[ ,]/)[0]])
+    .filter((n): n is string => !!n && n.length >= 2)
+    .map((n) => n.toLowerCase());
+  const namesCard = (t: string) => cardNames.some((n) => new RegExp(`(^|[^\\p{L}\\p{N}])${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^\\p{L}\\p{N}]|$)`, "iu").test(t));
   const keyPoints = ranked
-    .filter(({ s }) => !inSummary.has(s.text) && !cardKinds.has(s.kind))
-    .slice(0, 7)
+    .filter(({ s }) => !inSummary.has(s.text) && !cardKinds.has(s.kind) && !namesCard(s.text) && !s.evidenceIds.some((id) => cardEvidence.has(id)))
+    .slice(0, 6)
     .sort((a, b) => a.order - b.order)
     .map(({ s }) => ({ text: s.text, at: evidenceAt(s.evidenceIds), kind: s.kind }));
   const numbers = unique(
@@ -353,10 +379,10 @@ const ACTION_LABEL: Record<string, string> = {
 
 /** The view as plain text a PM can paste into a note; also what the benchmark judge reads. */
 export function analystNote(v: AnalystViewData): string {
+  // The note has one shape: a summary paragraph, the ideas, and the context
+  // around them. Everything else is on the page, not in the note.
   const lines: string[] = [`# ${v.title}`, [v.channel, v.publishedAt?.slice(0, 10)].filter(Boolean).join(" · "), ""];
-  if (v.summary.length) lines.push("## Summary", ...v.summary.map((s) => `- ${s.text}${clock(s.at)}`), "");
-  const glance = atAGlance(v);
-  if (glance) lines.push(`At a glance: ${glance}`, "");
+  if (v.summary.length) lines.push("## Summary", v.summary.map((s) => s.text).join(" "), "");
   if (v.ideas.length) {
     lines.push("## Ideas");
     for (const i of v.ideas) {
@@ -372,7 +398,6 @@ export function analystNote(v: AnalystViewData): string {
         i.conditions.length && `If: ${i.conditions.join("; ")}`,
         i.catalysts.length && `Catalysts: ${i.catalysts.map((k) => `${k.text}${k.date ? ` (${k.date})` : ""}`).join("; ")}`,
         i.risks.length && `Risks: ${i.risks.join("; ")}`,
-        ...i.also.map((a) => `Also: ${a}`),
       ].filter(Boolean);
       lines.push(...facts.map((f) => `- ${f}`));
       // A PM reads the checked English; the original words stay on the page.
@@ -380,15 +405,9 @@ export function analystNote(v: AnalystViewData): string {
       lines.push("");
     }
   }
-  if (v.sentiment.length) {
-    lines.push("## Also discussed");
-    for (const r of v.sentiment)
-      lines.push(`- ${r.ticker ?? r.name}${r.owner !== "creator" ? " (third party)" : ""}: ${r.sentiment}. ${r.reasons[0] ?? ""}${clock(r.firstAt)}`);
-    lines.push("");
-  }
-  if (v.otherMentions.length) lines.push(`Also mentioned: ${v.otherMentions.join(", ")}`, "");
-  if (v.keyPoints.length) lines.push("## Key points", ...v.keyPoints.map((k) => `- ${k.text}${clock(k.at)}`), "");
-  if (v.watchOuts.length) lines.push("## Watch-outs", ...v.watchOuts.map((w) => `- ${w.text}${clock(w.at)}`), "");
+  // Brief sentences carry an approximate position; only card quotes, copied
+  // from an exact span, are timestamped in the note.
+  if (v.keyPoints.length) lines.push("## Key points", ...v.keyPoints.map((k) => `- ${k.text}`), "");
   return lines.join("\n").trim() + "\n";
 }
 
