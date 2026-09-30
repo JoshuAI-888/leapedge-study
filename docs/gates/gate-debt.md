@@ -68,6 +68,7 @@ until the debt above is cleared.
 | 1 | Standby engages on an injected vendor error and not on a missing-captions case | **met**, by `tests/standby.test.ts`, no keys required |
 | 3 | At least 95% of L2 anchors within two seconds on the gold set | **deferred** |
 | 4 | A context check cites only sources inside its window on 100% of a 50-call sample | **deferred** |
+| 5 | Loading states shown in the browser matrix (F77) | **deferred** — loading is transient against a local fixture database and was not captured on screen; empty, error and retry states were. Clears with a matrix run that delays the query API (a route stub or a throttled connection) and screenshots each page's loading state. See `phase-5-conformance.md`. |
 
 Every other phase-2, phase-3 and phase-4 exit criterion is satisfiable from
 tests and fixtures, and is not affected by this register.
