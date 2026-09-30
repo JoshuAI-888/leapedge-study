@@ -61,6 +61,7 @@ test("Every action resolves in exactly one resource table and the legacy set is 
     );
   const additions = [
     "generateResearchBrief",
+    "writeBottomLine",
     "requestNewsReview",
     "signClaimReview",
     "requestAudioTrust",

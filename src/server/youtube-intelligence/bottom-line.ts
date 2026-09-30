@@ -36,9 +36,15 @@ const INSTRUCTIONS = `You write the bottom line of a research note for an instit
 const STARTERS = new Set(
   "the a an this that these those they he she it its his her their we our both but and so yet while with for after before despite however overall instead meanwhile if when as in on at by from to of all most some each".split(" "),
 );
+/** Quantities said in words: a bottom line may not add "doubles" or "half" either. */
+const NUMBER_WORDS =
+  /\b(?:double[sd]?|doubling|triple[sd]?|tripling|twice|thrice|half|halve[sd]?|quarter|two|three|four|five|six|seven|eight|nine|ten|dozen|hundred|thousand|million|billion|trillion|percent)\b/g;
 /** Numbers and name-like tokens (tickers, acronyms, capitalised words) a sentence asserts. */
 function facts(text: string) {
-  const numbers = (text.match(/\d+(?:[.,]\d+)*/g) ?? []).map((n) => n.replace(/,/g, ""));
+  const numbers = [
+    ...(text.match(/\d+(?:[.,]\d+)*/g) ?? []).map((n) => n.replace(/,/g, "")),
+    ...(text.toLowerCase().match(NUMBER_WORDS) ?? []),
+  ];
   const names = text
     .split(/\s+/)
     .map((w) => w.replace(/^[^\p{L}\p{N}$]+|[^\p{L}\p{N}]+$/gu, ""))

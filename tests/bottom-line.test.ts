@@ -52,3 +52,43 @@ test("the statements are the audited sentences and only the accepted ideas, with
   assert.deepEqual(out.map((s) => s.id), ["s1", "idea:c1"]);
   assert.match(out[1].text, /^Morgan Stanley \(not the creator\) on Tesla \/ TSLA: Thesis c1\./);
 });
+
+test("writing a bottom line stores the kept sentences, records the rejected ones, and reads back by source run", async () => {
+  const { FakeModelTransport } = await import("../src/server/youtube-intelligence/transport/fake.ts");
+  const { injectTransport } = await import("../src/server/youtube-intelligence/transport/index.ts");
+  const { create } = await import("../src/server/youtube-intelligence/store.ts");
+  const { writeBottomLine, bottomLineFor } = await import("../src/server/youtube-intelligence/bottom-line.ts");
+  const run = await create("bottom-line-fixture", "google/gemini-3.8-flash", {}, "fixture.v1");
+  const brief = {
+    id: run.id,
+    runId: run.id,
+    sourceRunId: "source-run-without-claims",
+    title: "Fixture",
+    mainTopics: ["Micron"],
+    sentences: [{ id: "s1", text: "The creator expects Micron to benefit from HBM demand through 2027.", kind: "creator_view", topic: "Micron", materiality: 3, speaker: "creator" }],
+  };
+  const fake = new FakeModelTransport({
+    responses: {
+      "synthesis-bottom-line": {
+        json: {
+          sentences: [
+            { text: "The creator's thesis is Micron on HBM demand through 2027.", statementIds: ["s1"] },
+            { text: "Micron could double.", statementIds: ["s1"] },
+            { text: "Nvidia is the second pick.", statementIds: ["s1"] },
+          ],
+        },
+      },
+    },
+  });
+  const restore = injectTransport(fake);
+  try {
+    const line = await writeBottomLine(run, brief as never);
+    assert.deepEqual(line.sentences.map((s) => s.text), ["The creator's thesis is Micron on HBM demand through 2027."]);
+    assert.deepEqual(line.rejected.map((r) => r.reason), ["Not in its cited statements: double.", "Not in its cited statements: Nvidia."]);
+    const request = fake.requestsFor("synthesis-bottom-line")[0] as { payload?: unknown };
+    assert.ok(JSON.stringify(request).includes("HBM demand"), "the call sees only the audited statements");
+    assert.deepEqual((await bottomLineFor("source-run-without-claims"))?.sentences, line.sentences);
+  } finally {
+    restore();
+  }
+});

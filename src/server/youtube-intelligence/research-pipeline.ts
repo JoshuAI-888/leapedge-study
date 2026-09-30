@@ -584,9 +584,9 @@ export async function researchStep(run: Run) {
     }
     await putIfAbsent("researchBrief", run.id, brief);
     run.output.researchBriefId = run.id;
-    // The bottom line is a reading aid over the audited brief; without it the
+    // The bottom line (a team setting) is a reading aid over the audited brief; without it the
     // analyst view selects the brief's own sentences, so a failure is recorded, not fatal.
-    try {
+    if (settings.processing.bottomLine) try {
       const line = await writeBottomLine(run, brief);
       run.output.bottomLineRejected = line.rejected;
     } catch (error) {
