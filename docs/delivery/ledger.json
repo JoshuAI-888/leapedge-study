@@ -2396,13 +2396,23 @@
     "verification": "Node 24: default and PGlite suites 772 pass/0 fail; typecheck, build and offline gate pass. The 4 failed videos were rerun on 30 Sep after deploy."
   },
   "clarityIteration2_20260930": {
-    "status": "in-review",
+    "status": "merged",
     "date": "2026-09-30",
     "scope": "Iteration 2 toward beating LeapEdge on PM clarity (goal set by the user 30 Sep). Page (code only): an 'At a glance' line grouping idea tickers by action; the sentiment table becomes 'Also discussed' (only instruments without a card, resolved, with a non-neutral stance, at most 5; everything else one 'Also mentioned' line of resolved names); key points exclude the summary and, when cards exist, action/holding sentences, at most 7; summary prefers the creator's own view, skips sentences opening with a connective, video order; market caps are not levels; a catalyst said twice appears once; one third party's views on several tickers are one card; a translation whose numbers differ from the original is not shown; quotes cut to about 180 characters and shown as the checked English translation; numbers, themes and 'not stated' leave the note. Prompt evidence-first.web.v10 (v9 plus rules on level roles, open vs closed trades, hedged conviction, waiting vs avoiding, speakers, and hold/break technical levels). The critic may return corrected_conviction on an accepted item; the pipeline only ever lowers conviction and records it (convictionCorrections), so a call is no longer lost when only its conviction was overstated.",
     "tests": [
       "tests/analyst-view.test.ts",
       "tests/critique.test.ts"
     ],
-    "verification": "Round 2A (page changes on 9 stored runs, blind): our clarity 2.33 -> 2.78 against LeapEdge 3.78."
+    "verification": "Blind rounds, ours vs LeapEdge clarity: 2A (9 stored runs) 2.78 vs 3.78; 2B (13, v10) 2.77 vs 3.69; 2C (note = summary, ideas, key points) 3.23 vs 3.54; 2D 3.31 vs 3.23; 2D-R replication 3.38 vs 3.77. Averaged 2D/2D-R: 3.35 vs 3.50, so clarity is not yet robustly beaten. We lead on fidelity, coverage and overall. Table: evaluations/analyst-view-13/README.md."
+  },
+  "clarityIteration2E_20260930": {
+    "status": "in-review",
+    "date": "2026-09-30",
+    "scope": "Iteration 2E toward beating LeapEdge on PM clarity. After the research brief is stored, one small extraction-model call (synthesis-bottom-line) condenses the audited brief sentences and the accepted ideas into two or three sentences leading with the creator's thesis. A deterministic check (checkBottomLine) keeps a sentence only when every number and name in it appears in the statements it cites; rejected sentences are recorded on the run (bottomLineRejected), a failure is recorded (bottomLineError) and never fails the brief. The analyst view uses the kept sentences as its summary, falls back to the brief's own sentences without them, and drops statements the bottom line condensed from the key points. The writeBottomLine action backfills an existing brief. Card headers omit a stance that only restates the action (Watching · watch, Holding · hold).",
+    "tests": [
+      "tests/bottom-line.test.ts",
+      "tests/analyst-view.test.ts"
+    ],
+    "verification": "Pending: needs a production deploy to backfill the 13 benchmark briefs, then two blind rounds (2E, 2E-R)."
   }
 }

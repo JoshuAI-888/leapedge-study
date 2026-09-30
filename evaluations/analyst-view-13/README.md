@@ -46,6 +46,14 @@ variation (about ±0.3).
 | 2A | page only: no repeats, card-free sentiment list, glance line, shorter | 2.78 | 3.78 | 3.11 | 2.78 | 3.11 | 2.11 |
 | 2B (13 videos) | prompt v10, critic lowers conviction, page fixes | 2.77 | 3.69 | 3.00 | 2.85 | 3.38 | 2.85 |
 | 2C (13 videos) | note = summary paragraph, ideas, key points only | 3.23 | 3.54 | 2.77 | 2.77 | 3.08 | 2.77 |
+| 2D (13 videos) | summary by importance, key points never repeat a card, creator ideas first, merged third-party cards | 3.31 | 3.23 | 3.00 | 2.62 | 3.31 | 2.46 |
+| 2D-R (13, replication) | same notes, fresh blind judges | 3.38 | 3.77 | 3.00 | 2.92 | 3.23 | 2.77 |
+
+LeapEdge's notes were identical in 2D and 2D-R, yet its clarity moved 3.23 to
+3.77: one round's judge noise is about ±0.3, so a clarity win counts only when
+it holds on the average of two blind rounds (2D and 2D-R average: ours 3.35,
+LeapEdge 3.50). Round 2E adds a checked bottom line that leads with the
+creator's thesis, the judges' most repeated clarity complaint.
 
 ## Target
 
