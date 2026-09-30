@@ -2431,5 +2431,12 @@
       "tests/jev-prescreen.test.ts"
     ],
     "verification": "Unit and integration tests with FakeModelTransport and a stubbed Jev endpoint pass; typecheck and build pass. No live Jev or critic run end to end in the cloud session (no OpenRouter key). Browser check on a local pglite dev server: the toggle saves, reloads and turns off; the comparison panel renders. Live Jev through the adapter on the 40 sandbox cases matched the sandbox (13 accept, 17 withhold, 10 escalate, 0 wrong). Tuning evidence is agreement with Claude-written labels on 40 constructed cases, not verified accuracy."
+  },
+  "clarityIteration2G_20260930": {
+    "status": "merged",
+    "date": "2026-09-30",
+    "scope": "Experiment, no code change: prompt evidence-first.web.v10-pm1 (v10 plus a PM-clarity block: the figures behind each idea in thesis_en, relayed and podcast views credited to their owner, spoken tickers kept, the video's main instrument always an idea) added through the prompt action and run on the 13 benchmark transcripts, with the bottom line written under the fixed check (PR 25). The team default prompt is unchanged.",
+    "tests": [],
+    "verification": "Blind rounds 2G/2G-R, ours vs LeapEdge: clarity 3.54/3.54 and 3.46/3.69; actionability 3.15/2.92 and 3.23/2.85; overall 3.15/2.69 and 3.15/2.62; coverage 3.15/3.08 and 3.08/3.23; fidelity 3.69/2.85 and 3.92/2.85. Five runs first failed on Gemini HTTP 402 (prepaid credits depleted) and were re-run after the top-up. Model spend for the round about $5."
   }
 }

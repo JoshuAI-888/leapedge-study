@@ -52,6 +52,8 @@ variation (about ±0.3).
 | 2E-R (13, replication) | same notes, fresh blind judges | 3.69 | 3.62 | 2.69 | 3.00 | 3.00 | 2.85 |
 | 2F (13, local re-render) | 2E notes, but key points keep what the bottom line condenses | 3.46 | 3.54 | 2.69 | 2.85 | 3.00 | 2.85 |
 | 2F-R (13, replication) | same notes, fresh blind judges | 3.46 | 3.54 | 2.85 | 3.00 | 3.23 | 2.85 |
+| 2G (13) | prompt evidence-first.web.v10-pm1 (numbers in theses, relayed views credited, spoken tickers, main instrument always an idea) + fixed bottom-line check | 3.54 | 3.54 | 3.15 | 2.92 | 3.15 | 2.69 |
+| 2G-R (13, replication) | same notes, fresh blind judges | 3.46 | 3.69 | 3.23 | 2.85 | 3.15 | 2.62 |
 
 LeapEdge's notes were identical in 2D and 2D-R, yet its clarity moved 3.23 to
 3.77: one round's judge noise is about ±0.3, so a clarity win counts only when
@@ -74,3 +76,11 @@ LeapEdge's; our remaining losses are thin coverage and misattributed speakers.
 
 Beat LeapEdge on all four dimensions, with no drop in coverage or fidelity. The
 plan is in `docs/delivery/analyst-view-plan.md`.
+
+Round 2G tested prompt `evidence-first.web.v10-pm1` (added through the prompt
+action, not yet in `prompt-versions.json`). It moved actionability from behind
+to ahead (3.19 against 2.89 averaged) and widened the overall lead (3.15
+against 2.66), with coverage level (3.12 against 3.15); clarity averaged 3.50
+against 3.62. Across six rounds LeapEdge's unchanged notes scored 3.54-3.69 on
+clarity and ours 3.46-3.62: clarity sits at parity within judge noise.
+
