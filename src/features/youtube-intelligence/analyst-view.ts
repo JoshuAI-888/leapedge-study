@@ -55,7 +55,10 @@ export const AnalystView = z.object({
   summary: z.array(z.object({ text: z.string(), at: z.number().nullable() })),
   stance: z.object({ bullish: z.number().int(), bearish: z.number().int(), neutral: z.number().int() }),
   ideas: z.array(IdeaCard),
+  /** Instruments discussed without an idea card: resolved, with a clear stance or repeated mention. */
   sentiment: z.array(SentimentRow),
+  /** Other names mentioned in passing, unresolved or once without a stance. */
+  otherMentions: z.array(z.string()),
   themes: z.array(z.string()),
   keyPoints: z.array(z.object({ text: z.string(), at: z.number().nullable(), kind: z.string() })),
   numbers: z.array(z.object({ label: z.string(), quote: z.string(), at: z.number().nullable() })),
@@ -107,7 +110,7 @@ function instrumentKey(spoken: string | null, ref: ListingRefData | null) {
  * characters, cut only at sentence ends so the words stay exactly as said.
  * Falls back to the opening sentences when the name is not found.
  */
-export function excerpt(text: string, names: string[], limit = 280) {
+export function excerpt(text: string, names: string[], limit = 180) {
   if (text.length <= limit) return text;
   const sentences = text.match(/[^.!?。！？]+[.!?。！？]*\s*/gu) ?? [text];
   const lower = names.filter(Boolean).map((n) => n.toLowerCase());
@@ -118,11 +121,23 @@ export function excerpt(text: string, names: string[], limit = 280) {
   if (!out) out = sentences[start].slice(0, limit);
   return `${start > 0 ? "… " : ""}${out.trim()}${out.trim().length < text.trim().length ? " …" : ""}`;
 }
+/** The numbers written in a text, compared as digit strings so a translation cannot change one. */
+const digits = (t: string) => (t.match(/\d+(?:[.,]\d+)*/g) ?? []).map((n) => n.replace(/,/g, "")).sort().join("|");
 function quoteOf(claim: ClaimData, names: string[]): z.infer<typeof Quote> | null {
   const e = claim.evidence[0];
   if (!e) return null;
-  const translation = e.quote_translation_en && e.quote_translation_en !== e.quote_original ? excerpt(e.quote_translation_en, names) : null;
+  // A translation whose numbers differ from the original is not shown: the
+  // quote is evidence, and a changed figure inside quotation marks misleads.
+  const faithful = e.quote_translation_en && digits(e.quote_translation_en) === digits(e.quote_original);
+  const translation = faithful && e.quote_translation_en !== e.quote_original ? excerpt(e.quote_translation_en, names) : null;
   return { text: excerpt(e.quote_original, names), translation, at: e.source_span?.start_seconds ?? null };
+}
+/** Drop a catalyst whose text is contained in another's (same event, said twice). */
+function dropContained<T extends { text: string; date: string | null }>(items: T[]) {
+  const norm = (t: string) => t.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, "").replace(/\s+/g, " ").trim();
+  return items.filter((k, i) =>
+    !items.some((o, j) => j !== i && norm(o.text).includes(norm(k.text)) && (norm(o.text) !== norm(k.text) || j < i) && (o.date || !k.date)),
+  );
 }
 const unique = <T,>(items: T[], key: (t: T) => string = (t) => JSON.stringify(t)) => {
   const seen = new Set<string>();
@@ -164,22 +179,43 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
       conviction: c.creator_conviction,
       horizon: c.horizon_en,
       thesis: c.thesis_en,
-      also: unique(all.slice(1).map((x) => x.thesis_en).filter((t) => t !== c.thesis_en), (t) => t),
+      also: [],
+      // A market capitalisation is not a price level a PM can trade on.
       levels: unique(
         all.flatMap((x) => x.levels.map((l) => ({ kind: l.kind, value: l.value_original, condition: l.condition_en ?? null }))),
         (l) => `${l.kind}|${l.value}`,
-      ),
+      ).filter((l) => !/\b(b|tr)illion\b|market cap|万亿|亿美元/i.test(l.value)),
       option: option
         ? { right: option.right, side: option.side, strike: option.strike_original, expiry: option.expiry_original, premium: option.premium_original }
         : null,
       size: all.find((x) => x.size_original)?.size_original ?? null,
-      conditions: unique(all.flatMap((x) => x.conditions_en), (s) => s),
-      risks: unique(all.flatMap((x) => x.risks_en), (s) => s),
-      catalysts: unique(all.flatMap((x) => (x.catalysts ?? []).map((k) => ({ text: k.text_en, date: k.date_original }))), (k) => k.text),
+      conditions: unique(all.flatMap((x) => x.conditions_en), (s) => s).slice(0, 2),
+      risks: unique(all.flatMap((x) => x.risks_en), (s) => s).slice(0, 2),
+      catalysts: dropContained(unique(all.flatMap((x) => (x.catalysts ?? []).map((k) => ({ text: k.text_en, date: k.date_original }))), (k) => k.text)),
       quote: quoteOf(c, [c.instrument_as_spoken ?? "", c.ticker ?? "", lead.ref?.symbol ?? ""]),
       claimIds: sorted.map((m) => m.id),
     };
   });
+  // One third party's view on several instruments is one card, not one per
+  // ticker (a fund manager's four shorts), so the creator's own ideas lead.
+  const ideaKeys = new Set(ideas.map((i) => i.key.split("|")[0]));
+  const merged: IdeaCardData[] = [];
+  for (const idea of ideas) {
+    const twin = idea.owner !== "creator" && idea.ownerName
+      ? merged.find((m) => m.owner === idea.owner && m.ownerName === idea.ownerName && m.stance === idea.stance)
+      : undefined;
+    if (!twin) {
+      merged.push(idea);
+      continue;
+    }
+    twin.ticker = [twin.ticker ?? twin.name, idea.ticker ?? idea.name].join(", ");
+    twin.name = twin.ticker;
+    twin.claimIds.push(...idea.claimIds);
+    twin.levels = unique([...twin.levels, ...idea.levels], (l) => `${l.kind}|${l.value}`);
+    twin.risks = unique([...twin.risks, ...idea.risks], (r) => r).slice(0, 2);
+  }
+  ideas.length = 0;
+  ideas.push(...merged);
   ideas.sort(
     (a, b) =>
       (ACTION_RANK[a.action ?? ""] ?? 4) - (ACTION_RANK[b.action ?? ""] ?? 4) ||
@@ -198,13 +234,15 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
     const key = instrumentKey(m.instrument_as_spoken ?? m.ticker, ref);
     rows.set(key, [...(rows.get(key) ?? []), { m, ref }]);
   });
-  const sentiment = [...rows.entries()].map(([key, ms]) => {
+  const allRows = [...rows.entries()].map(([key, ms]) => {
     const kinds = new Set(ms.map((x) => x.m.sentiment));
     const owner = ms.map((x) => (x.m.claim_id ? claimOwner.get(x.m.claim_id) : undefined)).find(Boolean) ?? "creator";
     const ref = ms.find((x) => x.ref)?.ref ?? null;
     return {
       key,
-      ticker: ref?.symbol ?? ms.find((x) => x.m.ticker)?.m.ticker ?? null,
+      // Only a resolved symbol is shown as a ticker; a model's guess is not.
+      ticker: ref?.symbol ?? null,
+      resolved: Boolean(ref),
       name: ref?.name ?? ms[0].m.instrument_as_spoken,
       sentiment: (kinds.has("bullish") && kinds.has("bearish") ? "mixed" : kinds.has("bullish") ? "bullish" : kinds.has("bearish") ? "bearish" : "neutral") as "bullish" | "bearish" | "neutral" | "mixed",
       mentions: ms.length,
@@ -217,7 +255,22 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
       }, null),
     };
   });
-  sentiment.sort((a, b) => Number(b.isCall) - Number(a.isCall) || b.mentions - a.mentions || (a.firstAt ?? Infinity) - (b.firstAt ?? Infinity));
+  // The cards already give each idea's direction, so the table covers the
+  // rest: resolved instruments discussed more than in passing. Everything else
+  // is one line of names, so noise never reads as a stance.
+  const discussed = allRows.filter((r) => !ideaKeys.has(r.key));
+  const shown = discussed
+    .filter((r) => r.resolved && r.sentiment !== "neutral")
+    .sort((a, b) => b.mentions - a.mentions || (a.firstAt ?? Infinity) - (b.firstAt ?? Infinity));
+  const sentiment = shown.slice(0, 5).map(({ resolved, ...row }) => (void resolved, row));
+  // An unresolved name is listed only when it reads as a name; lowercase
+  // phrases are transcription noise ("wind stock"), not instruments.
+  const otherMentions = unique(
+    [...shown.slice(5), ...discussed.filter((r) => !shown.includes(r))]
+      .filter((r) => r.resolved)
+      .map((r) => r.ticker ?? r.name),
+    (n) => n.toLowerCase(),
+  );
 
   // Summary and key points from the audited brief, highest materiality first.
   const sentences = input.brief?.sentences ?? [];
@@ -232,13 +285,23 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const ranked = sentences
     .map((s, order) => ({ s, order }))
     .sort((a, b) => b.s.materiality - a.s.materiality || a.order - b.order);
-  const summaryKinds = new Set(["creator_view", "action", "holding", "analysis", "countercase"]);
+  // The summary is the creator's own view first, three sentences that read on
+  // their own (not one that opens by contrasting another), in video order.
+  const KIND_RANK: Record<string, number> = { creator_view: 0, action: 1, holding: 2, analysis: 3, countercase: 4 };
+  const CONNECTIVE = /^(In contrast|However|Meanwhile|Additionally|Also|Similarly|Conversely|On the other hand|Furthermore|Moreover|By contrast)\b/i;
   const summary = ranked
-    .filter(({ s }) => summaryKinds.has(s.kind))
+    .filter(({ s }) => s.kind in KIND_RANK && !CONNECTIVE.test(s.text))
+    .sort((a, b) => b.s.materiality - a.s.materiality || KIND_RANK[a.s.kind] - KIND_RANK[b.s.kind] || a.order - b.order)
     .slice(0, 3)
+    .sort((a, b) => a.order - b.order)
     .map(({ s }) => ({ text: s.text, at: evidenceAt(s.evidenceIds) }));
+  const inSummary = new Set(summary.map((x) => x.text));
+  // With idea cards on the page, the brief's action and holding sentences
+  // would repeat them; key points keep the context around the ideas.
+  const cardKinds = ideas.length ? new Set(["action", "holding"]) : new Set<string>();
   const keyPoints = ranked
-    .slice(0, 10)
+    .filter(({ s }) => !inSummary.has(s.text) && !cardKinds.has(s.kind))
+    .slice(0, 7)
     .sort((a, b) => a.order - b.order)
     .map(({ s }) => ({ text: s.text, at: evidenceAt(s.evidenceIds), kind: s.kind }));
   const numbers = unique(
@@ -263,13 +326,14 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
     },
     ideas,
     sentiment,
+    otherMentions,
     themes: (input.brief?.mainTopics ?? []).slice(0, 5),
     keyPoints,
     numbers,
-    notStated: omissions.filter(isGap),
+    notStated: omissions.filter(isGap).slice(0, 3),
     // A misheard number changes meaning and is shown; a misspelt name is
     // already handled by listing resolution and stays in processing notes.
-    watchOuts: numericDoubts.map((d) => ({
+    watchOuts: numericDoubts.slice(0, 3).map((d) => ({
       text: `Possibly misheard: "${d.heard}" may be "${d.likely}". ${d.reason_en}`,
       at: d.start_seconds ?? null,
     })),
@@ -291,7 +355,8 @@ const ACTION_LABEL: Record<string, string> = {
 export function analystNote(v: AnalystViewData): string {
   const lines: string[] = [`# ${v.title}`, [v.channel, v.publishedAt?.slice(0, 10)].filter(Boolean).join(" · "), ""];
   if (v.summary.length) lines.push("## Summary", ...v.summary.map((s) => `- ${s.text}${clock(s.at)}`), "");
-  lines.push(`Creator stance: ${v.stance.bullish} bullish · ${v.stance.bearish} bearish · ${v.stance.neutral} neutral`, "");
+  const glance = atAGlance(v);
+  if (glance) lines.push(`At a glance: ${glance}`, "");
   if (v.ideas.length) {
     lines.push("## Ideas");
     for (const i of v.ideas) {
@@ -299,31 +364,40 @@ export function analystNote(v: AnalystViewData): string {
       const doing = i.action ? `${ACTION_LABEL[i.action] ?? i.action} · ${i.stance}` : i.stance;
       lines.push(`### ${i.ticker ?? i.name}${i.ticker && i.name !== i.ticker ? ` (${i.name})` : ""} · ${doing} · conviction ${i.conviction}${who}`);
       lines.push(i.thesis);
-      lines.push(...i.also.map((a) => `- Also: ${a}`));
       const facts = [
         i.option && `Option: ${i.option.side} ${i.option.right}${i.option.strike ? ` ${i.option.strike}` : ""}${i.option.expiry ? `, expiry ${i.option.expiry}` : ""}${i.option.premium ? `, premium ${i.option.premium}` : ""}`,
         i.size && `Size: ${i.size}`,
         i.levels.length && `Levels: ${i.levels.map((l) => `${l.kind} ${l.value}${l.condition ? ` (${l.condition})` : ""}`).join("; ")}`,
         i.horizon && `Horizon: ${i.horizon}`,
-        i.conditions.length && `Conditions: ${i.conditions.join("; ")}`,
+        i.conditions.length && `If: ${i.conditions.join("; ")}`,
         i.catalysts.length && `Catalysts: ${i.catalysts.map((k) => `${k.text}${k.date ? ` (${k.date})` : ""}`).join("; ")}`,
         i.risks.length && `Risks: ${i.risks.join("; ")}`,
+        ...i.also.map((a) => `Also: ${a}`),
       ].filter(Boolean);
       lines.push(...facts.map((f) => `- ${f}`));
-      if (i.quote) lines.push(`> "${i.quote.text}"${i.quote.translation ? ` — ${i.quote.translation}` : ""}${clock(i.quote.at)}`);
+      // A PM reads the checked English; the original words stay on the page.
+      if (i.quote) lines.push(`> "${i.quote.translation ?? i.quote.text}"${i.quote.translation ? " (translated)" : ""}${clock(i.quote.at)}`);
       lines.push("");
     }
   }
   if (v.sentiment.length) {
-    lines.push("## Ticker sentiment", "| Ticker | Sentiment | Mentions | Why |", "|---|---|---|---|");
+    lines.push("## Also discussed");
     for (const r of v.sentiment)
-      lines.push(`| ${r.ticker ?? r.name}${r.owner !== "creator" ? " (third party)" : ""} | ${r.sentiment}${r.isCall ? " · call" : ""} | ${r.mentions} | ${r.reasons[0] ?? ""} |`);
+      lines.push(`- ${r.ticker ?? r.name}${r.owner !== "creator" ? " (third party)" : ""}: ${r.sentiment}. ${r.reasons[0] ?? ""}${clock(r.firstAt)}`);
     lines.push("");
   }
-  if (v.themes.length) lines.push("## Themes", ...v.themes.map((t) => `- ${t}`), "");
+  if (v.otherMentions.length) lines.push(`Also mentioned: ${v.otherMentions.join(", ")}`, "");
   if (v.keyPoints.length) lines.push("## Key points", ...v.keyPoints.map((k) => `- ${k.text}${clock(k.at)}`), "");
-  if (v.numbers.length) lines.push("## Numbers", ...v.numbers.map((n) => `- ${n.label}: "${n.quote}"${clock(n.at)}`), "");
-  if (v.notStated.length) lines.push("## Not stated in the video", ...v.notStated.map((n) => `- ${n}`), "");
   if (v.watchOuts.length) lines.push("## Watch-outs", ...v.watchOuts.map((w) => `- ${w.text}${clock(w.at)}`), "");
   return lines.join("\n").trim() + "\n";
+}
+
+/** One line a PM can read first: each idea's ticker grouped by what the creator did. */
+export function atAGlance(v: AnalystViewData) {
+  const groups = new Map<string, string[]>();
+  for (const i of v.ideas) {
+    const label = i.owner !== "creator" ? "Third-party view" : i.action ? ACTION_LABEL[i.action] ?? i.action : i.stance;
+    groups.set(label, [...(groups.get(label) ?? []), i.ticker ?? i.name]);
+  }
+  return [...groups.entries()].map(([label, names]) => `${label}: ${unique(names, (n) => n).join(", ")}`).join(" · ");
 }

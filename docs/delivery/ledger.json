@@ -1838,7 +1838,7 @@
     "verification": "Browser check on a local Postgres copy of the v9 U32FPvvBaNI run at 1366 and 390 px: 6 idea cards, 11 sentiment rows, brief collapsed, no horizontal overflow."
   },
   "pipelineRobustness20260929": {
-    "status": "in-review",
+    "status": "merged",
     "date": "2026-09-29",
     "scope": "Iteration 1 rerun on 29 Sep: 4 of 13 runs failed for reasons unrelated to the prompt. (1) Neon connection-pool timeouts with 13 runs at once: a step that hits a transient database error is now retried (up to 5 times, 20 s apart) instead of failing the run; paid responses replay from the call ledger. (2) One key point with Chinese in an English field failed a whole extraction: invalid items are now dropped one by one with the reason (rejectedEvidence); a malformed or over-limit reply still fails. (3) A context cache past its 30-minute lifetime was reused and the provider answered HTTP 400: it is now recreated. (4) Provider 4xx errors (not 429) keep the first 300 characters of the provider's message so a rejected request can be diagnosed.",
     "tests": [
@@ -1847,6 +1847,16 @@
       "tests/critique.test.ts",
       "tests/transport.test.ts"
     ],
-    "verification": "Pending full run."
+    "verification": "Node 24: default and PGlite suites 772 pass/0 fail; typecheck, build and offline gate pass. The 4 failed videos were rerun on 30 Sep after deploy."
+  },
+  "clarityIteration2_20260930": {
+    "status": "in-review",
+    "date": "2026-09-30",
+    "scope": "Iteration 2 toward beating LeapEdge on PM clarity (goal set by the user 30 Sep). Page (code only): an 'At a glance' line grouping idea tickers by action; the sentiment table becomes 'Also discussed' (only instruments without a card, resolved, with a non-neutral stance, at most 5; everything else one 'Also mentioned' line of resolved names); key points exclude the summary and, when cards exist, action/holding sentences, at most 7; summary prefers the creator's own view, skips sentences opening with a connective, video order; market caps are not levels; a catalyst said twice appears once; one third party's views on several tickers are one card; a translation whose numbers differ from the original is not shown; quotes cut to about 180 characters and shown as the checked English translation; numbers, themes and 'not stated' leave the note. Prompt evidence-first.web.v10 (v9 plus rules on level roles, open vs closed trades, hedged conviction, waiting vs avoiding, speakers, and hold/break technical levels). The critic may return corrected_conviction on an accepted item; the pipeline only ever lowers conviction and records it (convictionCorrections), so a call is no longer lost when only its conviction was overstated.",
+    "tests": [
+      "tests/analyst-view.test.ts",
+      "tests/critique.test.ts"
+    ],
+    "verification": "Round 2A (page changes on 9 stored runs, blind): our clarity 2.33 -> 2.78 against LeapEdge 3.78."
   }
 }

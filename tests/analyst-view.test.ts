@@ -90,7 +90,7 @@ test("one card per instrument and owner: the strongest action leads, other these
   assert.equal(wynn.length, 1);
   assert.equal(wynn[0].action, "bought");
   assert.equal(wynn[0].size, "$8,400");
-  assert.deepEqual(wynn[0].also, ["Wynn could rip once rates fall."]);
+  assert.deepEqual(wynn[0].also, [], "the strongest thesis leads; a second thesis on the same card read as repetition");
   assert.deepEqual(wynn[0].levels, [{ kind: "target", value: "200", condition: "once rates peak" }]);
   assert.deepEqual(wynn[0].claimIds, ["c2", "c1"]);
 });
@@ -104,16 +104,34 @@ test("ideas rank executed trades first and third-party views last; rejected call
   assert.equal(v.stance.bullish, 2, "a third party's view is not counted as the creator's stance");
 });
 
-test("sentiment has one row per resolved instrument, marks disagreement as mixed, and drops critic-rejected mentions", () => {
-  const v = buildAnalystView(input());
-  const wynn = v.sentiment.find((r) => r.ticker === "WYNN")!;
-  assert.equal(wynn.mentions, 3);
-  assert.equal(wynn.sentiment, "mixed");
-  assert.equal(wynn.isCall, true);
-  assert.equal(wynn.firstAt, 320);
-  assert.equal(v.sentiment.find((r) => r.ticker === "NKE"), undefined);
-  assert.equal(v.sentiment.find((r) => r.ticker === "TSLA")?.owner, "third_party");
-  assert.equal(v.sentiment[0].ticker, "WYNN", "calls sort first");
+test("also discussed covers instruments without a card; passing or unresolved names are one line", () => {
+  const base = input();
+  const v = buildAnalystView({
+    ...base,
+    mentions: [
+      ...base.mentions,
+      mention("Amazon", "bullish", 200),
+      mention("Amazon", "bearish", 260),
+      mention("Costco", "neutral", 300),
+      mention("pound", "bullish", 310),
+    ],
+    mentionListings: [...base.mentionListings, ref("AMZN", "Amazon.com, Inc."), ref("AMZN", "Amazon.com, Inc."), ref("COST", "COSTCO WHOLESALE CORP"), null],
+  });
+  assert.deepEqual(v.sentiment.map((r) => [r.ticker, r.sentiment, r.mentions]), [["AMZN", "mixed", 2]]);
+  assert.equal(v.sentiment.find((r) => r.ticker === "WYNN"), undefined, "an instrument with a card is not repeated");
+  assert.deepEqual(v.otherMentions, ["COST"], "lowercase unresolved phrases are transcription noise");
+  assert.ok(!v.otherMentions.includes("NKE"), "a critic-rejected mention is not shown at all");
+});
+
+test("market caps are not levels, key points do not repeat the cards, a catalyst said twice appears once", () => {
+  const base = input();
+  base.claims[1].claim.levels = [{ kind: "target", value_original: "$1 trillion plus", condition_en: null }, { kind: "target", value_original: "120", condition_en: null }];
+  base.claims[1].claim.catalysts = [{ text_en: "Middle East property opening", date_original: null }, { text_en: "Middle East property opening next year", date_original: "next year" }];
+  const v = buildAnalystView(base);
+  const wynn = v.ideas.find((i) => i.ticker === "WYNN")!;
+  assert.deepEqual(wynn.levels.map((l) => l.value), ["120", "200"]);
+  assert.deepEqual(wynn.catalysts, [{ text: "Middle East property opening next year", date: "next year" }]);
+  assert.ok(!v.keyPoints.some((k) => k.kind === "action"), "an action sentence is already a card");
 });
 
 test("pipeline bookkeeping goes to processing notes; content gaps and misheard numbers are shown", () => {
@@ -131,6 +149,8 @@ test("pipeline bookkeeping goes to processing notes; content gaps and misheard n
 test("the note a PM copies has the ideas and none of the pipeline text", () => {
   const note = analystNote(buildAnalystView(input()));
   assert.match(note, /### WYNN \(WYNN RESORTS LTD\) · Bought · long · conviction high/);
+  assert.match(note, /At a glance: Bought: WYNN · Watching: CELH · Third-party view: TSLA/);
+  assert.doesNotMatch(note, /Creator stance|## Numbers|## Themes/);
   assert.match(note, /- Size: \$8,400/);
   assert.match(note, /third party: Morgan Stanley/);
   assert.match(note, /> "I bought \$8,400 of Winning Resorts here today\." \[10:00\]/);
@@ -141,7 +161,27 @@ test("a quote excerpt keeps whole sentences exactly as said, starting at the ins
   const text = "We talked about rates for a while and the market in general terms. ".repeat(4) + "Celsius is my top holding. It is cheap. " + "Unrelated closing remarks follow here. ".repeat(6);
   const cut = excerpt(text, ["Celsius"]);
   assert.ok(cut.startsWith("… Celsius is my top holding."));
-  assert.ok(cut.length <= 290);
+  assert.ok(cut.length <= 190);
   assert.ok(text.includes(cut.replace(/^… /, "").replace(/ …$/, "")));
   assert.equal(excerpt("Short quote.", ["x"]), "Short quote.");
+});
+
+test("one third party's views on several tickers are one card, and a translation that changes a number is not shown", () => {
+  const base = input();
+  base.claims.push(
+    checked("c6", claim({ instrument_as_spoken: "Micron", stance: "short", action: "view", owner: "third_party", owner_name: "Michael Burry", thesis_en: "Burry is short Micron." }, "Burry shorted Micron.", 800)),
+    checked("c7", claim({ instrument_as_spoken: "Palantir", stance: "short", action: "view", owner: "third_party", owner_name: "Michael Burry", thesis_en: "Burry is short Palantir." }, "Burry shorted Palantir.", 810)),
+  );
+  base.claimListings.c6 = ref("MU", "Micron Technology");
+  base.claimListings.c7 = ref("PLTR", "Palantir Technologies Inc.");
+  base.claims[0].claim.evidence[0].quote_original = "存款利率只有0.01%";
+  base.claims[0].claim.evidence[0].quote_translation_en = "Deposit rates are only 0.07%";
+  const v = buildAnalystView({ ...base, mentions: [...base.mentions, mention("Micron", "bearish", 805)], mentionListings: [...base.mentionListings, ref("MU", "Micron Technology")] });
+  const burry = v.ideas.filter((i) => i.ownerName === "Michael Burry");
+  assert.equal(burry.length, 1);
+  assert.equal(burry[0].ticker, "MU, PLTR");
+  assert.equal(v.sentiment.find((r) => r.ticker === "MU"), undefined, "a merged ticker is not repeated under also discussed");
+  const only = buildAnalystView({ ...base, claims: [base.claims[0]] }).ideas[0];
+  assert.equal(only.quote?.text, "存款利率只有0.01%");
+  assert.equal(only.quote?.translation, null, "0.07% is not what was said");
 });
