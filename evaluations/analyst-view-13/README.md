@@ -50,6 +50,8 @@ variation (about ±0.3).
 | 2D-R (13, replication) | same notes, fresh blind judges | 3.38 | 3.77 | 3.00 | 2.92 | 3.23 | 2.77 |
 | 2E (13) | checked bottom line leads the summary; headers stop restating the action | 3.54 | 3.54 | 2.85 | 3.00 | 3.00 | 2.92 |
 | 2E-R (13, replication) | same notes, fresh blind judges | 3.69 | 3.62 | 2.69 | 3.00 | 3.00 | 2.85 |
+| 2F (13, local re-render) | 2E notes, but key points keep what the bottom line condenses | 3.46 | 3.54 | 2.69 | 2.85 | 3.00 | 2.85 |
+| 2F-R (13, replication) | same notes, fresh blind judges | 3.46 | 3.54 | 2.85 | 3.00 | 3.23 | 2.85 |
 
 LeapEdge's notes were identical in 2D and 2D-R, yet its clarity moved 3.23 to
 3.77: one round's judge noise is about ±0.3, so a clarity win counts only when
@@ -59,6 +61,14 @@ Averaged over 2E and 2E-R, clarity is ours 3.62 against LeapEdge 3.58: level,
 within judge noise, not a robust win. Coverage fell from a lead (3.23 vs 2.85 in
 2D) to behind (3.00 vs 3.23), most likely because statements the bottom line
 condenses were removed from the key points. Fidelity still leads (3.85 vs 2.77).
+
+Round 2F tested putting the condensed statements back into the key points.
+Coverage did not recover (3.00 and 3.23 against 3.23 and 3.31) and clarity
+dipped to 3.46 against 3.54, so the change was reverted; 2E remains the best
+note. Across 2E to 2F-R, LeapEdge's unchanged notes averaged 3.56 clarity. Every
+invented trade or level the judges flagged in 2F (an S&P futures trade, a
+MongoDB entry/target/stop, an NVDA buy, LLY "initiate long", silver levels) was
+LeapEdge's; our remaining losses are thin coverage and misattributed speakers.
 
 ## Target
 

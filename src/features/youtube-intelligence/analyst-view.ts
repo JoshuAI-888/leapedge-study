@@ -312,6 +312,7 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const summaryScore = (x: { materiality: number; kind: string; topic: string }) =>
     x.materiality * 10 + (mainTopics.has(x.topic.toLowerCase()) ? 5 : 0) + (KIND_BONUS[x.kind] ?? -2);
   const bottomLine = input.bottomLine?.length ? input.bottomLine : null;
+  const cited = new Set(bottomLine?.flatMap((b) => b.statementIds) ?? []);
   const summary = bottomLine
     ? bottomLine.map((b) => ({ text: b.text, at: evidenceAt(sentences.filter((s) => b.statementIds.includes(s.id)).flatMap((s) => s.evidenceIds)) }))
     : ranked
@@ -331,7 +332,7 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
     .map((n) => n.toLowerCase());
   const namesCard = (t: string) => cardNames.some((n) => new RegExp(`(^|[^\\p{L}\\p{N}])${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^\\p{L}\\p{N}]|$)`, "iu").test(t));
   const keyPoints = ranked
-    .filter(({ s }) => !inSummary.has(s.text) && !cardKinds.has(s.kind) && !namesCard(s.text) && !s.evidenceIds.some((id) => cardEvidence.has(id)))
+    .filter(({ s }) => !inSummary.has(s.text) && !cited.has(s.id) && !cardKinds.has(s.kind) && !namesCard(s.text) && !s.evidenceIds.some((id) => cardEvidence.has(id)))
     .slice(0, 6)
     .sort((a, b) => a.order - b.order)
     .map(({ s }) => ({ text: s.text, at: evidenceAt(s.evidenceIds), kind: s.kind }));
