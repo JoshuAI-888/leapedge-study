@@ -34,20 +34,22 @@ const INSTRUCTIONS = `You write the bottom line of a research note for an instit
 
 /** Words a sentence may open with that are not names. */
 const STARTERS = new Set(
-  "the a an this that these those they he she it its his her their we our both but and so yet while with for after before despite however overall instead meanwhile if when as in on at by from to of all most some each".split(" "),
+  "the a an this that these those they he she it its his her their we our both but and so yet while with for after before despite however overall instead meanwhile if when as in on at by from to of all most some each key notably additionally accordingly ultimately specifically similarly finally also then here there separately together amid against beyond given following near over under until rather still noted citing".split(" "),
 );
 /** Quantities said in words: a bottom line may not add "doubles" or "half" either. */
 const NUMBER_WORDS =
   /\b(?:double[sd]?|doubling|triple[sd]?|tripling|twice|thrice|half|halve[sd]?|quarter|two|three|four|five|six|seven|eight|nine|ten|dozen|hundred|thousand|million|billion|trillion|percent)\b/g;
+/** A quantity word and its digits are the same fact: "two" in a sentence matches "2" in its statement. */
+const DIGITS: Record<string, string> = { two: "2", three: "3", four: "4", five: "5", six: "6", seven: "7", eight: "8", nine: "9", ten: "10" };
 /** Numbers and name-like tokens (tickers, acronyms, capitalised words) a sentence asserts. */
 function facts(text: string) {
   const numbers = [
     ...(text.match(/\d+(?:[.,]\d+)*/g) ?? []).map((n) => n.replace(/,/g, "")),
-    ...(text.toLowerCase().match(NUMBER_WORDS) ?? []),
+    ...(text.toLowerCase().match(NUMBER_WORDS) ?? []).map((w) => DIGITS[w] ?? w),
   ];
   const names = text
     .split(/\s+/)
-    .map((w) => w.replace(/^[^\p{L}\p{N}$]+|[^\p{L}\p{N}]+$/gu, ""))
+    .map((w) => w.replace(/^[^\p{L}\p{N}$]+|[^\p{L}\p{N}]+$/gu, "").replace(/['’]s$/u, ""))
     .filter((w, i) => /^\p{Lu}/u.test(w) && w.length > 1 && !(i === 0 && STARTERS.has(w.toLowerCase())));
   return { numbers, names };
 }

@@ -209,10 +209,10 @@ test("key points never cite a card's evidence, filler conditions go, the creator
   assert.doesNotMatch(analystNote(v), /## Key points[\s\S]*\[\d+:\d{2}\]\n?$/, "key points carry no approximate timestamps");
 });
 
-test("a checked bottom line replaces the selected summary, its sources leave key points, and a header never restates its action", () => {
+test("a checked bottom line replaces the selected summary, its sources keep their detail in key points, and a header never restates its action", () => {
   const view = buildAnalystView(input({ bottomLine: [{ text: "The creator's thesis is Wynn, bought on the rates view.", statementIds: ["s1", "s2"] }] }));
   assert.deepEqual(view.summary, [{ text: "The creator's thesis is Wynn, bought on the rates view.", at: 600 }]);
-  assert.equal(view.keyPoints.some((k) => k.text.startsWith("Rates are")), false, "a statement the bottom line condensed is not repeated");
+  assert.equal(view.keyPoints.some((k) => k.text.startsWith("Rates are")), true, "a statement the bottom line condensed keeps its detail in the key points");
   const watching = input();
   watching.claims = watching.claims.map((c) => (c.id === "c5" ? { ...c, claim: { ...c.claim, stance: "watch" } } : c));
   const note = analystNote(buildAnalystView(watching));
