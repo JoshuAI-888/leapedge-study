@@ -15,6 +15,7 @@ import {
 } from "./research-store.ts";
 import { type ClaimData } from "../../features/youtube-intelligence/contracts.ts";
 import { json } from "./database.ts";
+import { sessionFor } from "../../features/youtube-intelligence/trading-day.ts";
 export function localDay(at: string, timezone: string) {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: timezone,
@@ -29,6 +30,8 @@ export type Briefing = {
   date: string;
   timezone: string;
   kind: string;
+  /** Set when the briefing covers one US trading session (the daily report, F64). */
+  session?: string;
   runIds: string[];
   groups: {
     ticker: string;
@@ -51,11 +54,31 @@ export type Briefing = {
     reason: string | null;
   }[];
 };
-export async function buildBriefing(date?: string) {
+/** The US session a run's video belongs to, by publish time (analysis time as a fallback). */
+function runSession(r: { createdAt: string; output: Record<string, unknown> }) {
+  const at =
+    (r.output.metadata as { publishedAt?: unknown } | undefined)?.publishedAt ??
+    r.createdAt;
+  try {
+    return sessionFor(String(at)).session;
+  } catch {
+    return null;
+  }
+}
+/**
+ * `session: true` groups the runs whose videos were published in the US
+ * trading session `date` (F64) instead of the runs analysed on that local day.
+ */
+export async function buildBriefing(
+  date?: string,
+  options: { session?: boolean } = {},
+) {
   const p = await preferences(),
     day = date || localDay(new Date().toISOString(), p.timezone);
-  const runs = (await canonicalRuns()).filter(
-    (r) => localDay(r.createdAt, p.timezone) === day,
+  const runs = (await canonicalRuns()).filter((r) =>
+    options.session
+      ? runSession(r) === day
+      : localDay(r.createdAt, p.timezone) === day,
   );
   const registry = await docs<EntityData>("entity");
   const groups = new Map<string, Briefing["groups"][number]["calls"]>();
@@ -88,7 +111,10 @@ export async function buildBriefing(date?: string) {
     createdAt: new Date().toISOString(),
     date: day,
     timezone: p.timezone,
-    kind: "evidence-linked deterministic digest",
+    kind: options.session
+      ? "session report deterministic digest"
+      : "evidence-linked deterministic digest",
+    ...(options.session ? { session: day } : {}),
     runIds: runs.map((r) => r.id),
     groups: [...groups].map(([ticker, calls]) => ({
       ticker,

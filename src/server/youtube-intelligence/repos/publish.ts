@@ -33,6 +33,8 @@ import {
   upsertEvidenceSpan,
   type EvidenceSpanRow,
 } from "./evidence-spans.ts";
+import { parseLevel } from "../../../features/youtube-intelligence/level-parse.ts";
+import { normaliseMacro } from "../../../features/youtube-intelligence/instrument-kind.ts";
 /**
  * Not a table module: the one mapping from a completed run to the rows the
  * claim tables hold, so the publish stage and the one-off document migration
@@ -192,6 +194,23 @@ export function rowsForRun(run: Run): RunRows {
       conditionsEn: item.claim.conditions_en,
       risksEn: item.claim.risks_en,
       creatorConviction: item.claim.creator_conviction,
+      // Call fields (F60) over the structured-idea fields of prompt v9+. The
+      // level parse is the application's, never the model's; the model's theme
+      // is kept only when it is in the vocabulary.
+      levels: item.claim.levels.map((l) => ({
+        kind: l.kind,
+        valueOriginal: l.value_original,
+        conditionEn: l.condition_en ?? null,
+        parsed: parseLevel(l.value_original),
+      })),
+      action: item.claim.action ?? null,
+      catalysts: (item.claim.catalysts ?? []).map((c) => ({
+        text: c.text_en,
+        date: c.date_original,
+      })),
+      expiryDate: item.claim.expiry?.date ?? null,
+      expiryOriginal: item.claim.expiry?.original ?? null,
+      macroTheme: normaliseMacro(item.claim.macro_theme),
       // Pointer integrity, deterministic financial checks and independent
       // span agreement determine trust; human signatures are loaded on write.
       ...trust,
@@ -230,6 +249,7 @@ export function rowsForRun(run: Run): RunRows {
         : "L0",
     spanId: mention.source_span?.start_id ?? null,
     publishedAt,
+    instrument: mention.instrument_as_spoken ?? null,
   }));
   return { runId: run.id, claims, spans, mentions };
 }

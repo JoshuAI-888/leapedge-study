@@ -1,0 +1,1878 @@
+{
+ "version": "phase-5-baseline.v1",
+ "phase": 5,
+ "feature": "F77",
+ "date": "2026-09-30",
+ "mode": "fixture (YTI_FIXTURE_MODE=true, YTI_ISOLATED_DB=true); synthetic data from scripts/seed-phase5.ts in local Postgres yti_phase5_gate; next dev on 127.0.0.1:3050; no provider or LeapEdge calls",
+ "commits": {
+  "prHead": "6c68bb5",
+  "measured": "11e1023 (local, 5 commits ahead of the PR #19 head; not pushed). The full matrix ran after 067688a; report, channel-page and search-videos were re-run after 11e1023."
+ },
+ "browser": "Playwright Chromium 1194 (headless)",
+ "viewports": {
+  "desktop": "1440x1000",
+  "phone": "390x844 (isMobile, touch)"
+ },
+ "themes": [
+  "light",
+  "dark"
+ ],
+ "matrix": {
+  "total": 112,
+  "pass": 112,
+  "fail": 0,
+  "passRule": "page loads without HTTP error, every content check for the surface is found, document scrollWidth <= innerWidth, and no application console errors",
+  "surfaces": {
+   "today": {
+    "path": "/youtube-intelligence/today",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "sel .yi-watchlist-row",
+        "found": 4,
+        "pass": true
+       },
+       {
+        "expect": "sel table th",
+        "found": 5,
+        "pass": true
+       }
+      ],
+      "screenshot": "today-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "sel .yi-watchlist-row",
+        "found": 4,
+        "pass": true
+       },
+       {
+        "expect": "sel table th",
+        "found": 5,
+        "pass": true
+       }
+      ],
+      "screenshot": "today-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "sel .yi-watchlist-row",
+        "found": 4,
+        "pass": true
+       },
+       {
+        "expect": "sel table th",
+        "found": 5,
+        "pass": true
+       }
+      ],
+      "screenshot": "today-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "sel .yi-watchlist-row",
+        "found": 4,
+        "pass": true
+       },
+       {
+        "expect": "sel table th",
+        "found": 5,
+        "pass": true
+       }
+      ],
+      "screenshot": "today-m-dark.png"
+     }
+    }
+   },
+   "report-latest": {
+    "path": "/youtube-intelligence/report",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "report-latest-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "report-latest-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "report-latest-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "report-latest-m-dark.png"
+     }
+    }
+   },
+   "report-session": {
+    "path": "/youtube-intelligence/report/2026-09-28",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "text Mon 28 Sep",
+        "found": 5,
+        "pass": true
+       }
+      ],
+      "screenshot": "report-session-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "text Mon 28 Sep",
+        "found": 5,
+        "pass": true
+       }
+      ],
+      "screenshot": "report-session-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "text Mon 28 Sep",
+        "found": 5,
+        "pass": true
+       }
+      ],
+      "screenshot": "report-session-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "text Mon 28 Sep",
+        "found": 5,
+        "pass": true
+       }
+      ],
+      "screenshot": "report-session-m-dark.png"
+     }
+    }
+   },
+   "report-archive": {
+    "path": "/youtube-intelligence/report",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "sel .yi-report-archive li",
+        "found": 60,
+        "pass": true
+       }
+      ],
+      "screenshot": "report-archive-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "sel .yi-report-archive li",
+        "found": 60,
+        "pass": true
+       }
+      ],
+      "screenshot": "report-archive-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "sel .yi-report-archive li",
+        "found": 60,
+        "pass": true
+       }
+      ],
+      "screenshot": "report-archive-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "sel .yi-report-archive li",
+        "found": 60,
+        "pass": true
+       }
+      ],
+      "screenshot": "report-archive-m-dark.png"
+     }
+    }
+   },
+   "search-calls": {
+    "path": "/youtube-intelligence/search?ticker=NVDA&sentiment=bullish&trust=L1&window=30d",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "search-calls-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "search-calls-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "search-calls-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "search-calls-m-dark.png"
+     }
+    }
+   },
+   "search-videos": {
+    "path": "/youtube-intelligence/search?tab=videos&kind=macro&trust=L0",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "search-videos-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "search-videos-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "search-videos-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "search-videos-m-dark.png"
+     }
+    }
+   },
+   "search-empty": {
+    "path": "/youtube-intelligence/search?q=zzqqxx",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "text /No calls match|No results|nothing matches/i",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "search-empty-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "text /No calls match|No results|nothing matches/i",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "search-empty-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "text /No calls match|No results|nothing matches/i",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "search-empty-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [
+       {
+        "expect": "text /No calls match|No results|nothing matches/i",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "search-empty-m-dark.png"
+     }
+    }
+   },
+   "trends-ticker": {
+    "path": "/youtube-intelligence/trends?by=ticker&value=NVDA&range=90d",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-ticker-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-ticker-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-ticker-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-ticker-m-dark.png"
+     }
+    }
+   },
+   "trends-channel": {
+    "path": "/youtube-intelligence/trends?by=channel&value=UCmacroMike0000000000001&range=90d",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-channel-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-channel-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-channel-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-channel-m-dark.png"
+     }
+    }
+   },
+   "trends-table": {
+    "path": "/youtube-intelligence/trends?by=ticker&value=NVDA&range=30d",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-table-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-table-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-table-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "trends-table-m-dark.png"
+     }
+    }
+   },
+   "channel-page": {
+    "path": "/youtube-intelligence/channels/UCmacroMike0000000000001",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channel-page-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channel-page-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channel-page-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channel-page-m-dark.png"
+     }
+    }
+   },
+   "channels": {
+    "path": "/youtube-intelligence/channels",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channels-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channels-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channels-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channels-m-dark.png"
+     }
+    }
+   },
+   "channels-drawer": {
+    "path": "/youtube-intelligence/channels",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channels-drawer-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channels-drawer-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channels-drawer-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "channels-drawer-m-dark.png"
+     }
+    }
+   },
+   "analysis-completed": {
+    "path": "/youtube-intelligence/analysis/d706796d-4415-69f6-50e8-6d471e6755fe",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-completed-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-completed-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-completed-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-completed-m-dark.png"
+     }
+    }
+   },
+   "analysis-cjk": {
+    "path": "/youtube-intelligence/analysis/dc265d6b-cd10-1daf-37c1-c7615c4806a2",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-cjk-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-cjk-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-cjk-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-cjk-m-dark.png"
+     }
+    }
+   },
+   "analysis-unfollowed": {
+    "path": "/youtube-intelligence/analysis/1ac8149a-d15b-37ce-3d1f-2e95ab2ff707",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-unfollowed-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-unfollowed-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-unfollowed-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-unfollowed-m-dark.png"
+     }
+    }
+   },
+   "analysis-no-ideas": {
+    "path": "/youtube-intelligence/analysis/1805f730-10c7-7e03-1161-5120f788131f",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "text /No investable ideas/",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-no-ideas-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "text /No investable ideas/",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-no-ideas-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "text /No investable ideas/",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-no-ideas-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "text /No investable ideas/",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-no-ideas-m-dark.png"
+     }
+    }
+   },
+   "analysis-failed": {
+    "path": "/youtube-intelligence/analysis/phase5-run-failed",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "role button /Retry/",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-failed-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "role button /Retry/",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-failed-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "role button /Retry/",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-failed-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "role button /Retry/",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-failed-m-dark.png"
+     }
+    }
+   },
+   "analysis-running": {
+    "path": "/youtube-intelligence/analysis/phase5-run-running",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "sel section.yi-progress",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-running-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "sel section.yi-progress",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-running-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "sel section.yi-progress",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-running-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [
+       {
+        "expect": "sel section.yi-progress",
+        "found": 1,
+        "pass": true
+       }
+      ],
+      "screenshot": "analysis-running-m-dark.png"
+     }
+    }
+   },
+   "analysis-queued": {
+    "path": "/youtube-intelligence/analysis/phase5-run-queued",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-queued-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-queued-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-queued-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 2,
+      "checks": [],
+      "screenshot": "analysis-queued-m-dark.png"
+     }
+    }
+   },
+   "saved-open": {
+    "path": "/youtube-intelligence/saved",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-open-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-open-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-open-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-open-m-dark.png"
+     }
+    }
+   },
+   "saved-done": {
+    "path": "/youtube-intelligence/saved?tab=done",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-done-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-done-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-done-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-done-m-dark.png"
+     }
+    }
+   },
+   "saved-dismissed": {
+    "path": "/youtube-intelligence/saved?tab=dismissed",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-dismissed-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-dismissed-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-dismissed-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-dismissed-m-dark.png"
+     }
+    }
+   },
+   "saved-all": {
+    "path": "/youtube-intelligence/saved?tab=all",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-all-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-all-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-all-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "saved-all-m-dark.png"
+     }
+    }
+   },
+   "leaderboard": {
+    "path": "/youtube-intelligence/leaderboard",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "leaderboard-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "leaderboard-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "leaderboard-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "leaderboard-m-dark.png"
+     }
+    }
+   },
+   "settings": {
+    "path": "/youtube-intelligence/settings",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "settings-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "settings-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "settings-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "settings-m-dark.png"
+     }
+    }
+   },
+   "methodology": {
+    "path": "/youtube-intelligence/methodology",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "methodology-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "methodology-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "methodology-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "methodology-m-dark.png"
+     }
+    }
+   },
+   "palette": {
+    "path": "/youtube-intelligence/today",
+    "pass": 4,
+    "fail": 0,
+    "variants": {
+     "1440x1000 light": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "palette-d-light.png"
+     },
+     "1440x1000 dark": {
+      "status": "ok",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "palette-d-dark.png"
+     },
+     "390x844 light": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "palette-m-light.png"
+     },
+     "390x844 dark": {
+      "status": "ok",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "overflowOk": true,
+      "appConsoleErrors": [],
+      "environmentConsoleErrors": 0,
+      "checks": [],
+      "screenshot": "palette-m-dark.png"
+     }
+    }
+   }
+  }
+ },
+ "overflow390": {
+  "pagesChecked": 28,
+  "variants": 56,
+  "overflowing": []
+ },
+ "consoleErrors": {
+  "application": [],
+  "environment": {
+   "count": 56,
+   "note": "net::ERR_CERT_AUTHORITY_INVALID on Analysis pages only: the YouTube player and thumbnail requests go through the sandbox HTTPS proxy, whose CA the headless browser does not trust. Not an application error; the page shows its player-blocked fallback."
+  }
+ },
+ "flows": [
+  {
+   "name": "search-chips-and-clear-all",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "open Search with ticker, sentiment and window in the URL",
+     "expected": "three filter chips and Clear all",
+     "actual": "6 removable chips",
+     "pass": true
+    },
+    {
+     "action": "remove the Bullish chip",
+     "expected": "sentiment leaves the URL, ticker stays",
+     "actual": "http://127.0.0.1:3050/youtube-intelligence/search?window=30d&ticker=NVDA",
+     "pass": true
+    },
+    {
+     "action": "result total after removing a filter",
+     "expected": "total grows or stays",
+     "actual": "Showing 1–6 of 6 -> Showing 1–12 of 12",
+     "pass": true
+    },
+    {
+     "action": "Clear all",
+     "expected": "no filter keys left in the URL",
+     "actual": "http://127.0.0.1:3050/youtube-intelligence/search?trust=L0",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "search-load-more",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "open Search with every trust level",
+     "expected": "an honest total above 50",
+     "actual": "Showing 1–50 of 172",
+     "pass": true
+    },
+    {
+     "action": "Load 50 more",
+     "expected": "the shown range grows past 50",
+     "actual": "Showing 1–100 of 172",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "palette-ctrl-k-ticker-enter",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "Ctrl+K on Today",
+     "expected": "the quick search dialog opens with focus in its combobox",
+     "actual": "focused",
+     "pass": true
+    },
+    {
+     "action": "type NVDA",
+     "expected": "results listed; one option active",
+     "actual": "NVDA23 calls↵ Search · ⌘↵ Trends",
+     "pass": true
+    },
+    {
+     "action": "first active option",
+     "expected": "the NVDA instrument (Enter opens Search)",
+     "actual": "NVDA23 calls↵ Search · ⌘↵ Trends",
+     "pass": true
+    },
+    {
+     "action": "Enter on the NVDA instrument",
+     "expected": "Search opens filtered to NVDA",
+     "actual": "NVDA23 calls↵ Search · ⌘↵ Trends -> http://127.0.0.1:3050/youtube-intelligence/search?ticker=NVDA",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "trends-column-click-filters-drill-list",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "click a sentiment column",
+     "expected": "the drill list narrows to that period",
+     "actual": "23 calls behind this view -> 4 calls in the week of 28 Sept",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "report-prev-next-skips-weekend",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "previous from Mon 28 Sep",
+     "expected": "Fri 25 Sep (weekend skipped)",
+     "actual": "http://127.0.0.1:3050/youtube-intelligence/report/2026-09-25",
+     "pass": true
+    },
+    {
+     "action": "next from Fri 25 Sep",
+     "expected": "Mon 28 Sep (weekend skipped)",
+     "actual": "http://127.0.0.1:3050/youtube-intelligence/report/2026-09-28",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "saved-tab-switch-and-delete-confirm",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "Open tab",
+     "expected": "no Delete permanently offered",
+     "actual": "0 delete buttons",
+     "pass": true
+    },
+    {
+     "action": "switch to Reviewed",
+     "expected": "URL tab=done and the done call shows",
+     "actual": "http://127.0.0.1:3050/youtube-intelligence/saved?tab=done",
+     "pass": true
+    },
+    {
+     "action": "Reviewed tab",
+     "expected": "no Delete permanently offered",
+     "actual": "checked",
+     "pass": true
+    },
+    {
+     "action": "switch to Removed",
+     "expected": "Delete permanently offered per card",
+     "actual": "2 buttons",
+     "pass": true
+    },
+    {
+     "action": "Delete permanently",
+     "expected": "an inline confirmation with Cancel, focus on Cancel",
+     "actual": "confirm shown",
+     "pass": true
+    },
+    {
+     "action": "Cancel",
+     "expected": "confirmation closes; both removed calls remain",
+     "actual": "no deletion",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "unread-dot-and-sidebar-count",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "analyses finished after the watermark",
+     "expected": "dots on Today and 'N new' beside Today",
+     "actual": "6 dots, sidebar \"6 new\"",
+     "pass": true
+    },
+    {
+     "action": "open one new analysis",
+     "expected": "sidebar count drops by one",
+     "actual": "\"6 new\" -> \"5 new\"",
+     "pass": true
+    },
+    {
+     "action": "back on Today",
+     "expected": "one dot fewer",
+     "actual": "6 -> 5",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "today-levels-column-toggle",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "default Today table",
+     "expected": "no Levels column",
+     "actual": "hidden",
+     "pass": true
+    },
+    {
+     "action": "Columns → Levels",
+     "expected": "a Levels column appears",
+     "actual": "1 heading",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "watchlist-tab-switch",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "Mentioned today tab",
+     "expected": "selected, rows listed",
+     "actual": "5 rows",
+     "pass": true
+    },
+    {
+     "action": "Pinned tab",
+     "expected": "4 pinned rows incl. PLTR 'No price'",
+     "actual": "4 rows",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "keyboard-search-filters-and-palette",
+   "viewport": "1440x1000",
+   "pass": true,
+   "steps": [
+    {
+     "action": "Tab through Search",
+     "expected": "reaches the facet filter buttons with a visible focus style",
+     "actual": "12 filter stops; e.g. Stocks & ETFs153 | Macro17 | ▲ Bullish95 | ● Neutral33",
+     "pass": true
+    },
+    {
+     "action": "Enter on the Bullish filter",
+     "expected": "sentiment=bullish in the URL",
+     "actual": "http://127.0.0.1:3050/youtube-intelligence/search?sentiment=bullish",
+     "pass": true
+    },
+    {
+     "action": "Tab to the sidebar quick search and press Enter",
+     "expected": "palette opens",
+     "actual": "true",
+     "pass": true
+    },
+    {
+     "action": "↓ in the palette",
+     "expected": "an option becomes active (aria-selected)",
+     "actual": "MACRO · GOLDGold · 1 call↵ Search · ⌘↵ Trends",
+     "pass": true
+    },
+    {
+     "action": "Escape",
+     "expected": "palette closes and focus returns to the trigger",
+     "actual": "closed=true focusBack=true",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  },
+  {
+   "name": "phone-palette-and-more-menu",
+   "viewport": "390x844",
+   "pass": true,
+   "steps": [
+    {
+     "action": "phone header search icon",
+     "expected": "full-screen quick search opens",
+     "actual": "true",
+     "pass": true
+    },
+    {
+     "action": "More in the phone tab strip",
+     "expected": "the rest of the pages are listed",
+     "actual": "4 links",
+     "pass": true
+    }
+   ],
+   "consoleErrors": []
+  }
+ ],
+ "checks": {
+  "npm test": {
+   "command": "node --experimental-strip-types --test --test-concurrency=3 tests/*.test.ts",
+   "tests": 1001,
+   "pass": 1000,
+   "fail": 0,
+   "skipped": 1,
+   "skippedNote": "real Postgres process-kill test, skipped without a real Postgres URL",
+   "exit": 0
+  },
+  "YTI_DB=pglite npm test": {
+   "command": "YTI_DB=pglite node --experimental-strip-types --test --test-concurrency=3 tests/*.test.ts",
+   "tests": 1001,
+   "pass": 1000,
+   "fail": 0,
+   "skipped": 1,
+   "exit": 0
+  },
+  "npm run typecheck": {
+   "exit": 0
+  },
+  "npm run build": {
+   "exit": 0
+  },
+  "promotion-gate --offline": {
+   "exit": 0,
+   "pass": true,
+   "verdict": "advisory-only",
+   "binding": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0
+   },
+   "note": "binding.total is 0: the gate measured nothing; pass:true means only that nothing could fail"
+  },
+  "npm audit --omit=dev": {
+   "exit": 0,
+   "result": "found 0 vulnerabilities"
+  }
+ },
+ "notMeasured": [
+  "live providers",
+  "LeapEdge comparison",
+  "verified accuracy",
+  "hosted (Vercel + Neon) deployment"
+ ]
+}

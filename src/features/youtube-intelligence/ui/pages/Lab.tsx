@@ -7,6 +7,8 @@ import { useWorkspace } from "../workspace.tsx";
 import { action } from "../api.ts";
 import { Collapsible, Empty, PageTitle } from "../components.tsx";
 import { money, processingState, dateLabel } from "../viewmodel.ts";
+import { StepUsageTable } from "../CallUsageTable.tsx";
+import type { LedgerRow } from "../../call-usage.ts";
 export function Lab() {
   const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
     useWorkspace();
@@ -402,16 +404,20 @@ export function Lab() {
             </div>
           ))}
         </dl>
-        <pre>
-          {JSON.stringify(
-            {
-              calls: data.snapshot.calls,
-              captionAttempts: data.snapshot.captionAttempts,
-            },
-            null,
-            2,
-          )}
-        </pre>
+        <h3>Model calls per step</h3>
+        <StepUsageTable calls={data.snapshot.calls as LedgerRow[]} />
+        <Collapsible title="Show raw data">
+          <pre>
+            {JSON.stringify(
+              {
+                calls: data.snapshot.calls,
+                captionAttempts: data.snapshot.captionAttempts,
+              },
+              null,
+              2,
+            )}
+          </pre>
+        </Collapsible>
       </Collapsible>
       <Collapsible title="Optional legacy evaluation diagnostics">
         <p>

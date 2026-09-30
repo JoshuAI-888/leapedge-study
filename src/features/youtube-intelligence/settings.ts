@@ -3,6 +3,7 @@ import { ProcessingProfileSetting } from "./processing-profiles.ts";
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import { modelFamily } from "./model-family.ts";
+import { DEFAULT_TIME_ZONE, isValidTimeZone } from "./trading-day.ts";
 /**
  * Settings schemas from spec section 6.
  *
@@ -13,14 +14,7 @@ import { modelFamily } from "./model-family.ts";
  * `team.accountDefaults` are nullable, and null means "use the team default";
  * resolveAccount() fills them.
  */
-const timezone = z.string().refine((v) => {
-  try {
-    new Intl.DateTimeFormat("en", { timeZone: v });
-    return true;
-  } catch {
-    return false;
-  }
-}, "Unknown timezone");
+const timezone = z.string().refine(isValidTimeZone, "Unknown timezone");
 export const Transport = z.enum(["google-native", "openrouter"]);
 export const TrustLevel = z.enum([
   "text-checked",
@@ -209,6 +203,14 @@ export const TeamPreferences = z.object({
       showExtractedInLab: z.boolean().default(true),
     })
     .prefault({}),
+  // F58: the zone times display in, team-wide. Sessions are always US (ET);
+  // this only changes how a publish time reads. Outside the configuration
+  // hash, like every other display key.
+  display: z
+    .object({
+      timezone: timezone.default(DEFAULT_TIME_ZONE),
+    })
+    .prefault({}),
   sharing: z
     .object({
       expiry: z.enum(["never", "7d", "30d", "90d"]).default("never"),
@@ -261,6 +263,16 @@ export const TeamPreferences = z.object({
     .prefault({}),
 });
 export type TeamPreferencesData = z.infer<typeof TeamPreferences>;
+const Digest = z.object({
+  enabled: z.boolean().default(true),
+  hourLocal: z.number().int().min(0).max(23).default(7),
+  // null follows the team display zone (F58). Documents saved before the
+  // merge carry an explicit zone, which is kept.
+  timezone: timezone.nullable().default(null),
+  deliverTo: z
+    .array(z.enum(["finradar-briefing", "email"]))
+    .default(["finradar-briefing", "email"]),
+});
 export const AccountPreferences = z.object({
   benchmark: Benchmark.nullable().default(null),
   sentiment: z
@@ -273,16 +285,7 @@ export const AccountPreferences = z.object({
   marketFilter: z.array(Market).min(1).nullable().default(null),
   defaultHorizonDays: HorizonDays.nullable().default(null),
   todayTrustFilter: TrustLevel.nullable().default(null),
-  digest: z
-    .object({
-      enabled: z.boolean().default(true),
-      hourLocal: z.number().int().min(0).max(23).default(7),
-      timezone: timezone.default("Pacific/Auckland"),
-      deliverTo: z
-        .array(z.enum(["finradar-briefing", "email"]))
-        .default(["finradar-briefing", "email"]),
-    })
-    .prefault({}),
+  digest: Digest.prefault({}),
   display: z
     .object({
       language: z.enum(["en", "zh"]).default("en"),
@@ -302,6 +305,7 @@ export const ResolvedAccountPreferences = AccountPreferences.extend({
   marketFilter: z.array(Market).min(1),
   defaultHorizonDays: HorizonDays,
   todayTrustFilter: TrustLevel,
+  digest: Digest.extend({ timezone }),
 });
 export type ResolvedAccountPreferencesData = z.infer<
   typeof ResolvedAccountPreferences
@@ -333,6 +337,10 @@ export function resolveAccount(
     defaultHorizonDays: account.defaultHorizonDays ?? d.defaultHorizonDays,
     todayTrustFilter:
       account.todayTrustFilter ?? team.trust.minimumLevelForToday,
+    digest: {
+      ...account.digest,
+      timezone: account.digest.timezone ?? team.display.timezone,
+    },
   });
 }
 /**
@@ -455,8 +463,12 @@ export function migrateLegacyPreferences(input: unknown): {
   if (old.autoPullEnabled !== undefined)
     team.channels.discovery = old.autoPullEnabled ? "poll" : "push";
   if (old.windowedTranscription) team.sources.windowSeconds = 600;
-  if (old.timezone && timezone.safeParse(old.timezone).success)
+  // The flat document was team-wide, so its zone becomes the team's display
+  // zone as well as the digest zone it always was.
+  if (old.timezone && timezone.safeParse(old.timezone).success) {
+    team.display.timezone = old.timezone;
     account.digest.timezone = old.timezone;
+  }
   if (old.digestHour !== undefined) account.digest.hourLocal = old.digestHour;
   if (old.digestEnabled !== undefined)
     account.digest.enabled = old.digestEnabled;

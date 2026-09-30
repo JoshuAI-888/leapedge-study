@@ -2,6 +2,8 @@
 
 **Status:** Original approved feature plan, amended 19 September 2026. Companion to `youtube-intelligence-v2-spec.md` (revision 2). This document lists every feature needed to deliver the spec, which features are serial and which parallel, the loop each build agent follows, the backend test plan, and the multi-agent delivery strategy.
 
+**Execution override, 29 September 2026:** phase 5 (F56–F77, LeapEdge-gap features) is added to the standalone scope after phases 2 and 3; phase 4 stays excluded. See `standalone-scope.json`.
+
 **Execution override, 19 September 2026:** follow `../delivery/standalone-build-loop.md` and `standalone-scope.json`. Complete Phase 2 and Phase 3 and stop before F50. Remove the fifty human-verified cases from current acceptance; later LeapEdge comparison uses available valid video/channel links. Historical feature rows retain the original implementation trail, not a renewed annotation requirement. Browser workflows, visual review and real Postgres tests are required. The user has authorized the two-phase build; old human approvals at every intermediate phase/implementation change do not pause this execution.
 
 **Decisions this plan rests on:** all phases 0–4 in scope; Claude agents build with human review at every phase gate; tests reach Postgres through PGlite in-process; delivery runs as a multi-agent Workflow, one phase per spec phase.
@@ -98,6 +100,35 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | F54 | Digest per account: deliver to Finradar briefing and/or email | `briefings.ts` (`digestDue`, `prepareScheduledDigest`), `email.ts` | 6.3 |
 | F55 | Phase-4 gate run: 50-call context sample all inside window; edition renders the observation; corpus question cites spans | `tests/context-check.test.ts`, `docs/gates/phase-4-<date>.json` | 9 |
 
+### Phase 5 — LeapEdge-gap features (standalone, added 29 September 2026)
+
+Added after the user reviewed the LeapEdge feature teardown gap by gap (`../delivery/leapedge-gap-decisions-20260929.md`). Requirements per feature are in `../delivery/leapedge-gap-ux-proposals-20260929.md`, wireframes in `mockups/LeapEdgeGaps.html`, and the spec amendment in §7.6. Phase 4 stays excluded; phase 5 does not depend on it.
+
+| ID | Feature | Files | Spec |
+|---|---|---|---|
+| F56 | Research query API: paged server-side queries over calls and videos with facet counts and set aggregates; substring text match incl. CJK | `repos/research-query.ts`, `actions/query.ts` | 7.6 |
+| F57 | UX foundations: validated sentiment palette and split bar, URL filter state, hidden-by-filter notice, grouped sidebar (D2), screenshot-audit fixes | `ui/SplitBar.tsx`, `ui/url-state.ts`, `ui/Shell.tsx` | 7.6 |
+| F58 | US trading-day sessions (ET, holiday-aware) and team time zone | `trading-day.ts`, `ui/TradingDay.tsx` | 7.6 |
+| F59 | Macro, theme and sector views: fixed vocabulary, instrument label, type filter | `instrument-kind.ts`, `ui/InstrumentLabel.tsx` | 7.6 |
+| F60 | Richer call fields: catalysts, expiry, action, parsed levels; prompt/schema bump; call card v2 | `level-parse.ts`, `ui/components.tsx`, `prompts.ts` | 7.6 |
+| F61 | Analysis verdict box, summary, numbered key points; Calls · Research brief · Processing details tabs | `ui/Verdict.tsx`, `ui/pages/Analysis.tsx` | 7.6 |
+| F62 | Search page: facets with counts, calls and videos results, filtered-set summary, paging | `ui/pages/Search.tsx` | 7.6 |
+| F63 | CSV/JSON export with stated scope | `export.ts`, `ui/ExportMenu.tsx` | 7.6 |
+| F64 | Daily report page and archive: themes with citations, in focus, disagreements, sources; Today summary card | `ui/pages/Report.tsx`, `daily-report.ts` | 7.6 |
+| F65 | Trends page: tiles, weekly sentiment columns, price-aligned call timeline, drill list | `ui/pages/Trends.tsx`, `ui/charts.tsx` | 7.6 |
+| F66 | Channel detail page | `ui/pages/Channel.tsx` | 7.6 |
+| F67 | Channels list as a sortable table; add-channels drawer | `ui/pages/Channels.tsx`, `channel-stats.ts` | 7.6 |
+| F68 | Watchlist with sparkline, 1-day change and divergence flag | `ui/Watchlist.tsx` | 7.6 |
+| F69 | 24-hour trending window, session-aligned, view state | `ui/SentimentPanel.tsx` | 7.6 |
+| F70 | Per-browser unread markers | `ui/unread.ts` | 7.6 |
+| F71 | Follow-channel prompt with cost projection | `ui/FollowPrompt.tsx` | 7.6 |
+| F72 | Live step progress while running; Retry from checkpoint | `ui/StepProgress.tsx`, `progress-steps.ts` | 7.6 |
+| F73 | Per-call token, cache, time and cost table | `ui/CallUsageTable.tsx` | 7.6 |
+| F74 | Reuse a completed run for the same video and pipeline version | `reuse.ts` | 7.6 |
+| F75 | Saved calls: tabs with counts, session grouping, card v2, permanent delete | `ui/pages/Saved.tsx` | 7.6 |
+| F76 | Quick search palette (Cmd/Ctrl+K) | `ui/CommandPalette.tsx` | 7.6 |
+| F77 | Phase-5 gate run: browser and visual matrix for the new surfaces, registry CI, conformance | `tests/phase-5-gate.test.ts`, `docs/gates/phase-5-<date>.json` | 9 |
+
 ---
 
 ## 2. Dependency map and lanes
@@ -132,6 +163,8 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | F27 | F26, F16 | | F54 | F05, F53 |
 | F28 | F24 | | F55 | F50–F54 |
 
+**Phase 5 prerequisites:** F56 ← F24, F30 · F57 ← F43 · F58 ← F05 · F59 ← F19, F43 · F60 ← F19, F43 · F61 ← F47, F60 · F62 ← F56–F59 · F63 ← F56 · F64 ← F56–F59 · F65 ← F56–F58, F25 · F66 ← F56, F65, F36 · F67 ← F45, F56, F57 · F68 ← F25, F57 · F69 ← F38, F58 · F70 ← F44 · F71 ← F45, F47 · F72 ← F27, F47 · F73 ← F17b, F47 · F74 ← F26 · F75 ← F48, F60, F58 · F76 ← F56, F62 · F77 ← F56–F76.
+
 **Critical path (strictly serial):** F01 → F02 → F03 → F12 → F13 → F22 → F23 → F24 → F32 → F33 → F35 → F36 → F46 → F49 → F50 → F55.
 
 **Lanes per phase** (items within a lane are serial; lanes run in parallel):
@@ -161,6 +194,12 @@ Paths are relative to the `feat/youtube-intelligence` checkout. Spec references 
 | 3 | gate | F49 | |
 | 4 | context, finradar, corpus, sharing | F50; F51; F52; F53 → F54 | four parallel lanes |
 | 4 | gate | F55 | |
+| 5 | foundations (blocking) | F56, F57, F58, F59, F60 | parallel; the pages below wait on them |
+| 5 | research-ui | F62 → F76; F63; F64; F65 → F66 | after F56–F59 |
+| 5 | analysis-ui | F61, F71, F72, F73 | F61 after F60 |
+| 5 | today-ui | F68, F69, F70, F75 | F75 after F60 |
+| 5 | sources-ui, queue | F67; F74 | independent |
+| 5 | gate | F77 | after all phase-5 items |
 
 ---
 

@@ -1,9 +1,16 @@
 "use client";
 import Link from "next/link";
-import { ResearchOverview } from "../ResearchBrief.tsx";
+import { ReportSummaryCard } from "../ReportSummaryCard.tsx";
 import { SentimentPanel } from "../SentimentPanel.tsx";
+import { Watchlist } from "../Watchlist.tsx";
+import { UnreadDot, runsForUnread } from "../UnreadDot.tsx";
+import { TRACKED_HINT, useTodayVisit, useUnread } from "../unread.ts";
+import { useTeamTimeZone } from "../TradingDay.tsx";
+import { localTime } from "../../trading-day.ts";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useWorkspace } from "../workspace.tsx";
+import { InstrumentLabel } from "../InstrumentLabel.tsx";
 import { action } from "../api.ts";
 import {
   visibleClaims,
@@ -21,10 +28,15 @@ import {
   TrustBadge,
   SaveCallButton,
   MetricHeading,
+  LevelChips,
 } from "../components.tsx";
+import { HiddenByFilter } from "../HiddenByFilter.tsx";
+import { InlineRetry, MiniProgress } from "../StepProgress.tsx";
+import { hiddenByFilter, trustOptionLabel } from "../foundations.ts";
 export function Today() {
   const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
     useWorkspace();
+  const router = useRouter();
   const [url, setUrl] = useState(""),
     [search, setSearch] = useState(""),
     [minimum, setMinimum] = useState(""),
@@ -33,7 +45,13 @@ export function Today() {
     [view, setView] = useState("table"),
     [sort, setSort] = useState("default"),
     [descending, setDescending] = useState(false),
-    [limit, setLimit] = useState(5);
+    [limit, setLimit] = useState(5),
+    // Extra table columns, off by default (F60 Levels).
+    [levelsColumn, setLevelsColumn] = useState(false);
+  // F70: unread markers, kept on this browser only.
+  const unread = useUnread(),
+    lastVisit = useTodayVisit(),
+    timeZone = useTeamTimeZone();
   if (!data) return null;
   const defaultTrust =
     (
@@ -71,7 +89,6 @@ export function Today() {
         a.id.localeCompare(b.id)
       );
     });
-  const across = allCreators.slice(0, 6);
   const shown = claims.slice(0, limit);
   const recovered = recoveredRuns(data.runs);
   const latestBriefs = latestResearchBySource(data.snapshot.researchBriefs);
@@ -91,9 +108,14 @@ export function Today() {
     setSort(key);
     setDescending(sort === key ? !descending : false);
   }
-  const runs = data.runs.filter(
+  const filteredRuns = data.runs.filter(
     (r) => status === "all" || activityState(r).filter === status || (status === "Needs review" && activityState(r).needsReview),
   );
+  const fresh = new Set(unread.unread(runsForUnread(filteredRuns)).map((r) => r.id));
+  const runs = [
+    ...filteredRuns.filter((r) => fresh.has(r.id)),
+    ...filteredRuns.filter((r) => !fresh.has(r.id)),
+  ];
   return (
     <>
       <PageTitle
@@ -104,10 +126,24 @@ export function Today() {
           className="yi-quick-analyse"
           onSubmit={(e) => {
             e.preventDefault();
-            void perform(async () => {
-              await action("runs", "analyse", { url });
-              setUrl("");
-            }, "Video queued. Its progress appears below.");
+            void perform(
+              async () => {
+                const { result } = await action<{
+                  result: { reused?: boolean; runId?: string; analysedAt?: string | null };
+                }>("runs", "analyse", { url });
+                setUrl("");
+                // A finished analysis on the current pipeline is opened, not paid for again (F74).
+                if (result.reused && result.runId)
+                  router.push(`/youtube-intelligence/analysis/${encodeURIComponent(result.runId)}`);
+                return result;
+              },
+              (result) => {
+                const r = result as { reused?: boolean; analysedAt?: string | null };
+                return r.reused
+                  ? `Already analysed ${dateLabel(r.analysedAt)} with the current pipeline. Opened it, no new cost.`
+                  : "Video queued. Its progress appears below.";
+              },
+            );
           }}
         >
           <label htmlFor="video-url">Analyse a YouTube video</label>
@@ -125,7 +161,7 @@ export function Today() {
           </div>
         </form>
       </PageTitle>
-      <ResearchOverview />
+      <ReportSummaryCard />
       <div className="yi-today-layout">
         <div className="yi-today-primary">
           <section className="yi-panel yi-calls-panel">
@@ -157,6 +193,12 @@ export function Today() {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Ticker or thesis"
                 />
+                <Link
+                  className="yi-find-all"
+                  href={`/youtube-intelligence/search${search.trim() ? `?${new URLSearchParams({ q: search.trim() })}` : ""}`}
+                >
+                  Search all calls →
+                </Link>
               </label>
               <label>
                 Minimum trust
@@ -193,25 +235,38 @@ export function Today() {
               >
                 Reset sort
               </button>
-            </Filters>
-            {minimum !== "L1" &&
-              (minimum || defaultTrust) !== "L0" &&
-              visibleClaims(
-                data.snapshot.claims.filter((c) => canonical.has(c.runId)),
-                search,
-                "L1",
-              ).length > eligible.length && (
-                <p className="yi-muted">
-                  Some text-checked calls are hidden by the current trust
-                  filter.{" "}
-                  <button
-                    className="yi-text-button"
-                    onClick={() => setMinimum("L1")}
-                  >
-                    Show text-checked calls
-                  </button>
-                </p>
+              {view === "table" && (
+                <details className="yi-column-menu">
+                  <summary>Columns</summary>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={levelsColumn}
+                      onChange={(e) => setLevelsColumn(e.target.checked)}
+                    />
+                    Levels
+                  </label>
+                </details>
               )}
+            </Filters>
+            <HiddenByFilter
+              count={hiddenByFilter(
+                visibleClaims(
+                  data.snapshot.claims.filter((c) => canonical.has(c.runId)),
+                  search,
+                  "L0",
+                ).length,
+                eligible.length,
+              )}
+              filter={`the ${trustOptionLabel(minimum || defaultTrust)} trust filter`}
+              onReveal={() => setMinimum("L0")}
+            />
+            <HiddenByFilter
+              count={hiddenByFilter(eligible.length, claims.length)}
+              filter={`the ${stance} stance filter`}
+              onReveal={() => setStance("all")}
+              revealLabel="Show all stances"
+            />
             {data.snapshot.counts.claims.truncated && (
               <p className="yi-warning">
                 Showing {data.snapshot.counts.claims.returned} of{" "}
@@ -221,7 +276,7 @@ export function Today() {
             {claims.length ? (
               <>
                 {view === "table" && (
-                  <div className="yi-call-table">
+                  <div className={`yi-call-table${levelsColumn ? " yi-with-levels" : ""}`}>
                     <table>
                       <caption className="yi-sr-only">
                         Creator calls with stance, thesis and evidence trust
@@ -234,11 +289,12 @@ export function Today() {
                             "thesis",
                             "trust",
                             "creators",
+                            ...(levelsColumn ? ["levels"] : []),
                           ].map((key) => (
                             <MetricHeading
                               key={key}
                               id={`today.${key}`}
-                              onSort={() => sortBy(key)}
+                              onSort={key === "levels" ? undefined : () => sortBy(key)}
                               direction={
                                 sort === key
                                   ? descending
@@ -254,9 +310,7 @@ export function Today() {
                         {shown.map((c) => (
                           <tr key={c.id}>
                             <td>
-                              <strong className="yi-ticker">
-                                {c.ticker ?? c.instrument ?? "Unresolved"}
-                              </strong>
+                              <InstrumentLabel claim={c} />
                               {c.ticker && c.instrument !== c.ticker && (
                                 <small>{c.instrument}</small>
                               )}
@@ -302,6 +356,15 @@ export function Today() {
                               </strong>
                               <small>Dated creators</small>
                             </td>
+                            {levelsColumn && (
+                              <td className="yi-levels-cell">
+                                {c.levels?.length ? (
+                                  <LevelChips levels={c.levels} />
+                                ) : (
+                                  <span className="yi-muted">None stated</span>
+                                )}
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
@@ -360,15 +423,41 @@ export function Today() {
                 </select>
               </label>
             </div>
+            {fresh.size > 0 && unread.state && (
+              <div
+                className="yi-unread-head"
+                title={`${TRACKED_HINT}.${lastVisit ? ` Last visit ${localTime(lastVisit, timeZone)}.` : ""}`}
+              >
+                <strong>
+                  New since {localTime(unread.state.since, timeZone)}
+                </strong>
+                <span className="yi-muted">{fresh.size}</span>
+                <button
+                  type="button"
+                  className="yi-text-button"
+                  onClick={unread.markAllSeen}
+                >
+                  Mark all as seen
+                </button>
+              </div>
+            )}
             {runs.length ? (
               <ul className="yi-list">
                 {runs.map((r) => (
-                  <li key={r.id}>
+                  <li
+                    key={r.id}
+                    className={fresh.has(r.id) ? "yi-activity-new" : undefined}
+                  >
                     <div>
+                      <UnreadDot run={{ id: r.id, status: r.status, at: r.updatedAt }} />
                       <Link href={`/youtube-intelligence/analysis/${r.id}`}>
                         {r.title || `YouTube · ${r.videoId}`}
                       </Link>
                       <small>Processed {dateLabel(r.createdAt)}</small>
+                      <span className="yi-activity-progress">
+                        <MiniProgress run={r} />
+                        <InlineRetry run={r} />
+                      </span>
                     </div>
                     <span
                       className="yi-chip"
@@ -404,37 +493,8 @@ export function Today() {
           </section>
         </div>
         <aside className="yi-today-rail" aria-label="Research context">
+          <Watchlist />
           <SentimentPanel />
-          <section className="yi-panel">
-            <h2>Across creators</h2>
-            {across.length ? (
-              <ul className="yi-list">
-                {across.map((row) => (
-                  <li key={row.ticker}>
-                    <strong>{row.ticker}</strong>
-                    <div className="yi-row">
-                      {Object.entries(row.stances).map(([direction, count]) => (
-                        <span
-                          key={direction}
-                          className={`yi-chip yi-stance-${direction}`}
-                        >
-                          {count} {direction}
-                        </span>
-                      ))}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="yi-muted">
-                No dated creator calls match this view.
-              </p>
-            )}
-            <p className="yi-muted">
-              Latest dated stance per known creator among calls matching search
-              and trust. Agreement is not proof a thesis is correct.
-            </p>
-          </section>
           <section className="yi-panel">
             <h2>
               Needs your review{" "}

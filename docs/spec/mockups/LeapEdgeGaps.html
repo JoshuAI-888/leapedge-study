@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YouTube Intelligence UX Proposals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a long-form proposal doc with a sticky contents rail; wireframes are drawn in the app's own Finradar tokens so they read as the product. */
+:root{
+  --bg:#f4f6fa; --paper:#ffffff; --ink:#1d2330; --muted:#5d6678; --line:#e1e6ee;
+  --accent:#194df4; --accent-soft:#edf3ff; --warn-bg:#fff6e0; --warn-ink:#7a5200;
+  --bull:#0f8f6f; --neutral:#8a94a6; --bear:#c7492e; --bull-soft:#e3f4ee; --bear-soft:#fbe9e4;
+  --app-page:#f7f9fc; --app-surface:#ffffff; --app-line:#e5e9f0; --app-ink:#262626; --app-muted:#626b7b;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --f-app:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1420; --paper:#161c2a; --ink:#e6eaf2; --muted:#9aa4b8; --line:#2a3345;
+  --accent:#7096ff; --accent-soft:#1d2a4d; --warn-bg:#3a2f12; --warn-ink:#f2d27a;
+  --bull:#2aa384; --neutral:#8b95a8; --bear:#d9603e; --bull-soft:#15342c; --bear-soft:#3a1f19;
+  --app-page:#111827; --app-surface:#1a2233; --app-line:#2b3549; --app-ink:#e5e7eb; --app-muted:#9aa3b5;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1420; --paper:#161c2a; --ink:#e6eaf2; --muted:#9aa4b8; --line:#2a3345;
+  --accent:#7096ff; --accent-soft:#1d2a4d; --warn-bg:#3a2f12; --warn-ink:#f2d27a;
+  --bull:#2aa384; --neutral:#8b95a8; --bear:#d9603e; --bull-soft:#15342c; --bear-soft:#3a1f19;
+  --app-page:#111827; --app-surface:#1a2233; --app-line:#2b3549; --app-ink:#e5e7eb; --app-muted:#9aa3b5;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:32px 80px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr);gap:16px;padding-inline:16px}}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);align-self:start;font-size:13px;max-height:calc(100vh - 40px);overflow:auto}
+@media (max-width:900px){nav.toc{position:static;max-height:none;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}}
+nav.toc p{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+nav.toc a{display:block;color:var(--ink);text-decoration:none;padding:3px 0}
+nav.toc a:hover{color:var(--accent)}
+nav.toc a span{font-family:var(--f-mono);color:var(--muted);font-size:11px;margin-right:6px}
+main{min-width:0}
+h1{font-size:34px;line-height:1.15;letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance}
+h2{font-size:23px;letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
+h3{font-size:16px;margin:18px 0 6px}
+h4{font-size:13px;margin:14px 0 4px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+p{margin:0 0 10px;max-width:72ch}
+ul{margin:0 0 10px;padding-left:20px}
+li{margin:2px 0;max-width:72ch}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--accent-soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:17px;color:var(--muted);max-width:68ch}
+section.block{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:26px 28px;margin:22px 0}
+@media (max-width:600px){section.block{padding:18px 16px}}
+.gap-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;margin-bottom:6px}
+.gnum{font-family:var(--f-mono);font-size:12px;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:2px 8px}
+.where{font-size:13px;color:var(--muted)}
+.value{border-left:3px solid var(--accent);padding:4px 0 4px 12px;margin:10px 0 14px;color:var(--ink)}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 28px}
+@media (max-width:760px){.cols{grid-template-columns:minmax(0,1fr)}}
+.note{background:var(--warn-bg);color:var(--warn-ink);border-radius:10px;padding:10px 14px;font-size:14px;margin:12px 0}
+.note strong{color:inherit}
+.tbl{overflow-x:auto;margin:10px 0 14px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600}
+.pill{display:inline-block;font-size:12px;border-radius:20px;padding:1px 9px;background:var(--accent-soft);color:var(--accent);font-weight:600;white-space:nowrap}
+.pill.decide{background:var(--warn-bg);color:var(--warn-ink)}
+.pill.fix{background:var(--bear-soft);color:var(--bear)}
+
+/* ---------- wireframes: drawn in the app's tokens ---------- */
+.wf{font-family:var(--f-app);background:var(--app-page);color:var(--app-ink);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0 16px;font-size:12.5px;line-height:1.45;overflow-x:auto}
+.wf-cap{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin:-8px 0 16px}
+.wf .card{background:var(--app-surface);border:1px solid var(--app-line);border-radius:10px;padding:12px}
+.wf .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wf .grid{display:grid;gap:10px}
+.wf .muted{color:var(--app-muted)}
+.wf .t{font-weight:650}
+.wf .big{font-size:18px;font-weight:650}
+.wf .chip{display:inline-block;border-radius:20px;padding:1px 8px;font-size:11px;border:1px solid var(--app-line);color:var(--app-muted);background:var(--app-surface);white-space:nowrap}
+.wf .chip.on{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
+.wf .chip.bull{background:var(--bull-soft);color:var(--bull);border-color:transparent;font-weight:600}
+.wf .chip.bear{background:var(--bear-soft);color:var(--bear);border-color:transparent;font-weight:600}
+.wf .btn{display:inline-block;background:var(--accent);color:#fff;border-radius:7px;padding:4px 10px;font-weight:600;font-size:11.5px;white-space:nowrap}
+.wf .btn.sec{background:var(--app-surface);color:var(--accent);border:1px solid var(--app-line)}
+.wf .input{border:1px solid var(--app-line);background:var(--app-surface);border-radius:7px;padding:4px 9px;color:var(--app-muted);min-width:0}
+.wf .tick{font-weight:700;letter-spacing:.01em}
+.wf .macro{font-weight:700;font-size:10.5px;letter-spacing:.06em;border:1px dashed var(--app-muted);border-radius:5px;padding:0 5px;color:var(--app-ink)}
+.wf .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+.wf .kpi{background:var(--app-surface);border:1px solid var(--app-line);border-radius:10px;padding:9px 11px;min-width:0}
+.wf .kpi b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.wf .kpi small{color:var(--app-muted);font-size:11px}
+.wf table{font-size:12px}
+.wf th,.wf td{border-bottom:1px solid var(--app-line);padding:5px 7px}
+.wf th{color:var(--app-muted)}
+.split{display:flex;height:8px;border-radius:4px;overflow:hidden;gap:2px;min-width:80px;background:var(--app-surface)}
+.split i{display:block;height:100%}
+.split .b{background:var(--bull)} .split .n{background:var(--neutral)} .split .r{background:var(--bear)}
+.wf .lvl{display:inline-flex;gap:4px;align-items:baseline;border:1px solid var(--app-line);border-radius:6px;padding:1px 7px;background:var(--app-surface);font-variant-numeric:tabular-nums}
+.wf .lvl em{font-style:normal;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--app-muted)}
+.wf .side{display:grid;grid-template-columns:150px minmax(0,1fr) 190px;gap:10px;min-width:640px}
+.wf .two{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:10px;min-width:600px}
+.wf .facet p{margin:8px 0 3px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--app-muted)}
+.wf .facet div{display:flex;justify-content:space-between;padding:1px 0}
+.wf .facet div span:last-child{color:var(--app-muted);font-variant-numeric:tabular-nums}
+.wf .steps{display:flex;gap:3px}
+.wf .steps i{flex:1;height:6px;border-radius:3px;background:var(--app-line)}
+.wf .steps i.d{background:var(--accent)} .wf .steps i.a{background:var(--accent);opacity:.45}
+svg text{font-family:var(--f-app)}
+.swatches{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.sw{display:flex;align-items:center;gap:8px;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.sw i{width:18px;height:18px;border-radius:5px;display:block}
+.navcmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.navcmp{grid-template-columns:minmax(0,1fr)}}
+.navlist{font-family:var(--f-app);font-size:13px;background:var(--app-surface);border:1px solid var(--app-line);border-radius:10px;padding:10px 12px;color:var(--app-ink)}
+.navlist div{padding:3px 0}
+.navlist .grp{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--app-muted);margin-top:8px}
+.navlist .new{color:var(--accent);font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p>Start here</p>
+  <a href="#summary">Summary</a>
+  <a href="#audit">What the app looks like today</a>
+  <a href="#decisions">Decisions for you</a>
+  <a href="#system">Navigation &amp; shared parts</a>
+  <p>New pages</p>
+  <a href="#g1"><span>01</span>Daily report</a>
+  <a href="#g2"><span>02</span>Search</a>
+  <a href="#g3"><span>03</span>Trends</a>
+  <a href="#g4"><span>04</span>Channel page</a>
+  <p>Analysis page</p>
+  <a href="#g5"><span>05</span>Verdict &amp; key points</a>
+  <a href="#g6"><span>06</span>Richer call fields</a>
+  <a href="#g12"><span>12</span>Progress &amp; retry</a>
+  <a href="#g20"><span>20</span>Token counts</a>
+  <a href="#g7"><span>07</span>Reuse finished runs</a>
+  <a href="#g19"><span>19</span>Follow prompt</a>
+  <p>Today</p>
+  <a href="#g8"><span>08</span>Watchlist</a>
+  <a href="#g15"><span>15</span>24-hour trending</a>
+  <a href="#g18"><span>18</span>Unread markers</a>
+  <a href="#g16"><span>16</span>Quick search</a>
+  <p>Channels &amp; Saved</p>
+  <a href="#g11"><span>11</span>Channel list stats</a>
+  <a href="#g17"><span>17</span>Saved calls</a>
+  <p>Foundations with UI</p>
+  <a href="#g13"><span>13</span>Macro views</a>
+  <a href="#g14"><span>14</span>Trading day</a>
+  <a href="#g10"><span>10</span>Export</a>
+  <p>Finish</p>
+  <a href="#order">Build order</a>
+</nav>
+
+<main>
+<header id="summary">
+  <p class="eyebrow">YouTube Intelligence · UX proposals for the 19 agreed features · 29 Sep 2026</p>
+  <h1>YouTube Intelligence UX proposals</h1>
+  <p class="lede">What each new feature changes in the interface, what else has to move to make room for it, and the states each screen needs. It is based on the code on <code>main</code> and on screenshots of the app running locally with its test data, on desktop and phone, in light and dark.</p>
+  <div class="cols">
+    <div>
+      <h4>The overall shape</h4>
+      <ul>
+        <li><strong>Four new pages:</strong> Daily report, Search, Trends and one page per channel. The sidebar is grouped into Read · Research · Sources · Your work · Operate.</li>
+        <li><strong>Today becomes an inbox:</strong> today's report summary at the top, then what's new since your last visit, then the calls. A watchlist and the sentiment panel sit in the right-hand column.</li>
+        <li><strong>The Analysis page leads with a verdict:</strong> a summary, numbered key points, then richer call cards. How the result was produced stays under Processing details.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Shared parts built once and reused</h4>
+      <ul>
+        <li>a split bar showing bullish / neutral / bearish</li>
+        <li>a sparkline</li>
+        <li>a row of headline-number tiles</li>
+        <li>a filter bar whose state lives in the page address</li>
+        <li>an Export menu</li>
+        <li>a step-by-step progress bar</li>
+        <li>an instrument label that also handles macro views</li>
+        <li>a trading-day date label</li>
+        <li>an unread dot</li>
+        <li>the quick-search box</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><strong>Design skills:</strong> the "frontend-design" and "impeccable" skills you mentioned aren't installed in this session. I used the data-visualisation and page-design skills that are available, the app's own Finradar design tokens, and the spec's front-end section (§7). The chart colours below were run through the palette validator for colour-blind safety, not chosen by eye.</div>
+</header>
+
+<section class="block" id="audit">
+  <p class="eyebrow">Baseline</p>
+  <h2>What the app looks like today</h2>
+  <p>The screenshots showed several problems that the new features either fix or would make worse. I recommend fixing them alongside the features, because each one sits on a screen the features touch.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Finding</th><th>Where</th><th>Proposed fix</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill fix">High</span> The default trust filter hides everything. Today and the Leaderboard default to <em>Audio-agreed</em>, the test calls are all <em>Extracted</em>, so both pages open with "0 matching" and nothing says calls exist but are hidden.</td><td>Today, Leaderboard</td><td>Every filtered view says how many calls the filter hides, with a one-click "Show them" (e.g. "5 calls hidden by trust filter"). New pages reuse this.</td></tr>
+      <tr><td><span class="pill fix">High</span> The top of Today is an empty card. "Material developments" takes the prime position and, until a brief is generated, only holds an instruction.</td><td>Today</td><td>The daily report summary takes that position. Material developments moves into the Daily report page (see decision D3).</td></tr>
+      <tr><td>The evidence panel is its own scroll box (890 px tall holding 998 px of content), so "Review this evidence" is hidden on desktop. On a phone the evidence comes after every call card.</td><td>Analysis</td><td>Make the panel stick to the viewport instead of scrolling internally. On a phone, open the evidence directly under the selected card.</td></tr>
+      <tr><td>Stray "Select NVDA evidence" links float above each call card.</td><td>Analysis</td><td>Make the whole card selectable (a button with aria-pressed) and drop the extra link.</td></tr>
+      <tr><td>The Timing card says "In progress" on a completed run, with an empty table.</td><td>Analysis</td><td>Replaced by the step-by-step progress bar and the per-step table (gaps 12 and 20).</td></tr>
+      <tr><td>Short pages are centred vertically, leaving about 150 px of blank space above the page title.</td><td>Saved, Leaderboard</td><td>Align the main column to the top (<code>align-self:start</code>). This is a one-line CSS fix.</td></tr>
+      <tr><td>Internal detail is shown to users: raw ISO timestamps ("As of 2026-09-29T09:54:09.791Z"), file paths, schema names, and Title-Cased config keys ("Fallback To Open Router").</td><td>Leaderboard, Channels, Settings</td><td>Dates go through one trading-day label (gap 14). The catalogue source notes on Channels go behind a disclosure.</td></tr>
+      <tr><td>Channels opens with 1,200 px (on a phone) of catalogue source notes, and the followed channels sit at the bottom.</td><td>Channels</td><td>Followed channels come first (gap 11). Adding channels moves into a drawer.</td></tr>
+      <tr><td>Trust is named differently on different pages: "L2" in the Leaderboard filter and "Audio-agreed" elsewhere. "Human-verified 0" is drawn as the loudest pill on screen.</td><td>Leaderboard, strips</td><td>Use the names everywhere. Show zero counts in a muted style.</td></tr>
+      <tr><td>Settings is about 5,700 px with its save buttons at the top, and has no way to jump between sections.</td><td>Settings</td><td>Add a sticky save bar and section anchors. This matters because gaps 14 and 18 add settings there.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="block" id="decisions">
+  <p class="eyebrow">Needs your call</p>
+  <h2>Decisions for you</h2>
+  <p>Four of the proposals conflict with the spec or with each other. The rest of this document assumes the recommendation shown for each.</p>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Conflict</th><th>Recommendation</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill decide">D1</span></td><td>Spec §7.2 says analysts see only four states (Queued, Analysing, Ready, Needs review), and that stage detail and cost live in diagnostics. Gap 12 asks for a live step-by-step progress bar.</td><td>Show the progress bar only while a run is working, on the Analysis page and in the Today activity row. When the run finishes it collapses back to the four states, and cost stays in Processing details. Amend §7.2 to say so.</td></tr>
+      <tr><td><span class="pill decide">D2</span></td><td>Spec §7.1 fixes the sidebar at six items and says Finradar's top navigation is not changed. Four new pages and a site-wide quick search need a home.</td><td>Group the sidebar (next section). Put quick search at the top of the module sidebar and in each page header, not in Finradar's top bar. Remove the duplicate "Saved calls" and "Settings" links from the top bar. Amend §7.1.</td></tr>
+      <tr><td><span class="pill decide">D3</span></td><td>Today's "Material developments" (a ranking of per-video briefs) overlaps with the daily report's themes.</td><td>Move Material developments onto the Daily report page as a "Video briefs" section. Today shows only the report summary.</td></tr>
+      <tr><td><span class="pill decide">D4</span></td><td>Changing the Sentiment panel's period currently saves an account setting. With one shared passcode, that changes the view for the whole team.</td><td>Keep period, range and filters as view state in the page address, with the saved setting only as the starting default. Use the same rule on every new page.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="block" id="system">
+  <p class="eyebrow">Cross-cutting</p>
+  <h2>Navigation and shared parts</h2>
+  <h3>Sidebar, before and after</h3>
+  <div class="navcmp">
+    <div class="navlist" aria-label="Current sidebar">
+      <div class="grp">Now</div>
+      <div>Today</div><div>Channels</div><div>Leaderboard</div><div>Saved calls</div><div>Lab</div><div>Settings</div>
+      <div class="grp">Footer</div><div>Methodology</div>
+    </div>
+    <div class="navlist" aria-label="Proposed sidebar">
+      <div class="input" style="font-family:var(--f-app);font-size:12px;border:1px solid var(--app-line);border-radius:7px;padding:4px 8px;color:var(--app-muted)">Search tickers, channels, videos &nbsp; ⌘K</div>
+      <div class="grp">Read</div><div>Today <span class="muted">· 3 new</span></div><div class="new">Daily report</div>
+      <div class="grp">Research</div><div class="new">Search</div><div class="new">Trends</div><div>Leaderboard</div>
+      <div class="grp">Sources</div><div>Channels <span class="muted">→ channel pages</span></div>
+      <div class="grp">Your work</div><div>Saved calls</div>
+      <div class="grp">Operate</div><div>Lab</div><div>Settings</div><div>Methodology</div>
+    </div>
+  </div>
+  <p style="margin-top:12px">On a phone the tab strip becomes <strong>Today · Report · Search · More</strong>. Leaderboard moves under More, because the report and search are used every day and the leaderboard is not.</p>
+
+  <h3>Sentiment colours</h3>
+  <p>The app records seven stances (long, short, neutral, avoid, watch, hold, conditional). No chart can tell seven apart by colour. Charts and split bars therefore use the three sentiments the app already derives from stance (<code>contracts.ts:126</code>): bullish, neutral and bearish. Stance chips keep their text labels. The current green and red fail the colour-blind check (ΔE 5.2 for deuteranopia). The pair below keeps the green-up / red-down convention and passes in both themes (light ΔE 9.1, dark ΔE 9.7):</p>
+  <div class="swatches">
+    <div class="sw"><i style="background:var(--bull)"></i>Bullish ▲</div>
+    <div class="sw"><i style="background:var(--neutral)"></i>Neutral ●</div>
+    <div class="sw"><i style="background:var(--bear)"></i>Bearish ▼</div>
+  </div>
+  <p>Colour never carries sentiment alone. Each mark also gets an arrow glyph or a text label, a fixed position (bullish always first or on top), and a table view.</p>
+
+  <h3>Shared parts</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Part</th><th>What it is</th><th>Used by gaps</th></tr></thead>
+    <tbody>
+      <tr><td>Sentiment split bar</td><td>A thin bar in three parts separated by 2 px gaps, with counts as text beside it ("12 ▲ · 3 ● · 1 ▼"). Hover shows calls and creators separately.</td><td>1, 2, 3, 4, 5, 8, 11, 15</td></tr>
+      <tr><td>Headline tile row</td><td>A value, a change against the previous period and an optional sparkline. Never more than four tiles.</td><td>3, 4</td></tr>
+      <tr><td>Filter bar in the page address</td><td>One row above the content. The date range comes first. Every filter is written to the address, so a view can be bookmarked or pasted to a colleague. A "hidden by filters" line appears whenever results are filtered out.</td><td>1, 2, 3, 4</td></tr>
+      <tr><td>Instrument label</td><td>Renders <code>NVDA</code>, <code>BTC</code>, <code>MACRO · Rates</code> or <code>SECTOR · Semis</code> with a distinct shape (a dashed outline for non-tickers) and a link to Search for that instrument.</td><td>everywhere (13)</td></tr>
+      <tr><td>Trading-day label</td><td>"Mon 28 Sep · US session". Hover gives the local publish time and why the video was assigned to that session.</td><td>everywhere (14)</td></tr>
+      <tr><td>Export menu</td><td>"Export ▾ CSV · JSON". It states its scope ("184 calls matching these filters") and is disabled when there are no rows.</td><td>1, 2, 4, Leaderboard (10)</td></tr>
+      <tr><td>Step progress bar</td><td>Segments for each step, the current step's name, time elapsed, and a Retry button on failure.</td><td>12, Today activity</td></tr>
+      <tr><td>Call card v2</td><td>Adds an action line, level chips, catalysts and expiry (gap 6). Used on Today, Analysis, Search, Saved and channel pages.</td><td>6, 17</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Data constraint:</strong> today every page reads one capped workspace snapshot, which says "Showing N of M stored claims" when it hits the cap. Search, Trends, channel pages, the report archive and export can't work from that snapshot as the archive grows. They need queries that run on the server with paging. This is a build item behind several gaps, not a UI item, but it decides whether the UI can show true totals.</div>
+</section>
+
+<!-- ============ GAP 1 ============ -->
+<section class="block" id="g1">
+  <div class="gap-head"><span class="gnum">GAP 01</span><h2>Daily report</h2><span class="where">New page · /youtube-intelligence/report/2026-09-28 · archive at /report</span></div>
+  <p class="value">The PM's two-minute read before the open: what creators agree on, where they split, and how that differs from the previous session. Themes and ticker sentiment were your first stated priority, and this page delivers them.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the daily report page">
+    <div class="grid" style="grid-template-columns:minmax(0,1fr) 200px;min-width:620px">
+      <div class="grid">
+        <div class="card">
+          <div class="row" style="justify-content:space-between"><span class="muted">‹ Fri 25 Sep</span><span class="t">Mon 28 Sep 2026 · US session</span><span class="muted">Tue 29 Sep ›</span></div>
+          <div class="big" style="margin-top:8px">Creators lean bullish on AI infrastructure; small caps and oil the main worries</div>
+          <div class="row" style="margin-top:8px"><div class="split" style="width:220px"><i class="b" style="width:70%"></i><i class="n" style="width:18%"></i><i class="r" style="width:12%"></i></div><span>41 ▲ · 11 ● · 7 ▼ calls from 14 creators</span></div>
+          <div class="row muted" style="margin-top:6px">18 videos · checked against sources ✓ · generated 08:31 ET <span class="btn sec">Export ▾</span></div>
+        </div>
+        <div class="card"><div class="t">Themes</div>
+          <div style="margin-top:6px"><b>AI infrastructure spend holding up</b> <span class="muted">· 9 creators</span><br>• <span class="tick">NVDA</span>, <span class="tick">AVGO</span> seen as buy-the-dip after earnings <span class="muted">[Macro Mike ▶ 4:12] [老王聊股 ▶ 1:30]</span></div>
+          <div style="margin-top:6px"><b>Risks worth tracking</b> <span class="muted">· 6 creators</span><br>• <span class="macro">MACRO · RATES</span> hike expectations weigh on <span class="tick">IWM</span> <span class="muted">[…▶ 9:02]</span></div>
+        </div>
+        <div class="card"><div class="t">In focus</div>
+          <table><thead><tr><th>#</th><th>Instrument</th><th>Creators</th><th>Sentiment</th><th>vs prior</th><th>Why, in one line</th></tr></thead>
+          <tbody><tr><td>1</td><td class="tick">NVDA</td><td>7</td><td><div class="split" style="width:80px"><i class="b" style="width:86%"></i><i class="r" style="width:14%"></i></div></td><td>+2 ▲</td><td>Capex guidance intact; add on pullbacks</td></tr>
+          <tr><td>2</td><td class="tick">TSLA</td><td>5</td><td><div class="split" style="width:80px"><i class="b" style="width:40%"></i><i class="n" style="width:20%"></i><i class="r" style="width:40%"></i></div></td><td>split</td><td>Range 364–382; creators disagree on the break</td></tr></tbody></table>
+        </div>
+        <div class="card"><div class="t">Where creators disagree</div><span class="muted">TSLA 2 ▲ vs 2 ▼ · BTC 3 ▲ vs 1 ▼ — each opens both sides' quotes</span></div>
+      </div>
+      <div class="card"><div class="t">Past sessions</div>
+        <div class="muted" style="margin-top:6px">Fri 25 Sep<div class="split" style="margin:3px 0 8px"><i class="b" style="width:55%"></i><i class="n" style="width:25%"></i><i class="r" style="width:20%"></i></div>Thu 24 Sep<div class="split" style="margin:3px 0 8px"><i class="b" style="width:62%"></i><i class="n" style="width:20%"></i><i class="r" style="width:18%"></i></div>Wed 23 Sep<div class="split" style="margin:3px 0 8px"><i class="b" style="width:48%"></i><i class="n" style="width:22%"></i><i class="r" style="width:30%"></i></div></div>
+      </div>
+    </div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe with example data</p>
+  <div class="cols">
+    <div>
+      <h4>Page structure</h4>
+      <ul>
+        <li><strong>Header:</strong>
+          <ul>
+            <li>The US session date with previous/next arrows and a date picker that skips non-trading days.</li>
+            <li>A one-sentence consensus headline and the sentiment split bar.</li>
+            <li>Source count, check status and generation time. Cost stays in diagnostics.</li>
+          </ul>
+        </li>
+        <li><strong>Themes:</strong> 3–5 sections from the synthesis. Each bullet carries citations as chips (channel ▶ timestamp) that open the analysis at that moment. The briefing pipeline already requires a run or claim reference for every point.</li>
+        <li><strong>In focus:</strong> ranked instruments, including macro rows (gap 13), with:
+          <ul>
+            <li>creator count</li>
+            <li>split bar</li>
+            <li>change against the previous session</li>
+            <li>one-line reason</li>
+          </ul>
+          A row expands to show its source calls.</li>
+        <li><strong>Where creators disagree:</strong> a new section that LeapEdge doesn't have. It lists instruments with calls on both sides and shows the two sets of quotes side by side. For an investment team, disagreement is often the most useful signal.</li>
+        <li><strong>Video briefs</strong> (moved from Today, D3) and <strong>Sources</strong>: every analysis included, each with its verdict line (gap 5).</li>
+        <li><strong>Archive:</strong> a right-hand column (desktop) or a list page (phone) of past sessions. Each shows its headline and split bar, so a week of mood reads at a glance.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>States</h4>
+      <ul>
+        <li><strong>Before 08:30 ET:</strong> "Today's report is generated at 08:30 ET (9:30 pm your time). Showing Fri 25 Sep."</li>
+        <li><strong>Fewer than 3 videos:</strong> the report is not synthesised. The page shows the calls table and says why.</li>
+        <li><strong>The check flagged points:</strong> an amber strip "2 points removed by the source check", with the removed points listed in a disclosure. They are never shown silently.</li>
+        <li><strong>Generation failed:</strong> the error in plain words, with a Retry button (gap 12's retry pattern).</li>
+      </ul>
+      <h4>What else changes</h4>
+      <ul>
+        <li><strong>Today:</strong> the summary card replaces "Material developments" at the top, and the "Across creators" panel is folded into In focus.</li>
+        <li><strong>The public share page</strong> (<code>/share/[token]</code>) keeps working. The report page links to the existing share action only if you want it; sharing is out of scope, so no new share UI is added.</li>
+        <li><strong>Methodology</strong> gets a "How the daily report is built" entry.</li>
+      </ul>
+      <h4>Phone</h4>
+      <ul><li>Single column. In focus becomes cards (instrument, split bar, reason). Previous/next becomes swipeable arrows in the header.</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 2 ============ -->
+<section class="block" id="g2">
+  <div class="gap-head"><span class="gnum">GAP 02</span><h2>Search</h2><span class="where">New page · /search?ticker=NVDA&amp;window=30d&amp;sentiment=bullish</span></div>
+  <p class="value">Answers "what has everyone said about NVDA in the last 30 days, and which way do they lean?" in one screen. It becomes the main research tool once the archive passes a few hundred videos.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the search page with filters, results and summary">
+    <div class="row" style="margin-bottom:8px"><span class="input" style="flex:1">nvidia capex</span><span class="chip on">NVDA ×</span><span class="chip on">Last 30 days ×</span><span class="chip on">Trust ≥ Text-checked ×</span><span class="muted">Clear all</span></div>
+    <div class="side">
+      <div class="card facet">
+        <p>Instrument</p><div><span>NVDA</span><span>41</span></div><div><span>AVGO</span><span>12</span></div><div><span class="muted">+ 23 more</span><span></span></div>
+        <p>Type</p><div><span>Stocks &amp; ETFs</span><span>88</span></div><div><span>Macro</span><span>14</span></div><div><span>Crypto</span><span>9</span></div>
+        <p>Sentiment</p><div><span>▲ Bullish</span><span>33</span></div><div><span>● Neutral</span><span>5</span></div><div><span>▼ Bearish</span><span>3</span></div>
+        <p>Conviction</p><div><span>High</span><span>20</span></div><div><span>Medium</span><span>17</span></div>
+        <p>Channel</p><div><span>Macro Mike</span><span>9</span></div>
+        <p>Date</p><div><span>1d · 7d · <b>30d</b> · 90d · all</span><span></span></div>
+      </div>
+      <div class="card">
+        <div class="row" style="justify-content:space-between"><span><b>Calls 41</b> · <span class="muted">Videos 23</span></span><span class="muted">Newest ▾ &nbsp;<span class="btn sec">Export ▾</span></span></div>
+        <table style="margin-top:6px"><tbody>
+          <tr><td class="tick">NVDA</td><td><span class="chip bull">long</span></td><td>Add on pullbacks into year end as <mark>capex</mark> holds up<br><span class="muted">Macro Mike · Mon 28 Sep · Text-checked</span></td></tr>
+          <tr><td class="tick">NVDA</td><td><span class="chip">watch</span></td><td>Needs to reclaim 230 before adding<br><span class="muted">美股Alpha姐 · Fri 25 Sep · Audio-agreed</span></td></tr>
+        </tbody></table>
+        <div class="muted" style="margin-top:6px">Showing 1–50 of 41 · Load 50 more</div>
+      </div>
+      <div class="card">
+        <div class="t">This set</div><div class="muted">41 calls · 23 videos · 11 creators</div>
+        <div class="split" style="margin:6px 0"><i class="b" style="width:80%"></i><i class="n" style="width:12%"></i><i class="r" style="width:8%"></i></div>
+        <div class="muted">33 ▲ · 5 ● · 3 ▼</div>
+        <div class="t" style="margin-top:8px">Conviction</div>
+        <svg viewBox="0 0 170 40" width="100%" height="40" aria-hidden="true"><rect x="0" y="4" width="98" height="9" rx="2" fill="var(--accent)"/><rect x="0" y="16" width="83" height="9" rx="2" fill="var(--accent)" opacity=".6"/><rect x="0" y="28" width="19" height="9" rx="2" fill="var(--accent)" opacity=".35"/></svg>
+        <div class="t" style="margin-top:6px">Preview</div><div class="muted">Hovered call's thesis, levels and quote</div>
+      </div>
+    </div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe · the three columns are filters · results · summary of the filtered set</p>
+  <div class="cols">
+    <div>
+      <h4>Design choices</h4>
+      <ul>
+        <li><strong>Two result tabs, Calls and Videos</strong>, over the same filters. An analyst asks "what was said" (calls) as often as "what did they cover" (videos).</li>
+        <li><strong>Every filter shows a live count</strong> for the current set. Options with a count of zero stay visible but greyed, so nothing disappears unexplained.</li>
+        <li><strong>Active filters show as chips</strong> in the top row, with "Clear all". The whole state lives in the page address.</li>
+        <li><strong>Text search</strong> matches anywhere in the title, thesis, quote and translation, including Chinese text. This fixes LeapEdge's prefix-only title search, which missed "…｜Tom Lee" and returned 0 results for "Stock".</li>
+        <li><strong>Paging</strong> is "Load 50 more" with an honest total. There is no silent cap at 60.</li>
+        <li><strong>The summary column</strong> recomputes for the filtered set: sentiment split, conviction spread, top instruments, top channels, and a preview of the hovered row.</li>
+        <li><strong>Trust filter</strong> defaults to Text-checked, and the "N hidden by trust" line is always shown.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>States</h4>
+      <ul>
+        <li><strong>No results:</strong> suggests the one filter whose removal returns the most rows, e.g. "Remove 'Last 7 days' to see 12 calls".</li>
+        <li><strong>Loading:</strong> results keep their previous render at reduced opacity. No skeleton flash.</li>
+        <li><strong>Opened with no filters:</strong> shows the newest calls plus suggested entry points (top instruments this week).</li>
+      </ul>
+      <h4>What else changes</h4>
+      <ul>
+        <li>Today's "Find a call" box becomes a link into Search carrying the typed text.</li>
+        <li>Every instrument label and channel name in the app links to Search pre-filtered to it.</li>
+        <li>The Leaderboard row and the channel page get "See all calls →".</li>
+      </ul>
+      <h4>Phone</h4>
+      <ul><li>A "Filters (3)" button opens a full-height sheet with a sticky "Show 41 calls" button. The summary collapses into one line at the top ("41 calls · 33 ▲ 5 ● 3 ▼").</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 3 ============ -->
+<section class="block" id="g3">
+  <div class="gap-head"><span class="gnum">GAP 03</span><h2>Trends</h2><span class="where">New page · /trends?by=ticker&amp;value=NVDA&amp;range=90d</span></div>
+  <p class="value">Shows how sentiment moves: when creators flip on a name, whether bullishness is building or fading, and what one channel has been saying over months.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the trends page with headline tiles, a sentiment column chart and a price-aligned call timeline">
+    <div class="row" style="margin-bottom:8px"><span class="chip">View by: Ticker ▾</span><span class="chip">NVDA ▾</span><span class="chip">1d</span><span class="chip">7d</span><span class="chip">30d</span><span class="chip on">90d</span><span class="chip">1y</span><span class="chip">All</span><span class="chip">Trust ≥ Text-checked</span></div>
+    <div class="grid" style="grid-template-columns:repeat(4,minmax(110px,1fr));min-width:560px">
+      <div class="kpi"><small>Calls</small><b>79</b><small>+18 vs prior 90d</small></div>
+      <div class="kpi"><small>Sentiment</small><div class="split" style="margin:6px 0"><i class="b" style="width:78%"></i><i class="n" style="width:12%"></i><i class="r" style="width:10%"></i></div><small>62 ▲ · 9 ● · 8 ▼</small></div>
+      <div class="kpi"><small>Typical conviction</small><b>High</b><small>61% of calls</small></div>
+      <div class="kpi"><small>Creators</small><b>14</b><small>3 new this period</small></div>
+    </div>
+    <div class="card" style="margin-top:10px;min-width:560px">
+      <div class="t">Calls per week by sentiment</div>
+      <svg viewBox="0 0 560 150" width="100%" height="150" role="img" aria-label="Weekly bullish calls above the axis and bearish calls below">
+        <line x1="30" y1="90" x2="550" y2="90" stroke="var(--app-line)"/>
+        <text x="24" y="30" text-anchor="end" font-size="10" fill="var(--app-muted)">10</text>
+        <text x="24" y="93" text-anchor="end" font-size="10" fill="var(--app-muted)">0</text>
+        <text x="24" y="123" text-anchor="end" font-size="10" fill="var(--app-muted)">5</text>
+        <g fill="var(--bull)">
+          <rect x="40" y="66" width="28" height="24" rx="3"/><rect x="80" y="54" width="28" height="36" rx="3"/><rect x="120" y="60" width="28" height="30" rx="3"/><rect x="160" y="42" width="28" height="48" rx="3"/><rect x="200" y="36" width="28" height="54" rx="3"/><rect x="240" y="48" width="28" height="42" rx="3"/><rect x="280" y="30" width="28" height="60" rx="3"/><rect x="320" y="42" width="28" height="48" rx="3"/><rect x="360" y="54" width="28" height="36" rx="3"/><rect x="400" y="60" width="28" height="30" rx="3"/><rect x="440" y="48" width="28" height="42" rx="3"/><rect x="480" y="36" width="28" height="54" rx="3"/>
+        </g>
+        <g fill="var(--bear)">
+          <rect x="40" y="92" width="28" height="6" rx="3"/><rect x="120" y="92" width="28" height="12" rx="3"/><rect x="240" y="92" width="28" height="18" rx="3"/><rect x="360" y="92" width="28" height="24" rx="3"/><rect x="400" y="92" width="28" height="12" rx="3"/>
+        </g>
+        <text x="514" y="30" font-size="10" fill="var(--app-ink)">▲ bullish</text>
+        <text x="514" y="112" font-size="10" fill="var(--app-ink)">▼ bearish</text>
+        <text x="40" y="146" font-size="10" fill="var(--app-muted)">6 Jul</text><text x="280" y="146" font-size="10" fill="var(--app-muted)">17 Aug</text><text x="470" y="146" font-size="10" fill="var(--app-muted)">28 Sep</text>
+      </svg>
+      <div class="t" style="margin-top:6px">NVDA close · each call placed on the price line</div>
+      <svg viewBox="0 0 560 90" width="100%" height="90" role="img" aria-label="NVDA price line with bullish and bearish call markers">
+        <polyline points="40,60 80,55 120,58 160,45 200,40 240,50 280,32 320,36 360,48 400,52 440,40 480,30 520,26" fill="none" stroke="var(--app-muted)" stroke-width="2"/>
+        <g stroke="var(--app-surface)" stroke-width="2">
+          <circle cx="160" cy="45" r="6" fill="var(--bull)"/><circle cx="200" cy="40" r="4.5" fill="var(--bull)"/><circle cx="280" cy="32" r="6" fill="var(--bull)"/><circle cx="360" cy="48" r="5" fill="var(--bear)"/><circle cx="480" cy="30" r="6" fill="var(--bull)"/>
+        </g>
+        <text x="30" y="84" font-size="10" fill="var(--app-muted)">Dot size = creator conviction · hover for thesis, channel, date · click opens the call</text>
+      </svg>
+    </div>
+    <div class="card" style="margin-top:10px;min-width:560px"><div class="row" style="justify-content:space-between"><span class="t">79 calls behind this view</span><span class="muted">Chart · <b>Table</b> &nbsp;<span class="btn sec">Export ▾</span></span></div></div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe with example data · two charts on one date axis, each with its own vertical scale (never two scales on one chart)</p>
+  <div class="cols">
+    <div>
+      <h4>Why this chart and not LeapEdge's scatter</h4>
+      <ul>
+        <li>LeapEdge plots every call as a dot in four direction lanes. That shows volume badly: 40 overlapping dots read as one smear.</li>
+        <li><strong>Weekly columns</strong> (bullish above the line, bearish below) show whether the balance is shifting. That is the question this page answers.</li>
+        <li><strong>In the ticker view</strong>, a second chart below shares the date axis and puts each call on the price line. Calls against price is the view an investment team most wants, and LeapEdge doesn't have it. Two charts with separate scales avoid the misleading double axis.</li>
+        <li><strong>In the channel and sentiment views</strong> the price chart is replaced by a call-dot timeline, with at most three lanes (bullish, neutral, bearish). That stays within the three-colour limit for scatter charts.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Interaction and states</h4>
+      <ul>
+        <li><strong>Hover:</strong> a vertical crosshair snaps to the week, and the tooltip lists bullish, neutral and bearish counts. Each dot has a hit area of at least 24 px.</li>
+        <li><strong>Click</strong> a column to filter the list below to that week. Click a dot to open the call.</li>
+        <li><strong>Table view:</strong> a "Chart · Table" toggle shows the same data as rows, for accessibility and for export.</li>
+        <li><strong>Few calls:</strong> with fewer than 5 calls in the range, the columns hide and the call list is shown directly, with a note saying so.</li>
+        <li><strong>No prices</strong> for the instrument (macro views, most crypto without a price source): the price chart hides with "No price series for MACRO · Rates".</li>
+        <li><strong>What else changes:</strong> the Daily report archive covers LeapEdge's "Chronicle", so Trends doesn't repeat it. The channel page (gap 4) reuses this chart with the channel preset.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 4 ============ -->
+<section class="block" id="g4">
+  <div class="gap-head"><span class="gnum">GAP 04</span><h2>Channel page</h2><span class="where">New page · /channels/UC… · linked from every channel name</span></div>
+  <p class="value">Size up a source before trusting its call: what they cover, whether they're a permabull, and whether they have been right.</p>
+  <div class="wf" role="img" aria-label="Wireframe of a channel page">
+    <div class="card" style="min-width:560px">
+      <div class="row" style="justify-content:space-between"><div><span class="big">Macro Mike</span> <span class="muted">@macromike · followed since 13 Sep · <span class="dot"></span> analysing 1 video now</span></div><div class="row"><span class="btn sec">Search this channel</span><span class="btn sec">Export ▾</span><span class="btn sec">Unfollow</span></div></div>
+    </div>
+    <div class="grid" style="grid-template-columns:repeat(4,minmax(110px,1fr));margin-top:10px;min-width:560px">
+      <div class="kpi"><small>Videos analysed</small><b>38</b><small>6 in last 7 days</small></div>
+      <div class="kpi"><small>Calls</small><b>112</b><small>2.9 per video</small></div>
+      <div class="kpi"><small>Lean</small><div class="split" style="margin:6px 0"><i class="b" style="width:84%"></i><i class="n" style="width:10%"></i><i class="r" style="width:6%"></i></div><small>84% bullish · usually bullish</small></div>
+      <div class="kpi"><small>Record vs SPY, 90d</small><b>+2.1%</b><small>median excess · n=31 · not significant</small></div>
+    </div>
+    <div class="two" style="margin-top:10px">
+      <div class="card"><div class="t">Recent analyses</div>
+        <div style="margin-top:6px"><span class="dot"></span> <b>NVDA earnings: why I am adding here</b><br><span class="muted">Mon 28 Sep · 4 ideas · 3 ▲ 1 ● · NVDA AVGO TSM</span></div>
+        <div style="margin-top:6px"><b>Mid-June check: trimming, not selling</b><br><span class="muted">Mon 15 Jun · 2 ideas · 1 ▲ 1 ▼</span></div>
+      </div>
+      <div class="card"><div class="t">Most-discussed</div>
+        <div class="row" style="justify-content:space-between;margin-top:4px"><span class="tick">NVDA</span><span class="muted">14</span></div><div class="split" style="margin:2px 0 6px"><i class="b" style="width:92%"></i><i class="r" style="width:8%"></i></div>
+        <div class="row" style="justify-content:space-between"><span class="macro">MACRO · RATES</span><span class="muted">9</span></div><div class="split" style="margin:2px 0 6px"><i class="b" style="width:30%"></i><i class="n" style="width:20%"></i><i class="r" style="width:50%"></i></div>
+      </div>
+    </div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe with example data</p>
+  <div class="cols">
+    <div>
+      <h4>Page structure</h4>
+      <ul>
+        <li><strong>Header:</strong> name, handle, followed since, live status, and the Follow/Unfollow and Process-new-uploads switches (moved here from the Channels card). Also Search this channel, Open on YouTube and Export.</li>
+        <li><strong>Four headline tiles:</strong> videos, calls, lean and record against the team's benchmark. The record tile repeats the leaderboard's significance wording ("not significant", n, q) so a small sample isn't oversold.</li>
+        <li><strong>Calls over time</strong> uses the Trends chart with this channel preset.</li>
+        <li><strong>Most-discussed</strong> instruments, each with its split bar.</li>
+        <li><strong>Recent analyses</strong>, each with its verdict line (gap 5) and unread dot (gap 18).</li>
+        <li><strong>Collapsed "Processing"</strong> section: discovery mode, tier, last pull, projected monthly cost and trust distribution. These are ops details the spec keeps off the main view.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>States and what else changes</h4>
+      <ul>
+        <li><strong>Channel not followed</strong> (opened from an analysis): the same page with the Follow banner from gap 19 at the top.</li>
+        <li><strong>Fewer than 5 settled calls:</strong> the record tile reads "Too few settled calls to score (3 of 5)" instead of a percentage.</li>
+        <li><strong>Channel names become links</strong> to this page on the Leaderboard's creator board, the Channels list, the Analysis header, Search results and the Daily report sources.</li>
+        <li><strong>Phone:</strong> the tiles form a 2×2 grid, and the lists stack below.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 5 ============ -->
+<section class="block" id="g5">
+  <div class="gap-head"><span class="gnum">GAP 05</span><h2>Verdict, summary and key points</h2><span class="where">Analysis page (top) · compact version on list rows</span></div>
+  <p class="value">Decide in ten seconds whether a video deserves a full read. That matters at 50 videos a day.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the analysis page header with a verdict box">
+    <div class="card" style="min-width:560px">
+      <div class="grid" style="grid-template-columns:120px minmax(0,1fr) 190px;gap:12px">
+        <div style="background:var(--app-line);border-radius:8px;height:68px"></div>
+        <div><div class="big">AI资本开支还能撑多久？英伟达与苹果</div><div class="muted">老王聊股 · Mon 28 Sep · US session · 18:42 · Chinese → English</div>
+          <p style="margin:6px 0 0">The creator argues AI capex remains funded through 2027 and keeps adding to Nvidia on pullbacks, while avoiding Apple until its AI features show up in revenue.</p></div>
+        <div class="card" style="padding:9px"><div class="t">2 ideas · Medium conviction</div><div class="split" style="margin:6px 0"><i class="b" style="width:50%"></i><i class="r" style="width:50%"></i></div><div class="muted">1 ▲ · 1 ▼</div><div class="row" style="margin-top:4px"><span class="tick">NVDA</span><span class="tick">AAPL</span></div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:10px;min-width:560px"><div class="t">Key points</div>
+      <div style="margin-top:4px">1. Hyperscaler capex guidance was raised, not cut <span class="muted">▶ 0:48</span></div>
+      <div>2. Nvidia is a hold-and-add on pullbacks into year end <span class="muted">▶ 1:30</span></div>
+      <div>3. Apple's AI story hasn't reached revenue yet <span class="muted">▶ 6:12</span></div>
+      <div class="muted">… up to 10 points</div>
+    </div>
+    <div class="row" style="margin-top:10px"><span class="chip on">Calls (2)</span><span class="chip">Research brief</span><span class="chip">Processing details</span></div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe · the test video's real calls</p>
+  <div class="cols">
+    <div>
+      <h4>Changes to the Analysis page</h4>
+      <ul>
+        <li><strong>New order:</strong> header with verdict box → summary → numbered key points → tabs: Calls · Research brief · Processing details. Today the page opens on a brief card that often only says "Research not started".</li>
+        <li><strong>Key points</strong> are numbered because the order is the video's order. Each has a ▶ timestamp that plays the embedded player. They replace the collapsed "Research context" list.</li>
+        <li><strong>"Generate research brief"</strong> becomes a secondary action in the Research brief tab, with its cost estimate.</li>
+        <li><strong>The trust strip</strong> moves inside the Calls tab, with zero counts muted.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>States and compact form</h4>
+      <ul>
+        <li><strong>No investable ideas:</strong> the verdict box reads "No investable ideas · educational or commentary", and the summary and key points still show. That's a clear result, not an empty page.</li>
+        <li><strong>Still running:</strong> the verdict box is replaced by the step progress bar (gap 12).</li>
+        <li><strong>Compact verdict line</strong> ("4 ideas · 3 ▲ 1 ● · NVDA AVGO TSM") appears on Today's activity rows, channel pages, Search's Videos tab and the Daily report sources.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 6 ============ -->
+<section class="block" id="g6">
+  <div class="gap-head"><span class="gnum">GAP 06</span><h2>Richer call fields</h2><span class="where">Call card v2 · everywhere calls appear</span></div>
+  <p class="value">Catalysts and an expiry turn an opinion into something you can track. Numeric levels let the team check later whether a target or stop was actually hit.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the richer call card">
+    <div class="card" style="max-width:560px">
+      <div class="row"><span class="tick" style="font-size:15px">BTC</span><span class="chip bull">long</span><span class="chip">High conviction</span><span class="chip on">Text-checked</span><span class="muted" style="margin-left:auto">Swing · expires 31 Oct (32 days)</span></div>
+      <div class="t" style="margin-top:6px">Second leg up if 75,000 support holds</div>
+      <div style="margin-top:4px"><span class="muted">Action</span> Buy near 75,000–76,500 support</div>
+      <div class="row" style="margin-top:6px"><span class="lvl"><em>Entry</em>75,000–76,500</span><span class="lvl"><em>Target</em>83,000–85,400</span><span class="lvl"><em>Target 2</em>98,000–100,000</span><span class="lvl"><em>Stop</em>75,000</span></div>
+      <div class="row" style="margin-top:6px"><span class="muted">Catalysts</span><span class="chip">ETF inflows</span><span class="chip">Fed pause</span></div>
+      <div class="muted" style="margin-top:6px">▸ Risks (2) · ▸ Conditions (1) &nbsp;&nbsp; Inspect evidence ↗ &nbsp; + Save call</div>
+    </div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe based on a call from the LeapEdge test run</p>
+  <div class="cols">
+    <div>
+      <h4>Card layout</h4>
+      <ul>
+        <li><strong>Line 1:</strong> instrument, stance, conviction and trust. Horizon and expiry are right-aligned, with the days remaining. When expiry is near or passed it turns amber, then shows as "expired".</li>
+        <li><strong>Line 2:</strong> thesis. <strong>Line 3:</strong> the action, in the creator's terms.</li>
+        <li><strong>Level chips</strong> show the parsed number. Hovering shows the original wording ("突破724.32以上") and the parse, e.g. "close above 724.32". A level that couldn't be parsed shows its original text with a dotted underline. The app never invents a number.</li>
+        <li><strong>Catalysts</strong> are chips. Risks and conditions collapse by default on list views and open by default on the Analysis page.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>What else changes</h4>
+      <ul>
+        <li><strong>Today's table</strong> gets an optional "Levels" column, off by default and switched on in a column menu. The table stays scannable.</li>
+        <li><strong>Search</strong> gets "Has levels" and "Expires within" filters.</li>
+        <li><strong>The Analysis evidence panel's</strong> "Levels mentioned" list is replaced by the chips.</li>
+        <li><strong>Leaderboard settlement:</strong> a later phase could add "target hit before stop". The UI keeps room for a small "hit / missed / open" status chip on the level, but nothing is shown until settlement computes it.</li>
+        <li><strong>Prompt and schema version bump:</strong> older calls show only the fields they have, with no empty "Catalysts: —" rows.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 12 ============ -->
+<section class="block" id="g12">
+  <div class="gap-head"><span class="gnum">GAP 12</span><h2>Live progress and Retry</h2><span class="where">Analysis page while running · Today activity rows · failure banner</span></div>
+  <p class="value">Someone who submits a video before a meeting knows whether to wait, and a failure becomes one click instead of a support request.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the step progress bar and failure banner">
+    <div class="card" style="max-width:560px">
+      <div class="row" style="justify-content:space-between"><span class="t">Analysing · step 3 of 5 · Checking calls against the transcript</span><span class="muted">1 min 12 s</span></div>
+      <div class="steps" style="margin-top:8px"><i class="d"></i><i class="d"></i><i class="a"></i><i></i><i></i></div>
+      <div class="row muted" style="margin-top:6px;justify-content:space-between;font-size:11px"><span>Title</span><span>Transcript</span><span>Extract</span><span>Check</span><span>Publish</span></div>
+      <div class="muted" style="margin-top:6px">Typical total for a 20-minute video: about 3 minutes. You can leave this page.</div>
+    </div>
+    <div class="card" style="max-width:560px;margin-top:10px;border-color:var(--bear)">
+      <div class="t">Stopped at step 2 · Transcript unavailable from captions</div>
+      <div class="muted">Steps already completed won't be charged again. Estimated retry cost $0.04.</div>
+      <div class="row" style="margin-top:6px"><span class="btn">Retry from step 2</span><span class="btn sec">Transcribe audio instead</span><span class="muted">Details ▸</span></div>
+    </div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe</p>
+  <div class="cols">
+    <div>
+      <h4>Design</h4>
+      <ul>
+        <li><strong>Five plain-language steps</strong> map onto the pipeline's internal stages. The segments fill as checkpoints complete, and the page polls every 2 seconds as it does today.</li>
+        <li><strong>Typical duration</strong> comes from stored timings of similar-length videos, giving an honest expectation instead of a fake percentage.</li>
+        <li><strong>Retry</strong> names the step it resumes from and the estimated cost, and relies on the existing checkpoints and no-double-spend rule. It replaces the generic "Transcribe audio &amp; resume", which stays as the alternative when captions failed.</li>
+        <li><strong>Stuck runs:</strong> a run with no checkpoint for longer than 3× its typical time shows "This is taking longer than usual" and offers Retry.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>What else changes</h4>
+      <ul>
+        <li><strong>Today activity rows</strong> show a mini progress bar under running titles, and failed rows get an inline Retry.</li>
+        <li><strong>The Timing card</strong> is removed from the default view. Its data moves into the Processing details table (gap 20), which fixes the "In progress" on completed runs.</li>
+        <li><strong>The four-state pill</strong> remains the summary everywhere else (decision D1).</li>
+        <li><strong>The unused <code>recoverAudit</code> server action</strong> gets its button here, as "Retry the check".</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 20 ============ -->
+<section class="block" id="g20">
+  <div class="gap-head"><span class="gnum">GAP 20</span><h2>Token counts</h2><span class="where">Analysis → Processing details tab</span></div>
+  <p class="value">Explains why one long video cost $3 and another $0.08, and shows which step to tune to reach the ~$0.15/video target. This is for whoever owns cost and quality, so it stays out of the analysts' view.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the per-step token table">
+    <table style="min-width:560px"><thead><tr><th>Step</th><th>Model</th><th>Input</th><th>Cached</th><th>Output</th><th>Time</th><th>Cost</th></tr></thead>
+    <tbody><tr><td>Transcript</td><td>captions</td><td>—</td><td>—</td><td>—</td><td>4 s</td><td>$0.000</td></tr>
+    <tr><td>Extract</td><td>gemini-3.8-flash</td><td>84,210</td><td>0</td><td>3,902</td><td>41 s</td><td>$0.021</td></tr>
+    <tr><td>Check</td><td>gemini-3.5-flash</td><td>61,044</td><td>58,300</td><td>1,120</td><td>18 s</td><td>$0.006</td></tr>
+    <tr><td><b>Total</b></td><td></td><td><b>145,254</b></td><td><b>58,300</b></td><td><b>5,022</b></td><td><b>63 s</b></td><td><b>$0.027</b></td></tr></tbody></table>
+  </div>
+  <p class="wf-cap">Illustrative wireframe with example data</p>
+  <ul>
+    <li><strong>One table replaces</strong> the loose Run / Stage / Cost / Model list and most of the JSON dump. Every model call is a row, including retries (marked "retry"). The raw JSON stays behind "Show raw data".</li>
+    <li><strong>Cached tokens get their own column</strong>, so the benefit of context caching is visible.</li>
+    <li><strong>Lab's cost diagnostics</strong> gets the same columns aggregated per step across runs.</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 7 ============ -->
+<section class="block" id="g7">
+  <div class="gap-head"><span class="gnum">GAP 07</span><h2>Reuse finished analyses</h2><span class="where">Analyse box on Today · Analysis header</span></div>
+  <p class="value">Duplicate submissions from several analysts and auto-ingest cost $0 and return instantly, which protects the $50 cap.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the reuse notice">
+    <div class="card" style="max-width:560px;background:var(--accent-soft);border-color:transparent">Already analysed on Mon 28 Sep with the current pipeline. Opened that analysis, no new cost. <span style="color:var(--accent);font-weight:600">Re-run anyway (~$0.15)</span></div>
+    <div class="row" style="margin-top:10px"><span class="chip on">Reused · analysed 28 Sep</span><span class="muted">pipeline evidence-first.web.v8</span><span class="btn sec">Re-run with current pipeline</span></div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe</p>
+  <ul>
+    <li><strong>On submit</strong>, the page goes straight to the existing analysis with a notice. It does not show an error or a second queued row.</li>
+    <li><strong>Re-run</strong> asks for confirmation in the page itself (the app avoids browser dialogs), shows the estimate and the remaining budget, and records who asked in the audit trail.</li>
+    <li><strong>Older pipeline version:</strong> if the finished run used an older version, the notice says "Analysed with an older pipeline (v7). Re-run with v8?" and reuses nothing automatically. The version is part of the match.</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 19 ============ -->
+<section class="block" id="g19">
+  <div class="gap-head"><span class="gnum">GAP 19</span><h2>Follow prompt</h2><span class="where">Analysis page and channel page, for channels not yet followed</span></div>
+  <p class="value">Discovering creators in one click: paste one good video, like the source, follow it.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the follow banner">
+    <div class="card row" style="justify-content:space-between;max-width:620px"><span><b>The Plain Bagel</b> isn't followed. Follow to analyse new uploads automatically. <span class="muted">About 2 uploads a week · est. $1.20/month · budget $746 left</span></span><span class="row"><span class="btn">Follow</span><span class="btn sec">Not now</span></span></div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe</p>
+  <ul>
+    <li><strong>Placement:</strong> the banner sits under the verdict header, not above it, so it never pushes the content down on first read.</li>
+    <li><strong>Cost first:</strong> the cost projection reuses the Channels page's estimate. "Follow" defaults to discover-only if the projection would exceed the budget, and the banner says so.</li>
+    <li><strong>"Not now"</strong> hides the banner for that channel on this browser for 30 days.</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 8 ============ -->
+<section class="block" id="g8">
+  <div class="gap-head"><span class="gnum">GAP 08</span><h2>Watchlist with price context</h2><span class="where">Today right-hand column (top) · pin buttons everywhere</span></div>
+  <p class="value">Puts what creators say next to what the price is doing, and keeps fresh commentary on the names the team owns in view.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the watchlist panel with sparklines">
+    <div class="card" style="max-width:330px">
+      <div class="row" style="justify-content:space-between"><span class="t">Watchlist</span><span><span class="chip on">Pinned 6</span> <span class="chip">Mentioned today 11</span></span></div>
+      <table style="margin-top:6px"><tbody>
+        <tr><td class="tick">NVDA</td><td><svg width="70" height="20" viewBox="0 0 70 20" aria-hidden="true"><polyline points="0,14 10,12 20,13 30,9 40,10 50,6 60,7 68,4" fill="none" stroke="var(--app-ink)" stroke-width="1.5"/><circle cx="68" cy="4" r="2.5" fill="var(--app-ink)"/></svg></td><td>+1.7%</td><td class="muted">4 ▲</td></tr>
+        <tr><td class="tick">MDB</td><td><svg width="70" height="20" viewBox="0 0 70 20" aria-hidden="true"><polyline points="0,4 10,5 20,4 30,6 40,5 50,8 60,9 68,17" fill="none" stroke="var(--app-ink)" stroke-width="1.5"/><circle cx="68" cy="17" r="2.5" fill="var(--app-ink)"/></svg></td><td>−18.5%</td><td class="muted">2 ▲</td></tr>
+        <tr><td><span class="macro">MACRO · OIL</span></td><td class="muted">no price</td><td></td><td class="muted">3 ▼</td></tr>
+      </tbody></table>
+      <div class="muted" style="font-size:11px">Closes to Fri 25 Sep · 20 sessions</div>
+    </div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe with example data</p>
+  <div class="cols">
+    <div>
+      <h4>Design</h4>
+      <ul>
+        <li><strong>Two tabs:</strong> Pinned (the team's book, saved to the existing <code>watch</code> action) and Mentioned today.</li>
+        <li><strong>Each row:</strong> instrument, a 20-session sparkline, 1-day % change, and today's mention count with sentiment arrows.</li>
+        <li><strong>Sparklines are one neutral ink colour</strong> with an emphasised endpoint. The % change is text with a sign, not red or green, so sentiment colour keeps a single meaning (what creators think, not what the price did).</li>
+        <li><strong>A creators-versus-price flag</strong> marks rows where the two disagree strongly: mostly bullish calls with a price down more than 5%, or the reverse. This is the "everyone likes MDB and it's down 18%" signal.</li>
+        <li><strong>Price date is always shown</strong> ("Closes to Fri 25 Sep") because daily prices lag.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>What else changes</h4>
+      <ul>
+        <li><strong>A pin toggle (☆)</strong> appears on the instrument label in the Analysis header, Search results, In focus rows and quick search. This is the team's watchlist, not a personal favourite.</li>
+        <li><strong>Pinned names with new calls</strong> get a dot on Today and in the Daily report In focus.</li>
+        <li><strong>Pinned list becomes a filter:</strong> "Pinned only" in Search.</li>
+        <li><strong>Phone:</strong> the watchlist becomes a horizontal scroller of tiles under the Today header.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 15 ============ -->
+<section class="block" id="g15">
+  <div class="gap-head"><span class="gnum">GAP 15</span><h2>24-hour trending</h2><span class="where">Sentiment shift panel on Today</span></div>
+  <p class="value">Catches names that suddenly get attention overnight, before a 7-day window would show them.</p>
+  <ul>
+    <li><strong>The Period select becomes segments</strong>: <strong>24h · 7d · 14d · 30d</strong>. The choice is view state, not a saved setting (decision D4).</li>
+    <li><strong>Row redesign.</strong> Today each row is a disclosure whose summary is only the ticker, followed by a long sentence of counts. The new row is: instrument · split bar · creators · change against the previous window (e.g. "+4 creators", "new"). The evidence links stay in the disclosure.</li>
+    <li><strong>The 24h window follows US sessions</strong> (gap 14): "since Friday's close" on a Monday, not the literal last 24 hours, which would be empty after a weekend.</li>
+    <li><strong>Empty state</strong> names the window: "No creator mentions since Fri 25 Sep close".</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 18 ============ -->
+<section class="block" id="g18">
+  <div class="gap-head"><span class="gnum">GAP 18</span><h2>Unread markers</h2><span class="where">Today, channel pages, Search Videos tab, sidebar count</span></div>
+  <p class="value">Shows what auto-ingest added overnight, at about 50 videos a day.</p>
+  <ul>
+    <li><strong>What it looks like:</strong> a 7 px accent dot before unseen video titles, plus "3 new" next to Today in the sidebar. Today gets a "New since Tue 18:04" group at the top of the activity list, with "Mark all as seen".</li>
+    <li><strong>Honest labelling:</strong> the group header's hover text says "Tracked on this browser". The app has one shared passcode, so it can't know who has read what. Don't word it as if it were per person.</li>
+    <li><strong>What counts as seen:</strong> opening the analysis. Scrolling past it on Today doesn't count.</li>
+    <li><strong>Storage:</strong> the browser's local storage holds the seen IDs and the last-visit time. If storage is blocked, the page still works and shows no dots.</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 16 ============ -->
+<section class="block" id="g16">
+  <div class="gap-head"><span class="gnum">GAP 16</span><h2>Quick search (⌘K / Ctrl+K)</h2><span class="where">Search field at the top of the module sidebar and in page headers on a phone</span></div>
+  <p class="value">"What did anyone say about TSLA?" becomes a two-second action from any page.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the quick search box">
+    <div class="card" style="max-width:460px">
+      <div class="input" style="color:var(--app-ink)">tsl</div>
+      <div class="muted" style="margin-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Instruments</div>
+      <div class="row" style="justify-content:space-between;background:var(--accent-soft);border-radius:6px;padding:3px 6px"><span><span class="tick">TSLA</span> Tesla · 23 calls this month</span><span class="muted">↵ Search</span></div>
+      <div class="muted" style="margin-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Videos</div>
+      <div>特斯拉还能涨吗？ <span class="muted">美股Alpha姐 · 19 Sep</span></div>
+      <div class="muted" style="margin-top:6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Actions</div>
+      <div>Analyse a YouTube link… · Go to Trends for TSLA</div>
+    </div>
+  </div>
+  <p class="wf-cap">Illustrative wireframe</p>
+  <ul>
+    <li><strong>Result groups:</strong> Instruments, Channels, Videos, Pages and Actions. Pasting a YouTube link offers "Analyse this video" directly.</li>
+    <li><strong>Matching:</strong> anywhere in the text, including Chinese titles. Pressing Enter on an instrument opens Search filtered to it, and ⌘Enter opens Trends.</li>
+    <li><strong>Data:</strong> a small index loaded from the server (instruments, channels, recent titles), because the workspace snapshot is capped. It shows the last 5 searches when the box is empty.</li>
+    <li><strong>Keyboard and screen readers:</strong> fully keyboard-driven (↑↓, Enter, Esc) with combobox ARIA roles. On a phone it's a full-screen sheet opened from a search icon in the header.</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 11 ============ -->
+<section class="block" id="g11">
+  <div class="gap-head"><span class="gnum">GAP 11</span><h2>Channel list stats</h2><span class="where">Channels page</span></div>
+  <p class="value">An at-a-glance check of coverage and health: which sources are active, which have gone quiet, and what each one covers.</p>
+  <div class="wf" role="img" aria-label="Wireframe of the channels table">
+    <div class="row" style="margin-bottom:8px"><span class="chip on">Most active</span><span class="chip">Recently added</span><span class="chip">Best record</span><span class="input" style="flex:1">Filter channels</span><span class="btn">+ Add channels</span></div>
+    <table style="min-width:620px"><thead><tr><th>Channel</th><th>Status</th><th>Last video</th><th>7 days</th><th>Top</th><th>Lean</th><th>Record vs SPY</th></tr></thead>
+    <tbody><tr><td><b>Macro Mike</b></td><td><span class="dot"></span> Analysing</td><td>4 h ago</td><td>6</td><td class="tick">NVDA</td><td><div class="split" style="width:70px"><i class="b" style="width:84%"></i><i class="n" style="width:10%"></i><i class="r" style="width:6%"></i></div></td><td>+2.1% · n=31</td></tr>
+    <tr><td><b>老王聊股</b></td><td class="muted">Idle</td><td>2 d ago</td><td>1</td><td class="tick">AAPL</td><td><div class="split" style="width:70px"><i class="b" style="width:40%"></i><i class="r" style="width:60%"></i></div></td><td class="muted">Too few calls</td></tr>
+    <tr><td><b>Quiet Capital</b></td><td style="color:var(--warn-ink)">No uploads 21 d</td><td>21 d ago</td><td>0</td><td>—</td><td class="muted">—</td><td class="muted">—</td></tr></tbody></table>
+  </div>
+  <p class="wf-cap">Illustrative wireframe with example data</p>
+  <div class="cols">
+    <div>
+      <h4>Page reorder</h4>
+      <ul>
+        <li><strong>Followed channels come first</strong>, as a sortable table. The rows are comparable, so a table suits them better than cards. It becomes cards on a phone.</li>
+        <li><strong>Column headings</strong> read their hover definitions from the metrics registry, as the spec requires. A CI test enforces this.</li>
+        <li><strong>"+ Add channels"</strong> opens a drawer holding the current Follow, Discover, catalogue and cost-preview blocks. The catalogue source notes go behind "Where this list comes from".</li>
+        <li><strong>Row click</strong> opens the channel page (gap 4). The trust counts and per-video list move there.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Fixes on the way</h4>
+      <ul>
+        <li><strong>Status replaces a fake button:</strong> "Queued / analysed" currently looks like a disabled button. It becomes a status chip with the four states.</li>
+        <li><strong>Silent channels are flagged:</strong> "No uploads 21 d" in amber, so dead sources are easy to prune.</li>
+        <li><strong>Labels fixed:</strong> "Projected: Not selected / month" becomes "Not processed automatically". The unlabelled "· 1" after the handle gets its label or is removed.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAP 17 ============ -->
+<section class="block" id="g17">
+  <div class="gap-head"><span class="gnum">GAP 17</span><h2>Saved calls</h2><span class="where">Saved calls page</span></div>
+  <p class="value">Turns saved calls into a working idea log: what's getting stale, and what to review when.</p>
+  <ul>
+    <li><strong>Status select becomes tabs with counts:</strong> <strong>Open 12 · Reviewed 4 · Removed 2 · All</strong>. This mirrors how LeapEdge's analysts work, and the counts give a sense of the backlog.</li>
+    <li><strong>Grouped by call date</strong> (the video's trading session), newest first: "Mon 28 Sep · US session · 3 calls". Another sort, "Expiring soonest", puts time-sensitive ideas first.</li>
+    <li><strong>Cards use the richer call card</strong> (gap 6), so levels, catalysts and expiry show. The saved note sits below as today. An expiry badge says "Expires in 4 days" or "Expired 2 Oct".</li>
+    <li><strong>Delete permanently</strong> appears only in the Removed tab, with an inline confirmation in the card ("Delete BTC call and its note? This can't be undone. · Delete · Cancel"). Open and Reviewed items can't be deleted directly, which prevents accidents.</li>
+    <li><strong>Since saved:</strong> each card shows the price change since the call, from the watchlist price data (gap 8), labelled with the close date.</li>
+    <li><strong>Export</strong> of the current tab.</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 13 ============ -->
+<section class="block" id="g13">
+  <div class="gap-head"><span class="gnum">GAP 13</span><h2>Macro, theme and sector views</h2><span class="where">Instrument label everywhere · filters · report</span></div>
+  <p class="value">The Fed, rates, the dollar and oil are often what matters most for a multi-asset team. Today they show up as "Unresolved instrument".</p>
+  <ul>
+    <li><strong>A distinct shape:</strong> <code>MACRO · RATES</code> and <code>SECTOR · SEMIS</code> use a dashed outline and small caps, so they read as a different kind of thing from a ticker without extra colour.</li>
+    <li><strong>A fixed vocabulary:</strong> Rates, Inflation, USD, Oil, Gold, Growth, Liquidity, Credit, and sectors per GICS. This keeps grouping stable, because free text would split "rates" and "interest rates" into two rows.</li>
+    <li><strong>A new "Type" filter</strong> in Search and Trends: Stocks &amp; ETFs · Crypto · Macro · Sector. Macro rows appear in In focus and the sentiment panel like any ticker.</li>
+    <li><strong>"Unresolved instrument" stays</strong> only for genuinely unknown names. It gets a muted label and a "Suggest a ticker" hint, linking to the existing ticker-proposal data.</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 14 ============ -->
+<section class="block" id="g14">
+  <div class="gap-head"><span class="gnum">GAP 14</span><h2>US trading day and team time zone</h2><span class="where">Every date · Settings · date pickers</span></div>
+  <p class="value">Lines creator sentiment up with the market session it can move, instead of splitting one US session across two New Zealand calendar days.</p>
+  <ul>
+    <li><strong>Dates by session:</strong> every grouping and "day" label is by US session, "Mon 28 Sep · US session". Times inside a day show in the team's zone, e.g. "18:42 NZDT".</li>
+    <li><strong>Hover explains the assignment:</strong> "Published Sat 26 Sep 14:00 NZDT → counted in Mon 28 Sep session (weekend)". The explanation matters more than the rule.</li>
+    <li><strong>Date pickers and previous/next</strong> skip weekends and US market holidays. Holidays show as struck-through in the report archive with the holiday's name.</li>
+    <li><strong>Market status in the header:</strong> a small line next to the page title reads "US market: pre-market · opens in 2 h 10 m". It tells a New Zealand team at a glance which session "today" means.</li>
+    <li><strong>Settings:</strong> the team time zone is a searchable IANA select in the team section, and the digest time zone field is merged into it. Raw ISO timestamps are removed from the UI, starting with the Leaderboard's "As of".</li>
+  </ul>
+</section>
+
+<!-- ============ GAP 10 ============ -->
+<section class="block" id="g10">
+  <div class="gap-head"><span class="gnum">GAP 10</span><h2>Export</h2><span class="where">Search · channel page · Daily report · Saved · Leaderboard (existing)</span></div>
+  <p class="value">Lets analysts join creator sentiment with their own models, positions and records in Excel or Python.</p>
+  <ul>
+    <li><strong>One Export menu</strong> ("Export ▾ → CSV · JSON") at the right of each page's filter row, always stating its scope: "Exports 41 calls matching these filters".</li>
+    <li><strong>Columns are the same everywhere:</strong>
+      <ul>
+        <li>call id, session date, published at (UTC), channel, video title and link with timestamp</li>
+        <li>instrument and type, stance, sentiment, conviction, trust level</li>
+        <li>thesis, action, levels (original text and parsed value), catalysts, risks, horizon, expiry</li>
+        <li>original quote, translation</li>
+      </ul>
+      JSON nests evidence spans. The Methodology page documents the columns.</li>
+    <li><strong>The daily report exports</strong> as JSON (themes with citations, In focus rows) and as a calls CSV.</li>
+    <li><strong>Large exports</strong> run on the server with paging. Past 5,000 rows the menu says "Preparing export…" and then downloads. The button is disabled when there are no rows, which fixes the Leaderboard's always-enabled button.</li>
+    <li><strong>A footer line in every file</strong> states the filters, the trust basis, and "Trust describes the evidence, not investment quality". Exported numbers never pass as verified accuracy.</li>
+  </ul>
+</section>
+
+<section class="block" id="order">
+  <p class="eyebrow">Sequencing</p>
+  <h2>Build order</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Step</th><th>Contents</th><th>Why this order</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Foundations</td><td>
+        <ul>
+          <li>Server-side query endpoints with paging</li>
+          <li>Trading-day label (14)</li>
+          <li>Instrument label and macro vocabulary (13)</li>
+          <li>Sentiment colours and split bar</li>
+          <li>Filter bar in the page address</li>
+          <li>The "hidden by filter" pattern and the audit fixes</li>
+        </ul>
+      </td><td>Every page after this depends on these parts, and fixing the empty-by-default filter first makes every later screen testable with the test data.</td></tr>
+      <tr><td>2 · Call data</td><td>Richer call fields and card v2 (6), verdict, summary and key points (5)</td><td>This changes the prompt and schema version, so it lands before pages that aggregate calls.</td></tr>
+      <tr><td>3 · Research pages</td><td>Search (2) with Export (10), then the Daily report (1), then Trends (3), then channel pages (4) and the channel table (11)</td><td>Search's query layer is reused by the other three pages.</td></tr>
+      <tr><td>4 · Today</td><td>Report summary card, watchlist (8), 24h segment (15), unread (18), follow prompt (19)</td><td>Today is rebuilt once, after the pieces it summarises exist.</td></tr>
+      <tr><td>5 · Operations</td><td>Progress and Retry (12), tokens (20), reuse (7), Saved calls (17), quick search (16)</td><td>Independent of each other, and small.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Each step needs the usual acceptance checks from <code>AGENTS.md</code>: tests, typecheck, build, and a browser check at desktop and 390 px in both themes. It also needs the spec amendments D1–D4 and a ledger entry per feature before building starts.</p>
+</section>
+</main>
+</div>
+
+</body>
+</html>

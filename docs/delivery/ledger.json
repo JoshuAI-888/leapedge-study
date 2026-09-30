@@ -1288,6 +1288,552 @@
       ],
       "tests": [],
       "note": "What a fresh session reads before it touches anything."
+    },
+    {
+      "id": "F56",
+      "phase": 5,
+      "lane": "query",
+      "title": "Research query API: paged server-side calls and videos queries with facet counts and set aggregates",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F24",
+        "F30"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/repos/research-query.ts",
+        "src/server/youtube-intelligence/actions/query.ts",
+        "src/server/youtube-intelligence/actions/index.ts",
+        "src/app/api/youtube-intelligence/[resource]/[action]/route.ts"
+      ],
+      "tests": [
+        "tests/research-query.test.ts"
+      ],
+      "note": "query/calls, query/videos, query/series, query/searchIndex: paged, exact totals, facets excluding their own filter, aggregates, CJK-safe ILIKE text match, canonical runs, pinned-only. GET reads accept ?input= JSON (16 kB cap). Offset paging; series buckets in UTC (trading sessions come from F58). No migration (0009 unused). Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F56).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F57",
+      "phase": 5,
+      "lane": "ui-kit",
+      "title": "UX foundations: sentiment palette and split bar, URL filter state, hidden-by-filter notice, grouped sidebar, audit fixes",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/SplitBar.tsx",
+        "src/features/youtube-intelligence/ui/StatTiles.tsx",
+        "src/features/youtube-intelligence/ui/Sparkline.tsx",
+        "src/features/youtube-intelligence/ui/HiddenByFilter.tsx",
+        "src/features/youtube-intelligence/ui/foundations.ts",
+        "src/features/youtube-intelligence/ui/url-state.ts",
+        "src/features/youtube-intelligence/ui/url-state-core.ts",
+        "src/features/youtube-intelligence/ui/navigation.ts",
+        "src/features/youtube-intelligence/ui/layout-hooks.ts",
+        "src/features/youtube-intelligence/ui/Shell.tsx",
+        "src/features/youtube-intelligence/ui/styles/foundations.css",
+        "src/features/youtube-intelligence/stance-sentiment.ts"
+      ],
+      "tests": [
+        "tests/ui-foundations.test.ts"
+      ],
+      "note": "Split bar, tiles, sparkline, URL view state (D4 for the sentiment panel), grouped sidebar (D2), routes with placeholder pages for Report/Search/Trends/Channel, audit fixes (hidden-by-filter, top-aligned main, sticky evidence panel with phone placement, trust names, catalogue provenance behind a disclosure, Settings anchors and sticky save bar). Leaderboard change-window controls still save settings (D4 follow-up). Visual check so far on an empty database; the fixture-data browser check is part of F77. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F57).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F58",
+      "phase": 5,
+      "lane": "time",
+      "title": "US trading-day sessions (ET, holiday-aware) and team time zone setting",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F05"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/trading-day.ts",
+        "src/features/youtube-intelligence/ui/TradingDay.tsx",
+        "src/features/youtube-intelligence/settings.ts",
+        "src/features/youtube-intelligence/ui/pages/Settings.tsx"
+      ],
+      "tests": [
+        "tests/trading-day.test.ts"
+      ],
+      "note": "America/New_York sessions with a static NYSE 2025-2027 closure table (16:00:00 rolls forward, weekends and holidays roll to the next session), labels with assignment-reason hover, market status. Team display time zone (default Pacific/Auckland) in Settings; account digest zone follows it unless set. Leaderboard As-of is a session label. Market status line and non-trading-day date pickers are placed by the page lanes. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F58).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F59",
+      "phase": 5,
+      "lane": "extraction",
+      "title": "Macro, theme and sector views with a fixed vocabulary, instrument label and type filter",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F19",
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/instrument-kind.ts",
+        "src/features/youtube-intelligence/ui/InstrumentLabel.tsx"
+      ],
+      "tests": [
+        "tests/instrument-kind.test.ts"
+      ],
+      "note": "Fixed macro vocabulary and GICS sectors with sub-themes, EN/ZH synonym normalisation that refuses ambiguous phrases, instrumentKind/describeInstrument, InstrumentLabel on ClaimCard and Today. The prompt field macro_theme ships with F60's prompt version; Type filter and aggregation are wired by the Search/Trends/report lanes. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F59).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F60",
+      "phase": 5,
+      "lane": "extraction",
+      "title": "Richer call fields: catalysts, expiry, action, parsed levels; prompt/schema bump; call card v2",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F19",
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/level-parse.ts",
+        "src/features/youtube-intelligence/contracts.ts",
+        "src/features/youtube-intelligence/ui/components.tsx",
+        "src/server/youtube-intelligence/migrations/0010_call_fields.sql",
+        "src/server/youtube-intelligence/prompt-versions.json",
+        "src/server/youtube-intelligence/repos/claims.ts",
+        "src/server/youtube-intelligence/repos/publish.ts",
+        "src/features/youtube-intelligence/call-fields.ts"
+      ],
+      "tests": [
+        "tests/level-parse.test.ts"
+      ],
+      "note": "Reconciled with main's structured-idea prompts (v9/v10, analyst view) before merge: claims keep main's action enum, dated catalysts and level conditions; F60 adds only an expiry (wording plus a stated calendar date) and a macro/sector theme, in opt-in prompt evidence-first.web.v11 (v10 plus those two fields; callFields). The team default prompt is unchanged (v8). Migration 0010 (after main's 0009) adds claims.levels/action/catalysts/expiry_date/expiry_original/macro_theme and mentions.instrument, so Search, export, Saved and call cards read them from rows. Levels are parsed by the app, never the model. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F60).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F61",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Analysis page verdict box, summary paragraph and numbered key points; tabs for calls, brief and details",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F47",
+        "F60"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/verdict.ts",
+        "src/features/youtube-intelligence/ui/Verdict.tsx",
+        "src/features/youtube-intelligence/ui/pages/Analysis.tsx"
+      ],
+      "tests": [
+        "tests/verdict.test.ts"
+      ],
+      "note": "Header, verdict box, summary (derived from stored output, no new model call), numbered key points with seek, Calls/Research brief/Processing details tabs, no-ideas state, VerdictLine export, F74 reused chip and in-page re-run confirmation. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F61).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F62",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Search page: faceted filters with counts, calls and videos results, filtered-set summary, URL state, paging",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Search.tsx",
+        "src/features/youtube-intelligence/ui/search-state.ts",
+        "src/features/youtube-intelligence/ui/use-query-pages.ts",
+        "src/features/youtube-intelligence/ui/focus-trap.ts"
+      ],
+      "tests": [
+        "tests/search-page.test.ts"
+      ],
+      "note": "Faceted Search with URL state, live counts, Calls/Videos tabs with paging, filtered-set summary, chips, hidden-by-trust notice, best-single-removal empty state, phone filter sheet; F59 instrument kinds and F60 has-levels/expires-within filters in the query layer. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F62).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F63",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "CSV and JSON export of calls, videos and daily reports with stated scope",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/export.ts",
+        "src/features/youtube-intelligence/export-columns.ts",
+        "src/features/youtube-intelligence/ui/ExportMenu.tsx"
+      ],
+      "tests": [
+        "tests/export.test.ts"
+      ],
+      "note": "RFC 4180 CSV with formula-injection guard and # footer, JSON with nested evidence, query/export up to 20,000 rows, ExportMenu with stated scope. Wired on Search and Saved (via a claimIds query filter; GET input cap limits one export to roughly 250 saved calls). Channel page and report wiring land with those pages. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F63).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F64",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Daily report page and archive: themes with citations, in-focus ranking, disagreements, sources; Today summary card",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Report.tsx",
+        "src/server/youtube-intelligence/daily-report.ts",
+        "src/server/youtube-intelligence/actions/report.ts",
+        "src/features/youtube-intelligence/report.ts",
+        "src/features/youtube-intelligence/ui/ReportSummaryCard.tsx"
+      ],
+      "tests": [
+        "tests/daily-report.test.ts"
+      ],
+      "note": "Daily report per US session built on the briefing code: deterministic headline and split, cited themes, in-focus ranking with change vs the previous session, disagreements, video briefs (moved from Today, D3), sources with verdict lines, critic-removed points kept visible; archive; session navigation skipping non-trading days; report/session and report/archive reads and the existing synthesis as the spending action. ReportSummaryCard placed on Today. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F64).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F65",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Trends page: headline tiles, weekly sentiment columns, price-aligned call timeline, drill list",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F25"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Trends.tsx",
+        "src/features/youtube-intelligence/trends-series.ts",
+        "src/features/youtube-intelligence/ui/charts.tsx"
+      ],
+      "tests": [
+        "tests/trends-series.test.ts"
+      ],
+      "note": "Trends by ticker, channel or sentiment over session-bucketed series: tiles, weekly/daily bullish-above bearish-below columns, price chart on the same x axis with its own scale and conviction-sized call dots, lane timeline for channel/sentiment views, crosshair tooltip, 24px dot targets, chart/table toggle, drill list with Export. market/priceSeries read. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F65).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F66",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Channel detail page: stats, lean, record vs benchmark, calls over time, analyses list",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F65",
+        "F36"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Channel.tsx",
+        "src/features/youtube-intelligence/channel-page.ts"
+      ],
+      "tests": [
+        "tests/channel-page.test.ts"
+      ],
+      "note": "Channel page with follow/process controls, tiles (videos, calls per video, lean, record vs benchmark using the leaderboard minimum), calls over time, most-discussed instruments, recent analyses with verdict lines, collapsed Processing. Leaderboard creator names link here. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F66).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F67",
+      "phase": 5,
+      "lane": "sources-ui",
+      "title": "Channels list as a sortable table with activity, lean and status; add-channels drawer",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F45",
+        "F56",
+        "F57"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Channels.tsx",
+        "src/server/youtube-intelligence/channel-stats.ts",
+        "src/features/youtube-intelligence/channel-list.ts",
+        "src/features/youtube-intelligence/metrics/channel-columns.ts"
+      ],
+      "tests": [
+        "tests/channel-stats.test.ts"
+      ],
+      "note": "Followed channels first as a registry-backed sortable table (status, last video, 7-day count, top instrument, lean, record), sort presets, filter, cards on phone, Add channels drawer holding Follow/Discover/catalogue/cost preview, status chip replacing the pseudo-button, silent-channel flag. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F67).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F68",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Watchlist: pinned and mentioned-today tickers with sparkline, 1-day change and divergence flag",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F25",
+        "F57"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/Watchlist.tsx",
+        "src/features/youtube-intelligence/ui/PinButton.tsx",
+        "src/features/youtube-intelligence/watchlist.ts",
+        "src/server/youtube-intelligence/watchlist.ts"
+      ],
+      "tests": [
+        "tests/watchlist.test.ts"
+      ],
+      "note": "Today rail watchlist with Pinned and Mentioned today tabs, 20-session sparkline, signed 1-day change in ink, mention sentiment, close date, creators-vs-price divergence flag, No price state, team PinButton, phone tile scroller. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F68).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F69",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "24-hour trending window on the sentiment panel, session-aligned, as view state",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F38",
+        "F58"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/sentiment-window.ts",
+        "src/features/youtube-intelligence/metrics/sentiment-shift.ts",
+        "src/features/youtube-intelligence/ui/SentimentPanel.tsx"
+      ],
+      "tests": [
+        "tests/sentiment-window.test.ts"
+      ],
+      "note": "24h/7d/14d/30d segments as URL view state; 24h runs from the previous US close (holiday and DST aware) against the session before; rows with split bar, creators and change; window-named empty state. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F69).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F70",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Per-browser unread markers and new-since-last-visit group",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F44"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/unread.ts",
+        "src/features/youtube-intelligence/ui/UnreadDot.tsx"
+      ],
+      "tests": [
+        "tests/unread.test.ts"
+      ],
+      "note": "Per-browser seen ids and last visit (try/catch; blocked storage shows nothing), New since group with Mark all as seen on Today, N new beside Today in the sidebar with Tracked on this browser. Also Today's optional Levels column (F60). Unread dots on channel pages and Search videos wired with those pages. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F70).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F71",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Follow-channel prompt with cost projection on analyses from unfollowed channels",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F45",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/follow-prompt.ts",
+        "src/features/youtube-intelligence/ui/FollowPrompt.tsx"
+      ],
+      "tests": [
+        "tests/follow-prompt.test.ts"
+      ],
+      "note": "Banner on analyses from unfollowed channels with uploads/week, projected monthly cost and remaining budget; discover-only when over budget; Not now hides it for 30 days on this browser. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F71).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F72",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Live step progress while running and a general Retry that resumes from checkpoints",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F27",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/progress-steps.ts",
+        "src/features/youtube-intelligence/ui/StepProgress.tsx",
+        "src/server/youtube-intelligence/run-progress.ts",
+        "src/server/youtube-intelligence/actions/runs.ts"
+      ],
+      "tests": [
+        "tests/progress-steps.test.ts"
+      ],
+      "note": "Five plain steps shown only while queued/running (D1), typical duration and 3x slow notice, failure banner with Retry from the stopped step (resume without re-reserving completed steps), Transcribe audio instead, Retry the check; mini progress and Retry on Today activity rows. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F72).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F73",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Per-call token, cache, time and cost table in Processing details",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F17b",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/call-usage.ts",
+        "src/features/youtube-intelligence/ui/CallUsageTable.tsx",
+        "src/features/youtube-intelligence/ui/pages/Lab.tsx"
+      ],
+      "tests": [
+        "tests/call-usage.test.ts"
+      ],
+      "note": "Row per paid model call (retries marked) with input/cached/output tokens, time and cost plus totals; raw JSON behind Show raw data; Lab per-step aggregate; registry-backed headings. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F73).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F74",
+      "phase": 5,
+      "lane": "queue",
+      "title": "Reuse a completed run for the same video and pipeline version; explicit paid re-run",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F26"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/reuse.ts",
+        "src/server/youtube-intelligence/research-store.ts",
+        "src/server/youtube-intelligence/actions/runs.ts"
+      ],
+      "tests": [
+        "tests/run-reuse.test.ts"
+      ],
+      "note": "Completed canonical run with the same extraction/critic/transcription models, prompt, pipeline version and windowed-ASR setting is reused with no job or spend; force queues a fresh run recorded as rerun_requested. Legacy /api/intelligence/runs submissions never reuse (explicit model/transcript requests). Today shows the reuse notice; re-run confirmation and the Reused header chip land with the analysis UI (F61/F72). Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F74).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F75",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Saved calls: status tabs with counts, grouping by session, call card v2, permanent delete",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F48",
+        "F60",
+        "F58"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Saved.tsx",
+        "src/features/youtube-intelligence/saved-calls.ts",
+        "src/server/youtube-intelligence/saved-calls.ts"
+      ],
+      "tests": [
+        "tests/saved-calls.test.ts"
+      ],
+      "note": "Open/Reviewed/Removed/All tabs with counts (URL state), session grouping by video publish date (else saved date, stated on hover), expiring-soonest sort, card fields, since-saved price change from stored prices, delete only for Removed calls (research/deleteIdea, row-locked, evented). Export slot wired when F63 merges. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F75).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F76",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Quick search palette (Cmd/Ctrl+K) over instruments, channels, videos and actions",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F62"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/CommandPalette.tsx",
+        "src/features/youtube-intelligence/ui/command-palette.ts"
+      ],
+      "tests": [
+        "tests/command-palette.test.ts"
+      ],
+      "note": "Cmd/Ctrl+K palette over instruments, channels, videos, pages and an analyse action for pasted links; CJK substring matching; recent searches; combobox ARIA. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F76).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F77",
+      "phase": 5,
+      "lane": "gate",
+      "title": "Phase-5 gate run: browser and visual matrix for the LeapEdge-gap surfaces, registry CI, conformance",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59",
+        "F60",
+        "F61",
+        "F62",
+        "F63",
+        "F64",
+        "F65",
+        "F66",
+        "F67",
+        "F68",
+        "F69",
+        "F70",
+        "F71",
+        "F72",
+        "F73",
+        "F74",
+        "F75",
+        "F76"
+      ],
+      "files": [
+        "docs/gates/phase-5-conformance.md",
+        "docs/gates/phase-5-baseline.json",
+        "scripts/seed-phase5.ts"
+      ],
+      "tests": [
+        "tests/phase-5-gate.test.ts"
+      ],
+      "note": "Pre-merge gate on the PR #19 head in fixture mode: 112/112 browser matrix cells (28 surfaces x 1440/390 x light/dark), 11/11 flows, no page-wide overflow at 390, no application console errors; 14 defects fixed during and after the gate. Loading states deferred (gate-debt.md). No live-provider run or LeapEdge comparison; the offline promotion gate measured nothing (binding.total 0). A human approves the gate before merge.",
+      "planned": true,
+      "pr": 19
     }
   ],
   "executionScope": "docs/delivery/standalone-scope.json",

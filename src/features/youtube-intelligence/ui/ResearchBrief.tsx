@@ -14,7 +14,10 @@ import { action } from "./api.ts";
 import { NewsReview } from "./NewsReview.tsx";
 const date = (value: string | null) =>
   value ? new Date(value).toLocaleString() : "Unknown";
-export function ResearchOverview() {
+/** `title`: the heading; the Daily report shows this ranking as "Video briefs" (decision D3). */
+export function ResearchOverview({
+  title = "Material developments",
+}: { title?: string } = {}) {
   const { data } = useWorkspace();
   const [expanded, setExpanded] = useState(false);
   const [timeMode, setTimeMode] = useState<"video_date" | "current">(
@@ -48,7 +51,7 @@ export function ResearchOverview() {
       <div className="yi-section-title">
         <div>
           <span className="yi-eyebrow">Evidence-led research</span>
-          <h2>Material developments</h2>
+          <h2>{title}</h2>
         </div>
         <span className="yi-muted">General research · both horizons</span>
       </div>
