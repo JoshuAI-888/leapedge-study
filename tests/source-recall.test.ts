@@ -103,3 +103,23 @@ for(const levels of [undefined,[{kind:'entry',value_original:'5%'}]])test(`legac
  await step(run);assert.deepEqual((run.output.keyPoints as {claim:{levels:unknown[]}}[])[0].claim.levels,[]);assert.equal(JSON.stringify(raw),original);assert.equal(fake.requests.length,1);assert.equal(run.stage,'critique');if(levels)assert.equal((run.output.contextLevelNormalizations as {original:{levels:unknown[]}}[])[0].original.levels.length,1);
  }finally{restore();await db.close();}
 });
+
+test('a new run requests every recall window concurrently in one step against one frozen inventory and applies them in order',async()=>{
+ const db=await freshDatabase();const settings=teamDefaults();
+ let active=0,peak=0;
+ const reply=(summary:string,id:string)=>async()=>{peak=Math.max(peak,++active);await new Promise(r=>setTimeout(r,20));active--;return {json:{claims:[],key_points:[],mentions:[],reconciliation:{reviewedSourceIds:[id],propositions:[{summary,sourceIds:[id],disposition:'not_material',exclusionBasis:'nonfinancial_filler',existingIds:[],candidateRefs:[],reason:`${summary} contains no research information.`}],limitations:[]}},usage:{costUsd:.001}};};
+ const fake=new FakeModelTransport({responses:{'synthesis-recall-0':reply('Greeting','a'),'synthesis-recall-1':reply('Sponsor read','b'),'synthesis-recall-2':reply('Closing credits','c')}});const restore=injectTransport(fake);
+ try{
+  const run=await create('parallel-recall',settings.models.extraction.id,{promptSnapshot:await prompt('evidence-first.web.v8'),teamPreferencesSnapshot:settings},'evidence-first.web.v8');run.stage='publish';
+  const source=Source.parse({source_kind:'imported_transcript',language:'en',segments:[{id:'a',text:'Hello everyone.',start_seconds:0,end_seconds:2},{id:'b',text:'This video is sponsored.',start_seconds:2,end_seconds:4},{id:'c',text:'Thanks for watching.',start_seconds:4,end_seconds:6}]});
+  run.output={source,claims:[],keyPoints:[],mentions:[],recallPlanVersion:SOURCE_RECALL_VERSION,recallPlan:source.segments.map(s=>[s])};
+  await step(run);
+  assert.deepEqual(fake.requests.map(r=>r.stage).sort(),['synthesis-recall-0','synthesis-recall-1','synthesis-recall-2']);
+  assert.equal(peak,3,'windows were requested concurrently');
+  assert.equal(run.output.recallIndex,3,'all windows applied in one step');
+  assert.deepEqual((run.output.recallCandidates as {index:number}[]).map(c=>c.index),[0,1,2]);
+  const inventories=new Set(fake.requests.map(r=>JSON.stringify(r.user).match(/"existing":(\{.*?\}|\[.*?\])/)?.[0]));
+  assert.equal(inventories.size,1,'every window reviewed the same frozen inventory');
+  assert.equal(run.output.recallChecked,true);
+ }finally{restore();await db.close();}
+});

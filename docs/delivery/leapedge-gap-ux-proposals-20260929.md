@@ -103,8 +103,9 @@ The shared parts, the palette and the audit fixes above, plus the D2 sidebar and
 
 ### F60 — Richer call fields (gap 6)
 - **New fields:** catalysts, expiry, and recommended action.
+  - *Reconciled 30 September 2026 with main's structured-idea prompts (v9/v10):* action and catalysts are main's `action` enum and dated `catalysts`, and levels carry main's `condition_en`. F60 adds only `expiry` and `macro_theme`.
 - **Parsed levels:** each level carries a parsed value (number or range, currency, comparator such as "close above"). The original text is always kept.
-- **Version:** a new prompt/schema version.
+- **Version:** opt-in prompt `evidence-first.web.v11` (main's v10 plus expiry and macro theme). The team default prompt is unchanged.
 - **Card layout:**
   - Line 1: instrument, stance, conviction, trust, with horizon and expiry right-aligned. Expiry turns amber when near and reads "expired" once past.
   - Line 2: thesis.

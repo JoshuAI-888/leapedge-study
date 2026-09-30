@@ -15,7 +15,9 @@ import {
 import {
   PointerExtraction,
   extractionResponseSchema,
-  extractionResponseSchemaV2,
+  callFieldsExtractionResponseSchema,
+  structuredExtractionResponseSchema,
+  extractionSchemaFor,
 } from "../src/server/youtube-intelligence/schemas/extraction.ts";
 import {
   rowsForRun,
@@ -181,17 +183,20 @@ const oldClaim = {
 
 test("Claims without the new fields still parse, and new fields are kept when present", () => {
   const old = Claim.parse(oldClaim);
-  assert.equal(old.catalysts_en, undefined);
-  assert.equal(old.action_en, undefined);
+  assert.equal(old.expiry, undefined);
+  assert.equal(old.macro_theme, undefined);
   const rich = Claim.parse({
     ...oldClaim,
-    catalysts_en: ["ETF inflows", "Fed pause"],
-    action_en: "Buy near the 75,000-76,500 support",
+    catalysts: [
+      { text_en: "ETF inflows", date_original: null },
+      { text_en: "Fed pause", date_original: "18 September" },
+    ],
+    action: "plan_buy",
     expiry: { date: "2026-10-31", original: "end of October" },
     macro_theme: null,
   });
-  assert.deepEqual(rich.catalysts_en, ["ETF inflows", "Fed pause"]);
-  assert.equal(rich.action_en, "Buy near the 75,000-76,500 support");
+  assert.equal(rich.catalysts?.length, 2);
+  assert.equal(rich.action, "plan_buy");
   assert.deepEqual(rich.expiry, {
     date: "2026-10-31",
     original: "end of October",
@@ -206,8 +211,8 @@ test("A malformed expiry date from the model becomes null instead of failing the
         ...fields,
         evidence_ranges: [{ start_id: "s1", end_id: "s1" }],
         expiry: { date: "31/10/2026", original: "31 October" },
-        catalysts_en: [],
-        action_en: null,
+        catalysts: [],
+        action: "view",
         macro_theme: "Rates",
       },
     ],
@@ -221,17 +226,27 @@ test("A malformed expiry date from the model becomes null instead of failing the
   assert.equal(parsed.claims[0].macro_theme, "Rates");
 });
 
-test("The v2 response schema adds the call fields as optional and leaves v1 untouched", () => {
+test("The call-fields schema extends the structured-idea schema and leaves earlier ones untouched", () => {
   type Items = {
     items: { properties: Record<string, unknown>; required: string[] };
   };
   const v1 = (extractionResponseSchema.properties.claims as Items).items;
-  const v2 = (extractionResponseSchemaV2.properties.claims as Items).items;
-  for (const key of ["catalysts_en", "action_en", "expiry", "macro_theme"]) {
-    assert.ok(v2.properties[key], `${key} missing from v2`);
+  const structured = (structuredExtractionResponseSchema.properties.claims as Items).items;
+  const v2 = (callFieldsExtractionResponseSchema.properties.claims as Items).items;
+  for (const key of ["expiry", "macro_theme"]) {
+    assert.ok(v2.properties[key], `${key} missing from the call-fields schema`);
     assert.ok(!v2.required.includes(key), `${key} must be optional`);
     assert.equal(v1.properties[key], undefined);
+    assert.equal(structured.properties[key], undefined);
   }
+  // Action and catalysts are the structured-idea fields, unchanged.
+  for (const key of ["action", "catalysts", "owner", "option"])
+    assert.deepEqual(v2.properties[key], structured.properties[key]);
+  assert.deepEqual(v2.required, structured.required);
+  for (const key of ["catalysts_en", "action_en"]) assert.equal(v2.properties[key], undefined);
+  assert.equal(extractionSchemaFor({ callFields: true, structuredIdeas: true }), callFieldsExtractionResponseSchema);
+  assert.equal(extractionSchemaFor({ structuredIdeas: true }), structuredExtractionResponseSchema);
+  assert.equal(extractionSchemaFor({}), extractionResponseSchema);
   assert.deepEqual(
     (v2.properties.macro_theme as { enum: string[] }).enum.slice(0, 8),
     ["Rates", "Inflation", "USD", "Oil", "Gold", "Growth", "Liquidity", "Credit"],
@@ -252,7 +267,7 @@ function fixtureRun(claim: Record<string, unknown>): Run {
     videoId: "aB1cD2eF3gH",
     url: "https://www.youtube.com/watch?v=aB1cD2eF3gH",
     model: "fake",
-    promptVersion: "evidence-first.web.v9",
+    promptVersion: "evidence-first.web.v11",
     title: "Fixture",
     status: "completed",
     stage: "done",
@@ -299,15 +314,21 @@ test("Publishing stores parsed levels, catalysts, action, expiry and theme on th
   await freshDatabase();
   const run = fixtureRun({
     ...oldClaim,
-    catalysts_en: ["ETF inflows", "Fed pause"],
-    action_en: "Buy near the 75,000-76,500 support",
+    catalysts: [
+      { text_en: "ETF inflows", date_original: null },
+      { text_en: "Fed pause", date_original: "18 September" },
+    ],
+    action: "plan_buy",
     expiry: { date: "2026-10-31", original: "end of October" },
     macro_theme: "rates",
   });
   await writeRunRows(rowsForRun(run));
   const [row] = await claimsForRun(run.id);
-  assert.deepEqual(row.catalystsEn, ["ETF inflows", "Fed pause"]);
-  assert.equal(row.actionEn, "Buy near the 75,000-76,500 support");
+  assert.deepEqual(row.catalysts, [
+    { text: "ETF inflows", date: null },
+    { text: "Fed pause", date: "18 September" },
+  ]);
+  assert.equal(row.action, "plan_buy");
   assert.equal(row.expiryDate, "2026-10-31");
   assert.equal(row.expiryOriginal, "end of October");
   // The model's theme is normalised to the vocabulary before it is stored.
@@ -316,12 +337,14 @@ test("Publishing stores parsed levels, catalysts, action, expiry and theme on th
   assert.deepEqual(row.levels![0], {
     kind: "entry",
     valueOriginal: "75000附近至76500",
+    conditionEn: null,
     parsed: parseLevel("75000附近至76500"),
   });
   // Unparseable wording is kept verbatim with no number.
   assert.deepEqual(row.levels![2], {
     kind: "target",
     valueOriginal: "2028财年结束前",
+    conditionEn: null,
     parsed: null,
   });
   const [mention] = await mentionsForRun(run.id);
@@ -334,8 +357,8 @@ test("An older claim publishes with empty call fields, and they never enter the 
   await writeRunRows(rowsForRun(run));
   const [row] = await claimsForRun(run.id);
   assert.deepEqual(row.levels, []);
-  assert.deepEqual(row.catalystsEn, []);
-  assert.equal(row.actionEn, null);
+  assert.deepEqual(row.catalysts, []);
+  assert.equal(row.action, null);
   assert.equal(row.expiryDate, null);
   assert.equal(row.expiryOriginal, null);
   assert.equal(row.macroTheme, null);
@@ -343,8 +366,8 @@ test("An older claim publishes with empty call fields, and they never enter the 
   const bare = {
     ...row,
     levels: undefined,
-    catalystsEn: undefined,
-    actionEn: undefined,
+    catalysts: undefined,
+    action: undefined,
     expiryDate: undefined,
     expiryOriginal: undefined,
     macroTheme: undefined,

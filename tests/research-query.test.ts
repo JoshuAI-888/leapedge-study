@@ -595,10 +595,16 @@ test("Instruments group by the F59 vocabulary, so a label's link finds its calls
 test("Calls carry the F60 fields and filter by stated levels and expiry window", async () => {
   await database
     .prepare(
-      `UPDATE claims SET levels=$1::jsonb, action_en='Buy on dips', catalysts_en=ARRAY['Earnings','Capex guide'],
+      `UPDATE claims SET levels=$1::jsonb, action='plan_buy', catalysts=$2::jsonb,
         expiry_date='2026-09-20', expiry_original='by the 20th' WHERE id='r1:c1'`,
     )
-    .run(JSON.stringify([{ kind: "target", valueOriginal: "$150", parsed: null }]));
+    .run(
+      JSON.stringify([{ kind: "target", valueOriginal: "$150", parsed: null }]),
+      JSON.stringify([
+        { text: "Earnings", date: "18 November" },
+        { text: "Capex guide", date: null },
+      ]),
+    );
   await database
     .prepare("UPDATE claims SET expiry_date='2026-11-30', expiry_original='end of November' WHERE id='r3:c6'")
     .run();
@@ -606,8 +612,11 @@ test("Calls carry the F60 fields and filter by stated levels and expiry window",
   const withLevels = await queryCalls({ hasLevels: true, today });
   assert.deepEqual(withLevels.rows.map((r) => r.id), ["r1:c1"]);
   const nvda = withLevels.rows[0];
-  assert.equal(nvda.action, "Buy on dips");
-  assert.deepEqual(nvda.catalysts, ["Earnings", "Capex guide"]);
+  assert.equal(nvda.action, "plan_buy");
+  assert.deepEqual(nvda.catalysts, [
+    { text: "Earnings", date: "18 November" },
+    { text: "Capex guide", date: null },
+  ]);
   assert.equal(nvda.expiryDate, "2026-09-20");
   assert.equal(nvda.expiryOriginal, "by the 20th");
   assert.deepEqual(
@@ -633,7 +642,7 @@ test("Calls carry the F60 fields and filter by stated levels and expiry window",
   const plain = (await queryCalls({ text: "实际利率" })).rows[0];
   assert.deepEqual([plain.action, plain.levels, plain.catalysts, plain.expiryDate], [null, [], [], null]);
   await assert.rejects(() => queryCalls({ expiresWithin: 14 }));
-  // A model-chosen macro theme (prompt v9) decides the grouping.
+  // A model-chosen macro theme (prompt v11) decides the grouping.
   assert.equal(instrumentOf(null, "chip names", "Information Technology / Semiconductors").key, "Information Technology / Semiconductors");
 });
 

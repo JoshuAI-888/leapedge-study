@@ -1,0 +1,160 @@
+{
+  "videoId": "dhYuN3Oopss",
+  "language": "zh",
+  "mustKnow": [
+    {
+      "item": "Core thesis: TSLA's risk/reward has improved. Robotaxi/FSD execution risk is falling while the value is unchanged, so it is 'more worth buying' (更加值得买入)",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Grantham: warned on CNBC that the S&P could fall 75%; said in 2019 Tesla would fail within 2 years (it then rose 10x); accused Musk of hype-funding. Musk replied 'not a builder' and did not deny it. The creator agrees Grantham wasn't wrong about the model",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge drops Grantham, the S&P -75% call and the 10x."
+    },
+    {
+      "item": "Third-party target: $475 by end-2026 if Cybercab runs smoothly, attributed to Morgan Stanley at 114s and 'JPMorgan' (摩根大通) at 272s",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "Neither notes that the creator names two different banks. LeapEdge turns the target into the creator's own trade target."
+    },
+    {
+      "item": "Fleet: Tesla about 500+ in roughly a year vs Waymo 4,000 after 10 years (an 8x gap); Tesla growing 17% per week; 60-69 Cybercabs in Austin",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge conflates these: 'zero to nearly 70 units in Austin in just over a year'."
+    },
+    {
+      "item": "Cost: Cybercab under $20k (below a Model Y); Waymo's Jaguar build over 100k, cheaper with Zeekr but still needs lidar and HD maps",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": ""
+    },
+    {
+      "item": "Flywheel in Austin (more cars, users, revenue, cars); Waymo 'cannot compete'",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Waymo survives only through Google funding; the creator doubts Google ever gets a return or will fight Tesla (and draws a parallel to Meta)",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": ""
+    },
+    {
+      "item": "SpaceX was valued at $400-500B pre-IPO while loss-making (infinite P/E), and Tesla trades at about 200x P/E: investors price long-dated risk",
+      "ours": "partial",
+      "leapedge": "missed",
+      "note": "Ours drops the 'PE 200倍' reference for Tesla."
+    },
+    {
+      "item": "Price context: 2021 high about 402-420, now about 300s. Success probability is much higher but the price is not",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Horizon and risk: whether long-term or 1-2 years for robotaxi upside, holders must bear the risk that robotaxi fails or slips past 2026",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Ours puts the 1-2 year and long-term framing in k8 but leaves the call's horizon null. LeapEdge says 'long-term' only."
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "k7: 'Musk countered by stating Grantham is a short-seller/investor rather than a builder'",
+        "transcriptAt": "43s-52s",
+        "problem": "Embellished. Musk only said Grantham is 'not a builder'; the short-seller framing is the creator's, about Enron."
+      },
+      {
+        "text": "tickerSentiment 标普500 bearish",
+        "transcriptAt": "0s-5s",
+        "problem": "Misattribution. This is Grantham's forecast, which the creator implicitly discredits. It shows as a sentiment row with no owner."
+      },
+      {
+        "text": "tickerSentiment 安然 (Enron) bearish",
+        "transcriptAt": "57s",
+        "problem": "A historical anecdote treated as an instrument sentiment. Noise."
+      },
+      {
+        "text": "Google has two conflicting rows (neutral and bearish) with the same reason",
+        "transcriptAt": "587s-657s",
+        "problem": "Inconsistent."
+      },
+      {
+        "text": "Morgan Stanley vs JPMorgan inconsistency not flagged",
+        "transcriptAt": "114s, 272s",
+        "problem": "The source names two banks for the same $475 target, and neither system surfaces the conflict."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "tradeIdea target '475美元'; summary: 'positions the stock for substantial upside toward a $475 target by 2026'",
+        "transcriptAt": "111s-124s, 272s-279s",
+        "problem": "Misattribution. $475 is a third-party bank target that depends on Cybercab running smoothly in 2026. It is presented as the creator's unconditional trade target."
+      },
+      {
+        "text": "'growing from zero to nearly 70 units in Austin in just over a year'",
+        "transcriptAt": "435s-455s",
+        "problem": "Conflates two figures: about 500+ total fleet in a year, and 69 Cybercabs in Austin."
+      },
+      {
+        "text": "risk 'regulatory or scaling hurdles'",
+        "transcriptAt": "n/a",
+        "problem": "Regulation is never mentioned. The risk is generic filler."
+      },
+      {
+        "text": "'offering a better entry point'",
+        "transcriptAt": "721s-731s",
+        "problem": "A mild inference. The creator says the price has not risen much, not that it is an entry point. Directionally consistent."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [],
+    "leapedgeMissed": [],
+    "oursFalse": [],
+    "leapedgeFalse": [],
+    "oursUnresolvedTickers": [
+      "特斯拉 -> TSLA (in the accepted call)",
+      "Google -> GOOGL",
+      "Meta -> META",
+      "Waymo -> private (Alphabet subsidiary)",
+      "标普500 -> SPX (index, attributed to Grantham)"
+    ]
+  },
+  "sentimentIssues": [
+    "特斯拉 appears 5 times, all bullish/long. Collapse them into one row with the strongest quote (300s, '更加值得买入').",
+    "Waymo avoid: Waymo is not listed, so the investable read-through is a GOOGL negative, which is shown inconsistently as both neutral and bearish.",
+    "S&P 500 bearish and Enron bearish are third-party or historical, not creator stances. Drop them or tag them as attributed to Grantham."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 5,
+      "fidelity": 4,
+      "actionability": 3,
+      "clarity": 3,
+      "overall": 4
+    },
+    "leapedge": {
+      "coverage": 3,
+      "fidelity": 3,
+      "actionability": 4,
+      "clarity": 4,
+      "overall": 3
+    }
+  },
+  "verdict": "ours better",
+  "why": "Both find the single TSLA long. LeapEdge looks more actionable (ticker, target, horizon), but its $475 'target' is a conditional third-party bank target presented as the creator's, which is a material error for a PM. Ours attributes the target correctly (k1, with its condition) and covers Grantham, SpaceX, costs and fleet numbers. Its call lacks a ticker, horizon and attributed levels, and the sentiment table is noisy.",
+  "recommendations": [
+    "Attach third-party levels to the call as a separate field, e.g. thirdPartyTargets:[{source:'Morgan Stanley (also said JPMorgan at 272s)', value:'$475', by:'end-2026', condition:'Cybercab operating smoothly'}]. This keeps actionability without LeapEdge's misattribution.",
+    "Fill horizon from the creator's framing: here '1-2 years for robotaxi upside, or long-term holder' (85s-93s). Ours had it in k8 but left the call's horizon null.",
+    "Flag conflicting source attributions for the same number (Morgan Stanley vs JPMorgan) in brief.omissions. That is a useful omission, unlike the 's6: Proposed quantity withheld' boilerplate.",
+    "Filter tickerSentiment to instruments the creator holds a view on. Drop historical anecdotes (Enron) and other people's forecasts (Grantham on the S&P 500), or tag them owner=third_party.",
+    "Resolve Chinese names: 特斯拉→TSLA. Also map private companies to their listed parent for read-through (Waymo→GOOGL, marked as indirect)."
+  ]
+}

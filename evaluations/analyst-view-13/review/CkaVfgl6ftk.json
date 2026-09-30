@@ -1,0 +1,137 @@
+{
+  "videoId": "CkaVfgl6ftk",
+  "language": "en",
+  "mustKnow": [
+    {
+      "item": "Three stocks the creator is buying now, investing 'very heavily': #3 HIMS, #2 AMZN, #1 ELF",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "HIMS: target $100 over 3-7 yrs; ~8% down YTD; $7B mcap, 52w $13-65, negative P/E ('more of a gamble'); subs +19% YoY, monthly rev/sub +21%, RoW revenue +1,641%; Europe/Canada/Australia/Japan TAM; peptide facilities (503B CA, 503A AZ/OH, NJ lab); risks: volatile, FDA-dependent",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge has the target, subs growth and +1,641%, but not the valuation stats or facilities."
+    },
+    {
+      "item": "AMZN: accumulating 'very quickly'; mcap $2.75T, 52w $196-287, TTM P/E 20.79, fwd 24.09; AWS > half of operating income, AWS sales +37%, op income +64%; capex fear; target $300+ on a capex-slowdown announcement, before year-end or early next year",
+      "ours": "partial",
+      "leapedge": "captured",
+      "note": "Ours drops the P/E and 52w data and the 'end of this year / early next year' horizon (it says 'short to medium term'), and leaves the target only in prose."
+    },
+    {
+      "item": "ELF: #1 pick; trimmed, then re-entered 'at a perfect price', decent allocation; fwd P/E 28.59 (should be 30s at 20% growth, ServiceNow comp); 18-20% sales growth guide for 2027; ~60% manufacturing ex-China; intl penetration 10%->21% (2020-26), 42% aspiration; falls in oil help ELF; target $400 (4x) over 3-7 yrs, 20-40% annual compounding",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge lacks the P/E argument, penetration numbers and re-entry."
+    },
+    {
+      "item": "Macro: S&P flat; oil down 9% in a week; skepticism on Trump/Iran UN headlines; hope oil ~130 by end of next week; portfolio +5% on the day",
+      "ours": "partial",
+      "leapedge": "captured",
+      "note": "Ours misses the oil -9% and the Trump/Iran skepticism."
+    },
+    {
+      "item": "Other holdings: CELH largest position (+5%); SOFI trades inverse to Fed funds, CEO Noto; META +35% in a month ('blue chips at cheap prices')",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": "LeapEdge has SoFi only."
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "k8: buying blue-chip stocks at cheap valuations 'historically minimizes downside'",
+        "transcriptAt": "181s",
+        "problem": "Embellished. The creator said 'it's really hard to go wrong' and admitted he 'got a little bit lucky'. There is no historical claim."
+      },
+      {
+        "text": "tickerSentiment ELF at 152s: 'neutral / hold ... mentions having trimmed the position'",
+        "transcriptAt": "146s-160s",
+        "problem": "Contradicts the next row at the same timestamp (bullish/long) and the creator's 'back on the uptrend... very promising'."
+      },
+      {
+        "text": "AMZN call horizon 'short to medium term'",
+        "transcriptAt": "732s",
+        "problem": "Loses the stated horizon: 'maybe before the end of this year, maybe at the beginning of next year'."
+      },
+      {
+        "text": "Omission: 'Specific balance sheet liabilities and off-balance sheet lease commitments for Amazon AWS capex'",
+        "transcriptAt": "n/a",
+        "problem": "Not an omission of the source. This is generic analyst boilerplate injected as if the video left it out."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "HIMS rationale: 'emerging multi-billion dollar peptide market opportunity'",
+        "transcriptAt": "384s-420s",
+        "problem": "'Multi-billion dollar' is never said. The creator said peptides could be 'bigger than GPUs'."
+      },
+      {
+        "text": "ELF rationale: 'shifting manufacturing out of China to boost margins'",
+        "transcriptAt": "617s",
+        "problem": "'To boost margins' is not stated."
+      },
+      {
+        "text": "ELF risks: 'market volatility'",
+        "transcriptAt": "702s",
+        "problem": "Volatility was said about HIMS, not ELF. The creator named no ELF risk beyond the slightly high forward P/E."
+      },
+      {
+        "text": "HIMS catalyst 'FDA regulatory approvals'",
+        "transcriptAt": "710s",
+        "problem": "The creator framed FDA dependence as a risk ('out of their control, which kind of sucks'). Listing it as a catalyst flips the framing, although it also appears under risks."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [],
+    "leapedgeMissed": [],
+    "oursFalse": [
+      "Duplicated calls: 6 calls for 3 ideas (HIMS x2, AMZN x2, ELF x2), each pair splitting thesis and target"
+    ],
+    "leapedgeFalse": [],
+    "oursUnresolvedTickers": [
+      "Amazon -> AMZN (both calls, all sentiment rows)",
+      "E.L.F. Beauty / ELF -> ELF (both calls; the spoken form is literally 'ELF')",
+      "Celsius -> CELH",
+      "Meta -> META",
+      "SoFi -> SOFI",
+      "ServiceNow -> NOW",
+      "'Hims' emitted as ticker (lowercase, non-canonical) in one sentiment row"
+    ]
+  },
+  "sentimentIssues": [
+    "26 tickerSentiment rows for 8 names (ELF x8, HIMS x7, AMZN x5). Unusable as a table.",
+    "ELF gets contradictory rows at 152s (neutral/hold and bullish/long).",
+    "The CELH 'hold' stance is fine. META 'long' is OK, but it is a realized-gain brag, not a current call.",
+    "SoFi 'bullish/long' is defensible ('we're going to see the appreciation very soon')."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 5,
+      "fidelity": 4,
+      "actionability": 3,
+      "clarity": 2,
+      "overall": 3
+    },
+    "leapedge": {
+      "coverage": 3,
+      "fidelity": 4,
+      "actionability": 5,
+      "clarity": 5,
+      "overall": 4
+    }
+  },
+  "verdict": "leapedge better",
+  "why": "Both find the same three ideas with the same targets. LeapEdge delivers them as three clean, ticker-resolved trade cards with target, horizon, catalysts and risks: HIMS $100 in 3-7y, AMZN $300+ by year-end or early next year, ELF $400 in 3-7y. Ours has more supporting detail (ELF penetration, HIMS facilities, CELH/META/SOFI) but leaves AMZN and ELF with null tickers and puts targets only in prose. It also splits each idea into two calls, emits 26 sentiment rows and ends with 12 pipeline-noise omissions. A PM skimming this would act faster on LeapEdge.",
+  "recommendations": [
+    "Add structured target/horizon fields to calls and fill them: 'AMZN target $300+, horizon: before YE or early next year, trigger: capex slowdown announcement'. Today the $300 lives only inside thesis text.",
+    "Merge calls per ticker. The ELF 're-entered, undervalued' call and the 'ELF $400 in 3-7y' call are one idea; keep the target-bearing one and fold the rest into the rationale.",
+    "Resolve tickers. 'ELF' spoken literally still got ticker null. A symbol dictionary plus an exact-match pass on spoken uppercase tokens would fix AMZN/ELF/CELH/META/SOFI/NOW.",
+    "Add valuation snapshot fields when the creator reads them out (AMZN TTM P/E 20.79, fwd 24.09, 52w 196-287; ELF fwd P/E 28.59). Ours dropped the AMZN numbers entirely.",
+    "Capture macro context the creator ties to the calls (oil -9% w/w, 'oil down -> ELF up', skepticism on Trump/Iran headlines).",
+    "Delete generic 'analyst wish-list' omissions ('off-balance sheet lease commitments for Amazon') and all source-N / sN pipeline lines from the user-facing brief."
+  ]
+}

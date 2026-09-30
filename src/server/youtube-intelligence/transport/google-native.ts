@@ -13,6 +13,7 @@ import {
   ModelRequest,
   TransportError,
   classifyStatus,
+  providerErrorMessage,
   type CachedContextData,
   type ModelDescription,
   type ModelRequestData,
@@ -152,7 +153,7 @@ function transportError(error: unknown, aborted: boolean): TransportError {
     kind,
     httpStatus === undefined
       ? `Provider call failed without a status: ${error instanceof Error ? error.message : "unknown error"}`
-      : `Provider HTTP ${httpStatus}. No automatic paid retry.`,
+      : providerErrorMessage(httpStatus, error instanceof Error ? error.message : null),
     httpStatus,
   );
 }

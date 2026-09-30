@@ -21,6 +21,8 @@ export const CritiqueVerdict = z.object({
   id: z.string().min(1),
   verdict: z.enum(["accept", "reject"]),
   reason_en: z.string().min(1),
+  /** Prompt v10: an accepted item whose only fault is overstated conviction carries the supported level. */
+  corrected_conviction: z.enum(["high", "medium", "low", "unspecified"]).optional(),
   /** Set only when another supplied id contradicts or qualifies this one. */
   cross_claim_notes: z.preprocess(
     (value) => (typeof value === "string" && !value.trim() ? undefined : value),
@@ -64,6 +66,7 @@ export const critiqueResponseSchema: Record<string, unknown> = {
           verdict: { type: "string", enum: ["accept", "reject"] },
           reason_en: { type: "string" },
           cross_claim_notes: { type: "string" },
+          corrected_conviction: { type: "string", enum: ["high", "medium", "low", "unspecified"] },
         },
         required: ["id", "verdict", "reason_en"],
         additionalProperties: false,

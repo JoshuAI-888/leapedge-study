@@ -36,3 +36,8 @@ test('invalid returned IDs fail atomically before writing any translation', () =
   assert.throws(() => applyTranslations([a.value], [{ id: a.value.id, translation_en: 'Revenue' }, { id: 'alien', translation_en: 'Other' }]), /not sent/);
   assert.equal(a.translated(), undefined);
 });
+test('a span answered twice keeps its first translation instead of failing the run', () => {
+  const a = target('k10.e1', '股价测试支撑');
+  applyTranslations([a.value], [{ id: 'k10.e1', translation_en: 'The price tests support.' }, { id: 'k10.e1', translation_en: 'Shares test support.' }]);
+  assert.equal(a.translated(), 'The price tests support.');
+});

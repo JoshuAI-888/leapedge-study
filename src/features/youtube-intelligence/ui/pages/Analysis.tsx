@@ -10,6 +10,8 @@ import { ResearchBrief } from "../ResearchBrief.tsx";
 import { Timing } from "../Timing.tsx";
 import { CallUsageTable } from "../CallUsageTable.tsx";
 import type { LedgerRow } from "../../call-usage.ts";
+import { AnalystViewPanel } from "../AnalystView.tsx";
+import type { AnalystViewData } from "../../analyst-view.ts";
 import type { RunTimelineData } from "../../timing.ts";
 import type { ResearchBriefData } from "../../research-brief.ts";
 import type { SourceData } from "../../contracts.ts";
@@ -81,6 +83,7 @@ export function Analysis({ id }: { id: string }) {
     [listened, setListened] = useState(false),
     [spans, setSpans] = useState<EvidenceSpanRow[]>([]),
     [storedClaims, setStoredClaims] = useState<ClaimRow[]>([]),
+    [analyst, setAnalyst] = useState<{ view: AnalystViewData; note: string } | null>(null),
     [reviewerConfigured, setReviewerConfigured] = useState(false),
     [reuse, setReuse] = useState<{ count: number; last_at: string | null }>({
       count: 0,
@@ -128,6 +131,8 @@ export function Analysis({ id }: { id: string }) {
       reuse?: { count: number; last_at: string | null };
       progress?: { typical: Typical; stepCostUsd: Record<string, number> } | null;
       calls?: LedgerRow[];
+      analystView?: AnalystViewData | null;
+      analystNote?: string | null;
     }>(
       `/api/intelligence/runs/${encodeURIComponent(id)}`,
       undefined,
@@ -138,6 +143,7 @@ export function Analysis({ id }: { id: string }) {
         setBriefs(x.researchBriefs ?? []);
         setSpans(x.evidenceSpans ?? []);
         setStoredClaims(x.claims ?? []);
+        setAnalyst(x.analystView && x.analystNote ? { view: x.analystView, note: x.analystNote } : null);
         setReviewerConfigured(x.reviewerConfigured);
         setReuse(x.reuse ?? { count: 0, last_at: null });
         setProgress(x.progress ?? null);
@@ -402,21 +408,34 @@ export function Analysis({ id }: { id: string }) {
       {channelId && (
         <FollowPrompt channelId={channelId} channelTitle={channelTitle} />
       )}
-      {summary ? (
-        <p className="yi-an-summary">{summary.text}</p>
+      {analyst ? (
+        // The analyst view (built on main) is the page a PM reads: when a run
+        // has one it replaces the derived summary and key points, so the same
+        // points never appear twice.
+        <AnalystViewPanel
+          view={analyst.view}
+          note={analyst.note}
+          onSeek={(to) => seekTo(to, `Playing the analyst view reference at ${clock(to)}.`)}
+        />
       ) : (
-        !working &&
-        !stopped && (
-          <p className="yi-muted yi-an-summary-empty">
-            Summary appears after the research brief is generated.
-          </p>
-        )
+        <>
+        {summary ? (
+          <p className="yi-an-summary">{summary.text}</p>
+        ) : (
+          !working &&
+          !stopped && (
+            <p className="yi-muted yi-an-summary-empty">
+              Summary appears after the research brief is generated.
+            </p>
+          )
+        )}
+        <KeyPoints
+          points={points}
+          total={pointItems.length}
+          onSeek={(to) => seekTo(to, `Playing the key point at ${clock(to)}.`)}
+        />
+        </>
       )}
-      <KeyPoints
-        points={points}
-        total={pointItems.length}
-        onSeek={(to) => seekTo(to, `Playing the key point at ${clock(to)}.`)}
-      />
       {(run.output.coverage as { status?: string } | undefined)?.status ===
         "incomplete_or_unknown" && (
         <p className="yi-warning">

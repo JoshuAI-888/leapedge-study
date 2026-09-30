@@ -81,41 +81,46 @@ test("Seeding the bundled versions is idempotent and new teams use pointer evide
     "a bundled version was seeded twice",
   );
   // Standalone completion defaults new teams to the pointer-evidence prompt.
-  assert.equal(teamDefaults().prompts.version, "evidence-first.web.v9");
+  assert.equal(teamDefaults().prompts.version, "evidence-first.web.v8");
   // The compatibility preferences document keeps its historical default.
   assert.equal((await R.preferences()).promptVersion, "evidence-first.web.v5");
 });
-test("v9 asks for catalysts, action, expiry and a macro theme under the v2 schema", async () => {
+test("v11 adds expiry and a macro theme to v10's structured ideas and stays opt-in", async () => {
   const { MACRO_THEMES, GICS_SECTORS } = await import(
     "../src/features/youtube-intelligence/instrument-kind.ts"
   );
   const versions = await R.promptVersions();
-  const v9 = versions.find((v: { id: string }) => v.id === "evidence-first.web.v9") as
+  const v11 = versions.find((v: { id: string }) => v.id === "evidence-first.web.v11") as
     | { hash: string; callFields?: boolean }
     | undefined;
-  assert.ok(v9, "evidence-first.web.v9 is not seeded");
-  assert.equal(v9!.callFields, true);
-  assert.notEqual(v9!.hash, FROZEN_HASHES["evidence-first.web.v8"]);
-  const p = (await R.prompt("evidence-first.web.v9")) as Awaited<
+  assert.ok(v11, "evidence-first.web.v11 is not seeded");
+  assert.equal(v11!.callFields, true);
+  const p = (await R.prompt("evidence-first.web.v11")) as Awaited<
     ReturnType<typeof R.prompt>
-  > & { callFields?: boolean };
+  > & { callFields?: boolean; structuredIdeas?: boolean };
   assert.equal(p.callFields, true);
+  assert.equal(p.structuredIdeas, true);
   assert.equal(p.pointerEvidence, true);
   assert.equal(p.temporalResearch, true);
-  for (const field of ["catalysts_en", "action_en", "expiry", "macro_theme"])
+  for (const field of ["expiry", "macro_theme"])
     assert.match(p.extraction, new RegExp(field));
+  // Action and catalysts stay v9/v10's structured-idea fields, never a second copy.
+  for (const duplicate of ["catalysts_en", "action_en"])
+    assert.doesNotMatch(p.extraction, new RegExp(duplicate));
   for (const theme of [...MACRO_THEMES, ...GICS_SECTORS])
     assert.ok(p.extraction.includes(theme), `${theme} missing from the prompt`);
   // The model copies level wording; the application parses the number.
   assert.match(p.extraction, /value_original/);
   assert.match(p.extraction, /never infer a year/i);
-  assert.match(p.critique, /catalysts_en/);
-  // v8's text is carried forward unchanged, so v9 only adds.
-  const v8 = await R.prompt("evidence-first.web.v8");
-  assert.ok(p.extraction.startsWith(v8.extraction));
-  assert.ok(p.critique.startsWith(v8.critique));
-  assert.equal(p.synthesis, v8.synthesis);
-  assert.equal(p.transcribe, v8.transcribe);
+  assert.match(p.critique, /expiry/i);
+  // v10's text is carried forward unchanged, so v11 only adds.
+  const v10 = await R.prompt("evidence-first.web.v10");
+  assert.ok(p.extraction.startsWith(v10.extraction));
+  assert.ok(p.critique.startsWith(v10.critique));
+  assert.equal(p.synthesis, v10.synthesis);
+  assert.equal(p.transcribe, v10.transcribe);
+  // Opt-in: new teams keep the default the prompt work on main chose.
+  assert.notEqual(teamDefaults().prompts.version, "evidence-first.web.v11");
 });
 test("v7 asks for pointer evidence, sentiment-bearing mentions and a calibrated conviction", async () => {
   const p = await R.prompt("evidence-first.web.v7");

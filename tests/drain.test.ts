@@ -99,3 +99,59 @@ test("concurrent drains carry multi-step runs to completion within shared capaci
     await db.close();
   }
 });
+
+test("a run put back in the queue after its job failed is picked up again", async () => {
+  const { freshDatabase } = await import("./helpers/db.ts");
+  const store = await import("../src/server/youtube-intelligence/store.ts");
+  const { processNext, dispatchOpenRuns } = await import("../src/server/youtube-intelligence/runner.ts");
+  const db = await freshDatabase();
+  try {
+    const run = await store.create("recovered-video", "fixture", {}, "v1");
+    await processNext(async (r) => {
+      r.stage = "critique";
+      throw Error("Critique missing verdicts: m18.");
+    });
+    assert.equal((await store.get(run.id))?.status, "failed");
+    // An audit recovery puts the run back in the queue but cannot enqueue a
+    // second job under the same id.
+    await (await store.db()).prepare("UPDATE yi_runs SET status='queued',error=NULL WHERE id=$1").run(run.id);
+    await dispatchOpenRuns();
+    const done = await processNext(async (r) => {
+      r.stage = "done";
+      r.status = "completed";
+    });
+    assert.ok(done, "the reopened job is claimed");
+    assert.equal((await store.get(run.id))?.status, "completed");
+  } finally {
+    await db.close();
+  }
+});
+
+test("a database connection timeout retries the step instead of failing the run", async () => {
+  const { freshDatabase } = await import("./helpers/db.ts");
+  const store = await import("../src/server/youtube-intelligence/store.ts");
+  const { processNext, isTransientInfrastructureError, MAX_TRANSIENT_RETRIES } = await import("../src/server/youtube-intelligence/runner.ts");
+  const db = await freshDatabase();
+  try {
+    assert.equal(isTransientInfrastructureError(Error("timeout exceeded when trying to connect")), true);
+    assert.equal(isTransientInfrastructureError(Error("Provider HTTP 400. No automatic paid retry.")), false);
+    const run = await store.create("flaky-db", "fixture", {}, "v1");
+    await processNext(async () => {
+      throw Error("timeout exceeded when trying to connect");
+    });
+    let saved = await store.get(run.id);
+    assert.equal(saved?.status, "queued");
+    assert.match(saved?.error ?? "", /temporary database error \(1\/5\)/);
+    assert.equal(saved?.output.transientRetries, 1);
+    // Bounded: once the retries are spent the run fails as before.
+    await (await store.db()).prepare("UPDATE yi_runs SET output=$1 WHERE id=$2").run(JSON.stringify({ transientRetries: MAX_TRANSIENT_RETRIES }), run.id);
+    await (await store.db()).prepare("UPDATE jobs SET run_after=now() WHERE id=$1").run(`analyze:${run.id}`);
+    await processNext(async () => {
+      throw Error("timeout exceeded when trying to connect");
+    });
+    saved = await store.get(run.id);
+    assert.equal(saved?.status, "failed");
+  } finally {
+    await db.close();
+  }
+});

@@ -1,4 +1,5 @@
 "use client";
+import { actionText, catalystText } from "../call-fields.ts";
 import { resolveListing } from "../identity.ts";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
@@ -216,14 +217,15 @@ export function ClaimCard({
 }) {
   const listing = resolveListing(claim.instrument, claim.ticker);
   const levels = claim.levels ?? [];
-  const catalysts = claim.catalystsEn ?? [];
+  const catalysts = claim.catalysts ?? [];
   const extras = claim.risksEn.length + claim.conditionsEn.length;
   return (
     <article className={`yi-claim yi-card2 ${selected ? "yi-selected" : ""}`}>
       <div className="yi-row yi-card2-line1">
         <InstrumentLabel
           claim={{
-            ticker: listing?.ticker ?? claim.ticker,
+            // A named company resolved by lookup (0009) counts under its listing.
+            ticker: listing?.ticker ?? claim.ticker ?? claim.resolvedTicker ?? null,
             instrument: claim.instrument,
             macroTheme: claim.macroTheme,
           }}
@@ -254,10 +256,23 @@ export function ClaimCard({
           </a>
         </p>
       )}
+      {!listing && !claim.ticker && claim.resolvedTicker && (
+        <p className="yi-muted">
+          Said as “{claim.instrument}”; listed as {claim.resolvedName} (
+          {claim.resolvedBy === "alias"
+            ? "curated name"
+            : claim.resolvedBy === "registry_name"
+              ? "SEC registered name"
+              : claim.resolvedBy === "verified_proposal"
+                ? "proposed ticker checked against SEC listing"
+                : "ticker spoken"}
+          ).
+        </p>
+      )}
       <h3>{claim.thesisEn}</h3>
-      {claim.actionEn && (
+      {claim.action && (
         <p className="yi-card2-action">
-          <span>Action</span> {claim.actionEn}
+          <span>Action</span> {actionText(claim.action)}
         </p>
       )}
       <LevelChips levels={levels} />
@@ -266,7 +281,7 @@ export function ClaimCard({
           <span>Catalysts</span>
           {catalysts.map((c, i) => (
             <span key={i} className="yi-chip">
-              {c}
+              {catalystText(c)}
             </span>
           ))}
         </div>

@@ -1,3 +1,4 @@
+import { actionText, catalystText } from "../../features/youtube-intelligence/call-fields.ts";
 import { z } from "zod";
 import {
   queryCallsPage,
@@ -96,10 +97,10 @@ function cells(row: CallRow): Record<ExportColumn, string | null> {
     trust_level: row.trustLevel,
     trust: TRUST_NAMES[row.trustLevel] ?? row.trustLevel,
     thesis: row.thesis,
-    action: row.action,
+    action: actionText(row.action),
     levels_original: joined(row.levels.map((l) => `${l.kind}: ${l.valueOriginal}`)),
     levels_parsed: joined(row.levels.map((l) => `${l.kind}: ${parsedText(l.parsed)}`)),
-    catalysts: joined(row.catalysts),
+    catalysts: joined(row.catalysts.map(catalystText)),
     risks: joined(row.risks),
     conditions: joined(row.conditions),
     horizon: row.horizon,
@@ -166,6 +167,7 @@ export function toJson(rows: CallRow[], meta: ExportMeta): string {
         trust: { level: row.trustLevel, name: TRUST_NAMES[row.trustLevel] ?? row.trustLevel },
         thesis: row.thesis,
         action: row.action,
+        action_label: actionText(row.action),
         levels: row.levels.map((l) => ({ kind: l.kind, original: l.valueOriginal, parsed: l.parsed })),
         catalysts: row.catalysts,
         risks: row.risks,

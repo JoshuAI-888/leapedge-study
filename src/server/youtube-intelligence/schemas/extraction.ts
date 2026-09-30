@@ -4,8 +4,10 @@ import {
   type RangeSelectedClaimData,
 } from "../../../features/youtube-intelligence/evidence-selection.ts";
 import {
+  ACTIONS,
   MARKETS,
   Mention,
+  OWNERS,
   SENTIMENTS,
 } from "../../../features/youtube-intelligence/contracts.ts";
 import {
@@ -143,6 +145,66 @@ const researchContextSchema = {
   required: claimSchema.required.filter(key=>key!=="levels"),
   additionalProperties: false,
 };
+/**
+ * Prompt v9 asks for structured ideas: what the creator did, whose view it is,
+ * option terms, size, conditional levels and dated catalysts. Earlier prompt
+ * versions keep the schema above, so their requests are unchanged.
+ */
+const levelKinds = [...claimSchema.properties.levels.items.properties.kind.enum, "threshold"];
+const structuredClaimSchema = {
+  ...claimSchema,
+  properties: {
+    ...claimSchema.properties,
+    levels: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          kind: { type: "string", enum: levelKinds },
+          value_original: { type: "string" },
+          condition_en: stringOrNull,
+        },
+        required: ["kind", "value_original", "condition_en"],
+      },
+    },
+    action: { type: "string", enum: [...ACTIONS] },
+    owner: { type: "string", enum: [...OWNERS] },
+    owner_name: stringOrNull,
+    option: {
+      type: "object",
+      nullable: true,
+      properties: {
+        right: { type: "string", enum: ["call", "put"] },
+        side: { type: "string", enum: ["long", "short"] },
+        strike_original: stringOrNull,
+        expiry_original: stringOrNull,
+        premium_original: stringOrNull,
+      },
+      required: ["right", "side", "strike_original", "expiry_original", "premium_original"],
+    },
+    size_original: stringOrNull,
+    catalysts: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: { text_en: { type: "string" }, date_original: stringOrNull },
+        required: ["text_en", "date_original"],
+      },
+    },
+  },
+  required: [...claimSchema.required, "action", "owner", "owner_name", "option", "size_original", "catalysts"],
+};
+const transcriptionDoubtSchema = {
+  type: "object",
+  properties: {
+    start_id: { type: "string", minLength: 1 },
+    end_id: { type: "string", minLength: 1 },
+    heard: { type: "string", minLength: 1 },
+    likely: { type: "string", minLength: 1 },
+    reason_en: { type: "string", minLength: 1 },
+  },
+  required: ["start_id", "end_id", "heard", "likely", "reason_en"],
+};
 export const extractionResponseSchema = {
   type: "object",
   properties: {
@@ -152,18 +214,27 @@ export const extractionResponseSchema = {
   },
   required: ["claims", "key_points", "mentions"],
 };
-/**
- * Call fields v2 (F60): the same contract plus catalysts, recommended action,
- * expiry and a macro/sector theme on each claim. Used only by prompt versions
- * that declare `callFields`, so every earlier version keeps its request bytes.
- * The new properties are optional; the application parses levels itself.
- */
-const claimSchemaV2 = {
-  ...claimSchema,
+export const structuredExtractionResponseSchema = {
+  type: "object",
   properties: {
-    ...claimSchema.properties,
-    catalysts_en: { type: "array", items: { type: "string" } },
-    action_en: stringOrNull,
+    claims: { type: "array", maxItems: 40, items: structuredClaimSchema },
+    key_points: { type: "array", maxItems: 30, items: researchContextSchema },
+    mentions: { type: "array", maxItems: 200, items: mentionSchema },
+    transcription_doubts: { type: "array", maxItems: 30, items: transcriptionDoubtSchema },
+  },
+  required: ["claims", "key_points", "mentions", "transcription_doubts"],
+};
+/**
+ * Call fields (F60, prompt v11): the structured-idea contract of v9/v10 plus an
+ * expiry and a macro/sector theme on each claim. Action and catalysts come from
+ * the structured-idea fields, not a second copy. Used only by prompt versions
+ * that declare `callFields`, so every earlier version keeps its request bytes.
+ * The application parses level numbers itself.
+ */
+const callFieldsClaimSchema = {
+  ...structuredClaimSchema,
+  properties: {
+    ...structuredClaimSchema.properties,
     expiry: {
       type: "object",
       nullable: true,
@@ -184,13 +255,18 @@ const claimSchemaV2 = {
     },
   },
 };
-export const extractionResponseSchemaV2 = {
-  ...extractionResponseSchema,
+export const callFieldsExtractionResponseSchema = {
+  ...structuredExtractionResponseSchema,
   properties: {
-    ...extractionResponseSchema.properties,
-    claims: { type: "array", maxItems: 40, items: claimSchemaV2 },
+    ...structuredExtractionResponseSchema.properties,
+    claims: { type: "array", maxItems: 40, items: callFieldsClaimSchema },
   },
 };
+/** The response schema a prompt version asks for. */
+export function extractionSchemaFor(prompts: { structuredIdeas?: boolean; callFields?: boolean }) {
+  if (prompts.callFields) return callFieldsExtractionResponseSchema;
+  return prompts.structuredIdeas ? structuredExtractionResponseSchema : extractionResponseSchema;
+}
 /**
  * The same mention contract on the way back in. `ranges` carries no minimum
  * here on purpose: a mention that cites nothing is rejected one mention at a
@@ -208,15 +284,63 @@ export const MentionExtraction = Mention.omit({
 });
 export type MentionExtractionData = z.infer<typeof MentionExtraction>;
 /** The same contract on the way back in: ranges, never quotes. */
+const KeyPointExtraction = RangeSelectedClaim.extend({ levels: RangeSelectedClaim.shape.levels.default([]) });
+const TranscriptionDoubt = z.object({
+  start_id: z.string().min(1),
+  end_id: z.string().min(1),
+  heard: z.string().min(1),
+  likely: z.string().min(1),
+  reason_en: z.string().min(1),
+});
 export const PointerExtraction = z.object({
   claims: z.array(RangeSelectedClaim).max(40),
-  key_points: z.array(RangeSelectedClaim.extend({levels:RangeSelectedClaim.shape.levels.default([])})).max(30).default([]),
+  key_points: z.array(KeyPointExtraction).max(30).default([]),
   mentions: z.array(MentionExtraction).max(200).default([]),
+  /** Prompt v9: words that look misheard, with what was likely said. Shown as a doubt, never applied. */
+  transcription_doubts: z.array(TranscriptionDoubt).max(30).default([]),
 });
 export type PointerExtractionData = z.infer<typeof PointerExtraction>;
 export type { RangeSelectedClaimData };
 export function parsePointerExtraction(raw: unknown): PointerExtractionData {
   return PointerExtraction.parse(raw);
+}
+export type DroppedExtractionItem = { kind: string; index: number; item: unknown; reason: string };
+/**
+ * Parse an extraction reply, keeping every valid item when some are not. One
+ * malformed field (say Chinese text in an English field) used to fail the
+ * whole reply and so the whole run; now only that item is dropped, with the
+ * reason. A reply whose shape is wrong, or that exceeds the item limits, still
+ * fails as before.
+ */
+export function salvagePointerExtraction(raw: unknown): { extraction: PointerExtractionData; dropped: DroppedExtractionItem[] } {
+  const strict = PointerExtraction.safeParse(raw);
+  if (strict.success) return { extraction: strict.data, dropped: [] };
+  const envelope = z
+    .object({
+      claims: z.array(z.unknown()).max(40),
+      key_points: z.array(z.unknown()).max(30).default([]),
+      mentions: z.array(z.unknown()).max(200).default([]),
+      transcription_doubts: z.array(z.unknown()).max(30).default([]),
+    })
+    .safeParse(raw);
+  if (!envelope.success) throw strict.error;
+  const dropped: DroppedExtractionItem[] = [];
+  const keep = <T,>(schema: z.ZodType<T>, items: unknown[], kind: string) =>
+    items.flatMap((item, index) => {
+      const parsed = schema.safeParse(item);
+      if (parsed.success) return [parsed.data];
+      dropped.push({ kind, index, item, reason: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ") });
+      return [];
+    });
+  return {
+    extraction: {
+      claims: keep(RangeSelectedClaim, envelope.data.claims, "claim"),
+      key_points: keep(KeyPointExtraction, envelope.data.key_points, "key_point"),
+      mentions: keep(MentionExtraction, envelope.data.mentions, "mention"),
+      transcription_doubts: keep(TranscriptionDoubt, envelope.data.transcription_doubts, "transcription_doubt"),
+    },
+    dropped,
+  };
 }
 /** The instruction that accompanies the schema; the payload shape is unchanged. */
 export const POINTER_EVIDENCE_FORMAT =

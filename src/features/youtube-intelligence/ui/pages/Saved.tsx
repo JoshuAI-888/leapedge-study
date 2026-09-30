@@ -1,4 +1,5 @@
 "use client";
+import { actionText, catalystText, catalystsFromClaim, type CatalystValue } from "../../call-fields.ts";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { z } from "zod";
@@ -56,7 +57,7 @@ type CallView = {
   horizon: string | null;
   action: string | null;
   levels: Level[];
-  catalysts: string[];
+  catalysts: CatalystValue[];
   expiryDate: string | null;
   expiryOriginal: string | null;
   trust: ClaimRow | undefined;
@@ -88,12 +89,12 @@ function callView(idea: Idea, row: ClaimRow | undefined): CallView {
     thesis: row?.thesisEn ?? c.thesis_en ?? "",
     conviction: row?.creatorConviction ?? c.creator_conviction ?? null,
     horizon: row?.horizonEn ?? c.horizon_en ?? null,
-    action: row?.actionEn ?? c.action_en ?? null,
+    action: row?.action ?? c.action ?? null,
     // A row written before F60 has empty call fields; the saved copy may not.
     levels: row?.levels?.length ? row.levels : (c.levels ?? []),
-    catalysts: row?.catalystsEn?.length
-      ? row.catalystsEn
-      : (c.catalysts_en ?? []),
+    catalysts: row?.catalysts?.length
+      ? row.catalysts
+      : catalystsFromClaim(c.catalysts),
     expiryDate: row?.expiryDate ?? c.expiry?.date ?? null,
     expiryOriginal: row?.expiryOriginal ?? c.expiry?.original ?? null,
     trust: row,
@@ -251,7 +252,7 @@ function SavedCard({
       <h3>{call.thesis}</h3>
       {call.action && (
         <p className="yi-card2-action">
-          <span>Action</span> {call.action}
+          <span>Action</span> {actionText(call.action)}
         </p>
       )}
       <LevelChips levels={call.levels} />
@@ -260,7 +261,7 @@ function SavedCard({
           <span>Catalysts</span>
           {call.catalysts.map((c, n) => (
             <span key={n} className="yi-chip">
-              {c}
+              {catalystText(c)}
             </span>
           ))}
         </div>

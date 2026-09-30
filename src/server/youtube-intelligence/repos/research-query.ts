@@ -1,3 +1,4 @@
+import type { CatalystValue } from "../../../features/youtube-intelligence/call-fields.ts";
 import { z } from "zod";
 import { database, iso, json } from "../database.ts";
 import { parseLevel } from "../../../features/youtube-intelligence/level-parse.ts";
@@ -423,10 +424,10 @@ export type CallRow = {
   risks: string[];
   publishedAt: string | null;
   createdAt: string | null;
-  /** Call fields v2 (F60); empty or null on calls extracted before them. */
+  /** Structured-idea fields (prompt v9+) and call fields (F60); empty or null on older calls. */
   action: string | null;
   levels: StoredLevel[];
-  catalysts: string[];
+  catalysts: CatalystValue[];
   expiryDate: string | null;
   expiryOriginal: string | null;
   macroTheme: string | null;
@@ -464,6 +465,11 @@ const SPLIT = (a: string) => `count(*) FILTER (WHERE ${sentimentSql(`${a}.stance
 const TOP = 10;
 function strings(value: unknown): string[] {
   return Array.isArray(value) ? value.map(String) : [];
+}
+const StoredCatalysts = z.array(z.object({ text: z.string().min(1), date: z.string().nullable() }));
+function storedCatalysts(value: unknown): CatalystValue[] {
+  const parsed = StoredCatalysts.safeParse(json(value) ?? []);
+  return parsed.success ? parsed.data : [];
 }
 const StoredLevels = z.array(
   z.object({ kind: z.string().min(1), valueOriginal: z.string() }).loose(),
@@ -609,9 +615,9 @@ async function callPage(f: Resolved, q: z.output<typeof CallsQuery>) {
       risks: strings(r.risks_en),
       publishedAt: iso(r.published_at),
       createdAt: iso(r.created_at),
-      action: str(r.action_en),
+      action: str(r.action),
       levels: storedLevels(r.levels),
-      catalysts: strings(r.catalysts_en),
+      catalysts: storedCatalysts(r.catalysts),
       expiryDate: r.expiry_date == null ? null : String(iso(r.expiry_date) ?? r.expiry_date).slice(0, 10),
       expiryOriginal: str(r.expiry_original),
       macroTheme: str(r.macro_theme),

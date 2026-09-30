@@ -1407,12 +1407,13 @@
         "src/server/youtube-intelligence/migrations/0010_call_fields.sql",
         "src/server/youtube-intelligence/prompt-versions.json",
         "src/server/youtube-intelligence/repos/claims.ts",
-        "src/server/youtube-intelligence/repos/publish.ts"
+        "src/server/youtube-intelligence/repos/publish.ts",
+        "src/features/youtube-intelligence/call-fields.ts"
       ],
       "tests": [
         "tests/level-parse.test.ts"
       ],
-      "note": "Prompt evidence-first.web.v9 (action, catalysts, expiry without inferred dates, macro theme; v1-v8 request bytes pinned). New teams default to v9; a stored v8 team setting stays v8 until changed. Migration 0010 adds claims.levels/catalysts_en/action_en/expiry_date/expiry_original/macro_theme and mentions.instrument (SCHEMA_VERSION 10; 0009 unused). Levels parsed by the app on read, never by the model. New fields excluded from the review digest. Call card v2. Claims published before 0010 show levels after republish or documents:migrate. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F60).",
+      "note": "Reconciled with main's structured-idea prompts (v9/v10, analyst view) before merge: claims keep main's action enum, dated catalysts and level conditions; F60 adds only an expiry (wording plus a stated calendar date) and a macro/sector theme, in opt-in prompt evidence-first.web.v11 (v10 plus those two fields; callFields). The team default prompt is unchanged (v8). Migration 0010 (after main's 0009) adds claims.levels/action/catalysts/expiry_date/expiry_original/macro_theme and mentions.instrument, so Search, export, Saved and call cards read them from rows. Levels are parsed by the app, never the model. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F60).",
       "planned": true,
       "pr": 19
     },
@@ -2326,5 +2327,82 @@
     ],
     "notYetDone": "Source-recall windows on the analysis side still run one per step (each depends on the prior inventory); measure with live timing before changing. Live paired LeapEdge runs not started.",
     "verification": "Node 24: default and PGlite suites 737 pass/0 fail/1 skip; typecheck and build pass."
+  },
+  "liveFixes20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "First live runs on Vercel exposed: (1) strict JSON parsing failed on fenced model replies; parseModelJson accepts fenced or prose-wrapped JSON only. (2) Source recall ran ~13 windows one per step (~4.5 of 5.6 min on a short video); new runs freeze the recall inventory, request up to 24 windows per step 4 at a time, and apply them in order. (3) Calls on companies named but not ticker-spoken (\"Vistra\" drafted as VST) were rejected in the caption-alignment path; the symbol is now a retained proposal in both evidence modes.",
+    "tests": [
+      "tests/model-json.test.ts",
+      "tests/source-recall.test.ts",
+      "tests/ticker-proposal.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 741 pass/0 fail/1 skip; typecheck and build pass. Workspace settings aligned on 29 Sep: models reset to defaults (Gemini native extraction, Sonnet critic), prompt version v8, research pipeline faithful."
+  },
+  "captionCoverage20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "The 13-video rerun left 2 Chinese videos in review: fetched captions scored 86% timed coverage because the pauses between caption lines counted as missing speech. Coverage now treats a gap of up to 2 s between consecutive segments as a pause; a longer gap still counts. Fetched captions that still fall short go to windowed audio transcription (unless ASR is on demand or off) instead of stopping. A translation reply that answers a span twice keeps the first answer instead of failing the run; the copied original is still re-hashed.",
+    "tests": [
+      "tests/caption-coverage.test.ts",
+      "tests/selective-translation.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 744+ pass/0 fail; typecheck, build and offline promotion gate pass."
+  },
+  "listingResolution20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 1 (docs/delivery/analyst-view-plan.md). Named companies were left without tickers (Celsius, Amazon, 英伟达, even a spoken AMD), so calls showed no symbol and sentiment dropped them. A server-side resolver maps a spoken name to a listing by: spoken ticker, curated alias, a model proposal whose SEC-registered name matches, or an exact SEC name of two words or more; otherwise it stays unresolved. SEC snapshot committed (refresh script needs an operator contact). Claims store resolved_ticker/name/by (migration 0009) outside the review digest; published mentions aggregate under the resolved symbol; mentions link to calls by listing. Backfill action market/resolveListings. Benchmark frozen in evaluations/analyst-view-13.",
+    "tests": [
+      "tests/listing-resolution.test.ts",
+      "tests/listing-backfill.test.ts",
+      "tests/mentions.test.ts",
+      "tests/actions.test.ts"
+    ],
+    "verification": "Node 24 default suite 756 pass/0 fail; benchmark replay 251/268 references resolved."
+  },
+  "structuredIdeas20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 2 (docs/delivery/analyst-view-plan.md). Prompt evidence-first.web.v9 (structuredIdeas) asks each claim for action (bought, sold, holding, plan_buy, plan_sell, watch, research, avoid, view), owner (creator, guest, third_party with owner_name), option terms, size, threshold and conditional levels, and dated catalysts, all copied from the cited ranges, plus transcription doubts that are shown but never applied. Only v9 uses the new response schema; v8 requests are unchanged. Detail not present verbatim in the evidence is removed and recorded (ideaDetailRemovals); the idea is kept. A doubt is kept only when its range contains the misheard words. The critic rejects overstated actions and third-party views recorded as the creator's.",
+    "tests": [
+      "tests/idea-detail.test.ts",
+      "tests/structured-ideas.test.ts"
+    ],
+    "verification": "Live check 29 Sep on U32FPvvBaNI, 1WNowIoNgtg, 78RL-h4FB3s: actions, owners, sizes ($8,400 Wynn, $11,000 Celsius), AMD 'won't sell below 700' as a threshold, the PLTR short put (165 strike, Nov 20, $1.85 premium flagged as likely $11.85) and the Anthropic watch call were correct; unsaid values ('918', '13 contracts') were removed. Workspace switched to v9."
+  },
+  "analystView20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 3 (docs/delivery/analyst-view-plan.md), iteration 1. buildAnalystView assembles, by code only, the page a PM reads: summary from the highest-materiality brief sentences, creator stance counts, idea cards (one per resolved instrument and owner; executed trades first, third parties last; levels, option, size, catalysts merged; a quote excerpt of whole sentences naming the instrument, with timestamp), one sentiment row per instrument (critic-rejected mentions dropped, disagreement shown as mixed), themes, key points (10 at most), numbers, content gaps the creator did not state, and misheard numbers; pipeline notes and name-spelling doubts go to a collapsed processing panel. Served with the run as analystView and analystNote (copy as note, also what the benchmark judge reads). The full brief is collapsed below. Also: a critic that skips ids is re-asked for those ids twice automatically; still-unanswered items are withheld with the reason instead of failing the run (1WNowIoNgtg failed this way on 29 Sep). And: a run put back in the queue after its job had finished (runs/recoverAudit) was never picked up, because re-enqueueing the same job id is a no-op; the sweep now reopens that job (1WNowIoNgtg sat queued on 29 Sep).",
+    "tests": [
+      "tests/activity-performance.test.ts",
+      "tests/analyst-view.test.ts",
+      "tests/critique.test.ts",
+      "tests/drain.test.ts"
+    ],
+    "verification": "Browser check on a local Postgres copy of the v9 U32FPvvBaNI run at 1366 and 390 px: 6 idea cards, 11 sentiment rows, brief collapsed, no horizontal overflow."
+  },
+  "pipelineRobustness20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "Iteration 1 rerun on 29 Sep: 4 of 13 runs failed for reasons unrelated to the prompt. (1) Neon connection-pool timeouts with 13 runs at once: a step that hits a transient database error is now retried (up to 5 times, 20 s apart) instead of failing the run; paid responses replay from the call ledger. (2) One key point with Chinese in an English field failed a whole extraction: invalid items are now dropped one by one with the reason (rejectedEvidence); a malformed or over-limit reply still fails. (3) A context cache past its 30-minute lifetime was reused and the provider answered HTTP 400: it is now recreated. (4) Provider 4xx errors (not 429) keep the first 300 characters of the provider's message so a rejected request can be diagnosed.",
+    "tests": [
+      "tests/drain.test.ts",
+      "tests/structured-ideas.test.ts",
+      "tests/critique.test.ts",
+      "tests/transport.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 772 pass/0 fail; typecheck, build and offline gate pass. The 4 failed videos were rerun on 30 Sep after deploy."
+  },
+  "clarityIteration2_20260930": {
+    "status": "in-review",
+    "date": "2026-09-30",
+    "scope": "Iteration 2 toward beating LeapEdge on PM clarity (goal set by the user 30 Sep). Page (code only): an 'At a glance' line grouping idea tickers by action; the sentiment table becomes 'Also discussed' (only instruments without a card, resolved, with a non-neutral stance, at most 5; everything else one 'Also mentioned' line of resolved names); key points exclude the summary and, when cards exist, action/holding sentences, at most 7; summary prefers the creator's own view, skips sentences opening with a connective, video order; market caps are not levels; a catalyst said twice appears once; one third party's views on several tickers are one card; a translation whose numbers differ from the original is not shown; quotes cut to about 180 characters and shown as the checked English translation; numbers, themes and 'not stated' leave the note. Prompt evidence-first.web.v10 (v9 plus rules on level roles, open vs closed trades, hedged conviction, waiting vs avoiding, speakers, and hold/break technical levels). The critic may return corrected_conviction on an accepted item; the pipeline only ever lowers conviction and records it (convictionCorrections), so a call is no longer lost when only its conviction was overstated.",
+    "tests": [
+      "tests/analyst-view.test.ts",
+      "tests/critique.test.ts"
+    ],
+    "verification": "Round 2A (page changes on 9 stored runs, blind): our clarity 2.33 -> 2.78 against LeapEdge 3.78."
   }
 }

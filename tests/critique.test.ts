@@ -266,7 +266,9 @@ test("verdict ids map back to claims, key points and mentions", async () => {
       critique: critic({ reject: ["c2", "m1"], omit: ["k1"], extra: ["c9"] }),
     },
   });
-  await assert.rejects(withFake(fake, () => step(run)), /missing verdicts/i);
+  await withFake(fake, () => step(run));
+  assert.equal(run.stage, "critique", "a skipped id is asked again, not failed");
+  assert.equal(run.output.auditRecoveryAttempts, 1);
   const payload = payloadOf(fake.requestsFor("critique")[0]);
   assert.deepEqual(
     payload.claims.map((c) => [c.id, c.kind]),
@@ -379,10 +381,18 @@ test("the transcript is cached once per run, reused by a later pass and released
     ["c2"],
     "an already audited claim is not sent again",
   );
+  // A cache past its lifetime (a recovery an hour later) is replaced, not reused.
+  (run.output.contextCache as { createdAt: string }).createdAt = new Date(Date.now() - 3600_000).toISOString();
+  (run.output.claims as CheckedClaim[]).push(item("c3", 3));
+  run.stage = "critique";
+  await withFake(fake, () => step(run, settings));
+  assert.equal(fake.caches.length, 2, "an expired cache is recreated");
+  assert.equal(fake.requestsFor("critique")[2].cachedContent, fake.caches[1].name);
+  const renewed = fake.caches[1];
   // Publishing releases it; the run records that it was released.
   assert.equal(run.stage, "publish");
   await withFake(fake, () => step(run, settings));
-  assert.deepEqual(fake.deletedCaches, [cache.name]);
+  assert.deepEqual(fake.deletedCaches, [renewed.name]);
   assert.ok((run.output.contextCache as { deletedAt?: string }).deletedAt);
   assert.equal(run.status, "completed");
 });
@@ -698,9 +708,10 @@ test("explicit missing-verdict retry asks only unresolved evidence under a separ
     critique: critic({ omit: ["c2"] }),
     "critique-repair-1": critic(),
   } });
-  await assert.rejects(withFake(fake, () => step(run)), /missing verdicts/);
+  await withFake(fake, () => step(run));
+  assert.equal(run.stage, "critique");
+  assert.equal(run.output.auditRecoveryAttempts, 1, "the retry is automatic");
   const accepted = JSON.stringify((run.output.claims as CheckedClaim[])[0]);
-  run.output.auditRecoveryAttempts = 1;
   await withFake(fake, () => step(run));
   assert.equal(run.stage, "publish");
   assert.equal(JSON.stringify((run.output.claims as CheckedClaim[])[0]), accepted);
@@ -709,6 +720,26 @@ test("explicit missing-verdict retry asks only unresolved evidence under a separ
   assert.deepEqual(retry.mentions, []);
   assert.equal(fake.requestsFor("critique").length, 1);
   assert.deepEqual((run.output.critique as { missingVerdicts: string[] }).missingVerdicts, []);
+});
+
+test("ids the critic never answers are withheld after two retries and the run goes on", async () => {
+  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const run = await critiqueRun({ claims: [item("c1", 1), item("c2", 2)], mentions: [mention(4), mention(5)] });
+  const fake = new FakeModelTransport({ responses: {
+    critique: critic({ omit: ["c2", "m2"] }),
+    "critique-repair-1": critic({ omit: ["c2", "m2"] }),
+    "critique-repair-2": critic({ omit: ["c2", "m2"] }),
+  } });
+  for (let i = 0; i < 3; i++) await withFake(fake, () => step(run));
+  assert.equal(run.stage, "publish");
+  const [c1, c2] = run.output.claims as CheckedClaim[];
+  assert.equal(c1.passed, true);
+  assert.equal(c2.passed, false);
+  assert.match(c2.reasons.join(" "), /No critic verdict after 3 attempts/);
+  assert.deepEqual((run.output.mentions as MentionData[]).map((m) => m.ticker), ["N4"]);
+  assert.match(JSON.stringify(run.output.rejectedMentions), /No critic verdict/);
+  assert.deepEqual(run.output.auditWithheld, ["c2", "m2"]);
+  assert.equal(fake.requestsFor("critique-repair-2").length, 1);
 });
 
 test('a changed mention at the same instrument and source span must receive a fresh audit', async () => {
@@ -724,4 +755,25 @@ test('a changed mention at the same instrument and source span must receive a fr
   assert.equal(fake.requestsFor('critique').length, 2, 'coarse accepted span must not authorize changed content');
   const request = payloadOf(fake.requestsFor('critique')[1]);
   assert.equal(request.mentions[0].mention.stance, 'avoid');
+});
+
+test("an accepted call whose conviction is overstated keeps its idea at the supported conviction, never raised", async () => {
+  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const c1 = item("c1", 1), c2 = item("c2", 2);
+  c1.claim = { ...c1.claim, creator_conviction: "high" };
+  c2.claim = { ...c2.claim, creator_conviction: "low" };
+  const run = await critiqueRun({ claims: [c1, c2] });
+  const fake = new FakeModelTransport({ responses: { critique: {
+    json: { verdicts: [
+      { id: "c1", verdict: "accept", reason_en: "Supported, but 'not throwing a ton of money' is medium at most.", corrected_conviction: "medium" },
+      { id: "c2", verdict: "accept", reason_en: "Supported.", corrected_conviction: "high" },
+    ] },
+    usage: { inputTokens: 400, outputTokens: 120, costUsd: 0.002 },
+  } } });
+  await withFake(fake, () => step(run));
+  const [a, b] = run.output.claims as CheckedClaim[];
+  assert.equal(a.passed, true);
+  assert.equal(a.claim.creator_conviction, "medium");
+  assert.equal(b.claim.creator_conviction, "low", "a correction never raises conviction");
+  assert.deepEqual(run.output.convictionCorrections, [{ id: "c1", from: "high", to: "medium" }]);
 });

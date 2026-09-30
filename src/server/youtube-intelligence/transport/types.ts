@@ -93,6 +93,17 @@ export class TransportError extends Error {
     this.status = status;
   }
 }
+/**
+ * The error message for a failed provider call. A client error other than a
+ * rate limit (a 400 is a malformed or rejected request) keeps the first 300
+ * characters of what the provider said, so it can be diagnosed; nothing from
+ * the request is echoed. The fixed prefix is what callers match on.
+ */
+export function providerErrorMessage(status: number, detail?: string | null) {
+  const base = `Provider HTTP ${status}. No automatic paid retry.`;
+  const said = (detail ?? "").replace(/\s+/g, " ").trim().slice(0, 300);
+  return status >= 400 && status < 500 && status !== 429 && said ? `${base} Provider said: ${said}` : base;
+}
 export function classifyStatus(status: number): TransportErrorKind {
   return status === 429 ? "rate_limited" : status >= 500 ? "server" : "unknown";
 }

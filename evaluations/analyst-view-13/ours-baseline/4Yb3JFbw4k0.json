@@ -1,0 +1,179 @@
+{
+ "status": "completed",
+ "title": "超越英伟达的，可能是这家药企",
+ "costUsd": 0.37697899999999995,
+ "endToEndSeconds": 784.289,
+ "analysisSeconds": 693.12,
+ "keyPoints": [
+  {
+   "id": "k1",
+   "text": "Third-party commentator Jody Visser argued that Eli Lilly could surpass Nvidia to become the largest company by market capitalization, citing its adoption of over 10,000 AI agents to accelerate new drug discovery.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k2",
+   "text": "Eli Lilly faced a major downturn between 2009 and 2014 when patents on major drugs expired, triggering generic competition and 60% to 70% annual revenue declines, which management addressed by maintaining R&D investments rather than paying dividends or pursuing excessive acquisitions.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k3",
+   "text": "Eli Lilly operates as a high-growth pharmaceutical company with a $1 trillion market cap, a share price of 1,150, a 38x P/E ratio, and Q2 EPS beating Wall Street expectations by 27%.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k4",
+   "text": "Eli Lilly's tirzepatide products drive rapid revenue growth, with Mounjaro generating $9.9 billion in quarterly revenue (up 91% YoY) and weight-loss formulation Zepbound delivering $4.9 billion (up 46% YoY).",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k5",
+   "text": "In a 72-week clinical comparison at maximum tolerated doses, Eli Lilly's tirzepatide demonstrated a 20% average weight loss compared to 13.7% for Novo Nordisk's semaglutide, giving Eli Lilly clinical superiority in expanding obesity and diabetes markets.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k6",
+   "text": "Eli Lilly's Tirzepatide (Zepbound) achieved superior weight-loss efficacy compared to competitors (reducing weight down to 160 lbs over 72 weeks vs 180 lbs), and its approval for obesity allows Lilly to tap into an enormous market beyond diabetes.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k7",
+   "text": "Historically, Eli Lilly faced a slump between 2009 and 2014 caused by slow drug development (averaging 11 years per drug) and patent expirations, but it subsequently accelerated R&D timelines, including eventual approval of an Alzheimer's drug after 30 years of development.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k8",
+   "text": "Lilly generates massive cash flow from blockbuster drugs (estimated by the speaker at around 50 billion annually), enabling it to deploy approximately 10,000 AI agents to fundamentally eliminate historical bottlenecks in drug discovery and development.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k9",
+   "text": "Eli Lilly's earlier blockbuster diabetes drug Trulicity (dulaglutide) reached $7.5 billion in revenue in 2022, representing 25% of Eli Lilly's total sales at that time.",
+   "ticker": null,
+   "stance": "neutral"
+  }
+ ],
+ "calls": [
+  {
+   "instrument": "礼来",
+   "ticker": null,
+   "stance": "watch",
+   "thesis": "The speaker expresses strong excitement about Eli Lilly, comparing the thesis to discovering Tesla during early FSD prospects, and plans to continuously track its new drug R&D progress and AI utilization.",
+   "horizon": null,
+   "conviction": "medium",
+   "conditions": [],
+   "risks": [
+    "Competition from Novo Nordisk potentially catching up using AI-accelerated R&D."
+   ],
+   "trust": "L1"
+  }
+ ],
+ "rejectedCalls": [],
+ "tickerSentiment": [
+  {
+   "ticker": null,
+   "spoken": "礼来",
+   "sentiment": "bullish",
+   "stance": "watch",
+   "why": "The speaker views Eli Lilly as a critical downstream AI beneficiary with massive cash flows and AI agents driving drug breakthroughs, feeling excited comparable to early Tesla investments.",
+   "at": 860.96
+  },
+  {
+   "ticker": null,
+   "spoken": "礼来",
+   "sentiment": "bullish",
+   "stance": "watch",
+   "why": "The speaker expresses growing interest in Eli Lilly due to its rapid growth in obesity and diabetes drugs and superior clinical trial results compared to competitors.",
+   "at": 174.56
+  },
+  {
+   "ticker": null,
+   "spoken": "诺和诺德",
+   "sentiment": "neutral",
+   "stance": "neutral",
+   "why": "Novo Nordisk is acknowledged as a strong pharmaceutical competitor whose semaglutide achieved 13.7% weight loss compared to Eli Lilly's 20%.",
+   "at": 357.7
+  },
+  {
+   "ticker": null,
+   "spoken": "英伟达",
+   "sentiment": "neutral",
+   "stance": "neutral",
+   "why": "Nvidia is referenced in passing as the company currently holding the largest market capitalization.",
+   "at": 13.4
+  },
+  {
+   "ticker": null,
+   "spoken": "诺和诺德",
+   "sentiment": "neutral",
+   "stance": "neutral",
+   "why": "Novo Nordisk is mentioned neutrally as a competitor that could potentially accelerate its R&D through AI to catch up with Eli Lilly.",
+   "at": 484.4
+  },
+  {
+   "ticker": null,
+   "spoken": "礼来",
+   "sentiment": "bullish",
+   "stance": "watch",
+   "why": "The speaker contrasts traditional slow pharmaceutical companies with Eli Lilly, noting their increasing interest in it as a high-growth company whose Q2 EPS exceeded Wall Street expectations by 27%.",
+   "at": 166.68
+  },
+  {
+   "ticker": null,
+   "spoken": "诺和诺德",
+   "sentiment": "neutral",
+   "stance": "neutral",
+   "why": "The speaker notes that Novo Nordisk is a strong pharmaceutical competitor producing semaglutide.",
+   "at": 357.7
+  }
+ ],
+ "brief": {
+  "mainTopics": [
+   "Market Cap and AI Adoption Thesis",
+   "Historical R&D Cycles",
+   "Valuation and Earnings Drivers",
+   "Commercial Drug Portfolio",
+   "Clinical Competitive Advantage",
+   "Competitive Risk and Invalidation",
+   "AI Moat and Downstream Value Creation",
+   "Monitoring and Pipeline Milestones"
+  ],
+  "sentences": [
+   "The speaker notes that commentator George Wiser suggested during a conversation with Pomp that Eli Lilly could surpass Nvidia to become the largest company by market capitalization, pointing to Lilly's use of over 10,000 AI agents to accelerate drug discovery.",
+   "Historically, Eli Lilly experienced severe performance pressure between 2009 and 2014 as key patents on mental illness drugs expired, leading to cheap generic competition and annual revenue contractions around 60% to 70%.",
+   "Rather than reducing R&D or pursuing extensive acquisitions, management retained remaining cash flow, curtailed dividend payouts, and endured long development cycles—including an 11-year drug average and 30 years for Alzheimer's—leading to an eventual turnaround in 2014–2015.",
+   "Eli Lilly has grown into a $1 trillion company trading at 1,150 per share with a 38-times price-to-earnings ratio, supported by Q2 earnings per share beating Wall Street expectations by 27%.",
+   "The company's tirzepatide portfolio drives revenue through diabetes treatment Mounjaro, which generated $9.9 billion in quarterly revenue with 91% year-over-year growth, alongside weight-loss drug Zepbound delivering $4.9 billion in quarterly revenue, up 46% year-over-year.",
+   "The speaker projects that combined tirzepatide quarterly sales of over $14 billion or quarterly company-wide revenue of $22.9 billion could yield an annualized run rate approaching $100 billion, with potential for further acceleration next year.",
+   "Historically, Eli Lilly's previous diabetes drug Trulicity (dulaglutide) generated $7.5 billion in 2022 revenue, accounting for 25% of company sales at that time.",
+   "In a 72-week clinical comparison at maximum tolerated doses, Eli Lilly's tirzepatide demonstrated an average weight reduction of 20%, outperforming Novo Nordisk's semaglutide which achieved a 13.7% weight loss.",
+   "As a key countercase, the speaker acknowledges that Novo Nordisk remains a formidable competitor that could potentially accelerate its own research and development using AI to narrow the efficacy gap.",
+   "The speaker argues that reinvesting massive drug revenues into over 10,000 continuous AI agents builds an enduring competitive moat, allowing Lilly to overcome historical R&D latency and rapidly commercialize patent-protected molecules.",
+   "The speaker expresses enthusiasm for Eli Lilly comparable to their early stance on Tesla during initial Full Self-Driving milestones, concluding with a commitment to continually track Lilly's pipeline progress and AI implementation."
+  ],
+  "omissions": [
+   "ASR acquisition completed without independent audio or timestamp verification; transcript wording and exact numerical figures reflect unverified source transcription.",
+   "Exact speaker identity of the presenter is not independently established from metadata or channel ID and is therefore attributed as unknown.",
+   "The colloquial reference to an annualized 50 billion cash/earnings estimate in evidence k8 reflects rough creator extrapolation rather than formal audited accounting guidance.",
+   "s-1: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s-2: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s-3: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s-4: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s-6: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "source-0: Windowed ASR acquisition completed, but source wording and timestamps remain unverified. Processed clips and cue coverage do not establish transcription accuracy or semantic completeness; check material quotations, position disclosures and timing against the audio before relying on them.",
+   "source-1: Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+   "source-2: Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+   "source-3: Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+   "source-4: Model critique is not human verification.",
+   "source-5: This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications."
+  ],
+  "rejectedCount": 1
+ }
+}

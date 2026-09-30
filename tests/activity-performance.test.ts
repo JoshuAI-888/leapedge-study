@@ -148,4 +148,6 @@ test("workspace summaries omit duplicated analysis payloads while detail keeps t
   assert.deepEqual(detail.run.output.claims, output.claims);
   assert.ok(Array.isArray(detail.researchBriefs));
   assert.ok(Array.isArray(detail.evidenceSpans));
+  assert.equal(detail.analystView, null, "an output the view cannot read leaves the detail intact");
+  assert.equal(typeof detail.analystViewError, "string");
 });

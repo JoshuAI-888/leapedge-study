@@ -64,16 +64,30 @@ export function registerJobHandler(kind: string, handler: JobHandler) {
   handlers.set(kind, handler);
 }
 /** Migrate open pre-queue runs idempotently; paid work is only performed by the worker. */
+export const MAX_TRANSIENT_RETRIES = 5;
+const TRANSIENT_RETRY_MS = 20000;
+/** Connection-level database failures: pool exhaustion, dropped or refused connections. */
+export function isTransientInfrastructureError(error: unknown) {
+  const text = error instanceof Error ? `${error.message} ${(error as { code?: string }).code ?? ""}` : String(error);
+  return /timeout exceeded when trying to connect|Connection terminated|ECONNRESET|ECONNREFUSED|too many (connections|clients)|remaining connection slots|53300|57P01|08006|08001/i.test(text);
+}
 export async function dispatchOpenRuns() {
   const rows = await db()
     .prepare("SELECT id FROM yi_runs WHERE status IN ('queued','running')")
     .all();
-  for (const row of rows)
-    await enqueueJob({
-      id: `analyze:${row.id}`,
-      kind: "analyze",
-      payload: { runId: String(row.id) },
-    });
+  for (const row of rows) {
+    const id = `analyze:${row.id}`;
+    if (await enqueueJob({ id, kind: "analyze", payload: { runId: String(row.id) } })) continue;
+    // A run put back in the queue (an audit recovery, a resumed failure) keeps
+    // its job id, whose earlier job already finished: enqueueing is then a
+    // no-op, so reopen that finished job or the run is never picked up.
+    const now = new Date().toISOString();
+    await db()
+      .prepare(
+        "UPDATE jobs SET status='queued',error=NULL,run_after=$1,lease_until=NULL,lease_token=NULL,updated_at=$1 WHERE id=$2 AND status IN ('completed','failed')",
+      )
+      .run(now, id);
+  }
 }
 export async function processNext(executeStage: typeof step = step) {
   await heartbeat();
@@ -125,12 +139,23 @@ export async function processNext(executeStage: typeof step = step) {
       );
     run.status = "running";
     run.error = null;
+    let transientDelay = 0;
     try {
       await executeStage(run);
       if (run.status === "running") run.status = "queued";
     } catch (error) {
       run.status = error instanceof SourcePending ? "queued" : "failed";
       run.error = error instanceof Error ? error.message : "Stage failed";
+      // A database that could not be reached is not the run's fault. Paid
+      // responses are replayed from the call ledger, so retrying the step
+      // cannot bill twice; after a few tries the run fails as before.
+      const retries = Number(run.output.transientRetries ?? 0);
+      if (run.status === "failed" && isTransientInfrastructureError(error) && retries < MAX_TRANSIENT_RETRIES) {
+        run.output.transientRetries = retries + 1;
+        run.status = "queued";
+        run.error = `Retrying after a temporary database error (${retries + 1}/${MAX_TRANSIENT_RETRIES}): ${run.error}`;
+        transientDelay = TRANSIENT_RETRY_MS;
+      }
     }
     const executionMs = performance.now() - stageStarted;
     const checkpointStarted = performance.now();
@@ -153,11 +178,12 @@ export async function processNext(executeStage: typeof step = step) {
           job.id,
           token,
           run.error,
-          run.input.processingMode === "batch"
-            ? 60000
-            : run.stage === "source"
-              ? 1500
-              : 0,
+          transientDelay ||
+            (run.input.processingMode === "batch"
+              ? 60000
+              : run.stage === "source"
+                ? 1500
+                : 0),
         );
       else if (run.status === "failed")
         await failJob(job.id, token, run.error ?? "Stage failed");

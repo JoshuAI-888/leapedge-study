@@ -4,6 +4,7 @@ import {
   ModelRequest,
   TransportError,
   classifyStatus,
+  providerErrorMessage,
   type ModelDescription,
   type ModelRequestData,
   type ModelResponseData,
@@ -128,12 +129,22 @@ export class OpenRouterTransport implements ModelTransport {
         );
       throw error;
     }
-    if (!response.ok)
+    if (!response.ok) {
+      const body = await response.text().catch(() => "");
+      let detail = body;
+      try {
+        const parsed = JSON.parse(body) as { error?: string | { message?: unknown } };
+        if (typeof parsed.error === "string") detail = parsed.error;
+        else if (typeof parsed.error?.message === "string") detail = parsed.error.message;
+      } catch {
+        // Not JSON: keep the text as it came.
+      }
       throw new TransportError(
         classifyStatus(response.status),
-        `Provider HTTP ${response.status}. No automatic paid retry.`,
+        providerErrorMessage(response.status, detail),
         response.status,
       );
+    }
     return response.json();
   }
   async describe(model: string): Promise<ModelDescription> {

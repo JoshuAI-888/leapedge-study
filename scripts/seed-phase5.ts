@@ -71,8 +71,9 @@ type Call = {
   translation?: string;
   horizon?: string;
   levels?: Level[];
-  catalysts?: string[];
-  action?: string;
+  /** Structured-idea fields (prompt v9+): dated catalysts and the action enum. */
+  catalysts?: { text_en: string; date_original: string | null }[];
+  action?: "bought" | "sold" | "holding" | "plan_buy" | "plan_sell" | "watch" | "research" | "avoid" | "view";
   expiry?: { date: string | null; original: string };
   macro?: string;
   risks?: string[];
@@ -134,7 +135,7 @@ const RECENT: RunSpec[] = [
         thesis: "Yields keep drifting lower into year end after the Fed pause.",
         segment: "s1",
         horizon: "into year end",
-        action: "Stay short rates through year end.",
+        action: "holding",
         trust: "L1",
       },
       {
@@ -151,8 +152,11 @@ const RECENT: RunSpec[] = [
           { kind: "target", value: "$210" },
           { kind: "stop", value: "close below $160" },
         ],
-        catalysts: ["Q3 earnings on 18 November", "Next Fed decision"],
-        action: "Add on dips toward $172.",
+        catalysts: [
+          { text_en: "Q3 earnings", date_original: "18 November" },
+          { text_en: "Next Fed decision", date_original: null },
+        ],
+        action: "plan_buy",
         expiry: { date: "2026-10-02", original: "by Friday" },
         risks: ["An earnings miss would break the setup."],
         conditions: ["Only while the stock holds $160 on a closing basis."],
@@ -229,7 +233,7 @@ const RECENT: RunSpec[] = [
         ],
         conditions: ["A daily close above 382."],
         expiry: { date: "2026-09-25", original: "into last Friday's close" },
-        action: "Buy only on a confirmed break above 382.",
+        action: "plan_buy",
         trust: "L1",
       },
       {
@@ -276,7 +280,7 @@ const RECENT: RunSpec[] = [
         thesis: "Broadcom is a boring compounder worth buying every month.",
         segment: "s1",
         horizon: "three years",
-        action: "Buy a fixed amount monthly.",
+        action: "plan_buy",
         trust: "L1",
       },
     ],
@@ -388,7 +392,7 @@ const RECENT: RunSpec[] = [
         thesis: "Nvidia's valuation is too high; reducing the position.",
         translation: "Nvidia's (NVDA) valuation is too high, I am trimming.",
         segment: "s2",
-        action: "Trim the position.",
+        action: "plan_sell",
         trust: "L1",
       },
     ],
@@ -676,8 +680,8 @@ async function main() {
             };
           });
         Object.assign(checked.claim, {
-          catalysts_en: call.catalysts ?? [],
-          action_en: call.action ?? null,
+          catalysts: call.catalysts ?? [],
+          action: call.action,
           expiry: call.expiry ?? null,
           macro_theme: call.macro ?? null,
         });

@@ -63,6 +63,20 @@ const englishOutput = z
     (s) => !/\p{Script=Han}/u.test(s),
     "Research display and translations must be English; preserve original language only in source fields.",
   );
+/** What the creator did or will do (prompt v9): an executed trade, a plan, or a view. */
+export const ACTIONS = [
+  "bought",
+  "sold",
+  "holding",
+  "plan_buy",
+  "plan_sell",
+  "watch",
+  "research",
+  "avoid",
+  "view",
+] as const;
+/** Whose view a claim is: the creator's own, a guest's, or a third party the creator reports. */
+export const OWNERS = ["creator", "guest", "third_party"] as const;
 export const Claim = z.object({
   thesis_en: englishOutput.refine((s) => s.trim().length > 0),
   instrument_as_spoken: z.string().nullable(),
@@ -90,19 +104,43 @@ export const Claim = z.object({
         "support",
         "resistance",
         "strike",
+        "threshold",
       ]),
       value_original: z.string(),
+      /** What the level is conditional on, when the creator attached a trigger (prompt v9). */
+      condition_en: englishOutput.nullable().optional(),
     }),
   ),
   /**
-   * Call fields v2 (F60, prompt evidence-first.web.v9). All optional so every
-   * stored claim still parses; older claims simply lack them. A malformed
-   * expiry date degrades to null rather than rejecting the extraction, and
-   * the original wording is always kept. macro_theme is normalised to the
-   * fixed vocabulary (instrument-kind.ts) when the claim is published.
+   * Structured idea fields (prompt v9). Optional so earlier runs still parse;
+   * each value copied from speech must appear in the cited evidence, or the
+   * pipeline removes it and records why (normalizeIdeaDetail).
    */
-  catalysts_en: z.array(englishOutput).optional(),
-  action_en: englishOutput.nullable().optional(),
+  action: z.enum(ACTIONS).optional(),
+  owner: z.enum(OWNERS).optional(),
+  owner_name: z.string().nullable().optional(),
+  option: z
+    .object({
+      right: z.enum(["call", "put"]),
+      side: z.enum(["long", "short"]),
+      strike_original: z.string().nullable(),
+      expiry_original: z.string().nullable(),
+      premium_original: z.string().nullable(),
+    })
+    .nullable()
+    .optional(),
+  size_original: z.string().nullable().optional(),
+  catalysts: z
+    .array(z.object({ text_en: englishOutput, date_original: z.string().nullable() }))
+    .optional(),
+  /**
+   * Call fields (F60, prompt v11 `callFields`): when the call ends or must be
+   * reviewed, and the macro or sector theme of a claim with no listed ticker.
+   * Optional so every stored claim still parses. A malformed expiry date
+   * degrades to null rather than rejecting the extraction, and the original
+   * wording is always kept. macro_theme is normalised to the fixed vocabulary
+   * (instrument-kind.ts) when the claim is published.
+   */
   expiry: z
     .object({
       date: z.iso.date().nullable().catch(null),
@@ -322,6 +360,8 @@ export function validateClaim(
     reasons.push("Ticker is not explicit in its evidence.");
   return [...reasons, ...levelQualifierIssues(claim)];
 }
+/** Longest gap between consecutive timed segments treated as a pause. */
+export const PAUSE_SECONDS = 2;
 export function coverage(source: SourceData, duration: number) {
   const spans = source.segments
     .filter((s) => s.start_seconds !== null && s.end_seconds !== null)
@@ -331,7 +371,10 @@ export function coverage(source: SourceData, duration: number) {
     end = 0;
   for (const [a, b] of spans) {
     if (b > a) {
-      covered += Math.max(0, b - Math.max(a, end));
+      // A pause of up to PAUSE_SECONDS between caption lines is speech timing,
+      // not missing content; a longer gap still counts as uncovered.
+      const from = end > 0 && a > end && a - end <= PAUSE_SECONDS ? end : a;
+      covered += Math.max(0, b - Math.max(from, end));
       end = Math.max(end, b);
     }
   }

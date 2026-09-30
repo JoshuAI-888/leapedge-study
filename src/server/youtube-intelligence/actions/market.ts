@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { performance } from "../market.ts";
 import { priceSeries } from "../repos/prices.ts";
+import { resolvePublishedListings } from "../listings/backfill.ts";
 import { writes, reads, nothing, type ActionTable } from "./types.ts";
 import {
   loadBoardSnapshot,
@@ -38,4 +39,5 @@ export const market: ActionTable = {
   performance: writes(z.enum(["leapedge", "forward", "historical"]), (mode) =>
     performance(mode),
   ),
+  resolveListings: writes(nothing, () => resolvePublishedListings()),
 };

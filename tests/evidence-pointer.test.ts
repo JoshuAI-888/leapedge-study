@@ -13,7 +13,7 @@ const { materializeEvidenceRanges } = await import(
 );
 const {
   extractionResponseSchema,
-  extractionResponseSchemaV2,
+  callFieldsExtractionResponseSchema,
   PointerExtraction,
   parsePointerExtraction,
 } =
@@ -284,34 +284,39 @@ test("a pointer-evidence synthesis step copies spans and never rejects on a stri
   assert.equal(run.stage, "critique");
 });
 
-test("a call-fields version sends the v2 schema and keeps action, catalysts and expiry", async () => {
+test("a call-fields version sends the call-fields schema and keeps action, catalysts and expiry", async () => {
   const { run, fake } = await runSynthesis(
     true,
     {
       claims: [
         {
           ...pointerClaim,
-          action_en: "Exit below 500",
-          catalysts_en: ["CPI release"],
+          action: "plan_sell",
+          owner: "creator",
+          owner_name: null,
+          option: null,
+          size_original: null,
+          catalysts: [{ text_en: "CPI release", date_original: null }],
           expiry: { date: "tomorrow", original: "by tomorrow" },
           macro_theme: null,
         },
       ],
       key_points: [],
+      transcription_doubts: [],
     },
-    { callFields: true },
+    { callFields: true, structuredIdeas: true },
   );
   const request = fake.requestsFor("synthesis")[0];
-  assert.deepEqual(request.responseSchema, extractionResponseSchemaV2);
+  assert.deepEqual(request.responseSchema, callFieldsExtractionResponseSchema);
   const [item] = run.output.claims as {
     claim: {
-      action_en?: string;
-      catalysts_en?: string[];
+      action?: string;
+      catalysts?: { text_en: string; date_original: string | null }[];
       expiry?: { date: string | null; original: string };
     };
   }[];
-  assert.equal(item.claim.action_en, "Exit below 500");
-  assert.deepEqual(item.claim.catalysts_en, ["CPI release"]);
+  assert.equal(item.claim.action, "plan_sell");
+  assert.deepEqual(item.claim.catalysts, [{ text_en: "CPI release", date_original: null }]);
   // A date the model could not state as a calendar date is dropped, not guessed.
   assert.deepEqual(item.claim.expiry, { date: null, original: "by tomorrow" });
 });
