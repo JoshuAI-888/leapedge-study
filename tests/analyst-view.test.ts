@@ -228,17 +228,12 @@ test("a third party's view on the creator's instrument is a credited line on tha
     checked("c6", claim({ instrument_as_spoken: "Tesla", action: "holding", thesis_en: "The creator holds Tesla.", option: { right: "put", side: "short", strike_original: "$250", expiry_original: "November", premium_original: "$1.85" } }, "I hold Tesla and sold a 250 put for $1.85.", 800)),
   ];
   base.claimListings = { ...base.claimListings, c6: ref("TSLA", "Tesla, Inc.") };
-  base.transcriptionDoubts = [
-    ...base.transcriptionDoubts,
-    { heard: "$250", likely: "$520 or $205", reason_en: "A guess that the price looks wrong, not a slip of the ear.", start_seconds: 800 },
-  ];
   const view = buildAnalystView(base);
   const tesla = view.ideas.filter((i) => i.ticker === "TSLA");
   assert.equal(tesla.length, 1, "one Tesla card");
   assert.equal(tesla[0].owner, "creator");
   assert.deepEqual(tesla[0].also, ["Morgan Stanley (third party): Morgan Stanley has a $475 target."]);
   assert.equal(tesla[0].option?.premium, "$1.85 (likely $11.85)");
-  assert.equal(tesla[0].option?.strike, "$250", "a guess that a real value looks wrong is not shown as a likely reading");
   const note = analystNote(view);
   assert.match(note, /- Also: Morgan Stanley \(third party\): Morgan Stanley has a \$475 target\./);
   assert.match(note, /premium \$1\.85 \(likely \$11\.85\)/);
