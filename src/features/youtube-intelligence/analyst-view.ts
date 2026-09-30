@@ -212,8 +212,20 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   });
   // A value the transcript flags as probably misheard is shown with the likely
   // reading beside it, never as a plain fact ("$1.85 (likely $11.85)").
+  // Only a plain slip of the ear qualifies: one number heard, one number likely,
+  // the heard digits inside the likely ones in order ("1.85" for "11.85"). A
+  // guess that a real price looks wrong ("4,215" -> "2,415 or 1,915") is not.
+  const ONE_NUMBER = /^\$?\d[\d,.]*%?$/;
+  const digitsOf = (t: string) => t.replace(/\D/g, "");
+  const within = (short: string, long: string) => {
+    let i = 0;
+    for (const ch of long) if (ch === short[i]) i++;
+    return i === short.length;
+  };
   const misheard = new Map(
-    input.transcriptionDoubts.filter((d) => /\d/.test(d.heard)).map((d) => [d.heard.trim(), d.likely.trim()]),
+    input.transcriptionDoubts
+      .filter((d) => ONE_NUMBER.test(d.heard.trim()) && ONE_NUMBER.test(d.likely.trim()) && within(digitsOf(d.heard), digitsOf(d.likely)))
+      .map((d) => [d.heard.trim(), d.likely.trim()]),
   );
   const flag = (v: string | null) => (v && misheard.has(v.trim()) ? `${v} (likely ${misheard.get(v.trim())})` : v);
   for (const idea of ideas) {
