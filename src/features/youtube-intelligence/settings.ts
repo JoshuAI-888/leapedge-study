@@ -234,6 +234,22 @@ export const TeamPreferences = z.object({
       gates: GateThresholds,
     })
     .prefault({}),
+  // Optional Jev pre-screen in front of the faithfulness critic (v3 pipeline).
+  // Off by default, so runs behave exactly as before unless a team turns it on.
+  // Thresholds come from the 29 September tuning sandbox: accept at or above
+  // 0.8 with no error type, reject at or below 0.15, and the critic takes the
+  // rest. A missing key or any Jev failure sends every sentence to the critic.
+  faithfulnessPreScreen: z
+    .object({
+      enabled: z.boolean().default(false),
+      model: z
+        .string()
+        .regex(/^jev-[a-z0-9.-]{1,40}$/)
+        .default("jev-1.13.0"),
+      acceptAtOrAbove: z.number().min(0.5).max(1).default(0.8),
+      rejectAtOrBelow: z.number().min(0).max(0.5).default(0.15),
+    })
+    .prefault({}),
   // Not in the 6.2 listing, but the spec's rule "changing a model, transport,
   // prompt or provider creates a new configuration hash" needs the active
   // prompt version to live with the other hashed keys.
@@ -373,6 +389,11 @@ export function hashedConfiguration(team: TeamPreferencesData) {
     },
     trust: team.trust,
     prompts: team.prompts,
+    // Only an enabled pre-screen changes how a run is produced; leaving it out
+    // when off keeps every existing configuration hash unchanged.
+    ...(team.faithfulnessPreScreen.enabled
+      ? { faithfulnessPreScreen: team.faithfulnessPreScreen }
+      : {}),
   };
 }
 /**

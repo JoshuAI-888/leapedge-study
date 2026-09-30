@@ -1,5 +1,6 @@
 import { queueResearchBrief, researchBriefs } from "../research-pipeline.ts";
 import { queueNewsReview, newsReviews } from "../news-review.ts";
+import { queueJevComparison, jevComparisons } from "../jev-comparison.ts";
 import { z } from "zod";
 import { researchReadiness } from "../../../features/youtube-intelligence/research-readiness.ts";
 import { seedLists } from "../seed/lists.ts";
@@ -88,6 +89,12 @@ export const research: ActionTable = {
     (v) => queueNewsReview(v.briefId),
   ),
   newsReviews: reads(nothing, () => newsReviews()),
+  // Ad hoc Jev vs LLM critic comparison on one brief; nothing is published.
+  requestJevComparison: writes(
+    z.strictObject({ briefId: z.string().min(1), criticModel: z.string().max(120).optional() }),
+    (v) => queueJevComparison(v.briefId, v.criticModel),
+  ),
+  jevComparisons: reads(nothing, () => jevComparisons()),
   saveIdea: writes(
     z.strictObject({ runId: z.string(), claimId: z.string() }),
     (v) => R.saveIdea(v.runId, v.claimId),

@@ -7,6 +7,7 @@ import { useWorkspace, type Preferences } from "../workspace.tsx";
 import { action } from "../api.ts";
 import { money } from "../viewmodel.ts";
 import { PageTitle } from "../components.tsx";
+import { JevComparisonPanel, JevPreScreenSetting } from "../JevPreScreen.tsx";
 import {
   DEFAULT_TIME_ZONE,
   isValidTimeZone,
@@ -95,6 +96,7 @@ function ObjectFields({
             "defaultSelection",
             "autoAnalyzeNewChannels",
             "requireDifferentFamily",
+            "faithfulnessPreScreen",
             "display",
           ].includes(key)
         )
@@ -528,6 +530,11 @@ export function Settings() {
             </p>
             <Link href="/youtube-intelligence/analysis-pipelines">Compare analysis pipelines and experiment requirements</Link>
           </fieldset>
+          <JevPreScreenSetting
+            value={t.faithfulnessPreScreen}
+            disabled={busy}
+            onChange={(next) => setTeam({ ...t, faithfulnessPreScreen: next })}
+          />
           <fieldset className="yi-panel">
             <legend>Processing profile</legend>
             <div className="yi-settings-fields">
@@ -602,6 +609,10 @@ export function Settings() {
           </div>
         </section>
       </form>
+      <JevComparisonPanel
+        briefs={data.snapshot.researchBriefs.map((b) => ({ id: b.id, title: b.title, createdAt: b.createdAt }))}
+        defaultCritic={t.models.critique.id}
+      />
     </>
   );
 }

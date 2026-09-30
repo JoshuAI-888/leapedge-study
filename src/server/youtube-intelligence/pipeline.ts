@@ -973,6 +973,10 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
     const { audioReviewStep } = await import("./audio-review.ts");
     return audioReviewStep(run);
   }
+  if (run.input.task === "jev-comparison") {
+    const { jevComparisonStep } = await import("./jev-comparison.ts");
+    return jevComparisonStep(run);
+  }
   if (run.input.task === "news-review") {
     const { newsReviewStep } = await import("./news-review.ts");
     return newsReviewStep(run);

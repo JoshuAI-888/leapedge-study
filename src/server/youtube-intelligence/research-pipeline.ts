@@ -1,6 +1,7 @@
 import {researchPipelineIdentityFromInput, ResearchPipelineIdentity} from "../../features/youtube-intelligence/research-pipeline-choice.ts";
 import { advanceBoundedResearchAudit } from "./bounded-research-audit.ts";
 import { faithfulAudit } from "./faithful-audit.ts";
+import { screenSentences } from "./jev.ts";
 import { PRIMARY_DOMAINS } from "./primary-domain-registry.ts";
 import { researchReadiness } from "../../features/youtube-intelligence/research-readiness.ts";
 import { reconcileResearchAudit } from "./research-audit-repair.ts";
@@ -438,8 +439,15 @@ export async function researchStep(run: Run) {
     let supplementalAuditError: string | null = null;
     try {
     if (faithful) {
-      const checked = await faithfulAudit({ sentences: auditDraft.sentences, evidence: snapshot.evidence, invoke });
-      run.output.faithfulAudit = { chunks: checked.chunks, failures: checked.failures };
+      const screen = settings.faithfulnessPreScreen;
+      const checked = await faithfulAudit({
+        sentences: auditDraft.sentences, evidence: snapshot.evidence, invoke,
+        ...(screen.enabled ? { preScreen: (sentences: typeof auditDraft.sentences) => screenSentences({
+          runId: run.id, stage: "prescreen-jev", sentences, evidence: snapshot.evidence, model: screen.model,
+          band: screen, perVideoCapUsd: settings.budget.perVideoMaxUsd,
+        }) } : {}),
+      });
+      run.output.faithfulAudit = { chunks: checked.chunks, failures: checked.failures, ...(checked.preScreen ? { preScreen: checked.preScreen } : {}) };
       repaired = { audit: ResearchAudit.parse({ verdicts: checked.verdicts, coverageFindings: checked.coverageFindings, evidenceCoverage: checked.evidenceCoverage }), attempts: [], missing: [] };
     } else {
     const useBoundedAudit = targeted || (auditDraft.sentences.length > 0 && (snapshot.evidence.length > 24 || draft.sentences.length > 12));

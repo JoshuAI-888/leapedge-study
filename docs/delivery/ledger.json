@@ -2404,5 +2404,21 @@
       "tests/critique.test.ts"
     ],
     "verification": "Round 2A (page changes on 9 stored runs, blind): our clarity 2.33 -> 2.78 against LeapEdge 3.78."
+  },
+  "jevPreScreen20260930": {
+    "status": "in-review",
+    "date": "2026-09-30",
+    "scope": "Optional Jev (TypeSafe jev-1.13.0) pre-screen in front of the v3 faithfulness critic, behind a team setting (faithfulnessPreScreen.enabled, default off; only an enabled pre-screen enters the configuration hash). One parallel Jev request per sentence with the tuned r2 question set (sandbox 29 Sep); accept at >=0.8 with error type none, withhold at <=0.15, everything else and every Jev failure or missing TYPESAFE_API_KEY goes to the critic, which still judges evidence coverage (evidence cited only by pre-accepted sentences gets one coverage-only chunk). One ledger row per Jev wave. Settings page explains what it does and why; an ad hoc comparison task (jev-comparison) runs Jev and the configured critic on every sentence of a chosen brief and stores agreement, escalation, time and cost without changing the brief.",
+    "files": [
+      "src/features/youtube-intelligence/faithfulness-prescreen.ts",
+      "src/server/youtube-intelligence/jev.ts",
+      "src/server/youtube-intelligence/jev-comparison.ts",
+      "src/server/youtube-intelligence/faithful-audit.ts",
+      "src/features/youtube-intelligence/ui/JevPreScreen.tsx"
+    ],
+    "tests": [
+      "tests/jev-prescreen.test.ts"
+    ],
+    "verification": "Unit and integration tests with FakeModelTransport and a stubbed Jev endpoint pass; typecheck and build pass. No live Jev or critic run end to end in the cloud session (no OpenRouter key). Browser check on a local pglite dev server: the toggle saves, reloads and turns off; the comparison panel renders. Live Jev through the adapter on the 40 sandbox cases matched the sandbox (13 accept, 17 withhold, 10 escalate, 0 wrong). Tuning evidence is agreement with Claude-written labels on 40 constructed cases, not verified accuracy."
   }
 }
