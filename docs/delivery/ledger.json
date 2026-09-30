@@ -2438,5 +2438,14 @@
     "scope": "Experiment, no code change: prompt evidence-first.web.v10-pm1 (v10 plus a PM-clarity block: the figures behind each idea in thesis_en, relayed and podcast views credited to their owner, spoken tickers kept, the video's main instrument always an idea) added through the prompt action and run on the 13 benchmark transcripts, with the bottom line written under the fixed check (PR 25). The team default prompt is unchanged.",
     "tests": [],
     "verification": "Blind rounds 2G/2G-R, ours vs LeapEdge: clarity 3.54/3.54 and 3.46/3.69; actionability 3.15/2.92 and 3.23/2.85; overall 3.15/2.69 and 3.15/2.62; coverage 3.15/3.08 and 3.08/3.23; fidelity 3.69/2.85 and 3.92/2.85. Five runs first failed on Gemini HTTP 402 (prepaid credits depleted) and were re-run after the top-up. Model spend for the round about $5."
+  },
+  "promptDefaultPm1_20260930": {
+    "status": "in-review",
+    "date": "2026-09-30",
+    "scope": "Lock in after the clarity program (user decision 30 Sep): the team default prompt is evidence-first.web.v10-pm1 and processing.bottomLine is on for new runs, set in production team settings on 30 Sep. v10-pm1 (v10 plus the PM-clarity block) is added to prompt-versions.json so the bundled registry matches the stored version. Optimisation is paused; the idea-card fold, likely-reading flag and key-point experiments are reverted and parked.",
+    "tests": [
+      "tests/prompts.test.ts"
+    ],
+    "verification": "Pooled blind judgments, 52 videos per version, ours vs LeapEdge: v10-pm1 clarity 3.42 vs 3.62, actionability 3.17 vs 2.90, overall 3.13 vs 2.71, fidelity about 3.8 vs 2.8; v10 clarity 3.54 vs 3.56, actionability 2.77 vs 2.96, overall 3.06 vs 2.87."
   }
 }

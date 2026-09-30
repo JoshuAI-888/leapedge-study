@@ -94,3 +94,12 @@ actionability, clarity 3.42 against 3.62 (-0.19 +/- 0.13) but actionability
 also surfaced a bad transcription guess ("4,215" as "2,415 or 1,915"); the flag
 now fires only for a plain slip of the ear (one number inside another).
 
+## Where it stands (30 Sep)
+
+Optimisation is paused at the user's request. Production now defaults to
+`evidence-first.web.v10-pm1` with the checked bottom line on for new runs.
+Parked, not shipped: folding a third party's view into the creator's card and
+showing a likely reading for a misheard number (rounds 2H/2H-R, no measurable
+gain), and keeping supporting figures in the key points of one-stock videos
+(rendered, not judged).
+
