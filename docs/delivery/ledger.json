@@ -2406,14 +2406,14 @@
     "verification": "Blind rounds, ours vs LeapEdge clarity: 2A (9 stored runs) 2.78 vs 3.78; 2B (13, v10) 2.77 vs 3.69; 2C (note = summary, ideas, key points) 3.23 vs 3.54; 2D 3.31 vs 3.23; 2D-R replication 3.38 vs 3.77. Averaged 2D/2D-R: 3.35 vs 3.50, so clarity is not yet robustly beaten. We lead on fidelity, coverage and overall. Table: evaluations/analyst-view-13/README.md."
   },
   "clarityIteration2E_20260930": {
-    "status": "in-review",
+    "status": "merged",
     "date": "2026-09-30",
     "scope": "Iteration 2E toward beating LeapEdge on PM clarity. When the team setting processing.bottomLine is on (absent means off, so earlier request hashes and call counts are unchanged), after the research brief is stored one small extraction-model call (synthesis-bottom-line) condenses the audited brief sentences and the accepted ideas into two or three sentences leading with the creator's thesis. A deterministic check (checkBottomLine) keeps a sentence only when every number, quantity word and name in it appears in the statements it cites; rejected sentences are recorded on the run (bottomLineRejected), a failure is recorded (bottomLineError) and never fails the brief. The analyst view uses the kept sentences as its summary, falls back to the brief's own sentences without them, and drops statements the bottom line condensed from the key points. The writeBottomLine action backfills an existing brief. Card headers omit a stance that only restates the action (Watching · watch, Holding · hold).",
     "tests": [
       "tests/bottom-line.test.ts",
       "tests/analyst-view.test.ts"
     ],
-    "verification": "Pending: needs a production deploy to backfill the 13 benchmark briefs, then two blind rounds (2E, 2E-R).",
+    "verification": "Deployed to production 30 Sep (PR 24); bottom line backfilled on the 13 benchmark briefs (kept 1-3 sentences each; 6 sentences rejected by the check, mostly false positives on possessives and sentence-opening words). Blind rounds, ours vs LeapEdge: clarity 2E 3.54 vs 3.54, 2E-R 3.69 vs 3.62 (average 3.62 vs 3.58, within judge noise); coverage 3.00 vs 3.23 in both (down from a lead in 2D); fidelity 3.85 vs 2.77.",
     "pr": 24
   },
   "jevPreScreen20260930": {

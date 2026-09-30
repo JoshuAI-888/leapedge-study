@@ -48,12 +48,17 @@ variation (about ±0.3).
 | 2C (13 videos) | note = summary paragraph, ideas, key points only | 3.23 | 3.54 | 2.77 | 2.77 | 3.08 | 2.77 |
 | 2D (13 videos) | summary by importance, key points never repeat a card, creator ideas first, merged third-party cards | 3.31 | 3.23 | 3.00 | 2.62 | 3.31 | 2.46 |
 | 2D-R (13, replication) | same notes, fresh blind judges | 3.38 | 3.77 | 3.00 | 2.92 | 3.23 | 2.77 |
+| 2E (13) | checked bottom line leads the summary; headers stop restating the action | 3.54 | 3.54 | 2.85 | 3.00 | 3.00 | 2.92 |
+| 2E-R (13, replication) | same notes, fresh blind judges | 3.69 | 3.62 | 2.69 | 3.00 | 3.00 | 2.85 |
 
 LeapEdge's notes were identical in 2D and 2D-R, yet its clarity moved 3.23 to
 3.77: one round's judge noise is about ±0.3, so a clarity win counts only when
 it holds on the average of two blind rounds (2D and 2D-R average: ours 3.35,
-LeapEdge 3.50). Round 2E adds a checked bottom line that leads with the
-creator's thesis, the judges' most repeated clarity complaint.
+LeapEdge 3.50). Round 2E added a checked bottom line that leads with the creator's thesis.
+Averaged over 2E and 2E-R, clarity is ours 3.62 against LeapEdge 3.58: level,
+within judge noise, not a robust win. Coverage fell from a lead (3.23 vs 2.85 in
+2D) to behind (3.00 vs 3.23), most likely because statements the bottom line
+condenses were removed from the key points. Fidelity still leads (3.85 vs 2.77).
 
 ## Target
 
