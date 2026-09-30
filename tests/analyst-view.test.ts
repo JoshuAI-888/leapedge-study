@@ -220,3 +220,22 @@ test("a checked bottom line replaces the selected summary, its sources leave key
   assert.match(note, /### WYNN \(WYNN RESORTS LTD\) · Bought · long ·/, "a stance that adds to the action stays");
   assert.deepEqual(buildAnalystView(input({ bottomLine: [] })).summary.map((s) => s.text), ["Wynn is the main new buy.", "Rates are the key macro risk."], "no bottom line falls back to the brief");
 });
+
+test("a third party's view on the creator's instrument is a credited line on that card, and a misheard value shows its likely reading", () => {
+  const base = input();
+  base.claims = [
+    ...base.claims,
+    checked("c6", claim({ instrument_as_spoken: "Tesla", action: "holding", thesis_en: "The creator holds Tesla.", option: { right: "put", side: "short", strike_original: "$250", expiry_original: "November", premium_original: "$1.85" } }, "I hold Tesla and sold a 250 put for $1.85.", 800)),
+  ];
+  base.claimListings = { ...base.claimListings, c6: ref("TSLA", "Tesla, Inc.") };
+  const view = buildAnalystView(base);
+  const tesla = view.ideas.filter((i) => i.ticker === "TSLA");
+  assert.equal(tesla.length, 1, "one Tesla card");
+  assert.equal(tesla[0].owner, "creator");
+  assert.deepEqual(tesla[0].also, ["Morgan Stanley (third party): Morgan Stanley has a $475 target."]);
+  assert.equal(tesla[0].option?.premium, "$1.85 (likely $11.85)");
+  const note = analystNote(view);
+  assert.match(note, /- Also: Morgan Stanley \(third party\): Morgan Stanley has a \$475 target\./);
+  assert.match(note, /premium \$1\.85 \(likely \$11\.85\)/);
+  assert.doesNotMatch(note, /### TSLA.*third party/, "no separate third-party Tesla card");
+});
