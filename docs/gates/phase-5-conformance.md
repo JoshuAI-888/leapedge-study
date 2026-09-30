@@ -100,3 +100,28 @@ These were run on commit `11e1023` under Node 24.21.0, with suite concurrency 3 
 8. **Today's Video activity** makes the phone page about 10,000 px long before "Load older activity". A shorter first page on phones would help.
 9. **Not in the matrix:** a tablet width, the Lab page (F73's step-usage table is covered by tests and the registry check only), and submitting a duplicate URL for reuse (F74 is covered by `tests/run-reuse.test.ts`).
 10. **YouTube playback** could not be exercised because the sandbox proxy blocks the player. Timestamp links were checked only as links.
+
+## Re-verified after merging main (30 September 2026)
+
+Before merge, `main` was merged into this branch (commit 1804efc). `main` had moved on with the analyst-view session's work: prompt v9/v10 structured ideas, the analyst view, listing resolution (migration 0009) and pipeline hardening. Four overlaps were reconciled so that main's work keeps its behaviour:
+
+- **Prompts.** Phase 5's own "v9" became `evidence-first.web.v11`, which is main's v10 plus expiry and macro theme. It is opt-in, and the team default stays v8.
+- **Claim contract.** Claims use main's `action` enum and dated `catalysts`. F60 adds only `expiry` and `macro_theme`.
+- **Migration 0010.** It follows main's 0009 and stores main's fields.
+- **Analysis page.** Main's analyst view is the primary summary whenever a run has one.
+
+Checks on the merged head (Node 24):
+
+| Check | Result |
+|---|---|
+| `npm test` and `YTI_DB=pglite npm test` | 1038 tests, 1037 pass, 1 skipped (the existing real-Postgres test) |
+| Typecheck and build | Clean |
+| Offline promotion gate | Advisory only (`binding.total` 0) |
+| GitHub `verify` and the Vercel preview | Green |
+
+The phase-5 fixture database was re-seeded on the reconciled schema (10 migrations). The browser matrix passed again at 112/112 cells, and all 11 flows passed. The only console errors were from the sandbox blocking the YouTube player.
+
+Impact on other work:
+- **The paired-comparison harness** submits through `/api/intelligence/runs`, which never reuses a finished run (F74).
+- **Main's prompt versions v1–v10** keep their exact bytes.
+- **Open PR #22** (Jev pre-screen) merges onto this head with three trivial conflicts: two import and settings-key lists, and the action-count and ledger-date lines. With those resolved, its typecheck and affected tests pass.

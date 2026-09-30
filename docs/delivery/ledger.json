@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-09-29",
+  "updated": "2026-09-30",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -1295,7 +1295,7 @@
       "lane": "query",
       "title": "Research query API: paged server-side calls and videos queries with facet counts and set aggregates",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F24",
         "F30"
@@ -1319,7 +1319,7 @@
       "lane": "ui-kit",
       "title": "UX foundations: sentiment palette and split bar, URL filter state, hidden-by-filter notice, grouped sidebar, audit fixes",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F43"
       ],
@@ -1350,7 +1350,7 @@
       "lane": "time",
       "title": "US trading-day sessions (ET, holiday-aware) and team time zone setting",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F05"
       ],
@@ -1373,7 +1373,7 @@
       "lane": "extraction",
       "title": "Macro, theme and sector views with a fixed vocabulary, instrument label and type filter",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F19",
         "F43"
@@ -1395,7 +1395,7 @@
       "lane": "extraction",
       "title": "Richer call fields: catalysts, expiry, action, parsed levels; prompt/schema bump; call card v2",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F19",
         "F43"
@@ -1423,7 +1423,7 @@
       "lane": "analysis-ui",
       "title": "Analysis page verdict box, summary paragraph and numbered key points; tabs for calls, brief and details",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F47",
         "F60"
@@ -1446,7 +1446,7 @@
       "lane": "research-ui",
       "title": "Search page: faceted filters with counts, calls and videos results, filtered-set summary, URL state, paging",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F56",
         "F57",
@@ -1472,7 +1472,7 @@
       "lane": "research-ui",
       "title": "CSV and JSON export of calls, videos and daily reports with stated scope",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F56"
       ],
@@ -1494,7 +1494,7 @@
       "lane": "research-ui",
       "title": "Daily report page and archive: themes with citations, in-focus ranking, disagreements, sources; Today summary card",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F56",
         "F57",
@@ -1521,7 +1521,7 @@
       "lane": "research-ui",
       "title": "Trends page: headline tiles, weekly sentiment columns, price-aligned call timeline, drill list",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F56",
         "F57",
@@ -1546,7 +1546,7 @@
       "lane": "research-ui",
       "title": "Channel detail page: stats, lean, record vs benchmark, calls over time, analyses list",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F56",
         "F65",
@@ -1569,7 +1569,7 @@
       "lane": "sources-ui",
       "title": "Channels list as a sortable table with activity, lean and status; add-channels drawer",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F45",
         "F56",
@@ -1594,7 +1594,7 @@
       "lane": "today-ui",
       "title": "Watchlist: pinned and mentioned-today tickers with sparkline, 1-day change and divergence flag",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F25",
         "F57"
@@ -1618,7 +1618,7 @@
       "lane": "today-ui",
       "title": "24-hour trending window on the sentiment panel, session-aligned, as view state",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F38",
         "F58"
@@ -1641,7 +1641,7 @@
       "lane": "today-ui",
       "title": "Per-browser unread markers and new-since-last-visit group",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F44"
       ],
@@ -1662,7 +1662,7 @@
       "lane": "analysis-ui",
       "title": "Follow-channel prompt with cost projection on analyses from unfollowed channels",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F45",
         "F47"
@@ -1684,7 +1684,7 @@
       "lane": "analysis-ui",
       "title": "Live step progress while running and a general Retry that resumes from checkpoints",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F27",
         "F47"
@@ -1708,7 +1708,7 @@
       "lane": "analysis-ui",
       "title": "Per-call token, cache, time and cost table in Processing details",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F17b",
         "F47"
@@ -1731,7 +1731,7 @@
       "lane": "queue",
       "title": "Reuse a completed run for the same video and pipeline version; explicit paid re-run",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F26"
       ],
@@ -1753,7 +1753,7 @@
       "lane": "today-ui",
       "title": "Saved calls: status tabs with counts, grouping by session, call card v2, permanent delete",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F48",
         "F60",
@@ -1777,7 +1777,7 @@
       "lane": "research-ui",
       "title": "Quick search palette (Cmd/Ctrl+K) over instruments, channels, videos and actions",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F56",
         "F62"
@@ -1799,7 +1799,7 @@
       "lane": "gate",
       "title": "Phase-5 gate run: browser and visual matrix for the LeapEdge-gap surfaces, registry CI, conformance",
       "spec": "7.6",
-      "status": "in-review",
+      "status": "merged",
       "prereqs": [
         "F56",
         "F57",
