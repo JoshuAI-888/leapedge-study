@@ -5,6 +5,8 @@ import type {
   EvidenceRecordData,
   ResearchSentenceData,
 } from "../../features/youtube-intelligence/research-brief.ts";
+import { preScreenReason } from "../../features/youtube-intelligence/faithfulness-prescreen.ts";
+import type { ScreenResult } from "./jev.ts";
 
 /**
  * Pipeline v3 fidelity check. The brief is judged against the transcript
@@ -30,14 +32,28 @@ type Invoke = (stage: string, instructions: string, payload: unknown, schema: z.
 
 /** Split sentences into chunks; each evidence item is assessed once, in the
  * chunk holding the first sentence that cites it, with every citing sentence
- * supplied so coverage is judged against the whole brief. */
-export function faithfulChunks(sentences: ResearchSentenceData[], evidence: EvidenceRecordData[], size = 12) {
+ * supplied so coverage is judged against the whole brief. `preAccepted` are
+ * sentences the pre-screen already accepted: they get no verdict here but
+ * still count toward coverage, and evidence only they cite is assessed in one
+ * coverage-only chunk at the end. */
+export function faithfulChunks(
+  sentences: ResearchSentenceData[],
+  evidence: EvidenceRecordData[],
+  size = 12,
+  preAccepted: ResearchSentenceData[] = [],
+) {
   const chunks: ResearchSentenceData[][] = [];
   for (let i = 0; i < sentences.length; i += size) chunks.push(sentences.slice(i, i + size));
   const owner = new Map<string, number>();
   chunks.forEach((chunk, index) =>
     chunk.forEach((s) => s.evidenceIds.forEach((id) => owner.has(id) || owner.set(id, index))),
   );
+  const leftover = preAccepted.flatMap((s) => s.evidenceIds).filter((id) => !owner.has(id));
+  if (leftover.length) {
+    for (const id of leftover) owner.set(id, chunks.length);
+    chunks.push([]);
+  }
+  const all = [...sentences, ...preAccepted];
   return chunks.map((chunk, index) => {
     const owned = evidence.filter((e) => owner.get(e.id) === index);
     const cited = new Set(chunk.flatMap((s) => s.evidenceIds));
@@ -45,7 +61,7 @@ export function faithfulChunks(sentences: ResearchSentenceData[], evidence: Evid
       sentences: chunk,
       evidence: evidence.filter((e) => cited.has(e.id) || owner.get(e.id) === index),
       assessEvidenceIds: owned.map((e) => e.id),
-      otherSentencesCitingAssessedEvidence: sentences.filter(
+      otherSentencesCitingAssessedEvidence: all.filter(
         (s) => !chunk.includes(s) && s.evidenceIds.some((id) => owner.get(id) === index),
       ),
     };
@@ -57,8 +73,15 @@ export async function faithfulAudit(input: {
   evidence: EvidenceRecordData[];
   invoke: Invoke;
   concurrency?: number;
+  /** Optional Jev pre-screen: settles clear sentences, the critic gets the rest. */
+  preScreen?: (sentences: ResearchSentenceData[]) => Promise<ScreenResult>;
 }) {
-  const chunks = faithfulChunks(input.sentences, input.evidence);
+  const screen = input.preScreen ? await input.preScreen(input.sentences) : null;
+  const route = new Map(screen?.results.map((r) => [r.id, r]) ?? []);
+  const settledBy = (s: ResearchSentenceData) => route.get(s.id)?.route ?? "escalate";
+  const escalated = input.sentences.filter((s) => settledBy(s) === "escalate");
+  const preAccepted = input.sentences.filter((s) => settledBy(s) === "accept");
+  const chunks = faithfulChunks(escalated, input.evidence, 12, preAccepted);
   const results = await boundedSettled(chunks, input.concurrency ?? 4, (chunk, index) =>
     input.invoke(
       `critique-faithful-${index + 1}`,
@@ -68,6 +91,7 @@ export async function faithfulAudit(input: {
         evidence: chunk.evidence,
         assessEvidenceIds: chunk.assessEvidenceIds,
         otherSentencesCitingAssessedEvidence: chunk.otherSentencesCitingAssessedEvidence.map(({ id, text, evidenceIds }) => ({ id, text, evidenceIds })),
+        ...(screen ? { note: "otherSentencesCitingAssessedEvidence are accepted sentences for coverage only; return verdicts only for `sentences`." } : {}),
       },
       FaithfulResponse,
     ).then((raw) => FaithfulResponse.parse(raw)),
@@ -77,6 +101,11 @@ export async function faithfulAudit(input: {
   const fatal = results.find((r) => r.status === "rejected" && isFatalAccountError(r.reason));
   if (fatal?.status === "rejected") throw fatal.reason;
   const verdicts: { id: string; accepted: boolean; reason: string; factualStatus: "unverified" }[] = [];
+  for (const s of input.sentences) {
+    const screened = route.get(s.id);
+    if (screened && screened.route !== "escalate")
+      verdicts.push({ id: s.id, accepted: screened.route === "accept", reason: preScreenReason(screened, screen!.model), factualStatus: "unverified" });
+  }
   const evidenceCoverage: z.infer<typeof EvidenceCoverage>[] = [];
   const coverageFindings: string[] = [];
   const failures: string[] = [];
@@ -108,5 +137,16 @@ export async function faithfulAudit(input: {
     if (!cited.has(e.id))
       evidenceCoverage.push({ evidenceId: e.id, status: "missing", sentenceIds: [], missingPoints: [], reason: "No brief sentence cites this evidence item." });
   coverageFindings.push(...failures);
-  return { verdicts, evidenceCoverage, coverageFindings, chunks: chunks.length, failures: failures.length };
+  const preScreen = screen
+    ? {
+        model: screen.model,
+        accepted: preAccepted.length,
+        rejected: input.sentences.length - escalated.length - preAccepted.length,
+        escalated: escalated.length,
+        wallMs: screen.wallMs,
+        costUsd: screen.costUsd,
+        error: screen.error,
+      }
+    : undefined;
+  return { verdicts, evidenceCoverage, coverageFindings, chunks: chunks.length, failures: failures.length, ...(preScreen ? { preScreen } : {}) };
 }

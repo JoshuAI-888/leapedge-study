@@ -203,6 +203,8 @@ const MAY_FETCH: Record<string, string> = {
   "src/server/youtube-intelligence/transcripts.ts":
     "TranscriptAPI and Supadata",
   "src/server/youtube-intelligence/market.ts": "FMP prices and filings",
+  "src/server/youtube-intelligence/jev.ts":
+    "TypeSafe Jev (System One) for the optional faithfulness pre-screen and comparison; probabilities, not text, so not a model transport",
   "src/server/youtube-intelligence/email.ts": "Resend",
   "src/server/youtube-intelligence/pipeline.ts":
     "YouTube video metadata only; every model call goes through a transport",
