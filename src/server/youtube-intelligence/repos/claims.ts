@@ -3,6 +3,11 @@ import { createHash } from "node:crypto";
 import { spansForClaim, type EvidenceSpanRow } from "./evidence-spans.ts";
 import { SignedReview } from "../../../features/youtube-intelligence/trust.ts";
 import { reviewsForClaim } from "./reviews.ts";
+import { z } from "zod";
+import {
+  parseLevel,
+  type ParsedLevel,
+} from "../../../features/youtube-intelligence/level-parse.ts";
 /**
  * The only door to the `claims` table (spec 8). The row id is
  * `<run id>:<claim id within the run>`, so re-publishing a run rewrites the
@@ -33,10 +38,56 @@ export type ClaimRow = {
   configHash: string | null;
   publishedAt: string | null;
   createdAt: string | null;
+  // Call fields v2 (F60, migration 0010). Optional on the type so rows built
+  // before them still type-check; every row read from the table carries them.
+  levels?: StoredLevel[];
+  /** What the creator did or will do (prompt v9+ `action`), or null. */
+  action?: string | null;
+  /** Dated catalysts as the creator named them (prompt v9+ `catalysts`). */
+  catalysts?: StoredCatalyst[];
+  expiryDate?: string | null;
+  expiryOriginal?: string | null;
+  macroTheme?: string | null;
 };
+/** A level as the creator said it, plus the application's parse (or null). */
+export type StoredLevel = {
+  kind: string;
+  valueOriginal: string;
+  /** The trigger the creator attached to this level (prompt v9+), or null. */
+  conditionEn?: string | null;
+  parsed: ParsedLevel | null;
+};
+export type StoredCatalyst = { text: string; date: string | null };
+const StoredLevels = z.array(
+  z.object({
+    kind: z.string().min(1),
+    valueOriginal: z.string(),
+    conditionEn: z.string().nullable().optional(),
+    parsed: z.unknown(),
+  }),
+);
+const StoredCatalysts = z.array(
+  z.object({ text: z.string().min(1), date: z.string().nullable() }),
+);
+function catalysts(value: unknown): StoredCatalyst[] {
+  const parsed = StoredCatalysts.safeParse(json(value) ?? []);
+  return parsed.success ? parsed.data : [];
+}
+/** Stored levels, re-parsed from the original wording so the parse is never stale. */
+function levels(value: unknown): StoredLevel[] {
+  const parsed = StoredLevels.safeParse(json(value) ?? []);
+  return parsed.success
+    ? parsed.data.map((l) => ({
+        kind: l.kind,
+        valueOriginal: l.valueOriginal,
+        conditionEn: l.conditionEn ?? null,
+        parsed: parseLevel(l.valueOriginal),
+      }))
+    : [];
+}
 export type ClaimInput = Omit<ClaimRow, "createdAt"> & { createdAt?: string };
 const COLUMNS =
-  "id,run_id,video_id,channel_id,instrument,ticker,ticker_explicit,stance,thesis_en,horizon_en,conditions_en,risks_en,creator_conviction,trust_level,trust_basis,config_hash,published_at,created_at,resolved_ticker,resolved_name,resolved_by";
+  "id,run_id,video_id,channel_id,instrument,ticker,ticker_explicit,stance,thesis_en,horizon_en,conditions_en,risks_en,creator_conviction,trust_level,trust_basis,config_hash,published_at,created_at,resolved_ticker,resolved_name,resolved_by,levels,action,catalysts,expiry_date,expiry_original,macro_theme";
 function strings(value: unknown): string[] {
   const parsed = json(value);
   return Array.isArray(parsed) ? parsed.map((s) => String(s)) : [];
@@ -68,9 +119,24 @@ function convert(r: Record<string, unknown>): ClaimRow {
     configHash: r.config_hash === null ? null : String(r.config_hash),
     publishedAt: iso(r.published_at),
     createdAt: iso(r.created_at),
+    levels: levels(r.levels),
+    action: r.action == null ? null : String(r.action),
+    catalysts: catalysts(r.catalysts),
+    // date columns come back as a string from pg (parser) and PGlite.
+    expiryDate:
+      r.expiry_date == null
+        ? null
+        : String(iso(r.expiry_date) ?? r.expiry_date).slice(0, 10),
+    expiryOriginal: r.expiry_original == null ? null : String(r.expiry_original),
+    macroTheme: r.macro_theme == null ? null : String(r.macro_theme),
   };
 }
-/** Reviews bind semantic content and the exact cited source, never only a stable row id. */
+/**
+ * Reviews bind semantic content and the exact cited source, never only a
+ * stable row id. The F60 call fields are deliberately outside the digest:
+ * they were added after reviews were signed, and folding them in would revoke
+ * every existing signature on a republish.
+ */
 export function claimContentDigest(
   claim: ClaimInput | ClaimRow,
   spans: EvidenceSpanRow[],
@@ -154,7 +220,7 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
   };
   const result = await database
     .prepare(
-      `INSERT INTO claims(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16,$17,$18,$19,$20,$21)
+      `INSERT INTO claims(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16,$17,$18,$19,$20,$21,$22::jsonb,$23,$24::jsonb,$25,$26,$27)
        ON CONFLICT(id) DO UPDATE SET
          run_id=excluded.run_id,
          video_id=excluded.video_id,
@@ -180,7 +246,13 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
          published_at=excluded.published_at,
          resolved_ticker=excluded.resolved_ticker,
          resolved_name=excluded.resolved_name,
-         resolved_by=excluded.resolved_by`,
+         resolved_by=excluded.resolved_by,
+         levels=excluded.levels,
+         action=excluded.action,
+         catalysts=excluded.catalysts,
+         expiry_date=excluded.expiry_date,
+         expiry_original=excluded.expiry_original,
+         macro_theme=excluded.macro_theme`,
     )
     .run(
       claim.id,
@@ -204,6 +276,19 @@ async function writeClaim(claim: ClaimInput, evidence?: EvidenceSpanRow[]) {
       claim.resolvedTicker ?? null,
       claim.resolvedName ?? null,
       claim.resolvedBy ?? null,
+      JSON.stringify(
+        (claim.levels ?? []).map((l) => ({
+          kind: l.kind,
+          valueOriginal: l.valueOriginal,
+          conditionEn: l.conditionEn ?? null,
+          parsed: l.parsed,
+        })),
+      ),
+      claim.action ?? null,
+      JSON.stringify(claim.catalysts ?? []),
+      claim.expiryDate ?? null,
+      claim.expiryOriginal ?? null,
+      claim.macroTheme ?? null,
     );
   return result.changes > 0;
 }

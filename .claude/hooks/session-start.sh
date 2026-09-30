@@ -27,7 +27,7 @@ if [ -f docs/delivery/ledger.json ]; then
     const active = l.features.filter((f) => f.status !== "removed");
     const by = (s) => active.filter((f) => f.status === s).length;
     console.log(`\nDelivery ledger (${l.updated}): ${by("merged")} merged, ${by("in-review")} in review, ${by("todo")} to do, of ${active.length}.`);
-    for (const phase of [0, 1, 2, 3, 4]) {
+    for (const phase of [0, 1, 2, 3, 4, 5]) {
       const inPhase = active.filter((f) => f.phase === phase);
       if (!inPhase.length) continue;
       const done = inPhase.filter((f) => f.status === "merged").length;

@@ -129,7 +129,8 @@ test("Team and account defaults parse from an empty object and match spec 6.2 / 
   assert.deepEqual(account.digest, {
     enabled: true,
     hourLocal: 7,
-    timezone: "Pacific/Auckland",
+    // F58: null follows the team display zone (Pacific/Auckland by default).
+    timezone: null,
     deliverTo: ["finradar-briefing", "email"],
   });
   assert.deepEqual(account.display, { language: "en", theme: "system" });

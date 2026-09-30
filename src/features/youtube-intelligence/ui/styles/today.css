@@ -1,0 +1,948 @@
+/* Phase 5 (today lane). Global classes use the yi- prefix and the --yi-* tokens from workspace.css. */
+
+/* ---------------------------------------------------------------------------
+   Shared by this lane: amber "warn" ink and the live accent, with dark steps.
+   --------------------------------------------------------------------------- */
+.yi-workspace {
+  --yi-warn-ink: #8a5a00;
+  --yi-warn-bg: #fff4e0;
+  --yi-warn-line: #f1d5a3;
+  --yi-live: #194df4;
+}
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) {
+    --yi-warn-ink: #ecd097;
+    --yi-warn-bg: #382f1c;
+    --yi-warn-line: #675431;
+    --yi-live: #83a4ff;
+  }
+}
+.yi-workspace[data-theme="dark"] {
+  --yi-warn-ink: #ecd097;
+  --yi-warn-bg: #382f1c;
+  --yi-warn-line: #675431;
+  --yi-live: #83a4ff;
+}
+
+/* Segmented control (sort presets, sentiment period). */
+.yi-segmented {
+  display: inline-flex;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-wrap: nowrap;
+  max-width: 100%;
+}
+.yi-workspace .yi-segmented button {
+  border: 0;
+  border-radius: 0;
+  min-height: 32px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--yi-surface);
+  color: var(--yi-muted);
+  white-space: nowrap;
+}
+.yi-workspace .yi-segmented button + button {
+  border-left: 1px solid var(--yi-line);
+}
+.yi-workspace .yi-segmented button[aria-pressed="true"] {
+  background: var(--yi-selected);
+  color: var(--yi-primary);
+}
+.yi-workspace .yi-segmented button:focus-visible {
+  outline: 2px solid var(--yi-primary);
+  outline-offset: -2px;
+}
+
+/* ---------------------------------------------------------------------------
+   F67 — Channels list
+   --------------------------------------------------------------------------- */
+.yi-workspace .yi-channel-add {
+  align-self: flex-start;
+  white-space: nowrap;
+}
+.yi-channel-draft {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+.yi-channel-panel {
+  padding-bottom: 8px;
+}
+.yi-channel-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+.yi-channel-toolbar .yi-segmented {
+  margin-bottom: 2px;
+}
+.yi-channel-toolbar .yi-filters {
+  flex: 1;
+  margin: 0;
+}
+.yi-channel-loading {
+  padding: 18px 0;
+}
+.yi-channel-table {
+  overflow-x: auto;
+  margin: 0 -20px;
+}
+.yi-channel-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+}
+.yi-channel-table th {
+  background: var(--yi-page);
+  text-align: left;
+  border-block: 1px solid var(--yi-line);
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+.yi-workspace .yi-channel-table th button {
+  background: none;
+  color: var(--yi-muted);
+  padding: 0;
+  min-height: 28px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  text-align: left;
+}
+.yi-channel-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--yi-line);
+  vertical-align: middle;
+  font-size: 13px;
+}
+.yi-channel-table th:first-child,
+.yi-channel-table td:first-child {
+  padding-left: 20px;
+}
+.yi-channel-table th:last-child,
+.yi-channel-table td:last-child {
+  padding-right: 20px;
+  text-align: right;
+}
+.yi-channel-table td small {
+  display: block;
+  color: var(--yi-muted);
+  font-size: 11px;
+}
+.yi-channel-row {
+  cursor: pointer;
+}
+.yi-channel-row:hover > td {
+  background: var(--yi-selected);
+}
+.yi-workspace .yi-channel-name {
+  font-weight: 650;
+  color: var(--yi-ink);
+  overflow-wrap: anywhere;
+}
+.yi-workspace .yi-channel-name:hover {
+  color: var(--yi-primary);
+}
+.yi-channel-num {
+  font-variant-numeric: tabular-nums;
+}
+.yi-channel-top {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+.yi-channel-table .yi-channel-top small {
+  display: inline;
+}
+.yi-channel-details-row > td {
+  background: var(--yi-page);
+  text-align: left !important;
+}
+.yi-channel-details .yi-switches {
+  margin-top: 10px;
+}
+.yi-channel-details p {
+  margin: 10px 0;
+}
+.yi-channel-status {
+  gap: 6px;
+  white-space: nowrap;
+}
+.yi-workspace .yi-chip.yi-channel-status-live {
+  background: var(--yi-selected);
+  color: var(--yi-live);
+}
+.yi-channel-status-live i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: yi-live-pulse 1.6s ease-in-out infinite;
+}
+@keyframes yi-live-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yi-channel-status-live i {
+    animation: none;
+  }
+}
+.yi-workspace .yi-chip.yi-channel-status-warn {
+  background: var(--yi-warn-bg);
+  color: var(--yi-warn-ink);
+  box-shadow: inset 0 0 0 1px var(--yi-warn-line);
+}
+.yi-upload-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+.yi-upload-list > li {
+  padding: 10px 0;
+  border-top: 1px solid var(--yi-line);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+.yi-upload-list > li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.yi-workspace a.yi-upload-status {
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.yi-workspace a.yi-chip.yi-upload-failed {
+  background: var(--yi-warn-bg);
+  color: var(--yi-warn-ink);
+}
+.yi-channel-cards {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.yi-channel-card {
+  border-top: 1px solid var(--yi-line);
+  padding: 14px 0;
+}
+.yi-channel-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.yi-channel-card-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 14px;
+  margin: 10px 0;
+}
+.yi-channel-card-facts dt {
+  font-size: 11px;
+  color: var(--yi-muted);
+}
+.yi-channel-card-facts dd {
+  margin: 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.yi-channel-card-lean {
+  margin-bottom: 4px;
+}
+@media (max-width: 720px) {
+  .yi-channel-table {
+    display: none;
+  }
+  .yi-channel-cards {
+    display: block;
+  }
+  .yi-channel-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .yi-channel-toolbar .yi-segmented {
+    align-self: stretch;
+  }
+  .yi-workspace .yi-channel-toolbar .yi-segmented button {
+    flex: 1;
+    padding: 5px 6px;
+  }
+}
+
+/* The "+ Add channels" drawer: a modal <dialog> on the right edge. */
+.yi-drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  width: min(560px, 100vw);
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--yi-line);
+  background: var(--yi-surface);
+  color: var(--yi-ink);
+  box-shadow: -12px 0 32px rgb(0 0 0 / 0.18);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.yi-drawer::backdrop {
+  background: rgb(15 20 30 / 0.45);
+}
+.yi-drawer-body {
+  padding: 0 20px 28px;
+}
+.yi-drawer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  margin: 0 -20px 6px;
+  padding: 14px 20px;
+  background: var(--yi-surface);
+  border-bottom: 1px solid var(--yi-line);
+  z-index: 1;
+}
+.yi-drawer-head h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.yi-drawer-block {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--yi-line);
+}
+.yi-drawer-block:last-child {
+  border-bottom: 0;
+}
+.yi-drawer-block > button {
+  margin-top: 10px;
+}
+.yi-drawer-block h3 {
+  font-size: 15px;
+  margin: 0;
+}
+.yi-drawer-block.yi-projection {
+  flex-direction: column;
+  align-items: stretch;
+}
+.yi-drawer-block.yi-projection h3 {
+  font-size: 24px;
+  margin: 6px 0;
+}
+.yi-drawer-block.yi-projection h3 small {
+  font-size: 14px;
+  font-weight: 400;
+}
+.yi-drawer-search {
+  margin-top: 12px;
+}
+.yi-drawer-catalogue {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+.yi-drawer-catalogue > li {
+  border-top: 1px solid var(--yi-line);
+  padding: 8px 0;
+}
+.yi-drawer-catalogue summary {
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+   F68 — Watchlist (Today rail) and the pin toggle
+   --------------------------------------------------------------------------- */
+.yi-watchlist .yi-section-title {
+  margin-bottom: 8px;
+}
+.yi-watchlist-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--yi-line);
+  margin-bottom: 4px;
+}
+.yi-workspace .yi-watchlist-tabs button {
+  background: none;
+  color: var(--yi-muted);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  min-height: 34px;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.yi-workspace .yi-watchlist a.yi-instrument {
+  color: var(--yi-ink);
+  font-size: 13px;
+}
+.yi-watchlist-name .yi-instrument {
+  flex-shrink: 0;
+}
+.yi-watchlist-name .yi-instrument-theme,
+.yi-watchlist-name .yi-instrument-unresolved {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-watchlist .yi-instrument-hint {
+  display: none;
+}
+.yi-workspace .yi-watchlist a.yi-instrument:hover {
+  color: var(--yi-primary);
+}
+.yi-workspace .yi-watchlist-tabs button[aria-selected="true"] {
+  color: var(--yi-ink);
+  border-bottom-color: var(--yi-primary);
+}
+.yi-workspace .yi-watchlist-tabs button:focus-visible {
+  outline: 2px solid var(--yi-primary);
+  outline-offset: -2px;
+}
+.yi-watchlist-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--yi-muted);
+  background: var(--yi-page);
+  border-radius: 10px;
+  padding: 0 6px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-watchlist-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.yi-watchlist-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "name spark change"
+    "mentions flag flag";
+  align-items: center;
+  gap: 4px 8px;
+  padding: 9px 0;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-watchlist-row:first-child {
+  border-top: 0;
+}
+.yi-watchlist-name {
+  grid-area: name;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+.yi-watchlist-row .yi-sparkline {
+  grid-area: spark;
+  color: var(--yi-muted);
+}
+.yi-watchlist-change,
+.yi-watchlist-noprice {
+  grid-area: change;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.yi-watchlist-noprice {
+  grid-column: 2 / 4;
+  font-weight: 500;
+  color: var(--yi-muted);
+}
+.yi-watchlist-mentions {
+  grid-area: mentions;
+  font-size: 11px;
+  color: var(--yi-muted);
+  display: inline-flex;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-watchlist-closes {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--yi-muted);
+}
+.yi-watchlist-glyph {
+  font-weight: 600;
+}
+.yi-watchlist-bullish {
+  color: var(--yi-bullish);
+}
+.yi-watchlist-neutral {
+  color: var(--yi-neutral);
+}
+.yi-watchlist-bearish {
+  color: var(--yi-bearish);
+}
+.yi-workspace .yi-chip.yi-watchlist-flag {
+  grid-area: flag;
+  justify-self: end;
+  font-size: 10px;
+  padding: 1px 7px;
+  background: var(--yi-warn-bg);
+  color: var(--yi-warn-ink);
+  box-shadow: inset 0 0 0 1px var(--yi-warn-line);
+  cursor: help;
+}
+.yi-today-rail .yi-watchlist-empty {
+  margin: 10px 0;
+}
+.yi-today-rail .yi-watchlist-foot {
+  font-size: 11px;
+  color: var(--yi-muted);
+  margin: 8px 0 0;
+}
+.yi-workspace button.yi-pin {
+  background: none;
+  border: 0;
+  color: var(--yi-muted);
+  min-height: 28px;
+  min-width: 28px;
+  padding: 0 4px;
+  font-size: 15px;
+  line-height: 1;
+}
+.yi-workspace button.yi-pin[aria-pressed="true"] {
+  color: var(--yi-ink);
+}
+.yi-workspace button.yi-pin:hover {
+  color: var(--yi-primary);
+}
+.yi-workspace .yi-pin:focus-visible {
+  outline: 2px solid var(--yi-primary);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+/* Phone: the watchlist moves above the calls as a horizontal tile scroller. */
+@media (max-width: 720px) {
+  .yi-today-rail:has(> .yi-watchlist) {
+    display: contents;
+  }
+  .yi-today-rail > .yi-watchlist {
+    order: -1;
+    min-width: 0;
+  }
+  .yi-watchlist-rows {
+    /* The containing block for the tiles' screen-reader text, so it scrolls
+       with them instead of widening the page (F77: page overflow at 390). */
+    position: relative;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: 0 -18px;
+    padding: 2px 18px 6px;
+  }
+  .yi-watchlist-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name change"
+      "spark spark"
+      "mentions mentions"
+      "flag flag";
+    align-content: start;
+    flex: 0 0 min(220px, 72%);
+    scroll-snap-align: start;
+    border: 1px solid var(--yi-line);
+    border-radius: 10px;
+    padding: 10px;
+  }
+  .yi-watchlist-row:first-child {
+    border-top: 1px solid var(--yi-line);
+  }
+  .yi-watchlist-noprice {
+    grid-column: 2;
+  }
+  .yi-workspace .yi-chip.yi-watchlist-flag {
+    justify-self: start;
+  }
+}
+
+/* F75 — Saved calls (saved lane). Price moves are ink text; colour means sentiment only. */
+.yi-saved-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.yi-saved-count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  border-radius: 999px;
+  padding: 0 7px;
+  background: var(--yi-line);
+  color: var(--yi-ink);
+}
+.yi-saved-count.yi-saved-zero {
+  background: transparent;
+  color: var(--yi-muted);
+}
+.yi-saved-group + .yi-saved-group {
+  margin-top: 24px;
+}
+.yi-workspace .yi-saved-heading {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 650;
+  cursor: help;
+}
+.yi-workspace .yi-saved-tabs button[role="tab"] {
+  background: transparent;
+  color: var(--yi-muted);
+}
+.yi-workspace .yi-saved-tabs button[role="tab"][aria-selected="true"] {
+  background: var(--yi-selected);
+  color: var(--yi-primary);
+}
+.yi-workspace .yi-saved-card footer.yi-row {
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-workspace .yi-saved-card footer .yi-text-button,
+.yi-workspace .yi-saved-card footer a {
+  font-size: 13px;
+}
+.yi-workspace .yi-saved-card :is(footer, .yi-saved-confirm) .yi-secondary,
+.yi-workspace .yi-saved-confirm .yi-saved-danger {
+  font-size: 13px;
+  min-height: 36px;
+  padding: 6px 14px;
+}
+.yi-workspace .yi-saved-card footer .yi-text-button:last-child {
+  margin-left: auto;
+}
+.yi-saved-card h3 {
+  margin: 10px 0 6px;
+}
+.yi-saved-expiry {
+  font-size: 12px;
+}
+.yi-saved-expiry-soon,
+.yi-saved-expiry-expired {
+  color: #805300;
+  font-weight: 650;
+}
+.yi-saved-since {
+  margin: 8px 0 4px;
+  color: var(--yi-ink);
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+.yi-saved-since > span {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--yi-muted);
+  margin-right: 6px;
+}
+.yi-saved-meta {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+.yi-saved-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--yi-line);
+  border-radius: 9px;
+  background: var(--yi-page);
+}
+.yi-saved-confirm p {
+  flex-basis: 100%;
+  margin: 0;
+  font-weight: 600;
+}
+/* Destructive controls are ink, not red: red reads as bearish on this page. */
+.yi-workspace .yi-saved-confirm .yi-saved-danger,
+.yi-workspace[data-theme] .yi-saved-confirm .yi-saved-danger {
+  background: var(--yi-ink);
+  color: var(--yi-surface);
+}
+.yi-workspace .yi-text-button.yi-saved-delete,
+.yi-workspace[data-theme] .yi-text-button.yi-saved-delete {
+  background: none;
+  color: var(--yi-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) .yi-saved-expiry-soon,
+  .yi-workspace:not([data-theme="light"]) .yi-saved-expiry-expired {
+    color: #ecd097;
+  }
+}
+.yi-workspace[data-theme="dark"] .yi-saved-expiry-soon,
+.yi-workspace[data-theme="dark"] .yi-saved-expiry-expired {
+  color: #ecd097;
+}
+@media (max-width: 600px) {
+  .yi-saved-tabs {
+    overflow-x: auto;
+  }
+  .yi-saved-tabs button {
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+}
+.yi-workspace .yi-saved-card footer .yi-saved-removed {
+  margin-left: auto;
+  font-size: 13px;
+}
+@media (max-width: 600px) {
+  .yi-workspace .yi-saved-tabs {
+    gap: 2px;
+  }
+  .yi-workspace .yi-saved-tabs button[role="tab"] {
+    padding: 8px 4px;
+    font-size: 14px;
+    gap: 4px;
+  }
+  .yi-workspace .yi-saved-tabs .yi-saved-count {
+    padding: 0 5px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   F69 — Sentiment panel: 24h · 7d · 14d · 30d segments and trending rows
+   --------------------------------------------------------------------------- */
+.yi-sentiment-panel .yi-segmented button {
+  padding: 5px 9px;
+}
+.yi-sentiment-rows {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.yi-sentiment-rows > li {
+  padding: 9px 0;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-sentiment-rows > li:first-child {
+  border-top: 0;
+}
+.yi-sentiment-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "name creators change"
+    "split split split";
+  align-items: center;
+  gap: 5px 10px;
+}
+.yi-sentiment-row > .yi-instrument {
+  grid-area: name;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-workspace .yi-sentiment-row > a.yi-instrument {
+  color: var(--yi-ink);
+  font-size: 13px;
+}
+.yi-sentiment-row .yi-instrument-hint {
+  display: none;
+}
+.yi-sentiment-row > .yi-split {
+  grid-area: split;
+}
+.yi-sentiment-creators,
+.yi-sentiment-change {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.yi-sentiment-creators {
+  grid-area: creators;
+  color: var(--yi-muted);
+}
+.yi-sentiment-change {
+  grid-area: change;
+  font-weight: 600;
+  text-align: right;
+  cursor: help;
+}
+.yi-sentiment-evidence {
+  margin-top: 4px;
+  font-size: 12px;
+}
+.yi-sentiment-evidence summary {
+  cursor: pointer;
+  color: var(--yi-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   F70 — unread markers (this browser only) and the Levels column menu.
+   --------------------------------------------------------------------------- */
+.yi-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.yi-unread-dot {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--yi-live);
+  vertical-align: middle;
+}
+.yi-nav-new {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--yi-live);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.yi-unread-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+.yi-unread-head .yi-text-button {
+  margin-left: auto;
+}
+.yi-workspace .yi-list li.yi-activity-new {
+  font-weight: 500;
+}
+.yi-column-menu {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: flex-end;
+  font-size: 12px;
+}
+.yi-column-menu summary {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  box-sizing: border-box;
+  cursor: pointer;
+  padding: 0 10px;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  list-style: none;
+}
+.yi-column-menu summary::-webkit-details-marker {
+  display: none;
+}
+.yi-column-menu summary::after {
+  content: " ▾";
+  color: var(--yi-muted);
+}
+.yi-workspace .yi-calls-panel .yi-filters .yi-column-menu[open] > label,
+.yi-column-menu[open] > label {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  top: calc(100% + 4px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  background: var(--yi-surface);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 12%);
+  white-space: nowrap;
+  flex-direction: row;
+  min-width: 0;
+  font-size: 13px;
+}
+.yi-column-menu[open] > label input {
+  min-height: 0;
+  width: auto;
+  margin: 0;
+}
+.yi-levels-cell .yi-card2-levels {
+  margin: 0;
+  flex-wrap: wrap;
+}
+.yi-levels-cell .yi-card2-level {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.yi-levels-cell .yi-card2-level > :first-child {
+  white-space: nowrap;
+}
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) .yi-nav-new {
+    color: #0d1424;
+  }
+}
+.yi-workspace[data-theme="dark"] .yi-nav-new {
+  color: #0d1424;
+}
+/* With the optional Levels column the thesis gives up the room. */
+.yi-call-table.yi-with-levels th:nth-child(1) {
+  width: 13%;
+}
+.yi-call-table.yi-with-levels th:nth-child(2) {
+  width: 10%;
+}
+.yi-call-table.yi-with-levels th:nth-child(3) {
+  width: 32%;
+}
+.yi-call-table.yi-with-levels th:nth-child(4) {
+  width: 13%;
+}
+.yi-call-table.yi-with-levels th:nth-child(5) {
+  width: 12%;
+}
+.yi-call-table.yi-with-levels th:nth-child(6) {
+  width: 20%;
+}
+
+/* F77 fix — Saved filters at phone width: search on its own row, sort full width,
+   so the sort label is never cut off. */
+@media (max-width: 560px) {
+  .yi-workspace .yi-filters label {
+    flex: 1 1 100%;
+  }
+}

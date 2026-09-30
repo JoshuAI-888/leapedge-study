@@ -37,6 +37,11 @@ comparison agreement as verified accuracy or fabricate a human-reviewed badge.
 The current instruction authorizes continuing through both build phases; old
 per-phase permission text is superseded for implementation within this scope.
 
+**Phase 5 added — 29 September 2026.** The user added the LeapEdge-gap features as
+phase 5 (F56–F77) of the standalone scope. Build phases 2, 3 and 5; phase 4 stays excluded.
+Requirements: `docs/delivery/leapedge-gap-ux-proposals-20260929.md`; decisions:
+`docs/delivery/leapedge-gap-decisions-20260929.md`; spec §7.6.
+
 ## Verify
 
 These five are what CI runs. All need no credentials.

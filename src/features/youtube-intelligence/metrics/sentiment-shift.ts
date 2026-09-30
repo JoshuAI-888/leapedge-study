@@ -9,6 +9,7 @@ const empty = (): SentimentCounts => ({
   neutral: { mentions: 0, creators: 0 },
   bearish: { mentions: 0, creators: 0 },
 });
+/** The last `periodDays` days to `asOf` against the `periodDays` before them. */
 export function sentimentShift(
   mentions: MentionRow[],
   options: {
@@ -26,12 +27,36 @@ export function sentimentShift(
     span = options.periodDays * 86400000;
   if (!Number.isFinite(end) || !(span > 0))
     throw Error("Choose a valid sentiment date and period.");
+  return sentimentShiftWindow(mentions, {
+    current: { start: end - span, end },
+    previous: { start: end - 2 * span, end: end - span },
+    minimumTrust: options.minimumTrust,
+    callsOnly: options.callsOnly,
+  });
+}
+/**
+ * The shift between two half-open windows (start, end] of epoch milliseconds,
+ * the previous one ending where the current one starts. F69's session window
+ * ("since the previous close") uses this directly.
+ */
+export function sentimentShiftWindow(
+  mentions: MentionRow[],
+  options: {
+    current: { start: number; end: number };
+    previous: { start: number; end: number };
+    minimumTrust?: string;
+    callsOnly?: boolean;
+  },
+) {
+  const { current: now, previous: before } = options;
+  const within = (at: number, w: { start: number; end: number }) =>
+    at > w.start && at <= w.end;
   const eligible = mentions.filter(
     (m) =>
       m.ticker &&
       m.publishedAt &&
-      Date.parse(m.publishedAt) <= end &&
-      Date.parse(m.publishedAt) > end - 2 * span &&
+      (within(Date.parse(m.publishedAt), now) ||
+        within(Date.parse(m.publishedAt), before)) &&
       m.trustLevel >= (options.minimumTrust ?? "L1") &&
       (!options.callsOnly || m.isCall),
   );
@@ -39,7 +64,7 @@ export function sentimentShift(
     const rows = eligible.filter((m) => m.ticker === ticker);
     const counts = (recent: boolean) => {
       const selected = rows.filter(
-        (m) => Date.parse(m.publishedAt!) > end - span === recent,
+        (m) => within(Date.parse(m.publishedAt!), now) === recent,
       );
       const result = empty();
       for (const sentiment of ["bullish", "neutral", "bearish"] as const) {

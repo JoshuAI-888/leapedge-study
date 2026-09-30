@@ -5,6 +5,8 @@ import { startExperiment } from "../experiments.ts";
 import { backfillBottomLine } from "../bottom-line.ts";
 import { managedTranscript, SourcePending } from "../transcripts.ts";
 import { videoId } from "../../../features/youtube-intelligence/contracts.ts";
+import { analyseVideo } from "../reuse.ts";
+import { retryRun } from "../run-progress.ts";
 import { writes, type ActionTable } from "./types.ts";
 const CaptionProbe = z.strictObject({
   videoId: z.string().regex(/^[\w-]{11}$/),
@@ -48,9 +50,14 @@ async function captionProbe(v: z.output<typeof CaptionProbe>) {
   }
 }
 export const runs: ActionTable = {
+  // A finished analysis on today's identity is reused at no cost (F74);
+  // `force` is the explicit re-run and always queues.
   analyse: writes(
-    z.strictObject({ url: z.string().trim().min(1).max(1000) }),
-    ({ url }) => R.queue(videoId(url)),
+    z.strictObject({
+      url: z.string().trim().min(1).max(1000),
+      force: z.boolean().default(false),
+    }),
+    ({ url, force }) => analyseVideo(videoId(url), { force }),
   ),
   captionProbe: writes(CaptionProbe, captionProbe),
   audioReview: writes(z.string(), (id) => queueAudioReview(id)),
@@ -72,6 +79,8 @@ export const runs: ActionTable = {
     (v) => startExperiment(v),
   ),
   recoverAudit: writes(z.string(), (id) => R.continueAfterAuditFailure(id)),
+  // F72: resume a failed or stalled analysis from its checkpoint.
+  retry: writes(z.string(), (id) => retryRun(id)),
   publishRun: writes(z.string(), (id) => R.publishRun(id)),
   writeBottomLine: writes(z.string(), (briefId) => backfillBottomLine(briefId)),
 };
