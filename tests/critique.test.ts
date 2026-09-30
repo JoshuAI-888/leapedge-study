@@ -756,3 +756,24 @@ test('a changed mention at the same instrument and source span must receive a fr
   const request = payloadOf(fake.requestsFor('critique')[1]);
   assert.equal(request.mentions[0].mention.stance, 'avoid');
 });
+
+test("an accepted call whose conviction is overstated keeps its idea at the supported conviction, never raised", async () => {
+  const { step } = await import("../src/server/youtube-intelligence/pipeline.ts");
+  const c1 = item("c1", 1), c2 = item("c2", 2);
+  c1.claim = { ...c1.claim, creator_conviction: "high" };
+  c2.claim = { ...c2.claim, creator_conviction: "low" };
+  const run = await critiqueRun({ claims: [c1, c2] });
+  const fake = new FakeModelTransport({ responses: { critique: {
+    json: { verdicts: [
+      { id: "c1", verdict: "accept", reason_en: "Supported, but 'not throwing a ton of money' is medium at most.", corrected_conviction: "medium" },
+      { id: "c2", verdict: "accept", reason_en: "Supported.", corrected_conviction: "high" },
+    ] },
+    usage: { inputTokens: 400, outputTokens: 120, costUsd: 0.002 },
+  } } });
+  await withFake(fake, () => step(run));
+  const [a, b] = run.output.claims as CheckedClaim[];
+  assert.equal(a.passed, true);
+  assert.equal(a.claim.creator_conviction, "medium");
+  assert.equal(b.claim.creator_conviction, "low", "a correction never raises conviction");
+  assert.deepEqual(run.output.convictionCorrections, [{ id: "c1", from: "high", to: "medium" }]);
+});

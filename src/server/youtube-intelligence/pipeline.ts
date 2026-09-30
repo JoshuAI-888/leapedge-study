@@ -640,6 +640,23 @@ type RejectedMention = {
  * A non-call keeps the sentiment the model assigned, which is why its rationale
  * is required.
  */
+const CONVICTION_ORDER = ["unspecified", "low", "medium", "high"] as const;
+/**
+ * An accepted call whose conviction the critic says is overstated keeps its
+ * idea at the supported conviction (prompt v10), instead of being rejected and
+ * lost. Only ever lowered, and recorded.
+ */
+function lowerConviction(run: Run, item: CheckedClaim, verdict: { verdict: string; corrected_conviction?: string }) {
+  const to = verdict.corrected_conviction as (typeof CONVICTION_ORDER)[number] | undefined;
+  if (verdict.verdict !== "accept" || !to) return;
+  const from = item.claim.creator_conviction;
+  if (CONVICTION_ORDER.indexOf(to) >= CONVICTION_ORDER.indexOf(from)) return;
+  item.claim = { ...item.claim, creator_conviction: to };
+  run.output.convictionCorrections = [
+    ...((run.output.convictionCorrections ?? []) as unknown[]),
+    { id: item.id, from, to },
+  ];
+}
 /** Items a model reply got wrong are dropped one by one and kept here with the reason. */
 function recordDroppedItems(run: Run, stage: string, dropped: DroppedExtractionItem[]) {
   if (!dropped.length) return;
@@ -1620,6 +1637,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         // asks unanswered evidence, while the call ledger retains every attempt.
         const checked = batchClaims.find(({ item }) => item.id === verdict.id)?.item;
         if (checked) {
+          lowerConviction(run, checked, verdict);
           checked.audit = { verdict: verdict.verdict, reason_en: verdict.reason_en };
           checked.passed = verdict.verdict === "accept";
           if (!checked.passed && !checked.reasons.includes(verdict.reason_en))
@@ -1641,6 +1659,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         // Keep reasons empty so an explicit recovery can audit this exact item.
         continue;
       }
+      lowerConviction(run, item, verdict);
       item.audit = { verdict: verdict.verdict, reason_en: verdict.reason_en };
       item.passed = verdict.verdict === "accept";
       if (!item.passed && !item.reasons.includes(verdict.reason_en)) item.reasons.push(verdict.reason_en);
