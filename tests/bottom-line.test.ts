@@ -92,3 +92,21 @@ test("writing a bottom line stores the kept sentences, records the rejected ones
     restore();
   }
 });
+
+test("possessives, common opening words and quantity words in digits do not reject a supported sentence", () => {
+  const { kept, rejected } = checkBottomLine(
+    {
+      sentences: [
+        { text: "Key point: JPMorgan's view is that rates stay high for two more quarters.", statementIds: ["s9"] },
+        { text: "Accordingly the creator waits.", statementIds: ["s9"] },
+        { text: "Key risk: Nvidia's margins halve.", statementIds: ["s9"] },
+      ],
+    },
+    [{ id: "s9", text: "JPMorgan expects rates to stay high for 2 more quarters; the creator waits." }],
+  );
+  assert.deepEqual(kept.map((k) => k.text), [
+    "Key point: JPMorgan's view is that rates stay high for two more quarters.",
+    "Accordingly the creator waits.",
+  ]);
+  assert.deepEqual(rejected.map((r) => r.reason), ["Not in its cited statements: halve."], "an added quantity is still refused, before the name");
+});
