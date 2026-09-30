@@ -2,6 +2,7 @@ import { z } from "zod";
 import * as R from "../research-store.ts";
 import { queueAudioReview } from "../audio-review.ts";
 import { startExperiment } from "../experiments.ts";
+import { backfillBottomLine } from "../bottom-line.ts";
 import { managedTranscript, SourcePending } from "../transcripts.ts";
 import { videoId } from "../../../features/youtube-intelligence/contracts.ts";
 import { writes, type ActionTable } from "./types.ts";
@@ -72,4 +73,5 @@ export const runs: ActionTable = {
   ),
   recoverAudit: writes(z.string(), (id) => R.continueAfterAuditFailure(id)),
   publishRun: writes(z.string(), (id) => R.publishRun(id)),
+  writeBottomLine: writes(z.string(), (briefId) => backfillBottomLine(briefId)),
 };

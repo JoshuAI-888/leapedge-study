@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { atAGlance, type AnalystViewData, type IdeaCardData } from "../analyst-view.ts";
+import { atAGlance, headerStance, type AnalystViewData, type IdeaCardData } from "../analyst-view.ts";
 import { Collapsible } from "./components.tsx";
 
 const ACTION_LABEL: Record<string, string> = {
@@ -42,7 +42,7 @@ function Idea({ idea, onSeek }: { idea: IdeaCardData; onSeek: (s: number) => voi
       <div className="yi-row">
         <span className="yi-ticker">{idea.ticker ?? idea.name}</span>
         {idea.action && <span className="yi-chip yi-trust-L2">{ACTION_LABEL[idea.action] ?? idea.action}</span>}
-        <span className={`yi-chip yi-stance-${idea.stance}`}>{idea.stance}</span>
+        {headerStance(idea.action, idea.stance) && <span className={`yi-chip yi-stance-${idea.stance}`}>{idea.stance}</span>}
         <span className="yi-chip yi-conviction">conviction {idea.conviction}</span>
         {who && <span className="yi-chip yi-stance-watch">{who}</span>}
       </div>

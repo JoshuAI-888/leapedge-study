@@ -208,3 +208,15 @@ test("key points never cite a card's evidence, filler conditions go, the creator
   assert.ok(!v.keyPoints.some((k) => /repeats the Wynn purchase/.test(k.text)));
   assert.doesNotMatch(analystNote(v), /## Key points[\s\S]*\[\d+:\d{2}\]\n?$/, "key points carry no approximate timestamps");
 });
+
+test("a checked bottom line replaces the selected summary, its sources leave key points, and a header never restates its action", () => {
+  const view = buildAnalystView(input({ bottomLine: [{ text: "The creator's thesis is Wynn, bought on the rates view.", statementIds: ["s1", "s2"] }] }));
+  assert.deepEqual(view.summary, [{ text: "The creator's thesis is Wynn, bought on the rates view.", at: 600 }]);
+  assert.equal(view.keyPoints.some((k) => k.text.startsWith("Rates are")), false, "a statement the bottom line condensed is not repeated");
+  const watching = input();
+  watching.claims = watching.claims.map((c) => (c.id === "c5" ? { ...c, claim: { ...c.claim, stance: "watch" } } : c));
+  const note = analystNote(buildAnalystView(watching));
+  assert.match(note, /### CELH \(Celsius Holdings, Inc\.\) · Watching · conviction/, "Watching · watch shows once");
+  assert.match(note, /### WYNN \(WYNN RESORTS LTD\) · Bought · long ·/, "a stance that adds to the action stays");
+  assert.deepEqual(buildAnalystView(input({ bottomLine: [] })).summary.map((s) => s.text), ["Wynn is the main new buy.", "Rates are the key macro risk."], "no bottom line falls back to the brief");
+});

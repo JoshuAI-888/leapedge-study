@@ -83,6 +83,8 @@ export type AnalystViewInput = {
   brief: Pick<ResearchBriefData, "sentences" | "mainTopics" | "omissions" | "evidence"> | null;
   segmentSeconds: Record<string, number | null>;
   transcriptionDoubts: { heard: string; likely: string; reason_en: string; start_seconds?: number | null }[];
+  /** The checked bottom line, when one was written: it replaces the selected summary sentences. */
+  bottomLine?: { text: string; statementIds: string[] }[] | null;
 };
 
 const ACTION_RANK: Record<string, number> = {
@@ -309,7 +311,11 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const mainTopics = new Set((input.brief?.mainTopics ?? []).slice(0, 3).map((t) => t.toLowerCase()));
   const summaryScore = (x: { materiality: number; kind: string; topic: string }) =>
     x.materiality * 10 + (mainTopics.has(x.topic.toLowerCase()) ? 5 : 0) + (KIND_BONUS[x.kind] ?? -2);
-  const summary = ranked
+  const bottomLine = input.bottomLine?.length ? input.bottomLine : null;
+  const cited = new Set(bottomLine?.flatMap((b) => b.statementIds) ?? []);
+  const summary = bottomLine
+    ? bottomLine.map((b) => ({ text: b.text, at: evidenceAt(sentences.filter((s) => b.statementIds.includes(s.id)).flatMap((s) => s.evidenceIds)) }))
+    : ranked
     .filter(({ s }) => (KIND_BONUS[s.kind] ?? -2) > -3 && !CONNECTIVE.test(s.text))
     .sort((a, b) => summaryScore(b.s) - summaryScore(a.s) || a.order - b.order)
     .slice(0, 3)
@@ -326,7 +332,7 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
     .map((n) => n.toLowerCase());
   const namesCard = (t: string) => cardNames.some((n) => new RegExp(`(^|[^\\p{L}\\p{N}])${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^\\p{L}\\p{N}]|$)`, "iu").test(t));
   const keyPoints = ranked
-    .filter(({ s }) => !inSummary.has(s.text) && !cardKinds.has(s.kind) && !namesCard(s.text) && !s.evidenceIds.some((id) => cardEvidence.has(id)))
+    .filter(({ s }) => !inSummary.has(s.text) && !cited.has(s.id) && !cardKinds.has(s.kind) && !namesCard(s.text) && !s.evidenceIds.some((id) => cardEvidence.has(id)))
     .slice(0, 6)
     .sort((a, b) => a.order - b.order)
     .map(({ s }) => ({ text: s.text, at: evidenceAt(s.evidenceIds), kind: s.kind }));
@@ -376,6 +382,11 @@ const ACTION_LABEL: Record<string, string> = {
   bought: "Bought", sold: "Sold", holding: "Holding", plan_buy: "Plans to buy", plan_sell: "Plans to sell",
   watch: "Watching", research: "Researching", avoid: "Avoid", view: "View",
 };
+/** The stance a card header shows, or null when it only restates the action ("Watching · watch"). */
+const RESTATES: Record<string, string> = { watch: "watch", research: "watch", holding: "hold", avoid: "avoid" };
+export function headerStance(action: string | null | undefined, stance: string) {
+  return action && RESTATES[action] === stance ? null : stance;
+}
 
 /** The view as plain text a PM can paste into a note; also what the benchmark judge reads. */
 export function analystNote(v: AnalystViewData): string {
@@ -387,7 +398,7 @@ export function analystNote(v: AnalystViewData): string {
     lines.push("## Ideas");
     for (const i of v.ideas) {
       const who = i.owner === "creator" ? "" : ` — ${i.owner === "guest" ? "guest" : "third party"}${i.ownerName ? `: ${i.ownerName}` : ""}`;
-      const doing = i.action ? `${ACTION_LABEL[i.action] ?? i.action} · ${i.stance}` : i.stance;
+      const doing = [i.action && (ACTION_LABEL[i.action] ?? i.action), headerStance(i.action, i.stance)].filter(Boolean).join(" · ");
       lines.push(`### ${i.ticker ?? i.name}${i.ticker && i.name !== i.ticker ? ` (${i.name})` : ""} · ${doing} · conviction ${i.conviction}${who}`);
       lines.push(i.thesis);
       const facts = [
