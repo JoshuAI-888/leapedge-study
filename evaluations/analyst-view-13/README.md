@@ -52,6 +52,10 @@ variation (about ±0.3).
 | 2E-R (13, replication) | same notes, fresh blind judges | 3.69 | 3.62 | 2.69 | 3.00 | 3.00 | 2.85 |
 | 2F (13, local re-render) | 2E notes, but key points keep what the bottom line condenses | 3.46 | 3.54 | 2.69 | 2.85 | 3.00 | 2.85 |
 | 2F-R (13, replication) | same notes, fresh blind judges | 3.46 | 3.54 | 2.85 | 3.00 | 3.23 | 2.85 |
+| 2G (13) | prompt evidence-first.web.v10-pm1 (numbers in theses, relayed views credited, spoken tickers, main instrument always an idea) + fixed bottom-line check | 3.54 | 3.54 | 3.15 | 2.92 | 3.15 | 2.69 |
+| 2G-R (13, replication) | same notes, fresh blind judges | 3.46 | 3.69 | 3.23 | 2.85 | 3.15 | 2.62 |
+| 2H (13, local re-render) | 2G notes; a third party's view on the creator's instrument folds into that card; misheard values show a likely reading | 3.38 | 3.69 | 3.08 | 2.85 | 3.15 | 2.69 |
+| 2H-R (13, replication) | same notes, fresh blind judges | 3.31 | 3.54 | 3.23 | 3.00 | 3.08 | 2.85 |
 
 LeapEdge's notes were identical in 2D and 2D-R, yet its clarity moved 3.23 to
 3.77: one round's judge noise is about ±0.3, so a clarity win counts only when
@@ -74,3 +78,28 @@ LeapEdge's; our remaining losses are thin coverage and misattributed speakers.
 
 Beat LeapEdge on all four dimensions, with no drop in coverage or fidelity. The
 plan is in `docs/delivery/analyst-view-plan.md`.
+
+Round 2G tested prompt `evidence-first.web.v10-pm1` (added through the prompt
+action, not yet in `prompt-versions.json`). It moved actionability from behind
+to ahead (3.19 against 2.89 averaged) and widened the overall lead (3.15
+against 2.66), with coverage level (3.12 against 3.15); clarity averaged 3.50
+against 3.62. Across six rounds LeapEdge's unchanged notes scored 3.54-3.69 on
+clarity and ours 3.46-3.62: clarity sits at parity within judge noise.
+
+Pooled over 52 blind judgments each (paired by video, one standard error):
+the v10 notes (2E, 2F) sit at clarity parity, ours 3.54 against 3.56
+(difference -0.02 +/- 0.13); the v10-pm1 notes (2G, 2H) trade clarity for
+actionability, clarity 3.42 against 3.62 (-0.19 +/- 0.13) but actionability
+3.17 against 2.90 and overall 3.13 against 2.71. In 2H the likely-reading flag
+also surfaced a bad transcription guess ("4,215" as "2,415 or 1,915"); the flag
+now fires only for a plain slip of the ear (one number inside another).
+
+## Where it stands (30 Sep)
+
+Optimisation is paused at the user's request. Production now defaults to
+`evidence-first.web.v10-pm1` with the checked bottom line on for new runs.
+Parked, not shipped: folding a third party's view into the creator's card and
+showing a likely reading for a misheard number (rounds 2H/2H-R, no measurable
+gain), and keeping supporting figures in the key points of one-stock videos
+(rendered, not judged).
+
