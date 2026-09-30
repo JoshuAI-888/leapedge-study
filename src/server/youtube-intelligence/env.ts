@@ -25,6 +25,7 @@ export const Env = z.object({
   SUPADATA_API_KEY: secret, // optional; standby provider
   FMP_API_KEY: secret, // required; prices, filings, news
   EXA_API_KEY: secret, // optional; date-bounded web sources
+  TYPESAFE_API_KEY: secret, // optional; Jev faithfulness pre-screen and comparison
   DATABASE_URL: secret, // required; the POOLED Postgres endpoint
   DATABASE_URL_UNPOOLED: secret, // required when hosted; the DIRECT endpoint
   YTI_PRODUCTION_DB_HOST: secret, // required when hosted; both database guards
