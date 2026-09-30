@@ -47,11 +47,14 @@ const FeatureSchema = z.object({
 const LedgerSchema = z.object({ features: z.array(FeatureSchema) });
 export type Feature = z.infer<typeof FeatureSchema>;
 
+/** Standalone phases in order. Phase 4 (Finradar integration) is excluded; phase 5 is the LeapEdge-gap work added 29 September 2026. */
+export const STANDALONE_PHASES = [2, 3, 5] as const;
+
 export function selectWork(features: readonly Feature[]) {
   const complete = (f: Feature) =>
     f.status === "merged" || f.status === "removed";
   const phase =
-    [2, 3].find((p) => features.some((f) => f.phase === p && !complete(f))) ??
+    STANDALONE_PHASES.find((p) => features.some((f) => f.phase === p && !complete(f))) ??
     null;
   const byId = new Map(features.map((f) => [f.id, f]));
   const remaining = features.filter(
@@ -202,11 +205,11 @@ async function main() {
       JSON.stringify(
         {
           scope:
-            "Standalone only: phase 2 then phase 3; stop before Finradar phase 4",
+            "Standalone only: phases 2, 3 then 5 (LeapEdge gaps); Finradar phase 4 stays excluded",
           ...work,
           ...(command === "status"
             ? {
-                counts: [2, 3].map((phase) => ({
+                counts: STANDALONE_PHASES.map((phase) => ({
                   phase,
                   merged: ledger.features.filter(
                     (f) => f.phase === phase && f.status === "merged",

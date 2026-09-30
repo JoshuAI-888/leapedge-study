@@ -1,0 +1,460 @@
+/* Phase 5 (analysis lane). Global classes use the yi- prefix and the --yi-* tokens from workspace.css. */
+
+/* F61 — header, verdict, summary, key points and tabs. */
+.yi-an-header {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+.yi-an-thumb {
+  flex: none;
+  width: 160px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--yi-line);
+  background: var(--yi-page);
+}
+.yi-an-thumb-empty {
+  display: grid;
+  place-items: center;
+  color: var(--yi-muted);
+  font-size: 22px;
+}
+.yi-an-head-text {
+  min-width: 0;
+  flex: 1;
+}
+.yi-workspace .yi-an-head-text h1 {
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  margin: 4px 0 6px;
+  overflow-wrap: anywhere;
+}
+.yi-an-meta {
+  margin: 0;
+  color: var(--yi-muted);
+  font-size: 13px;
+}
+.yi-an-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+.yi-workspace .yi-an-rerun {
+  min-height: 30px;
+  padding: 3px 12px;
+  font-size: 12px;
+}
+.yi-an-confirm {
+  margin-bottom: 16px;
+}
+.yi-an-confirm p {
+  margin: 0 0 8px;
+}
+.yi-verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  padding: 14px 18px;
+  border: 1px solid var(--yi-line);
+  border-radius: 14px;
+  background: var(--yi-surface);
+  margin-bottom: 14px;
+}
+.yi-verdict-head strong {
+  font-size: 18px;
+}
+.yi-verdict .yi-split {
+  min-width: 180px;
+}
+.yi-verdict-instruments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.yi-verdict-empty,
+.yi-verdict-working {
+  display: block;
+}
+.yi-verdict-empty strong {
+  font-size: 16px;
+}
+.yi-verdict-line {
+  font-size: 12px;
+  color: var(--yi-muted);
+  font-variant-numeric: tabular-nums;
+}
+.yi-verdict-tickers {
+  color: var(--yi-ink);
+  font-weight: 600;
+}
+.yi-an-summary {
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 16px;
+  max-width: 78ch;
+}
+.yi-an-summary-empty {
+  margin: 0 0 16px;
+  font-size: 13px;
+}
+.yi-keypoints {
+  margin-bottom: 20px;
+}
+.yi-workspace .yi-keypoints h2 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+.yi-keypoints ol {
+  margin: 0;
+  padding-left: 24px;
+  display: grid;
+  gap: 4px;
+  max-width: 90ch;
+}
+.yi-keypoints li {
+  line-height: 1.45;
+}
+.yi-keypoints li > span:first-child {
+  margin-right: 8px;
+}
+.yi-workspace .yi-keypoint-seek {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  min-height: 24px;
+  padding: 0 4px;
+}
+.yi-keypoints p {
+  font-size: 12px;
+  margin: 6px 0 0;
+}
+.yi-an-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--yi-line);
+  margin: 8px 0 18px;
+  overflow-x: auto;
+}
+.yi-workspace .yi-an-tab {
+  background: none;
+  color: var(--yi-muted);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 8px 14px;
+  min-height: 40px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.yi-workspace .yi-an-tab[aria-selected="true"] {
+  color: var(--yi-ink);
+  border-bottom-color: var(--yi-primary);
+}
+.yi-an-panel > * + * {
+  margin-top: 18px;
+}
+.yi-an-panel > .yi-trust-strip {
+  margin-bottom: 18px;
+}
+/* The brief's generate button reads as a secondary action inside its tab. */
+.yi-workspace .yi-an-brief-tab #research-brief > button,
+.yi-workspace .yi-an-brief-tab #research-brief .yi-section-title > button {
+  background: var(--yi-surface);
+  color: var(--yi-ink);
+  border-color: var(--yi-line);
+}
+/* Dark mode: workspace.css paints every button primary blue; tabs and the
+   brief's secondary action keep their own look. */
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) .yi-an-tab {
+    background: none;
+    color: var(--yi-muted);
+  }
+  .yi-workspace:not([data-theme="light"]) .yi-an-tab[aria-selected="true"] {
+    color: var(--yi-ink);
+  }
+  .yi-workspace:not([data-theme="light"]) .yi-an-brief-tab #research-brief > button,
+  .yi-workspace:not([data-theme="light"])
+    .yi-an-brief-tab
+    #research-brief
+    .yi-section-title
+    > button {
+    background: var(--yi-surface);
+    color: var(--yi-ink);
+  }
+}
+.yi-workspace[data-theme="dark"] .yi-an-tab {
+  background: none;
+  color: var(--yi-muted);
+}
+.yi-workspace[data-theme="dark"] .yi-an-tab[aria-selected="true"] {
+  color: var(--yi-ink);
+}
+.yi-workspace[data-theme="dark"] .yi-an-brief-tab #research-brief > button,
+.yi-workspace[data-theme="dark"]
+  .yi-an-brief-tab
+  #research-brief
+  .yi-section-title
+  > button {
+  background: var(--yi-surface);
+  color: var(--yi-ink);
+}
+@media (max-width: 640px) {
+  .yi-an-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .yi-an-thumb {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+  .yi-an-thumb-empty {
+    display: none;
+  }
+  .yi-workspace .yi-an-head-text h1 {
+    font-size: 21px;
+  }
+  .yi-verdict {
+    padding: 12px 14px;
+  }
+}
+
+/* F71 — follow prompt banner. */
+.yi-follow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 18px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  border: 1px dashed var(--yi-line);
+  border-radius: 12px;
+  background: var(--yi-page);
+}
+.yi-follow-text {
+  min-width: 0;
+  flex: 1 1 320px;
+}
+.yi-follow-text p {
+  margin: 0 0 4px;
+}
+.yi-follow-text .yi-muted {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-workspace .yi-follow-process {
+  font-size: 13px;
+  margin-top: 6px;
+}
+.yi-follow-note {
+  font-size: 12px;
+  color: var(--yi-muted);
+}
+.yi-follow-actions {
+  flex: none;
+}
+
+/* F72 — step progress, failure banner, mini progress and inline retry. */
+.yi-progress {
+  padding: 14px 18px;
+  border: 1px solid var(--yi-line);
+  border-radius: 14px;
+  background: var(--yi-surface);
+  margin-bottom: 14px;
+}
+.yi-progress-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+.yi-progress-head p {
+  margin: 0;
+}
+.yi-progress-elapsed {
+  font-variant-numeric: tabular-nums;
+  color: var(--yi-muted);
+}
+.yi-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  padding: 0;
+  margin: 10px 0 6px;
+}
+.yi-step {
+  font-size: 12px;
+  color: var(--yi-muted);
+  min-width: 0;
+}
+.yi-step i {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--yi-line);
+  margin-bottom: 4px;
+}
+.yi-step span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-step-done i {
+  background: var(--yi-primary);
+}
+.yi-step-current i {
+  background: linear-gradient(90deg, var(--yi-primary) 50%, var(--yi-line) 50%);
+}
+.yi-step-current span,
+.yi-step-failed span {
+  color: var(--yi-ink);
+  font-weight: 600;
+}
+.yi-step-failed i {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--yi-ink) 0 4px,
+    transparent 4px 8px
+  );
+}
+.yi-progress-note {
+  font-size: 12px;
+  margin: 0;
+}
+.yi-progress-stuck {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-top: 10px;
+}
+.yi-progress-stuck p {
+  margin: 0;
+  font-weight: 600;
+}
+.yi-failure {
+  margin-bottom: 14px;
+}
+.yi-failure p {
+  margin: 0 0 6px;
+}
+.yi-failure .yi-steps {
+  margin: 8px 0 10px;
+}
+.yi-failure-cost {
+  font-size: 13px;
+}
+.yi-failure-details {
+  margin-top: 8px;
+  font-size: 12px;
+}
+.yi-failure-details p {
+  overflow-wrap: anywhere;
+}
+.yi-mini-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--yi-muted);
+  white-space: nowrap;
+}
+.yi-mini-steps {
+  display: inline-grid;
+  grid-template-columns: repeat(5, 10px);
+  gap: 2px;
+}
+.yi-mini-steps i {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--yi-line);
+}
+.yi-mini-steps .yi-step-done {
+  background: var(--yi-primary);
+}
+.yi-mini-steps .yi-step-current {
+  background: linear-gradient(90deg, var(--yi-primary) 50%, var(--yi-line) 50%);
+}
+.yi-workspace .yi-inline-retry {
+  font-size: 12px;
+  min-height: 24px;
+  padding: 0 6px;
+}
+
+/* F73 — model-call usage tables. */
+.yi-usage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.yi-usage-table th,
+.yi-usage-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--yi-line);
+  text-align: left;
+  vertical-align: top;
+}
+.yi-usage-table .yi-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.yi-usage-table tfoot th,
+.yi-usage-table tfoot td {
+  font-weight: 600;
+  border-bottom: 0;
+  border-top: 2px solid var(--yi-line);
+}
+.yi-usage-flag {
+  color: var(--yi-muted);
+  font-size: 12px;
+}
+.yi-usage-note {
+  display: block;
+  color: var(--yi-muted);
+  font-size: 11px;
+}
+@media (max-width: 640px) {
+  .yi-step {
+    font-size: 11px;
+  }
+  .yi-progress,
+  .yi-follow {
+    padding: 12px 14px;
+  }
+  /* All three tab labels fit at 390 px instead of "Processing d…" scrolling off. */
+  .yi-workspace .yi-an-tab {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+}
+/* Numeric column headings line up with their right-aligned figures. */
+.yi-usage-table thead th {
+  text-align: right;
+}
+.yi-usage-table thead th:first-child,
+.yi-usage-calls thead th:nth-child(2) {
+  text-align: left;
+}
+.yi-activity-progress {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+.yi-activity-progress:empty {
+  display: none;
+}
+.yi-workspace .yi-activity-progress .yi-inline-retry {
+  padding: 0;
+}

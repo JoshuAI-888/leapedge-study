@@ -133,6 +133,22 @@ export const Claim = z.object({
   catalysts: z
     .array(z.object({ text_en: englishOutput, date_original: z.string().nullable() }))
     .optional(),
+  /**
+   * Call fields (F60, prompt v11 `callFields`): when the call ends or must be
+   * reviewed, and the macro or sector theme of a claim with no listed ticker.
+   * Optional so every stored claim still parses. A malformed expiry date
+   * degrades to null rather than rejecting the extraction, and the original
+   * wording is always kept. macro_theme is normalised to the fixed vocabulary
+   * (instrument-kind.ts) when the claim is published.
+   */
+  expiry: z
+    .object({
+      date: z.iso.date().nullable().catch(null),
+      original: z.string().min(1),
+    })
+    .nullable()
+    .optional(),
+  macro_theme: z.string().nullable().optional(),
   evidence: z
     .array(
       z.object({

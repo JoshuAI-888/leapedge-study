@@ -14,10 +14,10 @@ import { z } from "zod";
  * each is machine-checkable. Anything the plan asserts, a test should assert.
  */
 
-const PHASES = [0, 1, 2, 3, 4] as const;
+const PHASES = [0, 1, 2, 3, 4, 5] as const;
 const Feature = z.object({
   id: z.string().regex(/^[FG]\d{2}[a-z]?$/),
-  phase: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4)]).nullable(),
+  phase: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).nullable(),
   lane: z.string().min(1),
   title: z.string().min(10),
   spec: z.string().min(1),

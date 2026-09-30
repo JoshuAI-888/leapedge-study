@@ -37,3 +37,20 @@ export const action = <T = unknown>(
   name: string,
   body?: unknown,
 ) => request<T>(`/api/youtube-intelligence/${resource}/${name}`, body);
+/**
+ * A read action that takes input (the query resource, F56): GET with the input
+ * as JSON in `?input=`, so it stays available in a read-only preview.
+ */
+export const read = <T = unknown>(
+  resource: string,
+  name: string,
+  input: unknown,
+  signal?: AbortSignal,
+) =>
+  request<T>(
+    `/api/youtube-intelligence/${resource}/${name}?input=${encodeURIComponent(JSON.stringify(input))}`,
+    undefined,
+    signal,
+  );
+/** Same as `read`; the name the Saved page (F75) uses. */
+export const readAction = read;

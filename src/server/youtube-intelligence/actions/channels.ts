@@ -10,6 +10,7 @@ import {
 } from "../channels.ts";
 import { seedCatalog } from "../seed/channels.ts";
 import { loadCostMetrics } from "../cost-metrics.ts";
+import { ChannelStatsInput, channelStats } from "../channel-stats.ts";
 import { reads, nothing, writes, type ActionTable } from "./types.ts";
 export const channels: ActionTable = {
   seedCatalog: writes(nothing, () => seedCatalog()),
@@ -18,6 +19,8 @@ export const channels: ActionTable = {
     (v) => saveProcessingSelection(v.channelIds),
   ),
   costMetrics: reads(nothing, () => loadCostMetrics()),
+  // F67: per followed channel activity, lean and status for the Channels table.
+  channelStats: reads(ChannelStatsInput, (v) => channelStats(v)),
   discoverChannels: writes(
     z.strictObject({
       query: z.string().trim().min(3).max(150),

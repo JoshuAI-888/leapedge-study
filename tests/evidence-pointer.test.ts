@@ -11,7 +11,12 @@ const { deriveEvidence, validateClaim, Claim, Source } = await import(
 const { materializeEvidenceRanges } = await import(
   "../src/features/youtube-intelligence/evidence-selection.ts"
 );
-const { extractionResponseSchema, PointerExtraction, parsePointerExtraction } =
+const {
+  extractionResponseSchema,
+  callFieldsExtractionResponseSchema,
+  PointerExtraction,
+  parsePointerExtraction,
+} =
   await import("../src/server/youtube-intelligence/schemas/extraction.ts");
 const { FakeModelTransport } = await import(
   "../src/server/youtube-intelligence/transport/fake.ts"
@@ -215,7 +220,11 @@ test("validateClaim records a stale pointer span as a warning, never a rejection
   assert.deepEqual(legacyWarnings, []);
 });
 
-async function runSynthesis(pointerEvidence: boolean, reply: unknown) {
+async function runSynthesis(
+  pointerEvidence: boolean,
+  reply: unknown,
+  flags: Record<string, unknown> = {},
+) {
   const model = "google/gemini-3.8-flash";
   const snapshot = {
     id: pointerEvidence ? "pointer.test.v1" : "evidence-first.web.v5",
@@ -225,6 +234,7 @@ async function runSynthesis(pointerEvidence: boolean, reply: unknown) {
     synthesis: "Summarise the supplied claims from the source fixture.",
     critique: "Audit the supplied claim against the source fixture.",
     ...(pointerEvidence ? { pointerEvidence: true } : {}),
+    ...flags,
   };
   const run = await create(
     pointerEvidence ? "pointer-run" : "legacy-run",
@@ -272,6 +282,43 @@ test("a pointer-evidence synthesis step copies spans and never rejects on a stri
   );
   assert.equal(run.output.validationVersion, "pointer-evidence.v1");
   assert.equal(run.stage, "critique");
+});
+
+test("a call-fields version sends the call-fields schema and keeps action, catalysts and expiry", async () => {
+  const { run, fake } = await runSynthesis(
+    true,
+    {
+      claims: [
+        {
+          ...pointerClaim,
+          action: "plan_sell",
+          owner: "creator",
+          owner_name: null,
+          option: null,
+          size_original: null,
+          catalysts: [{ text_en: "CPI release", date_original: null }],
+          expiry: { date: "tomorrow", original: "by tomorrow" },
+          macro_theme: null,
+        },
+      ],
+      key_points: [],
+      transcription_doubts: [],
+    },
+    { callFields: true, structuredIdeas: true },
+  );
+  const request = fake.requestsFor("synthesis")[0];
+  assert.deepEqual(request.responseSchema, callFieldsExtractionResponseSchema);
+  const [item] = run.output.claims as {
+    claim: {
+      action?: string;
+      catalysts?: { text_en: string; date_original: string | null }[];
+      expiry?: { date: string | null; original: string };
+    };
+  }[];
+  assert.equal(item.claim.action, "plan_sell");
+  assert.deepEqual(item.claim.catalysts, [{ text_en: "CPI release", date_original: null }]);
+  // A date the model could not state as a calendar date is dropped, not guessed.
+  assert.deepEqual(item.claim.expiry, { date: null, original: "by tomorrow" });
 });
 
 test("a v5 run through the same fake keeps the legacy quote path unchanged", async () => {

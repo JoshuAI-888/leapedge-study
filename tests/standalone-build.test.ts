@@ -21,6 +21,13 @@ test("Phase 3 opens after phase 2 completes and phase 4 is never selected", () =
   assert.deepEqual(selectWork([feature("F26", 2, "todo", ["missing"])]).ready, []);
 });
 
+test("Phase 5 opens after phase 3 completes, skipping the excluded phase 4", () => {
+  const features = [feature("F49", 3, "merged"), feature("F50", 4), feature("F56", 5), feature("F62", 5, "todo", ["F56"])];
+  assert.deepEqual(selectWork(features).ready.map(f => f.id), ["F56"]);
+  assert.equal(selectWork(features).phase, 5);
+  assert.deepEqual(selectWork([feature("F49", 3), feature("F56", 5)]).ready.map(f => f.id), ["F49"]);
+});
+
 test("Failed mandatory checks stop execution without advancing the ledger", async () => {
   const calls: string[] = [];
   const report = await runVerification(verificationPlan(true), async check => {

@@ -18,9 +18,14 @@ export type MentionRow = {
   trustLevel: TrustLevel;
   spanId: string | null;
   publishedAt: string | null;
+  /**
+   * The instrument as spoken (migration 0010), so a macro or sector reference,
+   * which has no ticker, can be grouped with instrument-kind.ts.
+   */
+  instrument?: string | null;
 };
 const COLUMNS =
-  "id,run_id,video_id,channel_id,ticker,stance,sentiment,is_call,claim_id,trust_level,span_id,published_at";
+  "id,run_id,video_id,channel_id,ticker,stance,sentiment,is_call,claim_id,trust_level,span_id,published_at,instrument";
 function convert(r: Record<string, unknown>): MentionRow {
   const trust = String(r.trust_level ?? "L0");
   return {
@@ -37,12 +42,13 @@ function convert(r: Record<string, unknown>): MentionRow {
       trust === "L1" || trust === "L2" || trust === "L3" ? trust : "L0",
     spanId: r.span_id === null ? null : String(r.span_id),
     publishedAt: iso(r.published_at),
+    instrument: r.instrument == null ? null : String(r.instrument),
   };
 }
 export async function upsertMention(mention: MentionRow) {
   const result = await database
     .prepare(
-      `INSERT INTO mentions(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+      `INSERT INTO mentions(${COLUMNS}) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
        ON CONFLICT(id) DO UPDATE SET
          run_id=excluded.run_id,
          video_id=excluded.video_id,
@@ -54,7 +60,8 @@ export async function upsertMention(mention: MentionRow) {
          claim_id=excluded.claim_id,
          trust_level=GREATEST(mentions.trust_level,excluded.trust_level),
          span_id=excluded.span_id,
-         published_at=excluded.published_at`,
+         published_at=excluded.published_at,
+         instrument=excluded.instrument`,
     )
     .run(
       mention.id,
@@ -69,6 +76,7 @@ export async function upsertMention(mention: MentionRow) {
       mention.trustLevel,
       mention.spanId,
       mention.publishedAt,
+      mention.instrument ?? null,
     );
   return result.changes > 0;
 }

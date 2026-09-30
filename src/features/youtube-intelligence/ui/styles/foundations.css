@@ -1,0 +1,470 @@
+/* Phase 5 (foundations lane). Global classes use the yi- prefix and the --yi-* tokens from workspace.css. */
+
+/* F57 — sentiment palette (validated for colour-vision deficiency; light ΔE 9.1, dark ΔE 9.7). */
+.yi-workspace {
+  --yi-bullish: #0f8f6f;
+  --yi-neutral: #8a94a6;
+  --yi-bearish: #c7492e;
+}
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) {
+    --yi-bullish: #2aa384;
+    --yi-neutral: #8b95a8;
+    --yi-bearish: #d9603e;
+  }
+}
+.yi-workspace[data-theme="dark"] {
+  --yi-bullish: #2aa384;
+  --yi-neutral: #8b95a8;
+  --yi-bearish: #d9603e;
+}
+
+/* F57 audit fix — short pages align to the top of the frame. globals.css gives
+   every <main> `margin: auto`, which centred .yi-main vertically in its grid cell. */
+.yi-frame {
+  align-items: start;
+}
+.yi-workspace .yi-main {
+  align-self: start;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* F57 — grouped module sidebar (decision D2) and the quick-search slot (F76 fills it). */
+.yi-sidebar {
+  overflow-y: auto;
+}
+.yi-workspace .yi-sidebar .yi-quick-search-slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  padding: 7px 9px;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  background: var(--yi-page);
+  color: var(--yi-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.yi-workspace .yi-sidebar .yi-quick-search-slot:hover {
+  border-color: var(--yi-muted);
+  background: var(--yi-page);
+}
+.yi-quick-search-slot span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-quick-search-slot kbd {
+  font: inherit;
+  font-size: 10.5px;
+  border: 1px solid var(--yi-line);
+  border-radius: 4px;
+  padding: 0 4px;
+  background: var(--yi-surface);
+}
+.yi-sidebar .yi-nav-groups {
+  gap: 0;
+}
+.yi-sidebar .yi-nav-group-label {
+  margin: 14px 12px 3px;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--yi-muted);
+}
+.yi-nav-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.yi-workspace .yi-sidebar .yi-nav-group a {
+  padding: 7px 12px;
+}
+.yi-sidebar .yi-sidebar-bottom {
+  margin-top: auto;
+}
+
+/* F57 — sentiment split bar. Order is fixed: bullish, neutral, bearish. */
+.yi-split {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+.yi-split-bar {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+  width: 88px;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--yi-surface);
+}
+.yi-split-bar i {
+  display: block;
+  flex: 0 1 0;
+  min-width: 2px;
+  height: 100%;
+}
+.yi-split-bar .yi-split-bullish {
+  background: var(--yi-bullish);
+}
+.yi-split-bar .yi-split-neutral {
+  background: var(--yi-neutral);
+}
+.yi-split-bar .yi-split-bearish {
+  background: var(--yi-bearish);
+}
+.yi-split-bar .yi-split-empty {
+  flex: 1 1 0;
+  background: var(--yi-line);
+}
+.yi-split-counts {
+  font-size: 12px;
+  color: var(--yi-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* F57 — headline tiles and sparkline. Change lines are text with a sign, never red or green. */
+.yi-stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin: 0 0 16px;
+}
+.yi-stat-tile {
+  min-width: 0;
+  border: 1px solid var(--yi-line);
+  border-radius: 10px;
+  padding: 9px 11px;
+  background: var(--yi-surface);
+}
+.yi-stat-tile dt {
+  font-size: 11px;
+  color: var(--yi-muted);
+}
+.yi-stat-tile dd {
+  margin: 0;
+}
+.yi-stat-value {
+  font-size: 19px;
+  font-weight: 650;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+.yi-stat-delta {
+  font-size: 11px;
+  color: var(--yi-muted);
+}
+.yi-stat-tile .yi-stat-visual {
+  margin-top: 4px;
+}
+.yi-sparkline {
+  display: block;
+  color: var(--yi-ink);
+  max-width: 100%;
+  overflow: visible;
+}
+@media (max-width: 720px) {
+  .yi-stat-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* F57 — "N calls hidden by <filter> · Show them". */
+.yi-hidden-by-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 4px;
+  margin: 0 0 14px;
+  padding: 4px 12px;
+  border: 1px dashed var(--yi-line);
+  border-radius: 8px;
+  color: var(--yi-muted);
+  font-size: 12.5px;
+}
+.yi-calls-panel > .yi-hidden-by-filter {
+  margin: 0 20px 14px;
+}
+.yi-workspace .yi-hidden-by-filter .yi-text-button {
+  min-height: 28px;
+  font-weight: 600;
+}
+
+/* F57 audit fix — Analysis: the whole claim card selects its evidence. */
+.yi-claim-select {
+  border-radius: 12px;
+  cursor: pointer;
+}
+.yi-claim-select:focus-visible {
+  outline: 2px solid var(--yi-primary);
+  outline-offset: 3px;
+}
+.yi-claim-select[aria-pressed="true"] .yi-claim {
+  border-color: var(--yi-primary);
+}
+
+/* F57 audit fix — evidence panel is sticky with no internal scroll box (tall panels get their top inline). */
+.yi-analysis-grid > .yi-evidence {
+  position: sticky;
+  top: 76px;
+  max-height: none;
+  overflow: visible;
+}
+.yi-evidence-slot > .yi-evidence {
+  position: static;
+  max-height: none;
+  overflow: visible;
+  margin-top: -8px;
+}
+@media (min-width: 900px) and (max-width: 1150px) {
+  .yi-analysis-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+@media (max-width: 899.98px) {
+  .yi-analysis-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* F57 audit fix — zero-count trust pills are muted. */
+.yi-trust-zero {
+  color: var(--yi-muted);
+  opacity: 0.55;
+}
+
+/* F57 audit fix — Settings section anchors and a sticky save bar. */
+.yi-settings-anchors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: -8px 0 18px;
+  font-size: 13px;
+}
+.yi-settings-anchors a {
+  font-weight: 550;
+}
+.yi-settings-section {
+  scroll-margin-top: 76px;
+}
+.yi-workspace .yi-settings-savebar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin: 0 -20px -20px;
+  padding: 12px 20px;
+  background: var(--yi-surface);
+  border-top: 1px solid var(--yi-line);
+  box-shadow: 0 -6px 14px #17204414;
+}
+
+/* F57 audit fix — internal catalogue provenance sits behind a disclosure. */
+.yi-provenance {
+  margin: 10px 0 0;
+}
+.yi-provenance summary {
+  cursor: pointer;
+  color: var(--yi-primary);
+  font-size: 12px;
+}
+.yi-provenance p {
+  font-size: 12px;
+}
+/* F58 trading-day label and market status (data/extraction lane). */
+.yi-trading-day {
+  white-space: nowrap;
+  cursor: help;
+  text-decoration: underline dotted var(--yi-line);
+  text-underline-offset: 3px;
+}
+.yi-trading-day:focus-visible {
+  outline: 2px solid var(--yi-primary);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.yi-market-status {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--yi-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* F59 instrument label (data/extraction lane). Tickers are ink; macro and
+   sector themes use a dashed outline and small caps so they read as a
+   different kind of thing without colour. */
+.yi-instrument {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--yi-ink);
+  white-space: nowrap;
+}
+.yi-workspace a.yi-instrument {
+  color: var(--yi-ink);
+}
+.yi-workspace a.yi-instrument:hover {
+  color: var(--yi-primary);
+}
+.yi-instrument-theme {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  border: 1px dashed var(--yi-muted);
+  border-radius: 5px;
+  padding: 0 6px;
+  line-height: 1.7;
+}
+.yi-instrument-unresolved {
+  font-weight: 600;
+  color: var(--yi-muted);
+  white-space: normal;
+}
+.yi-instrument-hint {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--yi-muted);
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+
+/* F60 call card v2 and level chips (data/extraction lane). */
+.yi-card2 h3 {
+  margin: 10px 0 6px;
+}
+.yi-card2-line1 {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.yi-card2-when {
+  margin-left: auto;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--yi-muted);
+}
+.yi-card2-when > span + span::before {
+  content: "· ";
+}
+.yi-card2-expiry-soon,
+.yi-card2-expiry-expired {
+  color: #805300;
+  font-weight: 650;
+}
+.yi-card2-action {
+  margin: 0 0 8px;
+}
+.yi-card2-action > span,
+.yi-card2-catalysts > span:first-child {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--yi-muted);
+  margin-right: 6px;
+}
+.yi-card2-levels {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 0;
+}
+.yi-card2-level {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  border: 1px solid var(--yi-line);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+.yi-card2-level em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--yi-muted);
+}
+.yi-card2-unparsed > span {
+  text-decoration: underline dotted var(--yi-muted);
+  text-underline-offset: 3px;
+}
+.yi-card2-catalysts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+.yi-card2-more {
+  margin: 8px 0 4px;
+  font-size: 13px;
+}
+.yi-card2-more summary {
+  cursor: pointer;
+  color: var(--yi-muted);
+}
+.yi-card2-more h4 {
+  margin: 8px 0 2px;
+  font-size: 12px;
+}
+.yi-card2-more ul {
+  margin: 0;
+  padding-left: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  .yi-workspace:not([data-theme="light"]) .yi-card2-expiry-soon,
+  .yi-workspace:not([data-theme="light"]) .yi-card2-expiry-expired {
+    color: #ecd097;
+  }
+}
+.yi-workspace[data-theme="dark"] .yi-card2-expiry-soon,
+.yi-workspace[data-theme="dark"] .yi-card2-expiry-expired {
+  color: #ecd097;
+}
+@media (max-width: 600px) {
+  .yi-card2-when {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}
+/* Registry column headings (MetricHeading) in every table: plain text in both
+   themes (the dark-theme button fill must not reach them), and full contrast
+   when the column is not sortable (its button is disabled, not faded). */
+.yi-workspace table thead th button[type] {
+  background: none;
+  color: inherit;
+}
+.yi-workspace table thead th button[type]:disabled {
+  opacity: 1;
+  cursor: help;
+}
+
+/* F77 fix — a zero-count trust pill is an outline, never a filled badge, so
+   "Human-verified 0" cannot read as a human-reviewed mark in either theme. */
+.yi-workspace .yi-trust-zero .yi-trust-L0,
+.yi-workspace .yi-trust-zero .yi-trust-L1,
+.yi-workspace .yi-trust-zero .yi-trust-L2,
+.yi-workspace .yi-trust-zero .yi-trust-L3 {
+  background: transparent;
+  color: var(--yi-muted);
+  border: 1px dashed var(--yi-line);
+}

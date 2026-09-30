@@ -10,6 +10,11 @@ import {
   OWNERS,
   SENTIMENTS,
 } from "../../../features/youtube-intelligence/contracts.ts";
+import {
+  GICS_SECTORS,
+  MACRO_THEMES,
+  SECTOR_SUBTHEMES,
+} from "../../../features/youtube-intelligence/instrument-kind.ts";
 /**
  * The extraction output contract as a provider response schema (spec 4.2).
  *
@@ -219,8 +224,47 @@ export const structuredExtractionResponseSchema = {
   },
   required: ["claims", "key_points", "mentions", "transcription_doubts"],
 };
+/**
+ * Call fields (F60, prompt v11): the structured-idea contract of v9/v10 plus an
+ * expiry and a macro/sector theme on each claim. Action and catalysts come from
+ * the structured-idea fields, not a second copy. Used only by prompt versions
+ * that declare `callFields`, so every earlier version keeps its request bytes.
+ * The application parses level numbers itself.
+ */
+const callFieldsClaimSchema = {
+  ...structuredClaimSchema,
+  properties: {
+    ...structuredClaimSchema.properties,
+    expiry: {
+      type: "object",
+      nullable: true,
+      properties: {
+        date: stringOrNull,
+        original: { type: "string", minLength: 1 },
+      },
+      required: ["date", "original"],
+    },
+    macro_theme: {
+      type: "string",
+      nullable: true,
+      enum: [
+        ...MACRO_THEMES,
+        ...GICS_SECTORS,
+        ...SECTOR_SUBTHEMES.map((s) => `${s.sector} / ${s.name}`),
+      ],
+    },
+  },
+};
+export const callFieldsExtractionResponseSchema = {
+  ...structuredExtractionResponseSchema,
+  properties: {
+    ...structuredExtractionResponseSchema.properties,
+    claims: { type: "array", maxItems: 40, items: callFieldsClaimSchema },
+  },
+};
 /** The response schema a prompt version asks for. */
-export function extractionSchemaFor(prompts: { structuredIdeas?: boolean }) {
+export function extractionSchemaFor(prompts: { structuredIdeas?: boolean; callFields?: boolean }) {
+  if (prompts.callFields) return callFieldsExtractionResponseSchema;
   return prompts.structuredIdeas ? structuredExtractionResponseSchema : extractionResponseSchema;
 }
 /**

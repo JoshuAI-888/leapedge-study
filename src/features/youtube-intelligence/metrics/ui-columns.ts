@@ -4,6 +4,7 @@
  * column headings read their hover text from that entry. Add a row here when a
  * column is added; the test fails until the registry can explain it.
  */
+import { channelListColumns } from "./channel-columns.ts";
 export type UiColumn = {
   /** Surface id: <page>.<table>. */
   surface: string;
@@ -12,6 +13,19 @@ export type UiColumn = {
   metricId: string;
 };
 export const uiColumns: UiColumn[] = [
+  ...channelListColumns,
+  // F65: the Trends period table.
+  { surface: "trends.periods", column: "Period", metricId: "trends.period" },
+  { surface: "trends.periods", column: "▲ Bullish", metricId: "trends.bullish" },
+  { surface: "trends.periods", column: "● Neutral", metricId: "trends.neutral" },
+  { surface: "trends.periods", column: "▼ Bearish", metricId: "trends.bearish" },
+  { surface: "trends.periods", column: "Calls", metricId: "trends.calls" },
+  // F64: the daily report's calls table.
+  { surface: "report.calls", column: "Instrument", metricId: "today.instrument" },
+  { surface: "report.calls", column: "Stance", metricId: "today.stance" },
+  { surface: "report.calls", column: "Thesis & conditions", metricId: "today.thesis" },
+  { surface: "report.calls", column: "Channel", metricId: "channel.title" },
+  { surface: "report.calls", column: "Trust", metricId: "today.trust" },
   { surface: "today.calls", column: "Creators", metricId: "today.creators" },
   {
     surface: "today.calls",
@@ -25,6 +39,7 @@ export const uiColumns: UiColumn[] = [
     metricId: "today.thesis",
   },
   { surface: "today.calls", column: "Trust", metricId: "today.trust" },
+  { surface: "today.calls", column: "Levels", metricId: "today.levels" },
   { surface: "standalone.ticker", column: "Ticker", metricId: "ticker.symbol" },
   {
     surface: "standalone.ticker",
@@ -78,4 +93,38 @@ export const uiColumns: UiColumn[] = [
     column: "Evidence",
     metricId: "board.status",
   },
+  // F73: Processing details, one row per model call.
+  ...(
+    [
+      ["Step", "usage.step"],
+      ["Model", "usage.model"],
+      ["Input tokens", "usage.inputTokens"],
+      ["Cached", "usage.cachedTokens"],
+      ["Output tokens", "usage.outputTokens"],
+      ["Time", "usage.seconds"],
+      ["Cost", "usage.costUsd"],
+    ] as const
+  ).map(([column, metricId]) => ({
+    surface: "analysis.modelCalls",
+    column,
+    metricId,
+  })),
+  // F73: Lab cost diagnostics, the same columns per step.
+  ...(
+    [
+      ["Step", "usage.step"],
+      ["Calls", "usage.calls"],
+      ["Analyses", "usage.runs"],
+      ["Input tokens", "usage.inputTokens"],
+      ["Cached", "usage.cachedTokens"],
+      ["Output tokens", "usage.outputTokens"],
+      ["Time", "usage.seconds"],
+      ["Cost", "usage.costUsd"],
+      ["Cost per analysis", "usage.costPerRun"],
+    ] as const
+  ).map(([column, metricId]) => ({
+    surface: "lab.stepUsage",
+    column,
+    metricId,
+  })),
 ];

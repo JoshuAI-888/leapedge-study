@@ -71,6 +71,9 @@ test("Every action resolves in exactly one resource table and the legacy set is 
     "refreshBoardData",
     "saveSelection",
     "seedCatalog",
+    "synthesize",
+    "deleteIdea",
+    "retry",
     "resolveListings",
   ];
   for (const action of mutating)
@@ -182,7 +185,7 @@ test("Every object-shaped action schema refuses an undeclared field", () => {
   // non-object and still pass, which is the degradation it exists to catch.
   assert.equal(
     shapes.length,
-    27,
+    29,
     `object schemas found: ${shapes.map((s) => `${s.resource}/${s.action}`).join(", ")}`,
   );
   for (const { resource, action, schema } of shapes) {

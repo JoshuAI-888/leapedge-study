@@ -520,6 +520,18 @@ The Analysis page leads with a trust strip (source basis, agreement, counts by l
 
 Finradar tokens are used exactly: surface `#ffffff`, page `#f7f9fc`, ink `#262626`, muted `#626b7b`, line `#e5e9f0`, primary `#194df4`, selected `#edf3ff`, radius 14px, Inter or system font. Stance colours are additive to the theme and always paired with text. Dark mode uses the existing dark token set in `globals.css`.
 
+
+### 7.6 LeapEdge-gap surfaces (amendment, 29 September 2026)
+
+The user added 19 features after comparing the product with LeapEdge (`../delivery/leapedge-gap-decisions-20260929.md`); they are build-plan phase 5, F56–F77. Requirements: `../delivery/leapedge-gap-ux-proposals-20260929.md`. Wireframes: `mockups/LeapEdgeGaps.html`. This section amends 7.1–7.3 where they conflict:
+
+- **7.1 side panel.** The module side panel is grouped: Read (Today, Daily report) · Research (Search, Trends, Leaderboard) · Sources (Channels, with a page per channel) · Your work (Saved calls) · Operate (Lab, Settings, Methodology). Quick search (Cmd/Ctrl+K) lives at the top of the side panel; Finradar's top navigation is still not changed by this module. Phone tabs: Today · Report · Search · More.
+- **7.2 processing state.** The four user-facing states remain the summary. While a run is working, the Analysis page and the Today activity row also show a step progress bar (five plain-language steps, elapsed time) and, on failure, a Retry that resumes from checkpoints. Cost and tokens stay in Processing details.
+- **7.3 Today.** Today leads with the daily report summary; "Material developments" moves to the Daily report page. Today adds a watchlist, unread markers and a 24-hour sentiment window.
+- **View state.** Periods, ranges and filters are URL view state seeded from settings; changing them does not write a setting.
+- **Sentiment colour.** Aggregates use the three sentiments, never the seven stances, with the CVD-validated pair in the requirements file and a non-colour cue on every mark.
+- **Days.** Day grouping follows the US trading session (ET, holiday-aware); times display in the team time zone.
+
 ---
 
 ## 8. Data contract changes
