@@ -7,6 +7,7 @@ import { get } from "../../../../../server/youtube-intelligence/store.ts";
 import { timelineFor } from "../../../../../server/youtube-intelligence/timing.ts";
 import { progressContext } from "../../../../../server/youtube-intelligence/run-progress.ts";
 import { analystViewFor } from "../../../../../server/youtube-intelligence/analyst-view.ts";
+import { bottomLineFor } from "../../../../../server/youtube-intelligence/bottom-line.ts";
 import {
   guard,
   failure,
@@ -38,7 +39,7 @@ export async function GET(
     let analystViewError: string | null = null;
     if (run && !run.input.task && run.status === "completed")
       try {
-        analyst = analystViewFor(run, briefs[0] ?? null);
+        analyst = analystViewFor(run, briefs[0] ?? null, await bottomLineFor(run.id));
       } catch (error) {
         analystViewError = error instanceof Error ? error.message : String(error);
       }

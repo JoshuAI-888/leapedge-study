@@ -7,7 +7,11 @@ import type { CheckedClaim, MentionData, Run, SourceData } from "../../features/
 import type { ResearchBriefData } from "../../features/youtube-intelligence/research-brief.ts";
 
 /** The analyst view of one analysis run, with listings resolved here on the server. */
-export function analystViewFor(run: Run, brief: ResearchBriefData | null) {
+export function analystViewFor(
+  run: Run,
+  brief: ResearchBriefData | null,
+  bottomLine: { sentences: { text: string; statementIds: string[] }[] } | null = null,
+) {
   const claims = (run.output.claims ?? []) as CheckedClaim[];
   const mentions = (run.output.mentions ?? []) as MentionData[];
   const source = run.output.source as SourceData | undefined;
@@ -33,6 +37,7 @@ export function analystViewFor(run: Run, brief: ResearchBriefData | null) {
     mentionListings: mentions.map((m) => resolveReference(m.instrument_as_spoken, m.ticker)),
     brief,
     segmentSeconds: Object.fromEntries((source?.segments ?? []).map((s) => [s.id, s.start_seconds])),
+    bottomLine: bottomLine?.sentences ?? null,
     transcriptionDoubts: (run.output.transcriptionDoubts ?? []) as { heard: string; likely: string; reason_en: string; start_seconds?: number | null }[],
   });
   return { view, note: analystNote(view) };

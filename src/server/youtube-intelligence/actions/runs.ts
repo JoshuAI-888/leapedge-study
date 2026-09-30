@@ -2,6 +2,7 @@ import { z } from "zod";
 import * as R from "../research-store.ts";
 import { queueAudioReview } from "../audio-review.ts";
 import { startExperiment } from "../experiments.ts";
+import { backfillBottomLine } from "../bottom-line.ts";
 import { managedTranscript, SourcePending } from "../transcripts.ts";
 import { videoId } from "../../../features/youtube-intelligence/contracts.ts";
 import { analyseVideo } from "../reuse.ts";
@@ -81,4 +82,5 @@ export const runs: ActionTable = {
   // F72: resume a failed or stalled analysis from its checkpoint.
   retry: writes(z.string(), (id) => retryRun(id)),
   publishRun: writes(z.string(), (id) => R.publishRun(id)),
+  writeBottomLine: writes(z.string(), (briefId) => backfillBottomLine(briefId)),
 };

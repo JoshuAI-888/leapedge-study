@@ -135,6 +135,8 @@ export const TeamPreferences = z.object({
       maxRetriesPerStage: z.number().int().min(0).max(10).default(3),
       parallelVideos: z.number().int().min(1).max(32).default(4),
       chunkAboveTokens: z.number().int().min(10000).default(700000),
+      /** Write a checked bottom line after each brief; absent is off, and keeps earlier request hashes. */
+      bottomLine: z.boolean().optional(),
     })
     .prefault({}),
   budget: z

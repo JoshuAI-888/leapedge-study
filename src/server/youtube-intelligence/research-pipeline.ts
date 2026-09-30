@@ -41,6 +41,7 @@ import {
   type ResearchBriefData,
 } from "../../features/youtube-intelligence/research-brief.ts";
 import type { Run } from "../../features/youtube-intelligence/contracts.ts";
+import { writeBottomLine } from "./bottom-line.ts";
 const Snapshot = z.object({
   sourceRunId: z.string(),
   title: z.string(),
@@ -591,6 +592,14 @@ export async function researchStep(run: Run) {
     }
     await putIfAbsent("researchBrief", run.id, brief);
     run.output.researchBriefId = run.id;
+    // The bottom line (a team setting) is a reading aid over the audited brief; without it the
+    // analyst view selects the brief's own sentences, so a failure is recorded, not fatal.
+    if (settings.processing.bottomLine) try {
+      const line = await writeBottomLine(run, brief);
+      run.output.bottomLineRejected = line.rejected;
+    } catch (error) {
+      run.output.bottomLineError = error instanceof Error ? error.message : String(error);
+    }
     run.status = readiness.status === "review_required" || run.output.coverageRepairError || (run.output.faithfulAudit as {failures?:number}|undefined)?.failures ? "needs_review" : "completed";
     run.stage = "complete";
     return;
