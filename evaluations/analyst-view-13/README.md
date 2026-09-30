@@ -32,6 +32,19 @@ iN7WmJTeEQc failed on our side (fixed by PR 17), which lowers our averages.
   wrong ticker (expected NUAG). Both are correct: NUAG is the Toronto listing and
   NEWP the NYSE American listing (SEC company_tickers_exchange.json, 29 Sep).
 
+## Blind rounds
+
+Judged with `judge-rubric.md` on notes prepared by `prepare-judging.ts` (A/B
+per video, key kept outside the round), scored by `score-round.ts`. LeapEdge's
+notes are identical in every round, so a change in its scores is judge
+variation (about ±0.3).
+
+| Round (29–30 Sep, 9 videos) | Change on our side | Ours clarity | LeapEdge clarity | Ours actionability | LeapEdge actionability | Ours overall | LeapEdge overall |
+|---|---|---|---|---|---|---|---|
+| Baseline (non-blind, raw output) | v8, no analyst view | 2.22 | 4.11 | 2.78 | 3.22 | 3.44 | 2.78 |
+| 1 | v9 structured ideas + analyst view | 2.33 | 3.78 | 3.44 | 2.44 | 3.33 | 2.22 |
+| 2A | page only: no repeats, card-free sentiment list, glance line, shorter | 2.78 | 3.78 | 3.11 | 2.78 | 3.11 | 2.11 |
+
 ## Target
 
 Beat LeapEdge on all four dimensions, with no drop in coverage or fidelity. The

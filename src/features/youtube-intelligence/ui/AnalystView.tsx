@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import type { AnalystViewData, IdeaCardData } from "../analyst-view.ts";
+import { atAGlance, type AnalystViewData, type IdeaCardData } from "../analyst-view.ts";
 import { Collapsible } from "./components.tsx";
 
 const ACTION_LABEL: Record<string, string> = {
@@ -104,11 +104,8 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
             </li>
           ))}
         </ul>
+        {atAGlance(view) && <p className="yi-av-glance"><strong>At a glance:</strong> {atAGlance(view)}</p>}
         <div className="yi-row">
-          <span className="yi-chip yi-stance-long">{view.stance.bullish} bullish</span>
-          <span className="yi-chip yi-stance-short">{view.stance.bearish} bearish</span>
-          <span className="yi-chip">{view.stance.neutral} neutral</span>
-          <span className="yi-muted">creator ideas</span>
           {view.themes.map((t) => (
             <span key={t} className="yi-chip yi-av-theme">{t}</span>
           ))}
@@ -128,7 +125,7 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
 
       {view.sentiment.length > 0 && (
         <>
-          <h2 className="yi-av-h">Ticker sentiment</h2>
+          <h2 className="yi-av-h">Also discussed</h2>
           <div className="yi-table-wrap">
             <table>
               <thead>
@@ -163,6 +160,10 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
         </>
       )}
 
+      {view.otherMentions.length > 0 && (
+        <p className="yi-muted">Also mentioned: {view.otherMentions.join(", ")}</p>
+      )}
+
       {view.keyPoints.length > 0 && (
         <div className="yi-panel">
           <h2>Key points</h2>
@@ -177,8 +178,7 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
       )}
 
       {view.numbers.length > 0 && (
-        <div className="yi-panel">
-          <h2>Numbers</h2>
+        <Collapsible title={`Numbers quoted (${view.numbers.length})`}>
           <dl className="yi-levels">
             {view.numbers.map((n, i) => (
               <div key={i}>
@@ -189,7 +189,7 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
               </div>
             ))}
           </dl>
-        </div>
+        </Collapsible>
       )}
 
       {(view.notStated.length > 0 || view.watchOuts.length > 0) && (

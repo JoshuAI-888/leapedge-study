@@ -36,7 +36,8 @@ import { recoverEvidenceRanges } from "../../features/youtube-intelligence/evide
 import { sentimentFromStance } from "../../features/youtube-intelligence/sentiment.ts";
 import {
   extractionSchemaFor,
-  parsePointerExtraction,
+  salvagePointerExtraction,
+  type DroppedExtractionItem,
   type PointerExtractionData,
   MENTION_OUTPUT_FORMAT,
   POINTER_EVIDENCE_FORMAT,
@@ -639,6 +640,31 @@ type RejectedMention = {
  * A non-call keeps the sentiment the model assigned, which is why its rationale
  * is required.
  */
+const CONVICTION_ORDER = ["unspecified", "low", "medium", "high"] as const;
+/**
+ * An accepted call whose conviction the critic says is overstated keeps its
+ * idea at the supported conviction (prompt v10), instead of being rejected and
+ * lost. Only ever lowered, and recorded.
+ */
+function lowerConviction(run: Run, item: CheckedClaim, verdict: { verdict: string; corrected_conviction?: string }) {
+  const to = verdict.corrected_conviction as (typeof CONVICTION_ORDER)[number] | undefined;
+  if (verdict.verdict !== "accept" || !to) return;
+  const from = item.claim.creator_conviction;
+  if (CONVICTION_ORDER.indexOf(to) >= CONVICTION_ORDER.indexOf(from)) return;
+  item.claim = { ...item.claim, creator_conviction: to };
+  run.output.convictionCorrections = [
+    ...((run.output.convictionCorrections ?? []) as unknown[]),
+    { id: item.id, from, to },
+  ];
+}
+/** Items a model reply got wrong are dropped one by one and kept here with the reason. */
+function recordDroppedItems(run: Run, stage: string, dropped: DroppedExtractionItem[]) {
+  if (!dropped.length) return;
+  run.output.rejectedEvidence = [
+    ...((run.output.rejectedEvidence ?? []) as unknown[]),
+    ...dropped.map((d) => ({ stage, kind: d.kind, index: d.index, draft: d.item, reason: `Malformed model output: ${d.reason}` })),
+  ];
+}
 /** Structured detail (prompt v9) that was not said is removed and recorded; the idea is kept. */
 function keepSaidDetail(run: Run, id: string, claim: ClaimData) {
   const { claim: kept, removed } = normalizeIdeaDetail(claim);
@@ -827,8 +853,14 @@ async function ensureContextCache(
     return null;
   if (!model || typeof transport.createCache !== "function") return null;
   const held = run.output.contextCache as ContextCacheRecord | undefined;
+  // A cache the provider has expired answers HTTP 400; one within two minutes
+  // of expiry could expire mid-call. Either is replaced, never reused.
+  const live =
+    !!held &&
+    Date.parse(held.createdAt) + (held.ttlSeconds - 120) * 1000 > Date.now();
   if (
     held &&
+    live &&
     !held.deletedAt &&
     held.model === model &&
     held.transport === transport.name
@@ -1315,7 +1347,9 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       mentions?: MentionExtractionData[];
     } = pointer
       ? (() => {
-          const context = normalizeResearchContextLevels(parsePointerExtraction(raw));
+          const salvaged = salvagePointerExtraction(raw);
+          recordDroppedItems(run, `synthesis-chunk-${chunkIndex}`, salvaged.dropped);
+          const context = normalizeResearchContextLevels(salvaged.extraction);
           const pointed = context.extraction;
           keepTranscriptionDoubts(run, pointed.transcription_doubts, source);
           if(context.diagnostics.length) run.output.contextLevelNormalizations = [...((run.output.contextLevelNormalizations??[]) as unknown[]),...context.diagnostics.map(item=>({stage:`synthesis-chunk-${chunkIndex}`,...item}))];
@@ -1607,6 +1641,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         // asks unanswered evidence, while the call ledger retains every attempt.
         const checked = batchClaims.find(({ item }) => item.id === verdict.id)?.item;
         if (checked) {
+          lowerConviction(run, checked, verdict);
           checked.audit = { verdict: verdict.verdict, reason_en: verdict.reason_en };
           checked.passed = verdict.verdict === "accept";
           if (!checked.passed && !checked.reasons.includes(verdict.reason_en))
@@ -1628,6 +1663,7 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
         // Keep reasons empty so an explicit recovery can audit this exact item.
         continue;
       }
+      lowerConviction(run, item, verdict);
       item.audit = { verdict: verdict.verdict, reason_en: verdict.reason_en };
       item.passed = verdict.verdict === "accept";
       if (!item.passed && !item.reasons.includes(verdict.reason_en)) item.reasons.push(verdict.reason_en);
@@ -1808,7 +1844,9 @@ export async function step(run: Run, settings?: TeamPreferencesData) {
       }
       while (index < batchEnd && index < chunks.length) {
         const raw = prefetched.has(index) ? prefetched.get(index) : await recallCall(index);
-        const contextNormalization = normalizeResearchContextLevels(parsePointerExtraction(raw));
+        const salvaged = salvagePointerExtraction(raw);
+        recordDroppedItems(run, `synthesis-recall-${index}`, salvaged.dropped);
+        const contextNormalization = normalizeResearchContextLevels(salvaged.extraction);
         const pointed = contextNormalization.extraction;
         keepTranscriptionDoubts(run, pointed.transcription_doubts, source);
         if(contextNormalization.diagnostics.length) run.output.contextLevelNormalizations = [...((run.output.contextLevelNormalizations??[]) as unknown[]),...contextNormalization.diagnostics.map(item=>({stage:`synthesis-recall-${index}`,...item}))];
