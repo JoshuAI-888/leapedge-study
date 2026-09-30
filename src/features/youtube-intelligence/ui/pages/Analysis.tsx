@@ -405,7 +405,8 @@ export function Analysis({ id }: { id: string }) {
       {summary ? (
         <p className="yi-an-summary">{summary.text}</p>
       ) : (
-        !working && (
+        !working &&
+        !stopped && (
           <p className="yi-muted yi-an-summary-empty">
             Summary appears after the research brief is generated.
           </p>
@@ -710,7 +711,11 @@ export function Analysis({ id }: { id: string }) {
                   ? "Progress refreshes automatically. You can leave this page and return later."
                   : stopped
                     ? "Calls appear here once the analysis finishes. Use Retry above to resume from the step where it stopped."
-                    : "An analysis can finish without finding an actionable call. The key points above and Research context below still come from the video. Processing details retain rejected extractions."}
+                    : `An analysis can finish without finding an actionable call.${
+                        points.length ? " The key points above come from the video." : ""
+                      }${
+                        context.length ? " Research context below adds background from it." : ""
+                      } Processing details keep any rejected extractions.`}
               </Empty>
               <aside className="yi-evidence yi-panel">
                 <h2>Source</h2>

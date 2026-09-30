@@ -91,11 +91,11 @@ These were run on commit `11e1023` under Node 24.21.0, with suite concurrency 3 
 ## Open items carried forward
 
 1. **Loading states** (deferred above). Screenshot each page with the query API delayed.
-2. **Saved "Since saved: No price"** appears when no close exists after the save date, for example for a call saved in the current session. The wording should say that no close has happened yet.
-3. **The Saved sort select is truncated at 390 px** ("By session, newest fi…").
-4. **Analysis copy on runs without calls.** The no-ideas empty state mentions "key points above and Research context below" when there are none, and "Summary appears after the research brief is generated" also shows on failed and running runs.
-5. **The trust count strip** on Analysis draws the Audio-agreed and Human-verified pills filled even at a count of 0. This predates phase 5. It should be reviewed so that a zero count never reads like a human-reviewed badge.
-6. **`verdictLineText`** (F61), used as the verdict box's `title`, still joins instrument labels with spaces.
+2. ~~**Saved "Since saved: No price"** appears when no close exists after the save date, for example for a call saved in the current session. The wording should say that no close has happened yet.~~ Fixed after the gate: when a price series exists but has no close on or after the call's session, the card reads "No close since <date> yet" (test in `tests/saved-calls.test.ts`).
+3. ~~**The Saved sort select is truncated at 390 px** ("By session, newest fi…").~~ Fixed after the gate: filter labels take the full width below 560 px, so the sort select is not cut off (checked at 390 px).
+4. ~~**Analysis copy on runs without calls.** The no-ideas empty state mentions "key points above and Research context below" when there are none, and "Summary appears after the research brief is generated" also shows on failed and running runs.~~ Fixed after the gate: the no-ideas copy mentions key points and Research context only when they exist, and the summary placeholder no longer shows on failed runs (it already stayed hidden while running).
+5. ~~**The trust count strip** on Analysis draws the Audio-agreed and Human-verified pills filled even at a count of 0. This predates phase 5. It should be reviewed so that a zero count never reads like a human-reviewed badge.~~ Fixed after the gate: a zero-count trust pill renders as a dashed outline in muted ink in both themes, never a filled badge (checked in dark mode).
+6. ~~**`verdictLineText`** (F61), used as the verdict box's `title`, still joins instrument labels with spaces.~~ Fixed after the gate: `verdictLineText` joins instruments with commas (test in `tests/verdict.test.ts`).
 7. **The Leaderboard shows no eligible records** under the fixture at its default trust and horizon, so a leaderboard with settled records was not exercised in this matrix (phase 3 covers it in tests).
 8. **Today's Video activity** makes the phone page about 10,000 px long before "Load older activity". A shorter first page on phones would help.
 9. **Not in the matrix:** a tablet width, the Lab page (F73's step-usage table is covered by tests and the registry check only), and submitting a duplicate URL for reuse (F74 is covered by `tests/run-reuse.test.ts`).

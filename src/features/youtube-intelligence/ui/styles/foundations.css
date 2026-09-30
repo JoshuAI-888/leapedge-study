@@ -457,3 +457,14 @@
   opacity: 1;
   cursor: help;
 }
+
+/* F77 fix — a zero-count trust pill is an outline, never a filled badge, so
+   "Human-verified 0" cannot read as a human-reviewed mark in either theme. */
+.yi-workspace .yi-trust-zero .yi-trust-L0,
+.yi-workspace .yi-trust-zero .yi-trust-L1,
+.yi-workspace .yi-trust-zero .yi-trust-L2,
+.yi-workspace .yi-trust-zero .yi-trust-L3 {
+  background: transparent;
+  color: var(--yi-muted);
+  border: 1px dashed var(--yi-line);
+}

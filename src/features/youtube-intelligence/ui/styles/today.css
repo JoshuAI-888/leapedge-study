@@ -938,3 +938,11 @@
 .yi-call-table.yi-with-levels th:nth-child(6) {
   width: 20%;
 }
+
+/* F77 fix — Saved filters at phone width: search on its own row, sort full width,
+   so the sort label is never cut off. */
+@media (max-width: 560px) {
+  .yi-workspace .yi-filters label {
+    flex: 1 1 100%;
+  }
+}

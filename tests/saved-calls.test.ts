@@ -166,8 +166,10 @@ test("Since saved measures from the call's session close to the latest close", (
   const same = sinceSaved(series, "2026-09-29");
   assert.equal(same.state, "no-later");
   assert.equal(sinceSavedText(same), "No close since 29 Sep yet");
-  // Prices end before the call.
-  assert.equal(sinceSaved(series, "2026-10-01").state, "no-price");
+  // Prices end before the call: the series exists, the call's close just has not landed yet.
+  const pending = sinceSaved(series, "2026-10-01");
+  assert.equal(pending.state, "no-later");
+  assert.equal(sinceSavedText(pending), "No close since 1 Oct yet");
   assert.equal(sinceSaved([], "2026-09-25").state, "no-price");
   assert.equal(sinceSavedText(sinceSaved([], "2026-09-25")), "No price");
   // A zero or broken close is never divided by.

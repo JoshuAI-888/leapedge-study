@@ -1798,7 +1798,7 @@
       "lane": "gate",
       "title": "Phase-5 gate run: browser and visual matrix for the LeapEdge-gap surfaces, registry CI, conformance",
       "spec": "7.6",
-      "status": "todo",
+      "status": "in-review",
       "prereqs": [
         "F56",
         "F57",
@@ -1823,13 +1823,16 @@
         "F76"
       ],
       "files": [
-        "docs/gates/phase-5-baseline.json"
+        "docs/gates/phase-5-conformance.md",
+        "docs/gates/phase-5-baseline.json",
+        "scripts/seed-phase5.ts"
       ],
       "tests": [
         "tests/phase-5-gate.test.ts"
       ],
-      "note": "Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F77). Decisions D1–D4 and scope: docs/delivery/leapedge-gap-decisions-20260929.md.",
-      "planned": true
+      "note": "Pre-merge gate on the PR #19 head in fixture mode: 112/112 browser matrix cells (28 surfaces x 1440/390 x light/dark), 11/11 flows, no page-wide overflow at 390, no application console errors; 14 defects fixed during and after the gate. Loading states deferred (gate-debt.md). No live-provider run or LeapEdge comparison; the offline promotion gate measured nothing (binding.total 0). A human approves the gate before merge.",
+      "planned": true,
+      "pr": 19
     }
   ],
   "executionScope": "docs/delivery/standalone-scope.json",

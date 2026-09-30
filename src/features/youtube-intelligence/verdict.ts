@@ -104,7 +104,8 @@ export function verdictLineText(v: Verdict) {
   return [
     `${v.ideas} ${v.ideas === 1 ? "idea" : "ideas"}`,
     splitShortText(v.split),
-    v.instruments.map((i) => i.text).join(" "),
+    // Commas: macro and sector labels contain spaces and "·" themselves.
+    v.instruments.map((i) => i.text).join(", "),
   ]
     .filter(Boolean)
     .join(" · ");

@@ -85,7 +85,7 @@ test("verdictOf counts ideas, sentiment and distinct instruments in call order",
     v.instruments.map((i) => i.text),
     ["NVDA", "AVGO", "TSM"],
   );
-  assert.equal(verdictLineText(v), "4 ideas · 3 ▲ 1 ● · NVDA AVGO TSM");
+  assert.equal(verdictLineText(v), "4 ideas · 3 ▲ 1 ● · NVDA, AVGO, TSM");
 });
 
 test("the verdict line is singular for one idea and never shows zero sentiments", () => {

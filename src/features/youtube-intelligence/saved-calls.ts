@@ -168,8 +168,10 @@ export function sinceSaved(series: PricePoint[], session: string): SinceSaved {
   const bars = series
     .filter((p) => Number.isFinite(p.adjustedClose) && p.adjustedClose > 0)
     .sort((a, b) => a.date.localeCompare(b.date));
+  if (!bars.length) return { state: "no-price" };
   const base = bars.find((p) => p.date >= session);
-  if (!base) return { state: "no-price" };
+  // The series exists but stops before the call's session: its close has not landed yet.
+  if (!base) return { state: "no-later", baseDate: session };
   const latest = bars.at(-1)!;
   if (latest.date === base.date)
     return { state: "no-later", baseDate: base.date };
