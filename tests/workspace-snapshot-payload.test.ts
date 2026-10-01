@@ -104,3 +104,81 @@ test("cost metrics count accepted claims in Postgres for the newest non-experime
     [["same", 2]],
   );
 });
+
+test("snapshot briefs carry what the overview shows, with readiness computed from the full brief", async () => {
+  await freshDatabase();
+  const full = {
+    id: "b1",
+    runId: "brief-run",
+    sourceRunId: "source",
+    videoId: "video",
+    title: "Brief",
+    createdAt: "2026-09-25T00:00:00.000Z",
+    context: {},
+    mainTopics: ["Gold"],
+    sentences: [
+      {
+        id: "s1",
+        text: "Gold is the hedge.",
+        kind: "creator_view",
+        topic: "Gold",
+        horizon: "fundamental",
+        materiality: 3,
+        importanceReason: "Main thesis",
+        timeMode: "video_date",
+        evidenceIds: ["e1"],
+        externalIds: [],
+        factualStatus: "unverified",
+        fidelity: "faithful",
+        auditReason: "a long audit reason ".repeat(50),
+        financialFactChecks: [{ note: "check detail" }],
+      },
+    ],
+    evidence: [{ id: "e1", summary: "Gold view", quotes: [{ text: "private quote" }] },
+      { id: "e2", summary: "Silver view", quotes: [] }],
+    evidenceCoverage: [
+      { evidenceId: "e1", status: "covered", sentenceIds: ["s1"], missingPoints: [], reason: "covered" },
+    ],
+    external: [],
+    omissions: ["omission one", "omission two", "omission three", "omission four"],
+    coverageFindings: [],
+    rejected: [{ text: "withheld draft" }],
+    retrievalNotes: [],
+    baseline: [],
+  };
+  await put("researchBrief", "b1", full);
+  const snapshot = (await dispatch("research", "snapshot", undefined)) as {
+    researchBriefs: Record<string, unknown>[];
+  };
+  const brief = snapshot.researchBriefs[0] as {
+    sentences: Record<string, unknown>[];
+    readiness: { status: string; covered: number; total: number; issues: string[]; issueCount: number; coverage?: unknown };
+  } & Record<string, unknown>;
+  for (const key of ["evidence", "external", "rejected", "omissions", "evidenceCoverage", "baseline"])
+    assert.equal(key in brief, false, `${key} should not be in the snapshot brief`);
+  assert.equal("auditReason" in brief.sentences[0], false);
+  assert.equal("financialFactChecks" in brief.sentences[0], false);
+  assert.equal(brief.sentences[0].text, "Gold is the hedge.");
+  assert.equal(brief.sentences[0].factualStatus, "unverified");
+  // Readiness still counts the withheld draft, omissions and unresolved evidence.
+  assert.equal(brief.readiness.status, "partial");
+  assert.equal(brief.readiness.covered, 1);
+  assert.equal(brief.readiness.total, 2);
+  assert.equal(brief.readiness.issues.length, 3);
+  assert.ok(brief.readiness.issueCount >= 6);
+  assert.equal(brief.readiness.coverage, undefined);
+});
+
+test("API reads report database time in a Server-Timing header", async () => {
+  const { timed } = await import("../src/server/youtube-intelligence/http.ts");
+  await freshDatabase();
+  const response = await timed(async () => {
+    await database.prepare("SELECT 1").get();
+    await database.prepare("SELECT 2").get();
+    return Response.json({ ok: true });
+  });
+  const header = response.headers.get("Server-Timing") ?? "";
+  assert.match(header, /total;dur=\d/);
+  assert.match(header, /db-query;dur=[\d.]+;desc="2 queries"/);
+  assert.deepEqual(await response.json(), { ok: true });
+});

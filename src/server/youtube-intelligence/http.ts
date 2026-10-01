@@ -1,4 +1,5 @@
 import { requestSession, workspaceOrigin } from "./access.ts";
+import { serverTiming, withDatabaseTiming } from "./database.ts";
 const loopback = ["localhost", "127.0.0.1", "[::1]"];
 export function guard(request: Request) {
   if(process.env.YTI_PREVIEW_READ_ONLY === "true" && !["GET","HEAD"].includes(request.method))throw Error("This preview is read-only. Changes are tested in the isolated local workspace.");
@@ -30,4 +31,18 @@ export function failure(e: unknown) {
     { error: e instanceof Error ? e.message : "Request failed." },
     { status: 400 },
   );
+}
+/**
+ * Run a route handler under database timing and return its response with a
+ * Server-Timing header, so a slow page can be traced to connecting, round
+ * trips or the app from the browser's network panel.
+ */
+export async function timed(handler: () => Promise<Response>) {
+  const { result, timing, totalMs } = await withDatabaseTiming(handler);
+  try {
+    result.headers.set("Server-Timing", serverTiming(timing, totalMs));
+  } catch {
+    /* An immutable response keeps its own headers. */
+  }
+  return result;
 }

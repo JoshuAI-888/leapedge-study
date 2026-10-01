@@ -34,22 +34,65 @@ async function snapshot() {
     // transcripts, extraction plans and audits remain on the run detail API.
     runs: s.runs.map((run) => ({ ...run, output: {} })),
     evaluationRuns: s.evaluationRuns.map((run) => ({ ...run, output: {} })),
+    // Briefs as the overview pages show them. The full brief (fact checks,
+    // audit reasons, coverage, withheld drafts) is on the run detail API that
+    // the analysis page reads, so it no longer rides on every page load.
     researchBriefs: briefs.map(
-      ({ evidence, external, retrievalNotes, baseline, ...brief }) => ({
-        ...brief,
-        readiness: researchReadiness({ ...brief, evidence }),
-        latestExternalPublishedAt:
-          external
-            .filter((e) =>
-              brief.sentences.some(
-                (s) => s.timeMode === "current" && s.externalIds.includes(e.id),
-              ),
-            )
-            .map((e) => e.publishedAt)
-            .filter((date): date is string => !!date)
-            .sort()
-            .at(-1) ?? null,
-      }),
+      ({
+        evidence,
+        external,
+        retrievalNotes,
+        baseline,
+        rejected,
+        omissions,
+        evidenceCoverage,
+        ...brief
+      }) => {
+        const { coverage, issues, ...readiness } = researchReadiness({
+          ...brief,
+          rejected,
+          omissions,
+          evidenceCoverage,
+          evidence,
+        });
+        return {
+          ...brief,
+          sentences: brief.sentences.map((s) => ({
+            id: s.id,
+            text: s.text,
+            kind: s.kind,
+            topic: s.topic,
+            horizon: s.horizon,
+            materiality: s.materiality,
+            importanceReason: s.importanceReason,
+            timeMode: s.timeMode,
+            speaker: s.speaker,
+            novelty: s.novelty,
+            // The overview's source and fact labels (factualSupportLabel).
+            fidelity: s.fidelity,
+            factualStatus: s.factualStatus,
+            externalSupport: s.externalSupport,
+            financialFacts: s.financialFacts,
+          })),
+          readiness: {
+            ...readiness,
+            issues: issues.slice(0, 3),
+            issueCount: issues.length,
+          },
+          latestExternalPublishedAt:
+            external
+              .filter((e) =>
+                brief.sentences.some(
+                  (s) =>
+                    s.timeMode === "current" && s.externalIds.includes(e.id),
+                ),
+              )
+              .map((e) => e.publishedAt)
+              .filter((date): date is string => !!date)
+              .sort()
+              .at(-1) ?? null,
+        };
+      },
     ),
     seedSources: seedLists().map((list) => ({
       source: list.source,
