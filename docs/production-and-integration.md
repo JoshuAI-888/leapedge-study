@@ -26,7 +26,7 @@ The app stores sources, reports, prompt snapshots, comparisons, reviews, deliver
 
 Use `.env.example` for variable names and `src/server/youtube-intelligence/env.ts` for the authoritative schema. Hosted configuration includes `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `YTI_PRODUCTION_DB_HOST`, `YTI_APP_ORIGIN`, a strong `YTI_ACCESS_TOKEN`, `CRON_SECRET`, provider credentials, recipient/sender and delivery enablement. `missingRequiredHosted()` lists whichever of those hosted keys is unset, by name, and `/api/intelligence/status` returns that list as `missingHosted`. Credentials stay in encrypted Vercel variables and ignored local environment files. Never expose them through `NEXT_PUBLIC_*`.
 
-Optional operational variables: `YTI_POOL_MAX` (clients per serving instance, default 4), `YTI_QUEUE_PAUSED` (declared for the drain sequence below; the dispatcher's own check on it is not wired yet), `YTI_PREVIEW_READ_ONLY`, `YTI_BUDGET_USD`, `YTI_TRANSCRIPT_CREDIT_BUDGET`, `RESEND_WEBHOOK_SECRET`.
+Optional operational variables: `YTI_POOL_MAX` (clients per serving instance, default 4), `YTI_QUEUE_PAUSED` (`true` stops the queue claiming new work; see the drain sequence below), `YTI_PREVIEW_READ_ONLY`, `YTI_BUDGET_USD`, `YTI_TRANSCRIPT_CREDIT_BUDGET`, `RESEND_WEBHOOK_SECRET`.
 
 Errors and reports name keys, never values. Keep it that way: a message that quotes a connection string ends up in a build log.
 
@@ -74,7 +74,7 @@ Before each production migration:
 
 An additive migration — a new table, a new nullable column, a new index — needs none of this; the serving bundle simply ignores what it does not know. A migration that changes or drops a type or column does, because the bundle in flight is still writing the old shape.
 
-1. Stop the dispatcher claiming new work. Set `YTI_QUEUE_PAUSED=true` and redeploy; the variable is declared but nothing reads it yet, so until that lands, pause by disabling the cron job in the Vercel dashboard (or removing the `crons` entry from `vercel.json`) and redeploying.
+1. Stop the dispatcher claiming new work. Set `YTI_QUEUE_PAUSED=true` and redeploy (Vercel applies a changed variable only to new deployments). `claimJob()` then claims nothing, from the cron and from the drain on submit alike; jobs already running are not interrupted.
 2. Drain. Leases are ten minutes, so wait out the longest in-flight run; `/api/intelligence/status` reports whether the worker is still active.
 3. `npm run research:export` — a second restore point that is readable off-host.
 4. Branch, migrate, verify as above.

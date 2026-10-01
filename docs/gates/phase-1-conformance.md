@@ -22,7 +22,7 @@
 | F21 gate run | `775e904` | `phase-1-v5.json`, `phase-1-v7.json`, `phase-1-summary.md`, `configs/v7.json` |
 | follow-ups | `d4a2eb3` | fallback wrapper forwards cache methods and never re-issues a cached request; `PromptVersion.translation` |
 
-Tests: 197 of 197 on the SQLite driver and on PGlite (168 at the phase-0 baseline). `npm run typecheck` and `npm run build` clean.
+Tests: 197 of 197 on the SQLite driver and on PGlite (168 at the phase-0 baseline). This records phase 1 as it was; F23 later removed the SQLite driver, and the suite now runs on Postgres and PGlite only. `npm run typecheck` and `npm run build` clean.
 
 Pipeline checks: no per-claim critique stage, no `source-repair`, no `json_object` or `provider.only` under `src/`, adapters deleted, `youtubei.js` removed. All true.
 

@@ -2267,13 +2267,15 @@
   },
   "direction": "docs/delivery/current-state.md",
   "cleanup": {
-    "status": "in-review",
+    "status": "merged",
+    "pr": "14",
     "date": "2026-09-28",
     "scope": "Removed cancelled Google Cloud preparation (Dockerfile, deploy/cloud, cloud-worker-launcher), targeted-audit paired runner and experiment schema, one-off benchmark scripts (scripts/archive). Per-run review documents archived to docs/archive/reviews. Budget defaults: lifetime cap now opt-in via YTI_BUDGET_USD; monthly default US$750; per-video default US$3.",
     "verification": "Node 24: default and PGlite suites 719 pass/0 fail/1 skip each; typecheck, build, offline gate (advisory-only) and npm audit (0 vulnerabilities) pass."
   },
   "cloudProcessing": {
-    "status": "in-review",
+    "status": "merged",
+    "pr": "14",
     "date": "2026-09-28",
     "scope": "Execute queued work on Vercel Functions: the per-minute cron sweeps then drains within 800 s; mutating API requests start an after() drain. Postgres queue capacity lock, leases and fencing govern concurrency across overlapping drains. Mac worker optional for local development only.",
     "files": [
@@ -2286,7 +2288,8 @@
     "verification": "Node 24: default and PGlite suites 726 pass/0 fail/1 skip each; typecheck and build pass. Live Vercel acceptance (a run completing with the Mac worker stopped) pending deployment."
   },
   "newsReview": {
-    "status": "in-review",
+    "status": "merged",
+    "pr": "14",
     "date": "2026-09-28",
     "scope": "Default research briefs are built from the transcript alone (webResearch:false; only the opt-in experimental-overlap profile keeps legacy in-brief search). Analysts request a news review per brief: one Gemini plan (<=6 queries), open-web Exa searches split before/after the video date, one Gemini cited review, deterministic citation checks (claim ids, retrieved sources only, verbatim excerpts, date window), then one independent critic (Sonnet) entailment check. Removed statements are retained and shown with reasons.",
     "files": [
@@ -2300,7 +2303,8 @@
     "verification": "Unit and integration tests with FakeModelTransport and stubbed Exa pass; typecheck and build pass. Live paid run and browser acceptance pending."
   },
   "timing": {
-    "status": "in-review",
+    "status": "merged",
+    "pr": "14",
     "date": "2026-09-28",
     "scope": "Submission-to-result timeline from stored yi_stage_timings rows: first step, analysis finished, research brief finished, end to end, and per-stage execution and queue time; shown on the Analysis page and returned by /api/intelligence/runs/[id] as output.timeline for paired comparison runs.",
     "files": [
@@ -2314,7 +2318,8 @@
     "verification": "Node 24: default and PGlite suites 734 pass/0 fail/1 skip; typecheck, build and offline gate pass. Browser on isolated local Postgres fixture: passcode login (wrong code refused, youtubeintel accepted), Timing and News review panels at 1360x900 and 390x844 with no horizontal overflow after wrapping the table."
   },
   "pipelineV3": {
-    "status": "in-review",
+    "status": "merged",
+    "pr": "14",
     "date": "2026-09-28",
     "scope": "Research pipeline \"faithful\" (faithful-v1), selectable in Settings; current stays default until the LeapEdge comparison. Transcript-only draft (1 Gemini call), deterministic structural preflight, then an independent fidelity check (Sonnet) of each sentence against only the quotes it cites, chunked by 12 and run in parallel within one step; evidence no sentence cites is recorded as missing; no repeated coverage audit or repair loop. A failed chunk withholds its sentences and marks the brief needs_review.",
     "files": [
@@ -2417,7 +2422,8 @@
     "pr": 24
   },
   "jevPreScreen20260930": {
-    "status": "in-review",
+    "status": "merged",
+    "pr": "22",
     "date": "2026-09-30",
     "scope": "Optional Jev (TypeSafe jev-1.13.0) pre-screen in front of the v3 faithfulness critic, behind a team setting (faithfulnessPreScreen.enabled, default off; only an enabled pre-screen enters the configuration hash). One parallel Jev request per sentence with the tuned r2 question set (sandbox 29 Sep); accept at >=0.8 with error type none, withhold at <=0.15, everything else and every Jev failure or missing TYPESAFE_API_KEY goes to the critic, which still judges evidence coverage (evidence cited only by pre-accepted sentences gets one coverage-only chunk). One ledger row per Jev wave. Settings page explains what it does and why; an ad hoc comparison task (jev-comparison) runs Jev and the configured critic on every sentence of a chosen brief and stores agreement, escalation, time and cost without changing the brief.",
     "files": [
