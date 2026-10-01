@@ -2470,13 +2470,13 @@
     "pr": 28
   },
   "functionRegion20261001": {
-    "status": "in-review",
+    "status": "merged",
     "date": "2026-10-01",
     "scope": "Move Vercel functions from syd1 to iad1, beside the database the app connects to. PR 28's status probe measured a 221 ms database round trip from syd1, which matches Sydney to US east and contradicts the old note that the Neon project is in ap-southeast-2. Each query pays that round trip, and a page makes 8–19 of them. With functions beside the database each query costs a millisecond or two, and the browser pays one long-haul trip per request instead. Reversible by changing vercel.json back; moving the database to Sydney instead is the alternative and is the user's decision.",
     "tests": [
       "tests/connection.test.ts"
     ],
-    "verification": "databaseRoundTripMs and Server-Timing measured on production after deploy.",
-    "pr": null
+    "verification": "Production after deploy (1 Oct): databaseRoundTripMs 0.9–1.1 from iad1 (was 221 from syd1). Server time from Server-Timing, warm: research/snapshot 406–607 ms (was 2.6–3.9 s), settings/teamAccount 13–19 ms (was 1.6 s), channels/costMetrics 134–148 ms, runs page 170–177 ms, activity 3.5–33 ms. End to end from a US host: snapshot 0.70–1.03 s for 322 KB compressed, the other reads 0.18–0.47 s.",
+    "pr": 29
   }
 }
