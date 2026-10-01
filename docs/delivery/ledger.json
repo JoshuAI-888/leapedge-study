@@ -2460,13 +2460,23 @@
     "pr": 27
   },
   "workspaceLatency20261001": {
-    "status": "in-review",
+    "status": "merged",
     "date": "2026-10-01",
     "scope": "Second pass on page load after PR 27. Measure: every API read (actions, activity, runs, run detail, status) returns a Server-Timing header splitting total time into database init, new connections and query time, and /api/intelligence/status reports the bare database round trip from the function region (fastest of five SELECT 1) and the region name. Trim: snapshot briefs carry only what the overview, Today and Report pages show (sentence text, topic, horizon, materiality, time mode, novelty and the fact/source labels; readiness status, counts and the first three issues), computed from the full brief; the analysis page keeps reading the whole brief from the run detail API.",
     "tests": [
       "tests/workspace-snapshot-payload.test.ts"
     ],
-    "verification": "Projected from the production snapshot of 1 Oct: briefs 2.75 MB to 0.92 MB, snapshot 4.1 MB to 2.2 MB (380 KB gzip). Database round trip and region measured on production after deploy.",
+    "verification": "Projected from the production snapshot of 1 Oct: briefs 2.75 MB to 0.92 MB, snapshot 4.1 MB to 2.2 MB (380 KB gzip). Production after deploy (1 Oct): databaseRoundTripMs 221 from syd1, so the database is not co-located; Server-Timing showed query time dominating (settings/teamAccount 8 sequential queries, 1.6 s server time; snapshot 2.6–3.9 s server time, 19 queries); snapshot 321 KB compressed.",
     "pr": 28
+  },
+  "functionRegion20261001": {
+    "status": "in-review",
+    "date": "2026-10-01",
+    "scope": "Move Vercel functions from syd1 to iad1, beside the database the app connects to. PR 28's status probe measured a 221 ms database round trip from syd1, which matches Sydney to US east and contradicts the old note that the Neon project is in ap-southeast-2. Each query pays that round trip, and a page makes 8–19 of them. With functions beside the database each query costs a millisecond or two, and the browser pays one long-haul trip per request instead. Reversible by changing vercel.json back; moving the database to Sydney instead is the alternative and is the user's decision.",
+    "tests": [
+      "tests/connection.test.ts"
+    ],
+    "verification": "databaseRoundTripMs and Server-Timing measured on production after deploy.",
+    "pr": null
   }
 }
