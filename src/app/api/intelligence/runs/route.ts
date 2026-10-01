@@ -8,13 +8,14 @@ import { runSummaryPage } from "../../../../server/youtube-intelligence/run-summ
 import {
   guard,
   failure,
+  timed,
 } from "../../../../server/youtube-intelligence/http.ts";
 import { queue } from "../../../../server/youtube-intelligence/research-store.ts";
 import { drainAfterResponse } from "../../../../server/youtube-intelligence/drain.ts";
 export const maxDuration = 800;
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export async function GET(r: Request) {
+async function read(r: Request) {
   try {
     guard(r);
     const params = new URL(r.url).searchParams;
@@ -61,3 +62,4 @@ export async function POST(r: Request) {
     return failure(e);
   }
 }
+export const GET = (r: Request) => timed(() => read(r));

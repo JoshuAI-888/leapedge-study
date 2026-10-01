@@ -417,11 +417,72 @@ async function initialize() {
     });
   await ready;
 }
+/**
+ * Per-request database timing, reported as a Server-Timing header by the API
+ * routes (timedResponse). It says where a slow request spends its time: the
+ * first connect to Neon, the round trips, or neither (the app itself). Values
+ * are durations and counts only, never SQL or data.
+ */
+export type DatabaseTiming = {
+  queries: number;
+  queryMs: number;
+  connects: number;
+  connectMs: number;
+  initMs: number;
+};
+const timing = new AsyncLocalStorage<DatabaseTiming>();
+export async function withDatabaseTiming<T>(
+  fn: () => Promise<T>,
+): Promise<{ result: T; timing: DatabaseTiming; totalMs: number }> {
+  const record: DatabaseTiming = {
+    queries: 0,
+    queryMs: 0,
+    connects: 0,
+    connectMs: 0,
+    initMs: 0,
+  };
+  const start = performance.now();
+  const result = await timing.run(record, fn);
+  return { result, timing: record, totalMs: performance.now() - start };
+}
+/** A Server-Timing header value: total, init, connect and query time, with counts. */
+export function serverTiming(t: DatabaseTiming, totalMs: number) {
+  const ms = (n: number) => n.toFixed(1);
+  return [
+    `total;dur=${ms(totalMs)}`,
+    `db-init;dur=${ms(t.initMs)}`,
+    `db-connect;dur=${ms(t.connectMs)};desc="${t.connects} new"`,
+    `db-query;dur=${ms(t.queryMs)};desc="${t.queries} queries"`,
+  ].join(", ");
+}
+/**
+ * The bare round trip to the database: the fastest of a few `SELECT 1`s on a
+ * warm connection, so neither connecting nor query work is counted.
+ */
+export async function databaseRoundTripMs(samples = 5) {
+  await initialize();
+  if (pglite) return 0;
+  const client = await pool!.connect();
+  try {
+    let best = Infinity;
+    for (let i = 0; i < samples; i++) {
+      const start = performance.now();
+      await client.query("SELECT 1");
+      best = Math.min(best, performance.now() - start);
+    }
+    return Math.round(best * 10) / 10;
+  } finally {
+    client.release();
+  }
+}
 async function execute(
   sql: string,
   params: unknown[] = [],
 ): Promise<{ rows: Row[]; changes: number }> {
+  const record = timing.getStore();
+  const initStart = performance.now();
   await initialize();
+  if (record) record.initMs += performance.now() - initStart;
   const values = params.map((x) => (x === undefined ? null : x));
   const run = async (c: Connection) => {
     if (isPGlite(c)) {
@@ -431,12 +492,29 @@ async function execute(
     const r = await c.query(sql, values);
     return { rows: r.rows as Row[], changes: r.rowCount || 0 };
   };
+  const timed = async (c: Connection) => {
+    const start = performance.now();
+    try {
+      return await run(c);
+    } finally {
+      if (record) {
+        record.queries++;
+        record.queryMs += performance.now() - start;
+      }
+    }
+  };
   const c = context.getStore();
-  if (c) return run(c);
-  if (pglite) return exclusive(() => run(pglite!));
+  if (c) return timed(c);
+  if (pglite) return exclusive(() => timed(pglite!));
+  const connectStart = performance.now(),
+    before = pool!.totalCount;
   const client = await pool!.connect();
+  if (record) {
+    record.connectMs += performance.now() - connectStart;
+    if (pool!.totalCount > before) record.connects++;
+  }
   try {
-    return await run(client);
+    return await timed(client);
   } finally {
     client.release();
   }

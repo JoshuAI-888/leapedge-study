@@ -1,6 +1,7 @@
 import {
   guard,
   failure,
+  timed,
 } from "../../../../../server/youtube-intelligence/http.ts";
 import {
   dispatch,
@@ -23,7 +24,7 @@ type Context = { params: Promise<{ resource: string; action: string }> };
  * shared envelope. `mutating` decides the method: a read answers GET, a write
  * takes POST, and nothing needs a list of action names to tell them apart.
  */
-export async function GET(r: Request, { params }: Context) {
+async function read(r: Request, { params }: Context) {
   try {
     guard(r);
     const { resource, action } = await params;
@@ -61,3 +62,4 @@ export async function POST(r: Request, { params }: Context) {
     return failure(e);
   }
 }
+export const GET = (r: Request, context: Context) => timed(() => read(r, context));

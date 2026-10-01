@@ -2450,13 +2450,23 @@
     "pr": 26
   },
   "workspaceLoad20261001": {
-    "status": "in-review",
+    "status": "merged",
     "date": "2026-10-01",
     "scope": "Every page sat on 'Loading your research workspace…' after login: the shell waits for research/snapshot, which took 44 s and returned 12.7 MB, and the provider re-ran the whole workspace load on every navigation. The snapshot now reads runs without their output (listHeaders; the old path read every transcript and audit twice and froze forward observations on each read), runs its queries in parallel, and leaves the Lab-only collections (comparisons, experiments, evaluations, caption attempts, call ledger: about 8 MB) to a new research/lab action that only the Lab page calls. Cost metrics count accepted claims in Postgres and read channel coverage in one query. The browser keeps the last loaded workspace in IndexedDB and paints from it at once, and navigation no longer reloads the workspace (the activity poll still refreshes it when a run changes).",
     "tests": [
       "tests/workspace-snapshot-payload.test.ts"
     ],
-    "verification": "Before (production, 1 Oct): research/snapshot 43.6 s / 12.7 MB, channels/costMetrics 6.4–6.6 s, settings/teamAccount 2.2–3.8 s, runs page 1.5–3.3 s, activity 0.8–2.2 s, all re-fetched on each page change. After: measured on production once deployed.",
+    "verification": "Before (production, 1 Oct): research/snapshot 43.6 s / 12.7 MB, channels/costMetrics 6.4–6.6 s, settings/teamAccount 2.2–3.8 s, runs page 1.5–3.3 s, activity 0.8–2.2 s, all re-fetched on each page change. After (production, 1 Oct, measured from a US cloud host where a static file takes 0.47 s): research/snapshot 6.5–9.9 s, 4.1 MB (576 KB compressed); channels/costMetrics 2.5–2.6 s; research/lab 4.1–5.1 s on the Lab page only; navigation reloads nothing. Small reads still take about 2 s (settings/teamAccount, 1.4 KB, 2.2 s), so a per-query floor remains: see workspaceLatency20261001.",
     "pr": 27
+  },
+  "workspaceLatency20261001": {
+    "status": "in-review",
+    "date": "2026-10-01",
+    "scope": "Second pass on page load after PR 27. Measure: every API read (actions, activity, runs, run detail, status) returns a Server-Timing header splitting total time into database init, new connections and query time, and /api/intelligence/status reports the bare database round trip from the function region (fastest of five SELECT 1) and the region name. Trim: snapshot briefs carry only what the overview, Today and Report pages show (sentence text, topic, horizon, materiality, time mode, novelty and the fact/source labels; readiness status, counts and the first three issues), computed from the full brief; the analysis page keeps reading the whole brief from the run detail API.",
+    "tests": [
+      "tests/workspace-snapshot-payload.test.ts"
+    ],
+    "verification": "Projected from the production snapshot of 1 Oct: briefs 2.75 MB to 0.92 MB, snapshot 4.1 MB to 2.2 MB (380 KB gzip). Database round trip and region measured on production after deploy.",
+    "pr": null
   }
 }
