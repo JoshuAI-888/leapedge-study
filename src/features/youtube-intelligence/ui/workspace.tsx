@@ -8,7 +8,6 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { usePathname } from "next/navigation";
 import {
   Activity,
   RunPage,
@@ -24,6 +23,7 @@ import type {
 } from "../settings.ts";
 import type { loadCostMetrics } from "../../../server/youtube-intelligence/cost-metrics.ts";
 import { request, action } from "./api.ts";
+import { readWorkspaceCache, writeWorkspaceCache } from "./workspace-cache.ts";
 export type Preferences = {
   defaults: TeamPreferencesData;
   team: TeamPreferencesData;
@@ -60,7 +60,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     [actionError, setActionError] = useState(""),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState("");
-  const pathname = usePathname();
   const epoch = useRef(0),
     refreshing = useRef(false),
     alive = useRef(true);
@@ -68,6 +67,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     loadedRuns.current = data?.runs ?? [];
   }, [data?.runs]);
+  // Save what a refresh loaded so the next visit paints from it at once.
+  const persist = useRef(false);
+  useEffect(() => {
+    if (data && persist.current) {
+      persist.current = false;
+      void writeWorkspaceCache(data);
+    }
+  }, [data]);
   const activity = useRef<ReturnType<typeof Activity.parse> | null>(null);
   const moreLock = useRef(false),
     paginationInitialized = useRef(false);
@@ -113,6 +120,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       }
       if (!alive.current || ticket !== epoch.current) return;
       activity.current = status;
+      persist.current = true;
       setData((previous) => ({
         snapshot,
         runs: mergeRunSummaries(previous?.runs ?? [], updated),
@@ -205,6 +213,13 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         if (!stopped) timer = setTimeout(() => void poll(), 2000);
       }
     }
+    // Paint the last loaded workspace while the live read runs; the refresh
+    // replaces it, and a cache that arrives after the refresh is ignored.
+    void readWorkspaceCache<WorkspaceData>().then((cached) => {
+      if (stopped || !cached) return;
+      setData((current) => current ?? cached);
+      setLoading(false);
+    });
     void refresh().then(() => {
       if (!stopped) timer = setTimeout(() => void poll(), 2000);
     });
@@ -214,7 +229,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       ++epoch.current;
       clearTimeout(timer);
     };
-  }, [refresh, pathname]);
+    // Navigation does not reload the workspace: pages share this provider, and
+    // the activity poll refreshes it when a run changes.
+  }, [refresh]);
   async function loadMoreRuns() {
     if (!nextCursor || moreLock.current) return;
     moreLock.current = true;

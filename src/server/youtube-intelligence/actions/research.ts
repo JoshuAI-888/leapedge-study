@@ -21,10 +21,12 @@ import {
  * list is a window and not the whole record.
  */
 async function snapshot() {
-  const s = await R.researchSnapshot();
-  const [claims, mentions] = await Promise.all([
+  const [s, claims, mentions, briefs, performances] = await Promise.all([
+    R.researchSnapshot(),
     countClaims(),
     countMentions(),
+    researchBriefs(),
+    R.docs<Awaited<ReturnType<typeof performance>>>("performance"),
   ]);
   return {
     ...s,
@@ -32,7 +34,7 @@ async function snapshot() {
     // transcripts, extraction plans and audits remain on the run detail API.
     runs: s.runs.map((run) => ({ ...run, output: {} })),
     evaluationRuns: s.evaluationRuns.map((run) => ({ ...run, output: {} })),
-    researchBriefs: (await researchBriefs()).map(
+    researchBriefs: briefs.map(
       ({ evidence, external, retrievalNotes, baseline, ...brief }) => ({
         ...brief,
         readiness: researchReadiness({ ...brief, evidence }),
@@ -58,8 +60,7 @@ async function snapshot() {
         list.channels.some((seed) => seed.id === channel.id),
       ).length,
     })),
-    performances:
-      await R.docs<Awaited<ReturnType<typeof performance>>>("performance"),
+    performances,
     counts: {
       claims: {
         returned: s.claims.length,
@@ -76,8 +77,12 @@ async function snapshot() {
 }
 /** What the research front end reads, including the truncation counts. */
 export type ResearchSnapshot = Awaited<ReturnType<typeof snapshot>>;
+/** What the Lab page reads on its own. */
+export type LabSnapshot = Awaited<ReturnType<typeof R.labSnapshot>>;
 export const research: ActionTable = {
   snapshot: reads(nothing, snapshot),
+  // The Lab page's diagnostics, kept out of the snapshot every page waits on.
+  lab: reads(nothing, R.labSnapshot),
   generateResearchBrief: writes(
     z.strictObject({ sourceRunId: z.string().min(1) }),
     (v) => queueResearchBrief(v.sourceRunId),
