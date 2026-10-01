@@ -8,8 +8,12 @@ import truealpha from "./truealpha.json" with { type: "json" };
  * rather than editing a number on every one of them.
  *
  * TrueAlpha handles are resolved against the YouTube API with dated evidence.
- * LeapEdge stays empty and explicitly unavailable until a ranked source exists.
- * A personal subscription list must never be relabelled as a ranking.
+ * LeapEdge is retired: no source-backed ranked list exists, so it is empty on
+ * purpose rather than pending, and channels beyond TrueAlpha are added in the
+ * app. A personal subscription list must never be relabelled as a ranking.
+ *
+ * `placeholder` means the channels are stand-ins and must not reach a real
+ * database; `retired` means the source was withdrawn and contributes nothing.
  */
 export const SeedChannel = z.object({
   id: z.string().regex(/^UC[\w-]{22}$/),
@@ -22,12 +26,17 @@ export const SeedList = z
     source: z.string().regex(/^[a-z][a-z0-9-]{1,30}$/),
     tier: z.number().int().min(1).max(3),
     placeholder: z.boolean(),
+    retired: z.boolean().default(false),
     note: z.string().max(2000).default(""),
     channels: z.array(SeedChannel).max(500),
   })
   .refine(
-    (list) => list.placeholder || list.channels.length > 0,
+    (list) => list.placeholder || list.retired || list.channels.length > 0,
     "A confirmed seed list must contain channels.",
+  )
+  .refine(
+    (list) => !list.retired || (!list.placeholder && list.channels.length === 0),
+    "A retired seed list is empty and is not a placeholder.",
   )
   .refine(
     (list) =>

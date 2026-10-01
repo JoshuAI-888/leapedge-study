@@ -625,6 +625,7 @@
       "tests": [
         "tests/channel-seed.test.ts"
       ],
+      "note": "LeapEdge list retired 1 October 2026 (user decision): no source-backed ranked list exists, so seed/leapedge.json is retired rather than a placeholder and production seeding runs with the 8 TrueAlpha channels.",
       "planned": true
     },
     {

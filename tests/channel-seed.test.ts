@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { placeholderSources } from "../scripts/seed-channels.ts";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { freshDatabase } from "./helpers/db.ts";
@@ -79,15 +80,16 @@ const rowsSnapshot = async () =>
     .prepare(`SELECT ${COLUMNS} FROM channels ORDER BY id`)
     .all()) as Record<string, unknown>[];
 
-test("Shipped channels have source evidence; unavailable LeapEdge contributes no invented ranks", () => {
+test("Shipped channels have source evidence; retired LeapEdge contributes no invented ranks", () => {
   const lists = seedLists();
   assert.deepEqual(
     lists.map((l) => l.source),
     ["leapedge", "truealpha"],
   );
-  assert.equal(lists[0].placeholder, true);
+  assert.equal(lists[0].retired, true);
+  assert.equal(lists[0].placeholder, false);
   assert.equal(lists[0].channels.length, 0);
-  assert.match(lists[0].note, /UNAVAILABLE/);
+  assert.match(lists[0].note, /RETIRED/);
   assert.equal(lists[1].placeholder, false);
   assert.equal(lists[1].tier, 1);
   assert.equal(lists[1].channels.length, 8);
@@ -104,6 +106,29 @@ test("Shipped channels have source evidence; unavailable LeapEdge contributes no
   const resolved = resolveSeeds(lists);
   assert.ok(resolved.every((channel) => channel.leapedgeRank === null));
   assert.equal(defaultSelection(resolved).length, 8);
+});
+
+test("The shipped lists do not block production seeding; a placeholder list still does", () => {
+  assert.deepEqual(placeholderSources(), []);
+  assert.deepEqual(
+    placeholderSources([list("standin", 2, 1), ...seedLists()]),
+    ["standin"],
+  );
+});
+
+test("A retired list is empty and is not a placeholder", () => {
+  const retired = { source: "gone", tier: 2, placeholder: false, retired: true };
+  assert.equal(SeedList.parse({ ...retired, channels: [] }).retired, true);
+  assert.throws(() =>
+    SeedList.parse({ ...retired, channels: list("gone", 2, 1).channels }),
+  );
+  assert.throws(() =>
+    SeedList.parse({ ...retired, placeholder: true, channels: [] }),
+  );
+  assert.throws(
+    () => SeedList.parse({ ...retired, retired: false, channels: [] }),
+    /must contain channels/,
+  );
 });
 
 test("A channel on both lists is one row, and it names both sources", async () => {

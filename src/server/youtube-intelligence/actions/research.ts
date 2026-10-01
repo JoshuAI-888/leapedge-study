@@ -97,6 +97,7 @@ async function snapshot() {
     seedSources: seedLists().map((list) => ({
       source: list.source,
       placeholder: list.placeholder,
+      retired: list.retired,
       note: list.note,
       count: list.channels.length,
       installedCount: s.channels.filter((channel) =>

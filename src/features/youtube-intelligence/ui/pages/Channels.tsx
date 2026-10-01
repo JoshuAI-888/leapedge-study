@@ -586,7 +586,9 @@ export function Channels() {
                   {source.source === "truealpha" ? "TrueAlphaData" : "LeapEdge"}
                 </strong>
                 <span className="yi-chip">
-                  {source.placeholder
+                  {source.retired
+                    ? "Retired · no source-backed list"
+                    : source.placeholder
                     ? "Source unavailable"
                     : `${source.count} confirmed channels · ${source.installedCount} added`}
                 </span>

@@ -1,7 +1,8 @@
 {
   "source": "leapedge",
   "tier": 2,
-  "placeholder": true,
-  "note": "UNAVAILABLE: no source-backed ranked LeapEdge channel list is archived. Personal subscription snapshots contain 3 then 4 channels, but do not establish ranking or membership in the advertised top 20/47. No channels are seeded from this unavailable list.",
+  "placeholder": false,
+  "retired": true,
+  "note": "RETIRED 1 October 2026 by the user's decision: no source-backed ranked LeapEdge channel list exists, so this list seeds nothing and production seeding runs with TrueAlpha alone. Personal subscription snapshots (3 then 4 channels) do not establish ranking or membership in the advertised top 20/47 and must never be relabelled as one. Add further channels in the app.",
   "channels": []
 }

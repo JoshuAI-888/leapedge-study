@@ -19,10 +19,10 @@ import { seedLists } from "../src/server/youtube-intelligence/seed/lists.ts";
  * second run neither writes a second version nor re-projects the first over
  * what anyone has since chosen.
  *
- * It refuses a placeholder list against a real database. The files that ship
- * say `placeholder: true`, and seeding those ids would fill the table with rows
- * pointing at channels that do not exist — which then have to be told apart
- * from real ones by hand. Replace the JSON files with the real lists first.
+ * It refuses a placeholder list against a real database: seeding stand-in ids
+ * would fill the table with rows pointing at channels that do not exist, which
+ * then have to be told apart from real ones by hand. A retired list (LeapEdge)
+ * is not a placeholder; it is empty on purpose and does not block production.
  */
 export const USAGE = [
   "Usage:",
