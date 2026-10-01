@@ -2467,6 +2467,6 @@
       "tests/workspace-snapshot-payload.test.ts"
     ],
     "verification": "Projected from the production snapshot of 1 Oct: briefs 2.75 MB to 0.92 MB, snapshot 4.1 MB to 2.2 MB (380 KB gzip). Database round trip and region measured on production after deploy.",
-    "pr": null
+    "pr": 28
   }
 }
