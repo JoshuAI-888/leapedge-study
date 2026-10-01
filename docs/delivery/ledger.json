@@ -2457,6 +2457,6 @@
       "tests/workspace-snapshot-payload.test.ts"
     ],
     "verification": "Before (production, 1 Oct): research/snapshot 43.6 s / 12.7 MB, channels/costMetrics 6.4–6.6 s, settings/teamAccount 2.2–3.8 s, runs page 1.5–3.3 s, activity 0.8–2.2 s, all re-fetched on each page change. After: measured on production once deployed.",
-    "pr": null
+    "pr": 27
   }
 }
