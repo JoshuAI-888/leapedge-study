@@ -1,0 +1,429 @@
+{
+  "version": "optimization-full-quality.v1",
+  "status": "targeted-brief-followup-completed-with-explicit-limits",
+  "reviewedArtifact": "data/optimization-20260920/reviewed-candidate.json",
+  "timingScope": "Raw frozen-source synthesis through completed brief; excludes ingestion, worker queue, UI paint and offline post hoc arithmetic gate. Not a fully controlled algorithm-only experiment: live retrieval and sequential baseline inputs can vary.",
+  "noNewLeapEdgeCalls": true,
+  "findings": [
+    {
+      "id": "credo-coverage",
+      "videoId": "M1FJ5dNiBEs",
+      "severity": "blocker-existing-gap",
+      "before": "No actionable Credo call or material brief preference retained.",
+      "after": "Checked bullish mention retains under the 170s preference, but evidence inventory excludes non-call mentions and final brief omits it.",
+      "sourceSpans": [
+        {
+          "startId": "s00209",
+          "endId": "s00215",
+          "startSeconds": 462,
+          "endSeconds": 477.28,
+          "finding": "Favorite valuation opportunity under the 170s, explicitly named Credo."
+        }
+      ],
+      "leapedge": "Retained reference captures CRDO long and under the 170s entry. Reference agrees with source here; it is not general ground truth.",
+      "resolution": "Feed independently checked non-call mentions into attributed research context; retain price condition and distinguish preference from an executed trade."
+    },
+    {
+      "id": "nvidia-stance",
+      "videoId": "M1FJ5dNiBEs",
+      "severity": "blocker-regression",
+      "before": "Nvidia bullish creator call plus platform thesis.",
+      "after": "Neutral platform-performance context only in final brief, although bullish Nvidia holding survives as checked mention. Not rejected by critic: never extracted as claim.",
+      "sourceSpans": [
+        {
+          "startId": "s00029",
+          "endId": "s00036",
+          "startSeconds": 58.48,
+          "endSeconds": 76.96,
+          "finding": "Creator states bullish AI allocation and portfolio companies including Nvidia."
+        },
+        {
+          "startId": "s00306",
+          "endId": "s00309",
+          "startSeconds": 675.2,
+          "endSeconds": 686.24,
+          "finding": "Positive Vera Rubin demand/profit expectations."
+        }
+      ],
+      "leapedge": "Reference captures NVDA long/high/long-term. Source supports positive stance/holding; high conviction and long-term horizon must not be copied automatically.",
+      "resolution": "Preserve checked holding/positive stance as attributed context, without inventing target, trade or horizon."
+    },
+    {
+      "id": "dutchbros-moat",
+      "videoId": "ZfOQoh82JTo",
+      "severity": "material-summary-weakening",
+      "before": "Explicit sustainable competitive advantage concern in s9.",
+      "after": "Mentioned in s9 with generic competitive risks; specific moat doubt and conditional low starting price diluted.",
+      "sourceSpans": [
+        {
+          "startId": "s00643",
+          "endId": "s00664",
+          "startSeconds": 1498.08,
+          "endSeconds": 1558.24,
+          "finding": "Speakers cannot identify sustainable differentiation; require attractive entry and growth to compensate; disclose no position."
+        }
+      ],
+      "leapedge": "No valid comparable output: stopped because video too long.",
+      "resolution": "Keep substantive bearish countercase and price-dependent qualification visible in main research context."
+    },
+    {
+      "id": "transdigm-new-call",
+      "videoId": "ZfOQoh82JTo",
+      "severity": "supported-improvement",
+      "before": "No creator call; discussed context may remain.",
+      "after": "Low-conviction favorable investment view with leverage and flight-hour risks.",
+      "sourceSpans": [
+        {
+          "startId": "s00770",
+          "endId": "s00783",
+          "startSeconds": 1817.84,
+          "endSeconds": 1854.48,
+          "finding": "My gut says this works; pricing power/maintenance demand; I like it; probably works."
+        }
+      ],
+      "leapedge": "No completed reference.",
+      "resolution": "Supported as tentative positive view, not verified business fundamentals or disclosed executed purchase."
+    },
+    {
+      "id": "opendoor-new-call",
+      "videoId": "ZfOQoh82JTo",
+      "severity": "supported-with-qualification",
+      "before": "No creator call.",
+      "after": "Conditional short-cover before hypothetical OpenAI IPO; low conviction.",
+      "sourceSpans": [
+        {
+          "startId": "s01597",
+          "endId": "s01608",
+          "startSeconds": 3695.76,
+          "endSeconds": 3724.319,
+          "finding": "Explicitly not short Opendoor; would cover if short ahead of the IPO because of ticker-confusion speculation."
+        }
+      ],
+      "leapedge": "No completed reference.",
+      "resolution": "Retain no actual short-position disclosure and hypothetical context; do not portray confirmed catalyst or executed covering."
+    },
+    {
+      "id": "options-contract-math",
+      "videoId": "1WNowIoNgtg",
+      "severity": "raw-blocker-gated-offline",
+      "before": "PLTR conditional short put context with inconsistent breakeven risk text.",
+      "after": "Long directional classification still explicitly short put; November 20 and 165/175 strikes retained. Raw s-12 wrongly presents 165 \u2212 1.85 as 153. Current deterministic gate withholds s-12 offline.",
+      "sourceSpans": [
+        {
+          "startId": "s00760",
+          "endId": "s00761",
+          "startSeconds": 1578.159,
+          "endSeconds": 1585.2,
+          "finding": "November 20 and 175 put scenario."
+        },
+        {
+          "startId": "s00783",
+          "endId": "s00796",
+          "startSeconds": 1625.84,
+          "endSeconds": 1658.2,
+          "finding": "165 strike; transcript says 1.85 premium, then 153 breakeven, and later 12 bucks premium: unresolved source contradiction."
+        }
+      ],
+      "leapedge": "PLTR long/sell 165 put with November 20 expiry; no evidence that reference resolves this arithmetic correctly.",
+      "resolution": "Do not silently repair source. 165 \u2212 1.85 = 163.15 before fees. Withhold inconsistent sentence, expose discrepancy, and retain independently supported expiry/strategy details elsewhere. Raw earlier claims still need discrepancy review."
+    }
+  ],
+  "metrics": [
+    {
+      "videoId": "1WNowIoNgtg",
+      "beforeSeconds": 115.678,
+      "afterSeconds": 114.442,
+      "beforeUsd": 0.391081,
+      "afterUsd": 0.4505107
+    },
+    {
+      "videoId": "ZfOQoh82JTo",
+      "beforeSeconds": 144.046,
+      "afterSeconds": 107.827,
+      "beforeUsd": 0.63723375,
+      "afterUsd": 0.513050325
+    },
+    {
+      "videoId": "M1FJ5dNiBEs",
+      "beforeSeconds": 76.47,
+      "afterSeconds": 56.863,
+      "beforeUsd": 0.23794475,
+      "afterUsd": 0.167627475
+    },
+    {
+      "videoId": "SPIRV9UjNYU",
+      "beforeSeconds": 78.615,
+      "afterSeconds": 66.062,
+      "beforeUsd": 0.19636350000000002,
+      "afterUsd": 0.205906925
+    }
+  ],
+  "rawFullAggregate": {
+    "beforeSeconds": 414.80899999999997,
+    "afterSeconds": 345.19399999999996,
+    "timeReductionPercent": 16.782422753604674,
+    "beforeUsd": 1.462623,
+    "afterUsd": 1.337095425,
+    "costReductionPercent": 8.582360252778741,
+    "scope": "Sum of four raw sequential frozen-source-to-brief observations, not current repaired pipeline or ingestion-to-display."
+  },
+  "followup": {
+    "artifact": "data/optimization-20260920/brief-followup-reviewed.json",
+    "rawArtifact": "data/optimization-20260920/brief-followup.json",
+    "scope": "Separate incremental brief-only generation from unchanged accepted source outputs, original source IDs, settings and analysis cutoff retained, empty baseline, no extraction, captions or LeapEdge calls. Offline final gate not included in provider timing.",
+    "rows": [
+      {
+        "videoId": "1WNowIoNgtg",
+        "runId": "3de93d75-c01d-4767-918c-89cd66fadca4",
+        "stageWorkSeconds": 51.564714583,
+        "briefWallSeconds": 51.856,
+        "costUsd": 0.140906,
+        "stages": [
+          {
+            "videoId": "1WNowIoNgtg",
+            "runId": "3de93d75-c01d-4767-918c-89cd66fadca4",
+            "stage": "metadata",
+            "seconds": 3.4112431249999995,
+            "status": "running"
+          },
+          {
+            "videoId": "1WNowIoNgtg",
+            "runId": "3de93d75-c01d-4767-918c-89cd66fadca4",
+            "stage": "research-sources",
+            "seconds": 10.006251417,
+            "status": "running"
+          },
+          {
+            "videoId": "1WNowIoNgtg",
+            "runId": "3de93d75-c01d-4767-918c-89cd66fadca4",
+            "stage": "research-sources",
+            "seconds": 0.022854958000001716,
+            "status": "running"
+          },
+          {
+            "videoId": "1WNowIoNgtg",
+            "runId": "3de93d75-c01d-4767-918c-89cd66fadca4",
+            "stage": "research-synthesis",
+            "seconds": 14.764489582999998,
+            "status": "running"
+          },
+          {
+            "videoId": "1WNowIoNgtg",
+            "runId": "3de93d75-c01d-4767-918c-89cd66fadca4",
+            "stage": "research-audit",
+            "seconds": 23.359875499999998,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "videoId": "ZfOQoh82JTo",
+        "runId": "541d4d77-a1f7-4280-a974-785227f67fb9",
+        "stageWorkSeconds": 47.252067458000006,
+        "briefWallSeconds": 47.473,
+        "costUsd": 0.16119975,
+        "stages": [
+          {
+            "videoId": "ZfOQoh82JTo",
+            "runId": "541d4d77-a1f7-4280-a974-785227f67fb9",
+            "stage": "metadata",
+            "seconds": 3.4731270829999996,
+            "status": "running"
+          },
+          {
+            "videoId": "ZfOQoh82JTo",
+            "runId": "541d4d77-a1f7-4280-a974-785227f67fb9",
+            "stage": "research-sources",
+            "seconds": 5.3442997499999985,
+            "status": "running"
+          },
+          {
+            "videoId": "ZfOQoh82JTo",
+            "runId": "541d4d77-a1f7-4280-a974-785227f67fb9",
+            "stage": "research-sources",
+            "seconds": 0.009796750000001339,
+            "status": "running"
+          },
+          {
+            "videoId": "ZfOQoh82JTo",
+            "runId": "541d4d77-a1f7-4280-a974-785227f67fb9",
+            "stage": "research-synthesis",
+            "seconds": 12.636684875000006,
+            "status": "running"
+          },
+          {
+            "videoId": "ZfOQoh82JTo",
+            "runId": "541d4d77-a1f7-4280-a974-785227f67fb9",
+            "stage": "research-audit",
+            "seconds": 25.788159,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "videoId": "M1FJ5dNiBEs",
+        "runId": "ca950e02-43c1-4e41-937a-c7f33ba9e87a",
+        "stageWorkSeconds": 43.62133095800002,
+        "briefWallSeconds": 43.948,
+        "costUsd": 0.10074975,
+        "stages": [
+          {
+            "videoId": "M1FJ5dNiBEs",
+            "runId": "ca950e02-43c1-4e41-937a-c7f33ba9e87a",
+            "stage": "metadata",
+            "seconds": 3.6759349580000125,
+            "status": "running"
+          },
+          {
+            "videoId": "M1FJ5dNiBEs",
+            "runId": "ca950e02-43c1-4e41-937a-c7f33ba9e87a",
+            "stage": "research-sources",
+            "seconds": 7.636779500000004,
+            "status": "running"
+          },
+          {
+            "videoId": "M1FJ5dNiBEs",
+            "runId": "ca950e02-43c1-4e41-937a-c7f33ba9e87a",
+            "stage": "research-sources",
+            "seconds": 0.0018568749999976716,
+            "status": "running"
+          },
+          {
+            "videoId": "M1FJ5dNiBEs",
+            "runId": "ca950e02-43c1-4e41-937a-c7f33ba9e87a",
+            "stage": "research-synthesis",
+            "seconds": 13.531712375000003,
+            "status": "running"
+          },
+          {
+            "videoId": "M1FJ5dNiBEs",
+            "runId": "ca950e02-43c1-4e41-937a-c7f33ba9e87a",
+            "stage": "research-audit",
+            "seconds": 18.775047250000004,
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "videoId": "SPIRV9UjNYU",
+        "runId": "f3a05d26-b339-4cf6-bbed-a199152d1be5",
+        "stageWorkSeconds": 42.24680291699999,
+        "briefWallSeconds": 42.465,
+        "costUsd": 0.10701975,
+        "stages": [
+          {
+            "videoId": "SPIRV9UjNYU",
+            "runId": "f3a05d26-b339-4cf6-bbed-a199152d1be5",
+            "stage": "metadata",
+            "seconds": 2.9999425420000043,
+            "status": "running"
+          },
+          {
+            "videoId": "SPIRV9UjNYU",
+            "runId": "f3a05d26-b339-4cf6-bbed-a199152d1be5",
+            "stage": "research-sources",
+            "seconds": 4.431876416999992,
+            "status": "running"
+          },
+          {
+            "videoId": "SPIRV9UjNYU",
+            "runId": "f3a05d26-b339-4cf6-bbed-a199152d1be5",
+            "stage": "research-sources",
+            "seconds": 0.0028512080000073184,
+            "status": "running"
+          },
+          {
+            "videoId": "SPIRV9UjNYU",
+            "runId": "f3a05d26-b339-4cf6-bbed-a199152d1be5",
+            "stage": "research-synthesis",
+            "seconds": 9.929454999999987,
+            "status": "running"
+          },
+          {
+            "videoId": "SPIRV9UjNYU",
+            "runId": "f3a05d26-b339-4cf6-bbed-a199152d1be5",
+            "stage": "research-audit",
+            "seconds": 24.882677750000003,
+            "status": "completed"
+          }
+        ]
+      }
+    ],
+    "costUsd": 0.50987525,
+    "modelCostUsd": 0.39787525,
+    "searchCostUsd": 0.112,
+    "unsettledCalls": 0,
+    "newlyWithheld": [
+      {
+        "videoId": "SPIRV9UjNYU",
+        "runId": "f3a05d26-b339-4cf6-bbed-a199152d1be5",
+        "newlyWithheld": []
+      },
+      {
+        "videoId": "M1FJ5dNiBEs",
+        "runId": "ca950e02-43c1-4e41-937a-c7f33ba9e87a",
+        "newlyWithheld": []
+      },
+      {
+        "videoId": "ZfOQoh82JTo",
+        "runId": "541d4d77-a1f7-4280-a974-785227f67fb9",
+        "newlyWithheld": []
+      },
+      {
+        "videoId": "1WNowIoNgtg",
+        "runId": "3de93d75-c01d-4767-918c-89cd66fadca4",
+        "newlyWithheld": [
+          {
+            "id": "s8",
+            "text": "For the 165 strike put on Palantir Technologies, collecting a cited premium of $1.85 per share establishes a calculated breakeven price of $153.15 per share, below the creator's estimated short-term downside floor of $155.",
+            "reasons": [
+              "Quoted breakeven conflicts with the supplied option inputs: strike minus premium is 163.15 before fees. The source discrepancy must be resolved before this sentence can appear in the summary."
+            ]
+          }
+        ]
+      }
+    ],
+    "sandboxAttempt": {
+      "artifact": "data/optimization-20260920/brief-followup-sandbox-denied.json",
+      "reservedUsd": 0.062412,
+      "confirmedSpendUsd": null,
+      "classification": "Local sandbox DNS failure ENOTFOUND before reachable provider; retained unknown reservation is not counted as confirmed API spend."
+    },
+    "checks": [
+      {
+        "check": "Credo under the 170s",
+        "result": "Restored in accepted s6 as attributed valuation preference, source s00209\u2013s00215."
+      },
+      {
+        "check": "Nvidia holding/positive context",
+        "result": "Restored in accepted s6 as existing AI portfolio holding, s10 retains platform thesis. No invented target or new buy."
+      },
+      {
+        "check": "Dutch Bros moat concern",
+        "result": "Accepted s12 explicitly states questionable moat defensibility. Price-dependent entry qualification remains less explicit than full transcript."
+      },
+      {
+        "check": "TransDigm",
+        "result": "Accepted s7 positive thesis and s8 explicit leverage/flight-hour countercase supported by retained source."
+      },
+      {
+        "check": "Opendoor",
+        "result": "Accepted s13 describes hypothetical short cover ahead of potential IPO. Source explicitly discloses no actual short position; this remains visible in evidence, not repeated in summary."
+      },
+      {
+        "check": "Options",
+        "result": "Accepted s7 retains November 20 and 165/175 strikes. Current offline gate withholds s8 false 153.15 computed breakeven. Raw contradictory source/audit retained; no silently corrected provider sentence published."
+      },
+      {
+        "check": "Mandarin dates/confidence",
+        "result": "Accepted s3/s6 retain BOJ September 18 and market on the 17th distinction; all 9 accepted sentences unverified/insufficient, no invented external corroboration."
+      }
+    ],
+    "limitations": [
+      "Four targeted source-backed checks are not a universal no-regression guarantee.",
+      "No re-extraction: actionable call lists still reflect prior accepted source outputs; company mention context now reaches researchbrief.",
+      "Live external search varied; independently verified fact coverage remains limited.",
+      "Do not add/substitute brief follow-up times into raw full paired metrics to invent a current end-to-end result."
+    ]
+  }
+}

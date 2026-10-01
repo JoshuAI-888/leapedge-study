@@ -1,0 +1,172 @@
+{
+  "mode": "fake transport, isolated persistent PostgreSQL",
+  "actualProviderSpendUsd": 0,
+  "results": [
+    {
+      "scenario": "admission",
+      "state": "finished",
+      "cases": [
+        {
+          "videoId": "fixturedur1",
+          "cutoff": "2026-01-03T00:00:00Z",
+          "sourceRunId": "8519fad4-50cc-4ca5-b845-134f52c3b282",
+          "researchRunId": "12278336-2d51-4376-abd0-a1df072badb7",
+          "state": "needs_review"
+        }
+      ],
+      "sourceRunCount": 1,
+      "synthesisCalls": 1,
+      "providerNetworkCalls": 0,
+      "fixtureLedgerUsd": 0.060000000000000005,
+      "cutoff": "2026-01-03T00:00:00Z",
+      "wallClockCreatedAt": "2026-09-26T21:14:38.044Z",
+      "database": "yti_perf_readiness_fixture_muiw1988_admission"
+    },
+    {
+      "scenario": "paid-response",
+      "state": "finished",
+      "cases": [
+        {
+          "videoId": "fixturedur1",
+          "cutoff": "2026-01-03T00:00:00Z",
+          "sourceRunId": "7b85bac1-094a-43d3-9ef9-6f913029db48",
+          "researchRunId": "3b8eda2f-594c-4e1b-ab0b-572a564ede90",
+          "state": "needs_review"
+        }
+      ],
+      "sourceRunCount": 1,
+      "synthesisCalls": 1,
+      "providerNetworkCalls": 0,
+      "fixtureLedgerUsd": 0.060000000000000005,
+      "cutoff": "2026-01-03T00:00:00Z",
+      "wallClockCreatedAt": "2026-09-26T21:14:38.476Z",
+      "database": "yti_perf_readiness_fixture_muiw19nu_paid_response"
+    },
+    {
+      "scenario": "checkpoint",
+      "state": "finished",
+      "cases": [
+        {
+          "videoId": "fixturedur1",
+          "cutoff": "2026-01-03T00:00:00Z",
+          "sourceRunId": "997babdf-21bf-4870-b2cb-77a964457e7c",
+          "researchRunId": "0c448ef2-018b-4eb1-aab0-0543edef0f69",
+          "state": "needs_review"
+        }
+      ],
+      "sourceRunCount": 1,
+      "synthesisCalls": 1,
+      "providerNetworkCalls": 0,
+      "fixtureLedgerUsd": 0.060000000000000005,
+      "cutoff": "2026-01-03T00:00:00Z",
+      "wallClockCreatedAt": "2026-09-26T21:14:38.941Z",
+      "database": "yti_perf_readiness_fixture_muiw1a0x_checkpoint"
+    },
+    {
+      "scenario": "in-flight",
+      "state": "finished",
+      "cases": [
+        {
+          "videoId": "fixturedur1",
+          "cutoff": "2026-01-03T00:00:00Z",
+          "sourceRunId": "ebb34343-1e3b-4cce-bd7f-93ba7fe410f5",
+          "researchRunId": "df48f57b-647e-4a16-87ad-7708a232aabc",
+          "state": "needs_review"
+        }
+      ],
+      "sourceRunCount": 1,
+      "synthesisCalls": 1,
+      "providerNetworkCalls": 0,
+      "fixtureLedgerUsd": 0.060000000000000005,
+      "cutoff": "2026-01-03T00:00:00Z",
+      "wallClockCreatedAt": "2026-09-26T21:14:39.471Z",
+      "database": "yti_perf_readiness_fixture_muiw1acc_in_flight"
+    }
+  ],
+  "sourceLimitationRetentionRecheck": {
+    "mode": "fake transport, isolated persistent PostgreSQL",
+    "actualProviderSpendUsd": 0,
+    "results": [
+      {
+        "scenario": "admission",
+        "state": "finished",
+        "cases": [
+          {
+            "videoId": "fixturedur1",
+            "cutoff": "2026-01-03T00:00:00Z",
+            "sourceRunId": "4a306739-cb7a-4a8b-8aef-81aa3f49b451",
+            "researchRunId": "e9df4f2b-aad9-4e6c-b149-ad9333eb34a5",
+            "state": "needs_review"
+          }
+        ],
+        "sourceRunCount": 1,
+        "synthesisCalls": 1,
+        "providerNetworkCalls": 0,
+        "fixtureLedgerUsd": 0.060000000000000005,
+        "cutoff": "2026-01-03T00:00:00Z",
+        "wallClockCreatedAt": "2026-09-26T21:39:54.246Z",
+        "database": "yti_perf_readiness_fixture_muiwxpic_admission"
+      },
+      {
+        "scenario": "paid-response",
+        "state": "finished",
+        "cases": [
+          {
+            "videoId": "fixturedur1",
+            "cutoff": "2026-01-03T00:00:00Z",
+            "sourceRunId": "55d5b896-92b2-4181-9ddd-928d3a896fcb",
+            "researchRunId": "87c93875-54da-48ed-91c1-9f96e8dd8010",
+            "state": "needs_review"
+          }
+        ],
+        "sourceRunCount": 1,
+        "synthesisCalls": 1,
+        "providerNetworkCalls": 0,
+        "fixtureLedgerUsd": 0.060000000000000005,
+        "cutoff": "2026-01-03T00:00:00Z",
+        "wallClockCreatedAt": "2026-09-26T21:39:57.339Z",
+        "database": "yti_perf_readiness_fixture_muiwxshl_paid_response"
+      },
+      {
+        "scenario": "checkpoint",
+        "state": "finished",
+        "cases": [
+          {
+            "videoId": "fixturedur1",
+            "cutoff": "2026-01-03T00:00:00Z",
+            "sourceRunId": "d45f92d0-74d2-40f1-bf28-037a590cdb36",
+            "researchRunId": "d5e2298d-ec80-4944-8988-7341257e7907",
+            "state": "needs_review"
+          }
+        ],
+        "sourceRunCount": 1,
+        "synthesisCalls": 1,
+        "providerNetworkCalls": 0,
+        "fixtureLedgerUsd": 0.060000000000000005,
+        "cutoff": "2026-01-03T00:00:00Z",
+        "wallClockCreatedAt": "2026-09-26T21:40:01.071Z",
+        "database": "yti_perf_readiness_fixture_muiwxv2g_checkpoint"
+      },
+      {
+        "scenario": "in-flight",
+        "state": "finished",
+        "cases": [
+          {
+            "videoId": "fixturedur1",
+            "cutoff": "2026-01-03T00:00:00Z",
+            "sourceRunId": "391729a2-3555-4bf6-ab4c-22259d70c16b",
+            "researchRunId": "e65bf4d7-e4c4-46a7-9b08-d9cf53a6858e",
+            "state": "needs_review"
+          }
+        ],
+        "sourceRunCount": 1,
+        "synthesisCalls": 1,
+        "providerNetworkCalls": 0,
+        "fixtureLedgerUsd": 0.060000000000000005,
+        "cutoff": "2026-01-03T00:00:00Z",
+        "wallClockCreatedAt": "2026-09-26T21:40:03.594Z",
+        "database": "yti_perf_readiness_fixture_muiwxxlo_in_flight"
+      }
+    ]
+  }
+}

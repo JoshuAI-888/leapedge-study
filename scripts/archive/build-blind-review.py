@@ -1,0 +1,28 @@
+"""Build a standalone reviewer form. Contains no candidate answers or API keys."""
+from pathlib import Path
+import json
+packet=json.loads(Path('docs/completion-blind-audio-review-20260915.json').read_text())
+html='''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>YouTube Intelligence — blind audio review</title>
+<style>body{font:16px/1.6 system-ui;background:#f5f7f8;color:#182c31;max-width:900px;margin:32px auto;padding:0 20px}h1{line-height:1.2}section{background:white;padding:24px;border:1px solid #ccd9d9;border-radius:12px;margin:20px 0}label{display:block;margin:14px 0 5px;font-weight:600}textarea,input{box-sizing:border-box;width:100%;font:inherit;padding:9px;border:1px solid #aabebe;border-radius:6px}textarea{min-height:130px}input[type=checkbox]{width:auto}a{color:#076b68}button{background:#076b68;color:white;border:0;border-radius:6px;padding:12px 18px;font:inherit;cursor:pointer}small{color:#53686d}.bar{position:sticky;top:0;background:#f5f7f8;padding:12px 0;border-bottom:1px solid #ccd9d9}#notice{color:#82480a}</style>
+<h1>Listen first. Compare second.</h1><p>Nine development windows, 9 minutes 28 seconds of audio. Allow extra time to replay and transcribe. No model answers are included. YouTube opens in a separate tab; stop at the displayed end time.</p>
+<p>Write the original spoken language, not an English translation. Mark unclear words [unclear]. Preserve numbers, ticker names, negatives and conditions (for example, a break versus a close). For chart-only facts, label them visual. Do not guess or consult auto-captions while making the reference.</p>
+<label>Reviewer name<input id="reviewer" autocomplete="name"></label><div class="bar"><button id="export">Download review JSON</button> <span id="progress"></span><div id="notice"></div></div><main id="windows"></main>
+<script>
+const packet=PACKET;
+const key='yti-blind-review-'+packet.packetSha256;
+let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch{}
+const reviewer=document.getElementById('reviewer');reviewer.value=saved.reviewer||'';
+const clock=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');
+for(const w of packet.windows){const s=document.createElement('section');s.dataset.id=w.id;
+const title=document.createElement('h2');title.textContent=w.id+' · '+w.language+' · '+clock(w.startSeconds)+'–'+clock(w.endSeconds);s.append(title);
+const a=document.createElement('a');a.href='https://www.youtube.com/watch?v='+w.videoId+'&t='+w.startSeconds+'s';a.target='_blank';a.rel='noopener';a.textContent='Open listening window ↗';s.append(a);
+for(const [name,label,placeholder] of [['text','Original spoken words','Transcribe this bounded window. Mark anything unclear.'],['facts','Critical facts and exact spoken conditions','One per line: number / ticker / issuer / negation / condition / attribution — exact words and context.'],['anchors','Timing landmarks','One per line: MM:SS — distinctive words heard at this source-video timestamp.'],['notes','Uncertainty or access problems','Record inaudible portions, missing video access, visual-only facts, or unclear boundaries.']]){
+const l=document.createElement('label');l.textContent=label;const t=document.createElement('textarea');t.dataset.field=name;t.placeholder=placeholder;t.value=saved[w.id]?.[name]||'';l.append(t);s.append(l);}
+const l=document.createElement('label'),c=document.createElement('input');c.type='checkbox';c.dataset.field='listened';c.checked=!!saved[w.id]?.listened;l.append(c,document.createTextNode(' I listened to this complete window and wrote my own reference.'));s.append(l);document.getElementById('windows').append(s);}
+function collect(){const x={reviewer:reviewer.value};for(const s of document.querySelectorAll('section')){x[s.dataset.id]={};for(const e of s.querySelectorAll('[data-field]'))x[s.dataset.id][e.dataset.field]=e.type==='checkbox'?e.checked:e.value;}return x;}
+function update(){const x=collect();const n=packet.windows.filter(w=>x[w.id].listened&&x[w.id].text.trim()&&x.reviewer.trim()).length;document.getElementById('progress').textContent=n+' / 9 references attested';try{localStorage.setItem(key,JSON.stringify(x));document.getElementById('notice').textContent='Saved in this browser. Download JSON to keep a portable copy.'}catch{document.getElementById('notice').textContent='Browser storage unavailable. Download JSON before closing.'}}
+document.addEventListener('input',update);update();
+document.getElementById('export').onclick=()=>{const x=collect(),at=new Date().toISOString();const result={version:'blind-review-draft.v1',packetSha256:packet.packetSha256,exportedAt:at,containsCandidateAnswers:false,windows:packet.windows.map(w=>({...w,reference:{...w.reference,status:'pending_audio_review',text:x[w.id].text,reviewer:x.reviewer,reviewedAt:x[w.id].listened?at:'',reviewerAttestedListening:x[w.id].listened,criticalFactsNotes:x[w.id].facts,anchorNotes:x[w.id].anchors,uncertaintyNotes:x[w.id].notes}}))};const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='youtube-intelligence-blind-review.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+</script></html>'''.replace('PACKET',json.dumps(packet,ensure_ascii=False).replace('<','\\u003c'))
+Path('docs/blind-audio-review.html').write_text(html)
+print('Wrote blind review form; no candidates; import still requires annotation/boundary validation.')

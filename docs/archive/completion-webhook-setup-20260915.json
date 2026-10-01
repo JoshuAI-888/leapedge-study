@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-14T21:11:24.554Z",
+  "webhookUrl": "https://resend.com/webhooks/42c3b24a-fba1-4084-ab56-0ccaf0a2b864",
+  "endpoint": "https://youtube-intelligence-two.vercel.app/api/email/webhook",
+  "events": [
+    "email.delivered",
+    "email.bounced",
+    "email.complained",
+    "email.delivery_delayed",
+    "email.failed"
+  ],
+  "localSecretConfigured": true,
+  "vercelSecretConfigured": true,
+  "redeploymentRequired": true
+}

@@ -1,0 +1,2 @@
+# Phase-5 lanes append CSS blocks; keep both sides when lanes merge.
+*.css merge=union

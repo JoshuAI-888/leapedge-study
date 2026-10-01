@@ -1,0 +1,11 @@
+import {readFileSync} from 'node:fs';
+import {put,addPrompt,promptVersions} from '../src/server/youtube-intelligence/research-store.ts';
+import {db} from '../src/server/youtube-intelligence/store.ts';
+import {selectionPrompts} from '../evaluations/native-google/selection-prompts.ts';
+const report=JSON.parse(readFileSync('docs/source-selection-results-20260915.json','utf8'));
+const prompt=selectionPrompts();
+if(!(await promptVersions()).some(p=>p.id===prompt.id))await addPrompt(prompt);
+await put('captionBenchmark',report.id,{...report,runtime:'Source-selection synthesis development comparison; audio unverified'});
+await put('improvement',report.id,{id:report.id,title:'Source selection and instrument inventory',status:'proposed',proposal:prompt.rationale,outcome:'Quote copying failures eliminated on three development sources; QQQ/IWM recovered. Two Mandarin interpretation defects escaped model audit. No promotion.',results:report});
+await put('researchWhitePaper',report.id,{id:report.id,at:report.at,markdown:readFileSync('docs/source-selection-findings-20260915.md','utf8'),scriptManifest:report.scriptManifest});
+await db().close();console.log('Source-selection findings saved; default prompt unchanged.');

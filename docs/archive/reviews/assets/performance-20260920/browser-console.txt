@@ -1,0 +1,9 @@
+The following is a diff from the previous accessibility tree for Window: "YouTube Intelligence" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~						2216 link Description: Skip to content, Value: 127.0.0.1:3024/youtube-intelligence/today#yi-main
+~								2256 link Description: AI Infrastructure Strategy, Value: 127.0.0.1:3024/youtube-intelligence/analysis/8fae7a8a-f4df-4357-bbab-f3d9a7112283#research-brief
+~							2267 link Description: Read brief and inspect evidence →, Value: 127.0.0.1:3024/youtube-intelligence/analysis/8fae7a8a-f4df-4357-bbab-f3d9a7112283#research-brief
+~								2272 link Description: Oracle earnings and balance sheet leverage, Value: 127.0.0.1:3024/youtube-intelligence/analysis/83858f51-80f8-4237-9c8f-b7f3c27ac89c#research-brief
+~							2283 link Description: Read brief and inspect evidence →, Value: 127.0.0.1:3024/youtube-intelligence/analysis/83858f51-80f8-4237-9c8f-b7f3c27ac89c#research-brief
+~									2429 link Description: 7 Stocks to Buy Heavy Before the Market Takes Off, Value: …
+~								2566 link Description: Open diagnostics in Lab →, Value: 127.0.0.1:3024/youtube-intelligence/lab
+The focused UI element is 2719 text entry area (settable) Description: Console prompt, Value:

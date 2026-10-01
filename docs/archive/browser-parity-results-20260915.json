@@ -1,0 +1,121 @@
+{
+  "method": "Browser submit to first captured terminal report/state. Upper bounds include polling and refresh delay; not server latency. Three fresh matched cases, one separately labelled retry. Cards are not verified facts.",
+  "accuracyMeasured": false,
+  "rows": [
+    {
+      "case": "english-short",
+      "videoId": "hYAnAtEqzI0",
+      "channel": "Miles Talks Finance",
+      "product": "LeapEdge",
+      "outcome": "report",
+      "acceptedCards": 1,
+      "observedUpperBoundSeconds": 130.938,
+      "evidence": [
+        "short-submit.json",
+        "leap-short-report.json"
+      ]
+    },
+    {
+      "case": "english-short",
+      "videoId": "hYAnAtEqzI0",
+      "channel": "Miles Talks Finance",
+      "product": "YouTube Intelligence",
+      "outcome": "report",
+      "acceptedCards": 3,
+      "observedUpperBoundSeconds": 126.886,
+      "evidence": [
+        "portal-short-submit.json",
+        "portal-short-poll5.json"
+      ],
+      "usage": {
+        "prompt": "evidence-first.web.v5",
+        "model": "google/gemini-3.8-flash",
+        "displayedCostOrReservationUsd": 0.1880115,
+        "modelStages": 6,
+        "totalModelTokens": 123743,
+        "summedModelStageSeconds": 24.142
+      }
+    },
+    {
+      "case": "english-long",
+      "videoId": "Q6G8pXFkKLk",
+      "channel": "Financial Education",
+      "product": "LeapEdge",
+      "outcome": "transcription_length_failure",
+      "acceptedCards": 0,
+      "observedUpperBoundSeconds": 148.019,
+      "evidence": [
+        "long-submit.json",
+        "long-poll4.json"
+      ]
+    },
+    {
+      "case": "english-long",
+      "videoId": "Q6G8pXFkKLk",
+      "channel": "Financial Education",
+      "product": "YouTube Intelligence",
+      "outcome": "budget_failure",
+      "acceptedCards": 0,
+      "observedUpperBoundSeconds": 193.829,
+      "evidence": [
+        "portal-long-submit.json",
+        "portal-long-poll4.json"
+      ]
+    },
+    {
+      "case": "english-long-retry",
+      "videoId": "Q6G8pXFkKLk",
+      "channel": "Financial Education",
+      "product": "YouTube Intelligence",
+      "outcome": "report_with_duplicate_company",
+      "acceptedCards": 4,
+      "observedUpperBoundSeconds": 264.456,
+      "evidence": [
+        "portal-long-retry-submit.json",
+        "portal-long-retry-poll7.json"
+      ],
+      "usage": {
+        "prompt": "evidence-first.web.v5",
+        "model": "google/gemini-3.8-flash",
+        "displayedCostOrReservationUsd": 0.9270435,
+        "modelStages": 12,
+        "totalModelTokens": 594365,
+        "summedModelStageSeconds": 101.339
+      }
+    },
+    {
+      "case": "chinese-short",
+      "videoId": "9nb3fp76Rz0",
+      "channel": "阳光财经",
+      "product": "LeapEdge",
+      "outcome": "report",
+      "acceptedCards": 3,
+      "observedUpperBoundSeconds": 62.709,
+      "evidence": [
+        "chinese-submit.json",
+        "chinese-poll1.json"
+      ]
+    },
+    {
+      "case": "chinese-short",
+      "videoId": "9nb3fp76Rz0",
+      "channel": "阳光财经",
+      "product": "YouTube Intelligence",
+      "outcome": "completed_without_accepted_evidence",
+      "acceptedCards": 0,
+      "observedUpperBoundSeconds": 167.496,
+      "evidence": [
+        "portal-chinese-submit.json",
+        "portal-chinese-poll3.json"
+      ],
+      "usage": {
+        "prompt": "evidence-first.web.v5",
+        "model": "google/gemini-3.8-flash",
+        "displayedCostOrReservationUsd": 0.07508100000000001,
+        "modelStages": 2,
+        "totalModelTokens": 65532,
+        "summedModelStageSeconds": 30.058
+      }
+    }
+  ]
+}

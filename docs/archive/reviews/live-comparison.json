@@ -1,0 +1,50 @@
+{
+  "version": "standalone-live-comparison.v1",
+  "at": "2026-09-19T12:40:30.043Z",
+  "videoId": "hYAnAtEqzI0",
+  "runId": "939b3924-58f9-44fe-ba6d-232b576dbf62",
+  "status": "completed",
+  "reference": "Retained LeapEdge report captured 2026-09-15; see leapedge-comparison-inventory.md",
+  "newLeapEdgeAnalyses": 0,
+  "humanReviewsCreated": 0,
+  "asrExecuted": false,
+  "trust": {
+    "L1": 3,
+    "L2": 0,
+    "L3": 0
+  },
+  "taskAccounting": {
+    "modelSpentOrHeldUsd": 0.10925415,
+    "transcriptCredits": 1,
+    "transcriptConservativeAllocationUsd": 0.02,
+    "totalSpentOrHeldUsd": 0.12925414999999998,
+    "taskCapUsd": 25,
+    "uncertainModelHolds": 0
+  },
+  "completedRunCostUsd": 0.10833765000000001,
+  "comparison": {
+    "mainInstrument": "SoFi in both",
+    "stance": "long in both",
+    "conviction": "high in both",
+    "horizon": "2028 in both",
+    "targets": "$50 and $100 in both",
+    "action": "dollar-cost averaging in both",
+    "additionalLocalClaims": [
+      "Celsius long, medium conviction",
+      "Zillow long, medium conviction"
+    ],
+    "tickerHandling": "Local ticker fields remain unresolved where spoken evidence does not explicitly supply a ticker; LeapEdge reports SOFI.",
+    "keyPoints": {
+      "local": 3,
+      "reference": 9,
+      "interpretation": "Different aggregation and coverage; not an accuracy score."
+    }
+  },
+  "limits": [
+    "One live English video, not a representative evaluation",
+    "Historical reference, not a fresh LeapEdge run",
+    "No audio or human validation",
+    "UI acceptance remains incomplete",
+    "Native batch completion and reachable HTTPS push not live-tested"
+  ]
+}

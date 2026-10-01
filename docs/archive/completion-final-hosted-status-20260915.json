@@ -1,0 +1,20 @@
+{
+  "at": "2026-09-14T21:16:57.690Z",
+  "origin": "https://youtube-intelligence-two.vercel.app",
+  "authenticatedRead": "passed",
+  "promptVersion": "evidence-first.web.v5",
+  "nativeGoogleExperimental": false,
+  "deliveryStatuses": [
+    {
+      "id": "completion-event-bounced-20260915",
+      "status": "bounced",
+      "lastEvent": "email.bounced"
+    },
+    {
+      "id": "completion-event-delivered-20260915",
+      "status": "delivered",
+      "lastEvent": "email.delivered"
+    }
+  ],
+  "findingsVisible": true
+}

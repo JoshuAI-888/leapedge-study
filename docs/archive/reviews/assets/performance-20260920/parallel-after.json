@@ -1,0 +1,1200 @@
+{
+  "root": "/Users/joshmini/Documents/ChatGPT/Finradar Enhancements/leapedge-study",
+  "kind": "controlled fake-provider benchmark; no live network; no paid calls; not end-to-end production latency",
+  "delayMs": 400,
+  "repetitions": 3,
+  "summary": {
+    "extractionMedianMs": 1737.2145840000003,
+    "researchSourcesMedianMs": 850.5706659999996
+  },
+  "results": [
+    {
+      "repetition": 1,
+      "extraction": {
+        "elapsedMs": 1761.0990410000002,
+        "providerCalls": 8,
+        "providerDelayMs": 400,
+        "peakConcurrent": 2,
+        "steps": 8,
+        "outputHash": "6e70ebd5c83275a1dca1c12b9e4e52a7dc54aff2e6c8c646c0932bbffab33fb5",
+        "claimCount": 8,
+        "claims": [
+          {
+            "id": "c1",
+            "claim": {
+              "thesis_en": "Exit Company 0 on a break below 500.",
+              "instrument_as_spoken": "Company 0",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s0",
+                  "quote_original": "If Company 0 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s0",
+                    "end_id": "s0",
+                    "start_seconds": 0,
+                    "end_seconds": 30,
+                    "text_hash": "cc0af2e2172bee5e71d9ffb9fa0caccdc6022a8fd5c85f0bfb9e9dc6e609db1b"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c2",
+            "claim": {
+              "thesis_en": "Exit Company 1 on a break below 500.",
+              "instrument_as_spoken": "Company 1",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s16",
+                  "quote_original": "If Company 1 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s16",
+                    "end_id": "s16",
+                    "start_seconds": 480,
+                    "end_seconds": 510,
+                    "text_hash": "2b2595a3fa95fb8271a4e26a75ae4118b963064c4b1a4c9933474b1b6a5dc314"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c3",
+            "claim": {
+              "thesis_en": "Exit Company 2 on a break below 500.",
+              "instrument_as_spoken": "Company 2",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s32",
+                  "quote_original": "If Company 2 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s32",
+                    "end_id": "s32",
+                    "start_seconds": 960,
+                    "end_seconds": 990,
+                    "text_hash": "6053aaac57501c4da4e28250ea3e4ecc1ea2c35c7bc56d4547132a8342a90819"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c4",
+            "claim": {
+              "thesis_en": "Exit Company 3 on a break below 500.",
+              "instrument_as_spoken": "Company 3",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s48",
+                  "quote_original": "If Company 3 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s48",
+                    "end_id": "s48",
+                    "start_seconds": 1440,
+                    "end_seconds": 1470,
+                    "text_hash": "153a22528d36bd30eba110121ae4b52a66b78b81d4019d517a6bc7ca7afada44"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c5",
+            "claim": {
+              "thesis_en": "Exit Company 4 on a break below 500.",
+              "instrument_as_spoken": "Company 4",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s64",
+                  "quote_original": "If Company 4 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s64",
+                    "end_id": "s64",
+                    "start_seconds": 1920,
+                    "end_seconds": 1950,
+                    "text_hash": "d7336598c67b64d13ef789f00c6b2e99d6d40a33fe10af9f0e9bcc0bccc1f2de"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c6",
+            "claim": {
+              "thesis_en": "Exit Company 5 on a break below 500.",
+              "instrument_as_spoken": "Company 5",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s80",
+                  "quote_original": "If Company 5 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s80",
+                    "end_id": "s80",
+                    "start_seconds": 2400,
+                    "end_seconds": 2430,
+                    "text_hash": "9e24932e0bbf1001b7d98d303ee1868db86569b931819b64b61217f00a2603e8"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c7",
+            "claim": {
+              "thesis_en": "Exit Company 6 on a break below 500.",
+              "instrument_as_spoken": "Company 6",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s96",
+                  "quote_original": "If Company 6 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s96",
+                    "end_id": "s96",
+                    "start_seconds": 2880,
+                    "end_seconds": 2910,
+                    "text_hash": "d528649fd3493435cbf85f9560882e527fc36d887bb6a65b03e1ada5460d7f3f"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c8",
+            "claim": {
+              "thesis_en": "Exit Company 7 on a break below 500.",
+              "instrument_as_spoken": "Company 7",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s112",
+                  "quote_original": "If Company 7 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s112",
+                    "end_id": "s112",
+                    "start_seconds": 3360,
+                    "end_seconds": 3390,
+                    "text_hash": "b3ee3f88bf2ca2f3019796934ac89ca46f4e3c850b0d50d151652f1dde2ef513"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          }
+        ]
+      },
+      "researchSources": {
+        "elapsedMs": 851.3837500000004,
+        "providerCalls": 4,
+        "providerDelayMs": 400,
+        "peakConcurrent": 2,
+        "steps": 2,
+        "outputHash": "237e910b5f6c2a85fac73f25370d60f9e299df515c5b55514e3ddde7ef6a91f8",
+        "sources": [
+          {
+            "query": "Company revenue",
+            "timeMode": "video_date",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company revenue",
+                "timeMode": "video_date"
+              }
+            ]
+          },
+          {
+            "query": "Company revenue",
+            "timeMode": "current",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company revenue",
+                "timeMode": "current"
+              }
+            ]
+          },
+          {
+            "query": "Company margins",
+            "timeMode": "video_date",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company margins",
+                "timeMode": "video_date"
+              }
+            ]
+          },
+          {
+            "query": "Company margins",
+            "timeMode": "current",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company margins",
+                "timeMode": "current"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "repetition": 2,
+      "extraction": {
+        "elapsedMs": 1695.1760830000003,
+        "providerCalls": 8,
+        "providerDelayMs": 400,
+        "peakConcurrent": 2,
+        "steps": 8,
+        "outputHash": "6e70ebd5c83275a1dca1c12b9e4e52a7dc54aff2e6c8c646c0932bbffab33fb5",
+        "claimCount": 8,
+        "claims": [
+          {
+            "id": "c1",
+            "claim": {
+              "thesis_en": "Exit Company 0 on a break below 500.",
+              "instrument_as_spoken": "Company 0",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s0",
+                  "quote_original": "If Company 0 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s0",
+                    "end_id": "s0",
+                    "start_seconds": 0,
+                    "end_seconds": 30,
+                    "text_hash": "cc0af2e2172bee5e71d9ffb9fa0caccdc6022a8fd5c85f0bfb9e9dc6e609db1b"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c2",
+            "claim": {
+              "thesis_en": "Exit Company 1 on a break below 500.",
+              "instrument_as_spoken": "Company 1",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s16",
+                  "quote_original": "If Company 1 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s16",
+                    "end_id": "s16",
+                    "start_seconds": 480,
+                    "end_seconds": 510,
+                    "text_hash": "2b2595a3fa95fb8271a4e26a75ae4118b963064c4b1a4c9933474b1b6a5dc314"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c3",
+            "claim": {
+              "thesis_en": "Exit Company 2 on a break below 500.",
+              "instrument_as_spoken": "Company 2",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s32",
+                  "quote_original": "If Company 2 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s32",
+                    "end_id": "s32",
+                    "start_seconds": 960,
+                    "end_seconds": 990,
+                    "text_hash": "6053aaac57501c4da4e28250ea3e4ecc1ea2c35c7bc56d4547132a8342a90819"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c4",
+            "claim": {
+              "thesis_en": "Exit Company 3 on a break below 500.",
+              "instrument_as_spoken": "Company 3",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s48",
+                  "quote_original": "If Company 3 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s48",
+                    "end_id": "s48",
+                    "start_seconds": 1440,
+                    "end_seconds": 1470,
+                    "text_hash": "153a22528d36bd30eba110121ae4b52a66b78b81d4019d517a6bc7ca7afada44"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c5",
+            "claim": {
+              "thesis_en": "Exit Company 4 on a break below 500.",
+              "instrument_as_spoken": "Company 4",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s64",
+                  "quote_original": "If Company 4 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s64",
+                    "end_id": "s64",
+                    "start_seconds": 1920,
+                    "end_seconds": 1950,
+                    "text_hash": "d7336598c67b64d13ef789f00c6b2e99d6d40a33fe10af9f0e9bcc0bccc1f2de"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c6",
+            "claim": {
+              "thesis_en": "Exit Company 5 on a break below 500.",
+              "instrument_as_spoken": "Company 5",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s80",
+                  "quote_original": "If Company 5 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s80",
+                    "end_id": "s80",
+                    "start_seconds": 2400,
+                    "end_seconds": 2430,
+                    "text_hash": "9e24932e0bbf1001b7d98d303ee1868db86569b931819b64b61217f00a2603e8"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c7",
+            "claim": {
+              "thesis_en": "Exit Company 6 on a break below 500.",
+              "instrument_as_spoken": "Company 6",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s96",
+                  "quote_original": "If Company 6 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s96",
+                    "end_id": "s96",
+                    "start_seconds": 2880,
+                    "end_seconds": 2910,
+                    "text_hash": "d528649fd3493435cbf85f9560882e527fc36d887bb6a65b03e1ada5460d7f3f"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c8",
+            "claim": {
+              "thesis_en": "Exit Company 7 on a break below 500.",
+              "instrument_as_spoken": "Company 7",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s112",
+                  "quote_original": "If Company 7 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s112",
+                    "end_id": "s112",
+                    "start_seconds": 3360,
+                    "end_seconds": 3390,
+                    "text_hash": "b3ee3f88bf2ca2f3019796934ac89ca46f4e3c850b0d50d151652f1dde2ef513"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          }
+        ]
+      },
+      "researchSources": {
+        "elapsedMs": 842.8249590000005,
+        "providerCalls": 4,
+        "providerDelayMs": 400,
+        "peakConcurrent": 2,
+        "steps": 2,
+        "outputHash": "237e910b5f6c2a85fac73f25370d60f9e299df515c5b55514e3ddde7ef6a91f8",
+        "sources": [
+          {
+            "query": "Company revenue",
+            "timeMode": "video_date",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company revenue",
+                "timeMode": "video_date"
+              }
+            ]
+          },
+          {
+            "query": "Company revenue",
+            "timeMode": "current",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company revenue",
+                "timeMode": "current"
+              }
+            ]
+          },
+          {
+            "query": "Company margins",
+            "timeMode": "video_date",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company margins",
+                "timeMode": "video_date"
+              }
+            ]
+          },
+          {
+            "query": "Company margins",
+            "timeMode": "current",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company margins",
+                "timeMode": "current"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "repetition": 3,
+      "extraction": {
+        "elapsedMs": 1737.2145840000003,
+        "providerCalls": 8,
+        "providerDelayMs": 400,
+        "peakConcurrent": 2,
+        "steps": 8,
+        "outputHash": "6e70ebd5c83275a1dca1c12b9e4e52a7dc54aff2e6c8c646c0932bbffab33fb5",
+        "claimCount": 8,
+        "claims": [
+          {
+            "id": "c1",
+            "claim": {
+              "thesis_en": "Exit Company 0 on a break below 500.",
+              "instrument_as_spoken": "Company 0",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s0",
+                  "quote_original": "If Company 0 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s0",
+                    "end_id": "s0",
+                    "start_seconds": 0,
+                    "end_seconds": 30,
+                    "text_hash": "cc0af2e2172bee5e71d9ffb9fa0caccdc6022a8fd5c85f0bfb9e9dc6e609db1b"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c2",
+            "claim": {
+              "thesis_en": "Exit Company 1 on a break below 500.",
+              "instrument_as_spoken": "Company 1",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s16",
+                  "quote_original": "If Company 1 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s16",
+                    "end_id": "s16",
+                    "start_seconds": 480,
+                    "end_seconds": 510,
+                    "text_hash": "2b2595a3fa95fb8271a4e26a75ae4118b963064c4b1a4c9933474b1b6a5dc314"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c3",
+            "claim": {
+              "thesis_en": "Exit Company 2 on a break below 500.",
+              "instrument_as_spoken": "Company 2",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s32",
+                  "quote_original": "If Company 2 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s32",
+                    "end_id": "s32",
+                    "start_seconds": 960,
+                    "end_seconds": 990,
+                    "text_hash": "6053aaac57501c4da4e28250ea3e4ecc1ea2c35c7bc56d4547132a8342a90819"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c4",
+            "claim": {
+              "thesis_en": "Exit Company 3 on a break below 500.",
+              "instrument_as_spoken": "Company 3",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s48",
+                  "quote_original": "If Company 3 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s48",
+                    "end_id": "s48",
+                    "start_seconds": 1440,
+                    "end_seconds": 1470,
+                    "text_hash": "153a22528d36bd30eba110121ae4b52a66b78b81d4019d517a6bc7ca7afada44"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c5",
+            "claim": {
+              "thesis_en": "Exit Company 4 on a break below 500.",
+              "instrument_as_spoken": "Company 4",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s64",
+                  "quote_original": "If Company 4 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s64",
+                    "end_id": "s64",
+                    "start_seconds": 1920,
+                    "end_seconds": 1950,
+                    "text_hash": "d7336598c67b64d13ef789f00c6b2e99d6d40a33fe10af9f0e9bcc0bccc1f2de"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c6",
+            "claim": {
+              "thesis_en": "Exit Company 5 on a break below 500.",
+              "instrument_as_spoken": "Company 5",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s80",
+                  "quote_original": "If Company 5 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s80",
+                    "end_id": "s80",
+                    "start_seconds": 2400,
+                    "end_seconds": 2430,
+                    "text_hash": "9e24932e0bbf1001b7d98d303ee1868db86569b931819b64b61217f00a2603e8"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c7",
+            "claim": {
+              "thesis_en": "Exit Company 6 on a break below 500.",
+              "instrument_as_spoken": "Company 6",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s96",
+                  "quote_original": "If Company 6 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s96",
+                    "end_id": "s96",
+                    "start_seconds": 2880,
+                    "end_seconds": 2910,
+                    "text_hash": "d528649fd3493435cbf85f9560882e527fc36d887bb6a65b03e1ada5460d7f3f"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          },
+          {
+            "id": "c8",
+            "claim": {
+              "thesis_en": "Exit Company 7 on a break below 500.",
+              "instrument_as_spoken": "Company 7",
+              "ticker": null,
+              "ticker_explicit": false,
+              "stance": "conditional",
+              "horizon_en": null,
+              "conditions_en": [
+                "break below 500"
+              ],
+              "creator_conviction": "unspecified",
+              "risks_en": [],
+              "levels": [
+                {
+                  "kind": "stop",
+                  "value_original": "500"
+                }
+              ],
+              "evidence": [
+                {
+                  "segment_id": "s112",
+                  "quote_original": "If Company 7 falls below 500, exit the position.",
+                  "quote_translation_en": "",
+                  "source_span": {
+                    "start_id": "s112",
+                    "end_id": "s112",
+                    "start_seconds": 3360,
+                    "end_seconds": 3390,
+                    "text_hash": "b3ee3f88bf2ca2f3019796934ac89ca46f4e3c850b0d50d151652f1dde2ef513"
+                  }
+                }
+              ]
+            },
+            "passed": false,
+            "reasons": []
+          }
+        ]
+      },
+      "researchSources": {
+        "elapsedMs": 850.5706659999996,
+        "providerCalls": 4,
+        "providerDelayMs": 400,
+        "peakConcurrent": 2,
+        "steps": 2,
+        "outputHash": "237e910b5f6c2a85fac73f25370d60f9e299df515c5b55514e3ddde7ef6a91f8",
+        "sources": [
+          {
+            "query": "Company revenue",
+            "timeMode": "video_date",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company revenue",
+                "timeMode": "video_date"
+              }
+            ]
+          },
+          {
+            "query": "Company revenue",
+            "timeMode": "current",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company revenue",
+                "timeMode": "current"
+              }
+            ]
+          },
+          {
+            "query": "Company margins",
+            "timeMode": "video_date",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company margins",
+                "timeMode": "video_date"
+              }
+            ]
+          },
+          {
+            "query": "Company margins",
+            "timeMode": "current",
+            "state": "complete",
+            "sources": [
+              {
+                "url": "https://www.sec.gov/Archives/fixture",
+                "text": "Published on: January 1, 2025\nReported revenue was 10 billion dollars.",
+                "publishedAt": "2025-01-01T23:59:59.999Z",
+                "publicationConfirmed": true,
+                "sourceClass": "primary",
+                "hash": "2f2178e2bfd3ccddbbc996ee2227b40830d07c1644a956a82151aed3d6452da4",
+                "query": "Company margins",
+                "timeMode": "current"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

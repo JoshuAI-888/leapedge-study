@@ -1,0 +1,48 @@
+{
+  "source": "truealpha",
+  "tier": 1,
+  "placeholder": false,
+  "note": "Eight explicit Tier 1 handles from archived handoff section 6, resolved through YouTube channels.list on 2026-09-19T11:49:14.189Z. Tier reflects the archived research priority, not a verified or current performance ranking. Archive narrative mentions 12 but provides only these 8 Tier 1 handles. Evidence: docs/delivery/channel-seed-resolution.json.",
+  "channels": [
+    {
+      "id": "UC5cEHfCr6WOE1R1zcohd1IA",
+      "handle": "@josenajarrostocks",
+      "title": "Jose Najarro Stocks"
+    },
+    {
+      "id": "UC_xMKlHYdRNXLX9XzuOLjsg",
+      "handle": "@jeremylefebvre-clips",
+      "title": "Jeremy Lefebvre Clips"
+    },
+    {
+      "id": "UC7kCeZ53sli_9XwuQeFxLqw",
+      "handle": "@tickersymbolyou",
+      "title": "Ticker Symbol: YOU"
+    },
+    {
+      "id": "UCbKdotYtcY9SxoU8CYAXdvg",
+      "handle": "@josephhogue",
+      "title": "Let's Talk Money! with Joseph Hogue, CFA"
+    },
+    {
+      "id": "UC3xKgYs1GqtoPu9tyYSjR8w",
+      "handle": "@ytfinance",
+      "title": "YT Finance"
+    },
+    {
+      "id": "UC3cAbmdQafYWGdrUguDHGaQ",
+      "handle": "@bullmarketlifestyle",
+      "title": "Bullmarket Lifestyle by Daniel Wilhelmi"
+    },
+    {
+      "id": "UCG5Ni-SI-jyrEsoNUhqftNQ",
+      "handle": "@chitchatstocks",
+      "title": "Chit Chat Stocks Podcast"
+    },
+    {
+      "id": "UC2Zg12phLyX1KTnH6D47d9g",
+      "handle": "@investwithhenry",
+      "title": "Invest with Henry"
+    }
+  ]
+}

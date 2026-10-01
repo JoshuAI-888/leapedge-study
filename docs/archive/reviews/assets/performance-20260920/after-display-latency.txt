@@ -1,0 +1,33 @@
+The following is a diff from the previous accessibility tree for Window: "YouTube Intelligence" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 537-538, 545-546
+~													517 container 9 messages in console
++															592 container Warning, Repeated 2 times
++																593 text 2
++															594 container Warning, Repeated 2 times
++																595 text 2
++														596 container YTI_DISPLAY_LATENCY_MS
++															597 container  YTI_DISPLAY_LATENCY_MS 1801 Stack table collapsed
++																598 container
++																	599 link Description: VM387:1, Help: debugger:///VM387:1
++																		600 text VM387:1
++																	601 text YTI_DISPLAY_LATENCY_MS 1801
++						602 container
++							603 text You earned the  Chrome DevTools User  badge for the
++							604 link Description: Google Developer Program, Help: https://developers.google.com/program
++								605 text Google Developer Program
++							606 text ! Turn on badges to claim it.
++						607 container Close
++							608 button Close
++						609 container
++							610 button No thanks
++							611 button Turn on badges
+~						25 link Description: Skip to content, Value: 127.0.0.1:3024/youtube-intelligence/today
+~								66 link Description: AI Infrastructure Strategy, Value: 127.0.0.1:3024/youtube-intelligence/analysis/8fae7a8a-f4df-4357-bbab-f3d9a7112283
+~							77 link Description: Read brief and inspect evidence →, Value: 127.0.0.1:3024/youtube-intelligence/analysis/8fae7a8a-f4df-4357-bbab-f3d9a7112283
+~								82 link Description: Oracle earnings and balance sheet leverage, Value: 127.0.0.1:3024/youtube-intelligence/analysis/83858f51-80f8-4237-9c8f-b7f3c27ac89c
+~							93 link Description: Read brief and inspect evidence →, Value: 127.0.0.1:3024/youtube-intelligence/analysis/83858f51-80f8-4237-9c8f-b7f3c27ac89c
+~									586 link Description: SYNTHETIC PERF COMPLETE 1789874761842, Value: 127.0.0.1:3024/youtube-intelligence/analysis/9fd7966e-e313-474f-a461-ef1f3f30e5fc
+~									587 text Processed  Sep 20, 2026 Ready
+~									236 link Description: Superinvestors are buying this stock I added $10,000+ last week, Value: 127.0.0.1:3024/youtube-intelligence/analysis/f8270148-9c71-4348-a152-72befa730d52
+~								376 link Description: Open diagnostics in Lab →, Value: …
+The focused UI element is 566 text entry area (settable) Description: Console prompt, Value:

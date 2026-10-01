@@ -1,0 +1,37 @@
+[
+  {
+    "case": "alpha",
+    "status": "shadow_completed_audio_unverified",
+    "items": 10,
+    "modelAccepted": 9,
+    "latencyMs": 27715,
+    "error": null,
+    "attempts": [
+      "0a793c99-f275-4820-af43-461f12a48dc3",
+      "67631e39-9859-4cf6-93cd-42ccde4dd50a"
+    ]
+  },
+  {
+    "case": "long",
+    "status": "shadow_stopped_review_required",
+    "items": 0,
+    "modelAccepted": 0,
+    "latencyMs": 22730,
+    "error": "[\n  {\n    \"origin\": \"array\",\n    \"code\": \"too_big\",\n    \"maximum\": 20,\n    \"inclusive\": true,\n    \"path\": [\n      \"claims\",\n      0,\n      \"evidence_segment_ids\"\n    ],\n    \"message\": \"Too big: expected array to have <=20 items\"\n  },\n  {\n    \"origin\": \"array\",\n    \"code\": \"too_big\",\n    \"maximum\": 20,\n    \"inclusive\": true,\n    \"path\": [\n      \"claims\",\n      1,\n      \"evidence_segment_ids\"\n    ],\n    \"message\": \"Too big: expected array to have <=20 items\"\n  },\n  {\n    \"origin\": \"array\",\n    \"code\": \"too_big\",\n    \"maximum\": 20,\n    \"inclusive\": true,\n    \"path\": [\n      \"claims\",\n      2,\n      \"evidence_segment_ids\"\n    ],\n    \"message\": \"Too big: expected array to have <=20 items\"\n  }\n]",
+    "attempts": [
+      "c77750d6-6f5e-4f91-b149-ab069c097043"
+    ]
+  },
+  {
+    "case": "mandarin",
+    "status": "shadow_completed_audio_unverified",
+    "items": 13,
+    "modelAccepted": 13,
+    "latencyMs": 33555,
+    "error": null,
+    "attempts": [
+      "81406b9c-2ee5-487e-9be4-36477c32c477",
+      "5be65d34-af92-4af5-ae08-c99e1e4f4827"
+    ]
+  }
+]

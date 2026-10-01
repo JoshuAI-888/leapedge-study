@@ -1,0 +1,196 @@
+{
+  "at": "2026-09-14T21:00:20.951Z",
+  "canonicalVideos": 6,
+  "existingFrozen": 6,
+  "newlyFrozen": 0,
+  "freezeHashStable": true,
+  "observations": [
+    {
+      "videoId": "J25UuUqHT3Y",
+      "observedAt": "2026-09-13T18:09:13.473Z",
+      "runId": "2157a9db-3f10-4063-bac8-00ddebf22da1",
+      "sourceHash": "13928de04093c597127f82f9f0c7c4822d2e6b1294addc2b177fb363d65c44ff"
+    },
+    {
+      "videoId": "skc2T5fcoLY",
+      "observedAt": "2026-09-13T18:00:01.683Z",
+      "runId": "13a22fe4-460b-4271-87d2-431947c53862",
+      "sourceHash": "c9020960903317721c39ebd9d5936bdbc7217c96fee464048606baf505c417a0"
+    },
+    {
+      "videoId": "v824SHV6COE",
+      "observedAt": "2026-09-13T18:00:00.478Z",
+      "runId": "e486b5e8-e19a-4852-9d4b-7207c2c3d91c",
+      "sourceHash": "55286fc8d67da0af5b3383c6ddfade1a2524354f11478916d13d864185b7be3c"
+    },
+    {
+      "videoId": "1_JCqHluJ9U",
+      "observedAt": "2026-09-13T17:59:58.698Z",
+      "runId": "8f93e168-2eff-4ce9-8ac4-6709797a3995",
+      "sourceHash": "d48d0b88677ba795b90af3bbf9df79a374ad7164d9b26f41188bb270505b0aa1"
+    },
+    {
+      "videoId": "kXYvRR7gV2E",
+      "observedAt": "2026-09-13T11:08:02.974Z",
+      "runId": "85c3f64f-ed06-4664-b219-34ae97680eca",
+      "sourceHash": "13a91669d0193189b87970b210e25920fba6945ea1e5850ea7334056b478ef3d"
+    },
+    {
+      "videoId": "3u24qyWjSVM",
+      "observedAt": "2026-09-13T11:08:02.967Z",
+      "runId": "22b54768-4e4b-4602-82d0-03f1486f9f1d",
+      "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a"
+    }
+  ],
+  "results": [
+    {
+      "id": "712a5380-446a-451d-be30-e5adffd19d9a",
+      "asOf": "2026-09-14",
+      "mode": "historical",
+      "createdAt": "2026-09-14T21:00:03.354Z",
+      "summary": {
+        "total": 3,
+        "priced": 0,
+        "completed": 0,
+        "ongoing": 0,
+        "stale": 0,
+        "meanReturn": null,
+        "meanSpy": null,
+        "meanExcess": null,
+        "winRate": null,
+        "beatsSpyRate": null
+      },
+      "rows": [
+        {
+          "id": "8f93e168-2eff-4ce9-8ac4-6709797a3995:c1",
+          "status": "ineligible",
+          "reason": "Only medium/high long/short calls qualify."
+        },
+        {
+          "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d:c2",
+          "status": "ineligible",
+          "reason": "Only medium/high long/short calls qualify."
+        },
+        {
+          "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d:c3",
+          "status": "ineligible",
+          "reason": "Only medium/high long/short calls qualify."
+        }
+      ],
+      "channels": [
+        {
+          "channel": "Daniel Pronk",
+          "total": 1,
+          "priced": 0,
+          "completed": 0,
+          "ongoing": 0,
+          "stale": 0,
+          "meanReturn": null,
+          "meanSpy": null,
+          "meanExcess": null,
+          "winRate": null,
+          "beatsSpyRate": null
+        },
+        {
+          "channel": "NaNa说美股",
+          "total": 2,
+          "priced": 0,
+          "completed": 0,
+          "ongoing": 0,
+          "stale": 0,
+          "meanReturn": null,
+          "meanSpy": null,
+          "meanExcess": null,
+          "winRate": null,
+          "beatsSpyRate": null
+        }
+      ],
+      "limitations": [
+        "Retrospective analyses are not contemporaneous historical recommendations.",
+        "Historical replay uses publication dates with today’s extraction. It is a retrospective backtest, not a forward record, and may contain hindsight bias.",
+        "LeapEdge exact holiday mapping is unpublished; first common session on/after analysis day is our explicit comparison rule.",
+        "Forward mode enters the next common session after the UTC analysis day.",
+        "FMP prices may differ from LeapEdge Yahoo Finance snapshots.",
+        "Selected collection analysis per video; versioned retrospective comparison, not portfolio return."
+      ],
+      "independentArithmetic": []
+    },
+    {
+      "id": "d778e4af-78c8-401a-a83f-574acc2a95a6",
+      "asOf": "2026-09-14",
+      "mode": "forward",
+      "createdAt": "2026-09-14T21:00:19.708Z",
+      "summary": {
+        "total": 3,
+        "priced": 0,
+        "completed": 0,
+        "ongoing": 0,
+        "stale": 0,
+        "meanReturn": null,
+        "meanSpy": null,
+        "meanExcess": null,
+        "winRate": null,
+        "beatsSpyRate": null
+      },
+      "rows": [
+        {
+          "id": "8f93e168-2eff-4ce9-8ac4-6709797a3995:c1",
+          "status": "ineligible",
+          "reason": "Only medium/high long/short calls qualify."
+        },
+        {
+          "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d:c2",
+          "status": "ineligible",
+          "reason": "Only medium/high long/short calls qualify."
+        },
+        {
+          "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d:c3",
+          "status": "ineligible",
+          "reason": "Only medium/high long/short calls qualify."
+        }
+      ],
+      "channels": [
+        {
+          "channel": "Daniel Pronk",
+          "total": 1,
+          "priced": 0,
+          "completed": 0,
+          "ongoing": 0,
+          "stale": 0,
+          "meanReturn": null,
+          "meanSpy": null,
+          "meanExcess": null,
+          "winRate": null,
+          "beatsSpyRate": null
+        },
+        {
+          "channel": "NaNa说美股",
+          "total": 2,
+          "priced": 0,
+          "completed": 0,
+          "ongoing": 0,
+          "stale": 0,
+          "meanReturn": null,
+          "meanSpy": null,
+          "meanExcess": null,
+          "winRate": null,
+          "beatsSpyRate": null
+        }
+      ],
+      "limitations": [
+        "Retrospective analyses are not contemporaneous historical recommendations.",
+        "LeapEdge exact holiday mapping is unpublished; first common session on/after analysis day is our explicit comparison rule.",
+        "Forward mode enters the next common session after the UTC analysis day.",
+        "FMP prices may differ from LeapEdge Yahoo Finance snapshots.",
+        "Forward calls are frozen from the first observation of each video in the collection; later prompt changes cannot replace them."
+      ],
+      "independentArithmetic": []
+    }
+  ],
+  "limitations": [
+    "Actual audio fidelity is unverified; return arithmetic does not establish claim accuracy.",
+    "No calls synthesized or conviction inflated to populate a cohort.",
+    "Equal-weight claim averages are not investable portfolio returns; short borrow fees and trading costs excluded.",
+    "90-day forward maturity requires elapsed time."
+  ]
+}

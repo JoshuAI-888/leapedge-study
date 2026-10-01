@@ -1,0 +1,378 @@
+{
+ "status": "completed",
+ "title": "Generate $3,000 Weekly Passive Income with this Options Strategy",
+ "costUsd": 0.8629794999999998,
+ "endToEndSeconds": 731.441,
+ "analysisSeconds": 648.738,
+ "keyPoints": [
+  {
+   "id": "k1",
+   "text": "Selling put options functions like selling insurance, collecting upfront premiums from buyers who are hedging or speculating on downside, while the seller commits to buying the underlying shares at the strike price if assigned.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k2",
+   "text": "To manage risk when selling cash-secured puts, investors should only sell put options on stocks they fundamentally want to own at a discount rather than aggressively chasing high premium yields on lower capital.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k3",
+   "text": "Selling cash-secured put options allows an investor to get paid premium while naming an entry price on stocks they want to own, functioning similarly to a limit order where assignment occurs if the stock falls below the strike price at expiration.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k4",
+   "text": "Chasing high weekly income yields (such as $3,000 per week on a $100,000 portfolio) requires taking on substantially higher risk compared to running the strategy on a larger capital base like $1,000,000.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k5",
+   "text": "Selling options requires sufficient implied volatility in the underlying stock to generate adequate premium, and may not be suitable for aggressive growth investors due to capping upside potential.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k6",
+   "text": "Selling put options caps upside potential to the collected premium and can underperform holding shares if the stock doubles, though assignment provides entry into desired stocks.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k7",
+   "text": "Put selling criteria require willingness to own the company, verifying the company is real, and ensuring sufficient implied volatility so option premium is worth collecting.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k8",
+   "text": "Execution should prioritize tight bid-ask spreads across brokerages to avoid losing money upon entering or closing trades.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k9",
+   "text": "Targeting approximately 30 delta when selling put options optimizes the Sharpe ratio by balancing a lower assignment probability with attractive premium collection.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k10",
+   "text": "When a short put is in the money, the trader's primary options are closing out the trade, rolling the option to a further expiration, or accepting share assignment to execute a wheel strategy with covered calls.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k11",
+   "text": "When a put option goes in the money or assigns, income generation can continue via rolling the option for a credit or executing the wheel strategy by selling covered calls.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k12",
+   "text": "When a high-quality stock is down significantly at 52-week lows and poised for a sharp recovery, buying call options is preferred over selling puts to capture upside.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k13",
+   "text": "Selling put options at a 0.35 delta gives an estimated 65% probability of retaining the premium without assignment and a 35% probability of assignment, keeping the risk of an overall net loss low.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k14",
+   "text": "Rolling an in-the-money put option to a lower strike price further out in time can generate an additional net credit and reduce downside purchase liability.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k15",
+   "text": "Early assignment risk escalates significantly in the final week before expiration when an option is deep in the money with high delta (70-80+), whereas the 30-45 day window offers accelerating theta decay with a target sweet spot delta around 30.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k16",
+   "text": "Selling a put option allows an investor to effectively buy a desired stock at a discount to current market price while collecting upfront premium income (e.g., selling a $190 strike put on a $200 stock to get a $10 discount).",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k17",
+   "text": "Selling cash-secured puts can generate consistent income, such as roughly $72,000 annually or $6,000 monthly (~$1,500 weekly) on a $250,000 portfolio, though seeking higher premiums requires taking on disproportionate portfolio downside risk.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k18",
+   "text": "QQQ is one of the best ETFs to trade when an investor wants index ETF exposure rather than single stocks, and selling puts on it generated a profitable return of $1,825.",
+   "ticker": "QQQ",
+   "stance": "long"
+  }
+ ],
+ "calls": [
+  {
+   "instrument": "Google",
+   "ticker": null,
+   "stance": "conditional",
+   "thesis": "The speaker plans to manage an assigned in-the-money Google short put position by either holding the assigned shares or rolling the put position, potentially transitioning into the wheel strategy to sell covered calls.",
+   "horizon": null,
+   "conviction": "medium",
+   "conditions": [
+    "If the put expires in-the-money, either accept share assignment to sell covered calls or roll the put contract to a future expiration date"
+   ],
+   "risks": [
+    "Risk of assignment when price is under strike 370"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Palanteer",
+   "ticker": "PLTR",
+   "stance": "long",
+   "thesis": "Continuously sell put options on Palantir as long as the creator favors the stock as a great company.",
+   "horizon": null,
+   "conviction": "high",
+   "conditions": [
+    "Select strikes on Palantir to generate options premium while liking the company"
+   ],
+   "risks": [
+    "Potential assignment if the stock price drops below the put strike"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Palunteer",
+   "ticker": "PLTR",
+   "stance": "conditional",
+   "thesis": "Selling put options is favored on Palantir Technologies (PLTR) over buying the stock outright, viewing upside as capped in the short term, with an example trade selling the 165 or 175 strike puts expiring November 20.",
+   "horizon": "November 20",
+   "conviction": "medium",
+   "conditions": [
+    "If afraid of downside risk, choose the 165 strike over 175"
+   ],
+   "risks": [
+    "Palantir falls below the effective breakeven price of 153"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Google",
+   "ticker": null,
+   "stance": "conditional",
+   "thesis": "Following an early assignment on Google put options, the plan is to sell covered calls against the assigned shares to generate income in the short term.",
+   "horizon": "shorter time frame",
+   "conviction": "medium",
+   "conditions": [
+    "Hold shares from assignment"
+   ],
+   "risks": [
+    "Position mismanaged on margin"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Google",
+   "ticker": null,
+   "stance": "conditional",
+   "thesis": "Following early assignment on put options using margin, sell the position or sell covered calls approximately 5% above the current price to collect premium and reach break-even quickly.",
+   "horizon": "a shorter time frame",
+   "conviction": "medium",
+   "conditions": [
+    "Position got early assigned while using margin and is roughly 5% underwater"
+   ],
+   "risks": [
+    "Position was assigned early",
+    "Position utilized margin"
+   ],
+   "trust": "L1"
+  },
+  {
+   "instrument": "Microsoft",
+   "ticker": null,
+   "stance": "conditional",
+   "thesis": "The speaker plans to manage an in-the-money Microsoft short put position later today by either closing it out, rolling it for a credit, or taking share assignment to run the wheel strategy.",
+   "horizon": "later today",
+   "conviction": "medium",
+   "conditions": [
+    "If the put is in the money, manage by closing, rolling, or taking assignment to run the wheel strategy"
+   ],
+   "risks": [
+    "Position is currently in the money and slightly underwater"
+   ],
+   "trust": "L1"
+  }
+ ],
+ "rejectedCalls": [],
+ "tickerSentiment": [
+  {
+   "ticker": "PLTR",
+   "spoken": "Palanteer",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker repeatedly sells put options on Palantir because he believes it is a great company and has traded it successfully.",
+   "at": 1173.679
+  },
+  {
+   "ticker": null,
+   "spoken": "Google",
+   "sentiment": "bullish",
+   "stance": "conditional",
+   "why": "The creator states he is a firm believer in Google and plans to either roll his short puts or take share assignment to run covered calls.",
+   "at": 1199.6
+  },
+  {
+   "ticker": "PLTR",
+   "spoken": "Palunteer",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker outlines selling put options on Palantir as the best strategy given limited expected near-term upside.",
+   "at": 1454.799
+  },
+  {
+   "ticker": null,
+   "spoken": "Google",
+   "sentiment": "neutral",
+   "stance": "conditional",
+   "why": "The speaker plans to sell covered calls on an assigned Google position to generate income.",
+   "at": 1781.44
+  },
+  {
+   "ticker": null,
+   "spoken": "Google",
+   "sentiment": "neutral",
+   "stance": "conditional",
+   "why": "The speaker manages an early assigned position by planning to sell the shares or write covered calls approximately 5% higher to recoup capital.",
+   "at": 1784.32
+  },
+  {
+   "ticker": "NBIS",
+   "spoken": "NBIS",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker discusses holding an NBIS 202.5 put option expiring on 9/18 and having done really well on it.",
+   "at": 1367.28
+  },
+  {
+   "ticker": "QQQ",
+   "spoken": "QQQ",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker praises QQQ as one of the best ETFs to trade if single stocks are avoided, noting successful put selling with an $1,825 gain.",
+   "at": 1375.44
+  },
+  {
+   "ticker": null,
+   "spoken": "Microsoft",
+   "sentiment": "neutral",
+   "stance": "conditional",
+   "why": "The speaker notes holding an in-the-money Microsoft short put position that is down slightly and will need to be managed later today by closing, rolling, or taking assignment.",
+   "at": 1392.32
+  },
+  {
+   "ticker": null,
+   "spoken": "Palanteer",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker expresses a bullish stance on Palantir as a great company and routinely sells put options on it.",
+   "at": 1173.679
+  },
+  {
+   "ticker": null,
+   "spoken": "Google",
+   "sentiment": "neutral",
+   "stance": "conditional",
+   "why": "The creator holds an in-the-money 370 strike put on Google facing assignment risk, planning to either roll the contract or take shares once the market opens.",
+   "at": 1197.76
+  },
+  {
+   "ticker": null,
+   "spoken": "Google",
+   "sentiment": "bullish",
+   "stance": "long",
+   "why": "The speaker confirms getting assigned on a huge Google put position and affirms being a firm believer in Google.",
+   "at": 1309.919
+  },
+  {
+   "ticker": "PLTR",
+   "spoken": "Palunteer",
+   "sentiment": "bullish",
+   "stance": "conditional",
+   "why": "The speaker introduces Palantir (PLTR) as a new trade position they would open right now by selling put options.",
+   "at": 1452.48
+  },
+  {
+   "ticker": null,
+   "spoken": "Microsoft",
+   "sentiment": "neutral",
+   "stance": "conditional",
+   "why": "The speaker plans to manage an in-the-money Microsoft short put position later today by either closing it out, rolling it for a credit, or taking share assignment to run the wheel strategy.",
+   "at": 1392.32
+  },
+  {
+   "ticker": null,
+   "spoken": "Google",
+   "sentiment": "neutral",
+   "stance": "conditional",
+   "why": "The speaker analyzes being assigned on a Google position, noting they are only slightly underwater and plan to sell covered calls 5% higher to reach break-even quickly.",
+   "at": 1864.159
+  },
+  {
+   "ticker": null,
+   "spoken": "Google",
+   "sentiment": "bullish",
+   "stance": "conditional",
+   "why": "The speaker demonstrates rolling a 370 Google put option down to a 360 put expiring in December for a net credit, expressing comfort being slightly up on the position despite assignment.",
+   "at": 1922.88
+  }
+ ],
+ "brief": {
+  "mainTopics": [
+   "Options Strategy Framework",
+   "Capital Requirements & Yield Risk",
+   "Underwriting & Strike Selection Criteria",
+   "Delta Selection & Option Greeks",
+   "Trade Execution & Liquidity",
+   "In-the-Money Management & The Wheel Strategy",
+   "Palantir Options Setup",
+   "Google Assignment & Recovery",
+   "Portfolio Holdings & Other Positions"
+  ],
+  "sentences": [
+   "The presenter outlines an income generation approach using cash-secured put options, framing the strategy as selling insurance where option buyers overpay to hedge portfolios or speculate on downside movement.",
+   "The presenter highlights that generating income via short puts is not guaranteed and that a majority of traders are unprofitable when trading options.",
+   "Generating $3,000 weekly in premium is framed as requiring significantly higher portfolio risk on a $100,000 capital base than on a $1,000,000 account.",
+   "An example student portfolio generated roughly $72,000 annually, averaging about $6,000 monthly or approximately $1,500 weekly on a $250,000 capital base.",
+   "The presenter requires that short puts only be written on real companies an investor genuinely wants to own, operating as an effective limit order at a discount to current market price.",
+   "Sellers of put options sacrifice significant equity upside because maximum gains are capped at the upfront premium received if a stock rallies strongly or doubles.",
+   "When a high-quality stock trades at 52-week lows and is positioned for a strong recovery, the presenter prefers buying call options rather than selling puts.",
+   "Sufficient implied volatility is stated as a prerequisite for put writing, as low volatility assets yield insufficient premium to compensate capital.",
+   "The presenter recommends targeting approximately 30 delta when selling puts, citing a 10-year study to balance Sharpe ratio optimization, acceptable assignment frequency, and income.",
+   "Theta decay is described as accelerating within 30 to 45 days of expiration, whereas early assignment risk spikes sharply during the final week on high-delta in-the-money puts.",
+   "For trade execution, the presenter emphasizes verifying tight bid-ask spreads across brokerages to prevent slippage losses upon entry and exit.",
+   "When a short put moves into the money, the framework outlines three primary management actions: closing out the trade, rolling the contract to a later expiration date, or accepting share assignment to run the wheel strategy.",
+   "For the Palantir options example, the presenter notes a 0.35 delta corresponding to an estimated 65% probability of keeping the full premium and a 35% chance of assignment.",
+   "With Google trading at $344 and the position approximately 5% underwater against an original $370 strike and roughly $30 in average credit collected, the presenter plans to sell covered calls 5% above the market to reach breakeven.",
+   "The presenter reports holding an in-the-money Microsoft short put that is down slightly and will require management later that day by closing, rolling, or taking assignment to run covered calls.",
+   "The presenter identifies QQQ as an optimal vehicle for investors preferring broad index ETF exposure over single stocks, noting a $1,825 profit from selling puts on the ETF."
+  ],
+  "omissions": [
+   "Specific strike price and expiration date for the in-the-money Microsoft short put were not detailed in the source audio.",
+   "Exact historical dates, recording date, and comprehensive broker trade confirmations were not disclosed in the video.",
+   "In the Palantir example, the speaker stated a $153 breakeven on a $165 strike put with $1.85 premium; mathematical breakeven is $163.15, indicating an uncorrected source discrepancy.",
+   "External corroboration was not available in the context.",
+   "Optional calculation for s13 withheld: unsupported expression or invalid inputs. The underlying sentence still requires independent review.",
+   "s17: Option strike basis is not established by the cited original quote. A price mentioned while discussing options does not by itself establish an exercise price. Retain the reported price and disclose that the strike is unspecified in an independently audited neutral repair.",
+   "source-0: Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+   "source-1: Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+   "source-2: Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+   "source-3: Model critique is not human verification.",
+   "source-4: This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications."
+  ],
+  "rejectedCount": 5
+ }
+}

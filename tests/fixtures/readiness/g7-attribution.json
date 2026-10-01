@@ -1,0 +1,213 @@
+{
+  "provenance": {
+    "path": "data/readiness-20260927/candidate-g-session-2.json",
+    "sha256": "2fa05b5a5bbeac3a10ff8b2c6a8b918de9e91c3c220a67adce95e1770e00965e",
+    "identity": {
+      "revision": "8b679df5290b8514ec1afb61fbe487edc3debd56",
+      "implementationSha256": "343124245dcb572855843f7bde32a7ecee7150f3bbd185585d409bc59405868b",
+      "inputSha256": "d43c51bfb6846bcc28afc0a344ccbe0caa97ffd778595ffe4e97dc182ee15551",
+      "settingsSha256": "067863563ef7c9a662423856d7b3ca799b171e3d78128d2a9505afca14a958ca",
+      "maxUsd": 25,
+      "treatment": "conservative-no-overlap-frozen-transcript"
+    },
+    "sourceRunId": "61da3563-d48c-4ffe-acce-20bd29de49da"
+  },
+  "sentence": {
+    "id": "s9",
+    "text": "A guest commentator argues the Federal Reserve should have hiked rates by 50 basis points ('stun and done') or 75 basis points to re-establish policy credibility and forcefully bring down Treasury yields, citing true inflation from unadjusted import/export prices averaging 7.8% and core PCE trending higher at 3.3%.",
+    "evidenceIds": [
+      "k3",
+      "k4",
+      "k5"
+    ],
+    "externalIds": [],
+    "financialFacts": [
+      {
+        "label": "Advocated rate hike scenario",
+        "value": 50,
+        "currency": null,
+        "unit": "basis_points",
+        "unitDescription": "basis points",
+        "relation": "exact",
+        "scale": "ones",
+        "period": null,
+        "basis": "not_stated",
+        "nature": "scenario",
+        "evidenceId": "k3",
+        "quote": "dissented and voted to raise rates 50 basis points today. Uh and I would have called that stun and done"
+      },
+      {
+        "label": "Import/export prices average inflation",
+        "value": 7.8,
+        "currency": null,
+        "unit": "percent",
+        "unitDescription": null,
+        "relation": "exact",
+        "scale": "ones",
+        "period": null,
+        "basis": "not_stated",
+        "nature": "reported",
+        "evidenceId": "k5",
+        "quote": "And if you average import export prices, which just came out recently, the average is 7.8%."
+      },
+      {
+        "label": "Core PCE inflation rate",
+        "value": 3.3,
+        "currency": null,
+        "unit": "percent",
+        "unitDescription": null,
+        "relation": "exact",
+        "scale": "ones",
+        "period": null,
+        "basis": "not_stated",
+        "nature": "reported",
+        "evidenceId": "k5",
+        "quote": "the uh the PCE uh is at 3.3 on the core rate"
+      }
+    ],
+    "novelty": {
+      "status": "unknown",
+      "baselineIds": [],
+      "reason": "No independently audited, dated comparable baseline."
+    },
+    "calculation": null,
+    "kind": "reported_fact",
+    "horizon": "tactical",
+    "topic": "Inflation and Monetary Policy",
+    "materiality": 2,
+    "importanceReason": "Underpins macroeconomic debate regarding monetary tightness and inflation stickiness.",
+    "speaker": "Guest",
+    "timeMode": "video_date",
+    "financialFactChecks": [
+      {
+        "fact": null,
+        "original": {
+          "label": "Alternative aggressive rate hike scenario",
+          "value": 75,
+          "currency": null,
+          "unit": "basis_points",
+          "unitDescription": "basis points",
+          "relation": "exact",
+          "scale": "ones",
+          "period": null,
+          "basis": "not_stated",
+          "nature": "scenario",
+          "evidenceId": "k3",
+          "quote": "You got to come in 75. You come in big dog."
+        },
+        "status": "unresolved",
+        "reason": "Basis-point quantity withheld: mixed or ambiguous rate quantities cannot be mapped to this metric safely."
+      }
+    ],
+    "factualStatus": "unverified",
+    "externalSupport": [],
+    "fidelity": "Text-checked source",
+    "robustness": "insufficient",
+    "robustnessReason": "Guest opinion and self-reported statistic without third-party statistical agency corroboration.",
+    "auditReason": "Quotes from k3, k4, and k5 support the guest's stated preference for 50-75bp hikes and cited inflation figures (7.8% import/export average, 3.3% core PCE); correctly attributed to the guest, not the creator, and basis-point units preserved correctly.",
+    "calculationResult": null
+  },
+  "evidence": [
+    {
+      "id": "k3",
+      "kind": "research_context",
+      "summary": "Guest argues the Fed chairman gave little content while noting inflation is not falling fast enough, advocating for an unseasonal 50 basis point rate hike ('stun and done') or a 75 basis point hike to forcefully pull down 2-year and 10-year Treasury yields, while pointing out that true inflation measured by unadjusted import/export prices averaged 7.8%.",
+      "instrument": null,
+      "ticker": null,
+      "stance": "neutral",
+      "horizon": null,
+      "conditions": [],
+      "risks": [],
+      "levels": [],
+      "trust": "L1",
+      "quotes": [
+        {
+          "startId": "s00379",
+          "endId": "s00426",
+          "text": "Well, I thought the press conference was kind of devoid of content. There were a lot of questions that were asked and not a lot of answers given. But he once again the chairman uh emphasized that everything's fine with employment and he reiterated that uh the in the speed of the inflation uh the CP the the the inflation statistics are not coming down with sufficient speed. If I were on the committee I actually would have uh dissented today. I noticed that in your halftime show that there were a lot of people playing word games with like, you know, the old one and done and then Steve Leeman said one and mom. Uh I actually would have dissented and voted to raise rates 50 basis points today. Uh and I would have called that stun and done and give the market a little bit more of a trueing up with the Fed. >> Uh so 50 basis points. Yeah, that would have done a little more. I think that probably would have sent treasure uh 10 year two-year down a little bit, but I still don't think that was really be the stunn and done. You got to come in 75. You come in big dog. You come in big dog. 75 plummet that 10 that 10 year would have plummeted today. That 2-year would have plummeted today. You come in with a 75, right? Uh market might got a little freaked out like but the market ended up dropping anyways. So let's say instead of the Dow dropping 600 and whatever it did today, maybe the Dow drops a,000 or 1,200, right? But so it's like, okay, you you lose some more on the market, but guess what? You get those freaking treasuries down heavy. You get people to say, oh shoot, like whatever we thought this worst guy was, no, he's serious. He's serious. And where might they take inflation? you know, where might they take the the Fed funds rate from here? That would have been Yeah.",
+          "translation": "",
+          "start": 845.44,
+          "end": 963.3599999999999,
+          "hash": "47f8e90cc50d9b50157ec65fe9b857423d0b3756397cc6f17f3b552a36603966"
+        },
+        {
+          "startId": "s00427",
+          "endId": "s00442",
+          "text": ">> The two-year Treasury going to the meeting was more than 100 basis points above the Fed funds rate. And the the two-year Treasury rate has risen today in reaction to the the one the one hike. I I think that one of the real problems is that the true inflation, and I use import export prices, is what I call true inflation because there's no seasonal adjustments. there's there's no uh adjustments for quality and other things that are kind of artificially uh uh estimated. Import export prices, they're just really prices. And if you average import export prices, which just came out recently, the average is 7.8%.",
+          "translation": "",
+          "start": 961.92,
+          "end": 1007.92,
+          "hash": "31e5ffe8ab7e6a226e7abb4c42891db29d3be24219f606497ba34a5d8583dbea"
+        }
+      ]
+    },
+    {
+      "id": "k4",
+      "kind": "research_context",
+      "summary": "A larger Federal Reserve rate hike of 75 basis points would have caused the 10-year and 2-year Treasury yields to drop significantly and established serious policy credibility, despite short-term market drops.",
+      "instrument": null,
+      "ticker": null,
+      "stance": "neutral",
+      "horizon": null,
+      "conditions": [],
+      "risks": [
+        "Near-term equity market drops"
+      ],
+      "levels": [],
+      "trust": "L1",
+      "quotes": [
+        {
+          "startId": "s00405",
+          "endId": "s00422",
+          "text": "stunn and done. You got to come in 75. You come in big dog. You come in big dog. 75 plummet that 10 that 10 year would have plummeted today. That 2-year would have plummeted today. You come in with a 75, right? Uh market might got a little freaked out like but the market ended up dropping anyways. So let's say instead of the Dow dropping 600 and whatever it did today, maybe the Dow drops a,000 or 1,200, right? But so it's like, okay, you you lose some more on the market, but guess what? You get those freaking treasuries down heavy. You get people to say, oh shoot, like whatever we thought this worst guy was, no, he's serious. He's serious. And",
+          "translation": "",
+          "start": 908.16,
+          "end": 956.4799999999999,
+          "hash": "89ab394c7c4aee9a92219a5822be5701b2dababf9ab898bc96710a3cba917226"
+        }
+      ]
+    },
+    {
+      "id": "k5",
+      "kind": "research_context",
+      "summary": "Import and export prices, which average 7.8% without seasonal or quality adjustments, combined with core PCE trending higher at 3.3%, indicate that the inflation problem is trending upward and may not be properly controlled.",
+      "instrument": null,
+      "ticker": null,
+      "stance": "neutral",
+      "horizon": null,
+      "conditions": [],
+      "risks": [],
+      "levels": [],
+      "trust": "L1",
+      "quotes": [
+        {
+          "startId": "s00432",
+          "endId": "s00451",
+          "text": "I I think that one of the real problems is that the true inflation, and I use import export prices, is what I call true inflation because there's no seasonal adjustments. there's there's no uh adjustments for quality and other things that are kind of artificially uh uh estimated. Import export prices, they're just really prices. And if you average import export prices, which just came out recently, the average is 7.8%. Which is which is pretty high. And also uh getting to something that's more standard, the uh the PCE uh is at 3.3 on the core rate and for the 14 years before CO 2.6 or 2.7 was the high on the core PCE. The the the 2.6 was the low on the core PCE ever since it bottomed out at 2.6. It's now trending higher at 3.3.",
+          "translation": "",
+          "start": 974.399,
+          "end": 1039.3600000000001,
+          "hash": "a400ccf90c9cbe8c9bc151a03f1a1950db64d83dd2087fb9b6104c06ed0a2b3c"
+        },
+        {
+          "startId": "s00500",
+          "endId": "s00509",
+          "text": "saying uh judge is when you get a psychology ology that inflation is now trending higher which is clearly the case on the PCE and on import export prices. I I worry that uh the inflation problem is not being fully respected and Kevin Worsh really focused in the press conference on the fact that inflation is not falling fast enough and it's still too high. it's been too high for too",
+          "translation": "",
+          "start": 1161.36,
+          "end": 1190.96,
+          "hash": "52dc773895c96e42856f5a814aba5aad9666836497949910cb28d52f5a8bcf38"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "videoPublishedAt": "2026-09-19T11:00:06Z",
+    "recordedAt": null,
+    "analysedAt": "2026-09-19T22:41:00.576Z",
+    "language": "en-US",
+    "videoId": "U32FPvvBaNI",
+    "channelId": "UC_xMKlHYdRNXLX9XzuOLjsg",
+    "temporalPolicy": "video-date evidence and later updates are separate"
+  }
+}

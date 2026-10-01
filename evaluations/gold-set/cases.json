@@ -1,0 +1,115 @@
+{
+  "version": "gold-set.v1",
+  "attribution": [
+    "docs/leapedge-reference-observations.json: signed-in browser observations of the LeapEdge reference product (2026-09-13).",
+    "eval/cases.json: pilot review checks written for the first three study videos.",
+    "Every case is pending: no expectation below has been checked against audio, and no anchor is verified. Reviewers fill in expectedClaims with spans, set anchorVerified, add a case-level review and flip status to verified."
+  ],
+  "cases": [
+    {
+      "id": "leapedge-v824SHV6COE",
+      "videoId": "v824SHV6COE",
+      "language": "en",
+      "split": "development",
+      "status": "pending",
+      "review": null,
+      "source": "docs/leapedge-reference-observations.json",
+      "notes": [
+        "Reference product showed 0 trade ideas and 9 key points at displayed cost US$0.05.",
+        "Topics: off-balance-sheet AI infrastructure obligations; leases and contractual commitments; capital intensity and reduced flexibility; SPVs and guarantees; nominal versus discounted liability values; irreversible commitments and revenue risk.",
+        "Language inferred from the English topic list in the observation; confirm on review."
+      ],
+      "expectedClaims": [],
+      "expectedRejections": [
+        {
+          "id": "v824SHV6COE-no-calls",
+          "reason": "Company risk commentary is explanatory research, not a creator investment decision; the reference classified it with zero trade ideas."
+        }
+      ]
+    },
+    {
+      "id": "leapedge-J25UuUqHT3Y",
+      "videoId": "J25UuUqHT3Y",
+      "language": "zh",
+      "split": "development",
+      "status": "pending",
+      "review": null,
+      "source": "docs/leapedge-reference-observations.json",
+      "notes": [
+        "Chinese macro video; reference product synthesized in English with 0 trade ideas and 11 key points at displayed cost US$0.06.",
+        "Topics: US realignment versus decline; negotiation uncertainty and institutional trust; technology-led productivity; personalized diplomacy; four US foreign-policy traditions; technology-government alignment."
+      ],
+      "expectedClaims": [],
+      "expectedRejections": [
+        {
+          "id": "J25UuUqHT3Y-no-calls",
+          "reason": "Macro commentary with no instrument-level decision; the reference classified it with zero trade ideas."
+        }
+      ]
+    },
+    {
+      "id": "nana-20260731",
+      "videoId": "3u24qyWjSVM",
+      "language": "zh",
+      "split": "development",
+      "status": "pending",
+      "review": null,
+      "source": "eval/cases.json",
+      "notes": [
+        "Do not infer entry from stop.",
+        "Keep original Chinese evidence.",
+        "Distinguish Nasdaq from QQQ instrument mapping.",
+        "Verify timestamps against audio.",
+        "evaluations/checks.ts expects separate VOO and QQQ ideas and a Reddit position-monitoring point from the retained text; stance and span are not yet reviewed, so no claim is seeded."
+      ],
+      "expectedClaims": [],
+      "expectedRejections": [
+        {
+          "id": "3u24qyWjSVM-coin-conditional",
+          "reason": "Conditional COIN position management must not become a fresh buy recommendation.",
+          "ticker": "COIN"
+        }
+      ]
+    },
+    {
+      "id": "pronk-20260604",
+      "videoId": "wkAqHlYL7bQ",
+      "language": "en",
+      "split": "development",
+      "status": "pending",
+      "review": null,
+      "source": "eval/cases.json",
+      "notes": [
+        "Preserve company-specific evidence.",
+        "Verify numerical valuation claims."
+      ],
+      "expectedClaims": [],
+      "expectedRejections": [
+        {
+          "id": "wkAqHlYL7bQ-holdings",
+          "reason": "Holdings disclosed by the creator are not recommendations; a holding stated without a decision must not become a call."
+        }
+      ]
+    },
+    {
+      "id": "plainbagel-research",
+      "videoId": "kXYvRR7gV2E",
+      "language": "en",
+      "split": "development",
+      "status": "pending",
+      "review": null,
+      "source": "eval/cases.json",
+      "notes": [
+        "No trade ideas is an acceptable result.",
+        "evaluations/checks.ts expects at least three supported key points."
+      ],
+      "expectedClaims": [],
+      "expectedRejections": [
+        {
+          "id": "kXYvRR7gV2E-education",
+          "reason": "Educational research process must not generate invented trade setups; example companies are not recommendations."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "createdAt": "2026-09-19",
+  "status": "archived candidates only; live availability and current LeapEdge outputs not yet verified",
+  "authorizedMaximumLeapEdgeAnalyses": 20,
+  "candidateCount": 9,
+  "candidates": [
+    {
+      "videoId": "v824SHV6COE",
+      "url": "https://www.youtube.com/watch?v=v824SHV6COE",
+      "archivedSources": [
+        "docs/archive/leapedge-reference-observations.json",
+        "docs/archive/completion-cohort-20260915.json"
+      ],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    },
+    {
+      "videoId": "J25UuUqHT3Y",
+      "url": "https://www.youtube.com/watch?v=J25UuUqHT3Y",
+      "archivedSources": [
+        "docs/archive/leapedge-reference-observations.json",
+        "docs/archive/completion-cohort-20260915.json"
+      ],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    },
+    {
+      "videoId": "hYAnAtEqzI0",
+      "url": "https://www.youtube.com/watch?v=hYAnAtEqzI0",
+      "archivedSources": ["docs/archive/browser-parity-results-20260915.json"],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    },
+    {
+      "videoId": "Q6G8pXFkKLk",
+      "url": "https://www.youtube.com/watch?v=Q6G8pXFkKLk",
+      "archivedSources": ["docs/archive/browser-parity-results-20260915.json"],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    },
+    {
+      "videoId": "9nb3fp76Rz0",
+      "url": "https://www.youtube.com/watch?v=9nb3fp76Rz0",
+      "archivedSources": ["docs/archive/browser-parity-results-20260915.json"],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    },
+    {
+      "videoId": "skc2T5fcoLY",
+      "url": "https://www.youtube.com/watch?v=skc2T5fcoLY",
+      "archivedSources": ["docs/archive/completion-cohort-20260915.json"],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    },
+    {
+      "videoId": "1_JCqHluJ9U",
+      "url": "https://www.youtube.com/watch?v=1_JCqHluJ9U",
+      "archivedSources": ["docs/archive/completion-cohort-20260915.json"],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    },
+    {
+      "videoId": "kXYvRR7gV2E",
+      "url": "https://www.youtube.com/watch?v=kXYvRR7gV2E",
+      "archivedSources": ["docs/archive/completion-cohort-20260915.json"],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    },
+    {
+      "videoId": "3u24qyWjSVM",
+      "url": "https://www.youtube.com/watch?v=3u24qyWjSVM",
+      "archivedSources": ["docs/archive/completion-cohort-20260915.json"],
+      "availability": "not checked in this task",
+      "leapedgeAnalysisSubmitted": false
+    }
+  ]
+}

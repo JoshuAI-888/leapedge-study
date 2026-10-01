@@ -1,0 +1,375 @@
+{
+  "date": "2026-09-13",
+  "budget_currency": "NZD",
+  "monthly_budget": 500,
+  "pilot_guard_usd": 5,
+  "live_cost_usd": 0.6456595,
+  "successful_calls": 16,
+  "leapedge_submissions": 3,
+  "tests_passed": 12,
+  "runs": [
+    {
+      "file": "nana-source.json",
+      "metrics": {
+        "model": "google/gemini-3.1-flash-lite",
+        "provider": "Google AI Studio",
+        "seconds": 33.78902095800731,
+        "usage": {
+          "prompt_tokens": 91596,
+          "completion_tokens": 7260,
+          "total_tokens": 98856,
+          "cost": 0.033789,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 91453
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.033789,
+            "upstream_inference_prompt_cost": 0.022899,
+            "upstream_inference_completions_cost": 0.01089
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "cache_hit": false
+      }
+    },
+    {
+      "file": "pronk-source.json",
+      "metrics": {
+        "model": "google/gemini-3.1-flash-lite",
+        "provider": "Google AI Studio",
+        "seconds": 182.40932891704142,
+        "usage": {
+          "prompt_tokens": 220554,
+          "completion_tokens": 17744,
+          "total_tokens": 238298,
+          "cost": 0.0817545,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 220411
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0817545,
+            "upstream_inference_prompt_cost": 0.0551385,
+            "upstream_inference_completions_cost": 0.026616
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "cache_hit": false
+      }
+    },
+    {
+      "file": "nana-reconstructed35.json",
+      "metrics": [
+        {
+          "stage": "keypoints",
+          "model": "google/gemini-3.1-flash-lite",
+          "provider": "Google",
+          "seconds": 3.0137340420042165,
+          "usage": {
+            "prompt_tokens": 6338,
+            "completion_tokens": 417,
+            "total_tokens": 6755,
+            "cost": 0.00221,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.00221,
+              "upstream_inference_prompt_cost": 0.0015845,
+              "upstream_inference_completions_cost": 0.0006255
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": false
+        },
+        {
+          "stage": "synthesis",
+          "model": "google/gemini-3.5-flash",
+          "provider": "Google",
+          "seconds": 15.06001566699706,
+          "usage": {
+            "prompt_tokens": 6830,
+            "completion_tokens": 2732,
+            "total_tokens": 9562,
+            "cost": 0.034833,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.034833,
+              "upstream_inference_prompt_cost": 0.010245,
+              "upstream_inference_completions_cost": 0.024588
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1881,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": false
+        }
+      ]
+    },
+    {
+      "file": "nana-reconstructed38.json",
+      "metrics": [
+        {
+          "stage": "keypoints",
+          "model": "google/gemini-3.1-flash-lite",
+          "provider": "Google",
+          "seconds": 3.0137340420042165,
+          "usage": {
+            "prompt_tokens": 6338,
+            "completion_tokens": 417,
+            "total_tokens": 6755,
+            "cost": 0.00221,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.00221,
+              "upstream_inference_prompt_cost": 0.0015845,
+              "upstream_inference_completions_cost": 0.0006255
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": true
+        },
+        {
+          "stage": "synthesis",
+          "model": "google/gemini-3.8-flash",
+          "provider": "Google AI Studio",
+          "seconds": 9.29213483404601,
+          "usage": {
+            "prompt_tokens": 6831,
+            "completion_tokens": 2777,
+            "total_tokens": 9608,
+            "cost": 0.015537,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.015537,
+              "upstream_inference_prompt_cost": 0.00512325,
+              "upstream_inference_completions_cost": 0.01041375
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1664,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": false
+        }
+      ]
+    },
+    {
+      "file": "nana-direct38.json",
+      "metrics": [
+        {
+          "stage": "synthesis",
+          "model": "google/gemini-3.8-flash",
+          "provider": "Google AI Studio",
+          "seconds": 35.55142104194965,
+          "usage": {
+            "prompt_tokens": 6682,
+            "completion_tokens": 11127,
+            "total_tokens": 17809,
+            "cost": 0.04673775,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.04673775,
+              "upstream_inference_prompt_cost": 0.0050115,
+              "upstream_inference_completions_cost": 0.04172625
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 5130,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": false
+        }
+      ]
+    },
+    {
+      "file": "nana-direct31pro.json",
+      "metrics": [
+        {
+          "stage": "synthesis",
+          "model": "google/gemini-3.1-pro-preview",
+          "provider": "Google",
+          "seconds": 69.50481541699264,
+          "usage": {
+            "prompt_tokens": 6681,
+            "completion_tokens": 10474,
+            "total_tokens": 17155,
+            "cost": 0.13905,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.13905,
+              "upstream_inference_prompt_cost": 0.013362,
+              "upstream_inference_completions_cost": 0.125688
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 6294,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": false
+        }
+      ]
+    },
+    {
+      "file": "pronk-direct38.json",
+      "metrics": [
+        {
+          "stage": "synthesis",
+          "model": "google/gemini-3.8-flash",
+          "provider": "Google AI Studio",
+          "seconds": 13.68072254199069,
+          "usage": {
+            "prompt_tokens": 15515,
+            "completion_tokens": 3957,
+            "total_tokens": 19472,
+            "cost": 0.026475,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.026475,
+              "upstream_inference_prompt_cost": 0.01163625,
+              "upstream_inference_completions_cost": 0.01483875
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "cache_hit": false
+        }
+      ]
+    },
+    {
+      "file": "pronk-video-audit.json",
+      "metrics": {
+        "model": "google/gemini-3.8-flash",
+        "provider": "Google AI Studio",
+        "seconds": 28.490762416971847,
+        "usage": {
+          "prompt_tokens": 220528,
+          "completion_tokens": 1668,
+          "total_tokens": 222196,
+          "cost": 0.171651,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 220411
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.171651,
+            "upstream_inference_prompt_cost": 0.165396,
+            "upstream_inference_completions_cost": 0.006255
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1414,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "cache_hit": false
+      }
+    },
+    {
+      "file": "pronk-lmb-semantic-audit.json",
+      "metrics": {
+        "model": "google/gemini-3.8-flash",
+        "provider": "Google AI Studio",
+        "seconds": 3.566383124969434,
+        "usage": {
+          "prompt_tokens": 16173,
+          "completion_tokens": 565,
+          "total_tokens": 16738,
+          "cost": 0.0142485,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0142485,
+            "upstream_inference_prompt_cost": 0.01212975,
+            "upstream_inference_completions_cost": 0.00211875
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 462,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "cache_hit": false
+      }
+    }
+  ]
+}

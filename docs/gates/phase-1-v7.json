@@ -1,0 +1,254 @@
+{
+  "version": "promotion-gate.v1",
+  "id": "gate-1b3207abd4947b81",
+  "at": "2026-09-17T22:00:27.228Z",
+  "date": "2026-09-17",
+  "mode": "offline",
+  "configHash": "1b3207abd4947b81c4d76235d5fac7bd248c2de801dbcdb42edfcb3b4c87ccd0",
+  "configuration": {
+    "models": {
+      "extraction": {
+        "id": "gemini-3.8-flash",
+        "transport": "google-native"
+      },
+      "critique": {
+        "id": "anthropic/claude-sonnet-5",
+        "transport": "openrouter",
+        "requireDifferentFamily": true,
+        "thinkingBudget": "low"
+      },
+      "transcription": {
+        "id": "gemini-3.8-flash",
+        "transport": "google-native"
+      },
+      "context": {
+        "id": "anthropic/claude-sonnet-5",
+        "transport": "openrouter"
+      },
+      "translation": {
+        "id": "gemini-3.1-flash-lite",
+        "transport": "google-native"
+      },
+      "audioReview": {
+        "id": "gemini-3.8-flash",
+        "transport": "google-native"
+      }
+    },
+    "prompts": {
+      "version": "evidence-first.web.v7"
+    },
+    "transport": {
+      "default": "google-native",
+      "fallbackToOpenRouter": false,
+      "allowOpenRouterInLab": true
+    },
+    "sources": {
+      "captionProvider": "transcriptapi",
+      "standby": "supadata",
+      "standbyPlan": "free",
+      "standbyCooldownMinutes": 15,
+      "asr": "gemini-windowed",
+      "asrPolicy": "when-captions-missing",
+      "windowSeconds": 300,
+      "mediaResolution": "low",
+      "agenticAudioReview": true,
+      "agreementThreshold": 0.92,
+      "tieBreakWithStandby": true,
+      "captionLanguages": [
+        "zh",
+        "zh-Hans",
+        "zh-Hant",
+        "en"
+      ]
+    },
+    "context": {
+      "enabled": true,
+      "windowDaysBefore": 14,
+      "windowDaysAfter": 2,
+      "webSearch": "off",
+      "sinceThenAtSettlement": true
+    },
+    "processing": {
+      "contextCaching": true,
+      "chunkAboveTokens": 700000
+    },
+    "trust": {
+      "minimumLevelForToday": "audio-agreed",
+      "showExtractedInLab": true
+    }
+  },
+  "thresholds": {
+    "goldPrecisionMin": 0.9,
+    "goldRecallMin": 0.8,
+    "anchorWithin2sMin": 0.95,
+    "costPerAcceptedClaimMaxUsd": 0.25,
+    "advisoryPolicy": "report-only"
+  },
+  "results": {
+    "goldPrecision": {
+      "id": "goldPrecision",
+      "source": "gold-set",
+      "metric": "claims.precision",
+      "comparison": "min",
+      "threshold": 0.9,
+      "value": null,
+      "meetsThreshold": null,
+      "advisory": true,
+      "blocking": false,
+      "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. claims.precision not measured (no denominator)."
+    },
+    "goldRecall": {
+      "id": "goldRecall",
+      "source": "gold-set",
+      "metric": "claims.recall",
+      "comparison": "min",
+      "threshold": 0.8,
+      "value": null,
+      "meetsThreshold": null,
+      "advisory": true,
+      "blocking": false,
+      "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. claims.recall not measured (no denominator)."
+    },
+    "anchorWithin2s": {
+      "id": "anchorWithin2s",
+      "source": "gold-set",
+      "metric": "anchors.accuracy",
+      "comparison": "min",
+      "threshold": 0.95,
+      "value": null,
+      "meetsThreshold": null,
+      "advisory": true,
+      "blocking": false,
+      "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. anchors.accuracy not measured (no denominator)."
+    },
+    "costPerAcceptedClaim": {
+      "id": "costPerAcceptedClaim",
+      "source": "gold-set",
+      "metric": "cost.perAcceptedClaimUsd",
+      "comparison": "max",
+      "threshold": 0.25,
+      "value": null,
+      "meetsThreshold": null,
+      "advisory": true,
+      "blocking": false,
+      "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. cost.perAcceptedClaimUsd not measured (no denominator)."
+    }
+  },
+  "advisory": [
+    {
+      "id": "goldPrecision",
+      "value": null,
+      "threshold": 0.9,
+      "meetsThreshold": null,
+      "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. claims.precision not measured (no denominator)."
+    },
+    {
+      "id": "goldRecall",
+      "value": null,
+      "threshold": 0.8,
+      "meetsThreshold": null,
+      "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. claims.recall not measured (no denominator)."
+    },
+    {
+      "id": "anchorWithin2s",
+      "value": null,
+      "threshold": 0.95,
+      "meetsThreshold": null,
+      "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. anchors.accuracy not measured (no denominator)."
+    },
+    {
+      "id": "costPerAcceptedClaim",
+      "value": null,
+      "threshold": 0.25,
+      "meetsThreshold": null,
+      "reason": "Advisory, not a gate: Only 0 of 50 required verified cases; metrics are advisory, not a gate. cost.perAcceptedClaimUsd not measured (no denominator)."
+    }
+  ],
+  "binding": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0
+  },
+  "pass": true,
+  "verdict": "advisory-only",
+  "measurements": {
+    "gold": {
+      "advisory": true,
+      "advisoryReason": "Only 0 of 50 required verified cases; metrics are advisory, not a gate.",
+      "claims": {
+        "precision": null,
+        "recall": null
+      },
+      "anchors": {
+        "accuracy": null,
+        "toleranceSeconds": 2
+      },
+      "cost": {
+        "perAcceptedClaimUsd": null
+      }
+    }
+  },
+  "sources": {
+    "goldSet": {
+      "casesPath": "evaluations/gold-set/cases.json",
+      "casesHash": "9f20ac74ef1f13e1355eed7521d2e9a334b31eb44973f29eae17b31501fe3020",
+      "runs": 0,
+      "runSource": "replay of stored runs",
+      "transport": "fake",
+      "goldSetVersion": "gold-set.v1",
+      "reportVersion": "gold-report.v1",
+      "cases": {
+        "total": 5,
+        "verified": 0,
+        "pending": 5,
+        "scored": 0,
+        "missingRun": [
+          "v824SHV6COE",
+          "J25UuUqHT3Y",
+          "3u24qyWjSVM",
+          "wkAqHlYL7bQ",
+          "kXYvRR7gV2E"
+        ]
+      },
+      "claims": {
+        "truePositives": 0,
+        "falsePositives": 0,
+        "falseNegatives": 0,
+        "precision": null,
+        "recall": null
+      },
+      "critic": {
+        "verdicts": 0,
+        "truePositives": 0,
+        "falsePositives": 0,
+        "falseNegatives": 0,
+        "precision": null,
+        "recall": null
+      },
+      "anchors": {
+        "toleranceSeconds": 2,
+        "verified": 0,
+        "compared": 0,
+        "measured": 0,
+        "withinTolerance": 0,
+        "accuracy": null,
+        "meanAbsoluteErrorSeconds": null
+      },
+      "sentiment": {
+        "compared": 0,
+        "agreed": 0,
+        "agreement": null
+      },
+      "cost": {
+        "totalUsd": 0,
+        "acceptedClaims": 0,
+        "perAcceptedClaimUsd": null
+      },
+      "validity": {
+        "graded": 0,
+        "passed": 0
+      }
+    }
+  },
+  "limitation": "Offline: the gold set replays stored runs; prompt, model or transport changes need fresh runs before the numbers reflect them. Advisory checks are reported, never enforced."
+}

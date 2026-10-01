@@ -1,0 +1,196 @@
+{
+  "scope": "Frozen retained transcript to final brief; excludes ingestion, queue wait and browser paint. Single trial per treatment, live models/search vary. AI before audit failed; no all-success latency claim. Source revision before dirty9b6a85e and after f5060f3; later profile UI does not change these explicit flags. CPU tests also ran concurrently, limiting wall-time attribution.",
+  "rows": [
+    {
+      "videoId": "SPIRV9UjNYU",
+      "before": {
+        "status": "completed",
+        "error": null,
+        "seconds": 70.843931335,
+        "stages": {
+          "synthesis": 5.920229416,
+          "translate": 8.192872875,
+          "critique": 16.761925625,
+          "publish": 2.731257042000001,
+          "metadata": 2.2024153339999977,
+          "research-sources": 6.399348167000003,
+          "research-synthesis": 11.018845459000003,
+          "research-audit": 17.61703741699999
+        },
+        "costUsd": 0.20629475,
+        "unsettled": [],
+        "providerCalls": 12,
+        "sourceUnchanged": true,
+        "acceptedSentences": 8,
+        "rejectedSentences": 0,
+        "prefetchPlanReused": false,
+        "prefetchSearchesReused": 0
+      },
+      "after": {
+        "status": "completed",
+        "error": null,
+        "seconds": 89.61740654299996,
+        "stages": {
+          "synthesis": 5.582813541000011,
+          "translate": 6.27884937499999,
+          "critique": 14.06312616699998,
+          "publish": 3.59087520900002,
+          "metadata": 2.780015374999959,
+          "research-sources": 7.286200083000003,
+          "research-synthesis": 12.857463083999988,
+          "research-audit": 37.17806370900001
+        },
+        "costUsd": 0.257979,
+        "unsettled": [],
+        "providerCalls": 17,
+        "sourceUnchanged": true,
+        "acceptedSentences": 11,
+        "rejectedSentences": 0,
+        "prefetchPlanReused": false,
+        "prefetchSearchesReused": 0
+      }
+    },
+    {
+      "videoId": "1WNowIoNgtg",
+      "before": {
+        "status": "completed",
+        "error": null,
+        "seconds": 106.309707834,
+        "stages": {
+          "synthesis": 15.334404083999994,
+          "critique": 36.418757333,
+          "publish": 11.959830666000009,
+          "metadata": 3.357929167000002,
+          "research-sources": 6.877212291999997,
+          "research-synthesis": 9.766233374999997,
+          "research-audit": 22.595340916999994
+        },
+        "costUsd": 0.47391099999999997,
+        "unsettled": [],
+        "providerCalls": 18,
+        "sourceUnchanged": true,
+        "acceptedSentences": 9,
+        "rejectedSentences": 1,
+        "prefetchPlanReused": false,
+        "prefetchSearchesReused": 0
+      },
+      "after": {
+        "status": "completed",
+        "error": null,
+        "seconds": 93.994116083,
+        "stages": {
+          "synthesis": 15.734374917,
+          "critique": 27.859557541999997,
+          "publish": 10.749345832999985,
+          "metadata": 0.005373041999999259,
+          "research-sources": 0.006137833000000682,
+          "research-synthesis": 11.821769291000004,
+          "research-audit": 27.817557625000003
+        },
+        "costUsd": 0.36786800000000003,
+        "unsettled": [],
+        "providerCalls": 17,
+        "sourceUnchanged": true,
+        "acceptedSentences": 11,
+        "rejectedSentences": 2,
+        "prefetchPlanReused": true,
+        "prefetchSearchesReused": 4
+      }
+    },
+    {
+      "videoId": "ZfOQoh82JTo",
+      "before": {
+        "status": "completed",
+        "error": null,
+        "seconds": 125.81271549799997,
+        "stages": {
+          "synthesis": 27.73920520699999,
+          "critique": 41.936657542,
+          "publish": 3.2007620419999876,
+          "metadata": 3.0340195830000156,
+          "research-sources": 11.218095541000016,
+          "research-synthesis": 18.259577874999987,
+          "research-audit": 20.424397707999976
+        },
+        "costUsd": 0.57239825,
+        "unsettled": [],
+        "providerCalls": 17,
+        "sourceUnchanged": true,
+        "acceptedSentences": 16,
+        "rejectedSentences": 0,
+        "prefetchPlanReused": false,
+        "prefetchSearchesReused": 0
+      },
+      "after": {
+        "status": "completed",
+        "error": null,
+        "seconds": 122.70165408199996,
+        "stages": {
+          "synthesis": 26.08175337399999,
+          "critique": 35.134933792,
+          "publish": 3.218603040999995,
+          "metadata": 2.9891204169999983,
+          "research-sources": 7.877465333,
+          "research-synthesis": 16.88090083299999,
+          "research-audit": 30.51887729199999
+        },
+        "costUsd": 0.58657925,
+        "unsettled": [],
+        "providerCalls": 22,
+        "sourceUnchanged": true,
+        "acceptedSentences": 11,
+        "rejectedSentences": 0,
+        "prefetchPlanReused": false,
+        "prefetchSearchesReused": 0
+      }
+    },
+    {
+      "videoId": "M1FJ5dNiBEs",
+      "before": {
+        "status": "failed",
+        "error": "Incomplete research audit.",
+        "seconds": 79.150989832,
+        "stages": {
+          "synthesis": 12.471332083000016,
+          "critique": 21.161783333,
+          "publish": 0.06632045800000197,
+          "metadata": 3.026982499999984,
+          "research-sources": 8.418985125000006,
+          "research-synthesis": 11.430078957999998,
+          "research-audit": 22.575507374999987
+        },
+        "costUsd": 0.21442525,
+        "unsettled": [],
+        "providerCalls": 10,
+        "sourceUnchanged": true,
+        "acceptedSentences": 0,
+        "rejectedSentences": 0,
+        "prefetchPlanReused": false,
+        "prefetchSearchesReused": 0
+      },
+      "after": {
+        "status": "completed",
+        "error": null,
+        "seconds": 55.01121854199999,
+        "stages": {
+          "synthesis": 8.702167250000027,
+          "critique": 18.743937874999975,
+          "publish": 3.299176665999985,
+          "metadata": 0.015560166000010213,
+          "research-sources": 0.018144750999985262,
+          "research-synthesis": 10.525945792000012,
+          "research-audit": 13.706286041999993
+        },
+        "costUsd": 0.19661275,
+        "unsettled": [],
+        "providerCalls": 11,
+        "sourceUnchanged": true,
+        "acceptedSentences": 9,
+        "rejectedSentences": 0,
+        "prefetchPlanReused": true,
+        "prefetchSearchesReused": 4
+      }
+    }
+  ],
+  "confirmedExperimentCostUsd": 2.87606825
+}

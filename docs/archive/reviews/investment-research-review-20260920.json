@@ -1,0 +1,1531 @@
+{
+  "scope": "Saved outputs only; no new LeapEdge calls. Counts are not accuracy scores.",
+  "cases": [
+    {
+      "case": 1,
+      "videoId": "SPIRV9UjNYU",
+      "title": "大多头突然改口！我为什么还敢拿着AI股？｜雅德尼下调目标",
+      "publishedAt": "2026-09-19T19:00:07Z",
+      "localRunId": "ddf09184-f988-44f5-bd3e-8608e5576c47",
+      "sourceHash": "b349940ae94619a384fe15a69f3b2c33bf3029f8734205c0b368c92e3d4c542f",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 1,
+      "acceptedContextPoints": 7,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:34:15.108Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/SPIRV9UjNYU__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 1,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "AI",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 590.62,
+              "end": 600,
+              "startId": "asr-1-114",
+              "endId": "asr-1-116",
+              "hash": "b274bd00330fc3090e5b7a8cb4483182f370a537419a3add8458969aeed3f157"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 2,
+      "videoId": "J_VpfkM74Wk",
+      "title": "Anthropic突然出大问题了",
+      "publishedAt": "2026-09-19T17:16:19Z",
+      "localRunId": "6165acf1-8c67-482b-9591-6959ee3ae2a2",
+      "sourceHash": "6ca4e1517e4a88df1b0de24c8cb86a8ca67b8cd83dc8d684916216d62fe9c1e1",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 0,
+      "acceptedContextPoints": 7,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:34:23.516Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/J_VpfkM74Wk__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 0,
+      "claimEvidence": []
+    },
+    {
+      "case": 3,
+      "videoId": "9nb3fp76Rz0",
+      "title": "美股：基本上定了。【2026-09-11】",
+      "publishedAt": "2026-09-11T23:18:40Z",
+      "localRunId": "1ac54e42-bb2a-4910-805c-152b98493541",
+      "sourceHash": "d37408d5e7c4876b9ada6231369515c03c098bfdb9bddffd1193c3eaa6ded03f",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 0,
+      "acceptedContextPoints": 7,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:35:23.623Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/9nb3fp76Rz0__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 3,
+      "claimEvidence": []
+    },
+    {
+      "case": 4,
+      "videoId": "3u24qyWjSVM",
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "publishedAt": "2026-07-31T22:27:01Z",
+      "localRunId": "e6c8b4c9-87c7-477b-9e12-891fd85a2276",
+      "sourceHash": "1036b6c5547bf558272cc967ad3ceb95fbd58c52069b7f24c492937bd5482a3a",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 6,
+      "acceptedContextPoints": 5,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:35:50.868Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/3u24qyWjSVM__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 4,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "纳指",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 308.766,
+              "end": 320.2,
+              "startId": "s00085",
+              "endId": "s00089",
+              "hash": "ce3269f5a0b78e97907988193c31c4cc57cc5193c9a7f741044b1a505f4988c9"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "费城半导体指数",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 442.533,
+              "end": 488.133,
+              "startId": "s00127",
+              "endId": "s00139",
+              "hash": "981496c70d6ae4c06fbd860bd33d98eeecb2648897afe04e0ba90e5363818615"
+            },
+            {
+              "start": 505.166,
+              "end": 525.633,
+              "startId": "s00146",
+              "endId": "s00151",
+              "hash": "3e0fb7193954d0c81712ec9dd43b7e9f2a4d13d67c8b080c45dde7a0b7cd5f2c"
+            }
+          ]
+        },
+        {
+          "id": "c3",
+          "instrument": "VOO",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 395.733,
+              "end": 424.833,
+              "startId": "s00114",
+              "endId": "s00119",
+              "hash": "97bb36ab1176c529be376115b1cfc38c9f382087b9578f6feabff534e8fed31b"
+            }
+          ]
+        },
+        {
+          "id": "c4",
+          "instrument": "QQQ",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 395.733,
+              "end": 424.833,
+              "startId": "s00114",
+              "endId": "s00119",
+              "hash": "97bb36ab1176c529be376115b1cfc38c9f382087b9578f6feabff534e8fed31b"
+            }
+          ]
+        },
+        {
+          "id": "c5",
+          "instrument": "COIN",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 914.8,
+              "end": 942.966,
+              "startId": "s00254",
+              "endId": "s00261",
+              "hash": "ac4c2ddeef615b5582a9b71e29a95129f8e1337c419ac90867afdb9d4b8d74c6"
+            }
+          ]
+        },
+        {
+          "id": "c6",
+          "instrument": "MSTR",
+          "stance": "avoid",
+          "evidence": [
+            {
+              "start": 959.933,
+              "end": 973.4000000000001,
+              "startId": "s00266",
+              "endId": "s00270",
+              "hash": "5b6726c14689387d827e798437ae673b412b9eda1f0532e6ce72c3ea1c838418"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 5,
+      "videoId": "M1FJ5dNiBEs",
+      "title": "AI Compute Demand Could DOUBLE Again by 2027!!",
+      "publishedAt": "2026-09-18T14:47:05Z",
+      "localRunId": "8cc62b21-4c63-4d96-a6cb-40d704891406",
+      "sourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 3,
+      "acceptedContextPoints": 5,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:40:06.321Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/M1FJ5dNiBEs__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 3,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "Credo",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 460.479,
+              "end": 477.28,
+              "startId": "s00208",
+              "endId": "s00215",
+              "hash": "37d4dce1db28c8d72e557f006bbed320ce899d46a8b3b9c9eca88854f5fab235"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "Meta Platforms",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 503.44,
+              "end": 522.56,
+              "startId": "s00229",
+              "endId": "s00236",
+              "hash": "cb24d9f009440730b85eee1a023c8e755774bcacb139ad1c0485b3734870f935"
+            },
+            {
+              "start": 531.44,
+              "end": 550.399,
+              "startId": "s00242",
+              "endId": "s00248",
+              "hash": "a5ac5fc88f48c5f4f409914b23caf4b9bde7821ad8e01bdfa42d3745cd7cd0ed"
+            },
+            {
+              "start": 595.2,
+              "end": 614.6400000000001,
+              "startId": "s00272",
+              "endId": "s00278",
+              "hash": "f98cff4103853d4337b9a25129905b0d6146fb9dd74f2dd5b88931a9944aa6f2"
+            }
+          ]
+        },
+        {
+          "id": "c3",
+          "instrument": "Nvidia",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 58.48,
+              "end": 76.96,
+              "startId": "s00029",
+              "endId": "s00036",
+              "hash": "517e0403103b1c0f6d4cabb46edf548a9741c9a9b39ead8e12e6bf8d41afed72"
+            },
+            {
+              "start": 778.24,
+              "end": 808,
+              "startId": "s00354",
+              "endId": "s00365",
+              "hash": "9caeb8798aa6bd463e241a72969692e1751197f3bc5bcca3794eb39421b61258"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 6,
+      "videoId": "LF7fgz1HAFs",
+      "title": "CoreWeave & Nebius GPU Pricing Just Exploded — Here’s Why",
+      "publishedAt": "2026-09-17T14:56:54Z",
+      "localRunId": "ac468ee1-1380-4455-8253-53ff407edd7b",
+      "sourceHash": "3ad5da8feb0202ebba9a3db7e6374011ef17997e025317b809d9ee578f4c3810",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 1,
+      "acceptedContextPoints": 4,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:40:28.853Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/LF7fgz1HAFs__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 2,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "Cororeweave",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 333.44,
+              "end": 397.84000000000003,
+              "startId": "s00151",
+              "endId": "s00178",
+              "hash": "80de956aecef5611612a93fd62bfbf6ab38ab93f7cb6a52c5545cced249aea23"
+            },
+            {
+              "start": 426.08,
+              "end": 437.759,
+              "startId": "s00191",
+              "endId": "s00194",
+              "hash": "2719259e737ddff2b92adcba9d86939d62b04cfb35905b8c62554b9e37ac3a22"
+            },
+            {
+              "start": 530.64,
+              "end": 562.0799999999999,
+              "startId": "s00240",
+              "endId": "s00252",
+              "hash": "165449d3dc4f66230e61e1b54d97e083da45561f8f132a37d2ee92c146385ea5"
+            },
+            {
+              "start": 605.279,
+              "end": 629.519,
+              "startId": "s00273",
+              "endId": "s00281",
+              "hash": "10df8facacfcc986baaa1c42e33be70e86a28a184c035dc0af56306afd9fa247"
+            },
+            {
+              "start": 742,
+              "end": 752.959,
+              "startId": "s00338",
+              "endId": "s00341",
+              "hash": "284eb491d903ba187166f7ee70d0b19bb4d3336b8db9712a6eaca8be8053250c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 7,
+      "videoId": "U32FPvvBaNI",
+      "title": "AMD Stock Is Entering a New Cycle‼️Listen Up",
+      "publishedAt": "2026-09-19T11:00:06Z",
+      "localRunId": "709bb1ef-45f0-4737-bba4-afcfb0aab1e7",
+      "sourceHash": "e7dfbc3587c28c71e1550a8b848e326fbad9a3b61a37402ba1bf4cad83c64eca",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 8,
+      "acceptedContextPoints": 7,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:42:18.945Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/U32FPvvBaNI__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 4,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "AMD",
+          "stance": "hold",
+          "evidence": [
+            {
+              "start": 262.88,
+              "end": 295.36,
+              "startId": "s00108",
+              "endId": "s00120",
+              "hash": "0af47988d846108dec24856de741465916c9c9d78c5655e3b81f081692f0b67f"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "win resorts",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 365.52,
+              "end": 436.639,
+              "startId": "s00151",
+              "endId": "s00181",
+              "hash": "38d7b3d42ba9f186c9eca6a9d6518566bac73896ef1c0d52305dbf879f28bd24"
+            }
+          ]
+        },
+        {
+          "id": "c3",
+          "instrument": "American Express",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 433.759,
+              "end": 457.36,
+              "startId": "s00182",
+              "endId": "s00191",
+              "hash": "73c026ccada5f1cef7da8e019b8d262b67902af96c9320bbf8c12b9840d48ac1"
+            }
+          ]
+        },
+        {
+          "id": "c4",
+          "instrument": "RH",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 455.44,
+              "end": 485.44,
+              "startId": "s00192",
+              "endId": "s00203",
+              "hash": "8becf7d0fc3be03d9c49b97b8c9e0cbb7bc2244c850ba51aad4ef6a2bc35a98d"
+            }
+          ]
+        },
+        {
+          "id": "c5",
+          "instrument": "Winning Resorts",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 668.88,
+              "end": 726.2399999999999,
+              "startId": "s00299",
+              "endId": "s00322",
+              "hash": "e8f7c8ec548ae704c311869b1746f36c0076d3e3008001420be8a173bf60a7b1"
+            }
+          ]
+        },
+        {
+          "id": "c6",
+          "instrument": "Nike",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 724.32,
+              "end": 742.7199999999999,
+              "startId": "s00323",
+              "endId": "s00331",
+              "hash": "cef0652ef3d61ce6a8d362d83b5efc7963e88d6822fa91c079f13bf0e01d97b6"
+            }
+          ]
+        },
+        {
+          "id": "c7",
+          "instrument": "Celsius Holdings",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 740.639,
+              "end": 751.68,
+              "startId": "s00332",
+              "endId": "s00336",
+              "hash": "1ecad22c4e0a3a73930b48bcfb7a8ef44fa172ba1124ad57327b86a4d525d65e"
+            }
+          ]
+        },
+        {
+          "id": "c8",
+          "instrument": "RH",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 749.68,
+              "end": 834.32,
+              "startId": "s00337",
+              "endId": "s00371",
+              "hash": "64b8f10ce1142bebbca6070902953807332e99e9efe95a7b09896a4fab877e8d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 8,
+      "videoId": "jPy5aDhMsMY",
+      "title": "Oracle & Adobe Shareholders‼️Brand New Developments",
+      "publishedAt": "2026-09-14T11:00:10Z",
+      "localRunId": "41b7e124-e13e-4aa8-85c1-680237490be1",
+      "sourceHash": "07e4a35ee3be49f95f1b8d06cc281db0dda11718a15c724648516418093c45b7",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 2,
+      "acceptedContextPoints": 4,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:42:23.749Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/jPy5aDhMsMY__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 2,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "Adobe",
+          "stance": "avoid",
+          "evidence": [
+            {
+              "start": 321.6,
+              "end": 334.8,
+              "startId": "s00152",
+              "endId": "s00155",
+              "hash": "3ffe3a86ed251258c63478cfb0c816783fee1d6d1908d8c238f75f8994f8d38c"
+            },
+            {
+              "start": 364,
+              "end": 376.56,
+              "startId": "s00170",
+              "endId": "s00174",
+              "hash": "518c21a51246f58638fd714c03fb4dba78c46572b65d54ab3ae97a2457f1c9d5"
+            },
+            {
+              "start": 421.759,
+              "end": 441.12,
+              "startId": "s00201",
+              "endId": "s00208",
+              "hash": "11809e9deb7aae5201375cff5f7a79e6b8e3f257ee6b3dc7d1d0b6b9ad116123"
+            },
+            {
+              "start": 459.039,
+              "end": 486.24,
+              "startId": "s00220",
+              "endId": "s00230",
+              "hash": "144093ddd100950c30d8894dc5f174e1ccd524e6f625691e9fb06aa4ecf0e0f0"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "Oracle",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 138,
+              "end": 160.4,
+              "startId": "s00067",
+              "endId": "s00075",
+              "hash": "fdf4e5ecad01d4083b74e5386acecbbe540c43bdb2dbeee3f214bacc7362ffdb"
+            },
+            {
+              "start": 180.16,
+              "end": 200.08,
+              "startId": "s00086",
+              "endId": "s00092",
+              "hash": "f7d13f1ded0d5a0bb3ccc502d6c546b3b24105f0ac5a8ab99d48e4df995d30a3"
+            },
+            {
+              "start": 223.599,
+              "end": 252.07999999999998,
+              "startId": "s00105",
+              "endId": "s00118",
+              "hash": "aeb3a542bca0c6e0d6ea62560681fc40d63703fd25f0569699d2145956aba343"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 9,
+      "videoId": "elD62rk5Ijo",
+      "title": "If You Missed NVIDIA Stock, This is Way Bigger.",
+      "publishedAt": "2026-09-18T15:07:06Z",
+      "localRunId": "5ffadb59-52d1-49a4-811a-67c247394b23",
+      "sourceHash": "852c63f02a21adfb749c67716d3ee88f571599c59aec17a9e3e21bda211e877c",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 1,
+      "acceptedContextPoints": 5,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:42:28.460Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/elD62rk5Ijo__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 1,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "SKH Highix",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 182,
+              "end": 192.48,
+              "startId": "s00074",
+              "endId": "s00076",
+              "hash": "1f410e801f9209494549d5bbcfca865a836802a062cc5e6efb7eabbc9f16a3ec"
+            },
+            {
+              "start": 1286.48,
+              "end": 1341.28,
+              "startId": "s00520",
+              "endId": "s00541",
+              "hash": "1afa0e1247b5f196e6193a37d86b2752c62774c7e244ab2c1460514deff575bf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 10,
+      "videoId": "zYeJZu1hkdM",
+      "title": "These Stocks Will Make Millionaires By 2029",
+      "publishedAt": "2026-08-24T20:15:25Z",
+      "localRunId": "43aeea43-37ee-4014-a28d-070432d60309",
+      "sourceHash": "f1c1fee7a07b421ea5e921c2bea3e38b764cb8925395a139fcaff1daad44397e",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 2,
+      "acceptedContextPoints": 8,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:40:55.783Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/zYeJZu1hkdM__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 2,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "Coherent",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 729.44,
+              "end": 755.1999999999999,
+              "startId": "s00306",
+              "endId": "s00315",
+              "hash": "c6c28ebbb7a56cbb359f75d6dda71f0727509508e7ca8dfdd3cf2c48e8998d45"
+            },
+            {
+              "start": 1008.959,
+              "end": 1038.88,
+              "startId": "s00421",
+              "endId": "s00432",
+              "hash": "22713663d137a97a3d60f416ec906242ea85c5a530450f697a0cb28514672bfb"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "Lumenum",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 753.12,
+              "end": 760.399,
+              "startId": "s00316",
+              "endId": "s00317",
+              "hash": "f43a583927f64c7b80bdcde3a87cb935a83021f667b7a9e7dc7e42570d3dea06"
+            },
+            {
+              "start": 1008.959,
+              "end": 1017.279,
+              "startId": "s00421",
+              "endId": "s00423",
+              "hash": "ceba46a6ecab905162ed0d1e9f992c2cfb4c405dd79189e38424efb187690270"
+            },
+            {
+              "start": 1036.079,
+              "end": 1053.6,
+              "startId": "s00433",
+              "endId": "s00438",
+              "hash": "29a8da4e9e8073ec5b801246eec7f59aac2159448b99770b4a0b7156bea99314"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 11,
+      "videoId": "ZfOQoh82JTo",
+      "title": "Nu Bank's Territorial Expansion; LVMH + Stocks At Cheapest Valuations Ever; Fed Hikes Interest Rates",
+      "publishedAt": "2026-09-17T10:13:22Z",
+      "localRunId": "18a0425d-38ab-4b27-92d3-624e1ea7faba",
+      "sourceHash": "d3eb8edbc5594e303d7735d41d8a8e464399e88c3f2279e1d77a7c40cf35c888",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 5,
+      "acceptedContextPoints": 19,
+      "leapedgeStatus": "stopped",
+      "leapedgeCapturedAt": "2026-09-19T20:41:11.584Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/ZfOQoh82JTo__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 0,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "longer-term bonds",
+          "stance": "hold",
+          "evidence": [
+            {
+              "start": 2010.82,
+              "end": 2046.25,
+              "startId": "asr-6-31",
+              "endId": "asr-6-36",
+              "hash": "4b453a304c24727a9ab4f1a4aedd0b70c71d72733bf0885d341a1cde06cc8f6d"
+            },
+            {
+              "start": 2072.77,
+              "end": 2095.42,
+              "startId": "asr-6-42",
+              "endId": "asr-6-46",
+              "hash": "a01696bc6d74a359a2b9630a2d740435a6f85832803eff1de847d7ba769f86aa"
+            }
+          ]
+        },
+        {
+          "id": "c3",
+          "instrument": "LVMH",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 3327.32,
+              "end": 3352.1,
+              "startId": "asr-13-11",
+              "endId": "asr-13-16",
+              "hash": "f4e2940159f8fd0a7de41dc7680e7c5c7a3e195de31a6834f8b6790c7e864ac2"
+            },
+            {
+              "start": 3382.48,
+              "end": 3419.82,
+              "startId": "asr-13-27",
+              "endId": "asr-13-37",
+              "hash": "dd2f74275f809cbd268cf4e36e65c7fe4efc8af3c7c10b6e65a1639e9c40fb52"
+            },
+            {
+              "start": 3544.78,
+              "end": 3560.82,
+              "startId": "asr-13-75",
+              "endId": "asr-13-78",
+              "hash": "4bc816db35f80ae7a5140e6c252384af374d039894f73b8e8f2b5a5c478852cd"
+            }
+          ]
+        },
+        {
+          "id": "c4",
+          "instrument": "LVMH",
+          "stance": "avoid",
+          "evidence": [
+            {
+              "start": 3434.78,
+              "end": 3444.66,
+              "startId": "asr-13-43",
+              "endId": "asr-13-44",
+              "hash": "8d24d9cd8474818c861d067a9ad6b5a07849e63eebb4a9d1fbbffc18c51d32f2"
+            },
+            {
+              "start": 3470.82,
+              "end": 3479.9,
+              "startId": "asr-13-55",
+              "endId": "asr-13-56",
+              "hash": "fb90bc94a63e1d23523e6c285db8fa2e2caae5f49406c74b0d41316710b431b8"
+            },
+            {
+              "start": 3499.78,
+              "end": 3511.08,
+              "startId": "asr-13-64",
+              "endId": "asr-13-66",
+              "hash": "2c7a270d03c6417e1295b10940f8e3901f0baec569e63358acfc7979f2c0e1e5"
+            }
+          ]
+        },
+        {
+          "id": "c5",
+          "instrument": "Hermès",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 3566.92,
+              "end": 3600,
+              "startId": "asr-13-81",
+              "endId": "asr-13-86",
+              "hash": "cc0735d5bb76bc53136ebce8e577fc2b69cbb8e2a965306b31e9ee5a27b150a0"
+            }
+          ]
+        },
+        {
+          "id": "c6",
+          "instrument": "Opendoor",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 3704.095,
+              "end": 3724.899,
+              "startId": "asr-21-1",
+              "endId": "asr-21-7",
+              "hash": "57055de040e9cf930b946547bc08aae1ae66a47d0b7f72d1caccb48064915678"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 12,
+      "videoId": "iBMZc7zs_Ew",
+      "title": "Ian Bezek Returns to Discuss Why Brazilian Bank INTER Is Undervalued + Much More [PODCAST]",
+      "publishedAt": "2026-09-16T04:00:13Z",
+      "localRunId": "c4268e6a-91cf-4d3d-a55d-297926b3073a",
+      "sourceHash": "13dc7fb204d2cc32a63b1df473827e684428fc5b52014ba3fa8b04166ca6f386",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 11,
+      "acceptedContextPoints": 16,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:41:20.964Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/iBMZc7zs_Ew__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 1,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "new",
+          "stance": "hold",
+          "evidence": [
+            {
+              "start": 468.96,
+              "end": 494.56,
+              "startId": "s00188",
+              "endId": "s00197",
+              "hash": "efd0b2ae1e00d62a71bce8264ddf08d1643bb347be9f07e75c506dccb1004e4c"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "Mexican fixed income",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 1730.399,
+              "end": 1761.52,
+              "startId": "s00733",
+              "endId": "s00742",
+              "hash": "4aa4899f536226c150c57ecbf5ed9dd7dc3a96636de02fd54d06d42a92685bbf"
+            },
+            {
+              "start": 1786.24,
+              "end": 1801.6789999999999,
+              "startId": "s00755",
+              "endId": "s00758",
+              "hash": "362bb03013b05f30fa5efee2c44a32126622fb5f3a77cfabbc0950c453cb5b7b"
+            },
+            {
+              "start": 1888.32,
+              "end": 1898.399,
+              "startId": "s00799",
+              "endId": "s00801",
+              "hash": "49e66dda929c013ffd5fa5427931d8ad8139c2f27ba6670a2fe56cd33f452883"
+            }
+          ]
+        },
+        {
+          "id": "c3",
+          "instrument": "Brazil",
+          "stance": "neutral",
+          "evidence": [
+            {
+              "start": 1814.24,
+              "end": 1830.88,
+              "startId": "s00765",
+              "endId": "s00770",
+              "hash": "2705edb5dbd1ea2af31b3f8390c401bd9b900fac593dc6d53b35719a656dd16c"
+            },
+            {
+              "start": 1842.32,
+              "end": 1878.5590000000002,
+              "startId": "s00778",
+              "endId": "s00792",
+              "hash": "53c40e6b4b5690deb48785774808d7c72b535c97f509ba46c0c0b6de91a80b78"
+            },
+            {
+              "start": 1888.32,
+              "end": 1898.399,
+              "startId": "s00799",
+              "endId": "s00801",
+              "hash": "49e66dda929c013ffd5fa5427931d8ad8139c2f27ba6670a2fe56cd33f452883"
+            }
+          ]
+        },
+        {
+          "id": "c4",
+          "instrument": "Jets, JETS",
+          "stance": "short",
+          "evidence": [
+            {
+              "start": 2004.559,
+              "end": 2050.639,
+              "startId": "s00843",
+              "endId": "s00860",
+              "hash": "f917844fbd9efe53838a8f5dec802fecad101af15ef28bc3fd6baeed4b739be0"
+            },
+            {
+              "start": 2059.2,
+              "end": 2081.2000000000003,
+              "startId": "s00865",
+              "endId": "s00873",
+              "hash": "a7c2d804a800336047964c4cdc5dfc2f49c41c1c1a85eeabd4fc21a3c2829931"
+            }
+          ]
+        },
+        {
+          "id": "c5",
+          "instrument": "airlines",
+          "stance": "short",
+          "evidence": [
+            {
+              "start": 2074.96,
+              "end": 2098.56,
+              "startId": "s00872",
+              "endId": "s00882",
+              "hash": "283e8aa824245ac177a8b2d30574dcd6de6398640d9076a8cea34d9f29d3e4d0"
+            },
+            {
+              "start": 2127.76,
+              "end": 2143.2,
+              "startId": "s00898",
+              "endId": "s00903",
+              "hash": "1858a54d4970af0c15a099efbdc65ec98a809a3e77e0f2b5d9ce43e5df1d6fdf"
+            }
+          ]
+        },
+        {
+          "id": "c6",
+          "instrument": "airports",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 2096.159,
+              "end": 2117.1189999999997,
+              "startId": "s00883",
+              "endId": "s00891",
+              "hash": "ac7f4c0cf2bf0fa86641b37db3f3127b5f1d942c6a727ed3550fea687b4c4287"
+            },
+            {
+              "start": 2124.56,
+              "end": 2145.3590000000004,
+              "startId": "s00896",
+              "endId": "s00904",
+              "hash": "b32623cb1fb260caf84fe8b6f8bbe95d75630f37e01746c395a01aac028e6053"
+            },
+            {
+              "start": 2147.52,
+              "end": 2154.24,
+              "startId": "s00907",
+              "endId": "s00908",
+              "hash": "3f745cfd99b12d1f1a41e89d768f8bf6bebe8c4b978e7744a2452b7233d91065"
+            }
+          ]
+        },
+        {
+          "id": "c7",
+          "instrument": "Marcato Libre",
+          "stance": "hold",
+          "evidence": [
+            {
+              "start": 2210.72,
+              "end": 2228.16,
+              "startId": "s00936",
+              "endId": "s00941",
+              "hash": "caa05885fb6d7875ed23d0860f8f536ae95c48aaa0b8c2dcb0570fd1851efdf5"
+            },
+            {
+              "start": 2287.68,
+              "end": 2320.56,
+              "startId": "s00970",
+              "endId": "s00983",
+              "hash": "4bce5b49969d96473309f6c1ddfc7a7e33669ef8bf54033e0bf319968f1b5499"
+            }
+          ]
+        },
+        {
+          "id": "c8",
+          "instrument": "airport stock there",
+          "stance": "hold",
+          "evidence": [
+            {
+              "start": 2595.68,
+              "end": 2615.2000000000003,
+              "startId": "s01111",
+              "endId": "s01116",
+              "hash": "f25671cc5c74dca177f5f38f894b734a419609d4ec881881bec15ad662402529"
+            }
+          ]
+        },
+        {
+          "id": "c9",
+          "instrument": "Columbia stocks",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 2723.52,
+              "end": 2764.079,
+              "startId": "s01170",
+              "endId": "s01185",
+              "hash": "de5a3f4d92a408ce96cfebbe623fc4492cbf1a4933f441ec1fb70ff619fb830a"
+            },
+            {
+              "start": 2850.96,
+              "end": 2864.24,
+              "startId": "s01224",
+              "endId": "s01227",
+              "hash": "4b9808b11cbdf1c6ffc3772dd5e1621813003b239205960eaf36742e4feca7a1"
+            }
+          ]
+        },
+        {
+          "id": "c10",
+          "instrument": "Technoglass",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 2898.4,
+              "end": 2939.7599999999998,
+              "startId": "s01245",
+              "endId": "s01261",
+              "hash": "375a8bdfb9ac35633d750e089ea04d07ee77cb3ad07a8d73d765bc18d93cf4e9"
+            }
+          ]
+        },
+        {
+          "id": "c11",
+          "instrument": "Colombian banks",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 2936.8,
+              "end": 2943.44,
+              "startId": "s01262",
+              "endId": "s01263",
+              "hash": "1c61e7ba6bd1f6a829107a1680e89a5020c91802de7b1cc10455559326b6fb2c"
+            },
+            {
+              "start": 2965.839,
+              "end": 2974.559,
+              "startId": "s01276",
+              "endId": "s01277",
+              "hash": "a168cf5a2a7cb690910e97a465fa9061aa866e4591ef9ab52b72d69a8a601033"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 13,
+      "videoId": "tUR0w-LDSbU",
+      "title": "Palantir News: Can Palantir Turn $10,000 Into $1,000,000 By 2035?!",
+      "publishedAt": "2026-04-10T01:16:13Z",
+      "localRunId": "0f432b9a-f158-462a-81b5-1bcb2627c6d8",
+      "sourceHash": "a2593ce514664ae4e37100873862a50447bb477a7205582c3abfae6a9e50fb85",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 0,
+      "acceptedContextPoints": 5,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:41:30.861Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/tUR0w-LDSbU__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 1,
+      "claimEvidence": []
+    },
+    {
+      "case": 14,
+      "videoId": "DuIyF_34ReI",
+      "title": "This Small Palantir Partner Just Unlocked One Billion Dollars in AI Defense Contracts!",
+      "publishedAt": "2026-04-08T00:01:42Z",
+      "localRunId": "a60cea8c-81d9-48a7-97d6-6b54747b9e59",
+      "sourceHash": "5a59cbf2f0a8969a70b6a01460dda454b8311b847a4af2fff7539a54cd0c0569",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 1,
+      "acceptedContextPoints": 5,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:41:39.591Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/DuIyF_34ReI__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 1,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "Ondas Holdings",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 32.599,
+              "end": 44.760000000000005,
+              "startId": "s00016",
+              "endId": "s00020",
+              "hash": "26fe0f7cb0632dcdcaed1f619d657a7309bb7419f9d4c1cc04e99a190cfcb7bc"
+            },
+            {
+              "start": 554.28,
+              "end": 565.88,
+              "startId": "s00271",
+              "endId": "s00275",
+              "hash": "24eabd60722ec8d2c22ff96c8b0c7c96936fe31dc8a202d997b054b590e10f1d"
+            },
+            {
+              "start": 586.72,
+              "end": 600.52,
+              "startId": "s00287",
+              "endId": "s00292",
+              "hash": "c7b235f9b5d30d36612cdd4d5b709121e754e1bc2d656093e3748f850c402d56"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 15,
+      "videoId": "QEwLInO3iZY",
+      "title": "You're Gambling on Stocks - Stop Losing Money",
+      "publishedAt": "2026-09-19T17:00:10Z",
+      "localRunId": "df0a66e4-d099-4cbf-a912-c449d28fd9df",
+      "sourceHash": "203ede23b6ebb3486f7fe122ca081f1b369e28c8756dead04f2419d9a1a60dec",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 0,
+      "acceptedContextPoints": 2,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:41:44.382Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/QEwLInO3iZY__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 0,
+      "claimEvidence": []
+    },
+    {
+      "case": 16,
+      "videoId": "IjYr5acuBT4",
+      "title": "7 Stocks to Buy Heavy Before the Market Takes Off",
+      "publishedAt": "2026-09-16T15:45:10Z",
+      "localRunId": "32b8e6cd-b47a-44a6-87e4-cbcbd397df82",
+      "sourceHash": "14105dce685d46826942c0cac2f70168ca19fce1ff680cbe8bf80bb641581f78",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 9,
+      "acceptedContextPoints": 8,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:41:49.092Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/IjYr5acuBT4__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 6,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "cyber security stocks",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 15.36,
+              "end": 46.16,
+              "startId": "s00009",
+              "endId": "s00019",
+              "hash": "682e9fce7780355975f53e0850afe7624d5325974b1b013a314b0200f7139e18"
+            },
+            {
+              "start": 90,
+              "end": 123.119,
+              "startId": "s00040",
+              "endId": "s00055",
+              "hash": "a39b36a171ced4725c5dadccab82d1aab85420a92577b168255ca8d9913b0d65"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "energy stocks",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 153.76,
+              "end": 206.159,
+              "startId": "s00073",
+              "endId": "s00096",
+              "hash": "155598d08aa82268ddb29fe669a7e021469397ef06aacb9e56d0e61f7ecf566b"
+            },
+            {
+              "start": 276.479,
+              "end": 288.32,
+              "startId": "s00132",
+              "endId": "s00136",
+              "hash": "773da62207e2be36dc14ce3fad5240de62e0701c86d2bdfcb477c42d4e80e193"
+            }
+          ]
+        },
+        {
+          "id": "c3",
+          "instrument": "insurers",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 290.32,
+              "end": 331.919,
+              "startId": "s00139",
+              "endId": "s00160",
+              "hash": "5289d6126f1b4047ae8453ecff8551d2925bd1db18afbfba8c4c33f8704b6269"
+            },
+            {
+              "start": 367.52,
+              "end": 373.52000000000004,
+              "startId": "s00180",
+              "endId": "s00181",
+              "hash": "bb1584d89b20e69ce0675bd3579321dfd5718eb79eb65f0192ec6980fd3778d7"
+            }
+          ]
+        },
+        {
+          "id": "c4",
+          "instrument": "Real estate, consumer staples, and utilities",
+          "stance": "avoid",
+          "evidence": [
+            {
+              "start": 478.879,
+              "end": 484.479,
+              "startId": "s00238",
+              "endId": "s00239",
+              "hash": "bb81ade1a321bff3f4ed31dbd98fb2962b30bf1d8dcdfa0242063afe51132d16"
+            },
+            {
+              "start": 494.319,
+              "end": 584.8000000000001,
+              "startId": "s00246",
+              "endId": "s00290",
+              "hash": "4cf656068666e1c4f413478236f23c408645c8067b8869da84377189e4fe0740"
+            }
+          ]
+        },
+        {
+          "id": "c5",
+          "instrument": "Service Now",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 680.56,
+              "end": 693.76,
+              "startId": "s00340",
+              "endId": "s00344",
+              "hash": "1990a21a7a27a716f57fb96a030eb401ed4b42cba406719812906ab7bf625714"
+            },
+            {
+              "start": 739.44,
+              "end": 754.959,
+              "startId": "s00366",
+              "endId": "s00372",
+              "hash": "47076574718b7ed0f580eb62a19e045fa570233801d28e3c4843f6c645c73eba"
+            },
+            {
+              "start": 770.88,
+              "end": 781.92,
+              "startId": "s00381",
+              "endId": "s00384",
+              "hash": "46d2fa97748d829daaafc16551f8b9f4f2d5de4400aa7672433bd13c99b78c3f"
+            },
+            {
+              "start": 838.639,
+              "end": 848.399,
+              "startId": "s00416",
+              "endId": "s00418",
+              "hash": "399e0cacf0a142d6c7a6ff28333d0d771d6872a065ea192ef55dd55360218c8d"
+            }
+          ]
+        },
+        {
+          "id": "c6",
+          "instrument": "Service Now",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 901.199,
+              "end": 906.7199999999999,
+              "startId": "s00446",
+              "endId": "s00447",
+              "hash": "9c153957cc04b87e54d708a2b3d95f4815a33bf6ba2bcce25870489a338cbc01"
+            }
+          ]
+        },
+        {
+          "id": "c7",
+          "instrument": "Palunteer",
+          "stance": "watch",
+          "evidence": [
+            {
+              "start": 905.04,
+              "end": 911.7600000000001,
+              "startId": "s00448",
+              "endId": "s00450",
+              "hash": "4a190c9db0aef5eb1bd9808ddda30879058654bb7780ccce65180df2588a6a37"
+            }
+          ]
+        },
+        {
+          "id": "c8",
+          "instrument": "Apploven",
+          "stance": "conditional",
+          "evidence": [
+            {
+              "start": 909.92,
+              "end": 919.76,
+              "startId": "s00451",
+              "endId": "s00454",
+              "hash": "e771f48456b76e2f9e699a4778fecf013d07603e449b63b3b94742702e8c3a69"
+            }
+          ]
+        },
+        {
+          "id": "c9",
+          "instrument": "consumer related space with travel or retail stocks",
+          "stance": "avoid",
+          "evidence": [
+            {
+              "start": 1028.72,
+              "end": 1047.6000000000001,
+              "startId": "s00508",
+              "endId": "s00516",
+              "hash": "28c323c67a7e16dfd97534d472fc1751a5cb27a69da592a8be65c7bd86a0c867"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 17,
+      "videoId": "pWnu1C8I6Xw",
+      "title": "Superinvestors are buying this stock I added $10,000+ last week",
+      "publishedAt": "2026-09-19T20:15:04Z",
+      "localRunId": "f8270148-9c71-4348-a152-72befa730d52",
+      "sourceHash": "6059156a2ce999d8f3fff22a0e1d723e3bec780ff52684f00497749a025a0da0",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 1,
+      "acceptedContextPoints": 3,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:41:54.809Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/pWnu1C8I6Xw__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 1,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "Vistra",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 46.72,
+              "end": 67.08,
+              "startId": "s00018",
+              "endId": "s00024",
+              "hash": "23af2cc8efd449262bdeaa8d84926f414f1156631f8236fe6f801964547356c1"
+            },
+            {
+              "start": 67.08,
+              "end": 83.08,
+              "startId": "s00026",
+              "endId": "s00032",
+              "hash": "fac58b7a20521aac83ab538178c21416f23f42a6284d7d60fc52f6a537b840d9"
+            },
+            {
+              "start": 86.64,
+              "end": 92.96000000000001,
+              "startId": "s00036",
+              "endId": "s00037",
+              "hash": "8cfe3086ab8b1a63ebb63bc3eb3bf0e814350893c833b0b5d3eb1189d4190ddd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 18,
+      "videoId": "1WNowIoNgtg",
+      "title": "Generate $3,000 Weekly Passive Income with this Options Strategy",
+      "publishedAt": "2026-09-19T19:21:18Z",
+      "localRunId": "86a6cbf0-38a5-4759-b0ac-a29a6f8bb7e7",
+      "sourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 2,
+      "acceptedContextPoints": 13,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:42:03.499Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/1WNowIoNgtg__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 1,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "Palanteer",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 1187.679,
+              "end": 1199.6,
+              "startId": "s00580",
+              "endId": "s00584",
+              "hash": "c283c722219f465ce68be3160bb39cf6b8240658ef106e798db6747fa5489538"
+            },
+            {
+              "start": 1456.4,
+              "end": 1461.76,
+              "startId": "s00702",
+              "endId": "s00703",
+              "hash": "93792e7110d2bb3ec40554bc41f65eb7f76ff43421afa4a327a442692100b364"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "Google",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 1350.4,
+              "end": 1369.8400000000001,
+              "startId": "s00651",
+              "endId": "s00659",
+              "hash": "d544588235da6af6eb1432ef09e0353be0d5f072777437bd821e369778ff25da"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 19,
+      "videoId": "vrTbCxUzRw4",
+      "title": "Why I Buy the Strongest Mining Stocks First — Not the Cheapest",
+      "publishedAt": "2026-09-19T11:30:13Z",
+      "localRunId": "8605534e-6096-474d-8412-324816fb7b98",
+      "sourceHash": "a6edfbe7dd80798e289e347abbbb5593f03d82dc977e64a0aba3b0cd28c05c53",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 6,
+      "acceptedContextPoints": 6,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:42:08.202Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/vrTbCxUzRw4__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 4,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "Banyan",
+          "stance": "watch",
+          "evidence": [
+            {
+              "start": 348.92,
+              "end": 378.12,
+              "startId": "s00157",
+              "endId": "s00170",
+              "hash": "2b44c3f1fccebd641f255fbb5d799b39b770363377a48c540e3506b5c0110397"
+            },
+            {
+              "start": 461.32,
+              "end": 467.40000000000003,
+              "startId": "s00203",
+              "endId": "s00204",
+              "hash": "dbad42940de9fbc98f1b09980a6834ca4f7b2a2d06845581007945df17d37684"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "Cabral Gold",
+          "stance": "watch",
+          "evidence": [
+            {
+              "start": 496.24,
+              "end": 515.3199999999999,
+              "startId": "s00219",
+              "endId": "s00226",
+              "hash": "d3fe7ee71308532bd3412881b08b9f90f2ddc6f0e962b96acd84a1e0287e2383"
+            },
+            {
+              "start": 545.56,
+              "end": 574,
+              "startId": "s00240",
+              "endId": "s00252",
+              "hash": "5ab5cd889d789e8da6e5d35c202f2b5ac21ff8f0bfbc5a725dbfe3ca40f2f41d"
+            }
+          ]
+        },
+        {
+          "id": "c3",
+          "instrument": "New Pacific Metals",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 616.36,
+              "end": 650.08,
+              "startId": "s00272",
+              "endId": "s00286",
+              "hash": "c652924dc43629e4d7260746bfbde9a66a0125bca182156b4af465d785ba8e5e"
+            }
+          ]
+        },
+        {
+          "id": "c4",
+          "instrument": "1911 Gold",
+          "stance": "long",
+          "evidence": [
+            {
+              "start": 729.84,
+              "end": 769.28,
+              "startId": "s00323",
+              "endId": "s00339",
+              "hash": "ee16b0cdcd3f0ba85a038bf62e5b7f34ab4c83132d9bcd08bddd6d7f7cef9290"
+            }
+          ]
+        },
+        {
+          "id": "c5",
+          "instrument": "McEwen Mining",
+          "stance": "avoid",
+          "evidence": [
+            {
+              "start": 774.76,
+              "end": 800.8,
+              "startId": "s00344",
+              "endId": "s00354",
+              "hash": "d8493b1f3c8a63a6a317ad2ebc48803e8a53bddc89438ff5cd9791bbdc4ebc4d"
+            }
+          ]
+        },
+        {
+          "id": "c6",
+          "instrument": "Lundin Mining",
+          "stance": "avoid",
+          "evidence": [
+            {
+              "start": 1041.839,
+              "end": 1087.2,
+              "startId": "s00468",
+              "endId": "s00484",
+              "hash": "a6d945802660080487e9f7dc0193def870048ae91e3ad39aef038d17e9afe831"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": 20,
+      "videoId": "Dy_0RtmAt1U",
+      "title": "Silver Is at Triple Support — If It Breaks, $54 Is in Play",
+      "publishedAt": "2026-09-15T11:42:03Z",
+      "localRunId": "f3d3972a-7985-434c-b4d3-65605caf8d7c",
+      "sourceHash": "48fd10e2e407eb6527f9051619d41ccc607186988e0e3d260d9859709a0fa9ac",
+      "promptVersion": "evidence-first.web.v7",
+      "acceptedClaims": 2,
+      "acceptedContextPoints": 5,
+      "leapedgeStatus": "ready",
+      "leapedgeCapturedAt": "2026-09-19T20:42:12.804Z",
+      "leapedgeReportUrl": "https://leapedge.app/analyses/Dy_0RtmAt1U__keypoints.v1-insights.v3-critique.v1",
+      "leapedgeClaims": 1,
+      "claimEvidence": [
+        {
+          "id": "c1",
+          "instrument": "silver",
+          "stance": "hold",
+          "evidence": [
+            {
+              "start": 959.199,
+              "end": 993.0400000000001,
+              "startId": "s00297",
+              "endId": "s00306",
+              "hash": "570c33bd65733845b5b5643675cf65d088caf42a1864fe20f0bdbba8b6b7f804"
+            },
+            {
+              "start": 1014.48,
+              "end": 1037.6,
+              "startId": "s00314",
+              "endId": "s00319",
+              "hash": "cc3b8cd82c6f7e7b0575195cb1b3edd06708134667ff1207280169d008f6a1a6"
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "instrument": "miners",
+          "stance": "hold",
+          "evidence": [
+            {
+              "start": 963.199,
+              "end": 999.48,
+              "startId": "s00298",
+              "endId": "s00307",
+              "hash": "ef7e971eb8301c0b570a59c5f28f2d669e6be7dad3a58e2c98472d4c6e41da67"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

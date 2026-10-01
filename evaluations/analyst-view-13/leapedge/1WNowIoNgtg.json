@@ -1,0 +1,53 @@
+{
+ "summary": "The creator details a cash-secured put selling strategy designed to generate consistent income by functioning similarly to an insurance provider. He recommends targeting fundamentally sound stocks at around a 30 delta with 30 to 45 days to expiration to maximize theta decay while balancing assignment risk.",
+ "keyPoints": [
+  "Selling put options functions like selling insurance, where you collect a premium in exchange for the obligation to buy a stock at a specified strike price.",
+  "The strategy requires having sufficient cash to purchase the underlying shares at the strike price if the option is assigned, making it a 'cash-secured put' strategy.",
+  "The creator suggests only selling put options on stocks you are fundamentally bullish on and would not mind holding long-term.",
+  "A 30 delta is recommended as the 'sweet spot' for striking a balance between receiving meaningful premiums and maintaining a higher probability of the option expiring out of the money.",
+  "When a put option is in the money at expiration, traders have three primary management choices: close the position, roll the position to a later date, or accept assignment.",
+  "If assigned shares, the creator employs the 'wheel strategy' by selling covered calls against those shares to continue generating income.",
+  "Traders should prioritize stocks with higher implied volatility to ensure enough premium collection, as low-volatility stocks yield lower income.",
+  "Always check the bid-ask spread before executing trades to avoid unnecessary slippage costs that eat into total returns.",
+  "The ideal time horizon to sell put options is between 30 and 45 days out to take advantage of accelerating theta decay (time value loss).",
+  "Selling puts limits upside potential, as you do not benefit from stock price appreciation beyond the strike price plus the collected premium."
+ ],
+ "tradeIdeas": [
+  {
+   "ticker": "PLTR",
+   "instrument": null,
+   "stance": "long",
+   "conviction": "high",
+   "entry": "165 strike",
+   "target": null,
+   "stop": null,
+   "horizon": "until November 20th",
+   "action": "sell 165 put option",
+   "rationale": "Palantir is currently stable and the creator believes selling puts is an efficient way to generate income and gain buffered downside exposure compared to buying the stock outright.",
+   "catalysts": [],
+   "risks": [
+    "downside risk if stock falls below breakeven",
+    "assignment risk",
+    "opportunity cost of missing out on significant stock upside"
+   ],
+   "quotes": [
+    "“selling puts to me is the number one strategy that I would be using on Palantir right now”"
+   ]
+  }
+ ],
+ "otherSections": [
+  {
+   "heading": "verdict",
+   "text": "VERDICT\n1 idea\nHIGHconviction\n1 LONG\nPLTR"
+  },
+  {
+   "heading": "direction mix",
+   "text": "Direction mix: 1 long"
+  },
+  {
+   "heading": "pipeline metadata",
+   "text": "prompt: keypoints.v1-insights.v3-critique.v1\ntokens: 235.0k\nmodels: gemini-3.1-flash-lite · gemini-3.1-flash-lite · gemini-3.7-flash · gemini-3.1-flash-lite"
+  }
+ ],
+ "cost": null
+}

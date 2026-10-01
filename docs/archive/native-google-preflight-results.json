@@ -1,0 +1,33 @@
+{
+  "id": "native-google-feasibility-20260915",
+  "at": "2026-09-14T19:17:57.051Z",
+  "hypothesis": "Native Google can replace transcript providers.",
+  "status": "blocked_prepaid_balance",
+  "credentialValidated": true,
+  "modelAccessValidated": true,
+  "sdk": "@google/genai@2.22.0",
+  "model": "gemini-3.8-flash",
+  "generationRequestsSubmitted": 1,
+  "generationRequestsCompleted": 0,
+  "attempts": [
+    {
+      "id": "10ba7b31-e1ff-4120-93e2-a512134e44a5",
+      "videoId": "SHMPiWbbR6E",
+      "httpStatus": 429,
+      "apiStatus": "RESOURCE_EXHAUSTED",
+      "latencyMs": 345,
+      "reason": "Gemini API prepayment credits depleted",
+      "mediaAccessConclusion": "not_tested",
+      "costUsd": null,
+      "reservationNzd": 2.5
+    }
+  ],
+  "automaticRetries": 0,
+  "phaseOneCapNzd": 10,
+  "campaignCapNzd": 50,
+  "controlledTests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "conclusion": "Credential and model access succeeded. Generation was rejected before returning evidence. No conclusion about native video access, accuracy, speed or cost-effectiveness. Add prepaid credits to the key-associated project before an explicitly recorded retry."
+}

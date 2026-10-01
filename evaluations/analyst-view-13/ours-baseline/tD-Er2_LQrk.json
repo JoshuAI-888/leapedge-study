@@ -1,0 +1,241 @@
+{
+ "status": "completed",
+ "title": "华尔街开始FOMO了！加密下一轮造富，散户还有先手？｜Jordi Vissel",
+ "costUsd": 0.34520055,
+ "endToEndSeconds": 875.234,
+ "analysisSeconds": 798.067,
+ "keyPoints": [
+  {
+   "id": "k1",
+   "text": "Bitcoin demonstrated resilience by not falling despite multiple negative headwinds such as rate hikes, cold wallet issues, and the failure of regulatory clarity legislation, subsequently surging upon slight positive news.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k2",
+   "text": "Crypto infrastructure such as Bitcoin and Ethereum is at an inflection point analogous to the launch of the iPhone, where AI digital agents represent the catalyst to utilize the existing rails.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k3",
+   "text": "Technological divergence causes digital and AI-driven businesses to expand while traditional businesses lag under high interest rates and financing costs, leading Wall Street funds to seek crypto and digital opportunities.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k4",
+   "text": "Digital economy tech leaders persistently outperform traditional sectors, which face headwinds from interest rates, financing costs, and compressed demand.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k5",
+   "text": "The 2021-2022 crypto boom built out foundational Layer 1 and Layer 2 infrastructure analogous to the dot-com bubble, which AI agents and novel applications are now positioned to utilize.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k6",
+   "text": "Retail investors have a strategic advantage in researching emerging tokens before 2027, when institutional coverage is expected to expand aggressively beyond Bitcoin and Ethereum.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k7",
+   "text": "Wall Street fund managers overseeing tens to hundreds of billions in assets are experiencing FOMO and actively inquiring about getting into crypto and tokenization of assets, while retail investors had already turned aggressively bullish earlier.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k8",
+   "text": "Bitcoin surged from approximately 58,000–64,000 to around 84,000 (roughly a 40% gain) following earlier commentary on Joe Dispenza.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k9",
+   "text": "Wall Street is experiencing FOMO around crypto and asset tokenization after missing out on previous semiconductor moves like Micron, potentially escalating institutional allocations from exploratory 1% allocations to $10 billion to $20 billion or more.",
+   "ticker": null,
+   "stance": "neutral"
+  },
+  {
+   "id": "k10",
+   "text": "AI agents requiring transaction privacy may drive adoption of privacy coins such as Zcash (ZEC), potentially driving multi-fold price increases.",
+   "ticker": null,
+   "stance": "neutral"
+  }
+ ],
+ "calls": [],
+ "rejectedCalls": [],
+ "tickerSentiment": [
+  {
+   "ticker": null,
+   "spoken": "Ethereum",
+   "sentiment": "bullish",
+   "stance": "neutral",
+   "why": "Ethereum is cited as core infrastructure built out during past VC cycles that is now positioned to take off alongside AI agents.",
+   "at": 269.74
+  },
+  {
+   "ticker": null,
+   "spoken": "比特币",
+   "sentiment": "bullish",
+   "stance": "neutral",
+   "why": "Identified as one of the major crypto assets appreciating alongside blockchain infrastructure utilization.",
+   "at": 674.5
+  },
+  {
+   "ticker": null,
+   "spoken": "Solana",
+   "sentiment": "bullish",
+   "stance": "neutral",
+   "why": "Noted as gaining value and likely to see future institutional research coverage.",
+   "at": 674.5
+  },
+  {
+   "ticker": null,
+   "spoken": "比特币",
+   "sentiment": "bullish",
+   "stance": "neutral",
+   "why": "The speaker notes that Bitcoin surged roughly 40% from 58,000–64,000 up to around 84,000.",
+   "at": 5.76
+  },
+  {
+   "ticker": "ETH",
+   "spoken": "ETH",
+   "sentiment": "bullish",
+   "stance": "neutral",
+   "why": "Described as appreciating as AI agent activity drives continuous demand for crypto infrastructure.",
+   "at": 669.2
+  },
+  {
+   "ticker": null,
+   "spoken": "Hyperliquid",
+   "sentiment": "bullish",
+   "stance": "neutral",
+   "why": "Described as part of the core infrastructure gaining demand from AI agents and an eventual target for Wall Street research.",
+   "at": 666.2
+  },
+  {
+   "ticker": null,
+   "spoken": "ZEC",
+   "sentiment": "bullish",
+   "stance": "watch",
+   "why": "The speaker notes that AI agents wanting private transactions could adopt privacy coins like ZEC, potentially leading to ten-fold plus price surges.",
+   "at": 690.3
+  },
+  {
+   "ticker": null,
+   "spoken": "加密",
+   "sentiment": "bullish",
+   "stance": "neutral",
+   "why": "The speaker relays that Wall Street fund managers managing huge assets are now experiencing FOMO and seeking entry into crypto and asset tokenization.",
+   "at": 44.42
+  },
+  {
+   "ticker": null,
+   "spoken": "比特币",
+   "sentiment": "bullish",
+   "stance": "watch",
+   "why": "The speaker notes that Bitcoin resisted falling on bad news and rallied strongly from 64,000 to 75,000 upon light positive political commentary from Trump.",
+   "at": 336.6
+  },
+  {
+   "ticker": null,
+   "spoken": "Bitcoin",
+   "sentiment": "bullish",
+   "stance": "watch",
+   "why": "The speaker references Bitcoin as foundational crypto infrastructure poised to take off as AI agents start utilizing it.",
+   "at": 262.18
+  },
+  {
+   "ticker": null,
+   "spoken": "Ethereum",
+   "sentiment": "bullish",
+   "stance": "watch",
+   "why": "The speaker cites Ethereum as key built-out infrastructure ready to experience significant adoption driven by AI agents.",
+   "at": 262.18
+  },
+  {
+   "ticker": null,
+   "spoken": "比特币",
+   "sentiment": "bullish",
+   "stance": "neutral",
+   "why": "The speaker notes that Bitcoin demonstrated resilience and rallied to 84,500 despite rate hikes and the failure of regulatory legislation.",
+   "at": 390.6
+  },
+  {
+   "ticker": null,
+   "spoken": "美光半导体",
+   "sentiment": "neutral",
+   "stance": "neutral",
+   "why": "Micron is mentioned in passing as an opportunity Wall Street missed before shifting attention to crypto.",
+   "at": 444.6
+  },
+  {
+   "ticker": null,
+   "spoken": "Hyperliquid",
+   "sentiment": "neutral",
+   "stance": "watch",
+   "why": "Hyperliquid is mentioned as an example of a token project not yet fully covered by Wall Street research, where institutions may eventually expand coverage.",
+   "at": 745.9
+  },
+  {
+   "ticker": null,
+   "spoken": "Solana",
+   "sentiment": "neutral",
+   "stance": "watch",
+   "why": "Solana is cited as a crypto project that institutions may increasingly research ahead of 2027.",
+   "at": 790.3
+  }
+ ],
+ "brief": {
+  "mainTopics": [
+   "Bitcoin Price Movements and Market Resilience",
+   "Macroeconomic Headwinds and Tech Divergence",
+   "AI Agents and Blockchain Infrastructure Utilization",
+   "Privacy Coins and ZEC Scenario",
+   "Institutional Adoption and Capital Flows",
+   "Retail Research Advantage and Timeline"
+  ],
+  "sentences": [
+   "The speaker notes that Bitcoin traded around 58,000 to 64,000 before surging to around 84,000, which is mentioned as approximately a 40 percent gain.",
+   "The commentary highlights that Bitcoin exhibited resilience by not falling on negative news such as rate hikes, cold wallet issues, and the failure of regulatory clarity legislation, subsequently reaching 84,500.",
+   "The source notes that after Trump remarked on supporting crypto at a press conference, Bitcoin advanced from 64,000 to approximately 75,000.",
+   "The speaker references expectations that dot plot predictions indicated a potential 25 basis point interest rate hike.",
+   "The discussion draws an analogy between crypto infrastructure such as Bitcoin and Ethereum and the launch of the iPhone, asserting that AI digital agents serve as the catalyst to utilize these rails.",
+   "The 2021 to 2022 crypto cycle is compared to the dot-com bubble, leaving behind Layer 1, Layer 2, and decentralized exchange infrastructure like Hyperliquid that require applications to achieve sustained usage.",
+   "Technological divergence is cited as separating digital and AI-driven companies that expand continuously from traditional firms constrained by interest rates, financing costs, and demand.",
+   "The commentary mentions a scenario where AI agents requiring transaction confidentiality choose privacy coins such as Zcash (ZEC), resulting in price gains of more than tenfold.",
+   "The source reports that Wall Street managers overseeing 50 billion to 100 billion in assets are displaying FOMO regarding crypto and asset tokenization.",
+   "The video relates a proposal by host Pomp suggesting institutional allocations could shift from 1 percent testing allocations to 10 billion or 20 billion or more after having missed moves in Micron Technology.",
+   "Jody Visser expects that large-scale institutional research coverage of tokens beyond Bitcoin and Ethereum will not materialize until 2027, when projects such as ZEC, Solana, or Hyperliquid may be covered.",
+   "Borrowing Peter Lynch's framework, the speaker argues that retail investors maintain an informational advantage only before 2027 by researching specific tokens before large-scale institutional coverage and capital inflows occur."
+  ],
+  "omissions": [
+   "Windowed ASR acquisition completed, but source wording and timestamps remain unverified. Processed clips and cue coverage do not establish transcription accuracy or semantic completeness; check material quotations, position disclosures and timing against the audio before relying on them.",
+   "Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+   "Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+   "Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+   "Model critique is not human verification.",
+   "This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications.",
+   "s1: Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label.",
+   "s1: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s2: Proposed quantity withheld: the explicit peak baseline in its label is not established by its original quote; no comparison baseline was inferred.",
+   "s3: Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label.",
+   "s3: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s4: Basis-point quantity withheld: mixed or ambiguous rate quantities cannot be mapped to this metric safely.",
+   "s8: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s9: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "s10: Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.",
+   "source-0: Windowed ASR acquisition completed, but source wording and timestamps remain unverified. Processed clips and cue coverage do not establish transcription accuracy or semantic completeness; check material quotations, position disclosures and timing against the audio before relying on them.",
+   "source-1: Full-source recall is a bounded model review; processing and proposition accounting do not establish semantic completeness.",
+   "source-2: Source recall assessment incomplete: missing source coverage or unresolved window-level proposition accounting; review retained reconciliation records.",
+   "source-3: Quotes checked against retained text; audio and timestamp accuracy have not been independently verified.",
+   "source-4: Model critique is not human verification.",
+   "source-5: This transcript exceeded the configured single-pass token threshold, so extraction and critique read it in overlapping chronological chunks; review cross-section qualifications."
+  ],
+  "rejectedCount": 0
+ }
+}

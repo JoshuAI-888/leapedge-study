@@ -1,0 +1,157 @@
+{
+  "videoId": "78RL-h4FB3s",
+  "language": "zh",
+  "mustKnow": [
+    {
+      "item": "Context: the DeepSeek scare took NVDA from about 130-150 to about 80",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "Bonsai: 27B parameters in 5.9GB, runs locally. Friedberg (a past Huawei bull, per the creator) claims 98% of frontier capability, and the creator is skeptical ('不知道他说的这个能力是指哪一方面')",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Ours keeps the numbers but k2 states 98% as fact and drops the creator's skepticism. LeapEdge has no numbers and no attribution."
+    },
+    {
+      "item": "Chamath: model plus execution-system combinations still differ greatly in cost and quality, so the market splits into cheap models for routine tasks and frontier models for hard tasks",
+      "ours": "captured",
+      "leapedge": "partial",
+      "note": ""
+    },
+    {
+      "item": "Vercel chart: closed-model share fell from 80% to 20% and open-model share rose from 20% to 80%. Sacks: frontier labs' revenue is disproportionate to that share",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "Hedge fund example (ARK vs Tom Lee using Anthropic): competitors force use of the best model. Chamath: AI bills rise 10-30x but can't be passed on, so margins compress",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Compute strategy: Anthropic buys compute week by week (per its CFO) while OpenAI buys aggressively. The creator calls Anthropic's under-buying 'a very very bad decision' and cites his own rationing experience",
+      "ours": "partial",
+      "leapedge": "partial",
+      "note": "Neither keeps the creator's own judgment."
+    },
+    {
+      "item": "Sacks: Anthropic's safety push is regulatory capture ('make everyone stop to check the engine') because it is compute-constrained",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Anthropic IPO risks: open-source competition, customer concentration, large funding needs, and 'a 10% extinction risk' rhetoric. All-In predicts the IPO is priced down. The creator says the IPO is delayed",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Spillover: a weak IPO or post-IPO drop would hit AI broadly, including NVDA and MU",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": ""
+    },
+    {
+      "item": "Leadership debate: Jason wants to replace Dario; Chamath disagrees because of Anthropic's culture, noting 8090 never won a talent fight against Anthropic",
+      "ours": "captured",
+      "leapedge": "missed",
+      "note": ""
+    },
+    {
+      "item": "Creator's actionable conclusion: for long-term investors an IPO stumble is only a short-term hit to NVDA and AI, because demand far exceeds supply. Keep watching Anthropic news. All-In itself reached no bull or bear verdict",
+      "ours": "captured",
+      "leapedge": "captured",
+      "note": "Neither says that All-In reached no conclusion (822s-829s)."
+    }
+  ],
+  "fidelityErrors": {
+    "ours": [
+      {
+        "text": "k2: 'as open-source capabilities approach 98% of frontier levels on benchmarks'",
+        "transcriptAt": "91s-102s",
+        "problem": "Friedberg's claim is stated as fact, and the creator's explicit doubt is dropped. The brief attributes it correctly."
+      },
+      {
+        "text": "brief: 'Anthropic's upcoming IPO will face price down-rounds'",
+        "transcriptAt": "705s-734s",
+        "problem": "Wrong term. A 'down-round' is a private financing below the prior valuation; All-In said the IPO would be priced at a discount."
+      },
+      {
+        "text": "tickerSentiment 英伟达 bearish/conditional at 743.98",
+        "transcriptAt": "743s-864s",
+        "problem": "There is no row for the creator's actual NVDA view: bullish long-term, with the IPO as a short-term hit (851s-864s). A PM skimming the sentiment table would read NVDA as neutral plus bearish."
+      },
+      {
+        "text": "k6 and k7 are the same point (Anthropic weekly vs OpenAI aggressive compute buying)",
+        "transcriptAt": "535s-558s",
+        "problem": "Duplicate."
+      }
+    ],
+    "leapedge": [
+      {
+        "text": "keyPoint: 'Anthropic的IPO延迟及管理层关于AI灭绝风险的频繁言论，已成为投资者对该板块估值持谨慎态度的主要顾虑'",
+        "transcriptAt": "671s-738s",
+        "problem": "Overgeneralized. The source concerns Anthropic's IPO pricing, not sector-wide valuation caution already observed."
+      },
+      {
+        "text": "NVDA conviction 'high'",
+        "transcriptAt": "839s-864s",
+        "problem": "A mild overstatement. The creator gives a soft closing view ('心灵鸡汤', 'long-term investor'). Medium is closer."
+      },
+      {
+        "text": "Output language is Chinese",
+        "transcriptAt": "n/a",
+        "problem": "Inconsistent with LeapEdge's English output on the other videos, so it is harder for an English-reading PM."
+      }
+    ]
+  },
+  "calls": {
+    "oursMissed": [],
+    "leapedgeMissed": [
+      "Anthropic watch (the creator explicitly says '要关注Anthropic持续的动态'). LeapEdge has it as a catalyst only."
+    ],
+    "oursFalse": [],
+    "leapedgeFalse": [],
+    "oursUnresolvedTickers": [
+      "英伟达 -> NVDA (in an accepted call)",
+      "美光 -> MU",
+      "Anthropic -> private, should be flagged as not listed (no ticker)"
+    ]
+  },
+  "sentimentIssues": [
+    "NVDA's long-term bullish stance is missing from tickerSentiment, even though the accepted call says long. The two sections contradict each other.",
+    "MU is bearish/conditional; it should be labeled 'contagion risk' and not read as a creator stance.",
+    "OpenAI is missing: the creator views its aggressive compute buying favorably, compared with Anthropic.",
+    "Anthropic sentiment should say it is private, and describe its IPO as an event risk."
+  ],
+  "scores": {
+    "ours": {
+      "coverage": 5,
+      "fidelity": 4,
+      "actionability": 3,
+      "clarity": 3,
+      "overall": 4
+    },
+    "leapedge": {
+      "coverage": 3,
+      "fidelity": 4,
+      "actionability": 3,
+      "clarity": 4,
+      "overall": 3
+    }
+  },
+  "verdict": "ours better",
+  "why": "Both extract the one real idea correctly: stay long NVDA for the long term and treat Anthropic IPO trouble as a short-term hit. Ours also adds a justified Anthropic watch item and keeps every figure and attribution (Friedberg, Chamath, Sacks, Jason, Vercel 80/20, NVDA 130-150 to 80), which LeapEdge drops. Ours is held back by the null NVDA ticker in its own call, a sentiment table that contradicts the call, and duplicate keyPoints.",
+  "recommendations": [
+    "Make a sentiment row for every accepted call. Build tickerSentiment from calls first, then add passing mentions, so a long NVDA call never appears with only neutral and bearish sentiment rows.",
+    "Label conditional contagion ('a poor IPO could affect Nvidia and Micron') as conditional_risk, not as a bearish stance.",
+    "Keep the creator's pushback when relaying guests. Here: Friedberg's '98%' should carry the creator's doubt ('不知道他说的这个能力是指哪一方面'). Add a claim_owner field: creator | guest:<name> | third_party.",
+    "Mark private companies explicitly (Anthropic, OpenAI: listed=false) so a null ticker reads as 'not tradeable', not 'unresolved'.",
+    "Add a 'creator's own view' line to the brief (here: 'Anthropic's weekly compute buying was a very bad decision'), separate from podcast recap."
+  ]
+}

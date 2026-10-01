@@ -1,0 +1,652 @@
+/* Phase 5 (report lane). Global classes use the yi- prefix and the --yi-* tokens from workspace.css. */
+
+/* F64 — daily report. Main column plus the archive on the right (desktop). */
+.yi-report-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 20px;
+  align-items: start;
+  transition: opacity 0.15s;
+}
+.yi-report-main {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.yi-workspace .yi-report-main > *,
+.yi-workspace .yi-report-briefs > .yi-panel {
+  margin: 0;
+}
+/* Refetch keeps the frame: the previous render stays, dimmed. */
+.yi-refetching {
+  opacity: 0.6;
+}
+.yi-report-header h2.yi-report-headline {
+  font-size: 21px;
+  line-height: 1.35;
+  font-weight: 650;
+  margin: 6px 0 10px;
+}
+.yi-report-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.yi-report-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--yi-line);
+  border-radius: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.yi-workspace a.yi-report-step:hover {
+  text-decoration: none;
+  background: var(--yi-selected);
+}
+.yi-report-date {
+  flex: 0 1 190px;
+}
+.yi-report-meta {
+  font-size: 12.5px;
+  margin: 8px 0 0;
+}
+.yi-report-state p {
+  margin: 0 0 6px;
+}
+.yi-report-state .yi-row {
+  margin-top: 10px;
+}
+.yi-report-state .yi-row .yi-muted {
+  font-size: 12px;
+  flex: 1 1 260px;
+}
+.yi-report-removed h2 {
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+.yi-report-removed ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+.yi-report-removed li p {
+  margin: 0 0 4px;
+}
+.yi-report-removed li {
+  margin-bottom: 10px;
+}
+
+/* Themes and citation chips: "Macro Mike ▶ 4:12" opens the analysis there. */
+.yi-report-themes {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+}
+.yi-cite-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  vertical-align: middle;
+}
+.yi-workspace a.yi-cite {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 1px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--yi-line);
+  background: var(--yi-page);
+  color: var(--yi-ink);
+  font-size: 11.5px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+.yi-workspace a.yi-cite:hover {
+  border-color: var(--yi-primary);
+  text-decoration: none;
+}
+
+/* In focus: one expandable row per instrument. */
+.yi-focus-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--yi-line);
+}
+.yi-focus-list > li {
+  border-bottom: 1px solid var(--yi-line);
+}
+.yi-focus-list summary {
+  display: grid;
+  grid-template-columns: 22px minmax(90px, 150px) 88px minmax(170px, 210px) 76px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 10px 4px;
+  cursor: pointer;
+  list-style: none;
+}
+.yi-focus-list summary::-webkit-details-marker {
+  display: none;
+}
+.yi-focus-list summary:hover {
+  background: var(--yi-page);
+}
+.yi-focus-rank {
+  color: var(--yi-muted);
+  font-variant-numeric: tabular-nums;
+}
+.yi-focus-creators,
+.yi-focus-change {
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-focus-reason {
+  font-size: 13px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yi-focus-list details[open] .yi-focus-reason {
+  white-space: normal;
+}
+.yi-report-calls {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px 12px 34px;
+  display: grid;
+  gap: 10px;
+}
+.yi-report-call p {
+  margin: 4px 0;
+}
+.yi-report-call blockquote {
+  margin: 4px 0 0;
+  padding-left: 10px;
+  border-left: 2px solid var(--yi-line);
+  font-size: 12.5px;
+}
+
+/* Where creators disagree: the two sides side by side. */
+.yi-disagree-list {
+  display: grid;
+  gap: 16px;
+}
+.yi-disagree h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+.yi-disagree-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.yi-disagree-sides h4 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--yi-muted);
+}
+.yi-disagree-sides .yi-report-calls {
+  padding: 0;
+}
+
+/* Sources with their verdict line. */
+.yi-report-sources {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.yi-report-sources li {
+  display: grid;
+  gap: 2px;
+}
+.yi-report-sources .yi-muted {
+  font-size: 12px;
+}
+.yi-verdict-line {
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-report-thesis {
+  white-space: normal !important;
+  min-width: 260px;
+}
+.yi-report-all-calls > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 6px 0;
+}
+
+/* Archive of past sessions. */
+.yi-report-archive h2 {
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+.yi-report-archive ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.yi-report-archive li {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 9px;
+}
+.yi-report-archive li a {
+  display: grid;
+  gap: 1px;
+  color: var(--yi-ink);
+}
+.yi-report-archive li a span {
+  font-size: 12px;
+  color: var(--yi-muted);
+  line-height: 1.4;
+}
+.yi-report-archive li:has(a[aria-current="page"]) {
+  background: var(--yi-selected);
+}
+.yi-report-archive .yi-split-counts {
+  font-size: 11px;
+}
+
+/* Today's summary card. */
+.yi-report-summary-headline {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+.yi-report-summary-focus {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.yi-report-summary-focus li {
+  display: grid;
+  grid-template-columns: minmax(80px, 140px) 80px auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12.5px;
+}
+
+@media (max-width: 1150px) {
+  .yi-report-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .yi-focus-list summary {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rank instrument change"
+      "rank creators split"
+      "rank reason reason";
+    row-gap: 6px;
+  }
+  .yi-focus-rank {
+    grid-area: rank;
+    align-self: start;
+  }
+  .yi-focus-instrument {
+    grid-area: instrument;
+  }
+  .yi-focus-creators {
+    grid-area: creators;
+  }
+  .yi-focus-split {
+    grid-area: split;
+    justify-self: end;
+  }
+  .yi-focus-change {
+    grid-area: change;
+    justify-self: end;
+  }
+  .yi-focus-reason {
+    grid-area: reason;
+    white-space: normal;
+  }
+}
+@media (max-width: 720px) {
+  .yi-report-nav .yi-report-step span {
+    display: none;
+  }
+  .yi-disagree-sides {
+    grid-template-columns: 1fr;
+  }
+  .yi-report-calls {
+    padding-left: 4px;
+  }
+  .yi-report-header h2.yi-report-headline {
+    font-size: 18px;
+  }
+  .yi-report-summary-focus li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .yi-report-summary-focus li .yi-split {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* F65 — Trends: filter row, range chips and the hand-written SVG charts (ui/charts.tsx). */
+.yi-workspace .yi-trends-filters label:first-child {
+  flex: 0 1 160px;
+}
+.yi-trends-filters label {
+  flex: 0 1 220px;
+}
+.yi-workspace .yi-range-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.yi-range-chips legend {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 6px;
+  width: 100%;
+}
+.yi-workspace .yi-range-chips button {
+  background: var(--yi-surface);
+  color: var(--yi-ink);
+  border: 1px solid var(--yi-line);
+  min-height: 36px;
+  min-width: 44px;
+  padding: 6px 10px;
+  font-weight: 550;
+}
+.yi-workspace .yi-range-chips button[aria-pressed="true"] {
+  background: var(--yi-selected);
+  color: var(--yi-primary);
+  border-color: var(--yi-primary);
+}
+.yi-trends {
+  display: grid;
+  gap: 20px;
+  transition: opacity 0.15s;
+}
+.yi-workspace .yi-trends > * {
+  margin: 0;
+}
+/* The Chart · Table switch sits in the section title here; the Today calls
+   panel's absolute placement would lift it out of the Trends panel. */
+.yi-trends-chart .yi-view-switch {
+  position: static;
+}
+.yi-trends-chart h3,
+.yi-trends-price h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 18px 0 6px;
+}
+.yi-chart {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+.yi-chart svg {
+  display: block;
+  overflow: visible;
+}
+.yi-chart svg:focus-visible {
+  outline: 3px solid #7096ff;
+  outline-offset: 2px;
+}
+.yi-chart-grid line,
+.yi-chart-axis line {
+  stroke: var(--yi-line);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.yi-chart-grid line.yi-chart-zero {
+  stroke: var(--yi-muted);
+}
+.yi-chart-grid text,
+.yi-chart-axis text {
+  fill: var(--yi-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-chart-direct {
+  fill: var(--yi-muted);
+  font-size: 11px;
+  font-weight: 600;
+  /* A halo in the panel colour keeps the lane label legible where the first
+     column is drawn under it. */
+  paint-order: stroke;
+  stroke: var(--yi-surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.yi-mark-bullish {
+  fill: var(--yi-bullish);
+}
+.yi-mark-neutral {
+  fill: var(--yi-neutral);
+}
+.yi-mark-bearish {
+  fill: var(--yi-bearish);
+}
+.yi-chart-dim {
+  opacity: 0.35;
+}
+.yi-chart-crosshair {
+  stroke: var(--yi-ink);
+  stroke-width: 1;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.yi-chart-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+.yi-chart-line {
+  fill: none;
+  stroke: var(--yi-ink);
+  stroke-opacity: 0.7;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.yi-chart-ring {
+  stroke: var(--yi-surface);
+  stroke-width: 2;
+}
+.yi-chart-dot {
+  cursor: pointer;
+  outline: none;
+}
+.yi-chart-dot-hit {
+  fill: transparent;
+}
+.yi-chart-dot:hover .yi-chart-ring,
+.yi-chart-dot:focus-visible .yi-chart-ring {
+  stroke: var(--yi-ink);
+}
+.yi-chart-dot:focus-visible .yi-chart-dot-hit {
+  stroke: #7096ff;
+  stroke-width: 2;
+}
+.yi-chart-tooltip {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  gap: 2px;
+  width: max-content;
+  max-width: 220px;
+  padding: 8px 10px;
+  border: 1px solid var(--yi-line);
+  border-radius: 8px;
+  background: var(--yi-surface);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.12);
+  font-size: 12px;
+  line-height: 1.45;
+  pointer-events: none;
+}
+.yi-tip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.yi-key {
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.yi-chart-legend .yi-key {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.yi-key-bullish {
+  background: var(--yi-bullish);
+}
+.yi-key-neutral {
+  background: var(--yi-neutral);
+}
+.yi-key-bearish {
+  background: var(--yi-bearish);
+}
+.yi-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+.yi-chart-note {
+  font-size: 12px;
+  margin: 6px 0 0;
+}
+.yi-trends-calls {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.yi-trends-call {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--yi-line);
+}
+.yi-trends-call .yi-muted {
+  font-size: 12px;
+}
+@media (max-width: 720px) {
+  .yi-trends-filters label,
+  .yi-workspace .yi-trends-filters label:first-child {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}
+/* A split bar inside a stat tile wraps its counts under the bar on a phone. */
+.yi-stat-value .yi-split {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+.yi-stat-value .yi-split-counts {
+  white-space: normal;
+  font-size: 13px;
+}
+
+/* F66 — channel page. */
+.yi-channel-header {
+  display: grid;
+  gap: 12px;
+}
+.yi-channel-identity p {
+  margin: 0;
+}
+.yi-live-status {
+  font-size: 12.5px;
+  color: var(--yi-muted);
+}
+.yi-live-status.yi-live-on {
+  color: var(--yi-ink);
+  font-weight: 600;
+}
+.yi-live-status.yi-live-on::before {
+  content: "● ";
+  color: var(--yi-primary);
+}
+.yi-channel-links {
+  gap: 18px;
+}
+.yi-workspace .yi-channel-header + .yi-stat-tiles,
+.yi-workspace .yi-channel-cols {
+  margin: 20px 0;
+}
+.yi-channel-instruments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.yi-channel-instruments li {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) 70px auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12.5px;
+}
+.yi-channel-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+  margin: 0;
+}
+.yi-channel-facts dt {
+  font-size: 12px;
+  color: var(--yi-muted);
+}
+.yi-channel-facts dd {
+  margin: 2px 0 0;
+}
+@media (max-width: 720px) {
+  .yi-channel-facts {
+    grid-template-columns: 1fr;
+  }
+  .yi-channel-instruments li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .yi-channel-instruments li .yi-split {
+    grid-column: 1 / -1;
+  }
+}
+/* A visually hidden range legend must not take the row's full width. */
+.yi-range-chips legend.yi-sr-only {
+  width: 1px;
+  margin: -1px;
+}
+.yi-trends-embedded h2 {
+  font-size: 14px;
+}
+/* The lean tile is half width on a phone: let the counts wrap under the bar. */
+.yi-channel-header + .yi-stat-tiles .yi-split {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}

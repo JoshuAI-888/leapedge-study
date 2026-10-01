@@ -1,0 +1,928 @@
+{
+  "version": "research-implementation-review.v1",
+  "at": "2026-09-19T23:10:56.415Z",
+  "scope": "20 retained videos; 19 usable saved LeapEdge references; zero new LeapEdge requests. No human gold accuracy claim.",
+  "allRuns": 66,
+  "completedRuns": 66,
+  "liveCostsUsd": {
+    "v8_extraction": 2.808854250000001,
+    "baseline_briefs": 1.058245,
+    "v8_research_briefs": 1.7325132499999998,
+    "targeted_rechecks": 0.25319450000000004
+  },
+  "totalCostUsd": 5.852807000000001,
+  "providerCalls": 232,
+  "unknownCallCosts": 0,
+  "externalSearchConfigured": false,
+  "externalSearchCostUsd": 0,
+  "structuralCitationIssues": [],
+  "cases": [
+    {
+      "case": 1,
+      "title": "大多头突然改口！我为什么还敢拿着AI股？｜雅德尼下调目标",
+      "videoId": "SPIRV9UjNYU",
+      "sourceRunId": "ddf09184-f988-44f5-bd3e-8608e5576c47",
+      "newRunId": "bdcab2d8-7fcc-498d-b58a-a132b7e98091",
+      "researchRunId": "497c96ad-310f-4159-9339-ffcd0a865ede",
+      "briefId": "497c96ad-310f-4159-9339-ffcd0a865ede",
+      "sourceHash": "b349940ae94619a384fe15a69f3b2c33bf3029f8734205c0b368c92e3d4c542f",
+      "sourceUnchanged": true,
+      "durationSeconds": 631,
+      "status": "completed",
+      "acceptedCalls": 1,
+      "acceptedContext": 5,
+      "acceptedSentences": 10,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 8,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 10
+      },
+      "topics": [
+        "S&P 500 Index Targets",
+        "S&P 500 Valuation Multiples",
+        "Energy Prices and Inflation",
+        "Bank of Japan Policy and Yen Carry Trade",
+        "AI Equities Fundamentals"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 1,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/SPIRV9UjNYU__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "No specific companies, tickers, or AI-related holdings are named despite the central AI thesis being repeated across s8-s10, limiting actionable specificity.",
+        "The original date when Yardeni first set the 8,400 target is not given, so the magnitude of the delay to mid-2027 cannot be independently timed.",
+        "Speaker attribution for portions of macro commentary (energy, BOJ) is marked unknown, leaving unclear whether these are creator analysis or paraphrased third-party views.",
+        "No explicit bearish countercase is presented for the AI equities thesis (s8/s9) beyond the general condition of deteriorating orders/profits; a fuller downside scenario for AI-specific risk (e.g., capex slowdown, energy costs impacting margins) is not elaborated with specific invalidation triggers."
+      ],
+      "omissions": [
+        "Specific company names, tickers, and portfolio allocations for the AI theme are not disclosed in the evidence.",
+        "Exact historical dates when Yardeni initially published the 8,400 target are not specified.",
+        "The speaker identities for the channel narrator are unstated in the source transcript.",
+        "Optional calculation for s2 withheld: unsupported expression or invalid inputs. The underlying sentence still requires independent review."
+      ],
+      "costUsdAllAttempts": 0.130596
+    },
+    {
+      "case": 2,
+      "title": "Anthropic突然出大问题了",
+      "videoId": "J_VpfkM74Wk",
+      "sourceRunId": "6165acf1-8c67-482b-9591-6959ee3ae2a2",
+      "newRunId": "db6105c1-2ae2-4382-9adc-fb18b1ffadc5",
+      "researchRunId": "8ab3e7cd-7dc0-4122-95c5-f25e5a881eb6",
+      "briefId": "8ab3e7cd-7dc0-4122-95c5-f25e5a881eb6",
+      "sourceHash": "6ca4e1517e4a88df1b0de24c8cb86a8ca67b8cd83dc8d684916216d62fe9c1e1",
+      "sourceUnchanged": true,
+      "durationSeconds": 958,
+      "status": "completed",
+      "acceptedCalls": 0,
+      "acceptedContext": 8,
+      "acceptedSentences": 17,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 16,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 17
+      },
+      "topics": [
+        "Nscale S-1 prospectus disclosures and financing risks",
+        "Nvidia vendor financing and upstream dynamics",
+        "Anthropic IPO timeline and compute dependency",
+        "Capital constraints across AI infrastructure",
+        "Comparative balance sheets of AI cloud providers"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 0,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/J_VpfkM74Wk__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "Novelty could not be assessed for any sentence because no baseline evidence set was supplied; all novelty statuses default to unknown/unmatched.",
+        "No external corroborating sources were available to verify Nscale's S-1 financial disclosures or Anthropic's revenue/capacity targets, leaving all financial facts as unverified single-source (creator/research context) claims.",
+        "The central thesis (capital, not demand, is now the AI infrastructure bottleneck) is retained but lacks a clearly paired invalidation condition sentence, limiting robustness to fragile.",
+        "Coverage omits independent confirmation of exact S-1 filing dates and interest rate/repayment terms on Nscale's debt, as flagged in the draft's own omissions list."
+      ],
+      "omissions": [
+        "External verification of Nscale S-1 prospectus data due to lack of API key configuration.",
+        "Exact dates for Nscale's S-1 filing and procurement commitment milestones.",
+        "Specific interest rates and repayment schedules on Nscale's $2.8 billion debt."
+      ],
+      "costUsdAllAttempts": 0.19387574999999999
+    },
+    {
+      "case": 3,
+      "title": "美股：基本上定了。【2026-09-11】",
+      "videoId": "9nb3fp76Rz0",
+      "sourceRunId": "1ac54e42-bb2a-4910-805c-152b98493541",
+      "newRunId": "f90aebeb-06c3-49db-8e7d-fc9d1e6c1ad4",
+      "researchRunId": "37a6be78-dfbd-4af5-94c4-a64f7ae0eb09",
+      "briefId": "37a6be78-dfbd-4af5-94c4-a64f7ae0eb09",
+      "sourceHash": "d37408d5e7c4876b9ada6231369515c03c098bfdb9bddffd1193c3eaa6ded03f",
+      "sourceUnchanged": true,
+      "durationSeconds": 718,
+      "status": "completed",
+      "acceptedCalls": 0,
+      "acceptedContext": 7,
+      "acceptedSentences": 8,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 4,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 8
+      },
+      "topics": [
+        "S&P 500 Macro Outlook",
+        "Short-Term Market Technicals",
+        "Federal Reserve Policy and Inflation",
+        "Semiconductor Sector Outlook",
+        "Dell Corporate Developments",
+        "Portfolio Execution Reflection"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 3,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/9nb3fp76Rz0__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "No external corroboration sources were available to verify the RBC Capital Dell rating, price target, or reported $95B backlog figure.",
+        "No external verification of the S&P 100 index rebalancing (Dell replacing Nike) was performed.",
+        "Sentence s5 substitutes '120-day moving average' for the original '半年线' (180-day/half-year line) in evidence k4, a potential terminology mismatch not flagged in the draft.",
+        "The central long-term AI-cycle thesis (s1) is retained but not tested against any explicit bearish countercase or invalidation condition despite the video itself noting technical correction risks in k1's risks field.",
+        "No coverage of what happens if the Fed does not hike, despite k3 noting market could 'question the Fed's independence' in that scenario — this risk was omitted from the draft sentences."
+      ],
+      "omissions": [
+        "Exact currency and accounting standard for Dell's reported 95 billion AI server backlog were omitted by the speaker.",
+        "External verification of the RBC Capital research note and S&P Dow Jones Indices rebalancing announcement could not be performed due to unconfigured external API access."
+      ],
+      "costUsdAllAttempts": 0.14716474999999998
+    },
+    {
+      "case": 4,
+      "title": "早盘闪崩真相！NaNa说美股(2026.07.31)",
+      "videoId": "3u24qyWjSVM",
+      "sourceRunId": "e6c8b4c9-87c7-477b-9e12-891fd85a2276",
+      "newRunId": "73b9ed06-b2f4-427e-bffc-367bf2c2219c",
+      "researchRunId": "ca406023-92f0-4c26-8302-ec70439d44ce",
+      "briefId": "ca406023-92f0-4c26-8302-ec70439d44ce",
+      "sourceHash": "1036b6c5547bf558272cc967ad3ceb95fbd58c52069b7f24c492937bd5482a3a",
+      "sourceUnchanged": true,
+      "durationSeconds": 1005,
+      "status": "completed",
+      "acceptedCalls": 9,
+      "acceptedContext": 7,
+      "acceptedSentences": 13,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 4,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 13
+      },
+      "topics": [
+        "Macro Liquidity & Yen Carry Trade",
+        "Equity Index Technicals",
+        "Semiconductors & Memory Sector",
+        "Portfolio Strategy & Broad Index ETFs",
+        "Big Tech AI Infrastructure Economics",
+        "Government Chip Subsidies",
+        "Single-Stock Setups & Digital Assets"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 4,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/3u24qyWjSVM__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "The video's central macro thesis—Yen carry trade unwind risk driven by Treasury/Fed signaling and its cascading effect on equities and yields—is retained but lacks any explicit bearish countercase acknowledging possibility that intervention rumors could be walked back or overstated.",
+        "No external corroboration was possible (Exa API unavailable per omissions), so all reported facts remain single-sourced to the creator's own citations; this limitation should be flagged more prominently as a coverage gap given multiple hard figures (S&P%, $920B, 10Y yield, $874M funding) are asserted as fact.",
+        "The MicroStrategy translation in k7 appears to contain a unit inconsistency (quote states '82亿美元' i.e. $8.2 billion, but the English translation says '$82 million'); this discrepancy was not surfaced or flagged in the draft despite touching a material quantity."
+      ],
+      "omissions": [
+        "Exact video recording time is unstated; only video publication timestamp is available.",
+        "Specific financial accounting period details for MicroStrategy's quarterly earnings were not specified in the excerpt.",
+        "External real-time corroboration could not be performed because EXA_API_KEY was not configured."
+      ],
+      "costUsdAllAttempts": 0.218863
+    },
+    {
+      "case": 5,
+      "title": "AI Compute Demand Could DOUBLE Again by 2027!!",
+      "videoId": "M1FJ5dNiBEs",
+      "sourceRunId": "8cc62b21-4c63-4d96-a6cb-40d704891406",
+      "newRunId": "8fae7a8a-f4df-4357-bbab-f3d9a7112283",
+      "researchRunId": "421efa19-114a-4aa8-8971-ab72af43f19e",
+      "briefId": "421efa19-114a-4aa8-8971-ab72af43f19e",
+      "sourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+      "sourceUnchanged": true,
+      "durationSeconds": 813,
+      "status": "completed",
+      "acceptedCalls": 3,
+      "acceptedContext": 8,
+      "acceptedSentences": 15,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 12,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 15
+      },
+      "topics": [
+        "AI Infrastructure Strategy",
+        "AI Compute Demand Drivers",
+        "Frontier Lab Expansion",
+        "Distributed Compute Architecture",
+        "Hardware Valuation Levels",
+        "CoreWeave Strategy",
+        "Meta Platforms Valuation",
+        "Agentic Workload Transition"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 3,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/M1FJ5dNiBEs__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "The video's central bullish thesis on sustained AI compute demand through 2027 is retained, but exact source attribution for the 67x Vera Rubin throughput and 2x profit-per-gigawatt claims remains vague ('they mentioned'), leaving these third-party estimates unverifiable.",
+        "No bearish or countercase perspective on the CoreWeave debt/dilution overhang (raised in baseline coverage) is carried into this video's treatment of the $79 put strategy, creating a gap in balanced risk disclosure for that specific new action.",
+        "Coverage omits specific premium, expiration, and contract size for the proposed CoreWeave put sales, limiting the actionability assessment of that strategy.",
+        "Coverage omits verification of whether Anthropic/OpenAI GW capacity targets have appeared in other corroborating primary reporting beyond the creator's paraphrase of an NYT article."
+      ],
+      "omissions": [
+        "Specific premium, expiration date, and total contract volume for the proposed CoreWeave $79 put sales were not disclosed in the evidence.",
+        "Exact source identity and methodological baseline for the 67x throughput and 2x profit per gigawatt Vera Rubin industry report were not specified beyond 'they mentioned'.",
+        "External verification was omitted because search APIs were unconfigured."
+      ],
+      "costUsdAllAttempts": 0.223988
+    },
+    {
+      "case": 6,
+      "title": "CoreWeave & Nebius GPU Pricing Just Exploded — Here’s Why",
+      "videoId": "LF7fgz1HAFs",
+      "sourceRunId": "ac468ee1-1380-4455-8253-53ff407edd7b",
+      "newRunId": "06a2ff95-de50-45ce-874c-add16edf63b5",
+      "researchRunId": "45030f44-b105-4a3f-9ae8-c0ddd0fe6ef9",
+      "briefId": "45030f44-b105-4a3f-9ae8-c0ddd0fe6ef9",
+      "sourceHash": "3ad5da8feb0202ebba9a3db7e6374011ef17997e025317b809d9ee578f4c3810",
+      "sourceUnchanged": true,
+      "durationSeconds": 759,
+      "status": "completed",
+      "acceptedCalls": 0,
+      "acceptedContext": 7,
+      "acceptedSentences": 8,
+      "withheldSentences": 1,
+      "typedFinancialFacts": 10,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 8
+      },
+      "topics": [
+        "GPU Pricing Dynamics",
+        "Capacity Contract Economics",
+        "CoreWeave Valuation & Scale",
+        "Capital Structure & Dilution Risk"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 2,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/LF7fgz1HAFs__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "No external sources were cited to corroborate any of the reported corporate announcements (Nebius pricing, CoreWeave notes, ATM program), leaving all financial facts at 'unverified' status.",
+        "The draft omits any explicit bearish countercase on Nebius's pricing thesis (e.g., risk that price hikes reflect temporary supply scarcity rather than durable margin expansion).",
+        "No invalidation conditions are stated for the CoreWeave bullish thesis (s5), such as conditions under which the $43B market cap/1GW power thesis would fail.",
+        "Speaker identity remains unknown throughout, and the channel is not identified in the evidence, limiting attribution clarity."
+      ],
+      "omissions": [
+        "Exact baseline recording date and time of the video are unstated.",
+        "External corroboration sources were unavailable to independently verify reported corporate press releases and filings.",
+        "Specific strike prices, counterparties, and cap prices for CoreWeave's capped call transactions were not disclosed.",
+        "Specific pricing terms for long-term contracts versus short-term contracts were partially qualitative or omitted."
+      ],
+      "costUsdAllAttempts": 0.28048625
+    },
+    {
+      "case": 7,
+      "title": "AMD Stock Is Entering a New Cycle‼️Listen Up",
+      "videoId": "U32FPvvBaNI",
+      "sourceRunId": "709bb1ef-45f0-4737-bba4-afcfb0aab1e7",
+      "newRunId": "7de93e5e-8fb4-45f2-a316-c7dd2d4211af",
+      "researchRunId": "71231460-52fd-4c5d-98cc-907d613db621",
+      "briefId": "71231460-52fd-4c5d-98cc-907d613db621",
+      "sourceHash": "e7dfbc3587c28c71e1550a8b848e326fbad9a3b61a37402ba1bf4cad83c64eca",
+      "sourceUnchanged": true,
+      "durationSeconds": 1333,
+      "status": "completed",
+      "acceptedCalls": 8,
+      "acceptedContext": 6,
+      "acceptedSentences": 12,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 8,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 12
+      },
+      "topics": [
+        "AMD Pricing and Margin Dynamics",
+        "Creator AMD Holding Stance",
+        "Macro Sensitivity and Rate-Sensitive Plays",
+        "Creator Portfolio Allocations",
+        "RH Valuation Drivers and Solvency Risk",
+        "Macroeconomic Inflation and Monetary Policy"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 4,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/U32FPvvBaNI__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "Speaker identities for the guest analysts discussing Fed policy and inflation metrics remain unstated, limiting attribution clarity.",
+        "No external corroborating sources were available to verify AMD's reported price increase, Wynn Resorts operating metrics, or macro inflation figures cited by the guest.",
+        "Exact share counts and execution prices for Nike, Celsius, and Wynn purchases are not specified, leaving position sizing context incomplete.",
+        "The central AMD margin-expansion thesis (s-1, s-2) and the rate-sensitive equity thesis (s-4, s-5) are the two dominant themes and are both represented with corresponding countercases, but neither reaches 'supported' robustness due to absence of independent corroboration or explicit invalidation sentences tied to the same time horizon."
+      ],
+      "omissions": [
+        "External verification unavailable because external retrieval keys are not configured.",
+        "Specific identity of the guest discussing inflation metrics and Fed rate dissenting opinions was not fully stated.",
+        "Exact purchase share quantities and execution prices for Nike, Celsius Holdings, and Wynn Resorts were not specified in the evidence."
+      ],
+      "costUsdAllAttempts": 0.21874375000000001
+    },
+    {
+      "case": 8,
+      "title": "Oracle & Adobe Shareholders‼️Brand New Developments",
+      "videoId": "jPy5aDhMsMY",
+      "sourceRunId": "41b7e124-e13e-4aa8-85c1-680237490be1",
+      "newRunId": "83858f51-80f8-4237-9c8f-b7f3c27ac89c",
+      "researchRunId": "13ccae16-3436-4a4d-9ea1-250c9cf1e59d",
+      "briefId": "13ccae16-3436-4a4d-9ea1-250c9cf1e59d",
+      "sourceHash": "07e4a35ee3be49f95f1b8d06cc281db0dda11718a15c724648516418093c45b7",
+      "sourceUnchanged": true,
+      "durationSeconds": 1773,
+      "status": "completed",
+      "acceptedCalls": 3,
+      "acceptedContext": 16,
+      "acceptedSentences": 14,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 12,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 14
+      },
+      "topics": [
+        "Oracle earnings and balance sheet leverage",
+        "Adobe valuation compression and AI disruption",
+        "Macro sentiment and seasonal market setup",
+        "Hyperscaler capital expenditure risks",
+        "Nvidia valuation and AI secular demand",
+        "Dell options activity and post-earnings volatility",
+        "Enterprise software and cybersecurity positioning"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 2,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/jPy5aDhMsMY__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "The draft omits explicit countercases and invalidation conditions for most claims, preventing any 'supported' robustness rating despite adequate primary sourcing.",
+        "Video's central Oracle/Adobe shareholder thesis (balance sheet risk vs. valuation ceiling) is preserved but lacks explicit bull-case countercase citations for either stock.",
+        "No external corroborating sources (SEC filings, press releases) were available to upgrade factualStatus from 'unverified' to 'corroborated' for financial figures.",
+        "Coverage of capex/Nvidia debate and Dell options activity is included but lacks discussion of Palo Alto Networks fundamentals despite disclosing the holding, leaving thesis rationale thin."
+      ],
+      "omissions": [
+        "Exact recording date is unstated; relative references to September and earnings dates are preserved.",
+        "Web search retrieval was unavailable due to unconfigured API key; external verification of Oracle and Adobe earnings figures was omitted."
+      ],
+      "costUsdAllAttempts": 0.3048725
+    },
+    {
+      "case": 9,
+      "title": "If You Missed NVIDIA Stock, This is Way Bigger.",
+      "videoId": "elD62rk5Ijo",
+      "sourceRunId": "5ffadb59-52d1-49a4-811a-67c247394b23",
+      "newRunId": "e0509996-cf3c-45b4-91ef-90613fb1ff72",
+      "researchRunId": "e7e355bd-fbc3-42eb-94a0-5c890fe952d5",
+      "briefId": "e7e355bd-fbc3-42eb-94a0-5c890fe952d5",
+      "sourceHash": "852c63f02a21adfb749c67716d3ee88f571599c59aec17a9e3e21bda211e877c",
+      "sourceUnchanged": true,
+      "durationSeconds": 1359,
+      "status": "completed",
+      "acceptedCalls": 1,
+      "acceptedContext": 7,
+      "acceptedSentences": 14,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 29,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 14
+      },
+      "topics": [
+        "SK Hynix ADR Structure and Capital Allocation",
+        "Memory Product Mix and Market Position",
+        "Contract Pricing Model and Supply Dynamics",
+        "Nvidia Partnership and HBM Roadmaps",
+        "Valuation Multiples and Peer Comparison"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 1,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/elD62rk5Ijo__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "External verification of the July 10 NASDAQ IPO details, $26.5B raise, and SEC buyback filing remain unconfirmed due to lack of independent sourcing.",
+        "Exact fiscal quarter dates for revenue and market share figures are not specified, limiting precise time-boundary verification.",
+        "The video's central thesis (SK Hynix as an underappreciated, diversified AI memory play trading at a valuation discount) is represented across sentences but lacks any externally sourced corroboration or dated countercase for robustness scoring."
+      ],
+      "omissions": [
+        "External factual corroboration for the reported July 10 NASDAQ IPO, $26.5 billion proceeds, and ticker SKHY could not be verified due to unconfigured search API.",
+        "External SEC filings verifying the 40 trillion KRW ($29 billion) share buyback and management undervalued designation were unavailable.",
+        "Exact historical dates for the quarterly revenue and market share figures were unspecified beyond relative video timing."
+      ],
+      "costUsdAllAttempts": 0.2504925
+    },
+    {
+      "case": 10,
+      "title": "These Stocks Will Make Millionaires By 2029",
+      "videoId": "zYeJZu1hkdM",
+      "sourceRunId": "43aeea43-37ee-4014-a28d-070432d60309",
+      "newRunId": "5af3ed33-5175-4b67-8503-9858cf8dbbb6",
+      "researchRunId": "382c2d8c-6422-4d00-92c2-c5c4d22c5895",
+      "briefId": "382c2d8c-6422-4d00-92c2-c5c4d22c5895",
+      "sourceHash": "f1c1fee7a07b421ea5e921c2bea3e38b764cb8925395a139fcaff1daad44397e",
+      "sourceUnchanged": true,
+      "durationSeconds": 1083,
+      "status": "completed",
+      "acceptedCalls": 2,
+      "acceptedContext": 7,
+      "acceptedSentences": 10,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 9,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 10
+      },
+      "topics": [
+        "AI Optical Networking Demand",
+        "Supply Chain and Concentration Risks",
+        "Coherent Financial Performance",
+        "Coherent Manufacturing and Expansion",
+        "Nvidia Strategic Investments",
+        "Co-Packaged Optics Technology",
+        "Lumentum Financial Metrics",
+        "Creator Trade Positioning"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 2,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/zYeJZu1hkdM__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "External factual corroboration could not be performed because no external search/API results were available in the evidence set; all facts remain unverified rather than corroborated.",
+        "No baseline coverage was supplied, so all novelty assessments default to unknown/false as required.",
+        "The video's exact recording date/timezone is unknown; only relative dates and the stated video-date cutoff should be relied upon for historical analysis.",
+        "Speaker identity is not disclosed in evidence; all sentences correctly marked speaker unknown.",
+        "Coverage omits any explicit discussion of valuation multiples (P/E, EV/EBITDA) for either Coherent or Lumentum, despite this being a common consideration for 'millionaire-maker' stock theses.",
+        "No countercase or invalidation sentence is paired with the Nvidia investment claim (s5) or the co-packaged optics technology claim (s6), leaving those topics without balanced risk framing even though robustness for the overall Coherent thesis relies partly on capex risk in c1."
+      ],
+      "omissions": [
+        "External factual corroboration could not be performed because EXA_API_KEY was not configured.",
+        "Specific video recording date was not stated in the source metadata.",
+        "Creator's identity or speaker name is not disclosed in the provided evidence."
+      ],
+      "costUsdAllAttempts": 0.183615
+    },
+    {
+      "case": 11,
+      "title": "Nu Bank's Territorial Expansion; LVMH + Stocks At Cheapest Valuations Ever; Fed Hikes Interest Rates",
+      "videoId": "ZfOQoh82JTo",
+      "sourceRunId": "18a0425d-38ab-4b27-92d3-624e1ea7faba",
+      "newRunId": "e0fba900-a05d-4657-b377-4f96df8ee77d",
+      "researchRunId": "811f6d45-111c-4972-b77d-6a18ca366231",
+      "briefId": "811f6d45-111c-4972-b77d-6a18ca366231",
+      "sourceHash": "d3eb8edbc5594e303d7735d41d8a8e464399e88c3f2279e1d77a7c40cf35c888",
+      "sourceUnchanged": true,
+      "durationSeconds": 3920,
+      "status": "completed",
+      "acceptedCalls": 5,
+      "acceptedContext": 24,
+      "acceptedSentences": 11,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 14,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 11
+      },
+      "topics": [
+        "NuBank Expansion and Cross-Border Model",
+        "TransDigm Business Fundamentals and Valuation",
+        "Treasury Allocation and Deflationary Hedging",
+        "Luxury Retail Valuation and Quality Assessment",
+        "Retail and Compounder Moat Analysis",
+        "Frontier AI Governance and Capex Moderation"
+      ],
+      "leapedgeStatus": "stopped",
+      "leapedgeCalls": 0,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/ZfOQoh82JTo__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "The draft omits discussion of Nu Holdings' broader competitive risk versus SoFi and incumbent Latin American banks (k2, k3) despite these being central to the NuBank segment's thesis.",
+        "The draft omits the Grab Holdings discussion (k9) which was a distinct topic in the source material.",
+        "The draft omits the historical portfolio performance discussion (k18) and Verra Mobility cautionary example (k19), which provide track-record context for the channel's stock-picking credibility.",
+        "The draft omits the Home Depot historical return fact (k20) and Canadian airport privatization discussion (k15), both distinct material topics covered in the source.",
+        "The draft omits the SpaceX/Cathie Wood Starship revenue projection critique (k24), a materially discussed valuation skepticism theme.",
+        "The draft omits the S-tier compounder valuation premium discussion (k23) explaining why predictable large caps trade at lower excitement despite premium multiples.",
+        "No externalIds are cited for any sentence despite several containing specific verifiable figures (e.g., LVMH multiples, TransDigm CAGR), leaving all factualStatus as unverified rather than corroborated or disputed."
+      ],
+      "omissions": [
+        "External factual verification of LVMH first-half 2026 organic revenue growth was unperformed due to unconfigured API keys.",
+        "The claim describing Mark Carney as Canadian Prime Minister proposing airport concessions lacks external corroboration."
+      ],
+      "costUsdAllAttempts": 0.46271875
+    },
+    {
+      "case": 12,
+      "title": "Ian Bezek Returns to Discuss Why Brazilian Bank INTER Is Undervalued + Much More [PODCAST]",
+      "videoId": "iBMZc7zs_Ew",
+      "sourceRunId": "c4268e6a-91cf-4d3d-a55d-297926b3073a",
+      "newRunId": "6ea1a4b7-f5ee-4096-9acc-1e6f48a89c73",
+      "researchRunId": "5e16e0d7-4bda-4693-baeb-ba3d6c9ffa30",
+      "briefId": "5e16e0d7-4bda-4693-baeb-ba3d6c9ffa30",
+      "sourceHash": "13dc7fb204d2cc32a63b1df473827e684428fc5b52014ba3fa8b04166ca6f386",
+      "sourceUnchanged": true,
+      "durationSeconds": 3107,
+      "status": "completed",
+      "acceptedCalls": 10,
+      "acceptedContext": 19,
+      "acceptedSentences": 13,
+      "withheldSentences": 3,
+      "typedFinancialFacts": 10,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 13
+      },
+      "topics": [
+        "Brazilian digital banking dynamics",
+        "Banco Inter valuation and execution risks",
+        "Latin American fintech holdings and credit profiles",
+        "Mexican and Brazilian sovereign fixed income",
+        "Airlines short versus airport operators pair trade",
+        "Colombian political shift and equity beneficiaries",
+        "Argentine capital controls and political caution"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 1,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/iBMZc7zs_Ew__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "The draft omits detailed treatment of the Brazilian presidential election dynamics (Lula vs. Bolsonaro) and their differential market impact on Nu versus Inter and EWZ (k6, k7), which the source material treats as a material near-term catalyst for Brazilian equities.",
+        "The draft does not address Argentina's election risk and the potential return of socialist policies mentioned in c7, despite covering the airport holding and index classification separately in s16; the specific election-driven caution is not fully captured.",
+        "No sentence addresses the JETS ceasefire risk/covering condition explicitly tied together with the airport long thesis as a single hedge structure, despite both being drawn from the same c4/c5 quotes.",
+        "The financial fact for Mercado Libre's purchase price in s7 appears altered from the original $600 figure to $1,600, and no corrected sentence is present in the draft to accurately reflect this holding.",
+        "Coverage does not include a sentence capturing the worst-case airline bailout scenario mentioned in k14 (oil at $150), which is a material downside scenario for the airline short thesis."
+      ],
+      "omissions": [
+        "Recording date is not stated, preventing determination of the exact trade date relative to publication.",
+        "Exact pricing, tickers, and baseline portfolio weightings are omitted for the Mexican, Argentine, and Brazilian airport operators.",
+        "External verification was unavailable as external search APIs were unconfigured."
+      ],
+      "costUsdAllAttempts": 0.488799
+    },
+    {
+      "case": 13,
+      "title": "Palantir News: Can Palantir Turn $10,000 Into $1,000,000 By 2035?!",
+      "videoId": "tUR0w-LDSbU",
+      "sourceRunId": "0f432b9a-f158-462a-81b5-1bcb2627c6d8",
+      "newRunId": "883b7b0e-9003-4233-b777-7c2abd3b1255",
+      "researchRunId": "0f0c444e-4fe1-434d-a7c5-d7f0e1166808",
+      "briefId": "0f0c444e-4fe1-434d-a7c5-d7f0e1166808",
+      "sourceHash": "a2593ce514664ae4e37100873862a50447bb477a7205582c3abfae6a9e50fb85",
+      "sourceUnchanged": true,
+      "durationSeconds": 514,
+      "status": "completed",
+      "acceptedCalls": 0,
+      "acceptedContext": 2,
+      "acceptedSentences": 8,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 8,
+      "calculationChecks": 1,
+      "factualStatuses": {
+        "unverified": 8
+      },
+      "topics": [
+        "Current Valuation Baseline",
+        "100x Return Scenario Feasibility",
+        "Valuation Multiples and Downside Risks",
+        "Earnings Growth and Long-Term Targets",
+        "Competitive Pressures in Artificial Intelligence"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 1,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/tUR0w-LDSbU__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "Speaker identity and channel are unknown, limiting attribution and cross-video novelty comparison.",
+        "No external corroboration sources were available (search API not configured), so all financial facts remain unverified against primary filings.",
+        "GAAP/non-GAAP basis for the $1.6B trailing profit and $32.5B target net income is not stated, per the noted omission.",
+        "The central thesis—that a 100x return is unrealistic but a 4x return over a decade is plausible under specific growth/multiple assumptions—is retained but rests entirely on creator-derived scenario math without independent stress-testing of the 35% CAGR assumption over 10 years.",
+        "No explicit invalidation condition or specific bearish threshold (e.g., a stated growth rate below which the thesis fails) is provided, limiting robustness assessment to 'insufficient' throughout.",
+        "Recording date/time is unknown despite a stated video publish date, and no relative-date anchoring is given in the transcript excerpts."
+      ],
+      "omissions": [
+        "Exact recording date is not specified in the source data.",
+        "Speaker identity is unknown.",
+        "External financial verification was not possible due to unconfigured search API keys.",
+        "GAAP vs non-GAAP basis for historical profit and forward net income projections was not stated.",
+        "Optional calculation for s5 withheld: unsupported expression or invalid inputs. The underlying sentence still requires independent review."
+      ],
+      "costUsdAllAttempts": 0.0910765
+    },
+    {
+      "case": 14,
+      "title": "This Small Palantir Partner Just Unlocked One Billion Dollars in AI Defense Contracts!",
+      "videoId": "DuIyF_34ReI",
+      "sourceRunId": "a60cea8c-81d9-48a7-97d6-6b54747b9e59",
+      "newRunId": "8f06312c-8fbc-4f01-9763-61e82789a1ab",
+      "researchRunId": "b57508d3-efd3-4362-a881-70892ad46180",
+      "briefId": "b57508d3-efd3-4362-a881-70892ad46180",
+      "sourceHash": "5a59cbf2f0a8969a70b6a01460dda454b8311b847a4af2fff7539a54cd0c0569",
+      "sourceUnchanged": true,
+      "durationSeconds": 622,
+      "status": "completed",
+      "acceptedCalls": 0,
+      "acceptedContext": 4,
+      "acceptedSentences": 9,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 12,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 9
+      },
+      "topics": [
+        "Mistral Merger Terms",
+        "Defense IDIQ Contracts",
+        "Integration and Execution Risks",
+        "4M Defense Operational Demining Award",
+        "Revenue Guidance and Growth Outlook"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 1,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/DuIyF_34ReI__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "No external, third-party, or independently sourced verification is present for any monetary figures (merger value, contract ceilings, revenue guidance); all facts derive solely from the single creator narration (k1-k4), so factualStatus is uniformly unverified.",
+        "The central thesis—that Ondas is transitioning from niche supplier to defense prime contractor via the Mistral merger and unlocking >$1B in contract access—is preserved across s1-s3, but no independent robustness support (e.g., filings, SEC data) is cited to corroborate the $175M deal terms or $1B IDIQ figure.",
+        "Revenue guidance figures (FY2026 $375M, Q1 2026 $38-40M, 820% YoY growth) are speculative/forecast in nature and correctly not treated as realized revenue, but the draft does not include any bearish analyst or third-party pushback on these guidance figures.",
+        "No mention of Palantir's specific role/partnership terms with Ondas is detailed beyond the title's framing, leaving a gap in explaining the 'Palantir Partner' angle referenced in the video title.",
+        "Missing explicit invalidation conditions tied to specific dates or metrics (e.g., what Q1 2026 earnings print would invalidate the guidance) reduces ability to mark any claim as 'supported' robustness."
+      ],
+      "omissions": [
+        "No external facts verified due to lack of configured search key.",
+        "Recording date is not stated in source context; temporal analysis anchored to video publication date 2026-04-08."
+      ],
+      "costUsdAllAttempts": 0.12127199999999999
+    },
+    {
+      "case": 15,
+      "title": "You're Gambling on Stocks - Stop Losing Money",
+      "videoId": "QEwLInO3iZY",
+      "sourceRunId": "df0a66e4-d099-4cbf-a912-c449d28fd9df",
+      "newRunId": "c34b384d-58d7-469e-a181-1e8fbfd498e6",
+      "researchRunId": "a9056b71-aa9b-4fe1-9cff-ff624417fda4",
+      "briefId": "a9056b71-aa9b-4fe1-9cff-ff624417fda4",
+      "sourceHash": "203ede23b6ebb3486f7fe122ca081f1b369e28c8756dead04f2419d9a1a60dec",
+      "sourceUnchanged": true,
+      "durationSeconds": 38,
+      "status": "completed",
+      "acceptedCalls": 0,
+      "acceptedContext": 1,
+      "acceptedSentences": 3,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 0,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 3
+      },
+      "topics": [
+        "Investment discipline",
+        "Five-year earnings thesis",
+        "Thesis invalidation and sell criteria"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 0,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/QEwLInO3iZY__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "Speaker identity remains unknown, consistent with source metadata gap.",
+        "No concrete examples, tickers, or quantitative thresholds are given for what constitutes valid earnings-growth reasons or invalidation triggers, limiting verifiability.",
+        "Recording date is unstated; only video publication date (2026-09-19) is known, per temporal policy this should be preserved as relative/unknown rather than assumed."
+      ],
+      "omissions": [
+        "Speaker identity is unspecified in the source metadata.",
+        "Specific examples or quantitative thresholds for earnings expansion or invalidation triggers were not provided in the clip.",
+        "Recording date is not stated; video publication date is 2026-09-19."
+      ],
+      "costUsdAllAttempts": 0.02647175
+    },
+    {
+      "case": 16,
+      "title": "7 Stocks to Buy Heavy Before the Market Takes Off",
+      "videoId": "IjYr5acuBT4",
+      "sourceRunId": "32b8e6cd-b47a-44a6-87e4-cbcbd397df82",
+      "newRunId": "12d3f814-b1d2-4a6f-a235-c305df712031",
+      "researchRunId": "b007d64f-ba15-4f2a-9e9d-7f638731e8b9",
+      "briefId": "b007d64f-ba15-4f2a-9e9d-7f638731e8b9",
+      "sourceHash": "14105dce685d46826942c0cac2f70168ca19fce1ff680cbe8bf80bb641581f78",
+      "sourceUnchanged": true,
+      "durationSeconds": 1054,
+      "status": "completed",
+      "acceptedCalls": 11,
+      "acceptedContext": 7,
+      "acceptedSentences": 13,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 21,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 13
+      },
+      "topics": [
+        "Cybersecurity spending resilience and PEG valuation dispersion",
+        "Energy sector dynamics tied to Middle East tensions and oil price increases",
+        "Financial sector benefits, specifically insurance float in higher-rate regimes",
+        "AI infrastructure and semiconductor supply chain dip-buying thesis",
+        "Underperformance and debt pressure across real estate, utilities, and consumer staples",
+        "Software sector earnings reactions and selective valuation opportunities in enterprise software",
+        "Consumer discretionary weakness indicated by travel stock drops and retail guidance cuts"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 6,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/IjYr5acuBT4__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "The speaker/creator's identity and channel attribution are never specified, leaving all creator_call claims attributed to an unknown speaker as flagged in the draft's omissions.",
+        "No external corroboration sources were available (search API not configured), so all factualStatus values remain 'unverified' rather than corroborated, including basic market-move claims (e.g., Zscaler +16%, oil at $101/barrel) that would typically be easily verifiable.",
+        "No sentence includes an explicit bearish countercase or invalidation condition paired with the bullish theses (cybersecurity, AI infrastructure, insurers, ServiceNow/Palantir/AppLovin), so robustness is insufficient throughout; the source data's own risk caveats (e.g., 4-5x PEG expense on cybersecurity, AI slowdown fears) were captured only partially as 'risks' fields but not elevated into standalone sentences with explicit invalidation framing.",
+        "The central thesis of the video (macro/top-down sector rotation logic in k2) is not represented in any retained sentence despite being flagged as a key structural argument distinguishing this creator's approach; this appears to be a coverage gap.",
+        "Novelty status is 'unknown' for every sentence due to an empty baseline array; this is consistent with the no-baseline-provided instruction but leaves the report unable to assess whether any views are repeated, new, or changed from prior videos.",
+        "The report does not flag the collateral risk that many of these are the creator's own portfolio holdings (c1 explicitly says 'in the portfolio') rather than fresh buy recommendations for the audience, though s1 hints at this without fully distinguishing existing holdings from a general buy call implied by the video title."
+      ],
+      "omissions": [
+        "Creator speaker identity is not stated in the source data.",
+        "External corroboration was not available due to unconfigured search API keys."
+      ],
+      "costUsdAllAttempts": 0.343479
+    },
+    {
+      "case": 17,
+      "title": "Superinvestors are buying this stock I added $10,000+ last week",
+      "videoId": "pWnu1C8I6Xw",
+      "sourceRunId": "f8270148-9c71-4348-a152-72befa730d52",
+      "newRunId": "21589b3f-ffeb-4382-8762-68cbb25b3197",
+      "researchRunId": "2ab2a63f-6af3-407e-b56f-d17f029daf98",
+      "briefId": "2ab2a63f-6af3-407e-b56f-d17f029daf98",
+      "sourceHash": "6059156a2ce999d8f3fff22a0e1d723e3bec780ff52684f00497749a025a0da0",
+      "sourceUnchanged": true,
+      "durationSeconds": 111,
+      "status": "completed",
+      "acceptedCalls": 2,
+      "acceptedContext": 2,
+      "acceptedSentences": 9,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 4,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 9
+      },
+      "topics": [
+        "Vistra Investment Thesis",
+        "Vistra Valuation",
+        "Macro AI Energy Demand",
+        "Superinvestor Tracking",
+        "13F Limitations",
+        "Vistra Risks",
+        "Sector Profitability Analysis",
+        "Alternative Energy Holdings"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 1,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/pWnu1C8I6Xw__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "The draft omits explicit statement that no entry price or dollar total was disclosed for the Vistra purchase, though this is noted in omissions field.",
+        "No countercase/invalidation condition pairing exists for the bullish AI-demand thesis (s3), leaving robustness assessments uniformly insufficient.",
+        "External verification of Tepper's 13F position size/timing and of Vistra's valuation multiples remains unavailable, limiting factualStatus beyond 'unverified' for all financial claims."
+      ],
+      "omissions": [
+        "External verification of David Tepper's 13F filing size and timing was unavailable due to missing API keys.",
+        "Third-party verification for Vistra's 10x EV/EBITDA and 16x 2026 P/E multiples could not be retrieved.",
+        "Specific entry price and total dollar amount for the 100-share purchase were not detailed in the source quotes."
+      ],
+      "costUsdAllAttempts": 0.06638525
+    },
+    {
+      "case": 18,
+      "title": "Generate $3,000 Weekly Passive Income with this Options Strategy",
+      "videoId": "1WNowIoNgtg",
+      "sourceRunId": "86a6cbf0-38a5-4759-b0ac-a29a6f8bb7e7",
+      "newRunId": "1d17ea0f-d670-440e-bce0-32bcfb5b487a",
+      "researchRunId": "681dd2b8-2889-4037-a3fe-55879d6f5bd2",
+      "briefId": "681dd2b8-2889-4037-a3fe-55879d6f5bd2",
+      "sourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+      "sourceUnchanged": true,
+      "durationSeconds": 2148,
+      "status": "completed",
+      "acceptedCalls": 6,
+      "acceptedContext": 11,
+      "acceptedSentences": 14,
+      "withheldSentences": 1,
+      "typedFinancialFacts": 3,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 14
+      },
+      "topics": [
+        "Options Strategy Mechanics",
+        "Options Parameters and Execution",
+        "Palantir Position Management",
+        "Alphabet Position Management",
+        "Defensive Options Adjustments"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 1,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/1WNowIoNgtg__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "The draft omits explicit discussion of the video's central income target ($3,000/week) as an aspirational rather than guaranteed outcome, understating the risk that higher targets on limited capital require materially higher risk per k1.",
+        "No mention is made of the creator's disclosed conflict of interest in promoting a paid coaching/Discord community tied to the same options strategies (referenced in c3/k5), which is relevant context for assessing the objectivity of the recommendations.",
+        "The scenario in k7 (preferring long calls over selling puts when a favored stock is at a 52-week low poised for recovery) is omitted from coverage despite being a material countercase to the blanket put-selling thesis.",
+        "External verification of Palantir, Alphabet, and Microsoft option premiums and strike levels was not possible due to unconfigured search/citation tools, leaving all creator-reported figures unverified as flagged in the omissions.",
+        "The baseline enterprise-software PEG valuation content (fundamental horizon) is not reconciled with this video's tactical options framing on Palantir, leaving the fundamental-vs-tactical horizon balance incomplete for Palantir specifically."
+      ],
+      "omissions": [
+        "No external price data could be verified for Palantir or Alphabet due to unconfigured search API keys.",
+        "Specific expiration dates, contract counts, and historical premiums collected for the initial Alphabet 370 and Microsoft put trades are not disclosed.",
+        "Detailed total portfolio capital and cash reserves backing the cash-secured puts were omitted by the creator."
+      ],
+      "costUsdAllAttempts": 0.36594925
+    },
+    {
+      "case": 19,
+      "title": "Why I Buy the Strongest Mining Stocks First — Not the Cheapest",
+      "videoId": "vrTbCxUzRw4",
+      "sourceRunId": "8605534e-6096-474d-8412-324816fb7b98",
+      "newRunId": "1ceaf3a6-8b2e-4964-91ff-b61b40367c61",
+      "researchRunId": "7843074c-3fb6-4274-8fff-29f7e315057a",
+      "briefId": "7843074c-3fb6-4274-8fff-29f7e315057a",
+      "sourceHash": "a6edfbe7dd80798e289e347abbbb5593f03d82dc977e64a0aba3b0cd28c05c53",
+      "sourceUnchanged": true,
+      "durationSeconds": 1230,
+      "status": "completed",
+      "acceptedCalls": 10,
+      "acceptedContext": 4,
+      "acceptedSentences": 14,
+      "withheldSentences": 0,
+      "typedFinancialFacts": 1,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 14
+      },
+      "topics": [
+        "Strategic Accumulation Framework",
+        "Macro Mining Context",
+        "Banyan Positioning",
+        "Cabral Gold Positioning",
+        "SSR Mining Setup",
+        "New Pacific Metals Setup",
+        "Next Gold Mining Setup",
+        "1911 Gold Trade"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 4,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/vrTbCxUzRw4__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "Speaker identity and channel are not identified in source metadata, limiting attribution specificity as already noted in omissions.",
+        "No external verification of any technical levels (moving averages, percentages) was performed due to unavailable external sources, so all technical claims remain uncorroborated creator opinion.",
+        "The video's central thesis (buy strong miners first, wait on weak ones for cheaper entries) is well represented, but no explicit countercase against this core strategy itself (e.g., risk that 'strong' stocks could reverse) is separately captured beyond the Banyan-specific risk."
+      ],
+      "omissions": [
+        "Speaker identity is not stated in the source metadata or transcripts.",
+        "Exact recording date is unknown; only publication timestamp (2026-09-19T11:30:13Z) is provided.",
+        "External search API was unavailable, preventing external verification of technical levels and ticker quotes."
+      ],
+      "costUsdAllAttempts": 0.52195675
+    },
+    {
+      "case": 20,
+      "title": "Silver Is at Triple Support — If It Breaks, $54 Is in Play",
+      "videoId": "Dy_0RtmAt1U",
+      "sourceRunId": "f3d3972a-7985-434c-b4d3-65605caf8d7c",
+      "newRunId": "9e9a45fe-e8fc-4d64-9f45-f6bfd8c44d26",
+      "researchRunId": "d956d357-3791-491d-b225-396fdd553f0f",
+      "briefId": "d956d357-3791-491d-b225-396fdd553f0f",
+      "sourceHash": "48fd10e2e407eb6527f9051619d41ccc607186988e0e3d260d9859709a0fa9ac",
+      "sourceUnchanged": true,
+      "durationSeconds": 1088,
+      "status": "completed",
+      "acceptedCalls": 2,
+      "acceptedContext": 4,
+      "acceptedSentences": 8,
+      "withheldSentences": 2,
+      "typedFinancialFacts": 1,
+      "calculationChecks": 0,
+      "factualStatuses": {
+        "unverified": 8
+      },
+      "topics": [
+        "Silver Technical Setup",
+        "Creator Positioning",
+        "Macro and Gold Dynamics",
+        "Long-Term Fundamentals"
+      ],
+      "leapedgeStatus": "ready",
+      "leapedgeCalls": 1,
+      "leapedgeReportUrl": "https://leapedge.app/analyses/Dy_0RtmAt1U__keypoints.v1-insights.v3-critique.v1",
+      "coverageFindings": [
+        "No explicit countercase or bearish rebuttal sentence is present beyond price scenarios; the bearish coupling with bond yields/dollar strength (k1's 'the problem is not silver itself') is mentioned in evidence but not fully surfaced as a distinct sentence.",
+        "No sentence addresses the fake-out psychological dynamic ('everybody will start talking about $50 silver again') described in k1, which is a notable part of the creator's scenario framing.",
+        "Currency/unit ambiguity for all price levels (59-60, 54-55, 4215) is flagged in omissions but not resolved in any sentence, leaving unit compliance uncertain.",
+        "Central video thesis title ('triple support... if it breaks, $54 is in play') is adequately reflected in s1-s3, but the explicit 'triple support' terminology from k1 is not explicitly retained in any draft sentence."
+      ],
+      "omissions": [
+        "External factual corroboration could not be conducted because search APIs were unconfigured.",
+        "Exact recording date is not specified in the source context.",
+        "Specific company tickers for mining stock holdings are not disclosed in the transcript.",
+        "Specific dollar currencies for quoted numeric price levels (59-60, 54-55, 4215) were not explicitly defined with currency codes."
+      ],
+      "costUsdAllAttempts": 0.15375625
+    }
+  ]
+}

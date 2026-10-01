@@ -1,0 +1,102 @@
+{
+  "at": "2026-09-14T20:25:11.714Z",
+  "files": [
+    {
+      "path": "evaluations/native-google/core.ts",
+      "sha256": "c075d44cbb758ce4aedf8d23aafa51e3f98924873737ec0487b82c97a888774d"
+    },
+    {
+      "path": "evaluations/native-google/runner.ts",
+      "sha256": "d66b20734169efd128b4edd1f7e7a8cd410281057715d64b05d2d40a650907bc"
+    },
+    {
+      "path": "evaluations/native-google/journal.ts",
+      "sha256": "b49d514a2244aedee397db50b36d59d0c630a13c774bd24990366f9cf47a13c4"
+    },
+    {
+      "path": "evaluations/native-google/followup.ts",
+      "sha256": "728956748c2759d1bbb919c56f7d9bed78ba64544f61d116a02f25fbb59fa3f8"
+    },
+    {
+      "path": "evaluations/native-google/followup-cases.ts",
+      "sha256": "d8420abd07609aa324e5eb2d582598b3e9e850f8d75d987916b7379d5d00db83"
+    },
+    {
+      "path": "evaluations/native-google/shadow-synthesis.ts",
+      "sha256": "9b879450950a6ef9362eb0d4f0988043045249e5f58d7bc143775f88b13a1f92"
+    },
+    {
+      "path": "evaluations/native-google/text-budget.ts",
+      "sha256": "7272b5959ad9f5270efbeffe177db58a72301b4b06d1695621992e8426f0278d"
+    },
+    {
+      "path": "evaluations/native-google/shadow-prompts.ts",
+      "sha256": "2f8f5adb779f5956b027de706e43cf9f5c3a9fb170331e868865f27e0a1aa5fd"
+    },
+    {
+      "path": "evaluations/native-google/report.mjs",
+      "sha256": "4ef60eef4ef9a41a4fa04093b78eed4ebf5a4c8227c0e15173c8567218fa8180"
+    },
+    {
+      "path": "evaluations/native-google/compare.mjs",
+      "sha256": "73364d307f334164fc9831e8dbc09390306f5c6879d11537ad29114e3c084747"
+    },
+    {
+      "path": "evaluations/native-google/snapshot-sources.py",
+      "sha256": "8da257c566064be41e8726aaf0321808ef202f2d2633b1cf6344a01e7c30fbbc"
+    },
+    {
+      "path": "evaluations/native-google/whitepaper-appendix.mjs",
+      "sha256": "18d7fa9a889d416c2aa8a69fed0eb5dfe4e91b77e9674362b1be60a955bca287"
+    },
+    {
+      "path": "evaluations/native-google/package.json",
+      "sha256": "05108be7c0460f9a8c2abd0a625ade0572bcb6b74bf78c1162102ea7e765eefc"
+    },
+    {
+      "path": "evaluations/native-google/package-lock.json",
+      "sha256": "7fa8e967c78db19f7d2c1a61909859f014884c0b9e94b0f9532e805e543a962c"
+    },
+    {
+      "path": "evaluations/native-google/fixtures/rejected-schema-request.json",
+      "sha256": "352c02076437b12beb2c981d70ea2fc9ea38c1648a1c25698c6bb755bd5228e3"
+    }
+  ],
+  "auxiliaryFiles": [
+    {
+      "path": "scripts/save-native-google-research.ts",
+      "sha256": "df8fbdb823a8d0ccbfb8f5298e1531c6be518df78ec156423e7192d0bd8898e1"
+    },
+    {
+      "path": "evaluations/transcript-accuracy.ts",
+      "sha256": "ca7b899e1843fbbbf8ce58c75841546477598f0f4dff6d6622f5649c522babc8"
+    }
+  ],
+  "historicalScripts": [
+    {
+      "privatePath": "work/native-google/minimal.ts",
+      "sha256": "aa5bd14b0e60611d8828e5c78fd02dce87e625b9adfd9a7fc1f45507e9696f16",
+      "caution": "Hash at report time. Historical helpers depended on a then-current core.ts; saved effectiveRequest is authoritative."
+    },
+    {
+      "privatePath": "work/native-google/schema.ts",
+      "sha256": "7313c3a1a81bde11216987bab62eb769bbb9ad9e9365f2e3e0ad40896b000943",
+      "caution": "Hash at report time. Historical helpers depended on a then-current core.ts; saved effectiveRequest is authoritative."
+    },
+    {
+      "privatePath": "work/native-google/google-schema.ts",
+      "sha256": "1a2769d98173f7166a0b40ec905029d61fd1e790fbbca71f1592373643613cb9",
+      "caution": "Hash at report time. Historical helpers depended on a then-current core.ts; saved effectiveRequest is authoritative."
+    },
+    {
+      "privatePath": "work/native-google/report.ts",
+      "sha256": "5aea708ba58feb710b8042e55a4569d6929857578bc1898c22859aebed5e4922",
+      "caution": "Hash at report time. Historical helpers depended on a then-current core.ts; saved effectiveRequest is authoritative."
+    },
+    {
+      "privatePath": "work/native-google/save.ts",
+      "sha256": "78e9684e0b00529db7cc7a5187e329712142e9916a6400a2a975ec3766dedecd",
+      "caution": "Hash at report time. Historical helpers depended on a then-current core.ts; saved effectiveRequest is authoritative."
+    }
+  ]
+}

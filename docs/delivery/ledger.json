@@ -1,0 +1,2452 @@
+{
+  "version": "delivery-ledger.v1",
+  "updated": "2026-09-30",
+  "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
+  "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
+  "statusMeaning": {
+    "merged": "On main. Every path in files and tests must exist and every prerequisite must also be merged.",
+    "in-review": "Complete on a branch with an open pull request; pr names it. Paths are not checked on this branch.",
+    "todo": "Not started. Paths are the plan's intent, not a promise about names.",
+    "removed": "Withdrawn from the design; the reason is in note."
+  },
+  "features": [
+    {
+      "id": "F01",
+      "phase": 0,
+      "lane": "infra",
+      "title": "PGlite test backend selected by YTI_DB=pglite",
+      "spec": "4.7, 9",
+      "status": "merged",
+      "prereqs": [],
+      "files": [
+        "src/server/youtube-intelligence/database.ts",
+        "tests/helpers/db.ts",
+        "package.json"
+      ],
+      "tests": [
+        "tests/pglite.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F02",
+      "phase": 0,
+      "lane": "infra",
+      "title": "Test helpers: route-matched fetch stub, fixture DB builder, frozen-response loader",
+      "spec": "9",
+      "status": "merged",
+      "prereqs": [
+        "F01"
+      ],
+      "files": [
+        "tests/helpers/fetch-stub.ts",
+        "tests/helpers/fixtures.ts",
+        "tests/helpers/frozen.ts",
+        "tests/fixtures/db/baseline.json"
+      ],
+      "tests": [
+        "tests/helpers.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F03",
+      "phase": 0,
+      "lane": "infra",
+      "title": "ModelTransport interface; OpenRouter and Fake transports; transport-agnostic modelCall",
+      "spec": "4.1",
+      "status": "merged",
+      "prereqs": [
+        "F02"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/types.ts",
+        "src/server/youtube-intelligence/transport/openrouter.ts",
+        "src/server/youtube-intelligence/transport/fake.ts",
+        "src/server/youtube-intelligence/transport/index.ts",
+        "src/server/youtube-intelligence/pipeline.ts"
+      ],
+      "tests": [
+        "tests/transport.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F04",
+      "phase": 0,
+      "lane": "registry",
+      "title": "Metrics registry skeleton, UI column manifest, Methodology renderer",
+      "spec": "4.11, 8",
+      "status": "merged",
+      "prereqs": [
+        "F02"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/registry.ts",
+        "src/features/youtube-intelligence/metrics/ui-columns.ts",
+        "src/features/youtube-intelligence/metrics/methodology.ts",
+        "src/features/youtube-intelligence/metrics/context.ts"
+      ],
+      "tests": [
+        "tests/metrics-registry.test.ts"
+      ],
+      "pr": 2,
+      "note": "Built but consumed only by its CI test; no product surface reads the registry until F43/F46.",
+      "planned": true
+    },
+    {
+      "id": "F05",
+      "phase": 0,
+      "lane": "settings",
+      "title": "TeamPreferences and AccountPreferences schemas, env validation, preferences migration",
+      "spec": "6",
+      "status": "merged",
+      "prereqs": [
+        "F01"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/settings.ts",
+        "src/server/youtube-intelligence/research-store.ts",
+        "src/server/youtube-intelligence/env.ts"
+      ],
+      "tests": [
+        "tests/settings.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F06",
+      "phase": 0,
+      "lane": "eval",
+      "title": "Gold set schema, seeded pending cases, offline report and script",
+      "spec": "4.9",
+      "status": "merged",
+      "prereqs": [
+        "F03"
+      ],
+      "files": [
+        "evaluations/gold-set/schema.ts",
+        "evaluations/gold-set/report.ts",
+        "evaluations/gold-set/cases.json",
+        "scripts/gold-set.ts"
+      ],
+      "tests": [
+        "tests/gold-set.test.ts",
+        "tests/gold-validate.test.ts"
+      ],
+      "pr": 2,
+      "note": "Legacy diagnostic with five pending cases. The user removed the fifty human-verified case requirement on 19 September 2026; see standalone-scope.json.",
+      "planned": true
+    },
+    {
+      "id": "F06a",
+      "phase": 0,
+      "lane": "eval",
+      "title": "Draft gold cases from exported runs",
+      "spec": "4.9",
+      "status": "merged",
+      "prereqs": [
+        "F06"
+      ],
+      "files": [
+        "scripts/gold-draft.ts"
+      ],
+      "tests": [
+        "tests/gold-draft.test.ts"
+      ],
+      "note": "Not in the build plan; added to cut the manual effort of handoff A.",
+      "planned": false
+    },
+    {
+      "id": "F07",
+      "phase": 0,
+      "lane": "eval",
+      "title": "VideoConviction benchmark harness",
+      "spec": "-",
+      "status": "removed",
+      "prereqs": [],
+      "files": [],
+      "tests": [],
+      "note": "Removed 17 September 2026 by spec revision 3: no product surface reads its labels.",
+      "planned": true
+    },
+    {
+      "id": "F08",
+      "phase": 0,
+      "lane": "eval",
+      "title": "Promotion gate command with lab.gates thresholds and the phase-0 baseline",
+      "spec": "4.9, 9",
+      "status": "merged",
+      "prereqs": [
+        "F06"
+      ],
+      "files": [
+        "scripts/promotion-gate.ts",
+        "docs/gates/phase-0-baseline.json"
+      ],
+      "tests": [
+        "tests/promotion-gate.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F10",
+      "phase": 1,
+      "lane": "transport",
+      "title": "GoogleNativeTransport with responseSchema, LOW media resolution, countTokens, cached price table",
+      "spec": "4.1, 5",
+      "status": "merged",
+      "prereqs": [
+        "F03"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/google-native.ts",
+        "src/server/youtube-intelligence/transport/prices.ts",
+        "src/server/youtube-intelligence/native-google-core.ts"
+      ],
+      "tests": [
+        "tests/transport.test.ts",
+        "tests/native-google.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F11",
+      "phase": 1,
+      "lane": "transport",
+      "title": "Stage routing from settings, OpenRouter fallback, different-family critic rule",
+      "spec": "4.1, 6.2",
+      "status": "merged",
+      "prereqs": [
+        "F05",
+        "F10"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/index.ts",
+        "src/server/youtube-intelligence/transport/openrouter.ts",
+        "src/features/youtube-intelligence/model-family.ts"
+      ],
+      "tests": [
+        "tests/transport.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F12",
+      "phase": 1,
+      "lane": "evidence",
+      "title": "Pointer evidence: source_span, extraction responseSchema returns ranges, app copies the text",
+      "spec": "4.2",
+      "status": "merged",
+      "prereqs": [
+        "F03"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/contracts.ts",
+        "src/features/youtube-intelligence/evidence-selection.ts",
+        "src/server/youtube-intelligence/schemas/extraction.ts"
+      ],
+      "tests": [
+        "tests/evidence-pointer.test.ts",
+        "tests/evidence-selection.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F13",
+      "phase": 1,
+      "lane": "evidence",
+      "title": "Mentions with sentiment, cited rationale and a resolvable span",
+      "spec": "4.3, 4.13",
+      "status": "merged",
+      "prereqs": [
+        "F12"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/sentiment.ts",
+        "src/features/youtube-intelligence/contracts.ts"
+      ],
+      "tests": [
+        "tests/mentions.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F14",
+      "phase": 1,
+      "lane": "evidence",
+      "title": "Translation stage over copied spans; text_original hash asserted unchanged",
+      "spec": "4.2, 4.19",
+      "status": "merged",
+      "prereqs": [
+        "F12"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/schemas/translation.ts"
+      ],
+      "tests": [
+        "tests/evidence-pointer.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F15",
+      "phase": 1,
+      "lane": "transport",
+      "title": "Batched critique with an explicit context cache; per-claim loop and source-repair removed",
+      "spec": "4.3, 5",
+      "status": "merged",
+      "prereqs": [
+        "F10",
+        "F12"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/pipeline.ts",
+        "src/features/youtube-intelligence/chunking.ts"
+      ],
+      "tests": [
+        "tests/critique.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F16",
+      "phase": 1,
+      "lane": "ledger",
+      "title": "Retry policy keyed by attempt; reserve refuses a second open attempt",
+      "spec": "4.4",
+      "status": "merged",
+      "prereqs": [
+        "F03"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/retry.ts",
+        "src/server/youtube-intelligence/store.ts"
+      ],
+      "tests": [
+        "tests/ledger.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F17",
+      "phase": 1,
+      "lane": "ledger",
+      "title": "Realistic reservations, reconciliation from usage, unknown-outcome hold",
+      "spec": "4.4, 6.2",
+      "status": "merged",
+      "prereqs": [
+        "F16",
+        "F10"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/store.ts",
+        "src/server/youtube-intelligence/reconcile.ts",
+        "src/server/youtube-intelligence/runner.ts"
+      ],
+      "tests": [
+        "tests/ledger.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F17b",
+      "phase": 1,
+      "lane": "ledger",
+      "title": "Record what priced a call, and which stage rejected a mention",
+      "spec": "4.4",
+      "status": "merged",
+      "prereqs": [
+        "F17"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transport/prices.ts"
+      ],
+      "tests": [
+        "tests/ledger.test.ts"
+      ],
+      "note": "Not in the build plan; closes two open items from the phase-1 conformance report.",
+      "planned": false
+    },
+    {
+      "id": "F18",
+      "phase": 1,
+      "lane": "standby",
+      "title": "Supadata standby with explicit modes, batch endpoint, per-vendor circuit breaker",
+      "spec": "4.10",
+      "status": "merged",
+      "prereqs": [
+        "F02"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/transcripts.ts",
+        "src/server/youtube-intelligence/circuit-breaker.ts"
+      ],
+      "tests": [
+        "tests/standby.test.ts",
+        "tests/managed-captions.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F19",
+      "phase": 1,
+      "lane": "evidence",
+      "title": "Prompt v7: pointer output, mentions with sentiment, conviction rubric",
+      "spec": "4.2, 10",
+      "status": "merged",
+      "prereqs": [
+        "F12",
+        "F13"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/prompt-versions.json",
+        "src/server/youtube-intelligence/prompts.ts"
+      ],
+      "tests": [
+        "tests/prompts.test.ts"
+      ],
+      "pr": 2,
+      "note": "Candidate only; promoted through F08, which cannot bind yet.",
+      "planned": true
+    },
+    {
+      "id": "F20",
+      "phase": 1,
+      "lane": "transport",
+      "title": "Retire YouTube.js and the Tapline/BibiGPT adapters; audio review demoted to Lab",
+      "spec": "4.10, 12",
+      "status": "merged",
+      "prereqs": [
+        "F11",
+        "F15"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/audio-review.ts"
+      ],
+      "tests": [
+        "tests/transport.test.ts"
+      ],
+      "pr": 2,
+      "planned": true
+    },
+    {
+      "id": "F21",
+      "phase": 1,
+      "lane": "gate",
+      "title": "Phase-1 gate run (offline, advisory) for v5 and v7",
+      "spec": "9",
+      "status": "merged",
+      "prereqs": [
+        "F08",
+        "F11",
+        "F12",
+        "F13",
+        "F14",
+        "F15",
+        "F16",
+        "F17",
+        "F18",
+        "F19"
+      ],
+      "files": [
+        "docs/gates/phase-1-v5.json",
+        "docs/gates/phase-1-v7.json",
+        "docs/gates/phase-1-summary.md",
+        "docs/gates/phase-1-conformance.md"
+      ],
+      "tests": [
+        "tests/standby.test.ts"
+      ],
+      "pr": 2,
+      "note": "Advisory only: three of four exit criteria are not measurable. See docs/gates/gate-debt.md.",
+      "planned": true
+    },
+    {
+      "id": "F22",
+      "phase": 2,
+      "lane": "data",
+      "title": "Migration runner: numbered SQL, yi_migrations, applied at worker start",
+      "spec": "4.7",
+      "status": "merged",
+      "prereqs": [
+        "F01"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/migrations/run.ts",
+        "src/server/youtube-intelligence/migrations/0001_baseline.sql",
+        "scripts/migrate.ts"
+      ],
+      "tests": [
+        "tests/migrations.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F23",
+      "phase": 2,
+      "lane": "data",
+      "title": "Postgres-only database.ts: node:sqlite gone, $n placeholders, row locks",
+      "spec": "4.7",
+      "status": "merged",
+      "prereqs": [
+        "F22"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/database.ts"
+      ],
+      "tests": [
+        "tests/connection.test.ts",
+        "tests/locks.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F24",
+      "phase": 2,
+      "lane": "data",
+      "title": "Relational tables and repositories; publish writes rows",
+      "spec": "8",
+      "status": "merged",
+      "prereqs": [
+        "F23",
+        "F12",
+        "F13"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/migrations/0003_relational.sql",
+        "src/server/youtube-intelligence/repos/claims.ts",
+        "src/server/youtube-intelligence/repos/mentions.ts"
+      ],
+      "tests": [
+        "tests/relational.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F25",
+      "phase": 2,
+      "lane": "prices",
+      "title": "prices and settlements tables; settlement sweep; the performance document removed",
+      "spec": "4.11, 4.12, 8",
+      "status": "merged",
+      "prereqs": [
+        "F23"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/migrations/0004_prices_settlements.sql",
+        "src/server/youtube-intelligence/repos/prices.ts",
+        "src/server/youtube-intelligence/repos/settlements.ts",
+        "src/server/youtube-intelligence/settlement.ts",
+        "src/server/youtube-intelligence/market.ts"
+      ],
+      "tests": [
+        "tests/repos.test.ts",
+        "tests/invariants.test.ts"
+      ],
+      "planned": true,
+      "note": "Settlement rows carry the call's own entry and exit only: spec 4.12 computes excess against the viewer's benchmark at query time, so scoreCall's SPY coupling is not carried over. market.performance() no longer freezes a scoreboard document; the v1 Performance tab still reads the documents written before this, and is replaced at F46. Invariant 5 (append-only) is now enforced by a database trigger."
+    },
+    {
+      "id": "F26",
+      "phase": 2,
+      "lane": "queue",
+      "title": "Postgres queue and always-on worker: jobs table with FOR UPDATE SKIP LOCKED",
+      "spec": "4.7",
+      "status": "merged",
+      "prereqs": [
+        "F23"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/queue.ts",
+        "src/server/youtube-intelligence/repos/jobs.ts",
+        "src/server/youtube-intelligence/runner.ts",
+        "scripts/worker.ts"
+      ],
+      "tests": [
+        "tests/queue.test.ts",
+        "tests/e2e-parallel.test.ts"
+      ],
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness.",
+      "planned": true,
+      "pr": 6
+    },
+    {
+      "id": "F27",
+      "phase": 2,
+      "lane": "queue",
+      "title": "Restart-safe resume from stage checkpoints and open-attempt rows",
+      "spec": "4.4, 9",
+      "status": "merged",
+      "prereqs": [
+        "F26",
+        "F16"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/pipeline.ts",
+        "src/server/youtube-intelligence/store.ts"
+      ],
+      "tests": [
+        "tests/resume.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F28",
+      "phase": 2,
+      "lane": "seed",
+      "title": "Channel seed: two source lists, dedupe by channel id, default selection",
+      "spec": "4.15",
+      "status": "merged",
+      "prereqs": [
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/seed/lists.ts",
+        "src/server/youtube-intelligence/seed/leapedge.json",
+        "src/server/youtube-intelligence/seed/truealpha.json"
+      ],
+      "tests": [
+        "tests/channel-seed.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F29",
+      "phase": 2,
+      "lane": "seed",
+      "title": "Cost projection and budget meter as registry metrics",
+      "spec": "4.15, 6",
+      "status": "merged",
+      "prereqs": [
+        "F04",
+        "F25",
+        "F28"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/cost.ts",
+        "src/server/youtube-intelligence/cost-metrics.ts"
+      ],
+      "tests": [
+        "tests/cost-metrics.test.ts"
+      ],
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness.",
+      "planned": true,
+      "pr": 6
+    },
+    {
+      "id": "F30",
+      "phase": 2,
+      "lane": "api",
+      "title": "API restructure: dispatch table per resource, routes under /api/youtube-intelligence",
+      "spec": "4.18",
+      "status": "merged",
+      "prereqs": [
+        "F05",
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/actions/index.ts",
+        "src/app/api/youtube-intelligence/[resource]/[action]/route.ts"
+      ],
+      "tests": [
+        "tests/actions.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F31",
+      "phase": 2,
+      "lane": "gate",
+      "title": "Phase-2 gate run: four-video parallel end to end, kill-and-resume, seed dedupe",
+      "spec": "9",
+      "status": "merged",
+      "prereqs": [
+        "F26",
+        "F27",
+        "F28"
+      ],
+      "files": [
+        "docs/gates/phase-2-baseline.json"
+      ],
+      "tests": [
+        "tests/e2e-parallel.test.ts"
+      ],
+      "planned": true,
+      "note": "Real PostgreSQL concurrency and SIGKILL recovery passed 2/2 without skips; conformance report records final integrated verification pending.",
+      "pr": 6
+    },
+    {
+      "id": "F32",
+      "phase": 3,
+      "lane": "asr",
+      "title": "Windowed ASR with videoMetadata offsets at LOW resolution",
+      "spec": "4.5, 5",
+      "status": "merged",
+      "prereqs": [
+        "F10",
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/windowed-asr.ts"
+      ],
+      "tests": [
+        "tests/windowed-asr.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F33",
+      "phase": 3,
+      "lane": "asr",
+      "title": "Agreement scoring: edit-distance core moved into agreement.ts, per-span scores",
+      "spec": "4.5",
+      "status": "merged",
+      "prereqs": [
+        "F32"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/agreement.ts",
+        "evaluations/transcript-accuracy.ts"
+      ],
+      "tests": [
+        "tests/agreement.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F34",
+      "phase": 3,
+      "lane": "asr",
+      "title": "Whisper tie-break: one Supadata generate below threshold, two-of-three rule",
+      "spec": "4.10",
+      "status": "merged",
+      "prereqs": [
+        "F18",
+        "F33"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/windowed-asr.ts"
+      ],
+      "tests": [
+        "tests/windowed-asr.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F35",
+      "phase": 3,
+      "lane": "asr",
+      "title": "Trust ladder L0-L3 with trust_basis; append-only reviews sign L3",
+      "spec": "4.6, 4.18",
+      "status": "merged",
+      "prereqs": [
+        "F33",
+        "F24"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/trust.ts",
+        "src/server/youtube-intelligence/actions/trust.ts"
+      ],
+      "tests": [
+        "tests/trust.test.ts"
+      ],
+      "planned": true,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness.",
+      "pr": 6
+    },
+    {
+      "id": "F36",
+      "phase": 3,
+      "lane": "board",
+      "title": "Leaderboard statistics: Wilson, t, p, BH q, gates; boards by creator and by ticker",
+      "spec": "4.12",
+      "status": "merged",
+      "prereqs": [
+        "F25",
+        "F35",
+        "F04"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/significance.ts",
+        "src/features/youtube-intelligence/leaderboard.ts",
+        "src/features/youtube-intelligence/metrics/registry.ts",
+        "src/server/youtube-intelligence/leaderboard.ts"
+      ],
+      "tests": [
+        "tests/significance.test.ts",
+        "tests/leaderboard.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F37",
+      "phase": 3,
+      "lane": "board",
+      "title": "Changes tab: boardAsOf and diffBoards over a user-selected window",
+      "spec": "4.12",
+      "status": "merged",
+      "prereqs": [
+        "F36"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/leaderboard.ts",
+        "src/features/youtube-intelligence/metrics/registry.ts"
+      ],
+      "tests": [
+        "tests/leaderboard.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F38",
+      "phase": 3,
+      "lane": "board",
+      "title": "Sentiment shift for period P against the prior P, with trust filter",
+      "spec": "4.13",
+      "status": "merged",
+      "prereqs": [
+        "F13",
+        "F24",
+        "F04"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/sentiment-shift.ts"
+      ],
+      "tests": [
+        "tests/sentiment-shift.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F39",
+      "phase": 3,
+      "lane": "automation",
+      "title": "Push notifications: PubSubHubbub verify and notify with HMAC, subscribe/renew job",
+      "spec": "4.8",
+      "status": "merged",
+      "prereqs": [
+        "F26"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/push.ts",
+        "src/app/api/youtube-intelligence/push/route.ts"
+      ],
+      "tests": [
+        "tests/push.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F40",
+      "phase": 3,
+      "lane": "automation",
+      "title": "Batch mode: Google Batch API submit and poll; ledger settles on completion",
+      "spec": "4.8, 5",
+      "status": "merged",
+      "prereqs": [
+        "F10",
+        "F26"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/batch.ts"
+      ],
+      "tests": [
+        "tests/batch.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F41",
+      "phase": 3,
+      "lane": "automation",
+      "title": "Historical replay of Tier-1 uploads from January 2026; Shorts skipped",
+      "spec": "4.16",
+      "status": "merged",
+      "prereqs": [
+        "F40",
+        "F28"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/replay.ts",
+        "src/server/youtube-intelligence/actions/automation.ts"
+      ],
+      "tests": [
+        "tests/replay.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F42",
+      "phase": 3,
+      "lane": "ui-shell",
+      "title": "UI shell: module layout with side panel; ResearchApp split into page components",
+      "spec": "7.1, 7.3",
+      "status": "merged",
+      "prereqs": [
+        "F30"
+      ],
+      "files": [
+        "src/app/youtube-intelligence/layout.tsx",
+        "src/features/youtube-intelligence/ui/Shell.tsx",
+        "src/features/youtube-intelligence/ui/workspace.tsx"
+      ],
+      "tests": [
+        "tests/ui-viewmodel.test.ts"
+      ],
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness. Approved Finradar UI alignment follow-up merged in PR #7 (3c8c2f3) on 20 September 2026 NZ time; see docs/delivery/finradar-ui-alignment.md for desktop/mobile evidence and preserved functionality.",
+      "planned": true,
+      "pr": 6
+    },
+    {
+      "id": "F43",
+      "phase": 3,
+      "lane": "ui-shell",
+      "title": "Shared components: TrustBadge, ConvictionChip, MetricHeader, DataTable, selectors",
+      "spec": "7.2, 7.5",
+      "status": "merged",
+      "prereqs": [
+        "F04",
+        "F42"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/components.tsx"
+      ],
+      "tests": [
+        "tests/ui-viewmodel.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness. Approved Finradar UI alignment follow-up merged in PR #7 (3c8c2f3) on 20 September 2026 NZ time; see docs/delivery/finradar-ui-alignment.md for desktop/mobile evidence and preserved functionality."
+    },
+    {
+      "id": "F44",
+      "phase": 3,
+      "lane": "ui-today",
+      "title": "Today page",
+      "spec": "7.3",
+      "status": "merged",
+      "prereqs": [
+        "F43",
+        "F35",
+        "F38"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Today.tsx"
+      ],
+      "tests": [
+        "tests/ui-viewmodel.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness. Approved Finradar UI alignment follow-up merged in PR #7 (3c8c2f3) on 20 September 2026 NZ time; see docs/delivery/finradar-ui-alignment.md for desktop/mobile evidence and preserved functionality."
+    },
+    {
+      "id": "F45",
+      "phase": 3,
+      "lane": "ui-channels",
+      "title": "Channels page: seed list, cost projection before save, trust distribution",
+      "spec": "4.15, 7.2",
+      "status": "merged",
+      "prereqs": [
+        "F43",
+        "F29"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Channels.tsx"
+      ],
+      "tests": [
+        "tests/ui-viewmodel.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F46",
+      "phase": 3,
+      "lane": "ui-leaderboard",
+      "title": "Leaderboard page with Changes, selectors, CSV export and Methodology",
+      "spec": "4.12, 7.3",
+      "status": "merged",
+      "prereqs": [
+        "F43",
+        "F36",
+        "F37"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Leaderboard.tsx"
+      ],
+      "tests": [
+        "tests/ui-viewmodel.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F47",
+      "phase": 3,
+      "lane": "ui-analysis",
+      "title": "Analysis page: trust strip, claim cards, evidence viewer, play-from",
+      "spec": "7.4",
+      "status": "merged",
+      "prereqs": [
+        "F43",
+        "F35"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Analysis.tsx"
+      ],
+      "tests": [
+        "tests/ui-viewmodel.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F48",
+      "phase": 3,
+      "lane": "ui-lab-settings",
+      "title": "Saved calls, Lab and Settings pages with reset-to-team-default",
+      "spec": "7.2, 7.3",
+      "status": "merged",
+      "prereqs": [
+        "F43",
+        "F08"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Settings.tsx"
+      ],
+      "tests": [
+        "tests/ui-viewmodel.test.ts"
+      ],
+      "planned": true,
+      "pr": 6,
+      "note": "Merged through standalone build PR #6. Historical integrated verification and browser acceptance are recorded with that release; current readiness work is tracked separately under investmentReadiness."
+    },
+    {
+      "id": "F49",
+      "phase": 3,
+      "lane": "gate",
+      "title": "Phase-3 gate run: anchor accuracy, push end to end, registry CI, Changes diff",
+      "spec": "9",
+      "status": "merged",
+      "prereqs": [
+        "F32",
+        "F33",
+        "F34",
+        "F35",
+        "F36",
+        "F37",
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43",
+        "F44",
+        "F45",
+        "F46",
+        "F47",
+        "F48"
+      ],
+      "files": [
+        "docs/gates/phase-3-baseline.json",
+        "docs/delivery/live-comparison-20-20260920.md",
+        "docs/delivery/live-comparison-20-20260920.json"
+      ],
+      "tests": [
+        "tests/leaderboard.test.ts",
+        "tests/push.test.ts"
+      ],
+      "note": "Code merged; acceptance remains open. Approved Finradar UI alignment merged in PR #7 with desktop/mobile checks (finradar-ui-alignment.md). The 20-video live comparison on 20 September completed: local 13 completed, 5 failed, 2 need review; LeapEdge 19 ready, 1 stopped. Repriced model usage US$2.176206, 16 free transcript credits, 16 new LeapEdge submissions plus 4 retained references. Live findings include ASR timing/coverage, synthesis span/truncation recovery, unresolved tickers, stale translation pricing and initial evidence-player timestamp mismatch. See docs/delivery/live-comparison-20-20260920.md. No human gold set or accuracy certification. Batch, HTTPS push and remaining broader browser acceptance stay open.",
+      "planned": false,
+      "pr": 6
+    },
+    {
+      "id": "F50",
+      "phase": 4,
+      "lane": "context",
+      "title": "Context check: dated sources, citation validation, context_checks rows",
+      "spec": "4.14",
+      "status": "todo",
+      "prereqs": [
+        "F25",
+        "F11"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/context-check.ts",
+        "src/server/youtube-intelligence/migrations/0007_context_checks.sql"
+      ],
+      "tests": [
+        "tests/context-check.test.ts"
+      ],
+      "note": "The 50-call window criterion is deferred in docs/gates/gate-debt.md.",
+      "planned": true
+    },
+    {
+      "id": "F51",
+      "phase": 4,
+      "lane": "finradar",
+      "title": "Finradar youtube observation and the briefing-read-v1 adapter",
+      "spec": "4.17",
+      "status": "todo",
+      "prereqs": [
+        "F38",
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/briefing-observation.ts"
+      ],
+      "tests": [
+        "tests/briefing-observation.test.ts"
+      ],
+      "note": "Blocked: starts only after the human supplies the current briefing-read-v1 contract file.",
+      "planned": true
+    },
+    {
+      "id": "F52",
+      "phase": 4,
+      "lane": "corpus",
+      "title": "File Search corpus: transcripts uploaded on publish, cross-video question with cited spans",
+      "spec": "5",
+      "status": "todo",
+      "prereqs": [
+        "F10",
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/corpus.ts"
+      ],
+      "tests": [
+        "tests/corpus.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F53",
+      "phase": 4,
+      "lane": "sharing",
+      "title": "Sharing: indefinite until revoked, optional expiry, immutable snapshot",
+      "spec": "4.18",
+      "status": "todo",
+      "prereqs": [
+        "F24"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/repos/shares.ts",
+        "src/app/share/[token]/page.tsx"
+      ],
+      "tests": [
+        "tests/sharing.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F54",
+      "phase": 4,
+      "lane": "sharing",
+      "title": "Digest per account: Finradar briefing and/or email",
+      "spec": "6.3",
+      "status": "todo",
+      "prereqs": [
+        "F05",
+        "F53"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/briefings.ts",
+        "src/server/youtube-intelligence/email.ts"
+      ],
+      "tests": [
+        "tests/digest.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "F55",
+      "phase": 4,
+      "lane": "gate",
+      "title": "Phase-4 gate run: context sample inside window, edition renders, corpus cites spans",
+      "spec": "9",
+      "status": "todo",
+      "prereqs": [
+        "F50",
+        "F51",
+        "F52",
+        "F53",
+        "F54"
+      ],
+      "files": [
+        "docs/gates/phase-4-baseline.json"
+      ],
+      "tests": [
+        "tests/context-check.test.ts"
+      ],
+      "planned": true
+    },
+    {
+      "id": "G01",
+      "lane": "conventions",
+      "title": "Repository conventions and drift guards",
+      "spec": "-",
+      "status": "merged",
+      "prereqs": [],
+      "files": [
+        "tests/conventions.test.ts"
+      ],
+      "tests": [
+        "tests/conventions.test.ts"
+      ],
+      "phase": null,
+      "planned": false
+    },
+    {
+      "id": "G02",
+      "lane": "invariants",
+      "title": "The eight system invariants",
+      "spec": "-",
+      "status": "merged",
+      "prereqs": [],
+      "files": [
+        "tests/invariants.test.ts"
+      ],
+      "tests": [
+        "tests/invariants.test.ts"
+      ],
+      "phase": null,
+      "planned": false
+    },
+    {
+      "id": "G03",
+      "lane": "ledger",
+      "title": "This ledger and the test that keeps it honest",
+      "spec": "-",
+      "status": "merged",
+      "prereqs": [],
+      "files": [
+        "docs/delivery/ledger.json"
+      ],
+      "tests": [
+        "tests/delivery-ledger.test.ts"
+      ],
+      "phase": null,
+      "planned": false
+    },
+    {
+      "id": "G04",
+      "phase": null,
+      "lane": "harness",
+      "title": "Session boot context and the build-loop skills",
+      "spec": "build plan section 3",
+      "status": "merged",
+      "planned": false,
+      "prereqs": [
+        "G03"
+      ],
+      "files": [
+        "AGENTS.md",
+        ".claude/settings.json",
+        ".claude/hooks/session-start.sh",
+        ".claude/skills/build-feature/SKILL.md",
+        ".claude/skills/phase-gate/SKILL.md"
+      ],
+      "tests": [],
+      "note": "What a fresh session reads before it touches anything."
+    },
+    {
+      "id": "F56",
+      "phase": 5,
+      "lane": "query",
+      "title": "Research query API: paged server-side calls and videos queries with facet counts and set aggregates",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F24",
+        "F30"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/repos/research-query.ts",
+        "src/server/youtube-intelligence/actions/query.ts",
+        "src/server/youtube-intelligence/actions/index.ts",
+        "src/app/api/youtube-intelligence/[resource]/[action]/route.ts"
+      ],
+      "tests": [
+        "tests/research-query.test.ts"
+      ],
+      "note": "query/calls, query/videos, query/series, query/searchIndex: paged, exact totals, facets excluding their own filter, aggregates, CJK-safe ILIKE text match, canonical runs, pinned-only. GET reads accept ?input= JSON (16 kB cap). Offset paging; series buckets in UTC (trading sessions come from F58). No migration (0009 unused). Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F56).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F57",
+      "phase": 5,
+      "lane": "ui-kit",
+      "title": "UX foundations: sentiment palette and split bar, URL filter state, hidden-by-filter notice, grouped sidebar, audit fixes",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/SplitBar.tsx",
+        "src/features/youtube-intelligence/ui/StatTiles.tsx",
+        "src/features/youtube-intelligence/ui/Sparkline.tsx",
+        "src/features/youtube-intelligence/ui/HiddenByFilter.tsx",
+        "src/features/youtube-intelligence/ui/foundations.ts",
+        "src/features/youtube-intelligence/ui/url-state.ts",
+        "src/features/youtube-intelligence/ui/url-state-core.ts",
+        "src/features/youtube-intelligence/ui/navigation.ts",
+        "src/features/youtube-intelligence/ui/layout-hooks.ts",
+        "src/features/youtube-intelligence/ui/Shell.tsx",
+        "src/features/youtube-intelligence/ui/styles/foundations.css",
+        "src/features/youtube-intelligence/stance-sentiment.ts"
+      ],
+      "tests": [
+        "tests/ui-foundations.test.ts"
+      ],
+      "note": "Split bar, tiles, sparkline, URL view state (D4 for the sentiment panel), grouped sidebar (D2), routes with placeholder pages for Report/Search/Trends/Channel, audit fixes (hidden-by-filter, top-aligned main, sticky evidence panel with phone placement, trust names, catalogue provenance behind a disclosure, Settings anchors and sticky save bar). Leaderboard change-window controls still save settings (D4 follow-up). Visual check so far on an empty database; the fixture-data browser check is part of F77. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F57).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F58",
+      "phase": 5,
+      "lane": "time",
+      "title": "US trading-day sessions (ET, holiday-aware) and team time zone setting",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F05"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/trading-day.ts",
+        "src/features/youtube-intelligence/ui/TradingDay.tsx",
+        "src/features/youtube-intelligence/settings.ts",
+        "src/features/youtube-intelligence/ui/pages/Settings.tsx"
+      ],
+      "tests": [
+        "tests/trading-day.test.ts"
+      ],
+      "note": "America/New_York sessions with a static NYSE 2025-2027 closure table (16:00:00 rolls forward, weekends and holidays roll to the next session), labels with assignment-reason hover, market status. Team display time zone (default Pacific/Auckland) in Settings; account digest zone follows it unless set. Leaderboard As-of is a session label. Market status line and non-trading-day date pickers are placed by the page lanes. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F58).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F59",
+      "phase": 5,
+      "lane": "extraction",
+      "title": "Macro, theme and sector views with a fixed vocabulary, instrument label and type filter",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F19",
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/instrument-kind.ts",
+        "src/features/youtube-intelligence/ui/InstrumentLabel.tsx"
+      ],
+      "tests": [
+        "tests/instrument-kind.test.ts"
+      ],
+      "note": "Fixed macro vocabulary and GICS sectors with sub-themes, EN/ZH synonym normalisation that refuses ambiguous phrases, instrumentKind/describeInstrument, InstrumentLabel on ClaimCard and Today. The prompt field macro_theme ships with F60's prompt version; Type filter and aggregation are wired by the Search/Trends/report lanes. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F59).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F60",
+      "phase": 5,
+      "lane": "extraction",
+      "title": "Richer call fields: catalysts, expiry, action, parsed levels; prompt/schema bump; call card v2",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F19",
+        "F43"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/level-parse.ts",
+        "src/features/youtube-intelligence/contracts.ts",
+        "src/features/youtube-intelligence/ui/components.tsx",
+        "src/server/youtube-intelligence/migrations/0010_call_fields.sql",
+        "src/server/youtube-intelligence/prompt-versions.json",
+        "src/server/youtube-intelligence/repos/claims.ts",
+        "src/server/youtube-intelligence/repos/publish.ts",
+        "src/features/youtube-intelligence/call-fields.ts"
+      ],
+      "tests": [
+        "tests/level-parse.test.ts"
+      ],
+      "note": "Reconciled with main's structured-idea prompts (v9/v10, analyst view) before merge: claims keep main's action enum, dated catalysts and level conditions; F60 adds only an expiry (wording plus a stated calendar date) and a macro/sector theme, in opt-in prompt evidence-first.web.v11 (v10 plus those two fields; callFields). The team default prompt is unchanged (v8). Migration 0010 (after main's 0009) adds claims.levels/action/catalysts/expiry_date/expiry_original/macro_theme and mentions.instrument, so Search, export, Saved and call cards read them from rows. Levels are parsed by the app, never the model. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F60).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F61",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Analysis page verdict box, summary paragraph and numbered key points; tabs for calls, brief and details",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F47",
+        "F60"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/verdict.ts",
+        "src/features/youtube-intelligence/ui/Verdict.tsx",
+        "src/features/youtube-intelligence/ui/pages/Analysis.tsx"
+      ],
+      "tests": [
+        "tests/verdict.test.ts"
+      ],
+      "note": "Header, verdict box, summary (derived from stored output, no new model call), numbered key points with seek, Calls/Research brief/Processing details tabs, no-ideas state, VerdictLine export, F74 reused chip and in-page re-run confirmation. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F61).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F62",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Search page: faceted filters with counts, calls and videos results, filtered-set summary, URL state, paging",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Search.tsx",
+        "src/features/youtube-intelligence/ui/search-state.ts",
+        "src/features/youtube-intelligence/ui/use-query-pages.ts",
+        "src/features/youtube-intelligence/ui/focus-trap.ts"
+      ],
+      "tests": [
+        "tests/search-page.test.ts"
+      ],
+      "note": "Faceted Search with URL state, live counts, Calls/Videos tabs with paging, filtered-set summary, chips, hidden-by-trust notice, best-single-removal empty state, phone filter sheet; F59 instrument kinds and F60 has-levels/expires-within filters in the query layer. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F62).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F63",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "CSV and JSON export of calls, videos and daily reports with stated scope",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/export.ts",
+        "src/features/youtube-intelligence/export-columns.ts",
+        "src/features/youtube-intelligence/ui/ExportMenu.tsx"
+      ],
+      "tests": [
+        "tests/export.test.ts"
+      ],
+      "note": "RFC 4180 CSV with formula-injection guard and # footer, JSON with nested evidence, query/export up to 20,000 rows, ExportMenu with stated scope. Wired on Search and Saved (via a claimIds query filter; GET input cap limits one export to roughly 250 saved calls). Channel page and report wiring land with those pages. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F63).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F64",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Daily report page and archive: themes with citations, in-focus ranking, disagreements, sources; Today summary card",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Report.tsx",
+        "src/server/youtube-intelligence/daily-report.ts",
+        "src/server/youtube-intelligence/actions/report.ts",
+        "src/features/youtube-intelligence/report.ts",
+        "src/features/youtube-intelligence/ui/ReportSummaryCard.tsx"
+      ],
+      "tests": [
+        "tests/daily-report.test.ts"
+      ],
+      "note": "Daily report per US session built on the briefing code: deterministic headline and split, cited themes, in-focus ranking with change vs the previous session, disagreements, video briefs (moved from Today, D3), sources with verdict lines, critic-removed points kept visible; archive; session navigation skipping non-trading days; report/session and report/archive reads and the existing synthesis as the spending action. ReportSummaryCard placed on Today. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F64).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F65",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Trends page: headline tiles, weekly sentiment columns, price-aligned call timeline, drill list",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F25"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Trends.tsx",
+        "src/features/youtube-intelligence/trends-series.ts",
+        "src/features/youtube-intelligence/ui/charts.tsx"
+      ],
+      "tests": [
+        "tests/trends-series.test.ts"
+      ],
+      "note": "Trends by ticker, channel or sentiment over session-bucketed series: tiles, weekly/daily bullish-above bearish-below columns, price chart on the same x axis with its own scale and conviction-sized call dots, lane timeline for channel/sentiment views, crosshair tooltip, 24px dot targets, chart/table toggle, drill list with Export. market/priceSeries read. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F65).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F66",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Channel detail page: stats, lean, record vs benchmark, calls over time, analyses list",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F65",
+        "F36"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Channel.tsx",
+        "src/features/youtube-intelligence/channel-page.ts"
+      ],
+      "tests": [
+        "tests/channel-page.test.ts"
+      ],
+      "note": "Channel page with follow/process controls, tiles (videos, calls per video, lean, record vs benchmark using the leaderboard minimum), calls over time, most-discussed instruments, recent analyses with verdict lines, collapsed Processing. Leaderboard creator names link here. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F66).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F67",
+      "phase": 5,
+      "lane": "sources-ui",
+      "title": "Channels list as a sortable table with activity, lean and status; add-channels drawer",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F45",
+        "F56",
+        "F57"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Channels.tsx",
+        "src/server/youtube-intelligence/channel-stats.ts",
+        "src/features/youtube-intelligence/channel-list.ts",
+        "src/features/youtube-intelligence/metrics/channel-columns.ts"
+      ],
+      "tests": [
+        "tests/channel-stats.test.ts"
+      ],
+      "note": "Followed channels first as a registry-backed sortable table (status, last video, 7-day count, top instrument, lean, record), sort presets, filter, cards on phone, Add channels drawer holding Follow/Discover/catalogue/cost preview, status chip replacing the pseudo-button, silent-channel flag. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F67).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F68",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Watchlist: pinned and mentioned-today tickers with sparkline, 1-day change and divergence flag",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F25",
+        "F57"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/Watchlist.tsx",
+        "src/features/youtube-intelligence/ui/PinButton.tsx",
+        "src/features/youtube-intelligence/watchlist.ts",
+        "src/server/youtube-intelligence/watchlist.ts"
+      ],
+      "tests": [
+        "tests/watchlist.test.ts"
+      ],
+      "note": "Today rail watchlist with Pinned and Mentioned today tabs, 20-session sparkline, signed 1-day change in ink, mention sentiment, close date, creators-vs-price divergence flag, No price state, team PinButton, phone tile scroller. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F68).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F69",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "24-hour trending window on the sentiment panel, session-aligned, as view state",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F38",
+        "F58"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/metrics/sentiment-window.ts",
+        "src/features/youtube-intelligence/metrics/sentiment-shift.ts",
+        "src/features/youtube-intelligence/ui/SentimentPanel.tsx"
+      ],
+      "tests": [
+        "tests/sentiment-window.test.ts"
+      ],
+      "note": "24h/7d/14d/30d segments as URL view state; 24h runs from the previous US close (holiday and DST aware) against the session before; rows with split bar, creators and change; window-named empty state. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F69).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F70",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Per-browser unread markers and new-since-last-visit group",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F44"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/unread.ts",
+        "src/features/youtube-intelligence/ui/UnreadDot.tsx"
+      ],
+      "tests": [
+        "tests/unread.test.ts"
+      ],
+      "note": "Per-browser seen ids and last visit (try/catch; blocked storage shows nothing), New since group with Mark all as seen on Today, N new beside Today in the sidebar with Tracked on this browser. Also Today's optional Levels column (F60). Unread dots on channel pages and Search videos wired with those pages. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F70).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F71",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Follow-channel prompt with cost projection on analyses from unfollowed channels",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F45",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/follow-prompt.ts",
+        "src/features/youtube-intelligence/ui/FollowPrompt.tsx"
+      ],
+      "tests": [
+        "tests/follow-prompt.test.ts"
+      ],
+      "note": "Banner on analyses from unfollowed channels with uploads/week, projected monthly cost and remaining budget; discover-only when over budget; Not now hides it for 30 days on this browser. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F71).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F72",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Live step progress while running and a general Retry that resumes from checkpoints",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F27",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/progress-steps.ts",
+        "src/features/youtube-intelligence/ui/StepProgress.tsx",
+        "src/server/youtube-intelligence/run-progress.ts",
+        "src/server/youtube-intelligence/actions/runs.ts"
+      ],
+      "tests": [
+        "tests/progress-steps.test.ts"
+      ],
+      "note": "Five plain steps shown only while queued/running (D1), typical duration and 3x slow notice, failure banner with Retry from the stopped step (resume without re-reserving completed steps), Transcribe audio instead, Retry the check; mini progress and Retry on Today activity rows. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F72).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F73",
+      "phase": 5,
+      "lane": "analysis-ui",
+      "title": "Per-call token, cache, time and cost table in Processing details",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F17b",
+        "F47"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/call-usage.ts",
+        "src/features/youtube-intelligence/ui/CallUsageTable.tsx",
+        "src/features/youtube-intelligence/ui/pages/Lab.tsx"
+      ],
+      "tests": [
+        "tests/call-usage.test.ts"
+      ],
+      "note": "Row per paid model call (retries marked) with input/cached/output tokens, time and cost plus totals; raw JSON behind Show raw data; Lab per-step aggregate; registry-backed headings. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F73).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F74",
+      "phase": 5,
+      "lane": "queue",
+      "title": "Reuse a completed run for the same video and pipeline version; explicit paid re-run",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F26"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/reuse.ts",
+        "src/server/youtube-intelligence/research-store.ts",
+        "src/server/youtube-intelligence/actions/runs.ts"
+      ],
+      "tests": [
+        "tests/run-reuse.test.ts"
+      ],
+      "note": "Completed canonical run with the same extraction/critic/transcription models, prompt, pipeline version and windowed-ASR setting is reused with no job or spend; force queues a fresh run recorded as rerun_requested. Legacy /api/intelligence/runs submissions never reuse (explicit model/transcript requests). Today shows the reuse notice; re-run confirmation and the Reused header chip land with the analysis UI (F61/F72). Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F74).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F75",
+      "phase": 5,
+      "lane": "today-ui",
+      "title": "Saved calls: status tabs with counts, grouping by session, call card v2, permanent delete",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F48",
+        "F60",
+        "F58"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/pages/Saved.tsx",
+        "src/features/youtube-intelligence/saved-calls.ts",
+        "src/server/youtube-intelligence/saved-calls.ts"
+      ],
+      "tests": [
+        "tests/saved-calls.test.ts"
+      ],
+      "note": "Open/Reviewed/Removed/All tabs with counts (URL state), session grouping by video publish date (else saved date, stated on hover), expiring-soonest sort, card fields, since-saved price change from stored prices, delete only for Removed calls (research/deleteIdea, row-locked, evented). Export slot wired when F63 merges. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F75).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F76",
+      "phase": 5,
+      "lane": "research-ui",
+      "title": "Quick search palette (Cmd/Ctrl+K) over instruments, channels, videos and actions",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F62"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/ui/CommandPalette.tsx",
+        "src/features/youtube-intelligence/ui/command-palette.ts"
+      ],
+      "tests": [
+        "tests/command-palette.test.ts"
+      ],
+      "note": "Cmd/Ctrl+K palette over instruments, channels, videos, pages and an analyse action for pasted links; CJK substring matching; recent searches; combobox ARIA. Requirements: docs/delivery/leapedge-gap-ux-proposals-20260929.md (F76).",
+      "planned": true,
+      "pr": 19
+    },
+    {
+      "id": "F77",
+      "phase": 5,
+      "lane": "gate",
+      "title": "Phase-5 gate run: browser and visual matrix for the LeapEdge-gap surfaces, registry CI, conformance",
+      "spec": "7.6",
+      "status": "merged",
+      "prereqs": [
+        "F56",
+        "F57",
+        "F58",
+        "F59",
+        "F60",
+        "F61",
+        "F62",
+        "F63",
+        "F64",
+        "F65",
+        "F66",
+        "F67",
+        "F68",
+        "F69",
+        "F70",
+        "F71",
+        "F72",
+        "F73",
+        "F74",
+        "F75",
+        "F76"
+      ],
+      "files": [
+        "docs/gates/phase-5-conformance.md",
+        "docs/gates/phase-5-baseline.json",
+        "scripts/seed-phase5.ts"
+      ],
+      "tests": [
+        "tests/phase-5-gate.test.ts"
+      ],
+      "note": "Pre-merge gate on the PR #19 head in fixture mode: 112/112 browser matrix cells (28 surfaces x 1440/390 x light/dark), 11/11 flows, no page-wide overflow at 390, no application console errors; 14 defects fixed during and after the gate. Loading states deferred (gate-debt.md). No live-provider run or LeapEdge comparison; the offline promotion gate measured nothing (binding.total 0). A human approves the gate before merge.",
+      "planned": true,
+      "pr": 19
+    }
+  ],
+  "executionScope": "docs/delivery/standalone-scope.json",
+  "recovery": {
+    "status": "complete",
+    "pr": 8,
+    "baseline": "docs/delivery/live-comparison-20-20260920.md",
+    "scope": "Recover the seven failed/review cases; no new LeapEdge calls; retain baseline and separate retry costs.",
+    "tests": [
+      "tests/recovery.test.ts",
+      "tests/windowed-asr.test.ts",
+      "tests/evidence-pointer.test.ts",
+      "tests/resume.test.ts",
+      "tests/ui-viewmodel.test.ts",
+      "tests/runs-api.test.ts"
+    ],
+    "note": "Seven stopped runs and four quality checks completed; long podcast has no uncovered interval over three seconds. No new LeapEdge calls. Additional API usage $2.75417070. Both full suites: 417 pass, one existing skip, zero failures; typecheck/build pass, offline gate advisory-only. Desktop/mobile browser checks passed, including zero unresolved dashboard runs and retained recovered history. PR #8 records merge/deployment; Mac runtime update preserves its database and paused queue. PR #8 merged after both GitHub verify jobs and Vercel preview passed. Installed Mac worker/web updated and healthy; queue remains paused.",
+    "report": "docs/archive/reviews/recovery-20260920.md",
+    "results": "docs/archive/reviews/recovery-20260920.json",
+    "mergeCommit": "b27c9034ff1f2c143106cc91513a4e9a1f9fd2a2",
+    "hostedFollowUp": "Access code creation explicitly approved and completed. Production login 303, authenticated status/runs 200, browser login successful. Hosted database has zero runs and no worker/model credentials; local comparison/Mac runtime remain separate. See research review for operational follow-up."
+  },
+  "researchReview": {
+    "status": "implemented-external-verification-pending",
+    "report": "docs/archive/reviews/investment-research-review-20260920.md",
+    "scope": "20 retained cases, 19 usable saved LeapEdge references; approved research implementation; zero new LeapEdge calls",
+    "preferences": {
+      "horizons": "equal tactical and fundamental",
+      "timeContext": "video-date plus separate current update",
+      "ranking": "general cross-company material developments"
+    },
+    "implementation": {
+      "branch": "codex/evidence-led-research",
+      "scope": "User approved the complete research review on 20 September: temporal context, attributed evidence, whole-video briefs, dated external verification, novelty/materiality UI and retained-case verification. This explicitly extends standalone research beyond the earlier phase scope, but excludes Finradar integration.",
+      "stages": [
+        "temporal-and-evidence-contracts",
+        "synthesis-and-verification",
+        "research-ui",
+        "retained-case-and-browser-acceptance"
+      ],
+      "status": "merged",
+      "pr": 9,
+      "report": "docs/archive/reviews/research-implementation-20260920.md",
+      "results": "docs/archive/reviews/research-implementation-20260920.json",
+      "checks": {
+        "unitAndIntegration": "436 pass, 1 pre-existing skip, 0 failures",
+        "pglite": "436 pass, 1 pre-existing skip, 0 failures",
+        "typecheck": "pass",
+        "productionBuild": "pass",
+        "offlinePromotion": "pass; legacy advisory-only diagnostic",
+        "browser": "desktop and 390x844 mobile; evidence, focus, transcript search, horizon/time controls and timestamp handoff verified",
+        "github": "Both verify jobs passed; Vercel preview passed before merge",
+        "postgres": "Disposable real-Postgres concurrency, deduplication, budgeting, immutable documents and lease fencing passed"
+      },
+      "liveJobs": {
+        "completed": 66,
+        "total": 66,
+        "recordedIncrementalUsd": 5.852807,
+        "newLeapEdgeRequests": 0
+      },
+      "remaining": [
+        "Exa is configured and live retrieval is exercised in the 27 September readiness evaluation; assertion-level quality and useful coverage remain separate acceptance checks.",
+        "Comprehensive point-in-time security master and independently established speaker identities are not supplied; ambiguous identities stay qualified",
+        "Hosted database/worker/provider activation remains separate; Mac automatic queue stays paused"
+      ],
+      "files": [
+        "src/features/youtube-intelligence/research-brief.ts",
+        "src/features/youtube-intelligence/ui/ResearchBrief.tsx",
+        "src/server/youtube-intelligence/research-pipeline.ts",
+        "src/server/youtube-intelligence/research-sources.ts"
+      ],
+      "tests": [
+        "tests/research-brief.test.ts",
+        "tests/research-pipeline.test.ts",
+        "tests/research-sources.test.ts"
+      ],
+      "operations": "docs/delivery/worker-operations.md",
+      "mergeCommit": "8cda21f2a39550b8ade0ebfdcfe6d21d280a58ba",
+      "mergedAt": "2026-09-19T23:20:59Z",
+      "macRuntime": {
+        "installedCodeCommit": "18c7ad6",
+        "webStatus": 200,
+        "workerOnline": true,
+        "promptVersion": "evidence-first.web.v8",
+        "automaticQueuePaused": true,
+        "databaseAndSecretsPreserved": true
+      }
+    }
+  },
+  "performance": {
+    "status": "merged",
+    "scope": [
+      "stage-timings",
+      "queue-priority",
+      "bounded-parallel-extraction-search",
+      "incremental-ui"
+    ],
+    "baselineCommit": "140d6b2",
+    "report": "docs/archive/reviews/performance-plan-20260920.md",
+    "targetVideosPerDay": 1000,
+    "targetBurst": 100,
+    "pr": 10,
+    "implementationComplete": true,
+    "verification": {
+      "automated": {
+        "defaultTests": {
+          "passed": 449,
+          "failed": 0,
+          "skipped": 1
+        },
+        "pgliteTests": {
+          "passed": 449,
+          "failed": 0,
+          "skipped": 1
+        },
+        "typecheck": "passed",
+        "productionBuild": "passed",
+        "offlineGate": "passed, advisory-only",
+        "realPostgres": "passed: integrity, shared capacity, restart/fencing/replay",
+        "githubCI": "both PR checks passed",
+        "productionDependencyAudit": "zero vulnerabilities"
+      },
+      "desktopBrowser": "passed: pagination, long report, evidence drawer and completion display",
+      "mobileBrowser": "passed: production 390x844, no horizontal overflow, navigation, horizon filter, evidence drawer, Escape/focus restoration",
+      "liveProviderBenchmark": "four production recovery analyses and four briefs completed; observed timing/cost, not a controlled speedup or capacity certification",
+      "newLeapEdgeRequests": 0
+    },
+    "migrationVersion": 7,
+    "mergeCommit": "2210320884456760bd99e54c7a83c750f463ccad",
+    "mergedAt": "2026-09-20T03:41:27Z",
+    "macRuntime": {
+      "installedCodeCommit": "7b609a219b7a034e44b808ebb36a762e5217a84d",
+      "schemaVersion": 7,
+      "webStatus": 200,
+      "workerOnline": true,
+      "automaticQueuePaused": true,
+      "databaseAndSecretsPreserved": true
+    },
+    "vercel": {
+      "deployment": "https://youtube-intel-riio8gh5x-joshu-ai.vercel.app",
+      "state": "READY",
+      "schemaVersion": 7,
+      "workerActivation": "separate; not certified by web deployment"
+    },
+    "liveSample": {
+      "status": "completed-with-quality-findings",
+      "attemptedVideos": 4,
+      "completedVideos": 4,
+      "completedBriefs": 4,
+      "recordedModelAndSearchUsd": 1.54788125,
+      "recordedSearchUsd": 0.112,
+      "additionalCaptionCredits": 0,
+      "earlierCaptionCredits": 3,
+      "newLeapEdgeRequests": 0,
+      "report": "docs/archive/reviews/production-resume-20260920.md",
+      "initialBlockedAttempt": "docs/archive/reviews/production-sample-20260920.md",
+      "remaining": [
+        "Credo under-170 explicit preference missed despite identical transcript",
+        "Long-podcast main brief omits some covered company topics",
+        "External retrieval accepted no factual corroboration or dated current updates",
+        "Consolidate repeated position-management calls"
+      ],
+      "queuePaused": true,
+      "concurrencyRestored": 1
+    },
+    "targetNote": "28 September 2026: 1,000/day is a design ceiling; working volume ~50 videos/day."
+  },
+  "evidenceEfficiency": {
+    "status": "merged",
+    "baselineCommit": "a949a8e",
+    "report": "docs/archive/reviews/evidence-efficiency-20260920.md",
+    "sequence": [
+      1,
+      2,
+      5,
+      3,
+      4,
+      6,
+      7
+    ],
+    "productionPromoted": true,
+    "qualityGate": "paired frozen-input measurements plus source-backed review; no quality claim from counts",
+    "newLeapEdgeRequests": 0,
+    "pr": 11,
+    "implemented": [
+      1,
+      2,
+      5,
+      3,
+      4,
+      6,
+      7
+    ],
+    "rollout": "Installed on Mac: conservative profile, capacity 3, automatic intake paused, speculative overlap disabled",
+    "reports": [
+      "docs/archive/reviews/optimization-stage-20260920.md",
+      "docs/archive/reviews/optimization-full-quality-20260920.md",
+      "docs/archive/reviews/optimization-harness-notes-20260920.md"
+    ],
+    "verification": {
+      "nodeTests": "484 passed, 1 skipped",
+      "typecheck": "passed",
+      "productionBuild": "passed",
+      "realPostgres": "passed: claims, deduplication, ledger reservations, fencing, frozen documents",
+      "offlineGate": "passed, advisory-only",
+      "liveComparison": "four frozen-source baseline/candidate analyses and briefs; four brief-only coverage followups completed, targeted source findings resolved or explicitly bounded",
+      "queueFixture": {
+        "jobs": 100,
+        "beforeSeconds": 73.078899,
+        "afterSeconds": 36.154157,
+        "beforeCapacity": 1,
+        "afterCapacity": 3,
+        "liveCapacityCertified": false
+      },
+      "pgliteTests": "484 passed, 1 skipped",
+      "desktopBrowser": "passed: final theme, equal horizons, retained revision and confidence display",
+      "mobileBrowser": "passed at 390x844: no horizontal overflow, navigation, horizon filter, quote/hash drill-down, Escape/focus, transcript search and timestamp target",
+      "githubCI": "both PR verification jobs passed; Vercel preview ready"
+    },
+    "confirmedExperimentCostUsd": 3.895488925,
+    "briefFollowupCostUsd": 0.50987525,
+    "mergeCommit": "b82ff7a7afc1f2da84f707cc1af518a1bd769013",
+    "macRuntime": {
+      "at": "2026-09-20T05:42:33.258Z",
+      "revision": "b82ff7a7afc1f2da84f707cc1af518a1bd769013",
+      "profile": "conservative",
+      "queuePaused": true,
+      "schema": 7,
+      "workerHeartbeatAgeSeconds": 0.043,
+      "requests": [
+        {
+          "path": "/youtube-intelligence/today",
+          "status": 200,
+          "seconds": 0.10611675,
+          "bytes": 14119
+        },
+        {
+          "path": "/api/intelligence/status",
+          "status": 200,
+          "seconds": 0.02993312500000002,
+          "bytes": 215
+        },
+        {
+          "path": "/api/intelligence/activity",
+          "status": 200,
+          "seconds": 0.002532291999999984,
+          "bytes": 176
+        },
+        {
+          "path": "/api/youtube-intelligence/research/snapshot",
+          "status": 200,
+          "seconds": 0.10939808399999998,
+          "bytes": 3311891
+        }
+      ]
+    },
+    "experimentalDisabled": [
+      "speculativeResearch"
+    ],
+    "remainingLimits": [
+      "No final end-to-end speedup claim after coverage repair",
+      "Four-video source review is not universal quality certification",
+      "Live provider quota and 1,000-video/day capacity not certified",
+      "Cache/overlap fleet-wide savings unmeasured"
+    ]
+  },
+  "operationalEfficiency": {
+    "status": "merged",
+    "pr": 12,
+    "features": [
+      3,
+      4,
+      6,
+      7
+    ],
+    "report": "docs/archive/reviews/operational-efficiency-20260920.md",
+    "releaseChecklist": "docs/delivery/release-checklist.md",
+    "baselineCommit": "e71ca3d",
+    "macDeployed": true,
+    "vercelDeployed": true,
+    "newLeapEdgeRequests": 0,
+    "measurement": "Completed four frozen-source comparisons; baseline 3 briefs/1 incomplete audit, overlap4 briefs; quality parity not established",
+    "qualityPolicy": "Preserve exact accepted evidence, independent critique, audit, point-in-time separation; hold overlap off unless measured benefit and source-backed review support rollout",
+    "profileSetting": "Workspace processing.efficiencyProfile dropdown: deployment-default, off, conservative, experimental-overlap; frozen for new runs",
+    "browserStatus": "Deferred at user request while away from Mac; automatic approval review blocked stale target inspection",
+    "vercelEnvironment": "User-approved conservative Production default deployed without downloading secrets",
+    "verification": {
+      "tests": "496 passed, 1 skipped in each database mode",
+      "typecheck": "passed",
+      "build": "passed",
+      "realPostgres": "passed",
+      "offlineGate": "advisory-only",
+      "profileHTTP": "four save/reloads and invalid-profile rejection passed in isolated database",
+      "browser": "deferred at user request",
+      "githubCI": "both PR verification jobs and Vercel preview passed"
+    },
+    "confirmedExperimentCostUsd": 2.87606825,
+    "overlapDecision": "Remain disabled by default: quality parity not established",
+    "liveBriefs": {
+      "beforeCompleted": 3,
+      "beforeFailed": 1,
+      "afterCompleted": 4
+    },
+    "reports": [
+      "docs/archive/reviews/operational-metrics-20260920.json",
+      "docs/archive/reviews/operational-quality-20260920.md",
+      "docs/archive/reviews/admission-validation-20260920.md",
+      "docs/archive/reviews/cache-validation-20260920.md"
+    ],
+    "profilePersistence": "Explicit Standard disabled value survives JSON persistence and changed-default re-admission; regression test passed",
+    "mergeCommit": "d39e09dfe113473e53b3a3a70ebf5df4a61586ea",
+    "macRuntime": {
+      "at": "2026-09-20T06:16:51.960Z",
+      "revision": "d39e09dfe113473e53b3a3a70ebf5df4a61586ea",
+      "profile": "conservative",
+      "queuePaused": true,
+      "schema": 7,
+      "workerHeartbeatAgeSeconds": 0.021,
+      "requests": [
+        {
+          "path": "/youtube-intelligence/today",
+          "status": 200,
+          "seconds": 0.13687991700000002,
+          "bytes": 14119
+        },
+        {
+          "path": "/youtube-intelligence/settings",
+          "status": 200,
+          "seconds": 0.010713209000000007,
+          "bytes": 14108
+        },
+        {
+          "path": "/youtube-intelligence/processing-profiles",
+          "status": 200,
+          "seconds": 0.009114083999999991,
+          "bytes": 21083
+        },
+        {
+          "path": "/api/intelligence/status",
+          "status": 200,
+          "seconds": 0.02752741599999999,
+          "bytes": 215
+        },
+        {
+          "path": "/api/intelligence/activity",
+          "status": 200,
+          "seconds": 0.003008499999999998,
+          "bytes": 176
+        },
+        {
+          "path": "/api/youtube-intelligence/research/snapshot",
+          "status": 200,
+          "seconds": 0.127467334,
+          "bytes": 3312035
+        }
+      ]
+    },
+    "vercel": {
+      "releaseRevision": "d39e09dfe113473e53b3a3a70ebf5df4a61586ea",
+      "url": "https://youtube-intel-2t39tnn4l-joshu-ai.vercel.app",
+      "productionAlias": "https://youtube-intel-delta.vercel.app",
+      "state": "READY",
+      "profileDefault": "conservative",
+      "authenticatedSmoke": "pending workspace session; public access boundary verified",
+      "errorLogRows": 0,
+      "workerActivation": "separate Neon database; Mac local heartbeat does not certify Vercel processing"
+    }
+  },
+  "investmentReadiness": {
+    "status": "closed",
+    "scope": "Priority 1 and 2 authorised 27 September 2026; no new LeapEdge calls or Finradar integration",
+    "audit": "docs/archive/reviews/adversarial-readiness-20260927.md",
+    "implementation": "implemented-under-validation",
+    "validation": "Final source-safeguard follow-up:695 tests/694pass/1existing skip/0failures in each default and PGlite full suite in the real Git checkout. Typecheck and production build pass; offline gate advisory-only. Nested optional billing-failure containment regression passes. Actual retained-output replay affects4/83published sentences across5inspected briefs, preserving input hashes; this is not a semantic coverage or new live quality pass. Billingcontinuationexportfollow-up:bothfullsuitesrerun695tests/694pass/1skip/0failures;typecheck/buildpass;comparisonmanifestvalid274observations/231uniqueruns/0unsettledcalls,offlinegateadvisory-only. Incrementalauditrecoverycostscopeexplicit;priorHsnapshotsunchanged.",
+    "operations": "Cloud-only production required by user; topology/cost approval and deployment acceptance pending. Local previews are development evidence only; no release installed.",
+    "lanes": [
+      "safe-recovery-and-long-source-coverage",
+      "assertion-support-and-research-readiness",
+      "retained-twenty-case-comparison",
+      "decision-focused-ui",
+      "production-path-verification"
+    ],
+    "pr": 13,
+    "report": "docs/archive/reviews/readiness-recovery-results-20260927.md",
+    "browser": "Final integrated read-only build on3026 against retained liveH data: unsupported CAGR warning above unchanged historical model critique; current source-check badge takes precedence, original label and quotes retained. Desktop and390x844mobile inspected, document390px/drawer374px, Escape restores originating evidence-button focus. Screenshots source-guard-final-desktop.png and source-guard-final-mobile.png. Earlier failed-attempt/quantity checks remain in prior report. No production-path acceptance. Fundedcontinuation:3027H20partialresult/evidencedrawer/currentwarninghierarchyandEscapefocuspass;3028isolatedH19recoverypartial51/55/sourcequoteinspection,desktopand390x844mobile(document390/drawer374),Escaperestoresfocus. H19previewdoesnotimportnormalizedclaimtablesororiginalresearchrow;sourceclaimcounts/one-attemptdisplayarenotproductionmigrationevidence. Screenshotsbilling-recovery-h20-*andbilling-recovery-h19-*.",
+    "liveEvaluation": "CandidateA ddf1006 finished20 attempted/12published/8failed, all failures optional-supplement-size errors. US$7.92614625 total ledger =6.38614625 models+1.54 external search; no open holds. CandidateB68eda4d paused after one brief with no duplicate sentences but disputed-label failure. Corrected structured comparability, retention and recall code under validation. No new LeapEdge calls. Candidate C 9589119 paused after first brief: duplicates/comparability improved but three typed 100x rate-unit errors. 110.436s stage execution, $0.306253 total ($0.236253 models + $0.07 search), no open holds. Source-based quantity checks now implemented; candidate D pending. Failed candidates preserved. Candidate D8b4096c failed first-case quality gate: BOJ unit correct, both Fed rate figures/approximate4.1 omitted upstream, forward yen monitoring omitted from accepted evidence downstream. $0.27890775 settled; no open holds. One published/19notstarted, no new LeapEdge calls. Proposition-level and source-window reconciliation follow-up under validation. Candidate E582bbee stopped after3sourceHTTP400failures+1partial/16notstarted/0briefs, $0.359941 models/0search/noholds. Nested JSONSchema metadata leaked into native responseSchema; fixed at composition boundary and wire-tested. First-result wrapper also fixed to stop on source failures. E retained; quality unassessed. Candidate F e96111b:1 published/19 not started, $0.38761045 total ($0.31761045 models+$0.07 search), no holds,162.920s frozen-source wall. All173 cues processed but only1/5 windows accounted; Fed/CPI context explicitly excluded as standard macro/no stance. Partial warnings truthful, not quality pass. Candidate G corrects materiality and independently re-audits corrected rejected statements; all prior evidence retained. Candidate G8b679df finished20attempted:9published/11failed, US$12.37598425 settled=11.11598425models+1.26search, noholds. Cases5/12support schema,11output limit,13–20HTTP402. H4f57ed1:3research-only audit failures recovered, $7.214854 settled, partialcoverage persists. Separate8-case frozen-source replay endedpaused:6completed,1needs_review with retained19-sentence original brief after optionalcriticHTTP402,1partial source-complete/research-unfinished. $9.22663450 settled, noholds. CombinednewHcost$16.44148850;9completed+1needs_review+1partial, not a20-case pass. Google recovered; OpenRouter critic spending constraint awaits user action. Controller nested-account containment corrected after measuredH run; originals unchanged. Selected source review still finds conditional-margin, subject association, contract qualification, option-role/expiry and coverage failures. No production release. Later funded continuation: exact174-file4f57ed1 restore resumedH20, adding122.513stage seconds/$0.335462; H8nowfinished$9.56209650 withoriginalH19needs_reviewretained. SeparateH19auditcheckpointrecoveryexecutedonly4unfinishedcriticjobs,71.405s/$0.210954;25sentences,partial51/55,oldbriefand4completedjobsunchanged. All11selectedHcasesnowhavecompletedrecoveryoutput;combinedH$16.98790450,noholds. Addedspend$0.546416. Billinginterruptionsresolved,butH20reversesgold/silverrelationandomitsconditions;H19newadditionoverstatesabsenceofcorrections. Qualitygatefails;noLEcalls/productionrelease. Priorc8ff37fCIandpreviewgreen.",
+    "longVideo": "Two fresh forced-ASR trials of3920s source:300s windows271.737s/$0.592134;120s windows304.936s/$0.52072575. Both finished with no open holds. Selected duplicate/timestamp density defects improved; ownership wording still differs from captions. No semantic-fidelity pass or causal speed claim. See long-asr-fidelity-20260927.md. Gfullpipeline failed mandatoryaudit16koutput cap with101items; new checkpointed1verdict+13coveragebatch plan fixture passes, livequality/fidelity acceptance pending. H4f57ed1 research-only recovery completed15initial+14supplemental batches over101IDs in855.533stage seconds/$3.13389650;24publishedsentences, partial37/101coverage. Faster or semantically complete output is not established; CAGR/attribution safeguards subsequently validated offline.",
+    "closedNote": "28 September 2026: closed without meeting the quality gate. Default path moves to source-faithful briefs; web research becomes on-demand. See docs/delivery/current-state.md."
+  },
+  "targetedAuditExperiment": {
+    "status": "parked",
+    "pr": 13,
+    "baselineRevision": "e6847e1fab0297fe9d73de8a50be37228dbb6922",
+    "checklist": "docs/archive/reviews/targeted-audit-experiment-checklist.md",
+    "defaultPipeline": "current",
+    "promotionApproved": false,
+    "qualityGate": "Not evaluated; all predefined quality, reliability, timing, cost, UI and cloud gates plus user approval required before changing default.",
+    "scope": "Experimental targeted supplemental audit, retained legacy implementation and user settings selection; paired 20-video evaluation planned. No new LeapEdge calls.",
+    "verification": {
+      "implementation": "Current and experimental settings, frozen per-run identity, targeted supplemental coverage audit, legacy checkpoint compatibility and nonspending paired-evaluation gate implemented.",
+      "pairedLiveEvaluation": "not-started",
+      "cloudAcceptance": "User explicitly selected Vercel + Neon only; Google migration cancelled. Vercel-hosted durable worker design pending implementation/acceptance. Google APIs and empty image registry were created; no application/database deployed or credentials transferred.",
+      "browser": "Temporary isolated fixture preview approved. Desktop save/reload and reset-to-current verified; explanation visually inspected at desktop and390px mobile. Run identity/drilldown/cloud checks remain pending.",
+      "targetedTests": "47 cloud/runner/source-review/locks/convention checks passed with zero skips; full integrated rerun pending.",
+      "build": "passed",
+      "typecheck": "passed",
+      "offlineGate": "advisory-only",
+      "paidCalls": 0,
+      "fullSuites": "Expanded checkpoint773tests:772pass/1existing skip/0fail each (234.530s default,235.486s PGlite), before cancelled wake-hook removal and final documentation."
+    },
+    "report": "docs/archive/reviews/targeted-audit-implementation-20260927.md",
+    "inputReadiness": "docs/archive/reviews/targeted-audit-input-readiness-20260927.md",
+    "limitations": [
+      "Initial experimental audits split short drafts into bounded jobs and may cost more.",
+      "Impact classification still depends on model judgment; indirect relationships need source-backed evaluation.",
+      "All20 retained transcript hashes match, but audio completeness is unverified; cases2/3 timestamp coverage incomplete/unknown and18donors retain source-recall warnings.",
+      "No live before/after performance or quality claim. Portable paired cloud runner and export guards implemented; paid execution remains pending cloud setup.",
+      "Research audit sees retained evidence inventory, not every source segment. Case14 IDIQ qualifier is absent; unchanged-inventory experiment cannot claim this defect recovered."
+    ],
+    "hostingDecision": {
+      "providers": [
+        "Vercel",
+        "Neon"
+      ],
+      "localProductionWorker": false,
+      "googleMigration": "cancelled by user",
+      "proposedWorker": "Selected by user: Vercel Workflows executing bounded Vercel Function steps; Neon remains database"
+    },
+    "handoff": "docs/archive/reviews/2026-09-27-claude-handoff.md",
+    "parkedNote": "28 September 2026: parked. Paired runner, source-review manifest and experiment schema archived (docs/archive/targeted-audit/); selector and pipeline code retained. Superseded by pipeline v3 direction in docs/delivery/current-state.md."
+  },
+  "direction": "docs/delivery/current-state.md",
+  "cleanup": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Removed cancelled Google Cloud preparation (Dockerfile, deploy/cloud, cloud-worker-launcher), targeted-audit paired runner and experiment schema, one-off benchmark scripts (scripts/archive). Per-run review documents archived to docs/archive/reviews. Budget defaults: lifetime cap now opt-in via YTI_BUDGET_USD; monthly default US$750; per-video default US$3.",
+    "verification": "Node 24: default and PGlite suites 719 pass/0 fail/1 skip each; typecheck, build, offline gate (advisory-only) and npm audit (0 vulnerabilities) pass."
+  },
+  "cloudProcessing": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Execute queued work on Vercel Functions: the per-minute cron sweeps then drains within 800 s; mutating API requests start an after() drain. Postgres queue capacity lock, leases and fencing govern concurrency across overlapping drains. Mac worker optional for local development only.",
+    "files": [
+      "src/server/youtube-intelligence/drain.ts",
+      "src/app/api/cron/intelligence/route.ts"
+    ],
+    "tests": [
+      "tests/drain.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 726 pass/0 fail/1 skip each; typecheck and build pass. Live Vercel acceptance (a run completing with the Mac worker stopped) pending deployment."
+  },
+  "newsReview": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Default research briefs are built from the transcript alone (webResearch:false; only the opt-in experimental-overlap profile keeps legacy in-brief search). Analysts request a news review per brief: one Gemini plan (<=6 queries), open-web Exa searches split before/after the video date, one Gemini cited review, deterministic citation checks (claim ids, retrieved sources only, verbatim excerpts, date window), then one independent critic (Sonnet) entailment check. Removed statements are retained and shown with reasons.",
+    "files": [
+      "src/features/youtube-intelligence/news-review.ts",
+      "src/server/youtube-intelligence/news-review.ts",
+      "src/features/youtube-intelligence/ui/NewsReview.tsx"
+    ],
+    "tests": [
+      "tests/news-review.test.ts"
+    ],
+    "verification": "Unit and integration tests with FakeModelTransport and stubbed Exa pass; typecheck and build pass. Live paid run and browser acceptance pending."
+  },
+  "timing": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Submission-to-result timeline from stored yi_stage_timings rows: first step, analysis finished, research brief finished, end to end, and per-stage execution and queue time; shown on the Analysis page and returned by /api/intelligence/runs/[id] as output.timeline for paired comparison runs.",
+    "files": [
+      "src/features/youtube-intelligence/timing.ts",
+      "src/server/youtube-intelligence/timing.ts",
+      "src/features/youtube-intelligence/ui/Timing.tsx"
+    ],
+    "tests": [
+      "tests/timing.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 734 pass/0 fail/1 skip; typecheck, build and offline gate pass. Browser on isolated local Postgres fixture: passcode login (wrong code refused, youtubeintel accepted), Timing and News review panels at 1360x900 and 390x844 with no horizontal overflow after wrapping the table."
+  },
+  "pipelineV3": {
+    "status": "in-review",
+    "date": "2026-09-28",
+    "scope": "Research pipeline \"faithful\" (faithful-v1), selectable in Settings; current stays default until the LeapEdge comparison. Transcript-only draft (1 Gemini call), deterministic structural preflight, then an independent fidelity check (Sonnet) of each sentence against only the quotes it cites, chunked by 12 and run in parallel within one step; evidence no sentence cites is recorded as missing; no repeated coverage audit or repair loop. A failed chunk withholds its sentences and marks the brief needs_review.",
+    "files": [
+      "src/server/youtube-intelligence/faithful-audit.ts",
+      "src/server/youtube-intelligence/research-pipeline.ts",
+      "src/features/youtube-intelligence/research-pipeline-choice.ts"
+    ],
+    "tests": [
+      "tests/faithful-pipeline.test.ts"
+    ],
+    "notYetDone": "Source-recall windows on the analysis side still run one per step (each depends on the prior inventory); measure with live timing before changing. Live paired LeapEdge runs not started.",
+    "verification": "Node 24: default and PGlite suites 737 pass/0 fail/1 skip; typecheck and build pass."
+  },
+  "liveFixes20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "First live runs on Vercel exposed: (1) strict JSON parsing failed on fenced model replies; parseModelJson accepts fenced or prose-wrapped JSON only. (2) Source recall ran ~13 windows one per step (~4.5 of 5.6 min on a short video); new runs freeze the recall inventory, request up to 24 windows per step 4 at a time, and apply them in order. (3) Calls on companies named but not ticker-spoken (\"Vistra\" drafted as VST) were rejected in the caption-alignment path; the symbol is now a retained proposal in both evidence modes.",
+    "tests": [
+      "tests/model-json.test.ts",
+      "tests/source-recall.test.ts",
+      "tests/ticker-proposal.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 741 pass/0 fail/1 skip; typecheck and build pass. Workspace settings aligned on 29 Sep: models reset to defaults (Gemini native extraction, Sonnet critic), prompt version v8, research pipeline faithful."
+  },
+  "captionCoverage20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "The 13-video rerun left 2 Chinese videos in review: fetched captions scored 86% timed coverage because the pauses between caption lines counted as missing speech. Coverage now treats a gap of up to 2 s between consecutive segments as a pause; a longer gap still counts. Fetched captions that still fall short go to windowed audio transcription (unless ASR is on demand or off) instead of stopping. A translation reply that answers a span twice keeps the first answer instead of failing the run; the copied original is still re-hashed.",
+    "tests": [
+      "tests/caption-coverage.test.ts",
+      "tests/selective-translation.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 744+ pass/0 fail; typecheck, build and offline promotion gate pass."
+  },
+  "listingResolution20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 1 (docs/delivery/analyst-view-plan.md). Named companies were left without tickers (Celsius, Amazon, 英伟达, even a spoken AMD), so calls showed no symbol and sentiment dropped them. A server-side resolver maps a spoken name to a listing by: spoken ticker, curated alias, a model proposal whose SEC-registered name matches, or an exact SEC name of two words or more; otherwise it stays unresolved. SEC snapshot committed (refresh script needs an operator contact). Claims store resolved_ticker/name/by (migration 0009) outside the review digest; published mentions aggregate under the resolved symbol; mentions link to calls by listing. Backfill action market/resolveListings. Benchmark frozen in evaluations/analyst-view-13.",
+    "tests": [
+      "tests/listing-resolution.test.ts",
+      "tests/listing-backfill.test.ts",
+      "tests/mentions.test.ts",
+      "tests/actions.test.ts"
+    ],
+    "verification": "Node 24 default suite 756 pass/0 fail; benchmark replay 251/268 references resolved."
+  },
+  "structuredIdeas20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 2 (docs/delivery/analyst-view-plan.md). Prompt evidence-first.web.v9 (structuredIdeas) asks each claim for action (bought, sold, holding, plan_buy, plan_sell, watch, research, avoid, view), owner (creator, guest, third_party with owner_name), option terms, size, threshold and conditional levels, and dated catalysts, all copied from the cited ranges, plus transcription doubts that are shown but never applied. Only v9 uses the new response schema; v8 requests are unchanged. Detail not present verbatim in the evidence is removed and recorded (ideaDetailRemovals); the idea is kept. A doubt is kept only when its range contains the misheard words. The critic rejects overstated actions and third-party views recorded as the creator's.",
+    "tests": [
+      "tests/idea-detail.test.ts",
+      "tests/structured-ideas.test.ts"
+    ],
+    "verification": "Live check 29 Sep on U32FPvvBaNI, 1WNowIoNgtg, 78RL-h4FB3s: actions, owners, sizes ($8,400 Wynn, $11,000 Celsius), AMD 'won't sell below 700' as a threshold, the PLTR short put (165 strike, Nov 20, $1.85 premium flagged as likely $11.85) and the Anthropic watch call were correct; unsaid values ('918', '13 contracts') were removed. Workspace switched to v9."
+  },
+  "analystView20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "Analyst view PR 3 (docs/delivery/analyst-view-plan.md), iteration 1. buildAnalystView assembles, by code only, the page a PM reads: summary from the highest-materiality brief sentences, creator stance counts, idea cards (one per resolved instrument and owner; executed trades first, third parties last; levels, option, size, catalysts merged; a quote excerpt of whole sentences naming the instrument, with timestamp), one sentiment row per instrument (critic-rejected mentions dropped, disagreement shown as mixed), themes, key points (10 at most), numbers, content gaps the creator did not state, and misheard numbers; pipeline notes and name-spelling doubts go to a collapsed processing panel. Served with the run as analystView and analystNote (copy as note, also what the benchmark judge reads). The full brief is collapsed below. Also: a critic that skips ids is re-asked for those ids twice automatically; still-unanswered items are withheld with the reason instead of failing the run (1WNowIoNgtg failed this way on 29 Sep). And: a run put back in the queue after its job had finished (runs/recoverAudit) was never picked up, because re-enqueueing the same job id is a no-op; the sweep now reopens that job (1WNowIoNgtg sat queued on 29 Sep).",
+    "tests": [
+      "tests/activity-performance.test.ts",
+      "tests/analyst-view.test.ts",
+      "tests/critique.test.ts",
+      "tests/drain.test.ts"
+    ],
+    "verification": "Browser check on a local Postgres copy of the v9 U32FPvvBaNI run at 1366 and 390 px: 6 idea cards, 11 sentiment rows, brief collapsed, no horizontal overflow."
+  },
+  "pipelineRobustness20260929": {
+    "status": "merged",
+    "date": "2026-09-29",
+    "scope": "Iteration 1 rerun on 29 Sep: 4 of 13 runs failed for reasons unrelated to the prompt. (1) Neon connection-pool timeouts with 13 runs at once: a step that hits a transient database error is now retried (up to 5 times, 20 s apart) instead of failing the run; paid responses replay from the call ledger. (2) One key point with Chinese in an English field failed a whole extraction: invalid items are now dropped one by one with the reason (rejectedEvidence); a malformed or over-limit reply still fails. (3) A context cache past its 30-minute lifetime was reused and the provider answered HTTP 400: it is now recreated. (4) Provider 4xx errors (not 429) keep the first 300 characters of the provider's message so a rejected request can be diagnosed.",
+    "tests": [
+      "tests/drain.test.ts",
+      "tests/structured-ideas.test.ts",
+      "tests/critique.test.ts",
+      "tests/transport.test.ts"
+    ],
+    "verification": "Node 24: default and PGlite suites 772 pass/0 fail; typecheck, build and offline gate pass. The 4 failed videos were rerun on 30 Sep after deploy."
+  },
+  "clarityIteration2_20260930": {
+    "status": "merged",
+    "date": "2026-09-30",
+    "scope": "Iteration 2 toward beating LeapEdge on PM clarity (goal set by the user 30 Sep). Page (code only): an 'At a glance' line grouping idea tickers by action; the sentiment table becomes 'Also discussed' (only instruments without a card, resolved, with a non-neutral stance, at most 5; everything else one 'Also mentioned' line of resolved names); key points exclude the summary and, when cards exist, action/holding sentences, at most 7; summary prefers the creator's own view, skips sentences opening with a connective, video order; market caps are not levels; a catalyst said twice appears once; one third party's views on several tickers are one card; a translation whose numbers differ from the original is not shown; quotes cut to about 180 characters and shown as the checked English translation; numbers, themes and 'not stated' leave the note. Prompt evidence-first.web.v10 (v9 plus rules on level roles, open vs closed trades, hedged conviction, waiting vs avoiding, speakers, and hold/break technical levels). The critic may return corrected_conviction on an accepted item; the pipeline only ever lowers conviction and records it (convictionCorrections), so a call is no longer lost when only its conviction was overstated.",
+    "tests": [
+      "tests/analyst-view.test.ts",
+      "tests/critique.test.ts"
+    ],
+    "verification": "Blind rounds, ours vs LeapEdge clarity: 2A (9 stored runs) 2.78 vs 3.78; 2B (13, v10) 2.77 vs 3.69; 2C (note = summary, ideas, key points) 3.23 vs 3.54; 2D 3.31 vs 3.23; 2D-R replication 3.38 vs 3.77. Averaged 2D/2D-R: 3.35 vs 3.50, so clarity is not yet robustly beaten. We lead on fidelity, coverage and overall. Table: evaluations/analyst-view-13/README.md."
+  },
+  "clarityIteration2E_20260930": {
+    "status": "merged",
+    "date": "2026-09-30",
+    "scope": "Iteration 2E toward beating LeapEdge on PM clarity. When the team setting processing.bottomLine is on (absent means off, so earlier request hashes and call counts are unchanged), after the research brief is stored one small extraction-model call (synthesis-bottom-line) condenses the audited brief sentences and the accepted ideas into two or three sentences leading with the creator's thesis. A deterministic check (checkBottomLine) keeps a sentence only when every number, quantity word and name in it appears in the statements it cites; rejected sentences are recorded on the run (bottomLineRejected), a failure is recorded (bottomLineError) and never fails the brief. The analyst view uses the kept sentences as its summary, falls back to the brief's own sentences without them, and drops statements the bottom line condensed from the key points. The writeBottomLine action backfills an existing brief. Card headers omit a stance that only restates the action (Watching · watch, Holding · hold).",
+    "tests": [
+      "tests/bottom-line.test.ts",
+      "tests/analyst-view.test.ts"
+    ],
+    "verification": "Deployed to production 30 Sep (PR 24); bottom line backfilled on the 13 benchmark briefs (kept 1-3 sentences each; 6 sentences rejected by the check, mostly false positives on possessives and sentence-opening words). Blind rounds, ours vs LeapEdge: clarity 2E 3.54 vs 3.54, 2E-R 3.69 vs 3.62 (average 3.62 vs 3.58, within judge noise); coverage 3.00 vs 3.23 in both (down from a lead in 2D); fidelity 3.85 vs 2.77.",
+    "pr": 24
+  },
+  "jevPreScreen20260930": {
+    "status": "in-review",
+    "date": "2026-09-30",
+    "scope": "Optional Jev (TypeSafe jev-1.13.0) pre-screen in front of the v3 faithfulness critic, behind a team setting (faithfulnessPreScreen.enabled, default off; only an enabled pre-screen enters the configuration hash). One parallel Jev request per sentence with the tuned r2 question set (sandbox 29 Sep); accept at >=0.8 with error type none, withhold at <=0.15, everything else and every Jev failure or missing TYPESAFE_API_KEY goes to the critic, which still judges evidence coverage (evidence cited only by pre-accepted sentences gets one coverage-only chunk). One ledger row per Jev wave. Settings page explains what it does and why; an ad hoc comparison task (jev-comparison) runs Jev and the configured critic on every sentence of a chosen brief and stores agreement, escalation, time and cost without changing the brief.",
+    "files": [
+      "src/features/youtube-intelligence/faithfulness-prescreen.ts",
+      "src/server/youtube-intelligence/jev.ts",
+      "src/server/youtube-intelligence/jev-comparison.ts",
+      "src/server/youtube-intelligence/faithful-audit.ts",
+      "src/features/youtube-intelligence/ui/JevPreScreen.tsx"
+    ],
+    "tests": [
+      "tests/jev-prescreen.test.ts"
+    ],
+    "verification": "Unit and integration tests with FakeModelTransport and a stubbed Jev endpoint pass; typecheck and build pass. No live Jev or critic run end to end in the cloud session (no OpenRouter key). Browser check on a local pglite dev server: the toggle saves, reloads and turns off; the comparison panel renders. Live Jev through the adapter on the 40 sandbox cases matched the sandbox (13 accept, 17 withhold, 10 escalate, 0 wrong). Tuning evidence is agreement with Claude-written labels on 40 constructed cases, not verified accuracy."
+  },
+  "clarityIteration2G_20260930": {
+    "status": "merged",
+    "date": "2026-09-30",
+    "scope": "Experiment, no code change: prompt evidence-first.web.v10-pm1 (v10 plus a PM-clarity block: the figures behind each idea in thesis_en, relayed and podcast views credited to their owner, spoken tickers kept, the video's main instrument always an idea) added through the prompt action and run on the 13 benchmark transcripts, with the bottom line written under the fixed check (PR 25). The team default prompt is unchanged.",
+    "tests": [],
+    "verification": "Blind rounds 2G/2G-R, ours vs LeapEdge: clarity 3.54/3.54 and 3.46/3.69; actionability 3.15/2.92 and 3.23/2.85; overall 3.15/2.69 and 3.15/2.62; coverage 3.15/3.08 and 3.08/3.23; fidelity 3.69/2.85 and 3.92/2.85. Five runs first failed on Gemini HTTP 402 (prepaid credits depleted) and were re-run after the top-up. Model spend for the round about $5."
+  },
+  "promptDefaultPm1_20260930": {
+    "status": "in-review",
+    "date": "2026-09-30",
+    "scope": "Lock in after the clarity program (user decision 30 Sep): the team default prompt is evidence-first.web.v10-pm1 and processing.bottomLine is on for new runs, set in production team settings on 30 Sep. v10-pm1 (v10 plus the PM-clarity block) is added to prompt-versions.json so the bundled registry matches the stored version. Optimisation is paused; the idea-card fold, likely-reading flag and key-point experiments are reverted and parked.",
+    "tests": [
+      "tests/prompts.test.ts"
+    ],
+    "verification": "Pooled blind judgments, 52 videos per version, ours vs LeapEdge: v10-pm1 clarity 3.42 vs 3.62, actionability 3.17 vs 2.90, overall 3.13 vs 2.71, fidelity about 3.8 vs 2.8; v10 clarity 3.54 vs 3.56, actionability 2.77 vs 2.96, overall 3.06 vs 2.87.",
+    "pr": 26
+  }
+}

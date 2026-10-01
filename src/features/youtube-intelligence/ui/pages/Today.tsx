@@ -1,0 +1,528 @@
+"use client";
+import Link from "next/link";
+import { ReportSummaryCard } from "../ReportSummaryCard.tsx";
+import { SentimentPanel } from "../SentimentPanel.tsx";
+import { Watchlist } from "../Watchlist.tsx";
+import { UnreadDot, runsForUnread } from "../UnreadDot.tsx";
+import { TRACKED_HINT, useTodayVisit, useUnread } from "../unread.ts";
+import { useTeamTimeZone } from "../TradingDay.tsx";
+import { localTime } from "../../trading-day.ts";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useWorkspace } from "../workspace.tsx";
+import { InstrumentLabel } from "../InstrumentLabel.tsx";
+import { action } from "../api.ts";
+import {
+  visibleClaims,
+  recoveredRuns,
+  activityReadiness,
+  latestResearchBySource,
+  dateLabel,
+  creatorStances,
+} from "../viewmodel.ts";
+import {
+  ClaimCard,
+  Empty,
+  Filters,
+  PageTitle,
+  TrustBadge,
+  SaveCallButton,
+  MetricHeading,
+  LevelChips,
+} from "../components.tsx";
+import { HiddenByFilter } from "../HiddenByFilter.tsx";
+import { InlineRetry, MiniProgress } from "../StepProgress.tsx";
+import { hiddenByFilter, trustOptionLabel } from "../foundations.ts";
+export function Today() {
+  const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
+    useWorkspace();
+  const router = useRouter();
+  const [url, setUrl] = useState(""),
+    [search, setSearch] = useState(""),
+    [minimum, setMinimum] = useState(""),
+    [status, setStatus] = useState("all"),
+    [stance, setStance] = useState("all"),
+    [view, setView] = useState("table"),
+    [sort, setSort] = useState("default"),
+    [descending, setDescending] = useState(false),
+    [limit, setLimit] = useState(5),
+    // Extra table columns, off by default (F60 Levels).
+    [levelsColumn, setLevelsColumn] = useState(false);
+  // F70: unread markers, kept on this browser only.
+  const unread = useUnread(),
+    lastVisit = useTodayVisit(),
+    timeZone = useTeamTimeZone();
+  if (!data) return null;
+  const defaultTrust =
+    (
+      {
+        "text-checked": "L1",
+        "audio-agreed": "L2",
+        "human-verified": "L3",
+      } as Record<string, string>
+    )[data.preferences.resolved.todayTrustFilter] ?? "L2";
+  const canonical = new Set(data.snapshot.runs.map((r) => r.id));
+  const eligible = visibleClaims(
+    data.snapshot.claims.filter((c) => canonical.has(c.runId)),
+    search,
+    minimum || defaultTrust,
+  );
+  const allCreators = creatorStances(eligible);
+  const creatorCounts = new Map(allCreators.map((r) => [r.ticker, r.creators]));
+  const claims = eligible.filter(
+    (c) => stance === "all" || c.stance === stance,
+  );
+  if (sort !== "default")
+    claims.sort((a, b) => {
+      const value = (c: typeof a) =>
+        sort === "creators"
+          ? String(creatorCounts.get(c.ticker ?? "") ?? 0).padStart(10, "0")
+          : sort === "instrument"
+            ? (c.ticker ?? c.instrument ?? "")
+            : sort === "stance"
+              ? c.stance
+              : sort === "thesis"
+                ? c.thesisEn
+                : c.trustLevel;
+      return (
+        (descending ? -1 : 1) * value(a).localeCompare(value(b)) ||
+        a.id.localeCompare(b.id)
+      );
+    });
+  const shown = claims.slice(0, limit);
+  const recovered = recoveredRuns(data.runs);
+  const latestBriefs = latestResearchBySource(data.snapshot.researchBriefs);
+  const activityState = (r: (typeof data.runs)[number]) =>
+    activityReadiness(r, latestBriefs.get(r.id), recovered.has(r.id));
+  const needsReview = data.runs.filter((r) => activityState(r).needsReview).map((r) => ({
+    id: r.id, title: r.title || r.videoId, label: activityState(r).label,
+  }));
+  // The activity list is paginated; an older source's unresolved brief must not
+  // disappear from the review total merely because its run is not loaded yet.
+  const loadedIds = new Set(data.runs.map((r) => r.id));
+  for (const brief of latestBriefs.values()) {
+    if (!loadedIds.has(brief.sourceRunId) && brief.readiness.status !== "complete")
+      needsReview.push({ id: brief.sourceRunId, title: brief.title || brief.videoId, label: brief.readiness.label });
+  }
+  function sortBy(key: string) {
+    setSort(key);
+    setDescending(sort === key ? !descending : false);
+  }
+  const filteredRuns = data.runs.filter(
+    (r) => status === "all" || activityState(r).filter === status || (status === "Needs review" && activityState(r).needsReview),
+  );
+  const fresh = new Set(unread.unread(runsForUnread(filteredRuns)).map((r) => r.id));
+  const runs = [
+    ...filteredRuns.filter((r) => fresh.has(r.id)),
+    ...filteredRuns.filter((r) => !fresh.has(r.id)),
+  ];
+  return (
+    <>
+      <PageTitle
+        title="Today"
+        description="Creator calls, the evidence behind them, and what changed."
+      >
+        <form
+          className="yi-quick-analyse"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void perform(
+              async () => {
+                const { result } = await action<{
+                  result: { reused?: boolean; runId?: string; analysedAt?: string | null };
+                }>("runs", "analyse", { url });
+                setUrl("");
+                // A finished analysis on the current pipeline is opened, not paid for again (F74).
+                if (result.reused && result.runId)
+                  router.push(`/youtube-intelligence/analysis/${encodeURIComponent(result.runId)}`);
+                return result;
+              },
+              (result) => {
+                const r = result as { reused?: boolean; analysedAt?: string | null };
+                return r.reused
+                  ? `Already analysed ${dateLabel(r.analysedAt)} with the current pipeline. Opened it, no new cost.`
+                  : "Video queued. Its progress appears below.";
+              },
+            );
+          }}
+        >
+          <label htmlFor="video-url">Analyse a YouTube video</label>
+          <div className="yi-row">
+            <input
+              id="video-url"
+              required
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="Paste a YouTube video link"
+            />
+            <button disabled={busy || !url.trim()}>
+              {busy ? "Adding…" : "Analyse video →"}
+            </button>
+          </div>
+        </form>
+      </PageTitle>
+      <ReportSummaryCard />
+      <div className="yi-today-layout">
+        <div className="yi-today-primary">
+          <section className="yi-panel yi-calls-panel">
+            <div className="yi-section-title">
+              <h2>Calls to explore</h2>
+              <span className="yi-muted">
+                {claims.length} matching ·{" "}
+                {sort === "default"
+                  ? "trust, then conviction"
+                  : `${sort}, ${descending ? "descending" : "ascending"}`}
+              </span>
+            </div>
+            <div className="yi-view-switch" aria-label="Call layout">
+              {["table", "cards"].map((v) => (
+                <button
+                  key={v}
+                  aria-pressed={view === v}
+                  onClick={() => setView(v)}
+                >
+                  {v === "table" ? "Table" : "Cards"}
+                </button>
+              ))}
+            </div>
+            <Filters>
+              <label>
+                Find a call
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Ticker or thesis"
+                />
+                <Link
+                  className="yi-find-all"
+                  href={`/youtube-intelligence/search${search.trim() ? `?${new URLSearchParams({ q: search.trim() })}` : ""}`}
+                >
+                  Search all calls →
+                </Link>
+              </label>
+              <label>
+                Minimum trust
+                <select
+                  value={minimum || defaultTrust}
+                  onChange={(e) => setMinimum(e.target.value)}
+                >
+                  <option value="L0">All extracted</option>
+                  <option value="L1">Text-checked</option>
+                  <option value="L2">Audio-agreed</option>
+                  <option value="L3">Human-verified</option>
+                </select>
+              </label>
+              <label>
+                Stance
+                <select
+                  value={stance}
+                  onChange={(e) => setStance(e.target.value)}
+                >
+                  <option value="all">All stances</option>
+                  {[...new Set(eligible.map((c) => c.stance))]
+                    .sort()
+                    .map((v) => (
+                      <option key={v}>{v}</option>
+                    ))}
+                </select>
+              </label>
+              <button
+                className="yi-text-button"
+                onClick={() => {
+                  setSort("default");
+                  setDescending(false);
+                }}
+              >
+                Reset sort
+              </button>
+              {view === "table" && (
+                <details className="yi-column-menu">
+                  <summary>Columns</summary>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={levelsColumn}
+                      onChange={(e) => setLevelsColumn(e.target.checked)}
+                    />
+                    Levels
+                  </label>
+                </details>
+              )}
+            </Filters>
+            <HiddenByFilter
+              count={hiddenByFilter(
+                visibleClaims(
+                  data.snapshot.claims.filter((c) => canonical.has(c.runId)),
+                  search,
+                  "L0",
+                ).length,
+                eligible.length,
+              )}
+              filter={`the ${trustOptionLabel(minimum || defaultTrust)} trust filter`}
+              onReveal={() => setMinimum("L0")}
+            />
+            <HiddenByFilter
+              count={hiddenByFilter(eligible.length, claims.length)}
+              filter={`the ${stance} stance filter`}
+              onReveal={() => setStance("all")}
+              revealLabel="Show all stances"
+            />
+            {data.snapshot.counts.claims.truncated && (
+              <p className="yi-warning">
+                Showing {data.snapshot.counts.claims.returned} of{" "}
+                {data.snapshot.counts.claims.total} stored claims.
+              </p>
+            )}
+            {claims.length ? (
+              <>
+                {view === "table" && (
+                  <div className={`yi-call-table${levelsColumn ? " yi-with-levels" : ""}`}>
+                    <table>
+                      <caption className="yi-sr-only">
+                        Creator calls with stance, thesis and evidence trust
+                      </caption>
+                      <thead>
+                        <tr>
+                          {[
+                            "instrument",
+                            "stance",
+                            "thesis",
+                            "trust",
+                            "creators",
+                            ...(levelsColumn ? ["levels"] : []),
+                          ].map((key) => (
+                            <MetricHeading
+                              key={key}
+                              id={`today.${key}`}
+                              onSort={key === "levels" ? undefined : () => sortBy(key)}
+                              direction={
+                                sort === key
+                                  ? descending
+                                    ? "desc"
+                                    : "asc"
+                                  : undefined
+                              }
+                            />
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {shown.map((c) => (
+                          <tr key={c.id}>
+                            <td>
+                              <InstrumentLabel claim={c} />
+                              {c.ticker && c.instrument !== c.ticker && (
+                                <small>{c.instrument}</small>
+                              )}
+                            </td>
+                            <td>
+                              <span className={`yi-chip yi-stance-${c.stance}`}>
+                                {c.stance}
+                              </span>
+                            </td>
+                            <td>
+                              <strong className="yi-call-thesis">
+                                {c.thesisEn}
+                              </strong>
+                              <p className="yi-muted">
+                                {c.horizonEn || "Horizon not specified"}
+                              </p>
+                              {c.conditionsEn.length > 0 && (
+                                <p className="yi-muted">
+                                  Conditions: {c.conditionsEn.join(" · ")}
+                                </p>
+                              )}
+                              <span className="yi-muted">
+                                Creator conviction: {c.creatorConviction}
+                              </span>
+                              <div className="yi-call-actions">
+                                <Link
+                                  href={`/youtube-intelligence/analysis/${encodeURIComponent(c.runId)}#${encodeURIComponent(c.id)}`}
+                                >
+                                  Inspect evidence ↗
+                                </Link>
+                                <SaveCallButton claim={c} />
+                              </div>
+                            </td>
+                            <td>
+                              <TrustBadge
+                                level={c.trustLevel}
+                                basis={c.trustBasis}
+                              />
+                            </td>
+                            <td>
+                              <strong>
+                                {creatorCounts.get(c.ticker ?? "") ?? 0}
+                              </strong>
+                              <small>Dated creators</small>
+                            </td>
+                            {levelsColumn && (
+                              <td className="yi-levels-cell">
+                                {c.levels?.length ? (
+                                  <LevelChips levels={c.levels} />
+                                ) : (
+                                  <span className="yi-muted">None stated</span>
+                                )}
+                              </td>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                <div
+                  className={`yi-card-grid ${view === "table" ? "yi-mobile-calls" : ""}`}
+                >
+                  {shown.map((c) => (
+                    <ClaimCard key={c.id} claim={c} />
+                  ))}
+                </div>
+                <p className="yi-calls-footnote">
+                  Showing {shown.length} of {claims.length}. Trust describes the
+                  evidence, not investment quality.
+                </p>
+                {shown.length < claims.length && (
+                  <button
+                    className="yi-text-button yi-show-more"
+                    onClick={() => setLimit(limit + 10)}
+                  >
+                    Show more calls ({claims.length - shown.length} remaining)
+                  </button>
+                )}
+              </>
+            ) : (
+              <Empty title="No calls match this view">
+                Analyse a video, follow a channel, or change the minimum trust
+                filter. Calls without enough evidence remain available in their
+                analysis.
+              </Empty>
+            )}
+          </section>
+          <section className="yi-panel">
+            <div className="yi-section-title">
+              <h2>Video activity</h2>
+              <label className="yi-inline-label">
+                Status
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  {[
+                    "all",
+                    "Queued",
+                    "Analysing",
+                    "Ready",
+                    "Needs review",
+                    "Recovered",
+                  ].map((s) => (
+                    <option key={s} value={s}>
+                      {s === "all" ? "All activity" : s === "Ready" ? "Analysis complete" : s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            {fresh.size > 0 && unread.state && (
+              <div
+                className="yi-unread-head"
+                title={`${TRACKED_HINT}.${lastVisit ? ` Last visit ${localTime(lastVisit, timeZone)}.` : ""}`}
+              >
+                <strong>
+                  New since {localTime(unread.state.since, timeZone)}
+                </strong>
+                <span className="yi-muted">{fresh.size}</span>
+                <button
+                  type="button"
+                  className="yi-text-button"
+                  onClick={unread.markAllSeen}
+                >
+                  Mark all as seen
+                </button>
+              </div>
+            )}
+            {runs.length ? (
+              <ul className="yi-list">
+                {runs.map((r) => (
+                  <li
+                    key={r.id}
+                    className={fresh.has(r.id) ? "yi-activity-new" : undefined}
+                  >
+                    <div>
+                      <UnreadDot run={{ id: r.id, status: r.status, at: r.updatedAt }} />
+                      <Link href={`/youtube-intelligence/analysis/${r.id}`}>
+                        {r.title || `YouTube · ${r.videoId}`}
+                      </Link>
+                      <small>Processed {dateLabel(r.createdAt)}</small>
+                      <span className="yi-activity-progress">
+                        <MiniProgress run={r} />
+                        <InlineRetry run={r} />
+                      </span>
+                    </div>
+                    <span
+                      className="yi-chip"
+                      title={
+                        recovered.has(r.id)
+                          ? "Earlier attempt; a linked recovery completed. Original details remain available."
+                          : undefined
+                      }
+                    >
+                      {activityState(r).label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Empty title="No video activity">
+                Submitted videos will appear here as they progress.
+              </Empty>
+            )}
+            {hasMoreRuns && (
+              <button
+                className="yi-text-button"
+                disabled={loadingMoreRuns}
+                onClick={() => void loadMoreRuns()}
+              >
+                {loadingMoreRuns ? "Loading…" : "Load older video activity"}
+              </button>
+            )}
+            <p className="yi-muted">
+              Showing {data.runs.length} loaded videos. Status filters apply to
+              loaded activity.
+            </p>
+          </section>
+        </div>
+        <aside className="yi-today-rail" aria-label="Research context">
+          <Watchlist />
+          <SentimentPanel />
+          <section className="yi-panel">
+            <h2>
+              Needs your review{" "}
+              <span className="yi-muted">{needsReview.length}</span>
+            </h2>
+            {needsReview.length ? (
+              <ul className="yi-list">
+                {needsReview.slice(0, 5).map((r) => (
+                  <li key={r.id}>
+                    <Link href={`/youtube-intelligence/analysis/${r.id}`}>
+                      {r.title} ↗
+                    </Link>
+                    <small>{r.label}</small>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="yi-muted">
+                No loaded analysis failures or retained research gaps currently need review.
+              </p>
+            )}
+            {needsReview.length > 5 && <p className="yi-muted">Showing 5 of {needsReview.length} items. Use the Needs review activity filter and load older activity to inspect more.</p>}
+            <Link href="/youtube-intelligence/lab">
+              Open diagnostics in Lab →
+            </Link>
+          </section>
+        </aside>
+      </div>
+    </>
+  );
+}

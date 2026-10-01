@@ -14,3 +14,7 @@ Files are Design Component artboards (`.dc.html`) plus the canvas index. They re
 - `Phone.dc.html` — Today at phone width
 
 Figures on the boards are placeholders. In the product every displayed number is computed from stored rows at request time and every column heading carries a hover with its definition and calculation steps (spec section 4.11).
+
+## LeapEdge-gap UX proposals (29 September 2026)
+
+- `LeapEdgeGaps.html` — standalone page (open directly in a browser) with the UI/UX proposals and wireframes for the phase-5 features F56–F77: Daily report, Search, Trends, channel page, verdict box, richer call card, progress/retry, watchlist and the rest. Published copy: https://claude.ai/artifact/R5WyW2Uqjw44CbB9nBo75s. The written requirements it illustrates are in `docs/delivery/leapedge-gap-ux-proposals-20260929.md`; where the two differ, the markdown wins. Wireframe figures are illustrative examples, not data.

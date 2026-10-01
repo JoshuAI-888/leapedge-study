@@ -1,0 +1,918 @@
+{
+  "id": "completion-campaign-20260915",
+  "at": "2026-09-14T21:22:56.412Z",
+  "outcomes": [
+    {
+      "case": "alpha",
+      "status": "shadow_completed_audio_unverified",
+      "sourceAttempt": "4e93d949-2083-43e3-98f5-fea6b133a4ad",
+      "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+      "promptHash": "4f03a808e6069cfb416813824a425a25a44397d4b88ea5b491771f8e67508f14",
+      "promptVersion": "evidence-first.web.v7-fidelity-candidate",
+      "attemptIds": [
+        "c9419c88-4fe1-4d84-843a-ecef88c9fb9d",
+        "ec67cf4f-e919-4a85-ba68-7ef375d72415",
+        "71703ebf-3678-4928-b6d0-0f86843c73f8",
+        "2d7275e3-903b-4fc6-9e37-16e199cf60cd",
+        "a0561858-c542-4d88-b5c2-6e4087a756ac",
+        "930112c8-5afe-49e9-b86a-88c7a30a5559",
+        "8911720c-8149-4155-bef2-270e78996930",
+        "48f60eca-c5e7-4804-8745-67acf6099cb9"
+      ],
+      "drafts": 8,
+      "textAccepted": 7,
+      "structuralFailures": [
+        {
+          "id": "item-7",
+          "reasons": [
+            "Quote does not match the retained source."
+          ]
+        }
+      ],
+      "error": null,
+      "audioVerified": false
+    },
+    {
+      "case": "mandarin",
+      "status": "shadow_stopped_review_required",
+      "sourceAttempt": "fe349e23-40c9-4f38-986d-a252a6591b96",
+      "sourceHash": "f091a4d19b93f3f527b992d9bacee75e3c6d537125ff703db7ef5e7a71b92dcd",
+      "promptHash": "4f03a808e6069cfb416813824a425a25a44397d4b88ea5b491771f8e67508f14",
+      "promptVersion": "evidence-first.web.v7-fidelity-candidate",
+      "attemptIds": [
+        "aab92766-c22d-41ca-8ce2-a8d8153f3f2d",
+        "e6ab30a9-c4a5-4db4-bf21-09f08d95b9a7"
+      ],
+      "drafts": 9,
+      "textAccepted": 0,
+      "structuralFailures": [
+        {
+          "id": "item-4",
+          "reasons": [
+            "Price is not present verbatim in its evidence."
+          ]
+        }
+      ],
+      "error": "fetch failed",
+      "audioVerified": false
+    },
+    {
+      "case": "long",
+      "status": "shadow_completed_audio_unverified",
+      "sourceAttempt": "0df6588a-cad3-411f-9202-12aac1c57495",
+      "sourceHash": "b9332d1cb00e70cd8397f7760d1da7307f8376381a20a0f7fb413f1d8c4a4280",
+      "promptHash": "4f03a808e6069cfb416813824a425a25a44397d4b88ea5b491771f8e67508f14",
+      "promptVersion": "evidence-first.web.v7-fidelity-candidate",
+      "attemptIds": [
+        "d628964e-b92e-453a-afa5-3c2cce3c6fbb",
+        "36ef775f-18fc-480a-ba4f-808f99ea04b3",
+        "510fc6e0-42f0-4c58-b21d-6ac31f1454ee",
+        "27a674bc-1c7c-46c3-a863-29bd58bdbf39",
+        "eff1cece-2298-4ae2-93c0-634d51a077f5",
+        "32920de3-9832-4f56-b17e-1c2a8a1c9085",
+        "8feab67c-2ebf-4634-8c05-73d8d2dd4caa"
+      ],
+      "drafts": 8,
+      "textAccepted": 6,
+      "structuralFailures": [
+        {
+          "id": "item-4",
+          "reasons": [
+            "Quote does not match the retained source."
+          ]
+        },
+        {
+          "id": "item-5",
+          "reasons": [
+            "Quote does not match the retained source."
+          ]
+        }
+      ],
+      "error": null,
+      "audioVerified": false
+    }
+  ],
+  "attempts": [
+    {
+      "id": "c9419c88-4fe1-4d84-843a-ecef88c9fb9d",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.36,
+      "artifactSha256": "4bf9eb71e9759c7dd3f4110fd1823536d612edbc1eb2c064162ea7b0844d9422"
+    },
+    {
+      "id": "ec67cf4f-e919-4a85-ba68-7ef375d72415",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.24,
+      "artifactSha256": "da6606633cee24694619bbe65ecab2cd76667d3fd0da4a5ee2b41d358fb5dd76"
+    },
+    {
+      "id": "71703ebf-3678-4928-b6d0-0f86843c73f8",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.24,
+      "artifactSha256": "cc17933933215f1587be8a55edd70537bd4b72f515d98008cb5d1e13ce891c24"
+    },
+    {
+      "id": "2d7275e3-903b-4fc6-9e37-16e199cf60cd",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.24,
+      "artifactSha256": "1b2c22bbfc568bbabd8c594d6dc0bec1d191b471a75aab8a40cc36b1b0a4f440"
+    },
+    {
+      "id": "a0561858-c542-4d88-b5c2-6e4087a756ac",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.24,
+      "artifactSha256": "8c42061889339fd070a39af910fa438183dc54da55af7a588be6d2ebbbb3b2dc"
+    },
+    {
+      "id": "930112c8-5afe-49e9-b86a-88c7a30a5559",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.24,
+      "artifactSha256": "67e506d11fbb9970e95df430521a592147e9f60ab5876d369be8dafbf5e859d8"
+    },
+    {
+      "id": "8911720c-8149-4155-bef2-270e78996930",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.24,
+      "artifactSha256": "1576d0576a2c721f8f26a3129a8ac07808afbcf1770e007598e4471a76123b92"
+    },
+    {
+      "id": "48f60eca-c5e7-4804-8745-67acf6099cb9",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.24,
+      "artifactSha256": "6624913addec43fbd10a6e80570080119e97650f6fe9c4b385801bcedb62a101"
+    },
+    {
+      "id": "aab92766-c22d-41ca-8ce2-a8d8153f3f2d",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.35,
+      "artifactSha256": "1993d0f911f192be79bf25d5e1af2e669ee9c4085d2c62037f1c160d71a788c1"
+    },
+    {
+      "id": "e6ab30a9-c4a5-4db4-bf21-09f08d95b9a7",
+      "status": "transport_uncertain",
+      "reservedNzd": 0.24,
+      "artifactSha256": "82fd3bff51f97902cf03917c621f3a1d10bb3a94bc26066789d9a30c91931f7d"
+    },
+    {
+      "id": "d628964e-b92e-453a-afa5-3c2cce3c6fbb",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.44,
+      "artifactSha256": "19a412942a66966007ee4bd3263a357d353720ac3cea4dea63b5ba3f403c3f57"
+    },
+    {
+      "id": "36ef775f-18fc-480a-ba4f-808f99ea04b3",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.41,
+      "artifactSha256": "f29e0345b59e0174f7202eadab447213fc88d6e4c91aabf6321b2f9be687d8dc"
+    },
+    {
+      "id": "510fc6e0-42f0-4c58-b21d-6ac31f1454ee",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.41,
+      "artifactSha256": "8780a68c52efc7e59c7ad17071dbcfa0880c77f7d6bfa96f79f64fbf5dc7668c"
+    },
+    {
+      "id": "27a674bc-1c7c-46c3-a863-29bd58bdbf39",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.41,
+      "artifactSha256": "0c95f75b8f7558a070d32bad4b48eab66581fe571d9d4fff803118a67b8fd7a7"
+    },
+    {
+      "id": "eff1cece-2298-4ae2-93c0-634d51a077f5",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.4,
+      "artifactSha256": "829a16d53f325953df2c0df6fd84ce7d4ff01282780cbc0b788a40973754eccc"
+    },
+    {
+      "id": "32920de3-9832-4f56-b17e-1c2a8a1c9085",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.41,
+      "artifactSha256": "78f1732cd5e186a56a9b49e91f96427173293e7a120bca0bbc81da447bc2f584"
+    },
+    {
+      "id": "8feab67c-2ebf-4634-8c05-73d8d2dd4caa",
+      "status": "text_stage_unverified",
+      "reservedNzd": 0.41,
+      "artifactSha256": "02f03ce001f9e82c577c280c44a55bd0bd0a5849ed666f21331891b87ca45f64"
+    }
+  ],
+  "accounting": {
+    "newAttempts": 17,
+    "newReservationsNzd": 5.52,
+    "totalCampaignAttempts": 42,
+    "totalHeldNzd": 43.38,
+    "capNzd": 50,
+    "costsNotReconciled": true
+  },
+  "hostedChecks": {
+    "at": "2026-09-14T20:58:36.254Z",
+    "origin": "https://youtube-intelligence-two.vercel.app",
+    "results": [
+      {
+        "check": "Private research denies anonymous API access",
+        "status": "passed"
+      },
+      {
+        "check": "Signed access reads migrated Neon collection and prompt registry",
+        "status": "passed"
+      },
+      {
+        "check": "Settings persist and restore across requests",
+        "status": "passed"
+      },
+      {
+        "check": "Saved idea state transitions persist",
+        "status": "passed"
+      },
+      {
+        "check": "Anonymous share reads frozen snapshot and revocation returns 404",
+        "status": "passed"
+      },
+      {
+        "check": "Dispatcher rejects unauthenticated invocation",
+        "status": "passed"
+      },
+      {
+        "check": "Cross-origin mutation rejected",
+        "status": "passed"
+      }
+    ]
+  },
+  "cohort": {
+    "at": "2026-09-14T21:00:20.951Z",
+    "canonicalVideos": 6,
+    "existingFrozen": 6,
+    "newlyFrozen": 0,
+    "freezeHashStable": true,
+    "observations": [
+      {
+        "videoId": "J25UuUqHT3Y",
+        "observedAt": "2026-09-13T18:09:13.473Z",
+        "runId": "2157a9db-3f10-4063-bac8-00ddebf22da1",
+        "sourceHash": "13928de04093c597127f82f9f0c7c4822d2e6b1294addc2b177fb363d65c44ff"
+      },
+      {
+        "videoId": "skc2T5fcoLY",
+        "observedAt": "2026-09-13T18:00:01.683Z",
+        "runId": "13a22fe4-460b-4271-87d2-431947c53862",
+        "sourceHash": "c9020960903317721c39ebd9d5936bdbc7217c96fee464048606baf505c417a0"
+      },
+      {
+        "videoId": "v824SHV6COE",
+        "observedAt": "2026-09-13T18:00:00.478Z",
+        "runId": "e486b5e8-e19a-4852-9d4b-7207c2c3d91c",
+        "sourceHash": "55286fc8d67da0af5b3383c6ddfade1a2524354f11478916d13d864185b7be3c"
+      },
+      {
+        "videoId": "1_JCqHluJ9U",
+        "observedAt": "2026-09-13T17:59:58.698Z",
+        "runId": "8f93e168-2eff-4ce9-8ac4-6709797a3995",
+        "sourceHash": "d48d0b88677ba795b90af3bbf9df79a374ad7164d9b26f41188bb270505b0aa1"
+      },
+      {
+        "videoId": "kXYvRR7gV2E",
+        "observedAt": "2026-09-13T11:08:02.974Z",
+        "runId": "85c3f64f-ed06-4664-b219-34ae97680eca",
+        "sourceHash": "13a91669d0193189b87970b210e25920fba6945ea1e5850ea7334056b478ef3d"
+      },
+      {
+        "videoId": "3u24qyWjSVM",
+        "observedAt": "2026-09-13T11:08:02.967Z",
+        "runId": "22b54768-4e4b-4602-82d0-03f1486f9f1d",
+        "sourceHash": "99492ab116220d56cc576279dfe35ae90df199beb6d9ea95a2883ec192b3872a"
+      }
+    ],
+    "results": [
+      {
+        "id": "712a5380-446a-451d-be30-e5adffd19d9a",
+        "asOf": "2026-09-14",
+        "mode": "historical",
+        "createdAt": "2026-09-14T21:00:03.354Z",
+        "summary": {
+          "total": 3,
+          "priced": 0,
+          "completed": 0,
+          "ongoing": 0,
+          "stale": 0,
+          "meanReturn": null,
+          "meanSpy": null,
+          "meanExcess": null,
+          "winRate": null,
+          "beatsSpyRate": null
+        },
+        "rows": [
+          {
+            "id": "8f93e168-2eff-4ce9-8ac4-6709797a3995:c1",
+            "status": "ineligible",
+            "reason": "Only medium/high long/short calls qualify."
+          },
+          {
+            "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d:c2",
+            "status": "ineligible",
+            "reason": "Only medium/high long/short calls qualify."
+          },
+          {
+            "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d:c3",
+            "status": "ineligible",
+            "reason": "Only medium/high long/short calls qualify."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "Daniel Pronk",
+            "total": 1,
+            "priced": 0,
+            "completed": 0,
+            "ongoing": 0,
+            "stale": 0,
+            "meanReturn": null,
+            "meanSpy": null,
+            "meanExcess": null,
+            "winRate": null,
+            "beatsSpyRate": null
+          },
+          {
+            "channel": "NaNa说美股",
+            "total": 2,
+            "priced": 0,
+            "completed": 0,
+            "ongoing": 0,
+            "stale": 0,
+            "meanReturn": null,
+            "meanSpy": null,
+            "meanExcess": null,
+            "winRate": null,
+            "beatsSpyRate": null
+          }
+        ],
+        "limitations": [
+          "Retrospective analyses are not contemporaneous historical recommendations.",
+          "Historical replay uses publication dates with today’s extraction. It is a retrospective backtest, not a forward record, and may contain hindsight bias.",
+          "LeapEdge exact holiday mapping is unpublished; first common session on/after analysis day is our explicit comparison rule.",
+          "Forward mode enters the next common session after the UTC analysis day.",
+          "FMP prices may differ from LeapEdge Yahoo Finance snapshots.",
+          "Selected collection analysis per video; versioned retrospective comparison, not portfolio return."
+        ],
+        "independentArithmetic": []
+      },
+      {
+        "id": "d778e4af-78c8-401a-a83f-574acc2a95a6",
+        "asOf": "2026-09-14",
+        "mode": "forward",
+        "createdAt": "2026-09-14T21:00:19.708Z",
+        "summary": {
+          "total": 3,
+          "priced": 0,
+          "completed": 0,
+          "ongoing": 0,
+          "stale": 0,
+          "meanReturn": null,
+          "meanSpy": null,
+          "meanExcess": null,
+          "winRate": null,
+          "beatsSpyRate": null
+        },
+        "rows": [
+          {
+            "id": "8f93e168-2eff-4ce9-8ac4-6709797a3995:c1",
+            "status": "ineligible",
+            "reason": "Only medium/high long/short calls qualify."
+          },
+          {
+            "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d:c2",
+            "status": "ineligible",
+            "reason": "Only medium/high long/short calls qualify."
+          },
+          {
+            "id": "22b54768-4e4b-4602-82d0-03f1486f9f1d:c3",
+            "status": "ineligible",
+            "reason": "Only medium/high long/short calls qualify."
+          }
+        ],
+        "channels": [
+          {
+            "channel": "Daniel Pronk",
+            "total": 1,
+            "priced": 0,
+            "completed": 0,
+            "ongoing": 0,
+            "stale": 0,
+            "meanReturn": null,
+            "meanSpy": null,
+            "meanExcess": null,
+            "winRate": null,
+            "beatsSpyRate": null
+          },
+          {
+            "channel": "NaNa说美股",
+            "total": 2,
+            "priced": 0,
+            "completed": 0,
+            "ongoing": 0,
+            "stale": 0,
+            "meanReturn": null,
+            "meanSpy": null,
+            "meanExcess": null,
+            "winRate": null,
+            "beatsSpyRate": null
+          }
+        ],
+        "limitations": [
+          "Retrospective analyses are not contemporaneous historical recommendations.",
+          "LeapEdge exact holiday mapping is unpublished; first common session on/after analysis day is our explicit comparison rule.",
+          "Forward mode enters the next common session after the UTC analysis day.",
+          "FMP prices may differ from LeapEdge Yahoo Finance snapshots.",
+          "Forward calls are frozen from the first observation of each video in the collection; later prompt changes cannot replace them."
+        ],
+        "independentArithmetic": []
+      }
+    ],
+    "limitations": [
+      "Actual audio fidelity is unverified; return arithmetic does not establish claim accuracy.",
+      "No calls synthesized or conviction inflated to populate a cohort.",
+      "Equal-weight claim averages are not investable portfolio returns; short borrow fees and trading costs excluded.",
+      "90-day forward maturity requires elapsed time."
+    ]
+  },
+  "boundaryReplay": {
+    "at": "2026-09-14T21:09:07.183Z",
+    "method": "Exact adjacent-cue space split only; translations retained at group level in repair provenance, not invented per fragment.",
+    "results": [
+      {
+        "caseName": "alpha",
+        "sourceHash": "59003ebd79479f8fa7f37d1871213adf8ae3bf0c261b8aa5b58e4754e4ec7e1c",
+        "draftHash": "af2ab8fdb1222ac00e22edb9a1399609bcfc4da32c9eb53512a07eec1746c8c4",
+        "items": [
+          {
+            "id": "item-1",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-2",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-3",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-4",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-5",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-6",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-7",
+            "before": [
+              "Quote does not match the retained source."
+            ],
+            "after": [],
+            "repairs": [
+              {
+                "evidenceIndex": 2,
+                "originalQuote": "特别是我们现在的多头趋势其实是 比较明确的 就是只要它在1小时之上 我们都可以不用右侧地去离场",
+                "groupTranslation": "especially since our current bull trend is quite clear, as long as it is above the 1-hour [20EMA], we don't need to exit on the right side",
+                "segmentIds": [
+                  "s00065",
+                  "s00066"
+                ]
+              }
+            ],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-8",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          }
+        ]
+      },
+      {
+        "caseName": "mandarin",
+        "sourceHash": "f091a4d19b93f3f527b992d9bacee75e3c6d537125ff703db7ef5e7a71b92dcd",
+        "draftHash": "575a4206bc9b4dbb12459a00cc2269a8ee888c760e26edab918b082583ce6f39",
+        "items": [
+          {
+            "id": "item-1",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-2",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-3",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-4",
+            "before": [
+              "Price is not present verbatim in its evidence."
+            ],
+            "after": [
+              "Price is not present verbatim in its evidence."
+            ],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-5",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-6",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-7",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-8",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-9",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          }
+        ]
+      },
+      {
+        "caseName": "long",
+        "sourceHash": "b9332d1cb00e70cd8397f7760d1da7307f8376381a20a0f7fb413f1d8c4a4280",
+        "draftHash": "e8a077d489d9ef9c21d13202796784b751daae9045e080f6f3aec1263ca29af6",
+        "items": [
+          {
+            "id": "item-1",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-2",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-3",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-4",
+            "before": [
+              "Quote does not match the retained source."
+            ],
+            "after": [],
+            "repairs": [
+              {
+                "evidenceIndex": 2,
+                "originalQuote": "And this is part of the reason why I own MasterCard and why I think that it could continue to grow even if there does end up being some slight disruption to the payments network,",
+                "groupTranslation": "And this is part of the reason why I own MasterCard and why I think that it could continue to grow even if there does end up being some slight disruption to the payments network,",
+                "segmentIds": [
+                  "s00304",
+                  "s00305"
+                ]
+              }
+            ],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-5",
+            "before": [
+              "Quote does not match the retained source."
+            ],
+            "after": [],
+            "repairs": [
+              {
+                "evidenceIndex": 0,
+                "originalQuote": "and it is Meta. And I have continued to buy more shares of Meta on a consistent basis in the market because I think that this stock is also truly undervalued in the market today.",
+                "groupTranslation": "and it is Meta. And I have continued to buy more shares of Meta on a consistent basis in the market because I think that this stock is also truly undervalued in the market today.",
+                "segmentIds": [
+                  "s00310",
+                  "s00311"
+                ]
+              }
+            ],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-6",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-7",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          },
+          {
+            "id": "item-8",
+            "before": [],
+            "after": [],
+            "repairs": [],
+            "semanticAudit": "NOT_RERUN",
+            "audioVerified": false
+          }
+        ]
+      }
+    ],
+    "defaultChanged": false,
+    "limitation": "Offline deterministic gate improvement; no semantic or audio accuracy claim."
+  },
+  "liveEmailEvents": {
+    "at": "2026-09-14T21:14:14.268Z",
+    "method": "Resend documented test addresses -> live signed webhook -> Neon -> application reconciliation",
+    "results": [
+      {
+        "id": "completion-event-delivered-20260915",
+        "delivery": {
+          "id": "completion-event-delivered-20260915",
+          "test": true,
+          "status": "delivered",
+          "simulation": true,
+          "providerId": "cbdacf2b-a130-45fc-9e25-48cdeb049f14",
+          "expectedEvent": "email.delivered",
+          "acceptedAt": "2026-09-14T21:13:25.109Z",
+          "eventAt": "2026-09-14T21:13:26.626Z",
+          "lastEvent": "email.delivered"
+        },
+        "events": [
+          {
+            "id": "msg_3JKr4FHQ9qpGm64R5ctzlE26sZz",
+            "type": "email.delivered",
+            "emailId": "cbdacf2b-a130-45fc-9e25-48cdeb049f14",
+            "at": "2026-09-14T21:13:26.626Z"
+          }
+        ],
+        "passed": true
+      },
+      {
+        "id": "completion-event-bounced-20260915",
+        "delivery": {
+          "id": "completion-event-bounced-20260915",
+          "test": true,
+          "status": "bounced",
+          "simulation": true,
+          "providerId": "94ca75a9-de9d-4a12-83a7-c550c29b02ac",
+          "expectedEvent": "email.bounced",
+          "acceptedAt": "2026-09-14T21:13:29.623Z",
+          "eventAt": "2026-09-14T21:13:30.772Z",
+          "lastEvent": "email.bounced"
+        },
+        "events": [
+          {
+            "id": "msg_3JKr4oH9eY2lEPGXG4StlqPo0oZ",
+            "type": "email.bounced",
+            "emailId": "94ca75a9-de9d-4a12-83a7-c550c29b02ac",
+            "at": "2026-09-14T21:13:30.772Z"
+          }
+        ],
+        "passed": true
+      }
+    ],
+    "inboxReceiptProven": false
+  },
+  "webhookSetup": {
+    "at": "2026-09-14T21:11:24.554Z",
+    "webhookUrl": "https://resend.com/webhooks/42c3b24a-fba1-4084-ab56-0ccaf0a2b864",
+    "endpoint": "https://youtube-intelligence-two.vercel.app/api/email/webhook",
+    "events": [
+      "email.delivered",
+      "email.bounced",
+      "email.complained",
+      "email.delivery_delayed",
+      "email.failed"
+    ],
+    "localSecretConfigured": true,
+    "vercelSecretConfigured": true,
+    "redeploymentRequired": true
+  },
+  "independentAudioWindowsScored": 0,
+  "leapedgeCreditsUsedThisCampaign": 0,
+  "leapedgeComparison": {
+    "videoId": "J25UuUqHT3Y",
+    "status": "READY",
+    "tradeIdeas": 0,
+    "keyPoints": 11,
+    "tokensDisplayed": "195.4k",
+    "prompt": "keypoints.v1-insights.v3-critique.v1",
+    "models": [
+      "gemini-3.1-flash-lite",
+      "gemini-3.7-flash",
+      "gemini-3.1-flash-lite"
+    ],
+    "creditsBefore": 19,
+    "creditsAfter": 19,
+    "freshIngestionProven": false,
+    "audioAccuracyVerified": false
+  },
+  "finalHostedStatus": {
+    "at": "2026-09-14T21:16:57.690Z",
+    "origin": "https://youtube-intelligence-two.vercel.app",
+    "authenticatedRead": "passed",
+    "promptVersion": "evidence-first.web.v5",
+    "nativeGoogleExperimental": false,
+    "deliveryStatuses": [
+      {
+        "id": "completion-event-bounced-20260915",
+        "status": "bounced",
+        "lastEvent": "email.bounced"
+      },
+      {
+        "id": "completion-event-delivered-20260915",
+        "status": "delivered",
+        "lastEvent": "email.delivered"
+      }
+    ],
+    "findingsVisible": true
+  },
+  "ci": {
+    "commit": "919c530a612efada1f17be4cb2e4a50bc1930a23",
+    "runs": [
+      34898044303,
+      34898040967
+    ],
+    "conclusion": "success"
+  },
+  "promotion": false,
+  "scriptManifest": [
+    {
+      "path": "src/server/youtube-intelligence/native-google.ts",
+      "sha256": "ee94daae3726f8e34010a49e67013dc5b25b6af8d0464e57a528728dd98aca9f"
+    },
+    {
+      "path": "src/server/youtube-intelligence/native-google-core.ts",
+      "sha256": "c075d44cbb758ce4aedf8d23aafa51e3f98924873737ec0487b82c97a888774d"
+    },
+    {
+      "path": "src/features/youtube-intelligence/evidence-boundaries.ts",
+      "sha256": "c0e75993b1568ca3a403255c29a9061ac9bfb2ce41d7163bf0e88e91931db6b9"
+    },
+    {
+      "path": "evaluations/native-google/fidelity-prompts.ts",
+      "sha256": "74824fc3f63305cb3a59e15db4b45c5a6c8496105340c4e57786c5dc80914c27"
+    },
+    {
+      "path": "evaluations/native-google/fidelity-synthesis.ts",
+      "sha256": "f08c173a3dd5680e93e5a95d49d7e0d09885a0191c27f6763b45d21c5ae35a1b"
+    },
+    {
+      "path": "evaluations/native-google/boundary-replay.ts",
+      "sha256": "1bbda03a922ace423489148df2cdcadfe156a6a62580d8262600fb089a26cf06"
+    },
+    {
+      "path": "scripts/completion-cohort.ts",
+      "sha256": "10dd8f1ef2e4640b549d4869dfe081e08c8b994ff9e39e3e1ca22d4448ea64c2"
+    },
+    {
+      "path": "scripts/completion-hosted-check.ts",
+      "sha256": "b1710a72389d0450f783f7e68b6e2e51cd69039c8d78a1ad8c201b34034b1243"
+    },
+    {
+      "path": "scripts/configure-delivery-webhook.mjs",
+      "sha256": "cf739b22f992743f55f1e81099b8112ce27dabd08668df092c0275d7a6451c39"
+    },
+    {
+      "path": "scripts/completion-report.mjs",
+      "sha256": "f9d5a77bf44702ac928b64ff83ae298b41ae2f5f7cea0ce6464b48c1c00cc469"
+    },
+    {
+      "path": "tests/native-google.test.ts",
+      "sha256": "070b148bc77d2d9849db7de9f3ee38525d7c227ecd8f0f1c47fcea2f89b296f0"
+    },
+    {
+      "path": "tests/evidence-boundaries.test.ts",
+      "sha256": "cc87b84b84bbbbaa5167839217b9e91a715bf33ebc59471b75565c001f2e37ec"
+    },
+    {
+      "path": "src/server/youtube-intelligence/email.ts",
+      "sha256": "48a4cac32b2c6da92086c84a0c5de0117f06fe446bedaff3baf88b5ca7f4c674"
+    },
+    {
+      "path": "src/server/youtube-intelligence/webhooks.ts",
+      "sha256": "4e784af4abdab7e3a1a5ec64c402ba31c61b990cf45669e33540fa8c1ab97257"
+    },
+    {
+      "path": "tests/email-reconciliation.test.ts",
+      "sha256": "2b2e7abb7813181e69f9fcd0295d78ed740d093c4a8d1518ed0611c69a5114af"
+    },
+    {
+      "path": "scripts/completion-live-events.ts",
+      "sha256": "ac935702fb935976ded6bcfb61fc586bff5814783460efd87e1f7bdb662b99b5"
+    },
+    {
+      "path": "scripts/completion-final-status.ts",
+      "sha256": "949b9c429fd8d60bd06a14c8deea1b3c09d8b500c6e6df5d981e42e9a19f7bd7"
+    },
+    {
+      "path": "scripts/save-completion-research.ts",
+      "sha256": "f2f1f0c1e4bac44f0edbd8a8c391026634e462702727a2c1e1b43968aaabf45c"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://ai.google.dev/gemini-api/docs/structured-output",
+      "finding": "Schema conformance does not establish semantic accuracy; retain evidence checks."
+    },
+    {
+      "url": "https://ai.google.dev/gemini-api/docs/generate-content/video-understanding",
+      "finding": "Native structured media and clipping documented; completeness/timestamp accuracy require measurements."
+    },
+    {
+      "url": "https://github.com/googleapis/js-genai/issues/938",
+      "finding": "Similar Node fetch-failed report on an older SDK; not proof of our transport failure cause."
+    },
+    {
+      "url": "https://resend.com/docs/webhooks/event-types",
+      "finding": "Delivered means recipient mail server accepted; not inbox placement."
+    },
+    {
+      "url": "https://resend.com/docs/dashboard/emails/introduction",
+      "finding": "Dashboard status provides delivery evidence independently of send response."
+    }
+  ]
+}

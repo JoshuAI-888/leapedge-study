@@ -1,0 +1,1767 @@
+{
+  "version": "typed-quantity-readiness.v1",
+  "reviewedAt": "2026-09-26T21:54:05.943Z",
+  "boundary": "Pure read-time source-backed typed-field reassessment only. Retained paid artifacts unchanged. Candidate C remains a failed quality attempt; this is not a new live pass or audio verification. No provider calls.",
+  "artifacts": [
+    {
+      "path": "data/readiness-20260927/candidate-c-session-1.json",
+      "sha256": "1232560b18bc104a859879e2c3ac2040dcb90f00049693481ca4878ce91e339f",
+      "findings": [
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s1",
+          "evidenceIds": [
+            "k1",
+            "m2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Original S&P 500 year-end target",
+            "value": 8400,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "end of this year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k1",
+            "quote": "他原来预计啊，标普500今年年底到达8,400"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s1",
+          "evidenceIds": [
+            "k1",
+            "m2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Revised S&P 500 year-end target",
+            "value": 7900,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "end of this year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k1",
+            "quote": "今年年底呢先看7,900"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s3",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Brent crude closing price",
+            "value": 104,
+            "currency": "USD",
+            "unit": "per_barrel",
+            "scale": "ones",
+            "period": "September 17, 2026",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "截至我们录制时间9月17号的收盘，布伦特原油啊虽然已经连续两个交易日下跌， 但是仍然是每桶104美元",
+            "unitDescription": "USD per barrel"
+          },
+          "original": {
+            "label": "Brent crude closing price",
+            "value": 104,
+            "currency": "USD",
+            "unit": "other",
+            "scale": "ones",
+            "period": "September 17, 2026",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "截至我们录制时间9月17号的收盘，布伦特原油啊虽然已经连续两个交易日下跌， 但是仍然是每桶104美元"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from other to per_barrel using the exact USD-per-barrel quote. Original model quantity remains in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Fed interest rate hike",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": "current",
+            "basis": "not_stated",
+            "nature": "realized",
+            "evidenceId": "k2",
+            "quote": "美联储已经加息了25个基点"
+          },
+          "original": {
+            "label": "Fed interest rate hike",
+            "value": 25,
+            "currency": null,
+            "unit": "percentage_points",
+            "scale": "ones",
+            "period": "current",
+            "basis": "not_stated",
+            "nature": "realized",
+            "evidenceId": "k2",
+            "quote": "美联储已经加息了25个基点"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from percentage_points to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Expected additional rate hike within year",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": "year-end",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "最新点阵图对应年内还要加息25个基点啊"
+          },
+          "original": {
+            "label": "Expected additional rate hike within year",
+            "value": 25,
+            "currency": null,
+            "unit": "percentage_points",
+            "scale": "ones",
+            "period": "year-end",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "最新点阵图对应年内还要加息25个基点啊"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from percentage_points to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Projected median policy rate for next year",
+            "value": 4.1,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": "next year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "明年的中位数也在4.1%左右"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s5",
+          "evidenceIds": [
+            "k5"
+          ],
+          "fact": {
+            "label": "BOJ rate hike",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": "September 18, 2026",
+            "basis": "not_stated",
+            "nature": "realized",
+            "evidenceId": "k5",
+            "quote": "加息25个基点"
+          },
+          "original": {
+            "label": "BOJ rate hike",
+            "value": 25,
+            "currency": null,
+            "unit": "percentage_points",
+            "scale": "ones",
+            "period": "September 18, 2026",
+            "basis": "not_stated",
+            "nature": "realized",
+            "evidenceId": "k5",
+            "quote": "加息25个基点"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from percentage_points to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s6",
+          "evidenceIds": [
+            "k3"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Hypothetical initial FX rate",
+            "value": 150,
+            "currency": "JPY",
+            "unit": "other",
+            "scale": "ones",
+            "period": "hypothetical",
+            "basis": "not_stated",
+            "nature": "scenario",
+            "evidenceId": "k3",
+            "quote": "假设一美元能换150日元"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s6",
+          "evidenceIds": [
+            "k3"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Hypothetical appreciated FX rate",
+            "value": 135,
+            "currency": "JPY",
+            "unit": "other",
+            "scale": "ones",
+            "period": "hypothetical",
+            "basis": "not_stated",
+            "nature": "scenario",
+            "evidenceId": "k3",
+            "quote": "一美元呢只能换135日元"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "badc47bb-0089-4c2f-a810-e9f83b9add49",
+          "sentenceId": "s8",
+          "evidenceIds": [
+            "k9",
+            "m3"
+          ],
+          "fact": null,
+          "original": {
+            "label": "S&P 500 closing level",
+            "value": 7600,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "September 17, 2026",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k9",
+            "quote": "17日标普500反弹1%， 收在7,600"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        }
+      ]
+    },
+    {
+      "path": "data/readiness-20260927/live-candidate.json",
+      "sha256": "89d7a22210bfc8bdb7c48d1464e76c7813ff5ce2afe321220276db0e47c405ea",
+      "findings": [
+        {
+          "videoId": "Dy_0RtmAt1U",
+          "briefId": "c0639cc4-cd6d-4d39-ba45-aa5f41546297",
+          "sentenceId": "s3",
+          "evidenceIds": [
+            "k3",
+            "k4"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Silver fake-out breakdown percentage lower bound",
+            "value": 4,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "scenario",
+            "evidenceId": "k3",
+            "quote": "So the fake outs are usually around 4% and when we get a real change of trend longer stay longer below the 50-day moving average we get around a 15%. So let's see what would happen if this is a 4 center. Let's say four to five."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "Dy_0RtmAt1U",
+          "briefId": "c0639cc4-cd6d-4d39-ba45-aa5f41546297",
+          "sentenceId": "s4",
+          "evidenceIds": [
+            "k2",
+            "m2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Gold downside support level",
+            "value": 4215,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "scenario",
+            "evidenceId": "k2",
+            "quote": "If we lose this average, we are going down, as you know. back to the therapy session of 4,215."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "vrTbCxUzRw4",
+          "briefId": "7371287d-243f-4da6-9587-521ec0d5f5de",
+          "sentenceId": "s-13",
+          "evidenceIds": [
+            "k4",
+            "k5"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Hypothetical gold pullback level",
+            "value": 4125,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "scenario",
+            "evidenceId": "k4",
+            "quote": "let's say gold goes down to 4,125 therapy session, the weaker mining stocks going to go down hard."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "pWnu1C8I6Xw",
+          "briefId": "61b4c99c-26ec-4a9a-b7b9-3a2ead36e317",
+          "sentenceId": "s-2",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "CEO James Burke share purchases",
+            "value": 1100000,
+            "currency": null,
+            "unit": "shares",
+            "scale": "ones",
+            "period": "last week",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "CEO James Burke, bought 1.1 million shares across three transactions last week near the 52-week low"
+          },
+          "original": {
+            "label": "CEO James Burke share purchases",
+            "value": 1100000,
+            "currency": null,
+            "unit": "contracts",
+            "scale": "ones",
+            "period": "last week",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "CEO James Burke, bought 1.1 million shares across three transactions last week near the 52-week low"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from contracts to shares using the exact retained ordinary-share count and scale. Original model quantity remains in the audit record."
+        },
+        {
+          "videoId": "pWnu1C8I6Xw",
+          "briefId": "61b4c99c-26ec-4a9a-b7b9-3a2ead36e317",
+          "sentenceId": "s-3",
+          "evidenceIds": [
+            "c1",
+            "k2"
+          ],
+          "fact": {
+            "label": "Creator purchased shares",
+            "value": 100,
+            "currency": null,
+            "unit": "shares",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "realized",
+            "evidenceId": "c1",
+            "quote": "I just purchased 100 shares myself, and I am now long the stock"
+          },
+          "original": {
+            "label": "Creator purchased shares",
+            "value": 100,
+            "currency": null,
+            "unit": "contracts",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "realized",
+            "evidenceId": "c1",
+            "quote": "I just purchased 100 shares myself, and I am now long the stock"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from contracts to shares using the exact retained ordinary-share count and scale. Original model quantity remains in the audit record."
+        },
+        {
+          "videoId": "DuIyF_34ReI",
+          "briefId": "ceb56dc4-9630-4e1f-85ee-60b0b086ada3",
+          "sentenceId": "s-3",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Prime Contractor Access Contract Ceiling",
+            "value": 1,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "contract_ceiling",
+            "evidenceId": "k1",
+            "quote": "This transaction effectively grants Ondas direct access as a prime contractor to more than $1 billion in existing war department contracts."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "DuIyF_34ReI",
+          "briefId": "ceb56dc4-9630-4e1f-85ee-60b0b086ada3",
+          "sentenceId": "s-5",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Full-Year 2026 Revenue Guidance",
+            "value": 375,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "millions",
+            "period": "FY 2026",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "raised its full-year 2026 revenue guidance to at least $375 million."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "DuIyF_34ReI",
+          "briefId": "ceb56dc4-9630-4e1f-85ee-60b0b086ada3",
+          "sentenceId": "coverage-3",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Prime Contractor Access Contract Ceiling",
+            "value": 1,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "contract_ceiling",
+            "evidenceId": "k1",
+            "quote": "This transaction effectively grants Ondas direct access as a prime contractor to more than $1 billion in existing war department contracts."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "DuIyF_34ReI",
+          "briefId": "ceb56dc4-9630-4e1f-85ee-60b0b086ada3",
+          "sentenceId": "coverage-5",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Full-Year 2026 Revenue Guidance",
+            "value": 375,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "millions",
+            "period": "FY 2026",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "raised its full-year 2026 revenue guidance to at least $375 million."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "tUR0w-LDSbU",
+          "briefId": "bea830b5-a068-4116-893d-7a53de639d2c",
+          "sentenceId": "s1",
+          "evidenceIds": [
+            "k1",
+            "k4"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Palantir market capitalization",
+            "value": 350,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k4",
+            "quote": "It has already reached a market capitalization of approximately $350 billion, placing it among the largest technology companies in the world."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "tUR0w-LDSbU",
+          "briefId": "bea830b5-a068-4116-893d-7a53de639d2c",
+          "sentenceId": "s4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Trailing four quarters profit",
+            "value": 1.6,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": "past four reported quarters",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "Over the past four reported quarters, Palantir has generated about $1.6 billion in profit."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "tUR0w-LDSbU",
+          "briefId": "bea830b5-a068-4116-893d-7a53de639d2c",
+          "sentenceId": "s6",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Target net income",
+            "value": 32.5,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": "over the next decade",
+            "basis": "not_stated",
+            "nature": "scenario",
+            "evidenceId": "k2",
+            "quote": "it would need to generate approximately $32.5 billion in net income."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "iBMZc7zs_Ew",
+          "briefId": "bfbcb8f9-5ad0-4890-a726-4ea4be817a92",
+          "sentenceId": "s12",
+          "evidenceIds": [
+            "m8"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Stone non-performing loan expansion",
+            "value": 400,
+            "currency": null,
+            "unit": "percentage_points",
+            "scale": "ones",
+            "period": "annual",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "m8",
+            "quote": "Stones, NPLs have gone up like 400 basis points over the past year."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "iBMZc7zs_Ew",
+          "briefId": "bfbcb8f9-5ad0-4890-a726-4ea4be817a92",
+          "sentenceId": "s13",
+          "evidenceIds": [
+            "k9"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Digital bank risk-free app return",
+            "value": 12,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k9",
+            "quote": "lock in money like 12%. With no risk."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "iBMZc7zs_Ew",
+          "briefId": "bfbcb8f9-5ad0-4890-a726-4ea4be817a92",
+          "sentenceId": "s19",
+          "evidenceIds": [
+            "c2",
+            "m9"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Mexican overnight interest rate",
+            "value": 10,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "c2",
+            "quote": "overnight rates 10% now I think or it's around 10. I haven't checked this one. It's around 10%."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "iBMZc7zs_Ew",
+          "briefId": "bfbcb8f9-5ad0-4890-a726-4ea4be817a92",
+          "sentenceId": "s19",
+          "evidenceIds": [
+            "c2",
+            "m9"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Mexican inflation rate",
+            "value": 5,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "c2",
+            "quote": "Inflation's like 5%."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "iBMZc7zs_Ew",
+          "briefId": "bfbcb8f9-5ad0-4890-a726-4ea4be817a92",
+          "sentenceId": "s30",
+          "evidenceIds": [
+            "c7",
+            "m15"
+          ],
+          "fact": null,
+          "original": {
+            "label": "MercadoLibre average credit book duration",
+            "value": 4,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "c7",
+            "quote": "duration on their lending is extremely short term. I believe it's four months on average."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "iBMZc7zs_Ew",
+          "briefId": "bfbcb8f9-5ad0-4890-a726-4ea4be817a92",
+          "sentenceId": "s35",
+          "evidenceIds": [
+            "c11",
+            "m22"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Tecnoglass stock price decline from peak",
+            "value": -50,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "c11",
+            "quote": "the stock's still down 50% when I was trading two years ago."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the explicit peak baseline in its label is not established by its original quote; no comparison baseline was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-1",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "H100 price increase",
+            "value": 17,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": "effective October 1st",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k1",
+            "quote": "The H100 saw an increase of about 17%."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-1",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "H200 price increase",
+            "value": 20,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": "effective October 1st",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k1",
+            "quote": "The H200 saw an increase of about 20%."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-1",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "B200 price increase",
+            "value": 19,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": "effective October 1st",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k1",
+            "quote": "The B200 saw an increase of about 19%"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-1",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "B300 price increase",
+            "value": 21,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": "effective October 1st",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k1",
+            "quote": "and the B300 saw an increase of roughly 21%."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-2",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Typical long-term contract pricing per megawatt",
+            "value": 20,
+            "currency": "USD",
+            "unit": "capacity",
+            "scale": "millions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "typical contracts are about 20 million per megawatt deals and these are less than 2-year payback period"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-2",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Short-term contract pricing per megawatt",
+            "value": 40,
+            "currency": "USD",
+            "unit": "capacity",
+            "scale": "millions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "short-term contracts are actually sitting at around 40 over $40 million per megawatt"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-4",
+          "evidenceIds": [
+            "k3"
+          ],
+          "fact": null,
+          "original": {
+            "label": "CoreWeave short-dated contract pricing per megawatt",
+            "value": 40,
+            "currency": "USD",
+            "unit": "capacity",
+            "scale": "millions",
+            "period": "3 to 6 months",
+            "basis": "not_stated",
+            "nature": "committed",
+            "evidenceId": "k3",
+            "quote": "shortdated customer contracts of approximately 3 to 6 months with pricing of approximately 40 million per megawatt."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-5",
+          "evidenceIds": [
+            "k9",
+            "m2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "CoreWeave market capitalization",
+            "value": 43,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k9",
+            "quote": "Core is at a $43 billion market cap. Yet, you have over 1 gawatt of active power."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-5",
+          "evidenceIds": [
+            "k9",
+            "m2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "CoreWeave active power",
+            "value": 1,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k9",
+            "quote": "Yet, you have over 1 gawatt of active power."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-6",
+          "evidenceIds": [
+            "k4",
+            "k5"
+          ],
+          "fact": null,
+          "original": {
+            "label": "CoreWeave convertible senior notes base offering",
+            "value": 3,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k4",
+            "quote": "roughly 3 billion in convertible senior notes."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-6",
+          "evidenceIds": [
+            "k4",
+            "k5"
+          ],
+          "fact": null,
+          "original": {
+            "label": "CoreWeave convertible senior notes maximum offering",
+            "value": 3.5,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k4",
+            "quote": "proceeds of these $3 billion which can actually go up to 3.5 billion."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-6",
+          "evidenceIds": [
+            "k4",
+            "k5"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Convertible senior notes overallotment option",
+            "value": 500,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "millions",
+            "period": "13-day period",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k4",
+            "quote": "ability within 13-day period to increase it by about 500 million."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-7",
+          "evidenceIds": [
+            "k6"
+          ],
+          "fact": null,
+          "original": {
+            "label": "CoreWeave ATM share issuance ceiling",
+            "value": 35,
+            "currency": null,
+            "unit": "per_share",
+            "scale": "millions",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "contract_ceiling",
+            "evidenceId": "k6",
+            "quote": "under which it may offer if applicable sell up to 35 million shares."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "LF7fgz1HAFs",
+          "briefId": "94e5391e-293b-407e-9e41-0bee720e538f",
+          "sentenceId": "s-9",
+          "evidenceIds": [
+            "m1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Nebius year-to-date return",
+            "value": 126,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": "year to date",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "m1",
+            "quote": "year to date, the stock is up about 126%."
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "M1FJ5dNiBEs",
+          "briefId": "240da5cd-72df-4c78-862e-c838370905d2",
+          "sentenceId": "s-3",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Anthropic 2027 targeted compute capacity",
+            "value": 10,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": "2027",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "Anthropic targets 10 gawatts of compute by the end of 2027"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "M1FJ5dNiBEs",
+          "briefId": "240da5cd-72df-4c78-862e-c838370905d2",
+          "sentenceId": "s-3",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Anthropic 2026 expected compute capacity",
+            "value": 5,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": "2026",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "it expects to have roughly 5 GW of available compute by the end of this year of 2026"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "M1FJ5dNiBEs",
+          "briefId": "240da5cd-72df-4c78-862e-c838370905d2",
+          "sentenceId": "s-3",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Anthropic prior year compute capacity",
+            "value": 1.5,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": "2025",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "up from 1.5 gawatt last year"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "M1FJ5dNiBEs",
+          "briefId": "240da5cd-72df-4c78-862e-c838370905d2",
+          "sentenceId": "s-4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "OpenAI 2026 compute target",
+            "value": 5,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": "2026",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "OpenAI which is also targeting about a 5 gawatt this year"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "M1FJ5dNiBEs",
+          "briefId": "240da5cd-72df-4c78-862e-c838370905d2",
+          "sentenceId": "s-4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "OpenAI 2027 compute target",
+            "value": 10,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": "2027",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "and 10 gawatt next"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "3u24qyWjSVM",
+          "briefId": "41f41a4c-104f-4015-b833-ce02a7aa0191",
+          "sentenceId": "s-18",
+          "evidenceIds": [
+            "c10"
+          ],
+          "fact": null,
+          "original": {
+            "label": "MSTR Bitcoin Impairment Loss",
+            "value": 8.2,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "billions",
+            "period": null,
+            "basis": "GAAP",
+            "nature": "reported",
+            "evidenceId": "c10",
+            "quote": "对价值约580亿美元的比特币持仓计提82亿美元减值损失导致当季录得巨额亏损"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "9nb3fp76Rz0",
+          "briefId": "8cb67f37-bff2-4b7a-92e8-93e3c1e6a65c",
+          "sentenceId": "s2",
+          "evidenceIds": [
+            "k1",
+            "m1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "S&P 500 Daily Gain Points",
+            "value": 65.28,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "m1",
+            "quote": "标普指数今天上涨了65.28点"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "9nb3fp76Rz0",
+          "briefId": "8cb67f37-bff2-4b7a-92e8-93e3c1e6a65c",
+          "sentenceId": "s3",
+          "evidenceIds": [
+            "k2",
+            "m2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Nasdaq Daily Gain Points",
+            "value": 251.31,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "纳斯达克指数今天上涨了251.31点"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "9nb3fp76Rz0",
+          "briefId": "8cb67f37-bff2-4b7a-92e8-93e3c1e6a65c",
+          "sentenceId": "s5",
+          "evidenceIds": [
+            "k4",
+            "k6",
+            "m3"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Microsoft Current Data Center Capacity",
+            "value": 12,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k4",
+            "quote": "微软目前有12吉瓦的产能"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "9nb3fp76Rz0",
+          "briefId": "8cb67f37-bff2-4b7a-92e8-93e3c1e6a65c",
+          "sentenceId": "s5",
+          "evidenceIds": [
+            "k4",
+            "k6",
+            "m3"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Microsoft Current AI Chip Capacity",
+            "value": 2,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k4",
+            "quote": "只有两吉瓦使用人工智能芯片"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "9nb3fp76Rz0",
+          "briefId": "8cb67f37-bff2-4b7a-92e8-93e3c1e6a65c",
+          "sentenceId": "s5",
+          "evidenceIds": [
+            "k4",
+            "k6",
+            "m3"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Microsoft Projected 2032 Data Center Capacity",
+            "value": 38,
+            "currency": null,
+            "unit": "capacity",
+            "scale": "ones",
+            "period": "2032",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k4",
+            "quote": "微软将扩大数据中心的容量到38吉瓦"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "s-1",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Original S&P 500 target",
+            "value": 8400,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "mid-2027",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k1",
+            "quote": "他原来预计啊，标普500今年年底到达8,400，现在呢，他把这个目标推到了2027年年中才达到"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "s-1",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Revised year-end S&P 500 target",
+            "value": 7900,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "year-end",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k1",
+            "quote": "今年年底呢先看7,900"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "s-3",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Brent crude price",
+            "value": 104,
+            "currency": "USD",
+            "unit": "per_barrel",
+            "scale": "ones",
+            "period": "2026-09-17",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "截至我们录制时间9月17号的收盘，布伦特原油啊虽然已经连续两个交易日下跌， 但是仍然是每桶104美元",
+            "unitDescription": "USD per barrel"
+          },
+          "original": {
+            "label": "Brent crude price",
+            "value": 104,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "ones",
+            "period": "2026-09-17",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "截至我们录制时间9月17号的收盘，布伦特原油啊虽然已经连续两个交易日下跌， 但是仍然是每桶104美元"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from total to per_barrel using the exact USD-per-barrel quote. Original model quantity remains in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "s-4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Fed rate hike amount",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "美联储已经加息了25个基点"
+          },
+          "original": {
+            "label": "Fed rate hike amount",
+            "value": 25,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "美联储已经加息了25个基点"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from other to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "s-4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Fed projected additional hike",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": "within year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "最新点阵图对应年内还要加息25个基点啊"
+          },
+          "original": {
+            "label": "Fed projected additional hike",
+            "value": 25,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "within year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "最新点阵图对应年内还要加息25个基点啊"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from other to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "s-4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Fed median rate projection for next year",
+            "value": 4.1,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": "next year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "明年的中位数也在4.1%左右"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "s-5",
+          "evidenceIds": [
+            "k3",
+            "k5"
+          ],
+          "fact": {
+            "label": "BOJ rate hike increment",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": "2026-09-18",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k5",
+            "quote": "9月18号日本央行已经公布结果， 加息25个基点"
+          },
+          "original": {
+            "label": "BOJ rate hike increment",
+            "value": 25,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "2026-09-18",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k5",
+            "quote": "9月18号日本央行已经公布结果， 加息25个基点"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from other to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "s-7",
+          "evidenceIds": [
+            "k6"
+          ],
+          "fact": null,
+          "original": {
+            "label": "S&P 500 closing level",
+            "value": 7600,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "2026-09-17",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k6",
+            "quote": "收在7,600"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "coverage-1",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Original S&P 500 target",
+            "value": 8400,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "mid-2027",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k1",
+            "quote": "他原来预计啊，标普500今年年底到达8,400，现在呢，他把这个目标推到了2027年年中才达到"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "coverage-1",
+          "evidenceIds": [
+            "k1"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Revised year-end S&P 500 target",
+            "value": 7900,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "year-end",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k1",
+            "quote": "今年年底呢先看7,900"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: measurement dimension or denominator is unspecified; no GW, per-MW, FX or other unit was inferred from its label."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "coverage-3",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Brent crude price",
+            "value": 104,
+            "currency": "USD",
+            "unit": "per_barrel",
+            "scale": "ones",
+            "period": "2026-09-17",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "截至我们录制时间9月17号的收盘，布伦特原油啊虽然已经连续两个交易日下跌， 但是仍然是每桶104美元",
+            "unitDescription": "USD per barrel"
+          },
+          "original": {
+            "label": "Brent crude price",
+            "value": 104,
+            "currency": "USD",
+            "unit": "total",
+            "scale": "ones",
+            "period": "2026-09-17",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "截至我们录制时间9月17号的收盘，布伦特原油啊虽然已经连续两个交易日下跌， 但是仍然是每桶104美元"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from total to per_barrel using the exact USD-per-barrel quote. Original model quantity remains in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "coverage-4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Fed rate hike amount",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "美联储已经加息了25个基点"
+          },
+          "original": {
+            "label": "Fed rate hike amount",
+            "value": 25,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": null,
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k2",
+            "quote": "美联储已经加息了25个基点"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from other to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "coverage-4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": {
+            "label": "Fed projected additional hike",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": "within year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "最新点阵图对应年内还要加息25个基点啊"
+          },
+          "original": {
+            "label": "Fed projected additional hike",
+            "value": 25,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "within year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "最新点阵图对应年内还要加息25个基点啊"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from other to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "coverage-4",
+          "evidenceIds": [
+            "k2"
+          ],
+          "fact": null,
+          "original": {
+            "label": "Fed median rate projection for next year",
+            "value": 4.1,
+            "currency": null,
+            "unit": "percent",
+            "scale": "ones",
+            "period": "next year",
+            "basis": "not_stated",
+            "nature": "forecast",
+            "evidenceId": "k2",
+            "quote": "明年的中位数也在4.1%左右"
+          },
+          "status": "unresolved",
+          "reason": "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred."
+        },
+        {
+          "videoId": "SPIRV9UjNYU",
+          "briefId": "0634c0ea-8407-4f0d-8b6d-8c16ae1a0de7",
+          "sentenceId": "coverage-5",
+          "evidenceIds": [
+            "k3",
+            "k5"
+          ],
+          "fact": {
+            "label": "BOJ rate hike increment",
+            "value": 25,
+            "currency": null,
+            "unit": "basis_points",
+            "scale": "ones",
+            "period": "2026-09-18",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k5",
+            "quote": "9月18号日本央行已经公布结果， 加息25个基点"
+          },
+          "original": {
+            "label": "BOJ rate hike increment",
+            "value": 25,
+            "currency": null,
+            "unit": "other",
+            "scale": "ones",
+            "period": "2026-09-18",
+            "basis": "not_stated",
+            "nature": "reported",
+            "evidenceId": "k5",
+            "quote": "9月18号日本央行已经公布结果， 加息25个基点"
+          },
+          "status": "corrected",
+          "reason": "Typed unit corrected from other to basis_points using the exact retained quote; 25 basis points equals 0.25 percentage points. Original model value and unit remain in the audit record."
+        }
+      ]
+    }
+  ]
+}

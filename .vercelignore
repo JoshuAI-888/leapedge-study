@@ -1,0 +1,16 @@
+.env*
+!.env.example
+data
+work
+.git
+node_modules
+.next
+.venv
+__pycache__
+*.sqlite*
+
+# Retired v1 research surface and one-off evidence scripts. Kept in the
+# repository under scripts/archive, never built and never deployed.
+scripts/archive
+
+docs/audit/*.png

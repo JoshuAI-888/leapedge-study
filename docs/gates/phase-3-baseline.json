@@ -1,0 +1,17 @@
+{
+  "version": "standalone-conformance.v1",
+  "phase": 3,
+  "status": "acceptance-incomplete",
+  "implementation": "F32-F49 implementation and gate record merged in PR 6; acceptance gaps remain",
+  "commandEvidence": "docs/gates/standalone-verification.json",
+  "browserEvidence": "docs/gates/browser-acceptance.json",
+  "liveEvidence": "docs/delivery/live-comparison.json",
+  "remaining": [
+    "Final production desktop/mobile visual and UX acceptance via browser control",
+    "Completed live native batch job",
+    "Reachable HTTPS push delivery"
+  ],
+  "humanVerified50": "removed from scope",
+  "finradarIntegration": "out of scope",
+  "mergeCommit": "a74efb76152d995a646462a3c763e619928008c0"
+}

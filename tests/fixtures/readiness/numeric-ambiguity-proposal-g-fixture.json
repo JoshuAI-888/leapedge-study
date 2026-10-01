@@ -1,0 +1,193 @@
+{
+  "provenance": {
+    "path": "data/readiness-20260927/candidate-g-session-2.json",
+    "sha256": "c1ef0ab6939eebbdb30124b6c066dd8c050728365a91f9964d8aa50fba0de8df",
+    "identity": {
+      "revision": "8b679df5290b8514ec1afb61fbe487edc3debd56",
+      "implementationSha256": "343124245dcb572855843f7bde32a7ecee7150f3bbd185585d409bc59405868b",
+      "inputSha256": "d43c51bfb6846bcc28afc0a344ccbe0caa97ffd778595ffe4e97dc182ee15551",
+      "settingsSha256": "067863563ef7c9a662423856d7b3ca799b171e3d78128d2a9505afca14a958ca",
+      "maxUsd": 25,
+      "treatment": "conservative-no-overlap-frozen-transcript"
+    }
+  },
+  "context": {
+    "videoPublishedAt": "2026-09-14T11:00:10Z",
+    "recordedAt": null,
+    "analysedAt": "2026-09-19T22:41:00.581Z",
+    "language": "en-US",
+    "videoId": "jPy5aDhMsMY",
+    "channelId": "UC_xMKlHYdRNXLX9XzuOLjsg",
+    "temporalPolicy": "video-date evidence and later updates are separate"
+  },
+  "sentences": [
+    {
+      "id": "s-3",
+      "text": "Oracle reported net income of $4.7 billion, up 63% year-over-year, with diluted EPS expanding from $1.01 to $1.56.",
+      "evidenceIds": [
+        "k15"
+      ],
+      "externalIds": [],
+      "financialFacts": [
+        {
+          "label": "Oracle current diluted EPS",
+          "value": 1.56,
+          "currency": "USD",
+          "unit": "per_share",
+          "unitDescription": null,
+          "relation": "exact",
+          "scale": "ones",
+          "period": "latest quarter",
+          "basis": "not_stated",
+          "nature": "reported",
+          "evidenceId": "k15",
+          "quote": "delivery PS $156 versus $101."
+        },
+        {
+          "label": "Oracle prior-year diluted EPS",
+          "value": 1.01,
+          "currency": "USD",
+          "unit": "per_share",
+          "unitDescription": null,
+          "relation": "exact",
+          "scale": "ones",
+          "period": "prior-year quarter",
+          "basis": "not_stated",
+          "nature": "reported",
+          "evidenceId": "k15",
+          "quote": "versus $101."
+        }
+      ],
+      "novelty": {
+        "status": "unknown",
+        "baselineIds": [],
+        "reason": "No independently audited, dated comparable baseline."
+      },
+      "calculation": null,
+      "kind": "reported_fact",
+      "horizon": "fundamental",
+      "topic": "Oracle Financial Performance and Balance Sheet Risks",
+      "materiality": 2,
+      "importanceReason": "Quantifies the reported quarterly net earnings surge and EPS growth.",
+      "speaker": "unknown",
+      "timeMode": "video_date",
+      "factualStatus": "unverified",
+      "externalSupport": [],
+      "fidelity": "Text-checked source",
+      "robustness": "insufficient",
+      "robustnessReason": "No primary source verification of net income/EPS figures beyond creator narration.",
+      "auditReason": "Matches k15's quoted net income, EPS figures for Oracle.",
+      "calculationResult": null
+    },
+    {
+      "id": "s-12",
+      "text": "Fed studies indicate core PCE may overstate sticky inflation due to flash memory accounting for one-third of excess inflation, and adjusted core PCE closely aligns with a 2.4% CPI level.",
+      "evidenceIds": [
+        "k18"
+      ],
+      "externalIds": [],
+      "financialFacts": [
+        {
+          "label": "Reported CPI rate",
+          "value": 2.4,
+          "currency": null,
+          "unit": "percent",
+          "unitDescription": null,
+          "relation": "exact",
+          "scale": "ones",
+          "period": null,
+          "basis": "not_stated",
+          "nature": "reported",
+          "evidenceId": "k18",
+          "quote": "core PCE if you adjust it is actually almost mirrored on top of CPI which is 24."
+        }
+      ],
+      "novelty": {
+        "status": "unknown",
+        "baselineIds": [],
+        "reason": "No independently audited, dated comparable baseline."
+      },
+      "calculation": null,
+      "kind": "analysis",
+      "horizon": "tactical",
+      "topic": "September Equity Market Seasonality and Macro Risks",
+      "materiality": 2,
+      "importanceReason": "Explains a technical measurement distortion in inflation readings that could ease market rate fears.",
+      "speaker": "unknown",
+      "timeMode": "video_date",
+      "factualStatus": "unverified",
+      "externalSupport": [],
+      "fidelity": "Text-checked source",
+      "robustness": "insufficient",
+      "robustnessReason": "Attributed to unnamed Fed studies without citation; no external corroboration retrieved.",
+      "auditReason": "Matches k18's quoted description of core PCE/CPI adjustment argument.",
+      "calculationResult": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "k15",
+      "kind": "research_context",
+      "summary": "Oracle reported 63% year-over-year net income growth to $4.7 billion and diluted EPS of $1.56 versus $1.01 (over 50% growth), yet faces severe balance sheet problems, mounting interest expense, and an unfavorable CDS market, which limits investor willingness to buy unless at a discount.",
+      "instrument": "Oracle",
+      "ticker": null,
+      "stance": "neutral",
+      "horizon": null,
+      "conditions": [],
+      "risks": [
+        "Worsening interest expense problems",
+        "Severe balance sheet debt distress reflected in the CDS market"
+      ],
+      "levels": [],
+      "trust": "L1",
+      "quotes": [
+        {
+          "startId": "s00076",
+          "endId": "s00105",
+          "text": "delivery PS $156 versus $101.",
+          "translation": "",
+          "start": 158.08,
+          "end": 226.959,
+          "hash": "68e3cae989257b89ddc28a23b6c48dc265da90d683b67f2a27af1f56a22d7dbb"
+        },
+        {
+          "startId": "s00076",
+          "endId": "s00105",
+          "text": "versus $101.",
+          "translation": "",
+          "start": 158.08,
+          "end": 226.959,
+          "hash": "68e3cae989257b89ddc28a23b6c48dc265da90d683b67f2a27af1f56a22d7dbb"
+        }
+      ]
+    },
+    {
+      "id": "k18",
+      "kind": "research_context",
+      "summary": "Fed studies indicate core PCE may overstate sticky inflation because software accessories (flash memory) account for one-third of excess inflation this year; when adjusted, core PCE closely mirrors CPI at 2.4%, and a 2.4% CPI print could relieve market inflation anxieties.",
+      "instrument": null,
+      "ticker": null,
+      "stance": "neutral",
+      "horizon": "next week",
+      "conditions": [
+        "CPI prints at 2.4% next week"
+      ],
+      "risks": [
+        "Gasoline price inflation is outside Fed control"
+      ],
+      "levels": [],
+      "trust": "L1",
+      "quotes": [
+        {
+          "startId": "s00385",
+          "endId": "s00403",
+          "text": "core PCE if you adjust it is actually almost mirrored on top of CPI which is 24.",
+          "translation": "",
+          "start": 805.68,
+          "end": 844.72,
+          "hash": "07b49b196ea30f41826b759eff64b6b0cfc2c30f6ab6b5ec09f37ccc50f67973"
+        }
+      ]
+    }
+  ]
+}

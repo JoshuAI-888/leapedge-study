@@ -1,0 +1,54 @@
+[
+  {
+    "videoId": "v824SHV6COE",
+    "url": "https://leapedge.app/analyses/v824SHV6COE__keypoints.v1-insights.v3-critique.v1",
+    "tradeIdeas": 0,
+    "keyPoints": 9,
+    "displayedCostUsd": 0.05,
+    "displayedTokens": "141.2k",
+    "models": [
+      "gemini-3.1-flash-lite",
+      "gemini-3.7-flash",
+      "gemini-3.1-flash-lite"
+    ],
+    "topics": [
+      "off-balance-sheet AI infrastructure obligations",
+      "leases and contractual commitments",
+      "capital intensity and reduced flexibility",
+      "SPVs and guarantees",
+      "nominal versus discounted liability values",
+      "irreversible commitments and revenue risk"
+    ],
+    "finding": "Reference classifies company risk commentary as explanatory research, not trade ideas.",
+    "observedAt": "2026-09-13T17:50:41.527Z",
+    "method": "Signed-in browser UI observation",
+    "prompt": "keypoints.v1-insights.v3-critique.v1",
+    "limitations": "Displayed token and cost totals have unpublished accounting. Internal prompts and transcript provider remain unverified."
+  },
+  {
+    "videoId": "J25UuUqHT3Y",
+    "url": "https://leapedge.app/analyses/J25UuUqHT3Y__keypoints.v1-insights.v3-critique.v1",
+    "tradeIdeas": 0,
+    "keyPoints": 11,
+    "displayedCostUsd": 0.06,
+    "displayedTokens": "195.4k",
+    "models": [
+      "gemini-3.1-flash-lite",
+      "gemini-3.7-flash",
+      "gemini-3.1-flash-lite"
+    ],
+    "topics": [
+      "US realignment versus decline",
+      "negotiation uncertainty and institutional trust",
+      "technology-led productivity",
+      "personalized diplomacy",
+      "four US foreign-policy traditions",
+      "technology-government alignment"
+    ],
+    "finding": "Chinese macro video synthesizes in English with zero trade ideas.",
+    "observedAt": "2026-09-13T17:50:41.527Z",
+    "method": "Signed-in browser UI observation",
+    "prompt": "keypoints.v1-insights.v3-critique.v1",
+    "limitations": "Displayed token and cost totals have unpublished accounting. Internal prompts and transcript provider remain unverified."
+  }
+]

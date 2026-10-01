@@ -1,0 +1,8 @@
+
+> youtube-intelligence@0.1.0 typecheck
+> next typegen && tsc --noEmit
+
+Generating route types...
+✓ Types generated successfully
+src/server/youtube-intelligence/email.ts(118,12): error TS2698: Spread types may only be created from object types.
+src/server/youtube-intelligence/email.ts(118,25): error TS2698: Spread types may only be created from object types.

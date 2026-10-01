@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS yi_runs(id TEXT PRIMARY KEY,video_id TEXT,url TEXT,model TEXT,prompt_version TEXT,title TEXT,status TEXT,stage TEXT,created_at TEXT,updated_at TEXT,error TEXT,input TEXT,output TEXT,cost DOUBLE PRECISION DEFAULT 0,lease_until BIGINT DEFAULT 0,lease_token TEXT);
+CREATE TABLE IF NOT EXISTS yi_calls(id TEXT PRIMARY KEY,run_id TEXT,stage TEXT,status TEXT,amount DOUBLE PRECISION,metrics TEXT,attempt INTEGER DEFAULT 1);
+CREATE TABLE IF NOT EXISTS yi_responses(id TEXT PRIMARY KEY,run_id TEXT,stage TEXT,payload TEXT,created_at TEXT);
+CREATE TABLE IF NOT EXISTS yi_heartbeat(id INTEGER PRIMARY KEY,at BIGINT);
+CREATE TABLE IF NOT EXISTS yi_documents(kind TEXT,id TEXT,payload TEXT,created_at TEXT,updated_at TEXT,PRIMARY KEY(kind,id));
+CREATE TABLE IF NOT EXISTS yi_events(id TEXT PRIMARY KEY,kind TEXT,entity_id TEXT,at TEXT,payload TEXT);
+CREATE TABLE IF NOT EXISTS yi_prompts(id TEXT PRIMARY KEY,hash TEXT UNIQUE,payload TEXT,created_at TEXT);
+CREATE TABLE IF NOT EXISTS yi_discoveries(video_id TEXT PRIMARY KEY,channel_id TEXT,payload TEXT,discovered_at TEXT,run_id TEXT);
+CREATE TABLE IF NOT EXISTS yi_shares(token_hash TEXT PRIMARY KEY,id TEXT UNIQUE,snapshot TEXT,created_at TEXT,expires_at TEXT,revoked_at TEXT);
+CREATE INDEX IF NOT EXISTS yi_runs_queue ON yi_runs(status,lease_until,created_at);
+CREATE INDEX IF NOT EXISTS yi_calls_run_stage ON yi_calls(run_id,stage);
+CREATE INDEX IF NOT EXISTS yi_documents_kind ON yi_documents(kind,created_at);
+CREATE INDEX IF NOT EXISTS yi_discoveries_channel ON yi_discoveries(channel_id,discovered_at);
+ALTER TABLE yi_calls ADD COLUMN IF NOT EXISTS attempt INTEGER DEFAULT 1;
+CREATE INDEX IF NOT EXISTS yi_calls_run_stage_attempt ON yi_calls(run_id,stage,attempt);

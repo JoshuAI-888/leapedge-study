@@ -1,0 +1,49 @@
+Vercel CLI 59.16.0 (Node.js 24.18.0)
+Deploying youtube-intelligence
+Uploading [--------------------] (0.0B/1.1MB)
+Uploading [=====---------------] (288.1KB/1.1MB)
+Uploading [==========----------] (557.7KB/1.1MB)
+Uploading [===============-----] (837.5KB/1.1MB)
+Uploading [====================] (1.1MB/1.1MB)
+  Inspect         https://vercel.com/joshu-ai/youtube-intelligence/Fk9BmUscTqptjLu9sBU3uRHajed7
+  Preview         https://youtube-intelligence-e39pzllph-joshu-ai.vercel.app
+Building…
+Building…
+Running build in Cleveland, USA (East) – cle1
+Build machine configuration: 4 cores, 8 GB
+Retrieving list of deployment files...
+Downloading 165 deployment files...
+Restored build cache from previous deployment (GWF4Z1uzWuzEmaHC3CYRbAkfYHnP)
+Running "vercel build"
+Vercel CLI 59.16.0
+Running "install" command: `npm ci --ignore-scripts`...
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+added 88 packages, and audited 89 packages in 13s
+13 packages are looking for funding
+run `npm fund` for details
+found 0 vulnerabilities
+Detected Next.js version: 16.3.4
+Running "npm run build"
+> youtube-intelligence@0.1.0 build
+> next build
+▲ Next.js 16.3.4 (Turbopack)
+Applying modifyConfig from Vercel
+✓ Running next.config took 161ms
+Creating an optimized production build ...
+✓ Compiled successfully in 4.5s
+Running TypeScript ...
+scripts/save-native-google-research.ts(12,31): error TS2307: Cannot find module '../evaluations/native-google/shadow-prompts.ts' or its corresponding type declarations.
+Failed to type check.
+Error: Command "npm run build" exited with 1
+{
+  "status": "error",
+  "reason": "deploy_failed",
+  "message": "Command \"npm run build\" exited with 1",
+  "next": [
+    {
+      "command": "vercel deploy",
+      "when": "retry deploy"
+    }
+  ]
+}
+Error: Command "npm run build" exited with 1

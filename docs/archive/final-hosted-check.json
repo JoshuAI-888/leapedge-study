@@ -1,0 +1,71 @@
+{
+  "at": "2026-09-13T18:19:27.443Z",
+  "origin": "https://youtube-intelligence-two.vercel.app",
+  "privateRead": "passed",
+  "activePrompt": "evidence-first.web.v5",
+  "experimentalWindowsEnabled": false,
+  "referenceCount": 2,
+  "collectionVideos": 6,
+  "performanceModes": [
+    {
+      "mode": "historical",
+      "summary": {
+        "total": 3,
+        "priced": 0,
+        "completed": 0,
+        "ongoing": 0,
+        "stale": 0,
+        "meanReturn": null,
+        "meanSpy": null,
+        "meanExcess": null,
+        "winRate": null,
+        "beatsSpyRate": null
+      },
+      "statuses": [
+        "ineligible",
+        "ineligible",
+        "ineligible"
+      ]
+    },
+    {
+      "mode": "forward",
+      "summary": {
+        "total": 3,
+        "priced": 0,
+        "completed": 0,
+        "ongoing": 0,
+        "stale": 0,
+        "meanReturn": null,
+        "meanSpy": null,
+        "meanExcess": null,
+        "winRate": null,
+        "beatsSpyRate": null
+      },
+      "statuses": [
+        "ineligible",
+        "ineligible",
+        "ineligible"
+      ]
+    },
+    {
+      "mode": "leapedge",
+      "summary": {
+        "total": 3,
+        "priced": 0,
+        "completed": 0,
+        "ongoing": 0,
+        "stale": 0,
+        "meanReturn": null,
+        "meanSpy": null,
+        "meanExcess": null,
+        "winRate": null,
+        "beatsSpyRate": null
+      },
+      "statuses": [
+        "ineligible",
+        "ineligible",
+        "ineligible"
+      ]
+    }
+  ]
+}

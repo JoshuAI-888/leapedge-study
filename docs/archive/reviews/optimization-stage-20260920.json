@@ -1,0 +1,2754 @@
+{
+  "version": "optimization-stage-report.v1",
+  "scope": "Frozen translation and final research audit only; not ingestion-to-display.",
+  "comparable": true,
+  "invalidReasons": [],
+  "qualityVerdict": "review-required",
+  "caveat": "One paired trial per stage; provider variability remains. Changed verdicts require source-backed adjudication; unchanged verdicts are not accuracy proof. Extraction/audit recall, queueing and UI paint are not measured.",
+  "rows": [
+    {
+      "videoId": "1WNowIoNgtg",
+      "stage": "translate",
+      "before": {
+        "videoId": "1WNowIoNgtg",
+        "stage": "translate",
+        "sourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+        "recomputedSourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+        "retrievalHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "seconds": 16.266408208999998,
+        "error": null,
+        "controlHash": "7ec13d95ce67373c8535bf0946d0535579167c73c5c8606910edaa11c37dcaee",
+        "draftHash": null,
+        "costUsd": 0.0092945,
+        "inputTokens": 5132,
+        "outputTokens": 5341,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [],
+        "coverageFindings": []
+      },
+      "after": {
+        "videoId": "1WNowIoNgtg",
+        "stage": "translate",
+        "sourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+        "recomputedSourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+        "retrievalHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "seconds": 0.0011907910000002176,
+        "error": null,
+        "controlHash": "7ec13d95ce67373c8535bf0946d0535579167c73c5c8606910edaa11c37dcaee",
+        "draftHash": null,
+        "costUsd": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [],
+        "coverageFindings": []
+      },
+      "verdictChanges": [],
+      "savedSeconds": 16.265217418,
+      "savedUsd": 0.0092945
+    },
+    {
+      "videoId": "1WNowIoNgtg",
+      "stage": "research-audit",
+      "before": {
+        "videoId": "1WNowIoNgtg",
+        "stage": "research-audit",
+        "sourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+        "recomputedSourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+        "retrievalHash": "7adb73b6936baacaf4c4f7ed1dfc58a035da6201c9c198b300dbd29d48c40557",
+        "seconds": 17.380209583,
+        "error": null,
+        "controlHash": "efbd0635a0b0b2edd557302b637d08a17bf18be2d275fd8f437ba6d1723d6ab9",
+        "draftHash": "e14c2e42f2c4af8be506bc2c7cd81551fbccffa67f5e7bc55ebfc30a67266eb5",
+        "costUsd": 0.059852,
+        "inputTokens": 21081,
+        "outputTokens": 1769,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [
+          {
+            "id": "s1",
+            "accepted": true,
+            "reason": "Supported by k1 quote describing put selling as insurance-like income mechanism.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion/context without independent corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s2",
+            "accepted": true,
+            "reason": "Supported by k1/k2 describing wanting to own stock and limit-order analogy.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator methodology, no external corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s3",
+            "accepted": true,
+            "reason": "Matches k1/k3 quotes on $3000 weekly target risk scaling with $100k vs $1M portfolios; financialFacts correctly labeled as scenario.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Countercase present but no invalidation condition tied to same topic/horizon.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s4",
+            "accepted": true,
+            "reason": "Supported by k2/k4/k5 on capped upside risk.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analysis without paired invalidation condition.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s5",
+            "accepted": true,
+            "reason": "Supported by k7/k12 on 30 delta and 30-45 day window.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single creator claim, no corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s6",
+            "accepted": true,
+            "reason": "Matches k11 on escalating assignment risk near expiration.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No independent corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s7",
+            "accepted": true,
+            "reason": "Matches k8/k10 on rolling and wheel strategy tactics.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator technique description only.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s8",
+            "accepted": true,
+            "reason": "Matches c1/c4 on Google 370 puts in the money and early assignment on margin.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single-source disclosed holding without external verification.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s9",
+            "accepted": true,
+            "reason": "Matches c1/c4/c5 on rolling or 5% covered call plan; financialFact correctly scenario-labeled.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Tactical plan, no corroboration or invalidation condition.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s10",
+            "accepted": true,
+            "reason": "Matches c2 on Microsoft ITM put slightly down requiring management.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single disclosed holding, unverified.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s11",
+            "accepted": true,
+            "reason": "Matches c3 on Palantir Nov 20 puts preferred over outright purchase due to limited near-term upside view.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion on valuation, no corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s12",
+            "accepted": true,
+            "reason": "Matches c3 quotes on 165 strike, $1.85 premium, and 155 support; breakeven calculation (165-1.85=163.15) correctly framed as scenario, though sentence states breakeven 'above' 155 which matches arithmetic.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Illustrative scenario without corroboration.",
+            "thesisSupportIds": []
+          }
+        ],
+        "coverageFindings": [
+          "No baseline evidence was supplied, so novelty status is correctly marked unknown throughout; no changed-stance or contradiction claims can be assessed.",
+          "The draft omits explicit countercase/invalidation sentence pairing needed to elevate any topic to 'supported' robustness (e.g., capital adequacy risk in s3 lacks a paired invalidation condition).",
+          "Coverage does not address the option strategy's collateral/margin risk in general terms beyond the specific Google anecdote, despite the transcript emphasizing margin-based early assignment risk as a distinct topic.",
+          "No sentence addresses the k9 point that buying calls is preferred over selling puts on high-quality 52-week-low stocks poised for sharp recovery, which is a notable countercase to the core put-selling thesis and is omitted from the draft."
+        ]
+      },
+      "after": {
+        "videoId": "1WNowIoNgtg",
+        "stage": "research-audit",
+        "sourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+        "recomputedSourceHash": "f9c9d50e18785fd4f72254102e17f8c962310e6ac4863f8e84b547f3f74f421c",
+        "retrievalHash": "7adb73b6936baacaf4c4f7ed1dfc58a035da6201c9c198b300dbd29d48c40557",
+        "seconds": 29.630635833,
+        "error": null,
+        "controlHash": "efbd0635a0b0b2edd557302b637d08a17bf18be2d275fd8f437ba6d1723d6ab9",
+        "draftHash": "e14c2e42f2c4af8be506bc2c7cd81551fbccffa67f5e7bc55ebfc30a67266eb5",
+        "costUsd": 0.0717,
+        "inputTokens": 21095,
+        "outputTokens": 2951,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": {
+          "originalBytes": 54719,
+          "actualBytes": 54749,
+          "evidenceItems": 17,
+          "sentences": 12,
+          "policy": "all-video-evidence-and-cited-external-v1"
+        },
+        "verdicts": [
+          {
+            "id": "s1",
+            "accepted": true,
+            "reason": "Directly supported by k1 quotes describing put selling as an income strategy analogous to insurance.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single creator opinion without independent corroboration or explicit countercase/invalidation pairing.",
+            "thesisSupportIds": [
+              "k1"
+            ]
+          },
+          {
+            "id": "s2",
+            "accepted": true,
+            "reason": "Supported by k1/k2 quotes on choosing desired ownership stocks and limit-order analogy.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator heuristic, no external corroboration.",
+            "thesisSupportIds": [
+              "k1",
+              "k2"
+            ]
+          },
+          {
+            "id": "s3",
+            "accepted": true,
+            "reason": "Matches k1/k3 quotes on capital size vs weekly target risk; scenario figures preserved as scenario not forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Countercase framing present but no explicit invalidation condition cited.",
+            "thesisSupportIds": [
+              "k1",
+              "k3"
+            ]
+          },
+          {
+            "id": "s4",
+            "accepted": true,
+            "reason": "Supported by k2/k4/k5 on capped upside risk.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "General risk description, no quantified countercase/invalidation.",
+            "thesisSupportIds": [
+              "k2",
+              "k4",
+              "k5"
+            ]
+          },
+          {
+            "id": "s5",
+            "accepted": true,
+            "reason": "Matches k7/k12 on 30 delta and 30-45 day window guidance.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator heuristic drawn from unverifiable internal Goldman study reference.",
+            "thesisSupportIds": [
+              "k7",
+              "k12"
+            ]
+          },
+          {
+            "id": "s6",
+            "accepted": true,
+            "reason": "Matches k11 quote on assignment risk rising near expiration with high delta.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single-source explanatory claim.",
+            "thesisSupportIds": [
+              "k11"
+            ]
+          },
+          {
+            "id": "s7",
+            "accepted": true,
+            "reason": "Matches k8/k10 on rolling or wheel strategy as management tactics.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Descriptive tactic, no countercase cited.",
+            "thesisSupportIds": [
+              "k8",
+              "k10"
+            ]
+          },
+          {
+            "id": "s8",
+            "accepted": true,
+            "reason": "Matches c1/c4 quotes on Google 370 puts in the money and early assignment on margin.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Self-reported creator holding, no independent verification of position size or margin use.",
+            "thesisSupportIds": [
+              "c1",
+              "c4"
+            ]
+          },
+          {
+            "id": "s9",
+            "accepted": true,
+            "reason": "Matches c1/c4/c5 quotes on rolling or selling a 5% higher covered call to reach breakeven.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forward-looking creator action plan, unverifiable.",
+            "thesisSupportIds": [
+              "c1",
+              "c4",
+              "c5"
+            ]
+          },
+          {
+            "id": "s10",
+            "accepted": true,
+            "reason": "Matches c2 quote on Microsoft ITM put management options.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single creator disclosure, strike/expiry omitted from evidence.",
+            "thesisSupportIds": [
+              "c2"
+            ]
+          },
+          {
+            "id": "s11",
+            "accepted": true,
+            "reason": "Matches c3 quotes on preferring puts over outright purchase due to Palantir being 'tapped out' and November 20 expiration.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion on valuation with no external corroboration of 'tapped out' claim.",
+            "thesisSupportIds": [
+              "c3"
+            ]
+          },
+          {
+            "id": "s12",
+            "accepted": false,
+            "reason": "The cited quotes are internally inconsistent: creator states 165 strike minus $1.85 premium yields a breakeven, then separately states the breakeven figure is 155, which is arithmetically inconsistent (165-1.85=163.15, not 155) and possibly refers to the earlier discussed 175-strike scenario. The draft resolves this ambiguity by asserting the breakeven is 'above' the 155 support level, which is not supported by the quotes and constitutes an invented reconciliation of a contradictory source rather than a faithful report.",
+            "factualStatus": "disputed",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Underlying quotes are self-contradictory; no reliable calculation can be grounded from them.",
+            "thesisSupportIds": []
+          }
+        ],
+        "coverageFindings": [
+          "The draft does not flag that the Palantir breakeven figures in c3 are internally inconsistent (165 strike price math does not reconcile with the stated 155 breakeven), which affects confidence in s12.",
+          "Coverage omits noting that all creator positions (Google, Microsoft, Palantir) are self-reported holdings/actions from a single unverified speaker with no independent confirmation of position sizes, account values, or actual fills.",
+          "No countercase or invalidation condition is explicitly tied to the central thesis (put-selling as low-risk income strategy) despite k4/k5 raising upside-capping risk; robustness for the central thesis sentences (s1-s7) is therefore uniformly insufficient.",
+          "The omission list correctly notes missing Microsoft strike/expiry and Google share quantities, but does not note that the speaker's Goldman Sachs credential and the cited '10-year internal study' (k7) are asserted by the creator without any independent source, which affects factualStatus for s5."
+        ]
+      },
+      "verdictChanges": [
+        {
+          "id": "s1",
+          "classificationChanged": false,
+          "before": {
+            "id": "s1",
+            "accepted": true,
+            "reason": "Supported by k1 quote describing put selling as insurance-like income mechanism.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion/context without independent corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s1",
+            "accepted": true,
+            "reason": "Directly supported by k1 quotes describing put selling as an income strategy analogous to insurance.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single creator opinion without independent corroboration or explicit countercase/invalidation pairing.",
+            "thesisSupportIds": [
+              "k1"
+            ]
+          }
+        },
+        {
+          "id": "s2",
+          "classificationChanged": false,
+          "before": {
+            "id": "s2",
+            "accepted": true,
+            "reason": "Supported by k1/k2 describing wanting to own stock and limit-order analogy.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator methodology, no external corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s2",
+            "accepted": true,
+            "reason": "Supported by k1/k2 quotes on choosing desired ownership stocks and limit-order analogy.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator heuristic, no external corroboration.",
+            "thesisSupportIds": [
+              "k1",
+              "k2"
+            ]
+          }
+        },
+        {
+          "id": "s3",
+          "classificationChanged": false,
+          "before": {
+            "id": "s3",
+            "accepted": true,
+            "reason": "Matches k1/k3 quotes on $3000 weekly target risk scaling with $100k vs $1M portfolios; financialFacts correctly labeled as scenario.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Countercase present but no invalidation condition tied to same topic/horizon.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s3",
+            "accepted": true,
+            "reason": "Matches k1/k3 quotes on capital size vs weekly target risk; scenario figures preserved as scenario not forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Countercase framing present but no explicit invalidation condition cited.",
+            "thesisSupportIds": [
+              "k1",
+              "k3"
+            ]
+          }
+        },
+        {
+          "id": "s4",
+          "classificationChanged": false,
+          "before": {
+            "id": "s4",
+            "accepted": true,
+            "reason": "Supported by k2/k4/k5 on capped upside risk.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analysis without paired invalidation condition.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s4",
+            "accepted": true,
+            "reason": "Supported by k2/k4/k5 on capped upside risk.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "General risk description, no quantified countercase/invalidation.",
+            "thesisSupportIds": [
+              "k2",
+              "k4",
+              "k5"
+            ]
+          }
+        },
+        {
+          "id": "s5",
+          "classificationChanged": false,
+          "before": {
+            "id": "s5",
+            "accepted": true,
+            "reason": "Supported by k7/k12 on 30 delta and 30-45 day window.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single creator claim, no corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s5",
+            "accepted": true,
+            "reason": "Matches k7/k12 on 30 delta and 30-45 day window guidance.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator heuristic drawn from unverifiable internal Goldman study reference.",
+            "thesisSupportIds": [
+              "k7",
+              "k12"
+            ]
+          }
+        },
+        {
+          "id": "s6",
+          "classificationChanged": false,
+          "before": {
+            "id": "s6",
+            "accepted": true,
+            "reason": "Matches k11 on escalating assignment risk near expiration.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No independent corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s6",
+            "accepted": true,
+            "reason": "Matches k11 quote on assignment risk rising near expiration with high delta.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single-source explanatory claim.",
+            "thesisSupportIds": [
+              "k11"
+            ]
+          }
+        },
+        {
+          "id": "s7",
+          "classificationChanged": false,
+          "before": {
+            "id": "s7",
+            "accepted": true,
+            "reason": "Matches k8/k10 on rolling and wheel strategy tactics.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator technique description only.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s7",
+            "accepted": true,
+            "reason": "Matches k8/k10 on rolling or wheel strategy as management tactics.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Descriptive tactic, no countercase cited.",
+            "thesisSupportIds": [
+              "k8",
+              "k10"
+            ]
+          }
+        },
+        {
+          "id": "s8",
+          "classificationChanged": false,
+          "before": {
+            "id": "s8",
+            "accepted": true,
+            "reason": "Matches c1/c4 on Google 370 puts in the money and early assignment on margin.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single-source disclosed holding without external verification.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s8",
+            "accepted": true,
+            "reason": "Matches c1/c4 quotes on Google 370 puts in the money and early assignment on margin.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Self-reported creator holding, no independent verification of position size or margin use.",
+            "thesisSupportIds": [
+              "c1",
+              "c4"
+            ]
+          }
+        },
+        {
+          "id": "s9",
+          "classificationChanged": false,
+          "before": {
+            "id": "s9",
+            "accepted": true,
+            "reason": "Matches c1/c4/c5 on rolling or 5% covered call plan; financialFact correctly scenario-labeled.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Tactical plan, no corroboration or invalidation condition.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s9",
+            "accepted": true,
+            "reason": "Matches c1/c4/c5 quotes on rolling or selling a 5% higher covered call to reach breakeven.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forward-looking creator action plan, unverifiable.",
+            "thesisSupportIds": [
+              "c1",
+              "c4",
+              "c5"
+            ]
+          }
+        },
+        {
+          "id": "s10",
+          "classificationChanged": false,
+          "before": {
+            "id": "s10",
+            "accepted": true,
+            "reason": "Matches c2 on Microsoft ITM put slightly down requiring management.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single disclosed holding, unverified.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s10",
+            "accepted": true,
+            "reason": "Matches c2 quote on Microsoft ITM put management options.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single creator disclosure, strike/expiry omitted from evidence.",
+            "thesisSupportIds": [
+              "c2"
+            ]
+          }
+        },
+        {
+          "id": "s11",
+          "classificationChanged": false,
+          "before": {
+            "id": "s11",
+            "accepted": true,
+            "reason": "Matches c3 on Palantir Nov 20 puts preferred over outright purchase due to limited near-term upside view.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion on valuation, no corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s11",
+            "accepted": true,
+            "reason": "Matches c3 quotes on preferring puts over outright purchase due to Palantir being 'tapped out' and November 20 expiration.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion on valuation with no external corroboration of 'tapped out' claim.",
+            "thesisSupportIds": [
+              "c3"
+            ]
+          }
+        },
+        {
+          "id": "s12",
+          "classificationChanged": true,
+          "before": {
+            "id": "s12",
+            "accepted": true,
+            "reason": "Matches c3 quotes on 165 strike, $1.85 premium, and 155 support; breakeven calculation (165-1.85=163.15) correctly framed as scenario, though sentence states breakeven 'above' 155 which matches arithmetic.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Illustrative scenario without corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s12",
+            "accepted": false,
+            "reason": "The cited quotes are internally inconsistent: creator states 165 strike minus $1.85 premium yields a breakeven, then separately states the breakeven figure is 155, which is arithmetically inconsistent (165-1.85=163.15, not 155) and possibly refers to the earlier discussed 175-strike scenario. The draft resolves this ambiguity by asserting the breakeven is 'above' the 155 support level, which is not supported by the quotes and constitutes an invented reconciliation of a contradictory source rather than a faithful report.",
+            "factualStatus": "disputed",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Underlying quotes are self-contradictory; no reliable calculation can be grounded from them.",
+            "thesisSupportIds": []
+          }
+        }
+      ],
+      "savedSeconds": -12.25042625,
+      "savedUsd": -0.011847999999999997
+    },
+    {
+      "videoId": "ZfOQoh82JTo",
+      "stage": "translate",
+      "before": {
+        "videoId": "ZfOQoh82JTo",
+        "stage": "translate",
+        "sourceHash": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+        "recomputedSourceHash": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+        "retrievalHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "seconds": 26.865625999999995,
+        "error": null,
+        "controlHash": "a31ae68621c5a4bb3efcd05e2e8cbfe4a6178e2ab7d10e30efcd30558b700a7f",
+        "draftHash": null,
+        "costUsd": 0.017137,
+        "inputTokens": 9154,
+        "outputTokens": 9899,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [],
+        "coverageFindings": []
+      },
+      "after": {
+        "videoId": "ZfOQoh82JTo",
+        "stage": "translate",
+        "sourceHash": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+        "recomputedSourceHash": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+        "retrievalHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "seconds": 0.0005620829999970737,
+        "error": null,
+        "controlHash": "a31ae68621c5a4bb3efcd05e2e8cbfe4a6178e2ab7d10e30efcd30558b700a7f",
+        "draftHash": null,
+        "costUsd": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [],
+        "coverageFindings": []
+      },
+      "verdictChanges": [],
+      "savedSeconds": 26.865063916999997,
+      "savedUsd": 0.017137
+    },
+    {
+      "videoId": "ZfOQoh82JTo",
+      "stage": "research-audit",
+      "before": {
+        "videoId": "ZfOQoh82JTo",
+        "stage": "research-audit",
+        "sourceHash": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+        "recomputedSourceHash": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+        "retrievalHash": "a503c0ed2eb17633dd8226b7749cf98b25c1412c7481b6e549cd0b10e6d2b753",
+        "seconds": 19.650369333000004,
+        "error": null,
+        "controlHash": "64c8133c9957c77ecbe896895e1f43fe0455d7ba5e286fd668238b2eda4b16af",
+        "draftHash": "e7a8063d38aa27074734bc471cfa6cc0c32b2030456edfa8b0308dd6bc59b469",
+        "costUsd": 0.108168,
+        "inputTokens": 43634,
+        "outputTokens": 2090,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [
+          {
+            "id": "s-1",
+            "accepted": true,
+            "reason": "Corroborated by external filing k1/web-0eecc2f5a3-2 matching APY, cashback, and Lead Bank partnership details.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No cited countercase/invalidation sentence pair for this specific topic.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-2",
+            "accepted": true,
+            "reason": "Matches k1 quote and external filing confirming 4.5% APY and 2% cashback with direct deposit.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No explicit countercase paired with this fact.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-3",
+            "accepted": true,
+            "reason": "Creator estimate ('I'm guessing') and SoFi deposit figure correctly labeled as approximate/reported per k2.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Speculative estimate without external corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-4",
+            "accepted": true,
+            "reason": "Matches k4 and external SEC filing on Nu Global APYs and 35+ country coverage.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No paired invalidation condition cited.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-5",
+            "accepted": true,
+            "reason": "Accurately reflects creator's countercase in k4/k5/k6 regarding cash pickup necessity and corridor complexity.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Countercase present but no explicit invalidation condition provided by creator.",
+            "thesisSupportIds": [
+              "k4",
+              "k5",
+              "k6"
+            ]
+          },
+          {
+            "id": "s-6",
+            "accepted": true,
+            "reason": "Correctly captures creator's loss-leader/limit argument from k4 and k5 quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analytical inference without corroboration or invalidation condition.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-7",
+            "accepted": true,
+            "reason": "Accurately reflects creator's stated holding and rationale per c1 quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion on hedge strategy lacks independent corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-8",
+            "accepted": true,
+            "reason": "Matches c2 quote on TLT price levels and liquidity rationale, correctly framed as scenario.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Scenario-based creator view, no corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-9",
+            "accepted": true,
+            "reason": "Matches k9/k10 quotes on 10-year yield below 5% and core CPI heading to 2%, properly framed as forecast/creator view.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forecast lacking corroboration or countercase.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-10",
+            "accepted": true,
+            "reason": "Matches k8 quote on TransDigm's 20x EV/EBIT and aftermarket-driven insulation thesis.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No corroborating external source for valuation multiple.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-11",
+            "accepted": true,
+            "reason": "Matches k16/k17 valuation figures for LVMH and Herm\u00e8s and stated preference rationale.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion on valuation preference without independent verification.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-12",
+            "accepted": true,
+            "reason": "Corroborated by external Financial Post article confirming Carney's announcement, airport names, and land ownership retention.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase/invalidation cited for this specific claim.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-13",
+            "accepted": true,
+            "reason": "Accurately reflects creator's skeptical view in k13 about AI slowdown rhetoric being cover for capex cuts.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Speculative creator opinion, no external corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-14",
+            "accepted": true,
+            "reason": "Matches k21 quotes on Cathie Wood's $10 trillion Starship revenue scenario and creator's rejection of it.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Scenario properly not treated as forecast; no corroboration of feasibility claim.",
+            "thesisSupportIds": []
+          }
+        ],
+        "coverageFindings": [
+          "The draft omits the Fed rate hike topic referenced in the video title ('Fed Hikes Interest Rates'), leaving a central thesis element uncovered.",
+          "Small-cap portfolio performance review (k15) is omitted from the draft despite being a distinct segment with specific return figures.",
+          "Dutch Bros moat discussion (k7) is omitted despite being a notable equity analysis segment.",
+          "OpenDoor/OpenAI ticker-confusion speculation (k18/k20) is omitted from draft coverage.",
+          "Speaker identities remain unresolved as 'unknown' throughout, which limits ability to assess conflicts of interest or track individual stance changes over time."
+        ]
+      },
+      "after": {
+        "videoId": "ZfOQoh82JTo",
+        "stage": "research-audit",
+        "sourceHash": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+        "recomputedSourceHash": "8828ae192fa35bf131109eea76965006f0807ffa83169ea51f659794851cd54a",
+        "retrievalHash": "a503c0ed2eb17633dd8226b7749cf98b25c1412c7481b6e549cd0b10e6d2b753",
+        "seconds": 17.518178292000005,
+        "error": null,
+        "controlHash": "64c8133c9957c77ecbe896895e1f43fe0455d7ba5e286fd668238b2eda4b16af",
+        "draftHash": "e7a8063d38aa27074734bc471cfa6cc0c32b2030456edfa8b0308dd6bc59b469",
+        "costUsd": 0.09896,
+        "inputTokens": 39545,
+        "outputTokens": 1987,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": {
+          "originalBytes": 114126,
+          "actualBytes": 103502,
+          "evidenceItems": 23,
+          "sentences": 14,
+          "policy": "all-video-evidence-and-cited-external-v1"
+        },
+        "verdicts": [
+          {
+            "id": "s-1",
+            "accepted": true,
+            "reason": "Corroborated by external SEC filing matching APY, cashback and partner bank details.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No cited countercase/invalidation for this factual topic.",
+            "thesisSupportIds": [
+              "k1",
+              "web-0eecc2f5a3-2"
+            ]
+          },
+          {
+            "id": "s-2",
+            "accepted": true,
+            "reason": "Matches k1 quote and external filing on 4.5% APY/2% cashback.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase cited.",
+            "thesisSupportIds": [
+              "k1"
+            ]
+          },
+          {
+            "id": "s-3",
+            "accepted": true,
+            "reason": "Creator estimate/guess clearly framed as such, matches quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion without corroboration.",
+            "thesisSupportIds": [
+              "k2",
+              "k3"
+            ]
+          },
+          {
+            "id": "s-4",
+            "accepted": true,
+            "reason": "Matches external SEC filing for Nu Global yields and country coverage.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase for this specific fact sentence.",
+            "thesisSupportIds": [
+              "k4",
+              "web-0eecc2f5a3-2"
+            ]
+          },
+          {
+            "id": "s-5",
+            "accepted": true,
+            "reason": "Accurately reflects creator's stated skepticism and cash-pickup rationale.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Countercase present but no explicit invalidation condition cited.",
+            "thesisSupportIds": [
+              "k4",
+              "k5",
+              "k6"
+            ]
+          },
+          {
+            "id": "s-6",
+            "accepted": true,
+            "reason": "Reflects creator's stated concern about loss-leader economics and send limits.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analysis inference, no invalidation condition cited.",
+            "thesisSupportIds": [
+              "k4",
+              "k5"
+            ]
+          },
+          {
+            "id": "s-7",
+            "accepted": true,
+            "reason": "Matches c1 quote on TLT yield and hedge rationale with conditions preserved.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator holding view, no corroboration or invalidation cited.",
+            "thesisSupportIds": [
+              "c1"
+            ]
+          },
+          {
+            "id": "s-8",
+            "accepted": true,
+            "reason": "Matches c2 scenario values (81 to 120) and framing as scenario not forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Scenario-based, no corroboration.",
+            "thesisSupportIds": [
+              "c2"
+            ]
+          },
+          {
+            "id": "s-9",
+            "accepted": true,
+            "reason": "Matches k9/k10 quotes on rate/CPI expectation, correctly framed as forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator forecast, no corroboration.",
+            "thesisSupportIds": [
+              "k9",
+              "k10"
+            ]
+          },
+          {
+            "id": "s-10",
+            "accepted": true,
+            "reason": "Matches k8 quotes on valuation multiple and aftermarket thesis.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analysis view without countercase citation despite risk noted in evidence.",
+            "thesisSupportIds": [
+              "k8"
+            ]
+          },
+          {
+            "id": "s-11",
+            "accepted": true,
+            "reason": "Matches k16/k17 multiples and preference stated.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion, no corroboration.",
+            "thesisSupportIds": [
+              "k16",
+              "k17"
+            ]
+          },
+          {
+            "id": "s-12",
+            "accepted": true,
+            "reason": "Corroborated by external Financial Post article matching announcement details.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase cited for this factual announcement.",
+            "thesisSupportIds": [
+              "k12",
+              "web-d9ff080956-2"
+            ]
+          },
+          {
+            "id": "s-13",
+            "accepted": true,
+            "reason": "Reflects creator's skeptical opinion accurately per k13 quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Speculative creator opinion, no corroboration.",
+            "thesisSupportIds": [
+              "k13"
+            ]
+          },
+          {
+            "id": "s-14",
+            "accepted": true,
+            "reason": "Matches k21 quotes on projection figures and creator's skeptical framing preserved as scenario/countercase.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Countercase view without explicit invalidation condition.",
+            "thesisSupportIds": [
+              "k21"
+            ]
+          }
+        ],
+        "coverageFindings": [
+          "Small-cap 'stock of the week' portfolio performance (k15) and Dutch Bros moat discussion (k7) were omitted from the draft despite being substantive segments in the source evidence.",
+          "OpenDoor/OpenAI ticker-confusion speculation (k18/k20) was omitted, though it represents a distinct, if minor, thematic segment.",
+          "The draft's omissions list acknowledges missing speaker attribution and incomplete small-cap detail, which is consistent with the evidence gaps found.",
+          "No coverage finding addresses that several sentences use vague 'unknown' speaker despite context suggesting a co-host dialogue; this is appropriately conservative given unlabelled speakers in evidence."
+        ]
+      },
+      "verdictChanges": [
+        {
+          "id": "s-1",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-1",
+            "accepted": true,
+            "reason": "Corroborated by external filing k1/web-0eecc2f5a3-2 matching APY, cashback, and Lead Bank partnership details.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No cited countercase/invalidation sentence pair for this specific topic.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-1",
+            "accepted": true,
+            "reason": "Corroborated by external SEC filing matching APY, cashback and partner bank details.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No cited countercase/invalidation for this factual topic.",
+            "thesisSupportIds": [
+              "k1",
+              "web-0eecc2f5a3-2"
+            ]
+          }
+        },
+        {
+          "id": "s-2",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-2",
+            "accepted": true,
+            "reason": "Matches k1 quote and external filing confirming 4.5% APY and 2% cashback with direct deposit.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No explicit countercase paired with this fact.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-2",
+            "accepted": true,
+            "reason": "Matches k1 quote and external filing on 4.5% APY/2% cashback.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase cited.",
+            "thesisSupportIds": [
+              "k1"
+            ]
+          }
+        },
+        {
+          "id": "s-3",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-3",
+            "accepted": true,
+            "reason": "Creator estimate ('I'm guessing') and SoFi deposit figure correctly labeled as approximate/reported per k2.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Speculative estimate without external corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-3",
+            "accepted": true,
+            "reason": "Creator estimate/guess clearly framed as such, matches quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion without corroboration.",
+            "thesisSupportIds": [
+              "k2",
+              "k3"
+            ]
+          }
+        },
+        {
+          "id": "s-4",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-4",
+            "accepted": true,
+            "reason": "Matches k4 and external SEC filing on Nu Global APYs and 35+ country coverage.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No paired invalidation condition cited.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-4",
+            "accepted": true,
+            "reason": "Matches external SEC filing for Nu Global yields and country coverage.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase for this specific fact sentence.",
+            "thesisSupportIds": [
+              "k4",
+              "web-0eecc2f5a3-2"
+            ]
+          }
+        },
+        {
+          "id": "s-5",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-5",
+            "accepted": true,
+            "reason": "Accurately reflects creator's countercase in k4/k5/k6 regarding cash pickup necessity and corridor complexity.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Countercase present but no explicit invalidation condition provided by creator.",
+            "thesisSupportIds": [
+              "k4",
+              "k5",
+              "k6"
+            ]
+          },
+          "after": {
+            "id": "s-5",
+            "accepted": true,
+            "reason": "Accurately reflects creator's stated skepticism and cash-pickup rationale.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Countercase present but no explicit invalidation condition cited.",
+            "thesisSupportIds": [
+              "k4",
+              "k5",
+              "k6"
+            ]
+          }
+        },
+        {
+          "id": "s-6",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-6",
+            "accepted": true,
+            "reason": "Correctly captures creator's loss-leader/limit argument from k4 and k5 quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analytical inference without corroboration or invalidation condition.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-6",
+            "accepted": true,
+            "reason": "Reflects creator's stated concern about loss-leader economics and send limits.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analysis inference, no invalidation condition cited.",
+            "thesisSupportIds": [
+              "k4",
+              "k5"
+            ]
+          }
+        },
+        {
+          "id": "s-7",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-7",
+            "accepted": true,
+            "reason": "Accurately reflects creator's stated holding and rationale per c1 quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion on hedge strategy lacks independent corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-7",
+            "accepted": true,
+            "reason": "Matches c1 quote on TLT yield and hedge rationale with conditions preserved.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator holding view, no corroboration or invalidation cited.",
+            "thesisSupportIds": [
+              "c1"
+            ]
+          }
+        },
+        {
+          "id": "s-8",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-8",
+            "accepted": true,
+            "reason": "Matches c2 quote on TLT price levels and liquidity rationale, correctly framed as scenario.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Scenario-based creator view, no corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-8",
+            "accepted": true,
+            "reason": "Matches c2 scenario values (81 to 120) and framing as scenario not forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Scenario-based, no corroboration.",
+            "thesisSupportIds": [
+              "c2"
+            ]
+          }
+        },
+        {
+          "id": "s-9",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-9",
+            "accepted": true,
+            "reason": "Matches k9/k10 quotes on 10-year yield below 5% and core CPI heading to 2%, properly framed as forecast/creator view.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forecast lacking corroboration or countercase.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-9",
+            "accepted": true,
+            "reason": "Matches k9/k10 quotes on rate/CPI expectation, correctly framed as forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator forecast, no corroboration.",
+            "thesisSupportIds": [
+              "k9",
+              "k10"
+            ]
+          }
+        },
+        {
+          "id": "s-10",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-10",
+            "accepted": true,
+            "reason": "Matches k8 quote on TransDigm's 20x EV/EBIT and aftermarket-driven insulation thesis.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No corroborating external source for valuation multiple.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-10",
+            "accepted": true,
+            "reason": "Matches k8 quotes on valuation multiple and aftermarket thesis.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analysis view without countercase citation despite risk noted in evidence.",
+            "thesisSupportIds": [
+              "k8"
+            ]
+          }
+        },
+        {
+          "id": "s-11",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-11",
+            "accepted": true,
+            "reason": "Matches k16/k17 valuation figures for LVMH and Herm\u00e8s and stated preference rationale.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion on valuation preference without independent verification.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-11",
+            "accepted": true,
+            "reason": "Matches k16/k17 multiples and preference stated.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion, no corroboration.",
+            "thesisSupportIds": [
+              "k16",
+              "k17"
+            ]
+          }
+        },
+        {
+          "id": "s-12",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-12",
+            "accepted": true,
+            "reason": "Corroborated by external Financial Post article confirming Carney's announcement, airport names, and land ownership retention.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase/invalidation cited for this specific claim.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-12",
+            "accepted": true,
+            "reason": "Corroborated by external Financial Post article matching announcement details.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase cited for this factual announcement.",
+            "thesisSupportIds": [
+              "k12",
+              "web-d9ff080956-2"
+            ]
+          }
+        },
+        {
+          "id": "s-13",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-13",
+            "accepted": true,
+            "reason": "Accurately reflects creator's skeptical view in k13 about AI slowdown rhetoric being cover for capex cuts.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Speculative creator opinion, no external corroboration.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-13",
+            "accepted": true,
+            "reason": "Reflects creator's skeptical opinion accurately per k13 quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Speculative creator opinion, no corroboration.",
+            "thesisSupportIds": [
+              "k13"
+            ]
+          }
+        },
+        {
+          "id": "s-14",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-14",
+            "accepted": true,
+            "reason": "Matches k21 quotes on Cathie Wood's $10 trillion Starship revenue scenario and creator's rejection of it.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Scenario properly not treated as forecast; no corroboration of feasibility claim.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-14",
+            "accepted": true,
+            "reason": "Matches k21 quotes on projection figures and creator's skeptical framing preserved as scenario/countercase.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Countercase view without explicit invalidation condition.",
+            "thesisSupportIds": [
+              "k21"
+            ]
+          }
+        }
+      ],
+      "savedSeconds": 2.1321910409999987,
+      "savedUsd": 0.009207999999999994
+    },
+    {
+      "videoId": "M1FJ5dNiBEs",
+      "stage": "translate",
+      "before": {
+        "videoId": "M1FJ5dNiBEs",
+        "stage": "translate",
+        "sourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+        "recomputedSourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+        "retrievalHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "seconds": 0.0001356250000098953,
+        "error": null,
+        "controlHash": "d217cc50a6e9b1890a497c8b8a5b0b2f4b71d4cf77ebb6d93de009715f2759f4",
+        "draftHash": null,
+        "costUsd": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [],
+        "coverageFindings": []
+      },
+      "after": {
+        "videoId": "M1FJ5dNiBEs",
+        "stage": "translate",
+        "sourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+        "recomputedSourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+        "retrievalHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "seconds": 0.0008681250000008731,
+        "error": null,
+        "controlHash": "d217cc50a6e9b1890a497c8b8a5b0b2f4b71d4cf77ebb6d93de009715f2759f4",
+        "draftHash": null,
+        "costUsd": 0,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [],
+        "coverageFindings": []
+      },
+      "verdictChanges": [],
+      "savedSeconds": -0.0007324999999909778,
+      "savedUsd": 0
+    },
+    {
+      "videoId": "M1FJ5dNiBEs",
+      "stage": "research-audit",
+      "before": {
+        "videoId": "M1FJ5dNiBEs",
+        "stage": "research-audit",
+        "sourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+        "recomputedSourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+        "retrievalHash": "39b5d06f3b823b071a67a22cf29aacb1a82ec3808b722cad4c94627dfe600fbc",
+        "seconds": 14.237768249999993,
+        "error": null,
+        "controlHash": "9fdc0f1373d79ccceee015009c0f5dd372619b8dc4676e1f6fd9d1c4499c6d50",
+        "draftHash": "d8403dcb13a2b99b9d472776272bf81bfef59b088028c8b22c8a0b45356a79ef",
+        "costUsd": 0.036024,
+        "inputTokens": 10417,
+        "outputTokens": 1519,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [
+          {
+            "id": "s-1",
+            "accepted": true,
+            "reason": "Supported by k1 quote content on safety compute workloads and lab constraints.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase/invalidation cited for this specific topic.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-2",
+            "accepted": true,
+            "reason": "Matches k2 quote exactly for figures and dates.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single third-party forecast without cited countercase.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-3",
+            "accepted": true,
+            "reason": "Matches k2 quote for OpenAI trajectory.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase provided.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-4",
+            "accepted": true,
+            "reason": "Supported by k3 quotes regarding smaller deployments and named operators.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase or invalidation cited.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-5",
+            "accepted": true,
+            "reason": "Matches c1 quote on holding and put strategy at 79 strike.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator view with assignment risk noted but no explicit countercase/invalidation IDs.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-6",
+            "accepted": true,
+            "reason": "Matches c2/k4 on Muse app ranking and caveat about popularity vs downloads.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase cited.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-7",
+            "accepted": true,
+            "reason": "Matches c2/k4 quotes on market cap, PE ratio, and bullish thesis on intelligence/compute monetization.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No bearish countercase cited for Meta valuation.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-8",
+            "accepted": true,
+            "reason": "Matches k5 quotes on Nvidia price, market cap, and Vera Rubin profit-per-gigawatt claim, correctly labeled as claim/forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase on chip economics provided.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-9",
+            "accepted": true,
+            "reason": "Matches k5 quote on 67x throughput per TCO claim, properly attributed as third-party estimate.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No independent verification or countercase cited.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-10",
+            "accepted": true,
+            "reason": "Reasonable grounded inference from k1/k2 about interconnection/capital constraints as invalidation condition; appropriately framed as a check rather than a forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Serves as invalidation condition itself but lacks a paired corroborated primary fact plus explicit countercase to qualify as supported.",
+            "thesisSupportIds": []
+          }
+        ],
+        "coverageFindings": [
+          "The central thesis that AI compute demand could double again by 2027 (implied by title) is represented via capacity target figures (s-2, s-3) but not explicitly stated as a headline synthesis sentence tying all capacity figures together as a doubling thesis.",
+          "No bearish countercase is preserved for the Meta or Nvidia valuation claims, despite the requirement to preserve bearish countercases where present in evidence.",
+          "Missing information about option premium, expiration, and collateral terms for the CoreWeave put strategy is noted in omissions but not reflected in any sentence about collateral risk.",
+          "Speaker identity remains unknown throughout, correctly flagged, but this omission is material to assessing conflicts of interest given disclosed CoreWeave and Meta holdings."
+        ]
+      },
+      "after": {
+        "videoId": "M1FJ5dNiBEs",
+        "stage": "research-audit",
+        "sourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+        "recomputedSourceHash": "91759df271a22bbee5dc9900f0db17c07b5a7ffa2308fb2949c13d7aed42fddc",
+        "retrievalHash": "39b5d06f3b823b071a67a22cf29aacb1a82ec3808b722cad4c94627dfe600fbc",
+        "seconds": 14.829792583000001,
+        "error": null,
+        "controlHash": "9fdc0f1373d79ccceee015009c0f5dd372619b8dc4676e1f6fd9d1c4499c6d50",
+        "draftHash": "d8403dcb13a2b99b9d472776272bf81bfef59b088028c8b22c8a0b45356a79ef",
+        "costUsd": 0.035892,
+        "inputTokens": 10431,
+        "outputTokens": 1503,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": {
+          "originalBytes": 21876,
+          "actualBytes": 21906,
+          "evidenceItems": 7,
+          "sentences": 10,
+          "policy": "all-video-evidence-and-cited-external-v1"
+        },
+        "verdicts": [
+          {
+            "id": "s-1",
+            "accepted": true,
+            "reason": "Matches k1 content on safety compute and constrained labs.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion/analysis, no independent corroboration or explicit invalidation pairing.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-2",
+            "accepted": true,
+            "reason": "Figures match k2 quote exactly (5GW 2026, 1.5GW prior, 10GW 2027).",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single-source forecast reported by creator citing NYT; no independent corroboration.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-3",
+            "accepted": true,
+            "reason": "Matches k2 OpenAI trajectory figures.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forecast only, no corroboration or countercase provided.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-4",
+            "accepted": true,
+            "reason": "Matches k3 on smaller deployments and named beneficiaries.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analysis inference, lacks corroborating primary source.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-5",
+            "accepted": true,
+            "reason": "Matches c1 quote on holding and 79 put strategy.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator personal option strategy disclosure, no external verification.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-6",
+            "accepted": true,
+            "reason": "Matches c2/k4 on Muse ranking and caveat about popularity vs downloads.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "App store ranking claim unverified externally.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-7",
+            "accepted": true,
+            "reason": "Matches k4 quotes on market cap, PE ratio, and margin thesis.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator valuation opinion without independent corroboration or countercase.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-8",
+            "accepted": true,
+            "reason": "Matches k5 quotes on share price, market cap, and Vera Rubin profit claim.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Vendor-sourced efficiency claim, unverified independently.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-9",
+            "accepted": true,
+            "reason": "Matches k5 quote on 67x throughput per TCO claim.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single vendor-cited estimate, no independent methodology verification.",
+            "thesisSupportIds": []
+          },
+          {
+            "id": "s-10",
+            "accepted": true,
+            "reason": "Reasonable grounded inference from k1/k2 about infrastructure and financing constraints; framed as a check, not a forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Inference-based invalidation condition, not independently corroborated as a resolved risk.",
+            "thesisSupportIds": []
+          }
+        ],
+        "coverageFindings": [
+          "Draft omissions correctly flag missing recording date, speaker identity, option contract terms, and independent verification of Vera Rubin performance claims.",
+          "No baseline evidence was supplied, so all novelty assessments are correctly marked unknown/false rather than asserting new stance changes.",
+          "The central thesis that AI compute demand could double again by 2027 (title) is adequately represented via s-1 through s-4, but no sentence directly ties these capacity figures back to the video's explicit doubling framing tied to the title, which is a minor coverage gap.",
+          "Bearish countercases for Meta and Nvidia valuations (e.g., high multiple risk, execution risk) are not present in the draft, creating an imbalance toward bullish creator views without corresponding skepticism sentences."
+        ]
+      },
+      "verdictChanges": [
+        {
+          "id": "s-1",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-1",
+            "accepted": true,
+            "reason": "Supported by k1 quote content on safety compute workloads and lab constraints.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase/invalidation cited for this specific topic.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-1",
+            "accepted": true,
+            "reason": "Matches k1 content on safety compute and constrained labs.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion/analysis, no independent corroboration or explicit invalidation pairing.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-2",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-2",
+            "accepted": true,
+            "reason": "Matches k2 quote exactly for figures and dates.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single third-party forecast without cited countercase.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-2",
+            "accepted": true,
+            "reason": "Figures match k2 quote exactly (5GW 2026, 1.5GW prior, 10GW 2027).",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single-source forecast reported by creator citing NYT; no independent corroboration.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-3",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-3",
+            "accepted": true,
+            "reason": "Matches k2 quote for OpenAI trajectory.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase provided.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-3",
+            "accepted": true,
+            "reason": "Matches k2 OpenAI trajectory figures.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forecast only, no corroboration or countercase provided.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-4",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-4",
+            "accepted": true,
+            "reason": "Supported by k3 quotes regarding smaller deployments and named operators.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase or invalidation cited.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-4",
+            "accepted": true,
+            "reason": "Matches k3 on smaller deployments and named beneficiaries.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analysis inference, lacks corroborating primary source.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-5",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-5",
+            "accepted": true,
+            "reason": "Matches c1 quote on holding and put strategy at 79 strike.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator view with assignment risk noted but no explicit countercase/invalidation IDs.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-5",
+            "accepted": true,
+            "reason": "Matches c1 quote on holding and 79 put strategy.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator personal option strategy disclosure, no external verification.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-6",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-6",
+            "accepted": true,
+            "reason": "Matches c2/k4 on Muse app ranking and caveat about popularity vs downloads.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase cited.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-6",
+            "accepted": true,
+            "reason": "Matches c2/k4 on Muse ranking and caveat about popularity vs downloads.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "App store ranking claim unverified externally.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-7",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-7",
+            "accepted": true,
+            "reason": "Matches c2/k4 quotes on market cap, PE ratio, and bullish thesis on intelligence/compute monetization.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No bearish countercase cited for Meta valuation.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-7",
+            "accepted": true,
+            "reason": "Matches k4 quotes on market cap, PE ratio, and margin thesis.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator valuation opinion without independent corroboration or countercase.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-8",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-8",
+            "accepted": true,
+            "reason": "Matches k5 quotes on Nvidia price, market cap, and Vera Rubin profit-per-gigawatt claim, correctly labeled as claim/forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No countercase on chip economics provided.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-8",
+            "accepted": true,
+            "reason": "Matches k5 quotes on share price, market cap, and Vera Rubin profit claim.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Vendor-sourced efficiency claim, unverified independently.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-9",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-9",
+            "accepted": true,
+            "reason": "Matches k5 quote on 67x throughput per TCO claim, properly attributed as third-party estimate.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No independent verification or countercase cited.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-9",
+            "accepted": true,
+            "reason": "Matches k5 quote on 67x throughput per TCO claim.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Single vendor-cited estimate, no independent methodology verification.",
+            "thesisSupportIds": []
+          }
+        },
+        {
+          "id": "s-10",
+          "classificationChanged": false,
+          "before": {
+            "id": "s-10",
+            "accepted": true,
+            "reason": "Reasonable grounded inference from k1/k2 about interconnection/capital constraints as invalidation condition; appropriately framed as a check rather than a forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Serves as invalidation condition itself but lacks a paired corroborated primary fact plus explicit countercase to qualify as supported.",
+            "thesisSupportIds": []
+          },
+          "after": {
+            "id": "s-10",
+            "accepted": true,
+            "reason": "Reasonable grounded inference from k1/k2 about infrastructure and financing constraints; framed as a check, not a forecast.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Inference-based invalidation condition, not independently corroborated as a resolved risk.",
+            "thesisSupportIds": []
+          }
+        }
+      ],
+      "savedSeconds": -0.5920243330000083,
+      "savedUsd": 0.00013200000000000017
+    },
+    {
+      "videoId": "SPIRV9UjNYU",
+      "stage": "translate",
+      "before": {
+        "videoId": "SPIRV9UjNYU",
+        "stage": "translate",
+        "sourceHash": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+        "recomputedSourceHash": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+        "retrievalHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "seconds": 9.791820083,
+        "error": null,
+        "controlHash": "fad3f47ec4104ccfc811781b928f1b50668f4414fc70951017b00e0aa2602630",
+        "draftHash": null,
+        "costUsd": 0.0047805,
+        "inputTokens": 2370,
+        "outputTokens": 2792,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [],
+        "coverageFindings": []
+      },
+      "after": {
+        "videoId": "SPIRV9UjNYU",
+        "stage": "translate",
+        "sourceHash": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+        "recomputedSourceHash": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+        "retrievalHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "seconds": 9.05299029200001,
+        "error": null,
+        "controlHash": "fad3f47ec4104ccfc811781b928f1b50668f4414fc70951017b00e0aa2602630",
+        "draftHash": null,
+        "costUsd": 0.00429325,
+        "inputTokens": 2107,
+        "outputTokens": 2511,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [],
+        "coverageFindings": []
+      },
+      "verdictChanges": [],
+      "savedSeconds": 0.7388297909999899,
+      "savedUsd": 0.00048724999999999984
+    },
+    {
+      "videoId": "SPIRV9UjNYU",
+      "stage": "research-audit",
+      "before": {
+        "videoId": "SPIRV9UjNYU",
+        "stage": "research-audit",
+        "sourceHash": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+        "recomputedSourceHash": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+        "retrievalHash": "2f690e7d65a1ba63725495b8e0e9ac0a82eed0f4e2d1a19d39b6f30f59d4892e",
+        "seconds": 17.95551866700001,
+        "error": null,
+        "controlHash": "b97ebe1457b639904658642691f8fa0b5ca4d3cf7a5c9f7eca9fef00a4cfe215",
+        "draftHash": "dbebcd3a35aec9660f1ddbbb55e6151721d6aada578405a022a02d4ce2f9eb52",
+        "costUsd": 0.076344,
+        "inputTokens": 29302,
+        "outputTokens": 1774,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": null,
+        "verdicts": [
+          {
+            "id": "s1",
+            "accepted": true,
+            "reason": "Matches k1 and is corroborated by external sources on target cut and mid-2027 deferral.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No explicit countercase/invalidation IDs cited for this specific claim.",
+            "thesisSupportIds": [
+              "k1",
+              "web-64dbccebcb-1",
+              "web-64dbccebcb-2"
+            ]
+          },
+          {
+            "id": "s2",
+            "accepted": true,
+            "reason": "Multiple compression from 19.8x to 18.6x with unchanged $425 EPS is directly supported by k1 and corroborated externally.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No paired countercase/invalidation citation for this valuation-mechanics claim.",
+            "thesisSupportIds": [
+              "k1",
+              "web-64dbccebcb-1"
+            ]
+          },
+          {
+            "id": "s3",
+            "accepted": true,
+            "reason": "Supported by k2 quotes on energy prices constraining Fed flexibility and corporate budgeting.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator/analytical claim without external corroboration or paired invalidation citation.",
+            "thesisSupportIds": [
+              "k2"
+            ]
+          },
+          {
+            "id": "s4",
+            "accepted": true,
+            "reason": "Supported by k2 quotes on discounting future cash flows due to higher rates.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "General analytical mechanism, no explicit countercase/invalidation pairing.",
+            "thesisSupportIds": [
+              "k2"
+            ]
+          },
+          {
+            "id": "s5",
+            "accepted": true,
+            "reason": "Supported by k3 and k4 describing carry trade unwind mechanics and forced selling of quality assets.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Mechanism plausible and cited, but no explicit invalidation condition sentence tied to this exact claim.",
+            "thesisSupportIds": [
+              "k3",
+              "k4"
+            ]
+          },
+          {
+            "id": "s6",
+            "accepted": true,
+            "reason": "BOJ 25bp hike to 1.25% on Sept 18 with yen softening on in-line outcome is supported by k3/k5 quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Reported fact without independent external citation to confirm exact date/rate; internal source only.",
+            "thesisSupportIds": [
+              "k3",
+              "k5"
+            ]
+          },
+          {
+            "id": "s7",
+            "accepted": true,
+            "reason": "S&P +1% to 7,600, Nasdaq +1.7%, 10yr yield 4.93% figures match k6 quote language.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No external citation confirming these exact figures; only internal creator narration.",
+            "thesisSupportIds": [
+              "k6"
+            ]
+          },
+          {
+            "id": "s8",
+            "accepted": true,
+            "reason": "Matches c1 and k7 conditional long-term AI holding stance with stated conditions.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator view, no independent corroboration; conditions preserved but no paired invalidation ID distinct from thesis itself.",
+            "thesisSupportIds": [
+              "c1",
+              "k7"
+            ]
+          },
+          {
+            "id": "s9",
+            "accepted": true,
+            "reason": "Invalidation condition (cost inflation eroding margins, earnings downgrades) is directly grounded in c1 risks and k6 discussion.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Serves as the invalidation itself; cannot self-certify robustness without a separate corroborated thesis sentence to pair against.",
+            "thesisSupportIds": [
+              "c1",
+              "k6"
+            ]
+          },
+          {
+            "id": "s10",
+            "accepted": true,
+            "reason": "Reasonable next-check question grounded in k3/k5 content about future BOJ pace, yen trajectory, and capital withdrawal.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forward-looking monitoring item, not a factual claim requiring robustness scoring.",
+            "thesisSupportIds": [
+              "k3",
+              "k5"
+            ]
+          }
+        ],
+        "coverageFindings": [
+          "The draft omits Yardeni's own probability shift (bearish scenario raised to 30% from 20%, base case trimmed to 70%) reported in external sources, which is directly relevant to the video's 'bull changes tune' framing.",
+          "Speaker/channel identity remains unstated ('unknown' speaker throughout), limiting ability to assess creator track record or conflicts.",
+          "No sentence addresses the external report's point that Yardeni's revised 7,900 target still implies ~4% upside and would still be a record high, which nuances the 'downgrade' framing the video emphasizes.",
+          "The countercase risk of margin erosion (s9) is asserted but no concrete invalidation trigger (specific data point or threshold) is cited, leaving the condition vague for monitoring purposes."
+        ]
+      },
+      "after": {
+        "videoId": "SPIRV9UjNYU",
+        "stage": "research-audit",
+        "sourceHash": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+        "recomputedSourceHash": "c835829dab9c4d7cb7fa468b7d3dbd1ba564b6c6d7756244e1b0ec62a0909185",
+        "retrievalHash": "2f690e7d65a1ba63725495b8e0e9ac0a82eed0f4e2d1a19d39b6f30f59d4892e",
+        "seconds": 18.519801583999985,
+        "error": null,
+        "controlHash": "b97ebe1457b639904658642691f8fa0b5ca4d3cf7a5c9f7eca9fef00a4cfe215",
+        "draftHash": "dbebcd3a35aec9660f1ddbbb55e6151721d6aada578405a022a02d4ce2f9eb52",
+        "costUsd": 0.06345,
+        "inputTokens": 22270,
+        "outputTokens": 1891,
+        "missingTokenCalls": 0,
+        "unsettledCalls": 0,
+        "auditPayloadMetrics": {
+          "originalBytes": 68298,
+          "actualBytes": 51267,
+          "evidenceItems": 8,
+          "sentences": 10,
+          "policy": "all-video-evidence-and-cited-external-v1"
+        },
+        "verdicts": [
+          {
+            "id": "s1",
+            "accepted": true,
+            "reason": "Matches k1 and is corroborated by external sources on Yardeni's target cut from 8,400 to 7,900, deferred to mid-2027.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No cited countercase/invalidation IDs specifically for this topic.",
+            "thesisSupportIds": [
+              "k1",
+              "web-64dbccebcb-1",
+              "web-64dbccebcb-2"
+            ]
+          },
+          {
+            "id": "s2",
+            "accepted": true,
+            "reason": "Multiple compression from 19.8x to 18.6x with unchanged $425 EPS is directly supported by k1 and external source.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No explicit countercase/invalidation cited for this specific sentence.",
+            "thesisSupportIds": [
+              "k1",
+              "web-64dbccebcb-1"
+            ]
+          },
+          {
+            "id": "s3",
+            "accepted": true,
+            "reason": "Supported by k2 discussing high oil prices, repeated conflict, and Fed policy constraints.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator/analyst opinion without independent corroboration or explicit invalidation condition.",
+            "thesisSupportIds": [
+              "k2"
+            ]
+          },
+          {
+            "id": "s4",
+            "accepted": true,
+            "reason": "Reflects k2's logic about higher rates increasing opportunity cost and compressing valuations of future cash flows.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analytical inference from creator commentary, not independently corroborated.",
+            "thesisSupportIds": [
+              "k2"
+            ]
+          },
+          {
+            "id": "s5",
+            "accepted": true,
+            "reason": "Matches k3/k4 description of carry trade unwind forcing asset sales unrelated to fundamentals.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Scenario-based mechanism without corroborating primary source data on actual liquidations.",
+            "thesisSupportIds": [
+              "k3",
+              "k4"
+            ]
+          },
+          {
+            "id": "s6",
+            "accepted": true,
+            "reason": "BOJ 25bp hike to 1.25% and yen softening due to expected outcome is directly quoted in k3/k5.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Fact is corroborated but no explicit countercase/invalidation sentence cited for this specific claim.",
+            "thesisSupportIds": [
+              "k3",
+              "k5"
+            ]
+          },
+          {
+            "id": "s7",
+            "accepted": true,
+            "reason": "S&P 500 1% rebound and 10-year yield at 4.93% figures match k6 quote, though external source shows differing yield (5.01%) suggesting partial divergence.",
+            "factualStatus": "partial",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Numbers partially diverge from external corroboration (10Y yield reported as ~5.01% vs 4.93%), reducing certainty.",
+            "thesisSupportIds": [
+              "k6"
+            ]
+          },
+          {
+            "id": "s8",
+            "accepted": true,
+            "reason": "Directly reflects creator's stated conditional long-term AI bullishness in c1/k7 with correct conditions preserved.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion; no external corroboration expected or provided.",
+            "thesisSupportIds": [
+              "c1",
+              "k7"
+            ]
+          },
+          {
+            "id": "s9",
+            "accepted": true,
+            "reason": "Reflects the stated risk in c1 and k6 regarding cost pressure eroding profits triggering earnings downgrades.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "This functions as an invalidation condition but lacks a paired countercase citation for full 'supported' status.",
+            "thesisSupportIds": [
+              "c1",
+              "k6"
+            ]
+          },
+          {
+            "id": "s10",
+            "accepted": true,
+            "reason": "Reasonable next-check question grounded in k3/k5 content about monitoring BOJ pace, yen trajectory, and leveraged fund flows.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forward-looking monitoring question, not a factual claim requiring robustness assessment beyond grounding.",
+            "thesisSupportIds": [
+              "k3",
+              "k5"
+            ]
+          }
+        ],
+        "coverageFindings": [
+          "The draft omits Yardeni's own quoted rationale from external sources (e.g., 'Earnings, I think, are going to be fantastic' and his view that yields should sit between 4-5%), which would strengthen contextual grounding.",
+          "External source shows 10-year Treasury at 5.01% on Sept 16, differing from the video's cited 4.93% on Sept 17; this discrepancy is not flagged in the draft and affects factual precision of s7.",
+          "The draft does not mention Yardeni's probability shift (raising bearish scenario to 30% from 20%), a materially relevant detail from the external corroborating source that adds nuance to the thesis.",
+          "Speaker identity is marked 'unknown' throughout despite this being a creator commentary video; the channel/creator's name is not identified in evidence, which should be flagged as a coverage gap.",
+          "No baseline evidence was supplied, so all novelty assessments remain 'unknown' by necessity; this limits the ability to assess whether the creator's AI bullishness represents a changed or repeated stance."
+        ]
+      },
+      "verdictChanges": [
+        {
+          "id": "s1",
+          "classificationChanged": false,
+          "before": {
+            "id": "s1",
+            "accepted": true,
+            "reason": "Matches k1 and is corroborated by external sources on target cut and mid-2027 deferral.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No explicit countercase/invalidation IDs cited for this specific claim.",
+            "thesisSupportIds": [
+              "k1",
+              "web-64dbccebcb-1",
+              "web-64dbccebcb-2"
+            ]
+          },
+          "after": {
+            "id": "s1",
+            "accepted": true,
+            "reason": "Matches k1 and is corroborated by external sources on Yardeni's target cut from 8,400 to 7,900, deferred to mid-2027.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No cited countercase/invalidation IDs specifically for this topic.",
+            "thesisSupportIds": [
+              "k1",
+              "web-64dbccebcb-1",
+              "web-64dbccebcb-2"
+            ]
+          }
+        },
+        {
+          "id": "s2",
+          "classificationChanged": false,
+          "before": {
+            "id": "s2",
+            "accepted": true,
+            "reason": "Multiple compression from 19.8x to 18.6x with unchanged $425 EPS is directly supported by k1 and corroborated externally.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No paired countercase/invalidation citation for this valuation-mechanics claim.",
+            "thesisSupportIds": [
+              "k1",
+              "web-64dbccebcb-1"
+            ]
+          },
+          "after": {
+            "id": "s2",
+            "accepted": true,
+            "reason": "Multiple compression from 19.8x to 18.6x with unchanged $425 EPS is directly supported by k1 and external source.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No explicit countercase/invalidation cited for this specific sentence.",
+            "thesisSupportIds": [
+              "k1",
+              "web-64dbccebcb-1"
+            ]
+          }
+        },
+        {
+          "id": "s3",
+          "classificationChanged": false,
+          "before": {
+            "id": "s3",
+            "accepted": true,
+            "reason": "Supported by k2 quotes on energy prices constraining Fed flexibility and corporate budgeting.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator/analytical claim without external corroboration or paired invalidation citation.",
+            "thesisSupportIds": [
+              "k2"
+            ]
+          },
+          "after": {
+            "id": "s3",
+            "accepted": true,
+            "reason": "Supported by k2 discussing high oil prices, repeated conflict, and Fed policy constraints.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator/analyst opinion without independent corroboration or explicit invalidation condition.",
+            "thesisSupportIds": [
+              "k2"
+            ]
+          }
+        },
+        {
+          "id": "s4",
+          "classificationChanged": false,
+          "before": {
+            "id": "s4",
+            "accepted": true,
+            "reason": "Supported by k2 quotes on discounting future cash flows due to higher rates.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "General analytical mechanism, no explicit countercase/invalidation pairing.",
+            "thesisSupportIds": [
+              "k2"
+            ]
+          },
+          "after": {
+            "id": "s4",
+            "accepted": true,
+            "reason": "Reflects k2's logic about higher rates increasing opportunity cost and compressing valuations of future cash flows.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Analytical inference from creator commentary, not independently corroborated.",
+            "thesisSupportIds": [
+              "k2"
+            ]
+          }
+        },
+        {
+          "id": "s5",
+          "classificationChanged": false,
+          "before": {
+            "id": "s5",
+            "accepted": true,
+            "reason": "Supported by k3 and k4 describing carry trade unwind mechanics and forced selling of quality assets.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Mechanism plausible and cited, but no explicit invalidation condition sentence tied to this exact claim.",
+            "thesisSupportIds": [
+              "k3",
+              "k4"
+            ]
+          },
+          "after": {
+            "id": "s5",
+            "accepted": true,
+            "reason": "Matches k3/k4 description of carry trade unwind forcing asset sales unrelated to fundamentals.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Scenario-based mechanism without corroborating primary source data on actual liquidations.",
+            "thesisSupportIds": [
+              "k3",
+              "k4"
+            ]
+          }
+        },
+        {
+          "id": "s6",
+          "classificationChanged": true,
+          "before": {
+            "id": "s6",
+            "accepted": true,
+            "reason": "BOJ 25bp hike to 1.25% on Sept 18 with yen softening on in-line outcome is supported by k3/k5 quotes.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Reported fact without independent external citation to confirm exact date/rate; internal source only.",
+            "thesisSupportIds": [
+              "k3",
+              "k5"
+            ]
+          },
+          "after": {
+            "id": "s6",
+            "accepted": true,
+            "reason": "BOJ 25bp hike to 1.25% and yen softening due to expected outcome is directly quoted in k3/k5.",
+            "factualStatus": "corroborated",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "Fact is corroborated but no explicit countercase/invalidation sentence cited for this specific claim.",
+            "thesisSupportIds": [
+              "k3",
+              "k5"
+            ]
+          }
+        },
+        {
+          "id": "s7",
+          "classificationChanged": true,
+          "before": {
+            "id": "s7",
+            "accepted": true,
+            "reason": "S&P +1% to 7,600, Nasdaq +1.7%, 10yr yield 4.93% figures match k6 quote language.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "No external citation confirming these exact figures; only internal creator narration.",
+            "thesisSupportIds": [
+              "k6"
+            ]
+          },
+          "after": {
+            "id": "s7",
+            "accepted": true,
+            "reason": "S&P 500 1% rebound and 10-year yield at 4.93% figures match k6 quote, though external source shows differing yield (5.01%) suggesting partial divergence.",
+            "factualStatus": "partial",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Numbers partially diverge from external corroboration (10Y yield reported as ~5.01% vs 4.93%), reducing certainty.",
+            "thesisSupportIds": [
+              "k6"
+            ]
+          }
+        },
+        {
+          "id": "s8",
+          "classificationChanged": false,
+          "before": {
+            "id": "s8",
+            "accepted": true,
+            "reason": "Matches c1 and k7 conditional long-term AI holding stance with stated conditions.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator view, no independent corroboration; conditions preserved but no paired invalidation ID distinct from thesis itself.",
+            "thesisSupportIds": [
+              "c1",
+              "k7"
+            ]
+          },
+          "after": {
+            "id": "s8",
+            "accepted": true,
+            "reason": "Directly reflects creator's stated conditional long-term AI bullishness in c1/k7 with correct conditions preserved.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Creator opinion; no external corroboration expected or provided.",
+            "thesisSupportIds": [
+              "c1",
+              "k7"
+            ]
+          }
+        },
+        {
+          "id": "s9",
+          "classificationChanged": false,
+          "before": {
+            "id": "s9",
+            "accepted": true,
+            "reason": "Invalidation condition (cost inflation eroding margins, earnings downgrades) is directly grounded in c1 risks and k6 discussion.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Serves as the invalidation itself; cannot self-certify robustness without a separate corroborated thesis sentence to pair against.",
+            "thesisSupportIds": [
+              "c1",
+              "k6"
+            ]
+          },
+          "after": {
+            "id": "s9",
+            "accepted": true,
+            "reason": "Reflects the stated risk in c1 and k6 regarding cost pressure eroding profits triggering earnings downgrades.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "fragile",
+            "robustnessReason": "This functions as an invalidation condition but lacks a paired countercase citation for full 'supported' status.",
+            "thesisSupportIds": [
+              "c1",
+              "k6"
+            ]
+          }
+        },
+        {
+          "id": "s10",
+          "classificationChanged": false,
+          "before": {
+            "id": "s10",
+            "accepted": true,
+            "reason": "Reasonable next-check question grounded in k3/k5 content about future BOJ pace, yen trajectory, and capital withdrawal.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forward-looking monitoring item, not a factual claim requiring robustness scoring.",
+            "thesisSupportIds": [
+              "k3",
+              "k5"
+            ]
+          },
+          "after": {
+            "id": "s10",
+            "accepted": true,
+            "reason": "Reasonable next-check question grounded in k3/k5 content about monitoring BOJ pace, yen trajectory, and leveraged fund flows.",
+            "factualStatus": "unverified",
+            "noveltyAccepted": false,
+            "robustness": "insufficient",
+            "robustnessReason": "Forward-looking monitoring question, not a factual claim requiring robustness assessment beyond grounding.",
+            "thesisSupportIds": [
+              "k3",
+              "k5"
+            ]
+          }
+        }
+      ],
+      "savedSeconds": -0.564282916999975,
+      "savedUsd": 0.012893999999999989
+    }
+  ],
+  "sourceBackedReview": [
+    {
+      "videoId": "1WNowIoNgtg",
+      "sentenceId": "s12",
+      "assessment": "Defensible stricter rejection, but preserve usable contract terms as separately attributed facts.",
+      "evidence": "c3: s00776\u2013s00787 (1611.12\u20131640.64s) says 165 strike and $1.85 premium; s00790 (1642.4\u20131646.799s) says 155. Draft asserts breakeven above155. Arithmetic is163.15, but source linkage is ambiguous and noncontiguous. New critic refuses to silently reconcile. The raw original full transcript/audio gap has not been rechecked in this stage-only review."
+    },
+    {
+      "videoId": "SPIRV9UjNYU",
+      "sentenceId": "s6",
+      "assessment": "Raw critic overclaims independent corroboration. Final factual gate prevents false verified label, but fragile robustness remains and needs correction.",
+      "evidence": "k3 and k5 repeat the same creator ASR range asr-1-36\u2013asr-1-46 (453.22\u2013501.3s). Both support what the creator said about25bp/1.25%, but sentence externalIds is empty. Final brief factualStatus remains unverified."
+    },
+    {
+      "videoId": "SPIRV9UjNYU",
+      "sentenceId": "s7",
+      "assessment": "Raw critic alleges divergence across different dates; final factual gate downgrades to unverified but audit reason retains misleading discrepancy.",
+      "evidence": "k6 asr-1-47\u2013asr-1-62 describes Sept17 market rebound/yield4.93%. Retained web-64dbccebcb-1/-2 describe Wednesday/Sept16 yield5.01%. Those are different dates, so they do not establish a contradiction. Sentence externalIds is empty."
+    }
+  ],
+  "releaseApplicability": {
+    "status": "superseded-candidate",
+    "reason": "Uncited-source filtering was rejected after adversarial review. Current release retains full external and baseline text; focused audit only bypasses deterministically invalid sentences. Combined26.7% stage-time and12% stage-cost reductions are not measurements of the current release.",
+    "applicableFinding": "Selective English translation bypass remains applicable; non-English translation and all original quotations remain preserved.",
+    "gateCorrection": "Final brief validation now removes unsupported external auditReason/robustness claims when downgrading factualStatus. This corrects presentation leakage, not general model semantic variance."
+  }
+}
