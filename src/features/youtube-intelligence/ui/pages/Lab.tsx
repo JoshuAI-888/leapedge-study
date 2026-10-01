@@ -2,13 +2,33 @@
 import Link from "next/link";
 import { AutomationPanel } from "../AutomationPanel.tsx";
 import { ComparisonReview } from "../ComparisonReview.tsx";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useWorkspace } from "../workspace.tsx";
 import { action } from "../api.ts";
 import { Collapsible, Empty, PageTitle } from "../components.tsx";
 import { money, processingState, dateLabel } from "../viewmodel.ts";
 import { StepUsageTable } from "../CallUsageTable.tsx";
 import type { LedgerRow } from "../../call-usage.ts";
+import type { LabSnapshot } from "../../../../server/youtube-intelligence/actions/research.ts";
+/** Lab diagnostics are large and operator-only, so Lab reads them itself instead of every page waiting on them. */
+function useLabSnapshot(key: string) {
+  const [lab, setLab] = useState<LabSnapshot | null>(null),
+    [error, setError] = useState("");
+  const load = useCallback(async () => {
+    try {
+      setLab(await action<LabSnapshot>("research", "lab"));
+      setError("");
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Could not load Lab diagnostics.",
+      );
+    }
+  }, []);
+  useEffect(() => {
+    void load();
+  }, [load, key]);
+  return { lab, error, reload: load };
+}
 export function Lab() {
   const { data, perform, busy, loadMoreRuns, hasMoreRuns, loadingMoreRuns } =
     useWorkspace();
@@ -21,9 +41,23 @@ export function Lab() {
     [modelB, setModelB] = useState("gemini-3.5-flash"),
     [experimentHypothesis, setExperimentHypothesis] = useState(""),
     [promptDraft, setPromptDraft] = useState("");
+  const {
+    lab,
+    error: labError,
+    reload: reloadLab,
+  } = useLabSnapshot(
+    data
+      ? `${data.snapshot.evaluationRuns.length}:${data.snapshot.reviews.length}:${data.snapshot.jobs.length}`
+      : "",
+  );
   if (!data) return null;
   return (
     <>
+      {labError && (
+        <p className="yi-warning" role="alert">
+          {labError}
+        </p>
+      )}
       <PageTitle
         title="Lab"
         description="Compare configurations, inspect diagnostics, and understand the limits of your evidence."
@@ -66,7 +100,9 @@ export function Lab() {
                   hypothesis,
                 }),
               "Comparison created.",
-            );
+            ).then((ok) => {
+              if (ok) void reloadLab();
+            });
           }}
         >
           <div className="yi-settings-fields">
@@ -116,7 +152,8 @@ export function Lab() {
           </label>
           <button disabled={busy || !left || !right}>Create comparison</button>
         </form>
-        {data.snapshot.comparisons.map((c) => (
+        {!lab && <p className="yi-muted">Loading comparisons…</p>}
+        {(lab?.comparisons ?? []).map((c) => (
           <Collapsible key={String(c.id)} title={String(c.hypothesis || c.id)}>
             <pre>{JSON.stringify(c, null, 2)}</pre>
             <ComparisonReview id={String(c.id)} />
@@ -344,7 +381,7 @@ export function Lab() {
           </Empty>
         )}
         <Collapsible title="Experiment records">
-          <pre>{JSON.stringify(data.snapshot.experiments, null, 2)}</pre>
+          <pre>{JSON.stringify(lab?.experiments ?? "Loading…", null, 2)}</pre>
         </Collapsible>
       </section>
       <AutomationPanel />
@@ -405,13 +442,13 @@ export function Lab() {
           ))}
         </dl>
         <h3>Model calls per step</h3>
-        <StepUsageTable calls={data.snapshot.calls as LedgerRow[]} />
+        <StepUsageTable calls={(lab?.calls ?? []) as LedgerRow[]} />
         <Collapsible title="Show raw data">
           <pre>
             {JSON.stringify(
               {
-                calls: data.snapshot.calls,
-                captionAttempts: data.snapshot.captionAttempts,
+                calls: lab?.calls ?? null,
+                captionAttempts: lab?.captionAttempts ?? null,
               },
               null,
               2,
@@ -424,7 +461,7 @@ export function Lab() {
           Historical diagnostics are retained for comparison and are not a human
           gold-set delivery gate.
         </p>
-        <pre>{JSON.stringify(data.snapshot.evaluations, null, 2)}</pre>
+        <pre>{JSON.stringify(lab?.evaluations ?? "Loading…", null, 2)}</pre>
       </Collapsible>
     </>
   );

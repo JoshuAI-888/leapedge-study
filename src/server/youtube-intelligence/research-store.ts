@@ -3,7 +3,7 @@ import { assertCriticIndependent, modelFamily } from "./transport/index.ts";
 import { canDropFailedAudit } from "../../features/youtube-intelligence/research-quality.ts";
 import { randomUUID, createHash } from "node:crypto";
 import { z } from "zod";
-import { db, get, lease, list, create } from "./store.ts";
+import { db, get, lease, list, listHeaders, create } from "./store.ts";
 import { iso, json } from "./database.ts";
 import { listChannels } from "./repos/channels.ts";
 import { listClaims } from "./repos/claims.ts";
@@ -514,7 +514,8 @@ export function accepted(r: Run): CheckedClaim[] {
     ? ((r.output.claims || []) as CheckedClaim[]).filter((c) => c.passed)
     : [];
 }
-export async function canonicalRuns() {
+/** One run per video: the published one, else the newest completed non-experiment. */
+async function selectCanonical(runs: Run[]) {
   const selected = new Map(
     (
       await docs<{
@@ -524,7 +525,7 @@ export async function canonicalRuns() {
     ).map((p) => [p.videoId, p.runId]),
   );
   const seen = new Set<string>();
-  const result = (await list()).filter((r) => {
+  return runs.filter((r) => {
     if (r.status !== "completed" || r.input.task || seen.has(r.videoId))
       return false;
     if (
@@ -536,6 +537,13 @@ export async function canonicalRuns() {
     seen.add(r.videoId);
     return true;
   });
+}
+/** The canonical runs without their output: what lists and pickers need, at a fraction of the read. */
+export async function canonicalRunHeaders() {
+  return selectCanonical(await listHeaders());
+}
+export async function canonicalRuns() {
+  const result = await selectCanonical(await list());
   for (const r of process.env.YTI_PREVIEW_READ_ONLY === "true"
     ? []
     : result.filter((r) => r.input.record !== "historical")) {
@@ -682,22 +690,68 @@ export async function improvement(input: unknown) {
     at: new Date().toISOString(),
   });
 }
+/**
+ * What every page reads, in one round of parallel queries. Runs come without
+ * their output (listHeaders), and the Lab-only collections — comparisons,
+ * experiments, evaluations, caption attempts and the call ledger, most of the
+ * old payload — are read by labSnapshot() when the Lab page asks for them.
+ */
 export async function researchSnapshot() {
-  const [allRuns, documents] = await Promise.all([
-    list(),
-    researchDB()
-      .prepare("SELECT kind,payload FROM yi_documents WHERE kind IN ('reference','audioReview','transcriptAccuracy','captionBenchmark','experiment','evaluation','managedCaptionAttempt','idea','watchlist','comparison','review','improvement','briefing','delivery') ORDER BY created_at DESC")
+  const database = researchDB();
+  const [
+    allRuns,
+    documents,
+    preferencesDoc,
+    prompts,
+    channels,
+    claims,
+    mentions,
+    entities,
+    channelCandidates,
+    shares,
+    discoveries,
+    events,
+    runs,
+  ] = await Promise.all([
+    listHeaders(),
+    database
+      .prepare(
+        "SELECT kind,payload FROM yi_documents WHERE kind IN ('reference','audioReview','transcriptAccuracy','idea','watchlist','review','improvement','briefing','delivery') ORDER BY created_at DESC",
+      )
       .all(),
+    preferences(),
+    promptVersions(),
+    // Rows, not documents (spec 8): claims, mentions and channels are read
+    // through repos/ so every surface sees the relational record.
+    listChannels(),
+    listClaims(),
+    listMentions(),
+    docs<import("../../features/youtube-intelligence/entities.ts").EntityData>(
+      "entity",
+    ),
+    docs("channelCandidate"),
+    database
+      .prepare(
+        "SELECT id,created_at,expires_at,revoked_at FROM yi_shares ORDER BY created_at DESC",
+      )
+      .all(),
+    database
+      .prepare(
+        "SELECT * FROM yi_discoveries ORDER BY (payload::jsonb->>'publishedAt') DESC",
+      )
+      .all(),
+    database
+      .prepare("SELECT * FROM yi_events ORDER BY at DESC LIMIT 100")
+      .all(),
+    canonicalRunHeaders(),
   ]);
-  async function readDocs<T = Record<string, unknown>>(
-    kind: string,
-  ): Promise<T[]> {
+  function readDocs<T = Record<string, unknown>>(kind: string): T[] {
     return documents
       .filter((r) => r.kind === kind)
       .map((r) => json(r.payload) as T);
   }
   return {
-    references: await readDocs<{
+    references: readDocs<{
       videoId: string;
       url: string;
       tradeIdeas: number;
@@ -708,29 +762,8 @@ export async function researchSnapshot() {
       finding: string;
       limitations: string;
     }>("reference"),
-    audioReviews: await readDocs("audioReview"),
-    transcriptAccuracy: await readDocs("transcriptAccuracy"),
-    captionBenchmarks: await readDocs("captionBenchmark"),
-    experiments: await readDocs("experiment"),
-    evaluations: await readDocs<{
-      id: string;
-      at: string;
-      checkVersion: string;
-      mode: string;
-      newModelCostUsd: number;
-      limitation: string;
-      rows: {
-        runId: string;
-        videoId: string;
-        model: string;
-        promptVersion: string;
-        pass: boolean;
-        reason: string;
-      }[];
-    }>("evaluation"),
-    captionAttempts: (await readDocs("managedCaptionAttempt"))
-      .slice(0, 30)
-      .map(({ source, payload, ...r }) => r),
+    audioReviews: readDocs("audioReview"),
+    transcriptAccuracy: readDocs("transcriptAccuracy"),
     jobs: allRuns
       .filter((r) => r.input.task)
       .map((r) => ({
@@ -764,44 +797,26 @@ export async function researchSnapshot() {
       ),
       hosted: !!process.env.YTI_APP_ORIGIN,
     },
-    preferences: await preferences(),
-    prompts: await promptVersions(),
-    // Rows, not documents (spec 8): claims, mentions and channels are read
-    // through repos/ so every surface sees the relational record.
-    channels: await listChannels(),
-    claims: await listClaims(),
-    mentions: await listMentions(),
-    ideas: await readDocs("idea"),
-    watchlist: await readDocs("watchlist"),
-    comparisons: await readDocs("comparison"),
-    reviews: await readDocs("review"),
-    improvements: await readDocs("improvement"),
-    briefings: await readDocs("briefing"),
-    deliveries: await readDocs("delivery"),
-    entities:
-      await docs<
-        import("../../features/youtube-intelligence/entities.ts").EntityData
-      >("entity"),
-    channelCandidates: await docs("channelCandidate"),
-    shares: (
-      await (await researchDB())
-        .prepare(
-          "SELECT id,created_at,expires_at,revoked_at FROM yi_shares ORDER BY created_at DESC",
-        )
-        .all()
-    ).map((r) => ({
+    preferences: preferencesDoc,
+    prompts,
+    channels,
+    claims,
+    mentions,
+    ideas: readDocs("idea"),
+    watchlist: readDocs("watchlist"),
+    reviews: readDocs("review"),
+    improvements: readDocs("improvement"),
+    briefings: readDocs("briefing"),
+    deliveries: readDocs("delivery"),
+    entities,
+    channelCandidates,
+    shares: shares.map((r) => ({
       id: r.id,
       created_at: iso(r.created_at),
       expires_at: iso(r.expires_at),
       revoked_at: iso(r.revoked_at),
     })),
-    discoveries: (
-      await (await researchDB())
-        .prepare(
-          "SELECT * FROM yi_discoveries ORDER BY (payload::jsonb->>'publishedAt') DESC",
-        )
-        .all()
-    ).map((r) => ({
+    discoveries: discoveries.map((r) => ({
       ...r,
       id: r.id,
       video_id: r.video_id,
@@ -810,11 +825,7 @@ export async function researchSnapshot() {
       discovered_at: iso(r.discovered_at),
       payload: json(r.payload) as { title?: string; publishedAt?: string },
     })),
-    events: (
-      await (await researchDB())
-        .prepare("SELECT * FROM yi_events ORDER BY at DESC LIMIT 100")
-        .all()
-    ).map((r) => ({
+    events: events.map((r) => ({
       ...r,
       id: r.id,
       video_id: r.video_id,
@@ -823,9 +834,52 @@ export async function researchSnapshot() {
       at: iso(r.at),
       payload: json(r.payload) as Record<string, unknown>,
     })),
-    calls: (
-      await (await researchDB()).prepare("SELECT * FROM yi_calls").all()
-    ).map((r) => ({
+    evaluationRuns: allRuns
+      .filter((r) => r.status === "completed" && !r.input.task)
+      .map((r) => ({ ...r, input: {} })),
+    runs: runs.map((r) => ({ ...r, input: {} })),
+  };
+}
+/** The Lab page's diagnostics: large, operator-only, and read only when Lab is open. */
+export async function labSnapshot() {
+  const database = researchDB();
+  const [documents, calls] = await Promise.all([
+    database
+      .prepare(
+        "SELECT kind,payload FROM yi_documents WHERE kind IN ('captionBenchmark','experiment','evaluation','managedCaptionAttempt','comparison') ORDER BY created_at DESC",
+      )
+      .all(),
+    database.prepare("SELECT * FROM yi_calls").all(),
+  ]);
+  function readDocs<T = Record<string, unknown>>(kind: string): T[] {
+    return documents
+      .filter((r) => r.kind === kind)
+      .map((r) => json(r.payload) as T);
+  }
+  return {
+    captionBenchmarks: readDocs("captionBenchmark"),
+    experiments: readDocs("experiment"),
+    evaluations: readDocs<{
+      id: string;
+      at: string;
+      checkVersion: string;
+      mode: string;
+      newModelCostUsd: number;
+      limitation: string;
+      rows: {
+        runId: string;
+        videoId: string;
+        model: string;
+        promptVersion: string;
+        pass: boolean;
+        reason: string;
+      }[];
+    }>("evaluation"),
+    captionAttempts: readDocs("managedCaptionAttempt")
+      .slice(0, 30)
+      .map(({ source, payload, ...r }) => r),
+    comparisons: readDocs("comparison"),
+    calls: calls.map((r) => ({
       ...r,
       id: r.id,
       run_id: r.run_id,
@@ -833,18 +887,6 @@ export async function researchSnapshot() {
       status: r.status,
       amount: r.amount,
       metrics: json(r.metrics) as Record<string, unknown>,
-    })),
-    evaluationRuns: allRuns
-      .filter((r) => r.status === "completed" && !r.input.task)
-      .map((r) => ({
-        ...r,
-        input: {},
-        output: { ...r.output, source: undefined },
-      })),
-    runs: (await canonicalRuns()).map((r) => ({
-      ...r,
-      input: {},
-      output: { ...r.output, source: undefined },
     })),
   };
 }
