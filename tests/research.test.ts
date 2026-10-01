@@ -47,6 +47,19 @@ test("Matched adjusted prices calculate signed returns, excess and win rate inde
   assert.equal(short.win, false);
   assert.equal(summarizeScores([r, short]).winRate, 0.5);
 });
+test("A settlement without a benchmark return is left out of the benchmark figures, not counted as zero", () => {
+  const r = scoreCall(call, stock, spy, "2026-04-02");
+  const { spyReturn: _s, excessReturn: _e, beatsSpy: _b, ...unbenchmarked } = r;
+  const summary = summarizeScores([r, unbenchmarked as typeof r]);
+  assert.equal(summary.priced, 2);
+  assert.ok(Math.abs(summary.meanSpy! - r.spyReturn!) < 1e-9);
+  assert.ok(Math.abs(summary.meanExcess! - r.excessReturn!) < 1e-9);
+  assert.equal(summary.beatsSpyRate, 1);
+  const none = summarizeScores([unbenchmarked as typeof r]);
+  assert.equal(none.meanSpy, null);
+  assert.equal(none.meanExcess, null);
+  assert.equal(none.beatsSpyRate, null);
+});
 test("Forward scoring cannot enter at same-day close and unmatched sessions are excluded", () => {
   const r = scoreCall(call, stock, spy, "2026-04-02", "forward");
   assert.equal(r.entryDate, "2026-01-05");

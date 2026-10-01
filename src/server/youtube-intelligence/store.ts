@@ -4,7 +4,7 @@ import { ResearchPipelineIdentity, researchPipelineIdentity, researchPipelineIde
 import { z } from "zod";
 import { resolveTeam } from "./env.ts";
 import { enqueueJob } from "./repos/jobs.ts";
-import { queuePaused } from "./queue.ts";
+import { assertLeaseHeld, queuePaused } from "./queue.ts";
 import { randomUUID } from "node:crypto";
 import type { Run } from "../../features/youtube-intelligence/contracts.ts";
 export function db() {
@@ -216,6 +216,10 @@ export async function reserve(
 ) {
   const d = await db();
   return d.transaction(async () => {
+    // A worker whose lease lapsed mid-stage must not start a paid call: another
+    // worker may already own this run. Settling is not fenced, because a call
+    // already made has cost what it cost whoever records it.
+    await assertLeaseHeld();
     if (
       await d
         .prepare(

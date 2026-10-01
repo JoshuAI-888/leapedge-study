@@ -9,6 +9,7 @@ import {
   connectionRole,
   isRetryableDatabaseError,
   poolMax,
+  parsers,
 } from "../src/server/youtube-intelligence/database.ts";
 import { loadMigrations } from "../src/server/youtube-intelligence/migrations/run.ts";
 import {
@@ -275,4 +276,13 @@ test("readEnv() accepts the new hosted keys and still reports only key names", (
   assert.equal(poolMax({ YTI_POOL_MAX: "9001" }), 4);
   assert.equal(poolMax({ YTI_POOL_MAX: "2.5" }), 4);
   assert.equal(poolMax({ YTI_POOL_MAX: "6" }), 6);
+});
+test("node-postgres returns BIGINT and count(*) as PGlite does, a number while exact", async () => {
+  // The pg driver hands every parser the wire text. Without the INT8 entry it
+  // returns "5", and "5" + 1 is "51": right on PGlite in tests, wrong live.
+  assert.equal(parsers[20]("5"), 5);
+  assert.equal(parsers[20]("-42"), -42);
+  assert.equal(parsers[20]("9007199254740993"), 9007199254740993n);
+  const pg = (await import("pg")).default;
+  assert.equal(pg.types.getTypeParser(20)("5"), 5);
 });

@@ -130,10 +130,17 @@ export function summarizeScores(rows: ReturnType<typeof scoreCall>[]) {
   const priced = rows.filter(
     (r) => "stockReturn" in r && typeof r.stockReturn === "number",
   );
-  const mean = (key: "stockReturn" | "spyReturn" | "excessReturn") =>
-    priced.length
-      ? priced.reduce((s, r) => s + (r[key] ?? 0), 0) / priced.length
+  // A row without a benchmark return is left out of the benchmark figures
+  // rather than counted as zero, which would drag them toward a plausible 0.
+  const mean = (key: "stockReturn" | "spyReturn" | "excessReturn") => {
+    const values = priced
+      .map((r) => r[key])
+      .filter((v): v is number => typeof v === "number");
+    return values.length
+      ? values.reduce((s, v) => s + v, 0) / values.length
       : null;
+  };
+  const benchmarked = priced.filter((r) => typeof r.beatsSpy === "boolean");
   return {
     total: rows.length,
     priced: priced.length,
@@ -146,8 +153,8 @@ export function summarizeScores(rows: ReturnType<typeof scoreCall>[]) {
     winRate: priced.length
       ? priced.filter((r) => r.win).length / priced.length
       : null,
-    beatsSpyRate: priced.length
-      ? priced.filter((r) => r.beatsSpy).length / priced.length
+    beatsSpyRate: benchmarked.length
+      ? benchmarked.filter((r) => r.beatsSpy).length / benchmarked.length
       : null,
   };
 }

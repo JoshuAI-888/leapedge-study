@@ -31,6 +31,8 @@ type Row = Record<string, unknown>;
  * only OIDs 21, 23, 26, 700 and 701, so PGlite returns it as a string too.
  */
 const NUMERIC_OID = 1700;
+/** int8 (BIGINT, count(*)). pg returns a string; PGlite a number or BigInt. */
+const INT8_OID = 20;
 /** timestamptz. Both drivers return it as a JavaScript Date by default. */
 const TIMESTAMPTZ_OID = 1184;
 /**
@@ -66,10 +68,18 @@ export function iso(value: unknown): string | null {
   const at = Date.parse(text);
   return Number.isNaN(at) ? text : new Date(at).toISOString();
 }
-const parsers: Record<number, (value: string) => unknown> = {
+/** Shared by both drivers. INT8 (count(*), BIGINT columns) follows PGlite:
+ * a number while it is exact, a BigInt beyond that. node-postgres would
+ * otherwise return a string, so arithmetic tested on PGlite went wrong live. */
+export const parsers: Record<number, (value: string) => unknown> = {
+  [INT8_OID]: (value) => {
+    const n = Number(value);
+    return Number.isSafeInteger(n) ? n : BigInt(value);
+  },
   [NUMERIC_OID]: (value) => Number(value),
   [TIMESTAMPTZ_OID]: (value) => iso(value) ?? value,
 };
+pg.types.setTypeParser(INT8_OID, parsers[INT8_OID]);
 pg.types.setTypeParser(NUMERIC_OID, parsers[NUMERIC_OID]);
 pg.types.setTypeParser(TIMESTAMPTZ_OID, parsers[TIMESTAMPTZ_OID]);
 /**

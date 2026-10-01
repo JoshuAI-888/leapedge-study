@@ -1,5 +1,7 @@
 import { z } from "zod";
 import {
+  holdingLease,
+  STALE_LEASE,
   claimJob,
   completeJob,
   retryJob,
@@ -102,9 +104,9 @@ export async function processNext(executeStage: typeof step = step) {
     if (job.kind !== "analyze") {
       const handler = handlers.get(job.kind);
       if (!handler) throw Error(`No worker handler registered for ${job.kind}`);
-      await handler(job.payload);
+      await holdingLease(job.id, token, () => handler(job.payload));
       if (!(await completeJob(job.id, token)))
-        throw Error("Stale worker lease.");
+        throw Error(STALE_LEASE);
       return { id: job.id, stage: job.kind, status: "completed" };
     }
     const { runId } = z.object({ runId: z.string().min(1) }).parse(job.payload);
@@ -141,7 +143,7 @@ export async function processNext(executeStage: typeof step = step) {
     run.error = null;
     let transientDelay = 0;
     try {
-      await executeStage(run);
+      await holdingLease(job.id, token, () => executeStage(run));
       if (run.status === "running") run.status = "queued";
     } catch (error) {
       run.status = error instanceof SourcePending ? "queued" : "failed";
@@ -166,7 +168,7 @@ export async function processNext(executeStage: typeof step = step) {
           "SELECT id FROM jobs WHERE id=$1 AND lease_token=$2 AND status='running' AND lease_until>now() FOR UPDATE",
         )
         .get(job.id, token);
-      if (!owner) throw Error("Stale worker lease.");
+      if (!owner) throw Error(STALE_LEASE);
       await db()
         .prepare(
           "UPDATE yi_runs SET lease_until=$1 WHERE id=$2 AND lease_token=$3",

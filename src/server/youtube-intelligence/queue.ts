@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { advisoryKey, database } from "./database.ts";
@@ -6,6 +7,28 @@ import { teamPreferences } from "./research-store.ts";
 export const queuePaused = () =>
   ["true", "1"].includes(process.env.YTI_QUEUE_PAUSED ?? "");
 export const QUEUE_LEASE_MS = 600_000;
+export const STALE_LEASE = "Stale worker lease.";
+/** The job lease the current worker code runs under, if any. */
+const held = new AsyncLocalStorage<{ id: string; token: string }>();
+/** Run fn as the holder of one job lease, so reserve() can refuse to spend
+ * once that lease has expired or been taken over by another worker. */
+export function holdingLease<T>(id: string, token: string, fn: () => Promise<T>) {
+  return held.run({ id, token }, fn);
+}
+/** Inside a transaction, throw unless the lease this code runs under is still
+ * live and still ours. FOR SHARE makes a takeover's claim wait for the commit.
+ * Code outside a job (scripts, tests calling a stage directly) holds no lease
+ * and is not fenced. */
+export async function assertLeaseHeld() {
+  const lease = held.getStore();
+  if (!lease) return;
+  const owner = await database
+    .prepare(
+      "SELECT id FROM jobs WHERE id=$1 AND lease_token=$2 AND status='running' AND lease_until>now() FOR SHARE",
+    )
+    .get(lease.id, lease.token);
+  if (!owner) throw Error(STALE_LEASE);
+}
 const CLAIM_LOCK = advisoryKey("yi:queue:capacity");
 const ClaimOptions = z.object({
   parallelVideos: z.number().int().min(1).max(64).optional(),
