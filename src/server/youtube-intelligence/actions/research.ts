@@ -21,10 +21,12 @@ import {
  * list is a window and not the whole record.
  */
 async function snapshot() {
-  const s = await R.researchSnapshot();
-  const [claims, mentions] = await Promise.all([
+  const [s, claims, mentions, briefs, performances] = await Promise.all([
+    R.researchSnapshot(),
     countClaims(),
     countMentions(),
+    researchBriefs(),
+    R.docs<Awaited<ReturnType<typeof performance>>>("performance"),
   ]);
   return {
     ...s,
@@ -32,22 +34,65 @@ async function snapshot() {
     // transcripts, extraction plans and audits remain on the run detail API.
     runs: s.runs.map((run) => ({ ...run, output: {} })),
     evaluationRuns: s.evaluationRuns.map((run) => ({ ...run, output: {} })),
-    researchBriefs: (await researchBriefs()).map(
-      ({ evidence, external, retrievalNotes, baseline, ...brief }) => ({
-        ...brief,
-        readiness: researchReadiness({ ...brief, evidence }),
-        latestExternalPublishedAt:
-          external
-            .filter((e) =>
-              brief.sentences.some(
-                (s) => s.timeMode === "current" && s.externalIds.includes(e.id),
-              ),
-            )
-            .map((e) => e.publishedAt)
-            .filter((date): date is string => !!date)
-            .sort()
-            .at(-1) ?? null,
-      }),
+    // Briefs as the overview pages show them. The full brief (fact checks,
+    // audit reasons, coverage, withheld drafts) is on the run detail API that
+    // the analysis page reads, so it no longer rides on every page load.
+    researchBriefs: briefs.map(
+      ({
+        evidence,
+        external,
+        retrievalNotes,
+        baseline,
+        rejected,
+        omissions,
+        evidenceCoverage,
+        ...brief
+      }) => {
+        const { coverage, issues, ...readiness } = researchReadiness({
+          ...brief,
+          rejected,
+          omissions,
+          evidenceCoverage,
+          evidence,
+        });
+        return {
+          ...brief,
+          sentences: brief.sentences.map((s) => ({
+            id: s.id,
+            text: s.text,
+            kind: s.kind,
+            topic: s.topic,
+            horizon: s.horizon,
+            materiality: s.materiality,
+            importanceReason: s.importanceReason,
+            timeMode: s.timeMode,
+            speaker: s.speaker,
+            novelty: s.novelty,
+            // The overview's source and fact labels (factualSupportLabel).
+            fidelity: s.fidelity,
+            factualStatus: s.factualStatus,
+            externalSupport: s.externalSupport,
+            financialFacts: s.financialFacts,
+          })),
+          readiness: {
+            ...readiness,
+            issues: issues.slice(0, 3),
+            issueCount: issues.length,
+          },
+          latestExternalPublishedAt:
+            external
+              .filter((e) =>
+                brief.sentences.some(
+                  (s) =>
+                    s.timeMode === "current" && s.externalIds.includes(e.id),
+                ),
+              )
+              .map((e) => e.publishedAt)
+              .filter((date): date is string => !!date)
+              .sort()
+              .at(-1) ?? null,
+        };
+      },
     ),
     seedSources: seedLists().map((list) => ({
       source: list.source,
@@ -58,8 +103,7 @@ async function snapshot() {
         list.channels.some((seed) => seed.id === channel.id),
       ).length,
     })),
-    performances:
-      await R.docs<Awaited<ReturnType<typeof performance>>>("performance"),
+    performances,
     counts: {
       claims: {
         returned: s.claims.length,
@@ -76,8 +120,12 @@ async function snapshot() {
 }
 /** What the research front end reads, including the truncation counts. */
 export type ResearchSnapshot = Awaited<ReturnType<typeof snapshot>>;
+/** What the Lab page reads on its own. */
+export type LabSnapshot = Awaited<ReturnType<typeof R.labSnapshot>>;
 export const research: ActionTable = {
   snapshot: reads(nothing, snapshot),
+  // The Lab page's diagnostics, kept out of the snapshot every page waits on.
+  lab: reads(nothing, R.labSnapshot),
   generateResearchBrief: writes(
     z.strictObject({ sourceRunId: z.string().min(1) }),
     (v) => queueResearchBrief(v.sourceRunId),

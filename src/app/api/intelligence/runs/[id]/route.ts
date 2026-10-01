@@ -11,10 +11,11 @@ import { bottomLineFor } from "../../../../../server/youtube-intelligence/bottom
 import {
   guard,
   failure,
+  timed,
 } from "../../../../../server/youtube-intelligence/http.ts";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export async function GET(
+async function read(
   r: Request,
   {
     params,
@@ -96,3 +97,5 @@ export async function GET(
     return failure(e);
   }
 }
+type Params = { params: Promise<{ id: string }> };
+export const GET = (r: Request, context: Params) => timed(() => read(r, context));

@@ -52,6 +52,44 @@ export async function list() {
       .all()) as Record<string, unknown>[]
   ).map(convert);
 }
+/** The input keys a list view reads; everything else (evidence, transcripts) stays in Postgres. */
+const HEADER_INPUT_KEYS = [
+  "task",
+  "experiment",
+  "record",
+  "recoveryOf",
+  "researchPipelineIdentity",
+  "researchPipeline",
+  "researchPipelineVersion",
+  "teamPreferencesSnapshot",
+  "snapshot",
+];
+/**
+ * Every run without its output, newest first, with the input cut down to the
+ * keys a list reads (and a research task's snapshot to its sourceRunId). The
+ * full `list()` moves every transcript and audit across the wire, which is
+ * tens of megabytes on a real workspace; this is the read for lists and pickers.
+ */
+export async function listHeaders(): Promise<Run[]> {
+  const rows = (await (
+    await db()
+  )
+    .prepare(
+      `WITH runs AS MATERIALIZED (
+        SELECT id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,error,cost,input::jsonb AS i
+        FROM yi_runs
+      )
+      SELECT id,video_id,url,model,prompt_version,title,status,stage,created_at,updated_at,error,cost,
+        CASE WHEN jsonb_typeof(i)='object' THEN COALESCE((
+          SELECT jsonb_object_agg(key, CASE WHEN key='snapshot' AND jsonb_typeof(value)='object'
+            THEN jsonb_build_object('sourceRunId', value->'sourceRunId') ELSE value END)
+          FROM jsonb_each(i) WHERE key = ANY($1::text[])
+        ), '{}'::jsonb) ELSE '{}'::jsonb END AS input
+      FROM runs ORDER BY created_at DESC`,
+    )
+    .all(HEADER_INPUT_KEYS)) as Record<string, unknown>[];
+  return rows.map((r) => ({ ...convert({ ...r, output: null }), output: {} }));
+}
 export async function get(id: string) {
   const r = (await (
     await db()
