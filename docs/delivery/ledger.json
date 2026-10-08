@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-09-30",
+  "updated": "2026-10-09",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -2478,5 +2478,22 @@
     ],
     "verification": "Production after deploy (1 Oct): databaseRoundTripMs 0.9–1.1 from iad1 (was 221 from syd1). Server time from Server-Timing, warm: research/snapshot 406–607 ms (was 2.6–3.9 s), settings/teamAccount 13–19 ms (was 1.6 s), channels/costMetrics 134–148 ms, runs page 170–177 ms, activity 3.5–33 ms. End to end from a US host: snapshot 0.70–1.03 s for 322 KB compressed, the other reads 0.18–0.47 s.",
     "pr": 29
+  },
+  "supabaseCutoverRepair20261009": {
+    "status": "in-review",
+    "pr": 32,
+    "note": "Supabase project identity guards, session-pooler maintenance validation, patched audit dependencies, append-only function search_path, and a defined cron with both Vercel scheduling and YTI_CRON_ENABLED disabled. No paid provider traffic or replay.",
+    "files": [
+      "src/server/youtube-intelligence/migrations/run.ts",
+      "src/server/youtube-intelligence/migrations/0011_append_only_search_path.sql",
+      "src/app/api/cron/intelligence/route.ts",
+      "vercel.json",
+      "docs/deployment/supabase-vercel-setup.md"
+    ],
+    "tests": [
+      "tests/supabase-cutover.test.ts"
+    ],
+    "productionProject": "youtube-intelligence",
+    "supabaseProject": "twidbzmqhvqpuakkzobf"
   }
 }

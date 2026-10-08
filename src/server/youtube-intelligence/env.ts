@@ -34,6 +34,8 @@ export const Env = z.object({
   // parses it and falls back to the default on anything it cannot use.
   YTI_REVIEWER_ACCOUNT_ID: secret, // authenticated standalone reviewer identity
   YTI_FIXTURE_MODE: secret, // visible synthetic-data banner
+  YTI_DB_SSL_CA: secret, // optional; Supabase root certificate PEM, with TLS verification
+  YTI_CRON_ENABLED: secret, // only "true" allows the scheduled dispatcher
   YTI_POOL_MAX: secret, // clients per serving instance
   YTI_QUEUE_PAUSED: secret, // "true" drains the queue before a migration
   YTI_PUSH_CALLBACK_SECRET: secret, // required when channels.discovery=push

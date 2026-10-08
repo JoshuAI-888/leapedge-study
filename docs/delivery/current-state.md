@@ -1,3 +1,5 @@
+> **9 October 2026 hosting update:** Production now uses Supabase project `twidbzmqhvqpuakkzobf` (joshuafang@gmail.com), hosted by the existing Vercel `youtube-intelligence` project. This supersedes older Neon hosting instructions below and in AGENTS.md. Cron is defined but stays disabled in Vercel and behind `YTI_CRON_ENABLED=false`. See [the exact environment-variable guide](../deployment/supabase-vercel-setup.md). No paid-provider requests or automatic retries are part of this repair.
+
 # Current state and direction — 28 September 2026
 
 This page replaces the per-run review documents (now under `docs/archive/reviews/`)
