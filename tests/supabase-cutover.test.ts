@@ -75,3 +75,25 @@ test("Append-only protection keeps rejecting edits after its search_path is pinn
     await assert.rejects(() => db.prepare("DELETE FROM reviews WHERE id=$1").run("review1"), /append-only/);
   } finally { await db.close(); }
 });
+
+
+test("Serving Supabase uses transaction pooling while preserving the saved secret", async () => {
+  const { servingConnectionString } = await import("../src/server/youtube-intelligence/database.ts");
+  const session = pooled(prod).replace(":6543/", ":5432/").replace("secret@", "p%40ss%23word@") + "?sslmode=require";
+  const before = new URL(session), after = new URL(servingConnectionString(session));
+  assert.equal(after.port, "6543");
+  assert.equal(after.hostname, before.hostname);
+  assert.equal(after.username, before.username);
+  assert.equal(after.password, before.password);
+  assert.equal(after.pathname, before.pathname);
+  assert.equal(after.search, before.search);
+  assert.equal(servingConnectionString(pooled(prod)), pooled(prod));
+  assert.equal(new URL(servingConnectionString(session.replace(":5432/", "/"))).port, "6543");
+  assert.equal(servingConnectionString(direct(prod)), direct(prod));
+  const neon = "postgres://user:secret@ep-prod-pooler.us-east-1.aws.neon.tech/db?sslmode=require";
+  assert.equal(servingConnectionString(neon), neon);
+  assert.throws(() => servingConnectionString("https://example.invalid/secret"), /DATABASE_URL/);
+  assert.throws(() => servingConnectionString("not-a-uri-secret"), /DATABASE_URL/);
+  // Normalizing serving must never change the migration role.
+  assert.equal(assertConnectionPair({ DATABASE_URL: session, DATABASE_URL_UNPOOLED: session }), session);
+});

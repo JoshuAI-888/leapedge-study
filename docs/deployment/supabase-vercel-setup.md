@@ -1,12 +1,12 @@
 # Supabase and Vercel: exact setup for this app
 
-Updated 9 October 2026. The GitHub repository is `JoshuAI-888/leapedge-study`, but the **live Vercel project is `youtube-intelligence` in team `joshu-ai`**. The separate Vercel project called `leapedge-study` has no environment variables and its deployments fail; it is not the live app. Apply the instructions below to `youtube-intelligence`.
+Updated 9 October 2026. The GitHub repository is `JoshuAI-888/leapedge-study`, but the **live Vercel project is `youtube-intelligence` in team `joshu-ai`**. The separate Vercel project called `leapedge-study` has no environment variables and its earlier deployments failed; it is not the live app and now skips redundant Git builds. Apply the instructions below to `youtube-intelligence`.
 
 The correct Supabase account is **joshuafang@gmail.com**. Its project is **youtube-intelligence**, project reference **twidbzmqhvqpuakkzobf**, in us-east-1. Do not use the TradingAgents project from the other account.
 
 ## What is already set up
 
-Production has working database credentials and a CA certificate. Preserve those values unless a connection actually fails. This repair sets the production identity guard to `db.twidbzmqhvqpuakkzobf.supabase.co` and adds `YTI_CRON_ENABLED=false`. The repository defines a cron job, but the Vercel Cron Jobs switch must stay **disabled**. The app also refuses scheduled processing unless that environment variable is exactly `true`.
+Production has valid database credentials and a CA certificate. Its saved serving URL used session pooling and reached Supabase’s 15-client session limit; the serving code now switches a shared Supabase session-pooler URL to transaction port 6543, preserving the credentials. Migration connections remain on session port 5432. Preserve those values unless a connection actually fails. This repair sets the production identity guard to `db.twidbzmqhvqpuakkzobf.supabase.co` and adds `YTI_CRON_ENABLED=false`. The repository defines a cron job, but the Vercel Cron Jobs switch must stay **disabled**. The app also refuses scheduled processing unless that environment variable is exactly `true`.
 
 An environment variable is a named setting, such as `DATABASE_URL`, whose value Vercel gives the app. **Production** means the live app. **Preview** means a test deployment of a branch. **Development** means your local computer. Secret values being hidden after saving is normal; do not replace them just because you cannot reveal them.
 
@@ -86,7 +86,7 @@ This repair's deployment is handled as part of the fix; you do not need another 
 
 ## Preview and local development
 
-The live project's ignored-build command intentionally skips Git branch previews to save compute. Leave that setting alone. Its older Development/Preview Neon credentials are not the production Supabase credentials. Before intentionally enabling preview builds or running a local worker, use an isolated non-production database, set both connection URLs and its CA, and keep `YTI_PRODUCTION_DB_HOST` pointing at the production reference above. A preview pointed at production is intentionally refused. There is no need to create another paid database for this repair.
+The live project's corrected ignored-build command is `[ "$VERCEL_GIT_COMMIT_REF" != "main" ]`: it builds main and skips other Git branches to save compute. The previous VERCEL_ENV-based command unexpectedly skipped main too; it has been replaced. Leave the corrected setting alone. Its older Development/Preview Neon credentials are not the production Supabase credentials. Before intentionally enabling preview builds or running a local worker, use an isolated non-production database, set both connection URLs and its CA, and keep `YTI_PRODUCTION_DB_HOST` pointing at the production reference above. A preview pointed at production is intentionally refused. There is no need to create another paid database for this repair.
 
 ## Recognizing errors
 
@@ -98,6 +98,7 @@ The live project's ignored-build command intentionally skips Git branch previews
 | `28P01` / password authentication failed | Wrong database password or URI encoding. Recheck the project and password; preserve working secrets unless repair is necessary. |
 | Certificate / self-signed chain error | Recheck the full `YTI_DB_SSL_CA` PEM from this project. Keep TLS verification enabled. |
 | `ENETUNREACH` on the direct host | Use the IPv4-compatible session pooler for migration/maintenance. |
+| `EMAXCONNSESSION` / max clients reached in session mode | The serving connection used session port 5432 and exhausted its 15-client pool. The repaired code uses transaction port 6543 for web requests without replacing the saved password. For future manual configuration, save the transaction URI as `DATABASE_URL`; keep session 5432 only for `DATABASE_URL_UNPOOLED`. Do not increase paid compute to mask this configuration error. |
 | GitHub dependency audit failure | The old lockfile contained vulnerable `sharp` and `source-map-js`; the repair updates their patched versions. |
 | Historical Google provider `402` / insufficient credits | Provider billing failed before the migration. Database changes cannot replenish AI credits. If you later want paid analysis, inspect billing for the Google AI Studio project associated with `GEMINI_API_KEY`. No credits are purchased or failed jobs retried by this repair. |
 

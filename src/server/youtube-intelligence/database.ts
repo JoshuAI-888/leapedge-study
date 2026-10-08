@@ -120,6 +120,28 @@ export function useDirectConnection() {
     );
   directRequested = true;
 }
+/**
+ * Web functions need transaction multiplexing. A saved Supabase session URL
+ * uses the same host, project username and password, but pins a backend for
+ * every client and exhausts the small session pool across serving instances.
+ * Maintenance bypasses this helper and keeps its session-lock connection.
+ */
+export function servingConnectionString(connection: string): string {
+  let url: URL;
+  try {
+    url = new URL(connection);
+  } catch {
+    throw Error("DATABASE_URL cannot be read.");
+  }
+  if (!["postgres:", "postgresql:"].includes(url.protocol))
+    throw Error("DATABASE_URL must be a PostgreSQL connection URL.");
+  if (/\.pooler\.supabase\.(?:com|co)$/.test(url.hostname) &&
+      (!url.port || url.port === "5432")) {
+    url.port = "6543";
+    return url.toString();
+  }
+  return connection;
+}
 function connectionString(
   env: Record<string, string | undefined> = process.env,
 ) {
@@ -131,7 +153,7 @@ function connectionString(
     throw Error(
       "DATABASE_URL is required: the store is Postgres only. Set YTI_DB=pglite for an in-process database.",
     );
-  return value;
+  return servingConnectionString(value);
 }
 const DEFAULT_POOL_MAX = 4;
 /**
