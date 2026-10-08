@@ -368,10 +368,19 @@ async function initialize() {
         pglite = instance;
       } else {
         const connectionUrl = new URL(connectionString());
-        if (connectionUrl.searchParams.get("sslmode") === "require")
+        // Supabase signs its certificates with a private CA that Node does not
+        // trust, so verify-full would refuse every connection. YTI_DB_SSL_CA
+        // carries that CA (PEM) and keeps the same guarantees: the chain is
+        // checked against it and the hostname against the certificate. The
+        // URL's sslmode is dropped so it cannot override the explicit config.
+        const sslCa = process.env.YTI_DB_SSL_CA?.trim();
+        if (sslCa) {
+          connectionUrl.searchParams.delete("sslmode");
+        } else if (connectionUrl.searchParams.get("sslmode") === "require")
           connectionUrl.searchParams.set("sslmode", "verify-full");
         const instance = new pg.Pool({
           connectionString: connectionUrl.toString(),
+          ...(sslCa ? { ssl: { ca: sslCa, rejectUnauthorized: true } } : {}),
           max: poolMax(),
           connectionTimeoutMillis: 15000,
           idleTimeoutMillis: 10000,
