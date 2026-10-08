@@ -2480,7 +2480,7 @@
     "pr": 29
   },
   "supabaseCutoverRepair20261009": {
-    "status": "in-review",
+    "status": "merged",
     "pr": 32,
     "note": "Supabase project identity guards, session-pooler maintenance validation, patched audit dependencies, append-only function search_path, and a defined cron with both Vercel scheduling and YTI_CRON_ENABLED disabled. No paid provider traffic or replay.",
     "files": [
@@ -2494,6 +2494,18 @@
       "tests/supabase-cutover.test.ts"
     ],
     "productionProject": "youtube-intelligence",
-    "supabaseProject": "twidbzmqhvqpuakkzobf"
+    "supabaseProject": "twidbzmqhvqpuakkzobf",
+    "deployment": "dpl_FcjG9RSatjA93G3JfZnHzkD3WJP9",
+    "verification": "Migration 11 applied, security advisor empty, 221 runs and 358 jobs retained, cron registered but disabled; live page exposed remaining session-pool exhaustion handled in follow-up."
+  },
+  "supabaseServingPoolRepair20261009": {
+    "status": "in-review",
+    "note": "Live EMAXCONNSESSION: normalize Supabase serving session URLs to transaction port 6543, preserving credentials and keeping maintenance on 5432. No capacity upgrade or provider traffic.",
+    "files": [
+      "src/server/youtube-intelligence/database.ts"
+    ],
+    "tests": [
+      "tests/supabase-cutover.test.ts"
+    ]
   }
 }
