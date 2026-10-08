@@ -3,12 +3,6 @@
   "regions": [
     "iad1"
   ],
-  "crons": [
-    {
-      "path": "/api/cron/intelligence",
-      "schedule": "* * * * *"
-    }
-  ],
   "installCommand": "npm ci --ignore-scripts",
   "buildCommand": "npm run migrate && next build"
 }

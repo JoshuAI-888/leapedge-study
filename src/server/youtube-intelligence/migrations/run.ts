@@ -240,6 +240,14 @@ export function assertPreviewIsNotProduction(
  * guard built on it.
  */
 export function cluster(host: string) {
+  // Supabase names its two endpoints with no shared token: the pooler is
+  // aws-<region>.pooler.supabase.com and the direct host is db.<ref>.supabase.co,
+  // and the project ref rides in the username, not the hostname. So a Supabase
+  // pair cannot be matched by name the way Neon's can; both shapes count as one
+  // cluster here, and pointing the pair at two different Supabase projects is a
+  // setup mistake for the operator, not something a hostname can catch.
+  if (/\.pooler\.supabase\.(com|co)$/.test(host) || /^db\.[a-z0-9]{20}\.supabase\.(com|co)$/.test(host))
+    return "supabase";
   return host.replace("-pooler", "");
 }
 export function assertIsolatedDatabase(
