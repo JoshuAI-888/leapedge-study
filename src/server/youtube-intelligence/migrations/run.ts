@@ -23,9 +23,9 @@ export type MigrateOptions = {
   log?: (line: string) => void;
   /**
    * Takes one session-level pg_advisory_lock for the whole run. A session lock
-   * outlives the statement that took it, so it is legal only on the direct
-   * (unpooled) endpoint, where the session stays with this process; a pooler
-   * may hand the session to another client and the lock would never be
+   * outlives the statement that took it, so it requires a direct endpoint or
+   * a Supabase session pooler. A transaction pooler may hand the session to
+   * another client and the lock would never be
    * released. Left off for PGlite, which has a single connection and can
    * never contend.
    */
@@ -192,18 +192,10 @@ export async function migrate(
     await c.query(`SELECT pg_advisory_unlock(${LOCK_KEY})`);
   }
 }
-function hostOf(connectionString: string | undefined) {
-  if (!connectionString) return undefined;
-  try {
-    return new URL(connectionString).hostname || undefined;
-  } catch {
-    return undefined;
-  }
-}
 /**
- * A preview deployment must never migrate the production database. Only hosts
- * are compared, and the error names neither value; an unset
- * YTI_PRODUCTION_DB_HOST cannot rule the production host out, so it refuses too.
+ * A preview deployment must never migrate the production database. Compare
+ * project identities across direct and pooled endpoints without printing
+ * credentials. Unknown identity or an unset production identity refuses too.
  */
 export function assertPreviewIsNotProduction(
   env: Record<string, string | undefined> = process.env,
@@ -218,9 +210,61 @@ export function assertPreviewIsNotProduction(
     throw refuse(
       "YTI_PRODUCTION_DB_HOST is unset, so the production host cannot be ruled out",
     );
-  const host = hostOf(env.DATABASE_URL_UNPOOLED);
-  if (!host) throw refuse("the host of DATABASE_URL_UNPOOLED cannot be read");
-  if (host === production) throw refuse("the two hosts are the same");
+  const target = cluster(env.DATABASE_URL_UNPOOLED ?? "");
+  const primary = cluster(production);
+  if (!target) throw refuse("the identity of DATABASE_URL_UNPOOLED cannot be read");
+  if (!primary) throw refuse("the production database identity cannot be read");
+  if (target === primary) throw refuse("the two endpoints identify the same database");
+}
+/**
+ * Stable database identity from a URL or a configured production host. Neon
+ * endpoints differ by -pooler; Supabase's shared pooler carries the project
+ * ref in its username. A shared pooler hostname alone cannot identify a project.
+ * No credential is returned or included in a diagnostic.
+ */
+export function cluster(connection: string): string | undefined {
+  try {
+    const url = new URL(connection.includes("://") ? connection : `postgres://${connection}`);
+    if (!["postgres:", "postgresql:"].includes(url.protocol)) return undefined;
+    const host = url.hostname.toLowerCase();
+    if (!host) return undefined;
+    const direct = /^db\.([a-z0-9]{20})\.supabase\.(?:co|com)$/.exec(host);
+    if (direct) return `supabase:${direct[1]}`;
+    if (/\.pooler\.supabase\.(?:com|co)$/.test(host)) {
+      const user = decodeURIComponent(url.username);
+      const pooled = /^[^.]+\.([a-z0-9]{20})$/.exec(user);
+      return pooled ? `supabase:${pooled[1]}` : undefined;
+    }
+    return host.replace("-pooler", "");
+  } catch {
+    return undefined;
+  }
+}
+
+/** Both connection roles must select the same project and database. */
+export function assertConnectionPair(
+  env: Record<string, string | undefined> = process.env,
+) {
+  const direct = directConnectionString(env);
+  if (!env.DATABASE_URL?.trim())
+    throw Error("DATABASE_URL must be set alongside DATABASE_URL_UNPOOLED, so the direct endpoint can be checked against it.");
+  let serving: URL, maintenance: URL;
+  try {
+    serving = new URL(env.DATABASE_URL);
+    maintenance = new URL(direct);
+  } catch {
+    throw Error("The database connection URLs cannot be read.");
+  }
+  const pooledIdentity = cluster(env.DATABASE_URL);
+  const directIdentity = cluster(direct);
+  if (!pooledIdentity || !directIdentity)
+    throw Error("The database connection identities cannot be read.");
+  const host = maintenance.hostname.toLowerCase();
+  if (host.includes("-pooler") || (directIdentity.startsWith("supabase:") && maintenance.port === "6543"))
+    throw Error("DATABASE_URL_UNPOOLED names a transaction-pooled endpoint: migrations need a direct connection or a Supabase session pooler on port 5432.");
+  if (pooledIdentity !== directIdentity || serving.pathname !== maintenance.pathname)
+    throw Error("DATABASE_URL and DATABASE_URL_UNPOOLED are not the two endpoints of one database: point both at the same project and database.");
+  return direct;
 }
 /**
  * A script that spends money or writes fixtures must never touch production.
@@ -231,25 +275,6 @@ export function assertPreviewIsNotProduction(
  * unset YTI_PRODUCTION_DB_HOST both refuse: neither rules production out.
  * Names only; no value is ever printed.
  */
-/**
- * `ep-x-pooler.region…` and `ep-x.region…` are the two endpoints of one
- * database. Every comparison between a connection host and a configured host
- * goes through this, because the two variables name different endpoints of the
- * same cluster: `DATABASE_URL` is pooled and `YTI_PRODUCTION_DB_HOST` is the
- * direct host. Comparing them raw never matches, which silently disarms any
- * guard built on it.
- */
-export function cluster(host: string) {
-  // Supabase names its two endpoints with no shared token: the pooler is
-  // aws-<region>.pooler.supabase.com and the direct host is db.<ref>.supabase.co,
-  // and the project ref rides in the username, not the hostname. So a Supabase
-  // pair cannot be matched by name the way Neon's can; both shapes count as one
-  // cluster here, and pointing the pair at two different Supabase projects is a
-  // setup mistake for the operator, not something a hostname can catch.
-  if (/\.pooler\.supabase\.(com|co)$/.test(host) || /^db\.[a-z0-9]{20}\.supabase\.(com|co)$/.test(host))
-    return "supabase";
-  return host.replace("-pooler", "");
-}
 export function assertIsolatedDatabase(
   what = "this script",
   env: Record<string, string | undefined> = process.env,
@@ -264,17 +289,19 @@ export function assertIsolatedDatabase(
     throw refuse(
       "none of YTI_DB=pglite, DATABASE_URL or DATABASE_URL_UNPOOLED is set",
     );
-  const host = hostOf(url);
-  if (!host) throw refuse("the connection host cannot be read");
+  const identity = cluster(url);
+  if (!identity) throw refuse("the connection identity cannot be read");
   const production = env.YTI_PRODUCTION_DB_HOST?.trim().toLowerCase();
   if (!production)
     throw refuse(
       "YTI_PRODUCTION_DB_HOST is unset, so the production host cannot be ruled out",
     );
-  if (cluster(host) === cluster(production))
+  const primary = cluster(production);
+  if (!primary) throw refuse("the production database identity cannot be read");
+  if (identity === primary)
     throw refuse("the connection points at the production database");
 }
-/** The direct (unpooled) endpoint; the pooled one cannot hold a session lock. */
+/** Maintenance endpoint: direct or session pooled; never transaction pooled. */
 export function directConnectionString(
   env: Record<string, string | undefined> = process.env,
 ) {

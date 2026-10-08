@@ -9,17 +9,15 @@ is edited afterwards fails the checksum check by version: add a new migration
 instead of changing an old one.
 
 Apply them with `npm run migrate`, which connects through
-`DATABASE_URL_UNPOOLED`, the direct Neon endpoint, because it holds a
+`DATABASE_URL_UNPOOLED`, a direct PostgreSQL endpoint or Supabase session pooler on port 5432, because it holds a
 session-level advisory lock for the whole run. Tests apply the same files
 through PGlite, so every migration is exercised offline before it reaches
 Postgres.
 
 No serving code migrates and no serving code creates a table: not a running
 instance, not `scripts/worker.ts`, not `scripts/postgres-check.ts`. Migrations
-are applied by `npm run migrate` alone. Today that is run by hand; F22a wires it
-into the Vercel build command, so a deploy migrates before its new functions go
-live. A new database — a fresh Neon project, a restored backup, a new branch —
-has to be migrated with `npm run migrate` against its direct endpoint before any
+are applied by `npm run migrate` alone. The Vercel build command runs it before building, so a deploy migrates before its new functions go live. A new database — a fresh Supabase or Neon project, a restored backup, a new branch —
+has to be migrated with `npm run migrate` against its direct or session-pooled endpoint before any
 of them can use it, and every later migration has to be applied the same way.
 
 A database that already carries the baseline schema but no `yi_migrations` row
@@ -32,10 +30,10 @@ September. `0009_resolved_listing.sql` adds the derived listing columns to
 `claims`.
 
 A preview deployment refuses to migrate the production database: with
-`VERCEL_ENV=preview` the runner compares the host of `DATABASE_URL_UNPOOLED`
+`VERCEL_ENV=preview` the runner compares the database identity of `DATABASE_URL_UNPOOLED`
 against `YTI_PRODUCTION_DB_HOST` and stops when they match, or when
 `YTI_PRODUCTION_DB_HOST` is unset and the production host therefore cannot be
-ruled out. Only hosts are compared, and neither value is ever printed.
+ruled out. Supabase identities use the project reference from the direct host or pooler username; a shared pooler host alone cannot identify a project. Neither connection value is ever printed. Both connection roles must select the same project and database.
 
 ## Expand and contract
 

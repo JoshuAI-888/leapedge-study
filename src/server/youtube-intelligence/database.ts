@@ -6,18 +6,17 @@ import pg from "pg";
 pg.types.setTypeParser(pg.types.builtins.DATE, (value: string) => value);
 import type { PGlite } from "@electric-sql/pglite";
 import {
-  cluster,
-  directConnectionString,
+  assertConnectionPair,
   migrate,
   pgliteClient,
 } from "./migrations/run.ts";
 /**
- * Postgres only. Every database reached from here — Neon in deployment, PGlite
+ * Postgres only. Every database reached from here — Supabase in deployment, PGlite
  * in tests — is built by the numbered files under migrations/, which are the
  * single source of truth for the schema, and every statement carries $1, $2 …
  * placeholders.
  *
- * Neon's pooled (transaction-mode) endpoint hands the session to another client
+ * A pooled (transaction-mode) endpoint hands the session to another client
  * between transactions, so nothing that outlives one transaction may be used at
  * runtime: no session-scoped advisory locks (pg_advisory_lock), no
  * LISTEN/NOTIFY, no temporary tables, no session SET and no SQL-level PREPARE.
@@ -83,10 +82,10 @@ export function advisoryKey(name: string) {
 export type ConnectionRole = "pooled" | "direct";
 /**
  * Which of the two endpoints this process opens. A Next.js function and the
- * cron route take the POOLED one (DATABASE_URL, whose host carries -pooler):
+ * cron route take the POOLED one (DATABASE_URL):
  * many short-lived instances, a handful of clients each. A maintenance script
- * calls useDirectConnection() and gets the DIRECT one through
- * directConnectionString(), so no script reads DATABASE_URL_UNPOOLED itself.
+ * calls useDirectConnection() and gets the maintenance connection through
+ * assertConnectionPair(), so both roles identify the same database.
  *
  * The direct endpoint is not a preference. DDL, session-level advisory locks
  * (pg_advisory_lock), SET, temporary tables and pg_dump are all unavailable
@@ -121,46 +120,11 @@ export function useDirectConnection() {
     );
   directRequested = true;
 }
-function hostOf(url: string | undefined) {
-  if (!url) return undefined;
-  try {
-    return new URL(url).hostname.toLowerCase() || undefined;
-  } catch {
-    return undefined;
-  }
-}
 function connectionString(
   env: Record<string, string | undefined> = process.env,
 ) {
   if (directRequested || connectionRole(env) === "direct") {
-    const direct = directConnectionString(env);
-    // The guards a maintenance script runs first inspect DATABASE_URL, so a
-    // DATABASE_URL_UNPOOLED pointing somewhere else would slip past them and be
-    // written to. Neon issues the pair together and they differ only by
-    // -pooler; anything else is a hand-edited mistake. Names only, no values.
-    //
-    // DATABASE_URL is required here even though this branch does not use it:
-    // before the two roles existed, every script needed it and could not run
-    // without it, and skipping the comparison when it is absent would hand that
-    // invariant back — `restore-research.ts` would write to whatever the direct
-    // endpoint named, with nothing having checked it.
-    const pooled = hostOf(env.DATABASE_URL),
-      unpooled = hostOf(direct);
-    if (!pooled)
-      throw Error(
-        "DATABASE_URL must be set alongside DATABASE_URL_UNPOOLED, so the direct endpoint can be checked against it.",
-      );
-    if (!unpooled)
-      throw Error("The host of DATABASE_URL_UNPOOLED cannot be read.");
-    if (unpooled.includes("-pooler"))
-      throw Error(
-        "DATABASE_URL_UNPOOLED names a pooled endpoint: session locks and DDL would be discarded without erroring. Use the direct endpoint.",
-      );
-    if (cluster(pooled) !== cluster(unpooled))
-      throw Error(
-        "DATABASE_URL and DATABASE_URL_UNPOOLED are not the two endpoints of one database: point both at the same branch.",
-      );
-    return direct;
+    return assertConnectionPair(env);
   }
   const value = env.DATABASE_URL?.trim();
   if (!value)
@@ -197,7 +161,7 @@ export function poolMax(
  * highest version loadMigrations() finds on disk, so adding 0003_*.sql without
  * raising this number fails `npm test`.
  */
-export const SCHEMA_VERSION = 10;
+export const SCHEMA_VERSION = 11;
 /**
  * Fail fast in one direction only. BEHIND means the database has not got the
  * tables or columns this code queries, so every statement is a guess: refuse

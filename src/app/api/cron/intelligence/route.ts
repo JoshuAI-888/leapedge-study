@@ -14,6 +14,13 @@ export async function GET(r: Request) {
     !constantEqual(r.headers.get("authorization") || "", `Bearer ${secret}`)
   )
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  // Default off: even an authenticated manual invocation must not start paid
+  // work until scheduled processing is explicitly enabled by the operator.
+  if (process.env.YTI_CRON_ENABLED !== "true")
+    return Response.json(
+      { skipped: true, reason: "Scheduled processing disabled" },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   const started = Date.now();
   try {
     const scheduled = await sweep();

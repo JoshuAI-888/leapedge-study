@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { cluster, assertPreviewIsNotProduction, assertIsolatedDatabase } from "../src/server/youtube-intelligence/migrations/run.ts";
+import { assertConnectionPair, cluster, assertPreviewIsNotProduction, assertIsolatedDatabase } from "../src/server/youtube-intelligence/migrations/run.ts";
 import { GET } from "../src/app/api/cron/intelligence/route.ts";
 
 const prod = "aaaaaaaaaaaaaaaaaaaa";
@@ -51,4 +51,27 @@ test("The cron dispatcher stays off by default, without opening a database", asy
       else process.env[key] = value;
     }
   }
+});
+
+
+test("Maintenance connections reject another Supabase project or a transaction pooler", () => {
+  const env = { DATABASE_URL: pooled(prod), DATABASE_URL_UNPOOLED: direct(prod) };
+  assert.equal(assertConnectionPair(env), direct(prod));
+  assert.equal(assertConnectionPair({ ...env, DATABASE_URL_UNPOOLED: pooled(prod).replace(":6543/", ":5432/") }), pooled(prod).replace(":6543/", ":5432/"));
+  assert.throws(() => assertConnectionPair({ ...env, DATABASE_URL_UNPOOLED: direct(other) }), /same project and database/);
+  assert.throws(() => assertConnectionPair({ ...env, DATABASE_URL_UNPOOLED: pooled(prod) }), /transaction-pooled/);
+  assert.throws(() => assertConnectionPair({ ...env, DATABASE_URL_UNPOOLED: direct(prod).replace(/\/postgres$/, "/different") }), /same project and database/);
+  assert.throws(() => assertConnectionPair({ ...env, DATABASE_URL: undefined }), /DATABASE_URL must be set/);
+});
+
+test("Append-only protection keeps rejecting edits after its search_path is pinned", async () => {
+  const { freshDatabase } = await import("./helpers/db.ts");
+  const db = await freshDatabase();
+  try {
+    const config = await db.prepare("SELECT proconfig FROM pg_proc WHERE proname='yi_append_only'").get() as { proconfig: string[] };
+    assert.ok(config.proconfig.includes("search_path=pg_catalog"));
+    await db.prepare("INSERT INTO reviews(id,claim_id,reviewer_account_id,verdict) VALUES($1,$2,$3,$4)").run("review1", "claim1", "reviewer1", "verified");
+    await assert.rejects(() => db.prepare("UPDATE reviews SET verdict=$1 WHERE id=$2").run("changed", "review1"), /append-only/);
+    await assert.rejects(() => db.prepare("DELETE FROM reviews WHERE id=$1").run("review1"), /append-only/);
+  } finally { await db.close(); }
 });

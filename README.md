@@ -26,9 +26,9 @@ npm run dev -- --port 3101
 npm run worker
 ```
 
-Local development requires an isolated Postgres database configured through `DATABASE_URL` and `DATABASE_URL_UNPOOLED`. `YTI_DB=pglite` is an in-process test database; separate web and worker processes do not share it. The hosted deployment uses **Next.js + Vercel Functions/Cron + Neon Postgres + OpenRouter + YouTube Data API + FMP + Resend**. No Python hosting is required. Retired v1 research code — the Python experiments and the one-off evidence scripts — is kept under `scripts/archive/`, excluded from the typecheck and never deployed.
+Local development requires an isolated Postgres database configured through `DATABASE_URL` and `DATABASE_URL_UNPOOLED`. `YTI_DB=pglite` is an in-process test database; separate web and worker processes do not share it. The hosted deployment uses **Next.js + Vercel Functions + Supabase Postgres + OpenRouter + YouTube Data API + FMP + Resend**. No Python hosting is required. Retired v1 research code — the Python experiments and the one-off evidence scripts — is kept under `scripts/archive/`, excluded from the typecheck and never deployed.
 
-The Vercel cron advances leased, checkpointed stages. Closing the browser does not stop research. Paid requests are bounded and conservatively reserved; uncertain outcomes remain reserved and are not automatically retried. `YTI_BUDGET_USD` is a cumulative USD ledger ceiling, not a monthly rollover or account billing feature.
+The repository defines a Vercel cron for leased, checkpointed stages, but scheduled processing is currently disabled in Vercel and by `YTI_CRON_ENABLED=false` to avoid unnecessary compute. Paid requests are bounded and conservatively reserved; uncertain outcomes remain reserved and are not automatically retried. `YTI_BUDGET_USD` is a cumulative USD ledger ceiling, not a monthly rollover or account billing feature.
 
 ## Verify
 
@@ -59,7 +59,8 @@ establishes quality. Agreement with LeapEdge is not independent ground truth.
 
 ## Evidence and deployment
 
-- [Current state and direction, 28 September 2026](docs/delivery/current-state.md)
+- [Supabase and Vercel environment setup, step by step](docs/deployment/supabase-vercel-setup.md)
+- [Current state and direction](docs/delivery/current-state.md)
 - [Delivery review, 18 September 2026](docs/archive/reviews/delivery-review-20260918.md)
 - [Spec and build plan](docs/spec/)
 - [Deployment, operation and recovery](docs/production-and-integration.md)
