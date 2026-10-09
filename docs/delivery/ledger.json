@@ -2532,8 +2532,8 @@
     "evidence": "docs/deployment/manual-pipeline-verification-20261009.md"
   },
   "channelMonitoring20261009": {
-    "status": "in-review",
-    "note": "User-requested workspace monitoring toggle, UTC schedule and cost warning. Fixed 15-minute Vercel checks remain while app monitoring is off, as selected by the user. New automatic work pauses; manual work remains available. Build and live acceptance pending.",
+    "status": "merged",
+    "note": "PR 36 merged and production browser/cron acceptance completed. App monitoring remains off, hourly UTC schedule and one-video cap saved; 15-minute platform heartbeat enabled as explicitly chosen. Test channel restored to discovery only.",
     "files": [
       "src/features/youtube-intelligence/monitoring.ts",
       "src/features/youtube-intelligence/ui/ChannelMonitoring.tsx",
@@ -2556,6 +2556,6 @@
       "tests/push.test.ts"
     ],
     "pr": 36,
-    "verification": "Five targeted monitoring tests and ten action contract tests pass; build/typecheck/audit pass. Real isolated PostgreSQL: eight concurrent monitoring checks yield one request and one queued run, with no model calls; generic Postgres locking/fencing check passes. Local browser validated cost acknowledgement and custom schedule errors. Full regression and production browser/cron acceptance pending."
+    "verification": "Both full local suites: 1074 passed, zero failed, one existing skip each. Typecheck/build/offline advisory diagnostics/audit passed; final feature-head GitHub CI passed twice. Real PostgreSQL eight concurrent ticks: one request/queued run, zero model calls; locking/fencing passed. Production custom schedule persisted, invalid cron rejected, acknowledgement enforced, live scan retained 50 uploads with zero errors and zero eligible analyses. Cron GET returned 200 while enabled and paused. No extra model spend; no live automatic-video publication claim. See docs/deployment/channel-monitoring-verification-20261009.md."
   }
 }
