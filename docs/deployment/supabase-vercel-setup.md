@@ -69,7 +69,7 @@ The app uses `DATABASE_URL` explicitly. Old Neon `PG*`, `POSTGRES*` and `NEON*` 
 3. After the fixed code is deployed, the definition should appear as `/api/cron/intelligence`, schedule `* * * * *` (once per minute if enabled).
 4. Keep `YTI_CRON_ENABLED=false`. This second safeguard makes an authenticated cron request return `Scheduled processing disabled` before opening the database.
 
-Defining a disabled schedule does not start processing. Automated video analysis, digests and queue advancement remain off. Viewing retained data is safe; submitting a video or running a worker can invoke paid providers independently of the cron switch.
+Defining a disabled schedule does not start processing. Scheduled channel analysis and digests remain off. Videos you submit manually advance through a bounded worker without cron; see [manual processing](manual-processing.md). Viewing retained results does not start a worker. Submitting or deliberately re-running a video can invoke paid providers independently of the cron switch.
 
 ## 6. Deploy once after any future environment change
 
