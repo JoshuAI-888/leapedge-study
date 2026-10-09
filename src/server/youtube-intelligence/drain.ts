@@ -13,6 +13,7 @@ export type DrainOptions = {
   reserveMs?: number;
   lanes?: number;
   now?: () => number;
+  sleep?: (ms: number) => Promise<void>;
   step?: () => Promise<unknown>;
 };
 
@@ -28,6 +29,8 @@ export async function drain(options: DrainOptions) {
   const started = now();
   const reserve = options.reserveMs ?? 300_000;
   const step = options.step ?? (() => processNext());
+  const sleep = options.sleep ??
+    ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
   const lanes =
     options.lanes ?? (await teamPreferences()).processing.parallelVideos;
   let steps = 0,
@@ -40,6 +43,16 @@ export async function drain(options: DrainOptions) {
         if (!job) return;
         steps++;
         consecutiveErrors = 0;
+        // A delayed checkpoint is work in progress, not an idle queue. Wait
+        // only for this lane's known retry, within the host's claim budget.
+        const delay =
+          typeof job === "object" && "retryAfterMs" in job
+            ? Number(job.retryAfterMs)
+            : 0;
+        if (Number.isFinite(delay) && delay > 0) {
+          if (delay >= options.budgetMs - reserve - (now() - started)) return;
+          await sleep(delay);
+        }
       } catch (error) {
         errors++;
         console.error(

@@ -140,10 +140,12 @@ export async function processNext(executeStage: typeof step = step) {
     run.status = "running";
     run.error = null;
     let transientDelay = 0;
+    let sourcePending = false;
     try {
       await executeStage(run);
       if (run.status === "running") run.status = "queued";
     } catch (error) {
+      sourcePending = error instanceof SourcePending;
       run.status = error instanceof SourcePending ? "queued" : "failed";
       run.error = error instanceof Error ? error.message : "Stage failed";
       // A database that could not be reached is not the run's fault. Paid
@@ -159,6 +161,9 @@ export async function processNext(executeStage: typeof step = step) {
     }
     const executionMs = performance.now() - stageStarted;
     const checkpointStarted = performance.now();
+    const retryAfterMs = run.status === "queued"
+      ? transientDelay || (run.input.processingMode === "batch" ? 60000 : sourcePending ? 1500 : 0)
+      : 0;
     // Lock and check queue ownership in the same transaction as the checkpoint.
     await db().transaction(async () => {
       const owner = await db()
@@ -178,12 +183,7 @@ export async function processNext(executeStage: typeof step = step) {
           job.id,
           token,
           run.error,
-          transientDelay ||
-            (run.input.processingMode === "batch"
-              ? 60000
-              : run.stage === "source"
-                ? 1500
-                : 0),
+          retryAfterMs,
         );
       else if (run.status === "failed")
         await failJob(job.id, token, run.error ?? "Stage failed");
@@ -201,11 +201,11 @@ export async function processNext(executeStage: typeof step = step) {
         );
     });
     if (run.status !== "queued") await finishExperiments();
-    return { id: run.id, stage: run.stage, status: run.status };
+    return { id: run.id, stage: run.stage, status: run.status, retryAfterMs };
   } catch (error) {
     if (error instanceof SourcePending) {
       await retryJob(job.id, token, error.message, 60000);
-      return { id: job.id, stage: job.kind, status: "queued" };
+      return { id: job.id, stage: job.kind, status: "queued", retryAfterMs: 60000 };
     }
     await failJob(
       job.id,
