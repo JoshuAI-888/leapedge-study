@@ -19,6 +19,7 @@ The platform checks every 15 minutes and starts a due monitoring check once. Mis
 ## Understand the costs
 
 - The platform makes **2,880 small checks per 30 days**, even while the app toggle is off. Each uses a function invocation and database read. Dollar charges depend on your Vercel/Supabase plan, allowances, active CPU, memory, duration and database usage. A precise hosting bill cannot be inferred from invocation count alone.
+- At [Vercel’s published Pro rate](https://vercel.com/docs/functions/usage-and-pricing) of US$0.60 per million invocations (checked 9 October 2026), 2,880 invocations alone cost about **US$0.002 before usage credits**. This excludes CPU, memory, database and network usage and is not an all-in estimate.
 - The selected schedule's number of checks is displayed separately. Faster checks improve freshness; uploads determine how many analyses are needed. Every hour is approximately 720 monitoring checks over 30 days; every day approximately 30.
 - The UI shows the selected channels' projected monthly model spend and measured analysis-only average per video. Incomplete upload history produces an unknown projection, not a zero estimate. Briefs, transcription and other services can add charges beyond that average.
 - Existing monthly and per-video reservation limits remain enforced. An environment cumulative limit (`YTI_BUDGET_USD`) is also shown when configured and can stop processing before the monthly cap. These model limits do not cap hosting, database subscriptions or every external provider's bills.

@@ -167,6 +167,20 @@ export function ChannelMonitoring() {
           to stop those checks entirely.
         </p>
         <p>
+          At Vercel’s published Pro invocation rate of $0.60 per million, 2,880
+          checks are about $0.002 in invocation charges before credits. CPU,
+          memory, database and network usage are additional; this is not an
+          all-in estimate.{" "}
+          <a
+            href="https://vercel.com/docs/functions/usage-and-pricing"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Current hosting rates
+          </a>{" "}
+          (checked 9 October 2026).
+        </p>
+        <p>
           {selected} channels selected for automatic processing · projected
           analysis spend {money(data.cost.projection.projectedMonthlyUsd)} /
           month · measured analysis-only average{" "}
