@@ -44,7 +44,7 @@ export function ChannelMonitoring() {
   }
   useEffect(() => {
     void load();
-  }, [data]);
+  }, []);
   let summary: ReturnType<typeof scheduleSummary> | null = null,
     invalid = "";
   try {
