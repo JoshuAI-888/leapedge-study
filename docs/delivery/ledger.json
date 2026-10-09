@@ -2537,10 +2537,25 @@
     "files": [
       "src/features/youtube-intelligence/monitoring.ts",
       "src/features/youtube-intelligence/ui/ChannelMonitoring.tsx",
-      "src/server/youtube-intelligence/monitoring.ts"
+      "src/server/youtube-intelligence/monitoring.ts",
+      "src/server/youtube-intelligence/channels.ts",
+      "src/server/youtube-intelligence/runner.ts",
+      "src/server/youtube-intelligence/push.ts",
+      "src/server/youtube-intelligence/research-pipeline.ts",
+      "src/server/youtube-intelligence/research-store.ts",
+      "src/server/youtube-intelligence/actions/channels.ts",
+      "src/features/youtube-intelligence/ui/pages/Channels.tsx",
+      "src/app/api/cron/intelligence/route.ts",
+      "src/app/api/youtube-intelligence/[resource]/[action]/route.ts",
+      "vercel.json",
+      "docs/deployment/channel-monitoring.md"
     ],
     "tests": [
-      "tests/channel-monitoring.test.ts"
-    ]
+      "tests/channel-monitoring.test.ts",
+      "tests/actions.test.ts",
+      "tests/push.test.ts"
+    ],
+    "pr": 36,
+    "verification": "Five targeted monitoring tests and ten action contract tests pass; build/typecheck/audit pass. Real isolated PostgreSQL: eight concurrent monitoring checks yield one request and one queued run, with no model calls; generic Postgres locking/fencing check passes. Local browser validated cost acknowledgement and custom schedule errors. Full regression and production browser/cron acceptance pending."
   }
 }

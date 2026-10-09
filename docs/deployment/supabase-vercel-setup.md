@@ -6,7 +6,7 @@ The correct Supabase account is **joshuafang@gmail.com**. Its project is **youtu
 
 ## What is already set up
 
-Production has valid database credentials and a CA certificate. Its saved serving URL used session pooling and reached Supabase’s 15-client session limit; the serving code now switches a shared Supabase session-pooler URL to transaction port 6543, preserving the credentials. Migration connections remain on session port 5432. Preserve those values unless a connection actually fails. This repair sets the production identity guard to `db.twidbzmqhvqpuakkzobf.supabase.co` and adds `YTI_CRON_ENABLED=false`. The repository defines a cron job, but the Vercel Cron Jobs switch must stay **disabled**. The app also refuses scheduled processing unless that environment variable is exactly `true`.
+Production has valid database credentials and a CA certificate. Its saved serving URL used session pooling and reached Supabase’s 15-client session limit; the serving code now switches a shared Supabase session-pooler URL to transaction port 6543, preserving the credentials. Migration connections remain on session port 5432. Preserve those values unless a connection actually fails. The production identity guard is `db.twidbzmqhvqpuakkzobf.supabase.co`. The optional monitoring feature now requires `YTI_CRON_ENABLED=true` in Production and Vercel Cron Jobs enabled, running every 15 minutes. The Channels page toggle defaults off and controls new automatic work. The user explicitly selected the small periodic check remaining while off; see [channel monitoring and cost controls](channel-monitoring.md).
 
 An environment variable is a named setting, such as `DATABASE_URL`, whose value Vercel gives the app. **Production** means the live app. **Preview** means a test deployment of a branch. **Development** means your local computer. Secret values being hidden after saving is normal; do not replace them just because you cannot reveal them.
 
@@ -52,7 +52,8 @@ On the Environment Variables page, find an existing name and choose its menu →
 | `DATABASE_URL_UNPOOLED` | Session-pooler URI from step 2, port 5432; keep existing working secret | Production |
 | `YTI_DB_SSL_CA` | Complete CA certificate from step 3; keep existing working secret | Production |
 | `YTI_PRODUCTION_DB_HOST` | `db.twidbzmqhvqpuakkzobf.supabase.co` | Production, Preview, Development |
-| `YTI_CRON_ENABLED` | `false` | Production, Preview, Development |
+| `YTI_CRON_ENABLED` | `true` | Production |
+| `YTI_CRON_ENABLED` | `false` | Preview, Development |
 | `YTI_APP_ORIGIN` | `https://youtube-intelligence-two.vercel.app` | Production |
 | `YTI_PREVIEW_READ_ONLY` | `true` | Preview |
 
@@ -62,14 +63,14 @@ Also preserve existing `YTI_ACCESS_TOKEN`, `YTI_PASSCODE`, `CRON_SECRET`, provid
 
 The app uses `DATABASE_URL` explicitly. Old Neon `PG*`, `POSTGRES*` and `NEON*` integration variables are not required by the new code. Leaving them does not make the app switch back to Neon. Do not delete the old database or its integration before confirming backups and completing your retention decision.
 
-## 5. Keep cron off
+## 5. Choose the monitoring state
 
-1. Open [Vercel Cron Jobs settings](https://vercel.com/joshu-ai/youtube-intelligence/settings/cron-jobs).
-2. Keep **Cron Jobs disabled**. Do not enable the switch or click **Run**.
-3. After the fixed code is deployed, the definition should appear as `/api/cron/intelligence`, schedule `* * * * *` (once per minute if enabled).
-4. Keep `YTI_CRON_ENABLED=false`. This second safeguard makes an authenticated cron request return `Scheduled processing disabled` before opening the database.
-
-Defining a disabled schedule does not start processing. Scheduled channel analysis and digests remain off. Videos you submit manually advance through a bounded worker without cron; see [manual processing](manual-processing.md). Viewing retained results does not start a worker. Submitting or deliberately re-running a video can invoke paid providers independently of the cron switch.
+1. For the new app toggle to work, Vercel Cron Jobs stays enabled and Production `YTI_CRON_ENABLED` is `true`.
+2. Open Channels in the app. Leave **Enable channel monitoring** off for manual-only operation. It defaults off; enabling it requires acknowledging costs and saving the settings.
+3. The platform definition is `/api/cron/intelligence`, schedule `*/15 * * * *`. App schedules are UTC and can be edited without deployment.
+4. Off stops new automatic analyses, including queued automatic stages. In-flight requests can finish. Manual submission and explicit individual analysis continue to work.
+5. Even while off, a small Vercel invocation/database check remains every 15 minutes: 2,880 over 30 days. Hosting/database charges depend on your plan and actual resources. To stop those checks completely, disable Cron Jobs in Vercel; then the app cannot receive scheduled checks until you re-enable it.
+6. See [the exact monitoring workflow](channel-monitoring.md) for schedule choices, projections, caps and how to check now.
 
 ## 6. Deploy once after any future environment change
 
@@ -80,7 +81,7 @@ Saved environment changes apply to **new deployments**, not the deployment that 
 3. If you changed any values after that deployment, choose its menu → **Redeploy**, keep Production selected, and confirm once. Do not repeatedly redeploy.
 4. Open its build log. It should finish with **Ready**. The migration step should apply `0011_append_only_search_path.sql` once or say the database is up to date on subsequent deploys.
 5. Open [the app](https://youtube-intelligence-two.vercel.app), enter your usual workspace access code, and open an existing analysis. Do not submit a paid video just to check the deployment.
-6. Recheck that Cron Jobs is disabled.
+6. Recheck that the app monitoring state matches your intention and the platform schedule is every 15 minutes.
 
 This repair's deployment is handled as part of the fix; you do not need another redeployment unless you subsequently change a value.
 

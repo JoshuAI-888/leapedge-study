@@ -1,6 +1,6 @@
 # Process videos without scheduled worker costs
 
-The recommended mode for occasional use is manual processing. Keep Vercel Cron Jobs disabled and `YTI_CRON_ENABLED=false`. Submitting a video starts a bounded worker after the response; it continues through saved stages, waits for known short provider backoffs, and exits when its queue is empty or its invocation budget is spent. Opening a result does not start a worker.
+The recommended mode for occasional use is manual processing. Leave the Channels → Channel monitoring toggle off. The optional monitoring feature now uses a 15-minute Vercel check even while off, as selected by the user; see [channel monitoring](channel-monitoring.md). To stop those small checks entirely, disable Vercel Cron Jobs. Submitting a video starts a bounded worker after the response; it continues through saved stages, waits for known short provider backoffs, and exits when its queue is empty or its invocation budget is spent. Opening a result does not start a worker.
 
 ## Everyday use
 
@@ -13,11 +13,11 @@ The recommended mode for occasional use is manual processing. Keep Vercel Cron J
 ## Keep costs controlled
 
 1. In Vercel, select team **joshu-ai**, project **youtube-intelligence**.
-2. In Settings → Cron Jobs, leave scheduling disabled. The cron definition remains available for future use.
-3. In Settings → Environment Variables, keep `YTI_CRON_ENABLED` set to `false` for Production. Do not enable automatic channel processing for occasional manual use.
+2. Keep the app monitoring toggle off. Vercel scheduling remains enabled for the small 15-minute check; disabling it in Vercel stops those checks entirely.
+3. In Settings → Environment Variables, `YTI_CRON_ENABLED=true` in Production permits the monitoring feature. The app toggle decides whether it may do work; use `false` as a server-level kill switch only if deliberately disabling scheduling entirely. Do not enable automatic channel processing for occasional manual use.
 4. Keep `YTI_INLINE_DRAIN` unset (or any value other than `off`). Setting it to `off` prevents submitted videos from processing automatically.
 5. The existing `YTI_BUDGET_USD` is a cumulative model reservation/spend cap. Settings also has monthly budget controls. These are model-spend guards; they do not cap Vercel hosting, database subscriptions, or every external provider's separate charges.
-6. Use Vercel's billing/spend notifications and the providers' billing limits for those separate costs. Idle scheduled worker invocations are avoided in manual mode; page visits and database hosting can still have costs.
+6. Use Vercel's billing/spend notifications and the providers' billing limits for those separate costs. The app-off check exits before scheduling or draining jobs; a small invocation and database read remain every 15 minutes. page visits and database hosting can still have costs.
 
 Each worker invocation preserves 300 seconds to finish a claimed stage and stops claiming new steps after 500 seconds of its 800-second route budget. Long batch jobs or runs exceeding that budget can need a manual resume after their backoff or lease expires. Manual mode does not promise unattended batch completion or automatic channel monitoring. Enable scheduling only if that becomes an intended feature of normal use.
 
