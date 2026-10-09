@@ -56,7 +56,8 @@ export async function POST(r: Request, { params }: Context) {
     );
     // Wake the worker only after an authorized mutation succeeds. Invalid
     // inputs and rejected retries must not start unrelated paid work.
-    await drainAfterResponse(maxDuration * 1000);
+    if (!(resource === "channels" && action === "saveMonitoring"))
+      await drainAfterResponse(maxDuration * 1000);
     return Response.json({ result });
   } catch (e) {
     return failure(e);

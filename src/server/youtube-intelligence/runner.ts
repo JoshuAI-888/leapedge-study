@@ -110,6 +110,11 @@ export async function processNext(executeStage: typeof step = step) {
     const { runId } = z.object({ runId: z.string().min(1) }).parse(job.payload);
     const run = await get(runId);
     if (!run) throw Error("Analysis run is missing.");
+    if (run.input.automaticMonitoring && !(await (await import("./monitoring.ts")).monitoringStatus()).enabled) {
+      await db().prepare("UPDATE yi_runs SET status='queued',lease_token=NULL,lease_until=NULL WHERE id=$1").run(run.id);
+      await retryJob(job.id, token, null, 900000);
+      return { id: run.id, stage: run.stage, status: "queued", retryAfterMs: 900000 };
+    }
     if (["completed", "failed"].includes(run.status)) {
       await completeJob(job.id, token);
       return { id: run.id, stage: run.stage, status: run.status };
@@ -222,11 +227,11 @@ export async function processNext(executeStage: typeof step = step) {
  * changes a row whose deadline has passed, so exactly one of any number of
  * concurrent callers gets it without holding a lock across external IO.
  */
-export async function sweep() {
+export async function sweep(options: { channels?: boolean } = {}) {
   if (queuePaused()) return { skipped: true };
   await dispatchOpenRuns();
   await (await import("./batch.ts")).schedulePendingBatches();
-  await (await import("./push.ts")).schedulePushRenewals();
+  if (options.channels !== false) await (await import("./push.ts")).schedulePushRenewals();
   await enqueueJob({
     id: `settle:${Math.floor(Date.now() / 3600000)}`,
     kind: "settle",
@@ -235,7 +240,7 @@ export async function sweep() {
   if (!(await claimLease("scheduler", "lease", Date.now() + 300000)))
     return { skipped: true };
   try {
-    if ((await preferences()).autoPullEnabled) await pullDue();
+    if (options.channels !== false && (await preferences()).autoPullEnabled) await pullDue();
     await prepareScheduledDigest();
     await deliverDue();
     /**

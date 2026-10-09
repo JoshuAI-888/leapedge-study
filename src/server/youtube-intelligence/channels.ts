@@ -117,7 +117,7 @@ export async function updateChannel(input: unknown) {
   });
   return (await getChannel(p.id))!;
 }
-export async function pull(id: string, older = false) {
+export async function pull(id: string, older = false, intervalMinutes = 60) {
   const c = await getChannel(id);
   if (!c?.active) throw Error("Channel is not followed.");
   if (older && !c.nextPageToken)
@@ -159,7 +159,7 @@ export async function pull(id: string, older = false) {
       ...c,
       lastPull: new Date().toISOString(),
       lastAttempt: attempt,
-      nextPullAt: new Date(Date.now() + 3600000).toISOString(),
+      nextPullAt: new Date(Date.now() + intervalMinutes * 60000).toISOString(),
       nextPageToken:
         older || !c.historyStarted
           ? data.nextPageToken || null
@@ -177,13 +177,13 @@ export async function pull(id: string, older = false) {
     await upsertChannel({
       ...c,
       lastAttempt: attempt,
-      nextPullAt: new Date(Date.now() + 3600000).toISOString(),
+      nextPullAt: new Date(Date.now() + intervalMinutes * 60000).toISOString(),
       error: e instanceof Error ? e.message : "Channel pull failed",
     });
     throw e;
   }
 }
-export async function analyzeDiscovery(id: string) {
+export async function analyzeDiscovery(id: string, automaticMonitoring = false) {
   const d = await researchDB();
   return d.transaction(async () => {
     const v = await d
@@ -198,6 +198,7 @@ export async function analyzeDiscovery(id: string) {
         : undefined;
     const run = await queue(id, undefined, undefined, false, {
       origin: "channel",
+      automaticMonitoring,
       processingMode,
     });
     await d
@@ -206,7 +207,9 @@ export async function analyzeDiscovery(id: string) {
     return { ...run, newlyQueued: true };
   });
 }
-export async function pullDue() {
+export async function pullDue(options: { intervalMinutes?: number; maxVideos?: number; monitorFrom?: string; canQueue?: () => Promise<boolean> } = {}) {
+  const result = { channels: 0, queued: 0, errors: 0 };
+  const interval = options.intervalMinutes ?? 60;
   for (const c of (await listChannels())
     .filter(
       (c) =>
@@ -218,9 +221,10 @@ export async function pullDue() {
         (!c.nextPullAt || Date.parse(c.nextPullAt) <= Date.now()),
     )
     .slice(0, 3)) {
-    if (c.lastPull && Date.now() - Date.parse(c.lastPull) < 3600000) continue;
+    if (c.lastPull && Date.now() - Date.parse(c.lastPull) < interval * 60000) continue;
     try {
-      await pull(c.id);
+      await pull(c.id, false, interval);
+      result.channels++;
       // Both switches have to agree before anything is paid for: a row left
       // saying `on-request` is not analysed whatever auto_analyze holds.
       if (c.autoAnalyze && c.processing !== PROCESSING_ON_REQUEST) {
@@ -237,15 +241,20 @@ export async function pullDue() {
             (v) =>
               Date.parse(
                 (json(v.payload) as { publishedAt: string }).publishedAt,
-              ) >= Date.parse(c.followedAt ?? c.createdAt ?? ""),
+              ) >= Date.parse(options.monitorFrom ?? c.followedAt ?? c.createdAt ?? ""),
           )
           .slice(0, 3);
-        for (const x of v) await analyzeDiscovery(String(x.video_id));
+        for (const x of v) {
+          if (result.queued >= (options.maxVideos ?? Infinity)) break;
+          if (options.canQueue && !(await options.canQueue())) break;
+          if ((await analyzeDiscovery(String(x.video_id), !!options.canQueue)).newlyQueued) result.queued++;
+        }
       }
     } catch {
-      /* Error persisted on channel; retry next scheduled sweep. */
+      result.errors++; /* Error persisted on channel; retry next scheduled sweep. */
     }
   }
+  return result;
 }
 
 export async function discoverChannels(input: unknown) {

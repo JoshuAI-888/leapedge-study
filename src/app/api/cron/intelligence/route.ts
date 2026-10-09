@@ -1,6 +1,7 @@
 import { constantEqual } from "../../../../server/youtube-intelligence/access.ts";
-import { sweep } from "../../../../server/youtube-intelligence/runner.ts";
+import { dispatchOpenRuns } from "../../../../server/youtube-intelligence/runner.ts";
 import { drain } from "../../../../server/youtube-intelligence/drain.ts";
+import { monitoringStatus, monitoringTick } from "../../../../server/youtube-intelligence/monitoring.ts";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 800;
@@ -23,12 +24,16 @@ export async function GET(r: Request) {
     );
   const started = Date.now();
   try {
-    const scheduled = await sweep();
+    if (!(await monitoringStatus()).enabled)
+      return Response.json({ skipped: true, reason: "Monitoring paused" }, { headers: { "Cache-Control": "no-store" } });
+    const monitoring = await monitoringTick();
+    await dispatchOpenRuns();
+    await (await import("../../../../server/youtube-intelligence/batch.ts")).schedulePendingBatches();
     // Execute queued work here on Vercel; the queue's capacity lock, leases
     // and fencing make overlapping cron and submit drains safe.
     const drained = await drain({ budgetMs: maxDuration * 1000 - (Date.now() - started) });
     return Response.json(
-      { scheduled, drained },
+      { monitoring, drained },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch {

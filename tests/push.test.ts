@@ -81,12 +81,13 @@ test("A hub challenge must match a pending subscription token and topic", async 
   await assert.rejects(verifyPushChallenge(channel, params), /verification/i);
 });
 
-test("opted-in duplicate push delivery queues one forward run with the channel immediate policy and no provider spend", async () => {
+test("opted-in push remains discovery-only so monitoring cadence and caps cannot be bypassed", async () => {
   const { list } = await import("../src/server/youtube-intelligence/store.ts");
   const { database } =
     await import("../src/server/youtube-intelligence/database.ts");
   await setup();
   try {
+    await (await import("../src/server/youtube-intelligence/monitoring.ts")).saveMonitoring({enabled:true,schedule:"0 * * * *",maxVideosPerCheck:1,acknowledgeCosts:true});
     await upsertChannel({
       id: channel,
       title: "Research",
@@ -103,9 +104,7 @@ test("opted-in duplicate push delivery queues one forward run with the channel i
       receivePush(channel, xml, sig),
     ]);
     const runs = await list();
-    assert.equal(runs.length, 1);
-    assert.equal(runs[0].input.processingMode, "immediate");
-    assert.equal(runs[0].input.record, "forward");
+    assert.equal(runs.length, 0);
     const again = await receivePush(channel, xml, sig);
     assert.equal(again.queued, 0);
     assert.equal(

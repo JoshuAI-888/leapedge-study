@@ -120,6 +120,7 @@ async function queueSourceBrief(
     team.models.extraction.id,
     {
       task: "research-brief",
+      automaticMonitoring: source.input.automaticMonitoring === true,
       snapshot,
       teamPreferencesSnapshot: team,
       criticModel: team.models.critique.id,

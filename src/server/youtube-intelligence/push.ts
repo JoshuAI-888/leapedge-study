@@ -10,7 +10,6 @@ import { doc, put, teamPreferences } from "./research-store.ts";
 import { database } from "./database.ts";
 import { getChannel, listChannels } from "./repos/channels.ts";
 import { enqueueJob } from "./repos/jobs.ts";
-import { analyzeDiscovery } from "./channels.ts";
 const ChannelId = z.string().regex(/^UC[\w-]{22}$/);
 const topic = (id: string) =>
   `https://www.youtube.com/feeds/videos.xml?channel_id=${ChannelId.parse(id)}`;
@@ -185,24 +184,9 @@ export async function receivePush(
         new Date().toISOString(),
       );
     discovered += inserted.changes;
-    // Retry the idempotent scheduling if a prior delivery died after insertion.
-    if (
-      channel.autoAnalyze &&
-      channel.processing !== "on-request" &&
-      Date.parse(entry.publishedAt) >=
-        Date.parse(
-          channel.followedAt ?? channel.createdAt ?? new Date().toISOString(),
-        )
-    ) {
-      const before = await database
-        .prepare("SELECT run_id FROM yi_discoveries WHERE video_id=$1")
-        .get(entry.videoId);
-      if (
-        !before?.run_id &&
-        (await analyzeDiscovery(entry.videoId)).newlyQueued
-      )
-        queued++;
-    }
+    // Push only discovers uploads. The selected monitoring schedule and
+    // per-check cap decide when automatic analysis may be queued.
+
   }
   return { discovered, queued };
 }

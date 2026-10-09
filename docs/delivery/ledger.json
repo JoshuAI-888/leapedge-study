@@ -2530,5 +2530,32 @@
     "verification": "Both full local suites: 1069 pass, 0 fail, 1 skip each; typecheck, build, audit and both PR-head CI runs passed. Targeted tests and isolated real PostgreSQL concurrency/resume checks passed. Production dpl_HFs9rTQV3VsGCNdHybbv9wunPL6W completed resumed ca8bd03a-daf8-4aff-b6d0-7ce869e39aae and fresh af79ea94-47ba-41bf-9a1c-1daa342ceb42 with their brief children. Visually inspected 9 and 2 text-checked calls, quoted evidence, and published briefs; persistence verified after reload. Model ledger total $0.967403202 unchanged after reload. Brief coverage 31/41 and 7/11; source-consistency warnings 2 and 1. No deployment error/fatal logs during verification; fresh result tab console had no errors. Original tab recorded two browser listener-channel errors without a stack, so their source is not established. No human accuracy claim.",
     "pr": 34,
     "evidence": "docs/deployment/manual-pipeline-verification-20261009.md"
+  },
+  "channelMonitoring20261009": {
+    "status": "in-review",
+    "note": "User-requested workspace monitoring toggle, UTC schedule and cost warning. Fixed 15-minute Vercel checks remain while app monitoring is off, as selected by the user. New automatic work pauses; manual work remains available. Build and live acceptance pending.",
+    "files": [
+      "src/features/youtube-intelligence/monitoring.ts",
+      "src/features/youtube-intelligence/ui/ChannelMonitoring.tsx",
+      "src/server/youtube-intelligence/monitoring.ts",
+      "src/server/youtube-intelligence/channels.ts",
+      "src/server/youtube-intelligence/runner.ts",
+      "src/server/youtube-intelligence/push.ts",
+      "src/server/youtube-intelligence/research-pipeline.ts",
+      "src/server/youtube-intelligence/research-store.ts",
+      "src/server/youtube-intelligence/actions/channels.ts",
+      "src/features/youtube-intelligence/ui/pages/Channels.tsx",
+      "src/app/api/cron/intelligence/route.ts",
+      "src/app/api/youtube-intelligence/[resource]/[action]/route.ts",
+      "vercel.json",
+      "docs/deployment/channel-monitoring.md"
+    ],
+    "tests": [
+      "tests/channel-monitoring.test.ts",
+      "tests/actions.test.ts",
+      "tests/push.test.ts"
+    ],
+    "pr": 36,
+    "verification": "Five targeted monitoring tests and ten action contract tests pass; build/typecheck/audit pass. Real isolated PostgreSQL: eight concurrent monitoring checks yield one request and one queued run, with no model calls; generic Postgres locking/fencing check passes. Local browser validated cost acknowledgement and custom schedule errors. Full regression and production browser/cron acceptance pending."
   }
 }

@@ -4,7 +4,7 @@
     "iad1"
   ],
   "crons": [
-    { "path": "/api/cron/intelligence", "schedule": "* * * * *" }
+    { "path": "/api/cron/intelligence", "schedule": "*/15 * * * *" }
   ],
   "installCommand": "npm ci --ignore-scripts",
   "buildCommand": "npm run migrate && next build"
