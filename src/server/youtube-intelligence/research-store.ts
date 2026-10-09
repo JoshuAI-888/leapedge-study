@@ -426,6 +426,7 @@ type QueueConfig = Omit<Partial<PreferencesData>, "model" | "criticModel"> & {
   criticModel?: string;
 };
 type QueueOptions = {
+  automaticMonitoring?: boolean;
   origin?: "channel" | "manual";
   record?: "historical" | "forward";
   processingMode?: "batch" | "immediate";
@@ -455,6 +456,7 @@ export async function queuePlan(
   const origin = z
     .object({
       origin: z.enum(["channel", "manual"]).default("manual"),
+      automaticMonitoring: z.boolean().default(false),
       record: z.enum(["historical", "forward"]).default("forward"),
       processingMode: z.enum(["batch", "immediate"]).optional(),
     })
@@ -489,6 +491,7 @@ export async function queuePlan(
       ...(source ? { source } : {}),
       teamPreferencesSnapshot: TeamPreferences.parse(effective),
       origin: origin.origin,
+      automaticMonitoring: origin.automaticMonitoring,
       record: origin.record,
       processingMode:
         origin.processingMode ??

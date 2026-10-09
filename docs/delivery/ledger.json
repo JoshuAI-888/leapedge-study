@@ -2530,5 +2530,17 @@
     "verification": "Both full local suites: 1069 pass, 0 fail, 1 skip each; typecheck, build, audit and both PR-head CI runs passed. Targeted tests and isolated real PostgreSQL concurrency/resume checks passed. Production dpl_HFs9rTQV3VsGCNdHybbv9wunPL6W completed resumed ca8bd03a-daf8-4aff-b6d0-7ce869e39aae and fresh af79ea94-47ba-41bf-9a1c-1daa342ceb42 with their brief children. Visually inspected 9 and 2 text-checked calls, quoted evidence, and published briefs; persistence verified after reload. Model ledger total $0.967403202 unchanged after reload. Brief coverage 31/41 and 7/11; source-consistency warnings 2 and 1. No deployment error/fatal logs during verification; fresh result tab console had no errors. Original tab recorded two browser listener-channel errors without a stack, so their source is not established. No human accuracy claim.",
     "pr": 34,
     "evidence": "docs/deployment/manual-pipeline-verification-20261009.md"
+  },
+  "channelMonitoring20261009": {
+    "status": "in-review",
+    "note": "User-requested workspace monitoring toggle, UTC schedule and cost warning. Fixed 15-minute Vercel checks remain while app monitoring is off, as selected by the user. New automatic work pauses; manual work remains available. Build and live acceptance pending.",
+    "files": [
+      "src/features/youtube-intelligence/monitoring.ts",
+      "src/features/youtube-intelligence/ui/ChannelMonitoring.tsx",
+      "src/server/youtube-intelligence/monitoring.ts"
+    ],
+    "tests": [
+      "tests/channel-monitoring.test.ts"
+    ]
   }
 }

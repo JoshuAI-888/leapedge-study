@@ -10,6 +10,7 @@ import { costProjection } from "../../metrics/cost.ts";
 import { money } from "../viewmodel.ts";
 import { useUrlState } from "../url-state.ts";
 import { SplitBar } from "../SplitBar.tsx";
+import { ChannelMonitoring } from "../ChannelMonitoring.tsx";
 import { InstrumentLabel } from "../InstrumentLabel.tsx";
 import {
   BenchmarkSelector,
@@ -212,6 +213,7 @@ export function Channels() {
           + Add channels
         </button>
       </PageTitle>
+      <ChannelMonitoring />
       {draft !== null && (
         <div className="yi-warning yi-channel-draft" role="status">
           <span>

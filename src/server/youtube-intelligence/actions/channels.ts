@@ -12,7 +12,12 @@ import { seedCatalog } from "../seed/channels.ts";
 import { loadCostMetrics } from "../cost-metrics.ts";
 import { ChannelStatsInput, channelStats } from "../channel-stats.ts";
 import { reads, nothing, writes, type ActionTable } from "./types.ts";
+import { MonitoringInput } from "../../../features/youtube-intelligence/monitoring.ts";
+import { monitoringStatus, saveMonitoring, monitoringTick } from "../monitoring.ts";
 export const channels: ActionTable = {
+  monitoringStatus: reads(nothing, () => monitoringStatus()),
+  saveMonitoring: writes(MonitoringInput, (v) => saveMonitoring(v)),
+  checkMonitoring: writes(nothing, () => monitoringTick({ force: true })),
   seedCatalog: writes(nothing, () => seedCatalog()),
   saveSelection: writes(
     z.strictObject({ channelIds: z.array(z.string().min(1)).max(1000) }),
