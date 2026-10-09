@@ -108,8 +108,8 @@ const RunId = z.string().min(1).max(200);
  * whose outcome is still open or unknown blocks the retry until reconciled.
  *
  * A failed run is re-queued. A queued or running run counts as stalled only
- * when no live job holds it (none queued, none running with a current lease);
- * then it gets a fresh job. Research-brief runs are not retried here.
+ * when no running job holds a current lease. Existing queued/expired jobs
+ * are resumed without creating another job. Research briefs have their own retry.
  */
 export async function retryRun(input: unknown) {
   const id = RunId.parse(input);
@@ -131,7 +131,7 @@ export async function retryRun(input: unknown) {
     if (stalled) {
       const live = await database
         .prepare(
-          "SELECT id FROM jobs WHERE kind='analyze' AND payload->>'runId'=$1 AND (status='queued' OR (status='running' AND lease_until>now())) LIMIT 1",
+          "SELECT id FROM jobs WHERE kind='analyze' AND payload->>'runId'=$1 AND status='running' AND lease_until>now() LIMIT 1",
         )
         .get(id);
       if (live)
@@ -147,6 +147,16 @@ export async function retryRun(input: unknown) {
       throw Error(
         "A paid request for this analysis has an open or unknown outcome; it must be settled before a retry.",
       );
+    const existing = stalled && await database.prepare(
+      "SELECT id FROM jobs WHERE kind='analyze' AND payload->>'runId'=$1 AND (status='queued' OR (status='running' AND lease_until<=now())) LIMIT 1",
+    ).get(id);
+    if (existing) {
+      // The authenticated mutation starts an inline drain after its response.
+      // Keep the job, its backoff and checkpoint; never race a claim by resetting it.
+      const step = progressOf({ status: "queued", stage: row.stage }).step;
+      await event("run_resume", id, { stage: row.stage, step, jobId: existing.id });
+      return { id, stage: row.stage, step };
+    }
     const changed = await database
       .prepare(
         "UPDATE yi_runs SET status='queued',error=NULL,lease_until=0,lease_token=NULL,updated_at=$1 WHERE id=$2 AND status=$3",

@@ -59,7 +59,7 @@ function useRetry(runId: string) {
     retry: () =>
       void perform(
         () => action("runs", "retry", runId),
-        "Retry queued. Completed steps are kept and not charged again.",
+        "Processing resumed. Completed steps are kept and not charged again.",
       ),
     audio: () =>
       void perform(
@@ -119,6 +119,14 @@ export function StepProgress({
           You can leave this page.
         </p>
       )}
+      {run.status === "queued" && !stuck && (
+        <div className="yi-row">
+          <button type="button" className="yi-secondary" disabled={busy} onClick={retry}>
+            Resume processing
+          </button>
+          <span className="yi-muted">Continue this analysis from its saved step.</span>
+        </div>
+      )}
       {stuck && (
         <div className="yi-progress-stuck" role="alert">
           <p>This is taking longer than usual.</p>
@@ -128,7 +136,7 @@ export function StepProgress({
             disabled={busy}
             onClick={retry}
           >
-            Retry from step {p.step}
+            Resume from step {p.step}
           </button>
         </div>
       )}

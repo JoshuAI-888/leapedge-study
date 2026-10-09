@@ -44,20 +44,20 @@ async function read(r: Request, { params }: Context) {
 export async function POST(r: Request, { params }: Context) {
   try {
     guard(r);
-    // Work a mutation queues starts now rather than at the next cron tick.
-    await drainAfterResponse(maxDuration * 1000);
     const { resource, action } = await params;
     if (!lookup(resource, action).mutating)
       throw Error("This action only reads. Request it with GET.");
     const text = await r.text();
     if (text.length > 150000) throw Error("Request too large.");
-    return Response.json({
-      result: await dispatch(
+    const result = await dispatch(
         resource,
         action,
         text ? JSON.parse(text) : undefined,
-      ),
-    });
+      );
+    // Wake the worker only after an authorized mutation succeeds. Invalid
+    // inputs and rejected retries must not start unrelated paid work.
+    await drainAfterResponse(maxDuration * 1000);
+    return Response.json({ result });
   } catch (e) {
     return failure(e);
   }

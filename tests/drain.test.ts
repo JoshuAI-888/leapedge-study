@@ -70,13 +70,14 @@ test("concurrent drains carry multi-step runs to completion within shared capaci
     let active = 0,
       peak = 0,
       calls = 0;
-    // Three steps per run: metadata -> synthesis -> complete.
+    // Include the real metadata -> source boundary, which must not need cron.
     const stage: Parameters<typeof processNext>[0] = async (run) => {
       calls++;
       peak = Math.max(peak, ++active);
       await new Promise((r) => setTimeout(r, 10));
       active--;
-      if (run.stage === "metadata") run.stage = "synthesis";
+      if (run.stage === "metadata") run.stage = "source";
+      else if (run.stage === "source") run.stage = "synthesis";
       else if (run.stage === "synthesis") run.stage = "publish";
       else {
         run.stage = "done";
@@ -92,12 +93,66 @@ test("concurrent drains carry multi-step runs to completion within shared capaci
     ]);
     for (const run of runs)
       assert.equal((await store.get(run.id))?.status, "completed");
-    assert.equal(calls, 9);
-    assert.equal(a.steps + b.steps, 9);
+    assert.equal(calls, 12);
+    assert.equal(a.steps + b.steps, 12);
     assert.ok(peak <= 4, `peak ${peak} exceeds team capacity`);
   } finally {
     await db.close();
   }
+});
+
+test("a delayed checkpoint continues in the same invocation without cron", async () => {
+  let clock = 0, calls = 0;
+  const waits: number[] = [];
+  const result = await drain({
+    budgetMs: 1000, reserveMs: 300, lanes: 1, now: () => clock,
+    sleep: async (ms) => { waits.push(ms); clock += ms; },
+    step: async () => {
+      calls++;
+      return calls === 1 ? { retryAfterMs: 100 } : calls === 2 ? { status: "completed" } : null;
+    },
+  });
+  assert.equal(result.steps, 2);
+  assert.deepEqual(waits, [100]);
+});
+
+test("a delayed checkpoint beyond the claim budget stops without waiting", async () => {
+  let calls = 0;
+  const result = await drain({
+    budgetMs: 1000, reserveMs: 300, lanes: 1, now: () => 0,
+    sleep: async () => { assert.fail("must preserve the reserve"); },
+    step: async () => ++calls === 1 ? { retryAfterMs: 800 } : null,
+  });
+  assert.equal(result.steps, 1);
+});
+
+test("an asynchronous transcript poll resumes its checkpoint without repeating metadata", async () => {
+  const { freshDatabase } = await import("./helpers/db.ts");
+  const store = await import("../src/server/youtube-intelligence/store.ts");
+  const { processNext } = await import("../src/server/youtube-intelligence/runner.ts");
+  const { SourcePending } = await import("../src/server/youtube-intelligence/transcripts.ts");
+  const db = await freshDatabase();
+  try {
+    const run = await store.create("pending-source", "fixture", {}, "v1");
+    const seen: string[] = [], waits: number[] = [];
+    let pending = true;
+    await drain({
+      budgetMs: 800000, lanes: 1,
+      sleep: async (ms) => {
+        waits.push(ms);
+        await (await store.db()).prepare("UPDATE jobs SET run_after=now() WHERE id=$1").run(`analyze:${run.id}`);
+      },
+      step: () => processNext(async (r) => {
+        seen.push(r.stage);
+        if (r.stage === "metadata") r.stage = "source";
+        else if (pending) { pending = false; throw new SourcePending("Waiting for transcript"); }
+        else { r.status = "completed"; r.stage = "done"; }
+      }),
+    });
+    assert.deepEqual(seen, ["metadata", "source", "source"]);
+    assert.deepEqual(waits, [1500]);
+    assert.equal((await store.get(run.id))?.status, "completed");
+  } finally { await db.close(); }
 });
 
 test("a run put back in the queue after its job failed is picked up again", async () => {

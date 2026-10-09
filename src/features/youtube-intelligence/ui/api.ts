@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export async function request<T>(
   url: string,
   body?: unknown,
@@ -37,6 +39,12 @@ export const action = <T = unknown>(
   name: string,
   body?: unknown,
 ) => request<T>(`/api/youtube-intelligence/${resource}/${name}`, body);
+
+/** Mutations return an envelope; validate before using an id in navigation. */
+export async function analyseRun(input: { url: string; force?: boolean }) {
+  const value = await action("runs", "analyse", input);
+  return z.object({ result: z.object({ runId: z.string().uuid(), reused: z.boolean().optional() }) }).parse(value).result;
+}
 /**
  * A read action that takes input (the query resource, F56): GET with the input
  * as JSON in `?input=`, so it stays available in a read-only preview.

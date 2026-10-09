@@ -217,11 +217,26 @@ test("Retry is refused while a paid request has an open outcome, and for finishe
   await assert.rejects(retryRun(id), /open or unknown outcome/);
   await store.release(held, "test");
   await retryRun(id);
-  // Now queued with a live job: not stalled.
+  // A queued job can be resumed without creating another one.
+  await retryRun(id);
+  const { claimJob } = await import("../src/server/youtube-intelligence/queue.ts");
+  await claimJob();
   await assert.rejects(retryRun(id), /still being worked on/);
   await database.prepare("UPDATE yi_runs SET status='completed' WHERE id=$1").run(id);
   await assert.rejects(retryRun(id), /Only a failed or stalled analysis/);
   await assert.rejects(retryRun("missing"), /not found/);
+});
+
+test("Resume wakes a queued checkpoint without duplicating jobs or spend", async () => {
+  await freshDatabase();
+  const run = await store.create("resume001", "fixture", {}, "v1");
+  await database.prepare("UPDATE yi_runs SET stage='source' WHERE id=$1").run(run.id);
+  await retryRun(run.id);
+  await retryRun(run.id);
+  const jobs = await database.prepare("SELECT id FROM jobs WHERE payload->>'runId'=$1").all(run.id);
+  assert.equal(jobs.length, 1);
+  assert.equal((await store.get(run.id))?.stage, "source");
+  assert.deepEqual(await ledger(run.id), []);
 });
 
 test("A stalled run with no live job gets a fresh job", async () => {

@@ -15,7 +15,7 @@ import type { AnalystViewData } from "../../analyst-view.ts";
 import type { RunTimelineData } from "../../timing.ts";
 import type { ResearchBriefData } from "../../research-brief.ts";
 import type { SourceData } from "../../contracts.ts";
-import { request, action } from "../api.ts";
+import { request, action, analyseRun } from "../api.ts";
 import type { EvidenceSpanRow } from "../../../../server/youtube-intelligence/repos/evidence-spans.ts";
 import type { ClaimRow } from "../../../../server/youtube-intelligence/repos/claims.ts";
 import type { Run, CheckedClaim } from "../../contracts.ts";
@@ -286,7 +286,7 @@ export function Analysis({ id }: { id: string }) {
   const rerun = () =>
     void perform(
       async () => {
-        const result = await action<{ runId: string }>("runs", "analyse", {
+        const result = await analyseRun({
           url: run.url || `https://www.youtube.com/watch?v=${run.videoId}`,
           force: true,
         });
