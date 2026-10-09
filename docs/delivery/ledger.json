@@ -2510,7 +2510,7 @@
     "pr": 33
   },
   "manualPipelineRepair20261009": {
-    "status": "in-progress",
+    "status": "in-review",
     "note": "Repair rerun response contract, remove metadata-to-source delay, wait for known delayed checkpoints within host budget, and resume queued jobs without duplicate enqueue/spend. Cron remains disabled. Live visual acceptance pending.",
     "files": [
       "src/features/youtube-intelligence/ui/api.ts",
@@ -2527,6 +2527,7 @@
       "tests/drain.test.ts",
       "tests/progress-steps.test.ts"
     ],
-    "verification": "Regression tests reproduced live failures before implementation; original targeted checks pass. Full checks and live-provider verification pending."
+    "verification": "34 targeted tests and 10 action-route tests pass; typecheck and production build pass; dependency audit reports zero vulnerabilities; offline promotion diagnostic is advisory-only. Isolated real PostgreSQL verified 3 completed fixture runs through metadata/source, 8 concurrent resume requests retaining 3 jobs, 9 stage executions, peak concurrency 3, no provider calls. Full suites/CI and live visual acceptance pending.",
+    "pr": 34
   }
 }

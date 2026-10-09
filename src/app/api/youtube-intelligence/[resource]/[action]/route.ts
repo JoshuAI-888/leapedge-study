@@ -50,10 +50,10 @@ export async function POST(r: Request, { params }: Context) {
     const text = await r.text();
     if (text.length > 150000) throw Error("Request too large.");
     const result = await dispatch(
-        resource,
-        action,
-        text ? JSON.parse(text) : undefined,
-      );
+      resource,
+      action,
+      text ? JSON.parse(text) : undefined,
+    );
     // Wake the worker only after an authorized mutation succeeds. Invalid
     // inputs and rejected retries must not start unrelated paid work.
     await drainAfterResponse(maxDuration * 1000);
