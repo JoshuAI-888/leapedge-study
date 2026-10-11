@@ -2561,7 +2561,7 @@
   "cheaperInference20261011": {
     "status": "merged",
     "pr": 38,
-    "note": "PR38 merged after both feature-head CI runs passed. Production9f218fc READY; live text stages persisted to Cheaper Inference with same models and balance routing; other preferences preserved. Hosted extraction completed, but the follow-on brief failed the0–3 materiality constraint. Follow-up schema compatibility repair is in progress; no full workflow quality parity claim.",
+    "note": "PR 38 merged after both feature-head CI runs passed. Production 9f218fc is READY; live text stages persisted to Cheaper Inference with the same models and balanced routing. Other preferences were preserved. Hosted extraction completed, but its brief failed the 0–3 materiality constraint. Schema compatibility repair is tracked in PR 39; no full workflow quality parity claim.",
     "files": [
       "src/features/youtube-intelligence/settings.ts",
       "src/features/youtube-intelligence/provider-model-settings.ts",
@@ -2576,5 +2576,19 @@
       "tests/provider-model-settings.test.ts"
     ],
     "verification": "Both full suites: 1108 pass, zero fail, one existing skip each. Typecheck/build/offline advisory diagnostic passed. Adapter:17; integration:7; provider settings:9 focused tests passed. Browser provider switching, model price updates, save/reload and critic independence passed at desktop and375px. Four live actual translation/critique contract checks passed; CI pair cost36.2% less, with differing token counts and slower translation. Gemini synthetic calls128–153s versus direct6–8s; no full workflow quality/speed parity claim. Billing/rejected-response/legacy replay regressions covered. Production dpl_JD6JTyGYamgYFdYvyWwh7LTkFo4E ready. Hosted parent0b294502 completed13settledcalls,$0.182394,200.745s versus native$0.22687,57.13s; same sourcehash and2accepted calls. Child638652cc failedmateriality>3; paid$0.01496 retained, no retry."
+  },
+  "cheaperInferenceSchemaCompatibility20261011": {
+    "status": "in-review",
+    "pr": 39,
+    "note": "The first hosted workflow exposed Google-style nullable schemas forwarded to a standard JSON Schema endpoint and materiality bounds ignored by a serving provider. Convert nullable schema positions and enumerate equivalent small bounded integer domains at the CI transport only. Original application schemas, validation domains, prompts and paid-response fingerprints remain unchanged. No score coercion or blind paid retry.",
+    "files": [
+      "src/server/youtube-intelligence/transport/cheaper-inference.ts",
+      "docs/deployment/inference-providers.md"
+    ],
+    "tests": [
+      "tests/cheaper-inference.test.ts",
+      "tests/research-materiality-schema.test.ts"
+    ],
+    "verification": "Both full local suites passed 1,112 tests, zero failures and one existing skip each. Typecheck/build/offline advisory diagnostic passed. Focused transport/schema tests: 21 passed. Exact research input parsed 11 sentences, scores all 0–3; $0.015456, 54.390 seconds. Extraction chunk 0 returned option/owner/horizon null; $0.013775, 36.377 seconds; output cap alone lowered to 14,721 to keep reservation below $0.10. Two fresh calls total $0.029231, no retries or database writes. Production repair release and whole hosted workflow validation pending."
   }
 }

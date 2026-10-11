@@ -105,16 +105,40 @@ other platform costs and Google audio, and does not guarantee realised savings.
 ## Hosted workflow compatibility follow-up
 
 The first hosted same-video check completed extraction: run
-`0b294502-7de6-48da-b513-adbb44583af7`,13 settled calls,$0.182394,200.745s,
-versus the previous native/Router run,$0.22687,57.13s. The source hash matched
+`0b294502-7de6-48da-b513-adbb44583af7`, 13 settled calls, $0.182394, 200.745s,
+versus the previous native/Router run, $0.22687, 57.13s. The source hash matched
 and both retained two accepted ideas, though stance/conviction wording differed.
 The automatic brief `638652cc-762e-4fa0-8ce3-8bdf7a0072d8` failed validation:
-Gemini returned materiality scores above the allowed0–3 range. Its$0.01496
+Gemini returned materiality scores above the allowed 0–3 range. Its $0.01496
 charge and failed response remain retained; no blind retry was made.
 The extraction output also used empty option metadata where the native run
 returned null. Legacy Google-style nullable schemas need standard JSON Schema
-translation at the new transport boundary. Compatibility repair is in progress;
-the first hosted check does not establish whole-workflow quality parity.
+translation at the new transport boundary. PR 39 converts those schema positions
+to explicit null alternatives and lists the equivalent choices for small bounded
+integers. This happens only during CI request serialization: original schemas,
+validation domains, prompts and paid-response fingerprints remain unchanged.
+Invalid returned scores are still rejected, never clamped. The first hosted
+check does not establish whole-workflow quality parity.
+
+A bounded recheck of the exact retained research prompt/payload through the
+corrected serialization passed: 11 sentences, every materiality score in 0–3,
+settled $0.015456, 54.390 seconds. No retry or database write was used in this
+probe. The serving model/provider can still ignore or reject structured-output
+parameters; strict output is not an unconditional provider guarantee. App-level
+validation and independent evidence checks remain necessary.
+
+A second bounded check used extraction chunk 0's retained source and the
+production v10-pm1 prompt with the corrected nullable schema. It returned an
+Ondas claim with `option`, `owner_name` and `horizon_en` all null, rather than
+invented option metadata. The exact charge was $0.013775 and elapsed time
+36.377 seconds. Only the output cap was reduced from 24,000 to 14,721 tokens
+to keep the conservative reservation below $0.10; the response ended normally.
+Together the two schema probes cost $0.029231. Neither wrote to the database or
+retried a paid call. They prove bounded compatibility, not whole-workflow parity.
+
+The repair passed both full repository suites: 1,112 tests passed, zero failed,
+one existing skip each. Typecheck, build and advisory offline diagnostic passed.
+The focused transport/schema suite passed 21 tests.
 
 ## Operational switch and rollback
 
