@@ -1,8 +1,11 @@
 # Inference providers
 
-Approved 11 October 2026; implementation merged in PR 38.
+Approved 11 October 2026; implementation merged in PR 38 and transport-schema
+compatibility repair merged in PR 39.
 Production release: `9f218fcd87c0bc86dbd5c85cc9bee4e60d3d3122`,
-Vercel `dpl_JD6JTyGYamgYFdYvyWwh7LTkFo4E`, ready 11 October 2026.
+Vercel `dpl_JD6JTyGYamgYFdYvyWwh7LTkFo4E`, ready 11 October 2026. The subsequent schema repair release is
+`7252d96c4948ae0c4d9dea9abe6345592ec51c3f`, Vercel
+`dpl_zmUTdWDmGLBG6SyAe4MjjLXu9tJn`, READY with the production alias.
 The live workspace was switched and persisted with balanced routing.
 A database comparison confirmed only provider choices, exact model aliases and
 the new routing preference changed; audio, prompts, budgets and other settings
@@ -97,10 +100,17 @@ wording from the literal fixture. The CI request also carried a 35% minimum
 discount constraint, so it is not a latency measurement of the unconstrained
 production balance route. No speed-equivalence claim is supported.
 
-The catalog's three configured models advertised 35% lower token rates. Repricing
+The initial catalog's three configured models advertised 35% lower token rates. Repricing
 two completed workflows at identical usage gave $0.62924 versus $0.96740,
 including unchanged Jev fees (34.96% lower). This is a counterfactual, excludes
 other platform costs and Google audio, and does not guarantee realised savings.
+
+A fresh catalog check at 08:12:23 UTC (pricing checked 08:10:40 UTC) changed
+Gemini 3.8 Flash to $0.5175 input/$2.5875 output per million, 31% below the dated
+$0.75/$3.75 Google reference. Claude Sonnet 5 remained $1.3/$6.5 and Flash Lite
+$0.1625/$0.975 (35% below their dated references). The live Settings view
+correctly refreshed its prices and savings estimate. Initial quotes and probes
+above are historical snapshots; 35% is not a fixed discount promise.
 
 ## Hosted workflow compatibility follow-up
 
@@ -138,7 +148,43 @@ retried a paid call. They prove bounded compatibility, not whole-workflow parity
 
 The repair passed both full repository suites: 1,112 tests passed, zero failed,
 one existing skip each. Typecheck, build and advisory offline diagnostic passed.
-The focused transport/schema suite passed 21 tests.
+The focused transport/schema suite passed 21 tests. Both final feature-head
+GitHub runs passed (38122830575 and 38122828674).
+
+## Final hosted production check
+
+On the schema-repair release, parent `899f678f-8018-417a-81c4-41767c7abdd7`
+and brief `39dfcafc-db26-4eec-acc6-d77431e7ef56` both completed and published.
+All 18 calls settled; no outstanding call reservation remained for these runs.
+The source hash matched the native baseline. Both accepted ideas had `option: null`,
+removing the invented option labels. All 11 draft materiality scores were in 0–3;
+10 sentences were published after application checks, with one withheld.
+The UI explicitly reports partial readiness, 5/15 retained evidence items
+represented and one current source-consistency warning. That inventory differs
+from the native brief's 7/11; these ratios are not comparable accuracy scores.
+Some overlapping idea summaries and empty structured conditions remain; source
+qualification and coverage work still matter.
+
+| Component | Earlier Google/OpenRouter | Final Cheaper Inference |
+| --- | ---: | ---: |
+| Analysis | $0.226870 / 57.130s | $0.211348 / 681.087s |
+| Brief, including unchanged Jev | $0.061314358 / 43.021s | $0.088506812 / 124.051s |
+| Complete workflow | $0.288184358 / about 100s | $0.299854812 / 805.105s |
+
+Analysis cost was 6.8% lower, but the complete workflow was **4.0% more expensive**
+in this sample. Elapsed time includes a queued pause and explicit resume at the
+saved critique stage; completed paid calls were retained. Different output,
+billed token counts and audit work prevent a same-usage interpretation. Lower
+catalog rates did not produce whole-workflow savings here. Compatibility is
+verified on this bounded workflow; fidelity, speed and cost parity are not.
+The approved default remains Cheaper Inference with balance routing and the
+same models. The original providers are selectable. For latency-sensitive use,
+the earlier Google/OpenRouter route is the stronger observed baseline; wider
+representative evidence is needed before claiming routine savings.
+
+No error/fatal runtime logs were returned for the repair deployment between
+08:04:28 and 08:20:16 UTC. This bounded log query is not proof of universal health.
+No Supabase migration or login is required for this provider change.
 
 ## Operational switch and rollback
 
