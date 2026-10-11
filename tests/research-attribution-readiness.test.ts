@@ -41,3 +41,15 @@ test('explicit if-scenario stays conditional rather than becoming an uncondition
  assert.equal(sourceAttributionCheck({...base,text:'If EPS reaches 14, a 20 times multiple implies a scenario price of 280.'},evidence).requiresNeutralRepair,false);
  assert.equal(sourceAttributionCheck({...base,text:'EPS will reach 1.60.'},[{id:'k1',quotes:[{text:'If EPS reaches 1.60, the valuation could change.'}]}]).requiresNeutralRepair,true);
 });
+
+test('bare trading imperatives cannot strengthen a personal ownership preference into advice',()=>{
+ const evidence=[{id:'e',quotes:[{text:"For me, these are not companies I want to own. I don't want to buy either stock."}]}];
+ for(const text of ['Avoid these companies.','Buy this stock.','Sell this stock.','Do not buy these companies.','The comparison is complete. Avoid these companies.']){
+  assert.equal(sourceAttributionCheck({text,speaker:'unknown',evidenceIds:['e']},evidence).requiresNeutralRepair,true,text);
+ }
+ for(const text of ['The speaker personally does not want to own these companies.','The speaker does not recommend buying this stock personally.','Avoidance is a personal preference.']){
+  assert.equal(sourceAttributionCheck({text,speaker:'unknown',evidenceIds:['e']},evidence).requiresNeutralRepair,false,text);
+ }
+ const explicit=[{id:'e',quotes:[{text:'For me, I do not want to own it. Avoid this stock.'}]}];
+ assert.equal(sourceAttributionCheck({text:'Avoid this stock.',speaker:'unknown',evidenceIds:['e']},explicit).requiresNeutralRepair,false,'explicit source advice remains source advice');
+});

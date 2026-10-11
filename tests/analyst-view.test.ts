@@ -300,3 +300,68 @@ test("legacy accepted numerical prose remains withheld when a decimal is reconst
  assert.equal(v.summary.length,0);
  assert.doesNotMatch(analystNote(v),/EPS was USD0.22/);
 });
+
+test('a unique accepted company named in the title leads root cards despite an earlier secondary idea',()=>{
+ const base=rootInput();
+ base.title='T MOBILE stock assessment';
+ base.claims=[checked('tmus',claim({instrument_as_spoken:'T-Mobile',ticker:'TMUS',action:'watch',thesis_en:'The creator watches T-Mobile.'},'I watch T-Mobile.',400)),checked('secondary',claim({instrument_as_spoken:'SpaceX',action:'watch',thesis_en:'SpaceX is a secondary discussion.'},'SpaceX is discussed.',100))];
+ base.claimListings={tmus:ref('TMUS','T-Mobile US Inc.'),secondary:null};base.mentions=[];
+ const v=buildAnalystView(base);
+ assert.equal(v.ideas[0].ticker,'TMUS');
+ assert.match(v.heading,/^TMUS —/);
+ const unaccepted=structuredClone(base);unaccepted.claims[0].audit!.verdict='reject';
+ assert.equal(buildAnalystView(unaccepted).heading,base.title,'a pending or rejected primary name cannot make a secondary company the headline');
+ base.title='T-Mobile versus SpaceX';assert.equal(buildAnalystView(base).heading,base.title,'two accepted title entities do not identify a unique primary');
+});
+
+test('a one-letter ticker cannot match a letter within a different company title',()=>{
+ const base=rootInput();base.title='T MOBILE stock assessment';
+ base.claims=[checked('t',claim({instrument_as_spoken:'AT&T',ticker:'T',thesis_en:'The creator discusses AT&T.'},'AT&T.',10))];
+ base.claimListings={t:ref('T','AT&T Inc.')};base.mentions=[];
+ assert.equal(buildAnalystView(base).heading,base.title);
+ base.title='T stock assessment';assert.match(buildAnalystView(base).heading,/^T —/,'an explicit complete ticker remains usable');
+});
+
+test('financial performance stays in thesis while explicit downside and monitoring retain their reading roles',()=>{
+ const base=input(),seed=base.brief!.sentences[0];
+ const revenue='Revenue was $116.1 million.';
+ base.brief!.mainTopics=['Financial Performance'];
+ base.brief!.evidence=[{id:'c2',quotes:[{startId:'s9',endId:'s9',text:revenue}]}] as never;
+ base.brief!.sentences=[
+  {...seed,id:'revenue',topic:'Financial Performance',kind:'reported_fact',text:revenue,financialFacts:[{label:'Revenue',value:116.1,currency:'USD',unit:'total',scale:'millions',relation:'exact',period:null,basis:'not_stated',nature:'reported',evidenceId:'c2',quote:revenue}]},
+  {...seed,id:'valuation',topic:'Valuation',kind:'reported_fact',text:'The valuation is a premium earnings multiple.'},
+  {...seed,id:'risk',topic:'Backlog',kind:'reported_fact',text:'Backlog is exposed to delays and cancellation provisions.'},
+  {...seed,id:'check',topic:'Next earnings',kind:'creator_view',text:'The creator will monitor upcoming earnings for sustainable growth.'},
+ ] as never;
+ const v=buildAnalystView(base),section=(key:string)=>v.sections.find(s=>s.key===key)!.points.map(p=>p.id);
+ assert.deepEqual(section('thesis'),['revenue']);
+ assert.deepEqual(section('valuation'),['valuation']);
+ assert.deepEqual(section('countercase'),['risk']);
+ assert.deepEqual(section('next_checks'),['check']);
+ assert.ok(v.summary.some(s=>s.text.includes('cancellation')));
+ assert.ok(v.summary.some(s=>s.text.includes('monitor upcoming earnings')));
+ assert.equal(v.sections.find(s=>s.key==='evidence')!.points.length,4,'classification never creates or drops an accepted assertion');
+});
+
+test('legacy accepted advice is withheld from reading and copy while its source preference stays intact',()=>{
+ const base=input(),seed=base.brief!.sentences[0];
+ base.brief!.evidence=[{id:'c2',quotes:[{startId:'s9',text:"For me, these are not companies I want to own."}]}] as never;
+ base.brief!.sentences=[{...seed,id:'advice',text:'Avoid these companies.',speaker:'unknown'},{...seed,id:'personal',text:'The speaker personally does not want to own these companies.',speaker:'unknown'}] as never;
+ const before=structuredClone(base),v=buildAnalystView(base);
+ assert.doesNotMatch(analystNote(v),/Avoid these companies/);
+ assert.match(analystNote(v),/personally does not want to own/);
+ assert.deepEqual(base,before,'a read guard cannot rewrite the retained audit or draft');
+});
+
+test('an accepted watch stance leads the overview even when results are the first topic and valuation is mentioned',()=>{
+ const base=input(),seed=base.brief!.sentences[0];
+ base.brief!.mainTopics=['Financial results'];
+ base.brief!.sentences=[
+  {...seed,id:'results',topic:'Financial results',kind:'reported_fact',text:'Revenue grew.'},
+  {...seed,id:'stance',topic:'Investment stance',kind:'creator_view',text:'The speaker maintains a watchful stance because valuation could outpace execution.'},
+ ] as never;
+ const v=buildAnalystView(base);
+ assert.equal(v.summary[0].text,base.brief!.sentences[1].text);
+ assert.ok(v.sections.find(s=>s.key==='thesis')!.points.some(p=>p.id==='stance'));
+ assert.equal(v.sections.find(s=>s.key==='valuation')!.points.length,0);
+});

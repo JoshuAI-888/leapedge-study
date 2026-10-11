@@ -577,7 +577,7 @@ export async function researchStep(run: Run) {
         )?.cost ?? 0,
       ),
     };
-    const readiness = researchReadiness(brief);
+    let readiness = researchReadiness(brief);
     run.output.researchReadiness = readiness;
     const missingEvidence = readiness.coverage.filter(c=>c.repairEligible).map(c=>c.evidenceId);
     const failedFidelity=(run.output.faithfulAudit as {failures?:number}|undefined)?.failures;
@@ -605,9 +605,25 @@ export async function researchStep(run: Run) {
       run.output.coverageRepairOmissions = supplement.omissions;
       const additions = filtered.sentences;
       if(additions.some(s=>draft.sentences.some(original=>original.id===s.id))) throw Error("Coverage repair ID collision; original draft retained.");
-      run.output.researchDraft = ResearchDraft.parse({...draft, sentences:[...draft.sentences,...additions], mainTopics:[...new Set([...draft.mainTopics,...supplement.mainTopics])], omissions:draft.omissions});
-      run.stage = "research-audit";
-      return;
+      if (faithful && atomicPublication && !additions.length) {
+        // No new assertion exists to audit. Keep the original independent
+        // verdicts and publication projection; an empty proposal resolves no gap.
+        const omission = "Bounded source-only coverage repair produced no new auditable statements; original accepted statements and independent coverage findings retained. Unresolved gaps remain.";
+        run.output.coverageRepairOmissions = [...new Set([...supplement.omissions, omission])];
+        run.output.coverageRepairNoAdditions = true;
+        brief.omissions = [...new Set([...brief.omissions, ...z.array(z.string()).parse(run.output.coverageRepairOmissions)])];
+        // The supplement generation already settled after this brief was built.
+        // Its cost must remain included even though a second audit is skipped.
+        brief.modelCostUsd = Number((await (await db()).prepare(
+          "SELECT COALESCE(SUM(amount),0) AS cost FROM yi_calls WHERE run_id=$1 AND stage NOT LIKE 'external-search-%' AND status='completed'",
+        ).get(run.id))?.cost ?? 0);
+        readiness = researchReadiness(brief);
+        run.output.researchReadiness = readiness;
+      } else {
+        run.output.researchDraft = ResearchDraft.parse({...draft, sentences:[...draft.sentences,...additions], mainTopics:[...new Set([...draft.mainTopics,...supplement.mainTopics])], omissions:draft.omissions});
+        run.stage = "research-audit";
+        return;
+      }
     }
     await putIfAbsent("researchBrief", run.id, brief);
     run.output.researchBriefId = run.id;

@@ -3,6 +3,7 @@ import type { CheckedClaim, ClaimData, MentionData } from "./contracts.ts";
 import type { ListingRefData } from "./listing-ref.ts";
 import { reviewFinancialFact, type ResearchBriefData } from "./research-brief.ts";
 import { numericalSentenceDisposition } from "./research-numeric-check.ts";
+import {sourceAttributionCheck} from './research-attribution.ts';
 
 /**
  * The page a PM reads (analyst view, PR 3). Assembled by code from what the
@@ -163,6 +164,35 @@ const unique = <T,>(items: T[], key: (t: T) => string = (t) => JSON.stringify(t)
   return items.filter((t) => (seen.has(key(t)) ? false : (seen.add(key(t)), true)));
 };
 
+/** A title is a ranking hint, never evidence that an unaccepted entity exists.
+ * Match complete name tokens, joining punctuation variants (T-Mobile/T MOBILE).
+ * Short tickers need explicit stock notation so T does not match T-Mobile. */
+export function uniqueTitledEntity<T>(title:string,items:T[],names:(item:T)=>(string|null|undefined)[]):T|null {
+ const tokens=(s:string)=>s.normalize('NFKC').toLowerCase().match(/[\p{L}\p{N}]+/gu)??[];
+ const titleWords=tokens(title);
+ const matches=items.filter(item=>names(item).some(name=>{
+  if(!name)return false;
+  const words=tokens(name),joined=words.join('');if(!joined)return false;
+  if(words.length===1 && joined.length<4){
+   const escaped=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+   return new RegExp(`(?:\\$${escaped}\\b|\\(${escaped}\\)|\\b${escaped}\\s+(?:stock|shares)\\b)`).test(title);
+  }
+  return titleWords.some((_,i)=>Array.from({length:words.length+1},(_,j)=>titleWords.slice(i,i+j+1).join('')).includes(joined));
+ }));
+ return matches.length===1?matches[0]:null;
+}
+
+/** These are reading buckets for already accepted prose, not new assertions.
+ * A financial fact alone does not turn revenue, cash or backlog into valuation. */
+function readingSection(s:{kind:string;text:string;topic:string}) {
+ if(['countercase','invalidation'].includes(s.kind))return 'countercase';
+ if(s.kind==='next_check' || /\b(?:check|watch|monitor|track|verify|assess)(?:ing)?\b[^.!?;]{0,80}\b(?:earnings|results|growth|margins?|execution|backlog)\b/i.test(s.text))return 'next_checks';
+ if(['creator_view','action','holding'].includes(s.kind))return 'thesis';
+ if(/\b(?:exposed to|cancellation provisions|not guaranteed|execution risks?|downside risks?)\b/i.test(s.text))return 'countercase';
+ if(s.kind==='scenario' || /\b(?:valuation|multiple|price.to.earnings|earnings times)\b/i.test(s.text))return 'valuation';
+ return 'thesis';
+}
+
 export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   // Ideas: accepted calls, one card per instrument, action and owner.
   const groups = new Map<string, { id: string; claim: ClaimData; ref: ListingRefData | null }[]>();
@@ -237,8 +267,10 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   }
   ideas.length = 0;
   ideas.push(...merged);
+  const primaryIdea=uniqueTitledEntity(input.title,ideas,i=>[i.ticker,i.name,i.spoken]);
   ideas.sort(
     (a, b) =>
+      Number(b===primaryIdea)-Number(a===primaryIdea) ||
       OWNER_RANK[a.owner] - OWNER_RANK[b.owner] ||
       (ACTION_RANK[a.action ?? ""] ?? 4) - (ACTION_RANK[b.action ?? ""] ?? 4) ||
       (CONVICTION_RANK[a.conviction] ?? 9) - (CONVICTION_RANK[b.conviction] ?? 9) ||
@@ -296,7 +328,10 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   // Only accepted child assertions enter a reviewed surface. Recheck legacy
   // numerical proposals rather than letting a root card restore rejected prose.
   const evidence = input.brief?.evidence ?? [];
+  const attributionEvidence=evidence.map(e=>({...e,quotes:e.quotes.filter(q=>typeof q.text==='string')}));
+  const attributionChecks=new Map((input.brief?.sentences??[]).map(s=>[s.id,sourceAttributionCheck(s,attributionEvidence)]));
   const sentences = (input.brief?.sentences ?? []).filter(sentence => {
+    if(attributionChecks.get(sentence.id)?.requiresNeutralRepair)return false;
     const unresolved = sentence.financialFacts.map(f=>reviewFinancialFact(f,
       evidence.filter(e=>e.id===f.evidenceId && sentence.evidenceIds.includes(e.id)).flatMap(e=>e.quotes.map(q=>q.text))))
       .filter(check=>check.status==="unresolved").map(check=>check.original);
@@ -320,14 +355,18 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
     if(item) chosen.push(item);
     return !!item;
   };
-  pick(main,["creator_view","action","holding"]);
+  pick(main,["creator_view","action","holding"]) || pick(ranked,["creator_view","action","holding"]);
   pick(main,["analysis","reported_fact","scenario"]);
   if(!chosen.some(x=>["analysis","reported_fact","scenario"].includes(x.s.kind))) pick(ranked,["analysis","reported_fact","scenario"]);
   // Topic labels may describe sections ("Risks and valuation", "Next checks")
   // rather than the company. Those accepted findings still belong up front.
+  const downside=ranked.filter(x=>readingSection(x.s)==='countercase');
+  const nextChecks=ranked.filter(x=>readingSection(x.s)==='next_checks');
   pick(main,["countercase"]) || pick(ranked,["countercase"])
     || pick(main,["invalidation"]) || pick(ranked,["invalidation"]);
   pick(main,["next_check","invalidation"]) || pick(ranked,["next_check","invalidation"]);
+  if(!chosen.some(x=>readingSection(x.s)==='countercase'))pick(downside,downside.map(x=>x.s.kind));
+  if(!chosen.some(x=>readingSection(x.s)==='next_checks'))pick(nextChecks,nextChecks.map(x=>x.s.kind));
   // A missing downside/check remains missing; never fill it with another
   // favourable fact. Detailed sections keep every accepted assertion.
   if(!chosen.length) pick(main.length ? main : ranked,ranked.map(x=>x.s.kind));
@@ -340,7 +379,7 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const inSummary=new Set(summary.map(s=>s.text));
   const keyPoints=sentences.filter(s=>!inSummary.has(s.text)).map(s=>({text:s.text,at:evidenceAt(s.evidenceIds),kind:s.kind}));
   const point=(s:typeof sentences[number])=>({id:s.id,text:s.text,topic:s.topic,kind:s.kind,speaker:s.speaker,at:evidenceAt(s.evidenceIds),references:referencesFor(s.evidenceIds)});
-  const sectionKey=(s:typeof sentences[number])=>["countercase","invalidation"].includes(s.kind) ? "countercase" : s.kind==="next_check" ? "next_checks" : s.kind==="scenario" || s.financialFacts.length>0 || /\b(?:valuation|multiple|price.to.earnings|earnings times)\b/i.test(s.text) ? "valuation" : "thesis";
+  const sectionKey=readingSection;
   const sections:z.infer<typeof AnalystView>["sections"]=([ ["thesis","Thesis"], ["valuation","Valuation and scenario"], ["countercase","Countercase"], ["next_checks","Next checks"] ] as const)
     .map(([key,title])=>({key,title,points:sentences.filter(s=>sectionKey(s)===key).sort((a,b)=>Number(b.topic===mainTopic)-Number(a.topic===mainTopic)).map(point)}));
   sections.push({key:"evidence",title:"Evidence",points:sentences.map(point)});
@@ -348,10 +387,10 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const ref=Object.values(input.claimListings).find(r=>r && [r.symbol,r.name].some(n=>n?.toLowerCase()===mainTopic?.toLowerCase()))
     ?? input.claims.map(c=>({c,ref:input.claimListings[c.id]})).find(x=>x.ref && x.c.claim.instrument_as_spoken?.toLowerCase()===mainTopic?.toLowerCase())?.ref;
   const company=ref ? `${ref.symbol ? ref.symbol+" · " : ""}${mainTopic}` : mainTopic;
-  const heading=company ? `${company} — ${lead?.text ?? "Checked research"}` : ideas[0] ? `${ideas[0].ticker ?? ideas[0].name} — ${ideas[0].thesis}` : input.title;
+  const heading=company ? `${company} — ${lead?.text ?? "Checked research"}` : primaryIdea ? `${primaryIdea.ticker ?? primaryIdea.name} — ${primaryIdea.thesis}` : input.title;
   const numbers=unique(sentences.flatMap(s=>s.financialFacts.map(f=>({label:f.label,quote:f.quote,at:evidenceAt([f.evidenceId])}))),n=>`${n.label}|${n.quote}`);
 
-  const omissions = input.brief?.omissions ?? [];
+  const omissions = [...(input.brief?.omissions ?? []),...Array.from(attributionChecks).flatMap(([id,c])=>c.requiresNeutralRepair?[`${id}: Legacy accepted wording withheld from reading pending independent attribution repair. ${c.reason}`]:[])];
   const doubts = unique(input.transcriptionDoubts, (d) => `${d.heard}|${d.likely}`);
   const numericDoubts = doubts.filter((d) => /\d/.test(d.heard));
   const wordDoubts = doubts.filter((d) => !/\d/.test(d.heard));
