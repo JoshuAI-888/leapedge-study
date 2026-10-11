@@ -19,7 +19,8 @@ const amount = z.preprocess(
 );
 export const Env = z.object({
   GEMINI_API_KEY: secret, // required; production transport
-  OPENROUTER_API_KEY: secret, // required; critic and context check
+  OPENROUTER_API_KEY: secret, // selected OpenRouter stages or explicit fallback
+  CHEAPER_INFERENCE_API_KEY: secret, // preferred text stages; server-only
   YOUTUBE_API_KEY: secret, // required; metadata and discovery
   TRANSCRIPTAPI_API_KEY: secret, // required; caption draft
   SUPADATA_API_KEY: secret, // optional; standby provider
@@ -57,8 +58,6 @@ export type EnvData = z.infer<typeof Env>;
 export type EnvKey = keyof EnvData;
 export const ENV_KEYS = Object.keys(Env.shape) as EnvKey[];
 const ALWAYS_REQUIRED: EnvKey[] = [
-  "GEMINI_API_KEY",
-  "OPENROUTER_API_KEY",
   "YOUTUBE_API_KEY",
   "TRANSCRIPTAPI_API_KEY",
   "FMP_API_KEY",
@@ -103,6 +102,12 @@ export function missingRequired(
   team: TeamPreferencesData,
 ): EnvKey[] {
   const required = new Set<EnvKey>(ALWAYS_REQUIRED);
+  const providerKeys = {"google-native":"GEMINI_API_KEY",openrouter:"OPENROUTER_API_KEY","cheaper-inference":"CHEAPER_INFERENCE_API_KEY"} as const;
+  for (const model of Object.values(team.models)) required.add(providerKeys[model.transport]);
+  required.add(providerKeys[team.transport.default]);
+  if (team.transport.fallbackToOpenRouter) required.add("OPENROUTER_API_KEY");
+  // Windowed ASR enforces Google clip offsets regardless of text routes.
+  if (team.sources.asr !== "off") required.add("GEMINI_API_KEY");
   // SUPADATA_API_KEY, EXA_API_KEY and RESEND_API_KEY are optional per spec
   // 6.1: without them the standby provider, web search and digest delivery
   // simply stay unavailable.

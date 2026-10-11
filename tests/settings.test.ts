@@ -22,6 +22,7 @@ test("Text defaults prefer Cheaper Inference while preserving current models and
   const team = teamDefaults();
   assert.equal(team.transport.default, "cheaper-inference");
   assert.equal(team.transport.fallbackToOpenRouter, false);
+  assert.equal(team.transport.cheaperInferenceRanking, "balance");
   assert.equal(team.transport.allowOpenRouterInLab, true);
   assert.deepEqual(team.models.transcription, {
     id: "gemini-3.8-flash",
@@ -228,6 +229,7 @@ test("readEnv validates lazily and reports key names, never values", () => {
       readEnv({
         GEMINI_API_KEY: "a",
         OPENROUTER_API_KEY: "b",
+        CHEAPER_INFERENCE_API_KEY: "ci",
         YOUTUBE_API_KEY: "c",
         TRANSCRIPTAPI_API_KEY: "d",
         FMP_API_KEY: "e",
@@ -441,7 +443,7 @@ test("Store: with no old document the team and account documents start from the 
   assert.throws(() => TeamPreferences.parse({models:{transcription:{transport:"cheaper-inference"}}}));
   const env = readEnv({GEMINI_API_KEY:"native",CHEAPER_INFERENCE_API_KEY:"test-ci",YOUTUBE_API_KEY:"yt",TRANSCRIPTAPI_API_KEY:"caption",FMP_API_KEY:"market",DATABASE_URL:"db",YTI_PUSH_CALLBACK_SECRET:"push"});
   assert.deepEqual(missingRequired(env,team), []);
-  assert.ok(missingRequired(readEnv({...env,CHEAPER_INFERENCE_API_KEY:undefined}),team).includes("CHEAPER_INFERENCE_API_KEY"));
+  assert.ok(missingRequired({...env,CHEAPER_INFERENCE_API_KEY:undefined},team).includes("CHEAPER_INFERENCE_API_KEY"));
   team.models.critique.transport="openrouter";
   assert.ok(missingRequired(env,team).includes("OPENROUTER_API_KEY"));
 });

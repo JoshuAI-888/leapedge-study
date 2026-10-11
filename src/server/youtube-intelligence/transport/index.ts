@@ -7,6 +7,7 @@ import {
   type ModelTransport,
 } from "./types.ts";
 import { OpenRouterTransport } from "./openrouter.ts";
+import { CheaperInferenceTransport } from "./cheaper-inference.ts";
 import { GoogleNativeTransport } from "./google-native.ts";
 import { modelFamily } from "../../../features/youtube-intelligence/model-family.ts";
 export * from "./types.ts";
@@ -56,6 +57,7 @@ export const TransportSettings = z.object({
     .object({
       default: StockKind.optional(),
       fallbackToOpenRouter: z.boolean().optional(),
+      cheaperInferenceRanking: z.enum(["balance", "discount", "speed"]).optional(),
     })
     .optional(),
   models: z
@@ -216,10 +218,12 @@ export function withOpenRouterFallback(
 }
 const openrouter = new OpenRouterTransport();
 const googleNative = new GoogleNativeTransport();
+const cheaperInference = new CheaperInferenceTransport();
 // Neither constructor reads a key or opens a socket; both are shared instances.
 const stock: Partial<Record<TransportKind, () => ModelTransport>> = {
   openrouter: () => openrouter,
   "google-native": () => googleNative,
+  "cheaper-inference": () => cheaperInference,
 };
 let override: TransportFactory | null = null;
 export function transportFor(
@@ -238,9 +242,11 @@ export function transportFor(
     "openrouter";
   const make = stock[kind];
   if (!make) throw Error(`Transport "${kind}" is not available yet.`);
-  const chosen = make();
+  const chosen = kind === "cheaper-inference"
+    ? new CheaperInferenceTransport({ranking: parsed.transport?.cheaperInferenceRanking ?? "balance"})
+    : make();
   return parsed.transport?.fallbackToOpenRouter === true &&
-    kind !== "openrouter"
+    kind === "google-native"
     ? withOpenRouterFallback(chosen, openrouter)
     : chosen;
 }

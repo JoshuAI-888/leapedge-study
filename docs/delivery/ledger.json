@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-10-09",
+  "updated": "2026-10-11",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -2557,5 +2557,24 @@
     ],
     "pr": 36,
     "verification": "Both full local suites: 1074 passed, zero failed, one existing skip each. Typecheck/build/offline advisory diagnostics/audit passed; final feature-head GitHub CI passed twice. Real PostgreSQL eight concurrent ticks: one request/queued run, zero model calls; locking/fencing passed. Production custom schedule persisted, invalid cron rejected, acknowledgement enforced, live scan retained 50 uploads with zero errors and zero eligible analyses. Cron GET returned 200 while enabled and paused. No extra model spend; no live automatic-video publication claim. See docs/deployment/channel-monitoring-verification-20261009.md."
+  },
+  "cheaperInference20261011": {
+    "status": "in-review",
+    "pr": 38,
+    "note": "User approved same-model provider integration. Cheaper Inference text product defaults, selectable Google/OpenRouter routes, live catalog pricing and exact settled billing. Audio remains Google. Existing workspace preferences are preserved until deliberately switched. Bounded compatibility checks passed; production activation pending release.",
+    "files": [
+      "src/features/youtube-intelligence/settings.ts",
+      "src/features/youtube-intelligence/provider-model-settings.ts",
+      "src/features/youtube-intelligence/ui/ProviderModels.tsx",
+      "src/server/youtube-intelligence/transport/cheaper-inference.ts",
+      "src/server/youtube-intelligence/transport/cheaper-inference-catalog.ts",
+      "docs/deployment/inference-providers.md"
+    ],
+    "tests": [
+      "tests/cheaper-inference.test.ts",
+      "tests/cheaper-inference-integration.test.ts",
+      "tests/provider-model-settings.test.ts"
+    ],
+    "verification": "Both full suites: 1108 pass, zero fail, one existing skip each. Typecheck/build/offline advisory diagnostic passed. Adapter:17; integration:7; provider settings:9 focused tests passed. Browser provider switching, model price updates, save/reload and critic independence passed at desktop and375px. Four live actual translation/critique contract checks passed; CI pair cost36.2% less, with differing token counts and slower translation. Gemini synthetic calls128\u2013153s versus direct6\u20138s; no full workflow quality/speed parity claim. Billing/rejected-response/legacy replay regressions covered."
   }
 }

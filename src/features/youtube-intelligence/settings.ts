@@ -15,7 +15,7 @@ import { DEFAULT_TIME_ZONE, isValidTimeZone } from "./trading-day.ts";
  * resolveAccount() fills them.
  */
 const timezone = z.string().refine(isValidTimeZone, "Unknown timezone");
-export const Transport = z.enum(["google-native", "openrouter"]);
+export const Transport = z.enum(["google-native", "openrouter", "cheaper-inference"]);
 export const TrustLevel = z.enum([
   "text-checked",
   "audio-agreed",
@@ -59,36 +59,37 @@ export const GateThresholds = z
   })
   .prefault({});
 export type GateThresholdsData = z.infer<typeof GateThresholds>;
-const modelSpec = (id: string, transport: z.infer<typeof Transport>) =>
+const modelSpec = (id: string, transport: z.infer<typeof Transport>, audioOnly = false) =>
   z
     .object({
       id: z.string().min(1).default(id),
-      transport: Transport.default(transport),
+      transport: Transport.refine(kind => !audioOnly || kind !== "cheaper-inference", "Audio requires Google or OpenRouter").default(transport),
     })
     .prefault({});
 export const TeamPreferences = z.object({
   transport: z
     .object({
-      default: Transport.default("google-native"),
+      default: Transport.default("cheaper-inference"),
       fallbackToOpenRouter: z.boolean().default(false),
       allowOpenRouterInLab: z.boolean().default(true),
+      cheaperInferenceRanking: z.enum(["balance", "discount", "speed"]).default("balance"),
     })
     .prefault({}),
   models: z
     .object({
-      transcription: modelSpec("gemini-3.8-flash", "google-native"),
-      extraction: modelSpec("gemini-3.8-flash", "google-native"),
+      transcription: modelSpec("gemini-3.8-flash", "google-native", true),
+      extraction: modelSpec("gemini-3.8-flash", "cheaper-inference"),
       critique: z
         .object({
           id: z.string().min(1).default("anthropic/claude-sonnet-5"),
-          transport: Transport.default("openrouter"),
+          transport: Transport.default("cheaper-inference"),
           requireDifferentFamily: z.boolean().default(true),
           thinkingBudget: ThinkingBudget.default("low"),
         })
         .prefault({}),
-      context: modelSpec("anthropic/claude-sonnet-5", "openrouter"),
-      translation: modelSpec("gemini-3.1-flash-lite", "google-native"),
-      audioReview: modelSpec("gemini-3.8-flash", "google-native"),
+      context: modelSpec("anthropic/claude-sonnet-5", "cheaper-inference"),
+      translation: modelSpec("gemini-3.1-flash-lite", "cheaper-inference"),
+      audioReview: modelSpec("gemini-3.8-flash", "google-native", true),
     })
     .prefault({}),
   sources: z

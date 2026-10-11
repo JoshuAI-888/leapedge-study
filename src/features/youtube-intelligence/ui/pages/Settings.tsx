@@ -8,6 +8,8 @@ import { action } from "../api.ts";
 import { money } from "../viewmodel.ts";
 import { PageTitle } from "../components.tsx";
 import { JevComparisonPanel, JevPreScreenSetting } from "../JevPreScreen.tsx";
+import { ProviderModels } from "../ProviderModels.tsx";
+import { modelSettingsErrors } from "../../provider-model-settings.ts";
 import {
   DEFAULT_TIME_ZONE,
   isValidTimeZone,
@@ -84,6 +86,8 @@ function ObjectFields({
       {Object.entries(value).map(([key, item]) => {
         if (
           [
+            "models",
+            "transport",
             "selection",
             "efficiencyProfile",
             "researchPipeline",
@@ -186,6 +190,7 @@ export function Settings() {
         <a href="#settings-budget">Monthly budget</a>
         <a href="#settings-preferences">Leaderboard and sentiment</a>
         <a href="#settings-team">Team configuration</a>
+        <a href="#settings-providers">Providers and models</a>
       </nav>
       <section className="yi-panel yi-settings-section" id="settings-budget">
         <div className="yi-section-title">
@@ -530,6 +535,7 @@ export function Settings() {
             </p>
             <Link href="/youtube-intelligence/analysis-pipelines">Compare analysis pipelines and experiment requirements</Link>
           </fieldset>
+          <ProviderModels value={t} onChange={setTeam} disabled={busy} />
           <JevPreScreenSetting
             value={t.faithfulnessPreScreen}
             disabled={busy}
@@ -590,6 +596,7 @@ export function Settings() {
               disabled={
                 busy ||
                 !team ||
+                modelSettingsErrors(t).length > 0 ||
                 (zoneText !== null && !isValidTimeZone(zoneText))
               }
             >

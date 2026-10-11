@@ -5,7 +5,7 @@ import { boundedSettled, isFatalAccountError } from "./bounded-parallel.ts";
 import {
   extractionContext,
 } from "../../features/youtube-intelligence/research-brief.ts";
-import { ModelResponse } from "./transport/types.ts";
+import { ModelResponse, TransportError } from "./transport/types.ts";
 import {
   estimateTokens,
   transcriptChunks,
@@ -222,7 +222,8 @@ function unknownOutcome(error: unknown) {
  * any other reads its rates from a catalogue fetched for that one call, which
  * names no version, so the transport that answered describe() is named instead.
  */
-function priceTableVersionFor(transport: ModelTransport) {
+function priceTableVersionFor(transport: ModelTransport, spec: {pricingVersion?: string}) {
+  if (spec.pricingVersion) return `${transport.name}:${spec.pricingVersion}`;
   return transport.family === "google-native"
     ? priceTableVersion
     : `${transport.name}:describe`;
@@ -340,7 +341,11 @@ export async function modelCall(
       : {}),
     source: run.output.sourceHash ?? run.output.source ?? null,
     models: settings.models,
-    transport: settings.transport,
+    // The new CI-only preference must not invalidate paid responses from
+    // frozen Google/OpenRouter runs created before this setting existed.
+    transport: Object.values(settings.models).some(m => m.transport === "cheaper-inference") || settings.transport.default === "cheaper-inference"
+      ? settings.transport
+      : Object.fromEntries(Object.entries(settings.transport).filter(([key]) => key !== "cheaperInferenceRanking")),
   });
   // A stage checkpoint may lag a durably received response after process death.
   // Replay the exact normalized response, never call the provider a second time.
@@ -359,7 +364,7 @@ export async function modelCall(
         );
       if (fingerprint !== requestFingerprint) continue;
       const recovered = ModelResponse.parse(retained);
-      if (call.status !== "completed")
+      if (call.status !== "completed" && !(recovered.usage.costUsd === null && call.metrics.transport === "cheaper-inference"))
         await settle(call.id, recovered.usage.costUsd, {
           ...call.metrics,
           recovered: true,
@@ -419,7 +424,7 @@ export async function modelCall(
     requestedEffort && spec.supportedEfforts.includes(requestedEffort)
       ? requestedEffort
       : undefined;
-  const maxTokens =
+  const desiredMaxTokens =
     options.maxOutputTokens ??
     (stage.startsWith("transcribe-window")
       ? 12000
@@ -430,6 +435,7 @@ export async function modelCall(
           : stage.startsWith("critique")
             ? config?.critiqueMaxTokens || 3000
             : 16000);
+  const maxTokens = Math.min(desiredMaxTokens, spec.maxOutputTokens ?? desiredMaxTokens);
   const request = ModelRequest.parse({
     stage,
     model: modelId,
@@ -474,7 +480,7 @@ export async function modelCall(
     counted.tokens * spec.inputRate +
     mediaTokens * spec.audioRate +
     maxTokens * spec.outputRate;
-  const pricedBy = priceTableVersionFor(transport);
+  const pricedBy = priceTableVersionFor(transport, spec);
   /**
    * The three rates that produced `amount`. A transport that priced them from a
    * catalogue fetched for this one call names no version, so the rates
@@ -548,8 +554,11 @@ export async function modelCall(
         } catch (error) {
           const reason = error instanceof Error ? error.message : String(error);
           if (unknownOutcome(error)) {
-            await settle(id, null, {
+            const received = error instanceof TransportError ? error.receivedResponse : undefined;
+            if (received) await retainResponse(id, run.id, stage, received.raw);
+            await settle(id, received?.costUsd ?? null, {
               model: modelId,
+              transport: transport.name,
               maxTokens,
               attempt,
               reservedUsd: amount,
@@ -558,7 +567,7 @@ export async function modelCall(
               inputTokens: counted.tokens,
               error: reason,
             });
-            await markUnknown(id, reason);
+            if (received?.costUsd == null) await markUnknown(id, reason);
           } else await release(id, reason);
           throw error;
         }
@@ -592,6 +601,9 @@ export async function modelCall(
     reservedUsd: amount,
     /** The rate table those rates came from, so the hold can be explained later. */
     priceTableVersion: pricedBy,
+    ...(spec.pricingCheckedAt ? { pricingCheckedAt: spec.pricingCheckedAt } : {}),
+    requestedModel: modelId,
+    transport: transport.name,
     /** And the rates themselves, which a per-call catalogue keeps nowhere else. */
     rates,
     inputTokens: counted.tokens,
@@ -600,6 +612,8 @@ export async function modelCall(
     attempts,
   };
   await settle(id, response.usage.costUsd, metrics);
+  if (transport.family === "cheaper-inference" && response.usage.costUsd === null)
+    await markUnknown(id, "Cheaper Inference has not reported a settled charge; the reservation is held.");
   if (response.finishReason !== "stop")
     throw Error("Model response was incomplete; refusing partial output.");
   let value;
