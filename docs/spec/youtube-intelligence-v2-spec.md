@@ -83,6 +83,16 @@ Why this is the right decision for that user:
 
 ### 4.1 Model transport policy
 
+**11 October 2026 approved amendment.** Cheaper Inference is the product default
+for text extraction/synthesis, independent critique, context and translation,
+preserving Gemini 3.8 Flash, Claude Sonnet 5 and Gemini 3.1 Flash Lite. Google
+native remains the audio/transcription transport. Google and OpenRouter remain
+selectable alternatives. Saved workspaces retain their explicit configuration
+until it is deliberately changed; queued runs retain their snapshot. See
+[provider configuration and validation](../deployment/inference-providers.md).
+This amendment supersedes the older native-text default below, without changing
+source validation, model-family independence, evidence or prompt contracts.
+
 **Decision.** Production stages call the Gemini Developer API directly through `@google/genai`. OpenRouter is the transport for the critic, the context check, experiments, non-Google models, and any stage a user explicitly routes there. A non-Google critic through OpenRouter is confirmed as acceptable.
 
 **Rationale.** Today every text call and the video fallback go through OpenRouter pinned to Google AI Studio. That pays a markup to reach the same endpoint and loses batch pricing, explicit context caching, media resolution control, clip offsets on YouTube URLs, agentic video mode and schema-enforced output. The native SDK already exists in the repo and is already proven on the hardest stage. The white paper itself flagged transport as an uncontrolled variable in the A/B.

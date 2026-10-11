@@ -5,7 +5,7 @@ import { z } from "zod";
  * snapshots, metrics) is provider-agnostic; everything below it is one
  * provider's HTTP. Spec section 4.1.
  */
-export const TransportKind = z.enum(["openrouter", "google-native", "fake"]);
+export const TransportKind = z.enum(["openrouter", "google-native", "cheaper-inference", "fake"]);
 export type TransportKind = z.infer<typeof TransportKind>;
 export const TextPart = z.object({ type: z.literal("text"), text: z.string() });
 export type TextPart = z.infer<typeof TextPart>;
@@ -70,6 +70,9 @@ export const ModelDescription = z.object({
   audioRate: z.number().nonnegative(),
   outputRate: z.number().nonnegative(),
   supportedEfforts: z.array(z.string()),
+  maxOutputTokens: z.number().int().positive().optional(),
+  pricingVersion: z.string().optional(),
+  pricingCheckedAt: z.string().optional(),
 });
 export type ModelDescription = z.infer<typeof ModelDescription>;
 /** An explicit context cache the provider holds; `name` is what a request names. */
@@ -86,11 +89,15 @@ export type TransportErrorKind = "rate_limited" | "server" | "timeout" | "unknow
 export class TransportError extends Error {
   kind: TransportErrorKind;
   status: number | undefined;
-  constructor(kind: TransportErrorKind, message: string, status?: number) {
+  /** A received but rejected model envelope can still carry a real charge. */
+  receivedResponse: { raw: unknown; costUsd: number | null } | undefined;
+  constructor(kind: TransportErrorKind, message: string, status?: number,
+    receivedResponse?: { raw: unknown; costUsd: number | null }) {
     super(message);
     this.name = "TransportError";
     this.kind = kind;
     this.status = status;
+    this.receivedResponse = receivedResponse;
   }
 }
 /**

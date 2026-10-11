@@ -7,6 +7,7 @@ import {
   unknownCalls,
   type UnknownCall,
 } from "./store.ts";
+import { settledCheaperInferenceCost } from "./transport/cheaper-inference.ts";
 import { usageOf } from "./transport/google-native.ts";
 /**
  * Reconciliation of unknown outcomes (spec 4.4).
@@ -29,6 +30,8 @@ export type ReconcileSummary = {
   checked: number;
   settled: number;
   released: number;
+  /** A retained Cheaper Inference result still awaiting its settled bill. */
+  unresolved?: number;
 };
 /** OpenRouter reports the price of a call; Google reports the tokens it billed. */
 const RetainedUsage = z.looseObject({
@@ -45,6 +48,8 @@ export function costFromRetained(
   payload: unknown,
   model: string,
 ): number | null {
+  if (payload && typeof payload === "object" && "cheaper_inference" in payload)
+    return settledCheaperInferenceCost(payload);
   const parsed = RetainedUsage.safeParse(payload);
   if (!parsed.success) return null;
   const reported = parsed.data.usage?.cost;
@@ -87,7 +92,16 @@ export async function reconcileUnknown(
     const retained = await retainedResponse(call.id);
     const reconciledAt = new Date(at).toISOString();
     if (retained !== undefined) {
-      const reported = costFromRetained(retained, modelOf(call));
+      const cheaperInference = call.metrics.transport === "cheaper-inference" ||
+        retained && typeof retained === "object" && "cheaper_inference" in retained;
+      const reported = cheaperInference ? settledCheaperInferenceCost(retained)
+        : costFromRetained(retained, modelOf(call));
+      if (reported === null && cheaperInference) {
+        // A successful result with pending billing is evidence of paid work.
+        // Keep its hold; never fabricate a settled charge from the reservation.
+        summary.unresolved = (summary.unresolved ?? 0) + 1;
+        continue;
+      }
       const amount = reported ?? call.amount;
       await settle(call.id, amount, {
         ...call.metrics,
