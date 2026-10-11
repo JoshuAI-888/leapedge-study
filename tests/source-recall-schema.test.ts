@@ -24,3 +24,20 @@ test('real Google SDK serializes combined recall schema without nested JSON-sche
  assert.equal(RecallReconciliation.safeParse({reviewedSourceIds:Array(201).fill('x'),propositions:[],limitations:[]}).success,false,'Local cardinality constraints still enforce the strict model contract');
  }finally{stub.restore();}
 });
+
+
+test('real Google SDK serializes source atom metadata and leaves original recall schema unchanged',async()=>{
+ const {atomExtractionSchema}=await import('../src/server/youtube-intelligence/schemas/source-atoms.ts');
+ const original=JSON.stringify(sourceRecallResponseSchema);
+ const stub=stubFetch([{url:'generativelanguage.googleapis.com',respond:()=>json({candidates:[{content:{parts:[{text:'{"claims":[],"key_points":[],"mentions":[]}'}],role:'model'},finishReason:'STOP'}],usageMetadata:{promptTokenCount:1,candidatesTokenCount:1,totalTokenCount:2},modelVersion:'gemini-3.8-flash'})}]);
+ try{
+ await new GoogleNativeTransport({apiKey:'fixture-not-real'}).call(ModelRequest.parse({stage:'synthesis-recall-0',model:'gemini-3.8-flash',user:[{type:'text',text:'Fixture'}],responseSchema:atomExtractionSchema(sourceRecallResponseSchema),maxOutputTokens:12000,temperature:0}));
+ const schema=JSON.parse(stub.log[0].body!).generationConfig.responseSchema;
+ assert.ok(schema.properties.key_points.items.required.includes('source_atom'));
+ assert.equal(schema.properties.key_points.items.properties.source_atom.properties.actorOriginal.nullable,true);
+ assert.ok(schema.properties.key_points.items.properties.source_atom.required.includes('opposingOriginal'));
+ assert.equal(schema.properties.claims.items.properties.source_atom,undefined);
+ assert.doesNotMatch(JSON.stringify(schema),/"\$schema"|"anyOf"/);
+ assert.equal(JSON.stringify(sourceRecallResponseSchema),original);
+ }finally{stub.restore();}
+});

@@ -1,3 +1,5 @@
+import {sourceAtomPlan} from "../../features/youtube-intelligence/source-atoms.ts";
+import {atomSynthesisContext,ATOM_INDEX_INSTRUCTIONS} from "./source-atom-index.ts";
 import {researchPipelineIdentityFromInput, ResearchPipelineIdentity} from "../../features/youtube-intelligence/research-pipeline-choice.ts";
 import { advanceBoundedResearchAudit } from "./bounded-research-audit.ts";
 import { faithfulAudit } from "./faithful-audit.ts";
@@ -138,6 +140,7 @@ async function queueSourceBrief(
       speculativeResearch: source.input.speculativeResearch,
       reuseResearchCache: source.input.reuseResearchCache,
       auditedExecutionPlan: source.input.auditedExecutionPlan,
+      sourceAtomPlan: source.input.sourceAtomPlan,
       publicationSafeguardsVersion: source.input.publicationSafeguardsVersion,
       benchmarkCampaign:source.input.benchmarkCampaign,
     },
@@ -164,6 +167,7 @@ export async function researchBriefs() {
   return docs<ResearchBriefData>("researchBrief");
 }
 export async function researchStep(run: Run) {
+  const atoms=sourceAtomPlan(run.input);
   const frozenPipeline=researchPipelineIdentityFromInput(run.input);
   if(run.input.researchPipelineVersion!==undefined&&run.input.researchPipelineVersion!==frozenPipeline.version)throw Error("Unsupported frozen research pipeline version; explicit migration is required.");
   run.output.researchPipelineIdentity=frozenPipeline;
@@ -226,7 +230,9 @@ export async function researchStep(run: Run) {
   // Use dictionary encoding only when its measured payload is smaller.
   const indexed = efficient && JSON.stringify(evidenceIndex).length + INDEX_INSTRUCTIONS.length < JSON.stringify(snapshot.evidence).length;
   const { evidence: _evidence, ...snapshotContext } = snapshot;
-  const modelSnapshot = indexed ? { ...snapshotContext, evidenceIndex } : snapshot;
+  const atomContext=atoms?.deduplication?atomSynthesisContext(snapshot.evidence):null;
+  const modelSnapshot = atomContext ? {...snapshotContext,...atomContext.payload} : indexed ? { ...snapshotContext, evidenceIndex } : snapshot;
+  if(atomContext)run.output.sourceAtomContext={version:"research-atom-index.v1",encoded:atomContext.encoded,originalBytes:atomContext.originalBytes,actualBytes:atomContext.actualBytes};
   // Planning selects queries, not publishable assertions. All quotations remain
   // available to synthesis and audit; this inventory preserves every topic.
   const planningSnapshot = efficient ? {
@@ -254,7 +260,7 @@ export async function researchStep(run: Run) {
       model: stage.startsWith("critique")
         ? settings.models.critique.id
         : run.model,
-      prompt: instructions + (payload && typeof payload === "object" && "evidenceIndex" in payload ? INDEX_INSTRUCTIONS : ""),
+      prompt: instructions + (payload && typeof payload === "object" && "evidenceIndex" in payload && !instructions.includes(INDEX_INSTRUCTIONS) ? INDEX_INSTRUCTIONS : "") + (payload && typeof payload === "object" && "atomEvidenceIndex" in payload && !instructions.includes(ATOM_INDEX_INSTRUCTIONS) ? ATOM_INDEX_INSTRUCTIONS : ""),
       payload,
       responseSchema,
       maxOutputTokens: 16000,
@@ -404,6 +410,7 @@ export async function researchStep(run: Run) {
       await invoke(
         "synthesis-research",
         PRINCIPLES +
+          (atoms ? " Preserve each accepted atomic proposition and its conditions/opposition. Use one independently auditable sentence per proposition, keep concise, and avoid repeating identical atoms merely because several original evidence IDs cite them. Cite the original inventory IDs and preserve every distinct material clause; do not upgrade holdings, personal preferences or sufficient conditions into new orders or necessary trading rules. " : "") +
           " For explicit growth, earnings-times-multiple or short-put examples, include the optional calculation with the original supported inputs, currency/scale and assumptions; use null otherwise. Do not invent missing inputs. Produce a concise whole-video brief, at most 48 sentences. Do not force long multi-company videos into 8–18 sentences. Account for every material evidence item, retaining entry/valuation conditions, no-position/hypothetical disclosures and bearish countercases; explicitly list any unsupported or unresolved coverage in omissions. Separate compound facts so rejecting one incorrect number does not discard independently supported strategy and expiry details. Do not force unsupported content into either horizon. Explain why each material point matters. MainTopics must use exact topic labels in sentences. Include central company/context, countercase, valuation drivers, invalidation or next check where supported. Attribute speaker as unknown if unclear. Record missing evidence in omissions. Current updates are optional and must have eligible sources. Return the supplied JSON schema.",
         {
           ...modelSnapshot,
@@ -455,13 +462,14 @@ export async function researchStep(run: Run) {
       const checked = await faithfulAudit({
         sentences: auditDraft.sentences, evidence: auditEvidence, invoke,
         weightedPlan:auditedExecution(run.input)?.weightedAudit ?? false,
+        compactPlan:atoms?.compactAudit ?? false,
         ...(previousAudit ? {retainedSentences,stagePrefix:'critique-faithful-coverage'} : {}),
         ...(screen.enabled ? { preScreen: (sentences: typeof auditDraft.sentences) => screenSentences({
           runId: run.id, stage: previousAudit ? "prescreen-jev-coverage" : "prescreen-jev", sentences, evidence: snapshot.evidence, model: screen.model,
           band: screen, perVideoCapUsd: settings.budget.perVideoMaxUsd,
         }) } : {}),
       });
-      run.output.faithfulAudit = { chunks: checked.chunks, failures: checked.failures, ...(checked.preScreen ? { preScreen: checked.preScreen } : {}) };
+      run.output.faithfulAudit = { chunks: checked.chunks, failures: checked.failures, ...(checked.context ? {context:checked.context} : {}), ...(checked.preScreen ? { preScreen: checked.preScreen } : {}) };
       if(previousAudit&&checked.failures) supplementalAuditError='Supplemental fidelity check unavailable; original independently audited sentences retained.';
       repaired = { audit: ResearchAudit.parse({ verdicts: checked.verdicts, coverageFindings: checked.coverageFindings, evidenceCoverage: checked.evidenceCoverage }), attempts: [], missing: [] };
     } else {

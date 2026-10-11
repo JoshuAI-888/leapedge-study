@@ -12,6 +12,7 @@ import { pathToFileURL } from 'node:url';
 import { z } from 'zod';
 import { TeamPreferences } from '../src/features/youtube-intelligence/settings.ts';
 import { researchPipelineIdentityFromInput } from '../src/features/youtube-intelligence/research-pipeline-choice.ts';
+import { freezeEfficiency } from '../src/server/youtube-intelligence/efficiency.ts';
 import { controlledInput } from './benchmark-controlled-models.ts';
 import { auditResponseHash } from './compare-audit-models.ts';
 import { iso } from '../src/server/youtube-intelligence/database.ts';
@@ -19,14 +20,14 @@ import { iso } from '../src/server/youtube-intelligence/database.ts';
 const Record=z.record(z.string(),z.unknown());
 function record(raw:unknown):globalThis.Record<string,unknown>{return Record.parse(typeof raw==='string'?JSON.parse(raw):raw??{});}
 const Cap=z.object({id:z.uuid(),maxUsd:z.number().finite().positive().max(5)});
-const Variant=z.enum(['baseline','candidate','haiku']);
+const Variant=z.enum(['baseline','candidate','haiku','sourceAtoms']);
 const Arm=z.object({ordinal:z.number().int().min(1).max(9),runId:z.uuid(),variant:Variant,videoId:z.string(),originalSourceRunId:z.string(),
  model:z.string(),title:z.string(),createdAt:z.iso.datetime(),sourceHash:z.string(),sourceBytesHash:z.string(),
  input:Record,output:Record});
 // Keep campaign marker typed while retaining all frozen settings/prompt fields.
 const TypedArm=Arm.extend({input:z.looseObject({benchmarkCampaign:Cap})});
-const Campaign=z.object({version:z.literal('hosted-model-benchmark.v1'),id:z.uuid(),maxUsd:z.number().finite().positive().max(5),
- generatedAt:z.iso.datetime(),sourceAcquisitionIncluded:z.literal(false),arms:z.array(TypedArm).length(9)});
+const Campaign=z.object({version:z.enum(['hosted-model-benchmark.v1','hosted-atom-benchmark.v1']),id:z.uuid(),maxUsd:z.number().finite().positive().max(5),
+ generatedAt:z.iso.datetime(),sourceAcquisitionIncluded:z.literal(false),arms:z.array(TypedArm).min(3).max(9)}).refine(c=>c.arms.length===(c.version==='hosted-atom-benchmark.v1'?3:9),'Wrong cohort size');
 type CampaignData=z.infer<typeof Campaign>;
 const videos=['_mEvVWGfmjU','Mepjkm_0ns4','fSx-Ho8mi18'];
 
@@ -69,7 +70,7 @@ export function createHostedCampaign(raw:unknown,maxUsd:number):CampaignData{
 
 function validateCampaign(raw:unknown){
  const campaign=Campaign.parse(raw);
- if(new Set(campaign.arms.map(a=>a.runId)).size!==9)throw Error('Campaign run IDs must be unique.');
+ if(new Set(campaign.arms.map(a=>a.runId)).size!==campaign.arms.length)throw Error('Campaign run IDs must be unique.');
  for(const [i,arm] of campaign.arms.entries()){
   if(arm.input.task!==undefined)throw Error('Hosted source roots must omit task for normal analyst-view behavior.');
   if(arm.ordinal!==i+1||arm.input.benchmarkCampaign.id!==campaign.id||arm.input.benchmarkCampaign.maxUsd!==campaign.maxUsd)throw Error('Campaign identity/cap/ordinal mismatch.');
@@ -79,7 +80,7 @@ function validateCampaign(raw:unknown){
 }
 
 export function stageHostedArm(raw:unknown,ordinal:number,now=new Date().toISOString()){
- const campaign=validateCampaign(raw);z.number().int().min(1).max(9).parse(ordinal);z.iso.datetime().parse(now);
+ const campaign=validateCampaign(raw);z.number().int().min(1).max(campaign.arms.length).parse(ordinal);z.iso.datetime().parse(now);
  const arm=campaign.arms[ordinal-1],team=TeamPreferences.parse(arm.input.teamPreferencesSnapshot);
  // SQL/params are deliberately separate. Callers must bind parameters or use a
  // trusted SQL literal serializer, never shell-interpolate the retained text.
@@ -223,6 +224,7 @@ function main(){
  if(!values.input||!values.output)throw Error('Require --input and a new --output path.');
  const input=JSON.parse(readFileSync(values.input,'utf8'));let result:unknown;
  if(values.mode==='plan')result=createHostedCampaign(input,Number(values['budget-cap-usd']));
+ else if(values.mode==='plan-atoms')result=createAtomCampaign(input,Number(values['budget-cap-usd']));
  else if(values.mode==='stage'){
   const staged=stageHostedArm(input,Number(values.ordinal));result=staged;
   if(values['sql-output'])writeFileSync(values['sql-output'],renderPostgresSQL(staged.sql,staged.parameters)+'\n',{flag:'wx',mode:0o600});
@@ -233,3 +235,15 @@ function main(){
  console.log(JSON.stringify({mode:values.mode,output:values.output,offline:true}));
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)try{main();}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+
+export function createAtomCampaign(raw:unknown,remainingUsd:number):CampaignData {
+ const base=createHostedCampaign(raw,remainingUsd);
+ const arms=base.arms.filter(a=>a.variant==='baseline').map((arm,index)=>{
+  const team=TeamPreferences.parse(arm.input.teamPreferencesSnapshot);
+  team.processing.sourceAtoms=true;
+  const input=freezeEfficiency({...arm.input,teamPreferencesSnapshot:team},{});
+  input.benchmarkExperiment={...record(arm.input.benchmarkExperiment),ordinal:index+1,variant:'sourceAtoms'};
+  return {...arm,ordinal:index+1,variant:'sourceAtoms',input};
+ });
+ return Campaign.parse({...base,version:'hosted-atom-benchmark.v1',arms});
+}
