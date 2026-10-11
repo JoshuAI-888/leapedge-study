@@ -18,9 +18,9 @@ import {
 } from "../src/server/youtube-intelligence/env.ts";
 import { freshDatabase } from "./helpers/db.ts";
 
-test("Text defaults prefer Cheaper Inference while preserving current models and native audio", () => {
+test("Defaults use native Google extraction and independent OpenRouter critique while preserving selectable providers", () => {
   const team = teamDefaults();
-  assert.equal(team.transport.default, "cheaper-inference");
+  assert.equal(team.transport.default, "google-native");
   assert.equal(team.transport.fallbackToOpenRouter, false);
   assert.equal(team.transport.cheaperInferenceRanking, "balance");
   assert.equal(team.transport.allowOpenRouterInLab, true);
@@ -30,11 +30,14 @@ test("Text defaults prefer Cheaper Inference while preserving current models and
   });
   assert.deepEqual(team.models.critique, {
     id: "anthropic/claude-sonnet-5",
-    transport: "cheaper-inference",
+    transport: "openrouter",
     requireDifferentFamily: true,
     thinkingBudget: "low",
   });
   assert.equal(team.models.translation.id, "gemini-3.1-flash-lite");
+  assert.equal(team.models.extraction.transport, "google-native");
+  assert.equal(team.models.context.transport, "openrouter");
+  assert.equal(team.models.translation.transport, "google-native");
   assert.equal(team.sources.captionProvider, "transcriptapi");
   assert.equal(team.sources.standby, "supadata");
   assert.equal(team.sources.standbyPlan, "free");
