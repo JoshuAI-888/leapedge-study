@@ -135,4 +135,4 @@ Reuse prior fresh LeapEdge captures, whose observed readiness bounds were roughl
 - `src/features/youtube-intelligence/ui/workspace.tsx:167`: two-second activity polling.
 - `architecture-evidence.json`: locally calculated metrics from the retained native-repeat captures; not new live timing.
 
-Approval requested by the user's instruction before implementation. This proposal intentionally leaves application and live-state changes pending.
+Approved and implemented in PR41. Nine matched hosted arms are complete; see haiku-speed-results-20261012.md for measured results and rollout decisions. Historical source anchors above describe the reviewed baseline, not current line numbers.
