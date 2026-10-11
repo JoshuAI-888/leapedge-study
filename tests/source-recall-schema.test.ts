@@ -37,7 +37,8 @@ test('real Google SDK serializes source atom metadata and leaves original recall
  assert.equal(schema.properties.key_points.items.properties.source_atom.properties.actorOriginal.nullable,true);
  assert.ok(schema.properties.key_points.items.properties.source_atom.required.includes('opposingOriginal'));
  assert.equal(schema.properties.claims.items.properties.source_atom,undefined);
- assert.doesNotMatch(JSON.stringify(schema),/"\$schema"|"anyOf"/);
+ assert.doesNotMatch(JSON.stringify(schema),/"\$schema"|"anyOf"|"const"|"additionalProperties"/);
+ assert.deepEqual(schema.properties.key_points.items.properties.source_atom.properties.version.enum,['source-atom.v1']);
  assert.equal(JSON.stringify(sourceRecallResponseSchema),original);
  }finally{stub.restore();}
 });
