@@ -17,6 +17,8 @@ test("restart replays retained unsettled and settled responses without provider 
     const run = await store.create("resume-video", "fixture", {}, "v1");
     const id = await store.reserve(run.id, "extraction", 0.1);
     const settings = teamDefaults();
+    // Native request identities omit the optional CI-only routing preference.
+    const { cheaperInferenceRanking: _ranking, ...nativeTransport } = settings.transport;
     const fingerprint = modelCallFingerprint({
       stage: "extraction",
       model: "fixture",
@@ -28,7 +30,7 @@ test("restart replays retained unsettled and settled responses without provider 
       inferenceConfig: null,
       source: null,
       models: settings.models,
-      transport: settings.transport,
+      transport: nativeTransport,
     });
     const response = {
       requestFingerprint: fingerprint,

@@ -438,10 +438,12 @@ test("Store: with no old document the team and account documents start from the 
   assert.equal(resolved.benchmark, "SPY");
 });
 
- test("Cheaper Inference is a text-only route and readiness requires the selected provider", () => {
+test("Cheaper Inference is a selectable text-only route and readiness requires the selected provider", () => {
   const team = teamDefaults();
-  for (const key of ["extraction", "critique", "context", "translation"] as const)
+  for (const key of ["extraction", "critique", "context", "translation"] as const) {
+    team.models[key].transport = "cheaper-inference";
     assert.equal(team.models[key].transport, "cheaper-inference");
+  }
   assert.equal(team.models.audioReview.transport, "google-native");
   assert.throws(() => TeamPreferences.parse({models:{transcription:{transport:"cheaper-inference"}}}));
   const env = readEnv({GEMINI_API_KEY:"native",CHEAPER_INFERENCE_API_KEY:"test-ci",YOUTUBE_API_KEY:"yt",TRANSCRIPTAPI_API_KEY:"caption",FMP_API_KEY:"market",DATABASE_URL:"db",YTI_PUSH_CALLBACK_SECRET:"push"});

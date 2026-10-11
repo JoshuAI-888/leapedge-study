@@ -382,23 +382,23 @@ test("FakeModelTransport replays frozen files named by the helper's request hash
   await assert.rejects(() => fake.call(videoRequest), /malformed/);
 });
 test("transportFor routes each stage by its settings key and honours the injected seam", () => {
-  // Approved text defaults use Cheaper Inference; audio retains native Google.
+  // Original mixed defaults: Google for Gemini, OpenRouter for Claude.
   const team = teamDefaults();
   const familyOf = (stage: string) => transportFor(stage, team).family;
-  assert.equal(familyOf("synthesis"), "cheaper-inference");
-  assert.equal(familyOf("synthesis-chunk-2"), "cheaper-inference");
-  assert.equal(familyOf("extraction"), "cheaper-inference");
+  assert.equal(familyOf("synthesis"), "google-native");
+  assert.equal(familyOf("synthesis-chunk-2"), "google-native");
+  assert.equal(familyOf("extraction"), "google-native");
   assert.equal(familyOf("transcribe"), "google-native");
   assert.equal(familyOf("transcribe-window-0"), "google-native");
   assert.equal(familyOf("native-source"), "google-native");
-  assert.equal(familyOf("translate"), "cheaper-inference");
+  assert.equal(familyOf("translate"), "google-native");
   assert.equal(familyOf("audio-review"), "google-native");
-  assert.equal(familyOf("critique-0"), "cheaper-inference");
-  assert.equal(familyOf("context"), "cheaper-inference");
+  assert.equal(familyOf("critique-0"), "openrouter");
+  assert.equal(familyOf("context"), "openrouter");
   // A stage with no settings key of its own follows transport.default.
-  assert.equal(familyOf("source-repair"), "cheaper-inference");
-  assert.equal(transportFor("critique-3", team).name, "cheaper-inference");
-  assert.equal(transportFor("synthesis", team).name, "cheaper-inference");
+  assert.equal(familyOf("source-repair"), "google-native");
+  assert.equal(transportFor("critique-3", team).name, "openrouter");
+  assert.equal(transportFor("synthesis", team).name, "google-native");
   // The stage's own key beats the default, in either direction.
   const mixed = teamDefaults();
   mixed.transport.default = "openrouter";
@@ -956,9 +956,9 @@ test("modelCall takes the model id and the transport from the settings when the 
       "a model the run pins still wins over the settings",
     );
     assert.deepEqual(routed, [
-      "critique-0->cheaper-inference",
+      "critique-0->openrouter",
       "transcribe->google-native",
-      "synthesis->cheaper-inference",
+      "synthesis->google-native",
     ]);
   } finally {
     restore();
@@ -1451,8 +1451,8 @@ test("The comparison week: transport.default openrouter keeps the old path selec
   week.transport.fallbackToOpenRouter = true;
   for (const stage of STAGES)
     assert.equal(transportFor(stage, week).name, "openrouter");
-  // The old comparison remains selectable; new text defaults use Cheaper Inference.
-  assert.equal(transportFor("synthesis", teamDefaults()).name, "cheaper-inference");
+  // The all-OpenRouter comparison remains selectable alongside native defaults.
+  assert.equal(transportFor("synthesis", teamDefaults()).name, "google-native");
 });
 
 test("native Google and OpenRouter normalize only known Google model aliases", async () => {
