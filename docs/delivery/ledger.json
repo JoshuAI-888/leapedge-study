@@ -2699,7 +2699,7 @@
   },
   "sourceAtoms20261012": {
     "status": "merged",
-    "note": "PR43 merged; all five exact-source checks passed (1231 total,1230 pass,one existing skip). Desktop/mobile persistence passed. First hosted schema request rejected with HTTP400 before generation: zero committed spend. Native-schema follow-up maps literal const to enum and omits unsupported additionalProperties, preserving full local Zod validation. Same-source rerun pending this corrective release.",
+    "note": "Implemented in approved order and released through PR43/44. Three same-source native candidates completed with independent audits. Mean active processing165.521s versus108.031s; recorded model cost1.348871826 versus0.863104665. Mixed source coverage and continued qualifier gaps do not support default promotion; sourceAtoms remains off and original providers/models are unchanged.",
     "files": [
       "src/features/youtube-intelligence/source-atoms.ts",
       "src/server/youtube-intelligence/source-atom-index.ts",
@@ -2714,7 +2714,8 @@
       "src/server/youtube-intelligence/faithful-audit.ts",
       "src/server/youtube-intelligence/efficiency.ts",
       "scripts/benchmark-hosted-models.ts",
-      "src/features/youtube-intelligence/chunking.ts"
+      "src/features/youtube-intelligence/chunking.ts",
+      "docs/delivery/source-atom-results-20261012.md"
     ],
     "tests": [
       "tests/source-atoms.test.ts",
@@ -2724,6 +2725,28 @@
       "tests/hosted-model-benchmark.test.ts"
     ],
     "pr": 43,
-    "mergeCommit": "fc4a6d19263af5676620c6c07f64efc97c9680a4"
+    "mergeCommit": "fc4a6d19263af5676620c6c07f64efc97c9680a4",
+    "report": "docs/delivery/source-atom-results-20261012.md",
+    "schemaCorrection": {
+      "pr": 44,
+      "status": "merged",
+      "mergeCommit": "f4358ba9171528e29430baf0afd851b7501d549c",
+      "deployment": "dpl_6n7hMMLSowuFtSQ5mbhqpWoL9yGa",
+      "state": "READY"
+    },
+    "verification": "Corrected source: both full local suites1231 total/1230 pass/zero fail/one existing skip; typecheck/build/offline advisory diagnostic passed. Exact-head push38169074835 and PR38169078446 succeeded including dependency audit. Setting persistence/default-off and desktop/390px reading acceptance passed in queue-paused isolated Postgres. No migration/dependency changes.",
+    "evaluation": {
+      "completedRoots": 3,
+      "completedChildren": 3,
+      "paidCalls": 59,
+      "releasedSchemaRejectionUsd": 0,
+      "newModelUsd": 1.348871826,
+      "taskUsd": 4.481129197,
+      "taskCapUsd": 5,
+      "unsettledCalls": 0,
+      "sourceAcquisitionIncluded": false,
+      "quality": "Unblinded author review of inherited25 material composites; no financial-truth or accuracy claim.",
+      "defaultPromoted": false
+    }
   }
 }

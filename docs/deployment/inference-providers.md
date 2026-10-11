@@ -178,9 +178,10 @@ saved critique stage; completed paid calls were retained. Different output,
 billed token counts and audit work prevent a same-usage interpretation. Lower
 catalog rates did not produce whole-workflow savings here. Compatibility is
 verified on this bounded workflow; fidelity, speed and cost parity are not.
-The approved default remains Cheaper Inference with balance routing and the
-same models. The original providers are selectable. For latency-sensitive use,
-the earlier Google/OpenRouter route is the stronger observed baseline; wider
+At the time of that cohort, Cheaper Inference used balance routing with the
+same models. The user's later rollback restored Google/OpenRouter as the
+defaults, as documented above. Cheaper Inference remains selectable. The
+Google/OpenRouter route is the stronger observed latency baseline; wider
 representative evidence is needed before claiming routine savings.
 
 No error/fatal runtime logs were returned for the repair deployment between
