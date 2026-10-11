@@ -2594,10 +2594,11 @@
   "nativeProviderDefaults20261011": {
     "status": "in-review",
     "pr": 40,
-    "note": "User requested restoration of the original provider mix. Product defaults use Google for Gemini and OpenRouter for independent Claude stages. Live workspace changed only provider/model alias fields; audits, prompts, Jev and budgets preserved. Verification and same-video repeat pending.",
+    "note": "User requested restoration of the original provider mix. Product defaults use Google for Gemini and OpenRouter for independent Claude stages. Live workspace changed only provider/model alias fields; audits, prompts, Jev and budgets preserved. Same-video repeat completed with every audit enabled: 49 settled calls, $0.951700502, no unknowns or new holds. Checked roots76.118/37.809/77.468s; briefs140.848/85.015/181.026s. PL/PLTR source hashes match; TMUS changed from ASR to captions. Detailed quality findings and ordered token/quality checklist recorded. Both local full suites passed: 1112 tests, zero failures, one existing skip each; focused routing/replay/default tests40/40, ledger9/9, typecheck/build/offline advisory diagnostic passed. Final GitHub checks pending.",
     "files": [
       "src/features/youtube-intelligence/settings.ts",
-      "docs/deployment/inference-providers.md"
+      "docs/deployment/inference-providers.md",
+      "docs/delivery/native-provider-repeat-20261011.md"
     ],
     "tests": [
       "tests/settings.test.ts",
