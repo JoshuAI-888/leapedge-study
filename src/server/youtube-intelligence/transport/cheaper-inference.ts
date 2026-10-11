@@ -44,6 +44,41 @@ export function fromCheaperInference(data: unknown, expectedModel: string): Mode
   };
 }
 export type CheaperInferenceOptions = { apiKey?: string; timeoutMs?: number; catalogueTimeoutMs?: number; catalogOptions?: Omit<CheaperInferenceCatalogOptions, "apiKey">; ranking?: "balance" | "discount" | "speed" };
+/** Legacy Gemini schemas express the application's nullable domain with
+ * nullable:true. Chat completions consumes standard JSON Schema instead.
+ * Convert schema positions only: enum/default/examples may contain user data
+ * named nullable. The original schema remains the paid-replay fingerprint. */
+function standardResponseSchema(schema: Record<string, unknown>): Record<string, unknown> {
+  const maps = new Set(["properties", "patternProperties", "$defs", "definitions", "dependentSchemas"]);
+  const arrays = new Set(["anyOf", "allOf", "oneOf", "prefixItems"]);
+  const singles = new Set(["items", "additionalItems", "additionalProperties", "unevaluatedItems", "unevaluatedProperties", "contains", "propertyNames", "not", "if", "then", "else", "contentSchema"]);
+  function visit(value: unknown): unknown {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+    const source = value as Record<string, unknown>;
+    const converted = Object.fromEntries(Object.entries(source).filter(([key]) => key !== "nullable").map(([key, child]) => {
+      if (maps.has(key) && child && typeof child === "object" && !Array.isArray(child))
+        return [key, Object.fromEntries(Object.entries(child).map(([name, entry]) => [name, visit(entry)]))];
+      if (arrays.has(key) && Array.isArray(child)) return [key, child.map(visit)];
+      if (singles.has(key)) return [key, Array.isArray(child) ? child.map(visit) : visit(child)];
+      if (key === "dependencies" && child && typeof child === "object" && !Array.isArray(child))
+        return [key, Object.fromEntries(Object.entries(child).map(([name, entry]) => [name, Array.isArray(entry) ? entry : visit(entry)]))];
+      return [key, child];
+    }));
+    // Some serving providers honor an explicit numeric enum more reliably
+    // than integer min/max. Preserve every original constraint and fingerprint;
+    // listing an equivalent small domain here cannot clamp/coerce the output.
+    if (converted.type === "integer" && converted.enum === undefined &&
+      Number.isSafeInteger(converted.minimum) && Number.isSafeInteger(converted.maximum)) {
+      const min = converted.minimum as number, max = converted.maximum as number;
+      if (max >= min && max - min < 16)
+        converted.enum = Array.from({ length: max - min + 1 }, (_, index) => min + index);
+    }
+    // Wrap the entire non-null branch, preserving enum/const and composition
+    // rather than dropping constraints or mixing null into only a nested type.
+    return source.nullable === true ? { anyOf: [converted, { type: "null" }] } : converted;
+  }
+  return visit(structuredClone(schema)) as Record<string, unknown>;
+}
 export class CheaperInferenceTransport implements ModelTransport {
   readonly name = "cheaper-inference";
   readonly family = "cheaper-inference" as const;
@@ -78,7 +113,7 @@ export class CheaperInferenceTransport implements ModelTransport {
       // Sonnet 5 rejects sampling temperature; omit controls on reasoning-only models as well.
       ...(/^(?:claude-sonnet-5|claude-opus-5|o[134](?:-|$)|gpt-.*-pro$)/.test(model) ? {} : { temperature: r.temperature }),
       ...(r.reasoningEffort ? { reasoning: { effort: r.reasoningEffort } } : {}),
-      ...(r.responseSchema ? { response_format: { type: "json_schema", json_schema: { name: r.stage.replace(/[^A-Za-z0-9_-]/g, "_"), schema: r.responseSchema, strict: true } } } : {}),
+      ...(r.responseSchema ? { response_format: { type: "json_schema", json_schema: { name: r.stage.replace(/[^A-Za-z0-9_-]/g, "_"), schema: standardResponseSchema(r.responseSchema), strict: true } } } : {}),
     };
     if (Buffer.byteLength(JSON.stringify(body), "utf8") > 4_500_000) throw Error("Cheaper Inference request exceeds the 4.5 MB body limit.");
     return body;

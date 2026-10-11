@@ -1,6 +1,13 @@
 # Inference providers
 
-Approved 11 October 2026; implementation tracked in PR 38.
+Approved 11 October 2026; implementation merged in PR 38.
+Production release: `9f218fcd87c0bc86dbd5c85cc9bee4e60d3d3122`,
+Vercel `dpl_JD6JTyGYamgYFdYvyWwh7LTkFo4E`, ready 11 October 2026.
+The live workspace was switched and persisted with balanced routing.
+A database comparison confirmed only provider choices, exact model aliases and
+the new routing preference changed; audio, prompts, budgets and other settings
+were preserved. Both final feature-head GitHub verification runs passed
+(38121401282 and 38121398472).
 
 The product defaults use Cheaper Inference for text extraction/synthesis,
 independent critique, context and translation. The models remain Gemini 3.8 Flash,
@@ -83,10 +90,55 @@ was 27.5% lower because billed token counts differed. The same model and input
 do not guarantee identical token accounting. This proves bounded prompt/schema
 compatibility, not a full workflow fidelity or completion-time benchmark.
 
+A further small Gemini pair used the app’s explicit low reasoning setting:
+CI took 24.610 seconds/$0.000135 versus Google 2.516 seconds/$0.00022275.
+Both preserved the source meaning and negations; Google used a different stance
+wording from the literal fixture. The CI request also carried a 35% minimum
+discount constraint, so it is not a latency measurement of the unconstrained
+production balance route. No speed-equivalence claim is supported.
+
 The catalog's three configured models advertised 35% lower token rates. Repricing
 two completed workflows at identical usage gave $0.62924 versus $0.96740,
 including unchanged Jev fees (34.96% lower). This is a counterfactual, excludes
 other platform costs and Google audio, and does not guarantee realised savings.
+
+## Hosted workflow compatibility follow-up
+
+The first hosted same-video check completed extraction: run
+`0b294502-7de6-48da-b513-adbb44583af7`, 13 settled calls, $0.182394, 200.745s,
+versus the previous native/Router run, $0.22687, 57.13s. The source hash matched
+and both retained two accepted ideas, though stance/conviction wording differed.
+The automatic brief `638652cc-762e-4fa0-8ce3-8bdf7a0072d8` failed validation:
+Gemini returned materiality scores above the allowed 0–3 range. Its $0.01496
+charge and failed response remain retained; no blind retry was made.
+The extraction output also used empty option metadata where the native run
+returned null. Legacy Google-style nullable schemas need standard JSON Schema
+translation at the new transport boundary. PR 39 converts those schema positions
+to explicit null alternatives and lists the equivalent choices for small bounded
+integers. This happens only during CI request serialization: original schemas,
+validation domains, prompts and paid-response fingerprints remain unchanged.
+Invalid returned scores are still rejected, never clamped. The first hosted
+check does not establish whole-workflow quality parity.
+
+A bounded recheck of the exact retained research prompt/payload through the
+corrected serialization passed: 11 sentences, every materiality score in 0–3,
+settled $0.015456, 54.390 seconds. No retry or database write was used in this
+probe. The serving model/provider can still ignore or reject structured-output
+parameters; strict output is not an unconditional provider guarantee. App-level
+validation and independent evidence checks remain necessary.
+
+A second bounded check used extraction chunk 0's retained source and the
+production v10-pm1 prompt with the corrected nullable schema. It returned an
+Ondas claim with `option`, `owner_name` and `horizon_en` all null, rather than
+invented option metadata. The exact charge was $0.013775 and elapsed time
+36.377 seconds. Only the output cap was reduced from 24,000 to 14,721 tokens
+to keep the conservative reservation below $0.10; the response ended normally.
+Together the two schema probes cost $0.029231. Neither wrote to the database or
+retried a paid call. They prove bounded compatibility, not whole-workflow parity.
+
+The repair passed both full repository suites: 1,112 tests passed, zero failed,
+one existing skip each. Typecheck, build and advisory offline diagnostic passed.
+The focused transport/schema suite passed 21 tests.
 
 ## Operational switch and rollback
 

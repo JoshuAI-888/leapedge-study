@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { json, stubFetch } from "./helpers/fetch-stub.ts";
 import { CheaperInferenceTransport, fromCheaperInference, settledCheaperInferenceCost } from "../src/server/youtube-intelligence/transport/cheaper-inference.ts";
 import { clearCheaperInferenceCatalogCache, getCheaperInferenceCatalog, parseCheaperInferenceCatalog } from "../src/server/youtube-intelligence/transport/cheaper-inference-catalog.ts";
+import { callFieldsExtractionResponseSchema, structuredExtractionResponseSchema } from "../src/server/youtube-intelligence/schemas/extraction.ts";
 
 function entry(id = "gemini-3.8-flash") {
   return {
@@ -148,6 +149,63 @@ test("routing defaults to balance and accepts explicit discount or speed without
     assert.equal(body.ranking, ranking); assert.equal(body.model, "claude-sonnet-5");
   }
   assert.throws(() => new CheaperInferenceTransport({ ranking: "invalid" as "balance" }).body(request));
+});
+test("extraction nulls remain an explicit choice in the standard JSON Schema request without changing replay inputs", () => {
+  const original = structuredClone(callFieldsExtractionResponseSchema);
+  for (const schema of [structuredExtractionResponseSchema, callFieldsExtractionResponseSchema]) {
+    const body = new CheaperInferenceTransport().body({ ...request, responseSchema: schema });
+    const sent = body.response_format!.json_schema.schema as any;
+    const fields = sent.properties.claims.items.properties;
+    assert.deepEqual(fields.ticker, { anyOf: [{ type: "string" }, { type: "null" }] });
+    assert.deepEqual(fields.option.anyOf[1], { type: "null" });
+    assert.deepEqual(fields.option.anyOf[0].required, ["right", "side", "strike_original", "expiry_original", "premium_original"]);
+    assert.deepEqual(fields.option.anyOf[0].properties.strike_original, { anyOf: [{ type: "string" }, { type: "null" }] });
+    if (fields.macro_theme) {
+      assert.deepEqual(fields.macro_theme.anyOf[1], { type: "null" });
+      assert.deepEqual(fields.macro_theme.anyOf[0].enum, original.properties.claims.items.properties.macro_theme.enum);
+    }
+  }
+  assert.deepEqual(callFieldsExtractionResponseSchema, original, "provider conversion must not mutate original request/fingerprint schemas");
+});
+test("nullable conversion preserves composition, existing types, constraints and data named nullable", () => {
+  const value = { nullable: true, type: "object" };
+  const schema = {
+    type: "object", properties: {
+      nullable: { type: "boolean" },
+      choice: { nullable: true, anyOf: [{ type: "string", enum: ["x"] }, { type: "integer", minimum: 2 }] },
+      alreadyNullable: { nullable: true, type: ["string", "null"], enum: ["x", null] },
+      fixed: { type: "string", nullable: false, const: "x", default: value, examples: [value] },
+    },
+    $defs: { row: { type: "array", items: { nullable: true, type: "integer", enum: [0, 1] }, minItems: 1 } },
+    additionalProperties: { type: "string", nullable: true },
+    allOf: [{ properties: { constrained: { type: "string", nullable: true, minLength: 1 } } }],
+  };
+  const original = structuredClone(schema);
+  const body = new CheaperInferenceTransport().body({ ...request, responseSchema: schema });
+  const sent = body.response_format!.json_schema.schema as any;
+  assert.deepEqual(sent.properties.choice, { anyOf: [{ anyOf: original.properties.choice.anyOf }, { type: "null" }] });
+  assert.deepEqual(sent.properties.alreadyNullable, { anyOf: [{ type: ["string", "null"], enum: ["x", null] }, { type: "null" }] });
+  assert.deepEqual(sent.properties.fixed, { type: "string", const: "x", default: value, examples: [value] });
+  assert.deepEqual(sent.properties.nullable, { type: "boolean" });
+  assert.deepEqual(sent.$defs.row.items, { anyOf: [{ type: "integer", enum: [0, 1] }, { type: "null" }] });
+  assert.equal(sent.$defs.row.minItems, 1);
+  assert.deepEqual(sent.additionalProperties, { anyOf: [{ type: "string" }, { type: "null" }] });
+  assert.deepEqual(sent.allOf[0].properties.constrained, { anyOf: [{ type: "string", minLength: 1 }, { type: "null" }] });
+  assert.deepEqual(schema, original);
+});
+test("only small inclusive safe integer ranges gain an equivalent enum without dropping other constraints", () => {
+  const schema = { type: "object", properties: {
+    bounded: { type: "integer", minimum: -1, maximum: 2, multipleOf: 2, exclusiveMinimum: -1 },
+    large: { type: "integer", minimum: 0, maximum: 100 },
+    fraction: { type: "number", minimum: 0, maximum: 3 },
+    existing: { type: "integer", minimum: 0, maximum: 3, enum: [1, 3] },
+    unsafe: { type: "integer", minimum: Number.MAX_SAFE_INTEGER, maximum: Number.MAX_SAFE_INTEGER + 1 },
+  } };
+  const original = structuredClone(schema);
+  const sent = new CheaperInferenceTransport().body({ ...request, responseSchema: schema }).response_format!.json_schema.schema as any;
+  assert.deepEqual(sent.properties.bounded, { ...original.properties.bounded, enum: [-1, 0, 1, 2] });
+  for (const key of ["large", "fraction", "existing", "unsafe"]) assert.deepEqual(sent.properties[key], original.properties[key as keyof typeof original.properties]);
+  assert.deepEqual(schema, original);
 });
 test("audio/video, foreign caches, unavailable models and oversized bodies are refused before paid traffic", async () => {
   const stub = stubFetch([{ url: "/v1/models", respond: json(catalog()) }]);
