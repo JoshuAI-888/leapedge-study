@@ -1691,7 +1691,7 @@ export async function step(run: Run, settings?: TeamPreferencesData, hooks: {che
           (chunks.length === 1 ? "critique" : `critique-chunk-${index}`) +
             (run.output.auditRecoveryAttempts ? `-repair-${run.output.auditRecoveryAttempts}` : ""),
           model,
-          prompts.critique + "\n" + CRITIQUE_BATCH_FORMAT + (run.input.publicationSafeguardsVersion==='atomic-publication.v1' ? '\nAudit every separate source_ranges/citedSourceRanges passage including later qualifications. The first navigation pointer alone is not complete support; never invent text across gaps.' : ''),
+          prompts.critique + "\n" + CRITIQUE_BATCH_FORMAT + (atoms ? " Independently check every source_atom actor, predicate, object, kind, quantity/unit/period/basis and linked conditions/opposition against its copied original quotes. Reject tuples joining different actors, periods or stances, or dropping meaning-changing qualifiers, even if the thesis alone sounds plausible. Atom metadata remains a proposal, not verification." : "") + (run.input.publicationSafeguardsVersion==='atomic-publication.v1' ? '\nAudit every separate source_ranges/citedSourceRanges passage including later qualifications. The first navigation pointer alone is not complete support; never invent text across gaps.' : ''),
           critiquePayload({
             claims: batchClaims.map(({ item, kind }) => ({
               id: item.id,

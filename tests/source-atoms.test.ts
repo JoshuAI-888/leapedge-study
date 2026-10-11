@@ -52,3 +52,11 @@ test('an unsupported historical prompt is rejected before atomisation can buy a 
  const {step}=await import('../src/server/youtube-intelligence/pipeline.ts');
  await assert.rejects(()=>step({input:{sourceAtomPlan:{version:'source-atom-plan.v1'},promptSnapshot:{pointerEvidence:false}},output:{},stage:'synthesis'} as never),/requires a frozen pointer-evidence prompt; no paid call made/);
 });
+
+test('initial and recall deduplication cannot collapse differing atom attribution or conditions',async()=>{
+ const {uniqueClaims}=await import('../src/features/youtube-intelligence/chunking.ts');
+ const a=Claim.parse({thesis_en:'Planet reports a metric.',instrument_as_spoken:'Planet',ticker:null,ticker_explicit:false,stance:'neutral',horizon_en:null,conditions_en:[],creator_conviction:'unspecified',risks_en:[],levels:[],source_atom:atom(),evidence:[{segment_id:'a',quote_translation_en:'',quote_original:'Planet Q2 adjusted EBITDA 13.9 million, not net profit, if earnings hold.'}]});
+ const b={...a,source_atom:{...a.source_atom!,conditionsOriginal:['if earnings hold']}};
+ assert.equal(uniqueClaims([a,b]).length,2);
+ assert.equal(uniqueClaims([a,structuredClone(a)]).length,1);
+});

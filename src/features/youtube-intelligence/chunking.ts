@@ -71,6 +71,7 @@ export function uniqueClaims(claims: ClaimData[]) {
       c.conditions_en,
       c.risks_en,
       c.levels,
+      ...(c.source_atom ? [c.source_atom] : []),
       c.evidence
         .map((e) => [
           e.segment_id,

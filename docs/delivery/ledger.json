@@ -2699,7 +2699,7 @@
   },
   "sourceAtoms20261012": {
     "status": "in-review",
-    "note": "Implemented in approved order with a separate frozen opt-in, exact original-field checks, lossless atom/quote dictionaries and bounded faithful audit context. Native provider/model defaults and independent Claude/Jev checks retained. Initial five checks passed (1228 tests, 1227 pass, one skip); final source freeze is being rechecked. Desktop setting save/reload validated in isolated Postgres. Three-candidate hosted rerun pending under remaining US$1.867742629.",
+    "note": "Implemented in approved order. Review also guards root deduplication against collapsing different atom metadata and explicitly asks the independent critic to check each atomic relation. Original provider/model defaults and Claude/Jev checks retained. Five local checks and desktop/mobile persistence passed before this final regression fix; final source checks and hosted same-source rerun pending.",
     "files": [
       "src/features/youtube-intelligence/source-atoms.ts",
       "src/server/youtube-intelligence/source-atom-index.ts",
@@ -2713,7 +2713,8 @@
       "src/server/youtube-intelligence/schemas/source-atoms.ts",
       "src/server/youtube-intelligence/faithful-audit.ts",
       "src/server/youtube-intelligence/efficiency.ts",
-      "scripts/benchmark-hosted-models.ts"
+      "scripts/benchmark-hosted-models.ts",
+      "src/features/youtube-intelligence/chunking.ts"
     ],
     "tests": [
       "tests/source-atoms.test.ts",
