@@ -47,6 +47,9 @@ export function createHostedCampaign(raw:unknown,maxUsd:number):CampaignData{
   const order=orders[index];
   for(const variant of order){
    const input=controlledInput(originalInput,variant);
+   // Normal analyst/readability surfaces accept source roots with no task.
+   // Hosted experiment identity belongs in metadata, not dispatch/UI task type.
+   delete input.task;
    // A control must not retain the previous run's efficiency opt-in either.
    if(variant==='baseline')delete input.efficiencyVersion;
    const ordinal=arms.length+1,runId=randomUUID();
@@ -68,6 +71,7 @@ function validateCampaign(raw:unknown){
  const campaign=Campaign.parse(raw);
  if(new Set(campaign.arms.map(a=>a.runId)).size!==9)throw Error('Campaign run IDs must be unique.');
  for(const [i,arm] of campaign.arms.entries()){
+  if(arm.input.task!==undefined)throw Error('Hosted source roots must omit task for normal analyst-view behavior.');
   if(arm.ordinal!==i+1||arm.input.benchmarkCampaign.id!==campaign.id||arm.input.benchmarkCampaign.maxUsd!==campaign.maxUsd)throw Error('Campaign identity/cap/ordinal mismatch.');
   if(auditResponseHash(arm.output.source)!==arm.sourceBytesHash||arm.output.sourceHash!==arm.sourceHash)throw Error('Campaign frozen source integrity mismatch.');
  }
@@ -84,10 +88,10 @@ SELECT pg_advisory_xact_lock(hashtextextended($1,0));
 WITH admission AS (
  SELECT 1 WHERE
   NOT EXISTS (SELECT 1 FROM yi_runs WHERE id=$2)
-  AND (SELECT COUNT(*) FROM yi_runs WHERE (input::jsonb)->'benchmarkCampaign'->>'id'=$3 AND (input::jsonb)->>'task'='source-model-benchmark')=$14
+  AND (SELECT COUNT(*) FROM yi_runs WHERE (input::jsonb)->'benchmarkCampaign'->>'id'=$3 AND (input::jsonb)->'benchmarkExperiment'->>'version'='hosted-source-fixed.v1')=$14
   AND NOT EXISTS (SELECT 1 FROM yi_runs r WHERE (r.input::jsonb)->'benchmarkCampaign'->>'id'=$3 AND r.status<>'completed')
   AND NOT EXISTS (SELECT 1 FROM yi_calls c JOIN yi_runs r ON r.id=c.run_id WHERE (r.input::jsonb)->'benchmarkCampaign'->>'id'=$3 AND c.status NOT IN ('completed','released'))
-  AND NOT EXISTS (SELECT 1 FROM yi_runs r WHERE (r.input::jsonb)->'benchmarkCampaign'->>'id'=$3 AND (r.input::jsonb)->>'task'='source-model-benchmark'
+  AND NOT EXISTS (SELECT 1 FROM yi_runs r WHERE (r.input::jsonb)->'benchmarkCampaign'->>'id'=$3 AND (r.input::jsonb)->'benchmarkExperiment'->>'version'='hosted-source-fixed.v1'
    AND NOT EXISTS (SELECT 1 FROM yi_runs child WHERE (child.input::jsonb)->>'task'='research-brief' AND (child.input::jsonb)->'snapshot'->>'sourceRunId'=r.id
     AND (child.input::jsonb)->'benchmarkCampaign'->>'id'=$3 AND child.status='completed'))
 )

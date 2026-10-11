@@ -2609,7 +2609,7 @@
   "auditedSpeed20261012": {
     "status": "in-review",
     "pr": 41,
-    "note": "Approved ordered source-fidelity, publication and latency improvements implemented behind an explicit frozen execution plan. Independent Claude/Jev audits retained. Original native provider defaults preserved. Matched nine-arm source-fixed hosted benchmark includes Haiku 5.5, capped atomically at US$5 across root and automatic briefs. Live benchmark and production acceptance pending.",
+    "note": "Approved ordered source-fidelity, publication and latency improvements implemented behind an explicit frozen execution plan. Independent Claude/Jev audits retained. Original native provider defaults preserved. Matched nine-arm source-fixed hosted benchmark includes Haiku 5.5, capped atomically at US$5 across root and automatic briefs. Hosted roots use normal source dispatch with experiment identity in metadata, so checked findings and analyst views are exercised without a special task bypass. Live benchmark and production acceptance pending.",
     "files": [
       "docs/delivery/audited-speed-plan-20261012.md",
       "scripts/audited-postgres-check.ts",

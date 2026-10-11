@@ -9,6 +9,7 @@ test('hosted campaign freezes nine source arms with one shared bounded cap and f
  assert.equal(campaign.arms.length,9);assert.equal(new Set(campaign.arms.map(x=>x.runId)).size,9);
  assert.ok(campaign.arms.every(x=>x.input.benchmarkCampaign.id===campaign.id&&x.input.benchmarkCampaign.maxUsd===.75));
  assert.equal(campaign.arms[0].createdAt,original[0].createdAt);assert.equal(campaign.arms[0].input.origin,'manual');
+ assert.ok(campaign.arms.every(a=>a.input.task===undefined));
  assert.equal(campaign.arms[0].input.auditedExecutionPlan,undefined);assert.ok(campaign.arms[1].input.auditedExecutionPlan);
  assert.equal(campaign.arms[2].input.criticModel,'anthropic/claude-haiku-5.5');assert.deepEqual(original,roots());
  assert.deepEqual(campaign.arms.map(a=>a.variant),['baseline','candidate','haiku','candidate','haiku','baseline','haiku','baseline','candidate']);
@@ -22,7 +23,9 @@ test('hosted staging contains exactly one queued synthesis root and analyze job 
  assert.ok(staged.sql.includes("'analyze'"));assert.ok(staged.parameters.includes(`analyze:${arm.runId}`));
  assert.ok(!staged.sql.includes('If revenues grow'));assert.ok(staged.parameters.some(x=>typeof x==='string'&&x.includes('If revenues grow')));
  assert.ok(staged.sql.includes('ON CONFLICT'));assert.ok(!staged.sql.includes('UPDATE yi_runs'));
+ assert.ok(staged.sql.includes("->'benchmarkExperiment'->>'version'='hosted-source-fixed.v1'"));assert.ok(!staged.sql.includes("->>'task'='source-model-benchmark'"));
  assert.throws(()=>stageHostedArm(campaign,0));assert.throws(()=>stageHostedArm(campaign,10));
+ const oldTaskManifest=structuredClone(campaign);oldTaskManifest.arms[0].input.task='source-model-benchmark';assert.throws(()=>stageHostedArm(oldTaskManifest,1),/must omit task/);
 });
 test('remote summary scopes descendants and raw records while unknown holds prevent a settled total',()=>{
  const campaign=createHostedCampaign(roots(),1),arm=campaign.arms[0];
