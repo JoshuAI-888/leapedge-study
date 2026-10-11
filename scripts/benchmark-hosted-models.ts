@@ -56,7 +56,9 @@ export function createHostedCampaign(raw:unknown,maxUsd:number):CampaignData{
    const frozen={source:structuredClone(output.source),sourceHash,metadata:structuredClone(output.metadata),coverage:structuredClone(output.coverage)};
    const team=TeamPreferences.parse(input.teamPreferencesSnapshot);
    arms.push({ordinal,runId,variant,videoId,originalSourceRunId:sourceRunId,model:z.string().parse(root.model??team.models.extraction.id),
-    title:`Benchmark ${variant} · ${String(root.title??videoId)}`,createdAt,sourceHash,sourceBytesHash:auditResponseHash(frozen.source),input,output:frozen});
+    // queueSourceBrief copies this title into the synthesis snapshot. Keep it
+    // identical across treatments; experiment identity stays in input metadata.
+    title:String(root.title??videoId),createdAt,sourceHash,sourceBytesHash:auditResponseHash(frozen.source),input,output:frozen});
   }
  }
  return Campaign.parse({version:'hosted-model-benchmark.v1',id,maxUsd,generatedAt:new Date().toISOString(),sourceAcquisitionIncluded:false,arms});

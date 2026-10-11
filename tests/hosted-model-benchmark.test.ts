@@ -12,6 +12,7 @@ test('hosted campaign freezes nine source arms with one shared bounded cap and f
  assert.equal(campaign.arms[0].input.auditedExecutionPlan,undefined);assert.ok(campaign.arms[1].input.auditedExecutionPlan);
  assert.equal(campaign.arms[2].input.criticModel,'anthropic/claude-haiku-5.5');assert.deepEqual(original,roots());
  assert.deepEqual(campaign.arms.map(a=>a.variant),['baseline','candidate','haiku','candidate','haiku','baseline','haiku','baseline','candidate']);
+ for(const root of original)assert.deepEqual(campaign.arms.filter(a=>a.videoId===root.videoId).map(a=>a.title),[root.title,root.title,root.title]);
  assert.throws(()=>createHostedCampaign(original,5.1));assert.throws(()=>createHostedCampaign(original.slice(1),1));
 });
 test('hosted staging contains exactly one queued synthesis root and analyze job with parameterized source',()=>{
