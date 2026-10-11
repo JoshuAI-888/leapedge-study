@@ -1,4 +1,5 @@
 import { financialBasisIssue, semanticBasisIssues } from "./semantic-basis.ts";
+import {SourceAtom} from "./source-atoms.ts";
 import {sourceAttributionCheck} from './research-attribution.ts';
 import {sourceNumericCheck, numericalSentenceDisposition, sourceQuantityProseIssues} from './research-numeric-check.ts';
 import { EvidenceCoverage } from "./research-readiness.ts";
@@ -49,6 +50,7 @@ export function extractionContext(run: Run, chunk: SourceData["segments"]) {
   };
 }
 export const EvidenceRecord = z.object({
+  source_atom: SourceAtom.optional(),
   id: z.string(),
   kind: z.enum(["creator_call", "research_context"]),
   summary: z.string(),
@@ -80,6 +82,7 @@ export function evidenceInventory(run: Run): EvidenceRecordData[] {
       .map((c) =>
         EvidenceRecord.parse({
           id: c.id,
+          ...(c.claim.source_atom ? {source_atom:c.claim.source_atom} : {}),
           kind: key === "claims" ? "creator_call" : "research_context",
           summary: c.claim.thesis_en,
           instrument: c.claim.instrument_as_spoken ?? null,

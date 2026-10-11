@@ -74,3 +74,21 @@ test('first checked finding uses fenced publication time rather than critique or
  assert.equal(summary.arms[1].firstCheckedSeconds,null);assert.equal(summary.arms[1].firstCheckedTimingBasis,'unavailable');
  assert.ok(summary.arms[1].issues.some(x=>x.includes('publication timestamp precedes')));assert.equal(summary.arms[0].firstCheckedSeconds,null);
 });
+
+test('atom campaign buys only three fresh native candidates with the remaining cap and identical frozen sources',async()=>{
+ const {createAtomCampaign}=await import('../scripts/benchmark-hosted-models.ts');
+ const original=roots(),campaign=createAtomCampaign(original,1.867742629);
+ assert.equal(campaign.arms.length,3);assert.equal(campaign.maxUsd,1.867742629);
+ for(const [i,arm] of campaign.arms.entries()){
+  assert.equal(arm.variant,'sourceAtoms');assert.equal(arm.ordinal,i+1);
+  assert.deepEqual(arm.output.source,original[i].output.source);
+  assert.equal(arm.input.auditedExecutionPlan,undefined);
+  assert.equal((arm.input.sourceAtomPlan as {version:string}).version,'source-atom-plan.v1');
+  assert.deepEqual(TeamPreferences.parse(arm.input.teamPreferencesSnapshot).models,TeamPreferences.parse(original[i].input.teamPreferencesSnapshot).models);
+  assert.equal(arm.input.criticModel,undefined);
+  assert.equal(arm.input.benchmarkCampaign.maxUsd,1.867742629);
+  assert.equal(stageHostedArm(campaign,i+1).parameters[13],i);
+ }
+ assert.throws(()=>stageHostedArm(campaign,4));
+ assert.equal(summarizeHostedCampaign(campaign,{runs:[]}).arms.length,3);
+});

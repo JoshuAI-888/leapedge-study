@@ -1,3 +1,4 @@
+import {SourceAtom} from "./source-atoms.ts";
 import { z } from "zod";
 import { createHash } from "node:crypto";
 import { levelQualifierIssues } from "./level-qualifiers.ts";
@@ -78,6 +79,7 @@ export const ACTIONS = [
 /** Whose view a claim is: the creator's own, a guest's, or a third party the creator reports. */
 export const OWNERS = ["creator", "guest", "third_party"] as const;
 export const Claim = z.object({
+  source_atom: SourceAtom.optional(),
   thesis_en: englishOutput.refine((s) => s.trim().length > 0),
   instrument_as_spoken: z.string().nullable(),
   ticker: z.string().nullable(),
