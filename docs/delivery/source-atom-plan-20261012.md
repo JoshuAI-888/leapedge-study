@@ -1,0 +1,13 @@
+# Source atom optimisation — approved 12 October 2026
+
+Implement in order:
+
+1. A frozen opt-in plan adds typed atomic research-context proposals to the existing pointer extraction and recall requests. Each proposal carries one independently assessable proposition, explicit actor/object, original quantities/units/period/basis, conditions/opposition and copied source ranges. Null means unknown; no numeric restoration or guessed actor. Exact original excerpts are structurally checked, and the ordinary cross-family root critic still checks every eligible proposal. No additional atomisation model stage.
+2. Deduplicate only exactly identical accepted proposition metadata, keeping all original evidence IDs, independently audited provenance and distinct complete quotes. A lossless dictionary is expanded and integrity checked before use. If encoded context is larger, use the original payload. No fuzzy merge of actors, periods, conditions, ownership or opposing clauses.
+3. Use exact quote dictionaries in faithful audits and plan bounded batches by actual payload duplication and peak work. Keep every verdict target, unique coverage owner and all other citing statements. Only newly changed repair statements require new verdicts; prior verdicts remain immutable. No increase to global concurrency, retry limits or budget.
+
+Original Google native/Sonnet defaults and independent Claude/Jev checks remain. Historical request bytes and frozen benchmark outputs remain unchanged. An absent plan never opts in. Tests first; full suites, typecheck, build, offline advisory diagnostic and desktop/mobile reading acceptance before release. No dependencies or migrations.
+
+Comparison uses the same retained captions/titles/as-of dates for T-Mobile (_mEvVWGfmjU), Planet Labs (Mepjkm_0ns4), and Palantir (fSx-Ho8mi18). Save requests, raw responses, all charges, timings, drafts, rejected/accepted output, and source coverage. The previous US$5 task cap remains; US$3.132257371 was spent, leaving at most US$1.867742629. Use fresh candidate runs against frozen native baselines within that remaining ceiling. Do not buy new LeapEdge credits or present the earlier polling bounds as an end-to-end stopwatch win. Additional spend requires explicit authorisation if the hard ceiling prevents completing the cohort.
+
+Quality checks retain actor/debt attribution, personal stance, original ambiguous quantities, EBITDA versus net profit, backlog cancellation, per-share dilution, retention persistence, explicit ownership and conditional upside/next tests. Caption fidelity is not independently verified financial truth. Promotion depends on observed cost/latency and publication quality; token reduction alone is not success.

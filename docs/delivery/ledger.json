@@ -2696,5 +2696,21 @@
     ],
     "pr": 42,
     "verification": "Both full local suites passed: 1208 pass, zero failures, one existing skip each. Focused reading/attribution checks 38/38 and empty-repair/changed-atom/unknown-payment checks 23/23 passed. Final typecheck, production build and offline advisory diagnostic passed. Final desktop copy/heading/section acceptance and 390px mobile with 390px content width passed using retained results in a queue-paused isolated database. No dependency or migration changes. Final-head push 38164602631 and PR 38164606117 checks succeeded on bd2ca3c09dbfcace9bf72c3bd5c0dd569d2bc083, including 1210 tests/1209 pass/zero fail/one existing skip, typecheck, build, offline advisory diagnostic and dependency audit. PR42 merged and exact source production SHA verified READY."
+  },
+  "sourceAtoms20261012": {
+    "status": "todo",
+    "note": "User approved atomisation, deduplication and reduced repeated audit context in that order; independent Claude/Jev checks and native provider/model defaults retained. Implementation and same-source rerun pending.",
+    "files": [
+      "src/features/youtube-intelligence/source-atoms.ts",
+      "src/server/youtube-intelligence/source-atom-index.ts",
+      "src/server/youtube-intelligence/compact-faithful-audit.ts",
+      "src/server/youtube-intelligence/pipeline.ts",
+      "src/server/youtube-intelligence/research-pipeline.ts"
+    ],
+    "tests": [
+      "tests/source-atoms.test.ts",
+      "tests/source-atom-index.test.ts",
+      "tests/compact-faithful-audit.test.ts"
+    ]
   }
 }
