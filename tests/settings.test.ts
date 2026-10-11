@@ -18,9 +18,9 @@ import {
 } from "../src/server/youtube-intelligence/env.ts";
 import { freshDatabase } from "./helpers/db.ts";
 
-test("Team and account defaults parse from an empty object and match spec 6.2 / 6.3", () => {
+test("Text defaults prefer Cheaper Inference while preserving current models and native audio", () => {
   const team = teamDefaults();
-  assert.equal(team.transport.default, "google-native");
+  assert.equal(team.transport.default, "cheaper-inference");
   assert.equal(team.transport.fallbackToOpenRouter, false);
   assert.equal(team.transport.allowOpenRouterInLab, true);
   assert.deepEqual(team.models.transcription, {
@@ -29,7 +29,7 @@ test("Team and account defaults parse from an empty object and match spec 6.2 / 
   });
   assert.deepEqual(team.models.critique, {
     id: "anthropic/claude-sonnet-5",
-    transport: "openrouter",
+    transport: "cheaper-inference",
     requireDifferentFamily: true,
     thinkingBudget: "low",
   });
@@ -431,4 +431,17 @@ test("Store: with no old document the team and account documents start from the 
   assert.deepEqual(await R.accountPreferences(), AccountPreferences.parse({}));
   const resolved = await R.resolvedAccountPreferences();
   assert.equal(resolved.benchmark, "SPY");
+});
+
+ test("Cheaper Inference is a text-only route and readiness requires the selected provider", () => {
+  const team = teamDefaults();
+  for (const key of ["extraction", "critique", "context", "translation"] as const)
+    assert.equal(team.models[key].transport, "cheaper-inference");
+  assert.equal(team.models.audioReview.transport, "google-native");
+  assert.throws(() => TeamPreferences.parse({models:{transcription:{transport:"cheaper-inference"}}}));
+  const env = readEnv({GEMINI_API_KEY:"native",CHEAPER_INFERENCE_API_KEY:"test-ci",YOUTUBE_API_KEY:"yt",TRANSCRIPTAPI_API_KEY:"caption",FMP_API_KEY:"market",DATABASE_URL:"db",YTI_PUSH_CALLBACK_SECRET:"push"});
+  assert.deepEqual(missingRequired(env,team), []);
+  assert.ok(missingRequired(readEnv({...env,CHEAPER_INFERENCE_API_KEY:undefined}),team).includes("CHEAPER_INFERENCE_API_KEY"));
+  team.models.critique.transport="openrouter";
+  assert.ok(missingRequired(env,team).includes("OPENROUTER_API_KEY"));
 });
