@@ -1,6 +1,13 @@
 # Inference providers
 
-Approved 11 October 2026; implementation tracked in PR 38.
+Approved 11 October 2026; implementation merged in PR 38.
+Production release: `9f218fcd87c0bc86dbd5c85cc9bee4e60d3d3122`,
+Vercel `dpl_JD6JTyGYamgYFdYvyWwh7LTkFo4E`, ready 11 October 2026.
+The live workspace was switched and persisted with balanced routing.
+A database comparison confirmed only provider choices, exact model aliases and
+the new routing preference changed; audio, prompts, budgets and other settings
+were preserved. Both final feature-head GitHub verification runs passed
+(38121401282 and 38121398472).
 
 The product defaults use Cheaper Inference for text extraction/synthesis,
 independent critique, context and translation. The models remain Gemini 3.8 Flash,
@@ -83,10 +90,31 @@ was 27.5% lower because billed token counts differed. The same model and input
 do not guarantee identical token accounting. This proves bounded prompt/schema
 compatibility, not a full workflow fidelity or completion-time benchmark.
 
+A further small Gemini pair used the app’s explicit low reasoning setting:
+CI took 24.610 seconds/$0.000135 versus Google 2.516 seconds/$0.00022275.
+Both preserved the source meaning and negations; Google used a different stance
+wording from the literal fixture. The CI request also carried a 35% minimum
+discount constraint, so it is not a latency measurement of the unconstrained
+production balance route. No speed-equivalence claim is supported.
+
 The catalog's three configured models advertised 35% lower token rates. Repricing
 two completed workflows at identical usage gave $0.62924 versus $0.96740,
 including unchanged Jev fees (34.96% lower). This is a counterfactual, excludes
 other platform costs and Google audio, and does not guarantee realised savings.
+
+## Hosted workflow compatibility follow-up
+
+The first hosted same-video check completed extraction: run
+`0b294502-7de6-48da-b513-adbb44583af7`,13 settled calls,$0.182394,200.745s,
+versus the previous native/Router run,$0.22687,57.13s. The source hash matched
+and both retained two accepted ideas, though stance/conviction wording differed.
+The automatic brief `638652cc-762e-4fa0-8ce3-8bdf7a0072d8` failed validation:
+Gemini returned materiality scores above the allowed0–3 range. Its$0.01496
+charge and failed response remain retained; no blind retry was made.
+The extraction output also used empty option metadata where the native run
+returned null. Legacy Google-style nullable schemas need standard JSON Schema
+translation at the new transport boundary. Compatibility repair is in progress;
+the first hosted check does not establish whole-workflow quality parity.
 
 ## Operational switch and rollback
 
