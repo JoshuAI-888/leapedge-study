@@ -90,6 +90,8 @@ function ObjectFields({
             "transport",
             "selection",
             "efficiencyProfile",
+            "auditedSpeed",
+            "criticRouting",
             "researchPipeline",
             "context",
             "corpus",
@@ -545,6 +547,20 @@ export function Settings() {
             <legend>Processing profile</legend>
             <div className="yi-settings-fields">
               <label>
+                <input type="checkbox" checked={t.processing.auditedSpeed === true} disabled={busy}
+                  onChange={e=>setTeam({...t,processing:{...t.processing,auditedSpeed:e.target.checked}})} />
+                Faster processing with independent audits
+              </label>
+              <label>
+                Independent audit routing
+                <select value={t.processing.criticRouting??"default"} disabled={busy||t.processing.auditedSpeed!==true}
+                  onChange={e=>setTeam({...t,processing:{...t.processing,criticRouting:e.target.value as "default"|"latency"|"throughput"}})}>
+                  <option value="default">Provider default</option>
+                  <option value="latency">Prefer faster response start</option>
+                  <option value="throughput">Prefer faster completion</option>
+                </select>
+              </label>
+              <label>
                 Profile for new analyses
                 <select
                   value={t.processing.efficiencyProfile ?? "deployment-default"}
@@ -572,6 +588,7 @@ export function Settings() {
               Existing and already queued analyses keep their original profile.
               Every profile preserves evidence, references and required audits.
             </p>
+            <p className="yi-muted">Faster processing shows checked findings while coverage review continues. Audit routing keeps the selected model and its price ceiling; availability and speed vary.</p>
             {t.processing.efficiencyProfile === "experimental-overlap" ? (
               <p className="yi-warning">Experimental research overlap may add cost. Quality parity has not been established; use Efficient for routine research.</p>
             ) : null}

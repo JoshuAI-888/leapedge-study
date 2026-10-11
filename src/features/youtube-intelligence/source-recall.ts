@@ -3,12 +3,12 @@ import type {SourceData,CheckedClaim,Run} from './contracts.ts';
 
 export const SOURCE_RECALL_VERSION='source-recall.full-chronological.v2';
 /** Small full-source review windows, independent of action vocabulary or previous citation coverage. */
-export function sourceRecallPlan(source:SourceData) {
+export function sourceRecallPlan(source:SourceData, bounds={cues:40,bytes:12000,seconds:180}) {
  const windows:SourceData['segments'][]=[];let current:SourceData['segments']=[];
  const bytes=(items:SourceData['segments'])=>new TextEncoder().encode(JSON.stringify(items)).length;
  for(const cue of source.segments){
-  if(bytes([cue])>12000 || (cue.start_seconds!==null&&cue.end_seconds!==null&&cue.end_seconds-cue.start_seconds>180))throw Error('One source cue exceeds the recall window bound; retain and resolve its original boundary rather than truncate it.');
-  const exceeds=(items:SourceData['segments'])=>items.length>=40||bytes([...items,cue])>12000||(cue.end_seconds!==null&&items[0]?.start_seconds!==null&&items.length>0&&cue.end_seconds-items[0].start_seconds! > 180);
+  if(bytes([cue])>bounds.bytes || (cue.start_seconds!==null&&cue.end_seconds!==null&&cue.end_seconds-cue.start_seconds>bounds.seconds))throw Error('One source cue exceeds the recall window bound; retain and resolve its original boundary rather than truncate it.');
+  const exceeds=(items:SourceData['segments'])=>items.length>=bounds.cues||bytes([...items,cue])>bounds.bytes||(cue.end_seconds!==null&&items[0]?.start_seconds!==null&&items.length>0&&cue.end_seconds-items[0].start_seconds! > bounds.seconds);
   if(current.length&&exceeds(current)){windows.push(current);current=current.slice(-Math.min(3,Math.max(0,current.length-1)));while(current.length&&exceeds(current))current.shift();}
   current.push(cue);
  }

@@ -4,7 +4,7 @@ import { registerHooks } from "node:module";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
-import { createElement } from "react";
+import { createElement, type ComponentType } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { AnalystView, analystNote } from "../src/features/youtube-intelligence/analyst-view.ts";
 
@@ -21,7 +21,8 @@ registerHooks({
     return next(url,context);
   },
 });
-const { AnalystViewPanel } = await import("../src/features/youtube-intelligence/ui/AnalystView.tsx");
+const analystComponents = await import("../src/features/youtube-intelligence/ui/AnalystView.tsx");
+const {AnalystViewPanel}=analystComponents;
 const point = {id:"s1",topic:"Planet Labs",kind:"creator_view",speaker:"creator",text:"The creator watches Planet Labs if backlog converts.",at:30,references:[{evidenceId:"c1",startId:"s8",endId:"s9",text:"Watch if backlog converts.",at:30}]};
 function view() {
  return AnalystView.parse({title:"Original video",heading:"PL · Planet Labs — Creator watches",publicationState:"coverage_in_progress",channel:null,publishedAt:null,summary:[{text:point.text,at:30,references:point.references}],sections:[
@@ -55,4 +56,14 @@ test("short company headings render a long thesis as body text without hiding co
  assert.match(html,/<p>The creator watches Planet Labs if backlog converts\.<\/p>/);
  assert.match(html,/if profitable; if backlog converts; if margins improve/);
  assert.match(html,/Dilution; Losses; Execution/);
+});
+
+test('page H1 names the company/topic while the full accepted assessment remains in the overview',()=>{
+ const v=view();v.publicationState='reviewed_brief';
+ v.heading=`PL · Planet Labs Investment Thesis — ${point.text}`;
+ const component=(analystComponents as unknown as {AnalystPageHeading:ComponentType<{heading:string}>}).AnalystPageHeading;
+ const heading=renderToStaticMarkup(createElement(component,{heading:v.heading}));
+ assert.equal(heading,'<h1>PL · Planet Labs Investment Thesis</h1>');
+ const body=renderToStaticMarkup(createElement(AnalystViewPanel,{view:v,note:analystNote(v),onSeek:()=>{}}));
+ assert.match(body,/The creator watches Planet Labs if backlog converts\./);
 });

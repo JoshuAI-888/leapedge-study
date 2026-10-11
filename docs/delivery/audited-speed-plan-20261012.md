@@ -1,6 +1,6 @@
-# Five additional speed improvements — approval proposal
+# Five additional speed improvements — approved implementation plan
 
-12 October 2026, Pacific/Auckland. Status: proposed, awaiting the user's requested approval. No application code, provider settings, database configuration or paid runs changed in this review.
+12 October 2026, Pacific/Auckland. The user approved implementation and a Haiku 5.5 comparison. PR41 implements the ordered plan; this document retains the original architecture findings and proposed measurement design. Delivery and measured results are recorded separately. Independent audits remain required, and Haiku is a comparison arm until its results justify any default change.
 
 ## Architecture finding
 

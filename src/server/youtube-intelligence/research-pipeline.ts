@@ -6,6 +6,8 @@ import { PRIMARY_DOMAINS } from "./primary-domain-registry.ts";
 import { researchReadiness } from "../../features/youtube-intelligence/research-readiness.ts";
 import { reconcileResearchAudit } from "./research-audit-repair.ts";
 import { coverageAdditions } from "./research-coverage-repair.ts";
+import { acceptedPublicationProjection } from "../../features/youtube-intelligence/research-publication.ts";
+import { auditedExecution } from "../../features/youtube-intelligence/audited-execution.ts";
 import { researchEvidenceInventory, researchEvidenceInventoryWithDiagnostics } from "./research-evidence-inventory.ts";
 import { boundedSettled } from "./bounded-parallel.ts";
 import { buildEvidenceIndex, expandEvidenceIndex, INDEX_INSTRUCTIONS } from "./research-evidence-index.ts";
@@ -135,6 +137,9 @@ async function queueSourceBrief(
       efficiencyVersion: source.input.efficiencyVersion,
       speculativeResearch: source.input.speculativeResearch,
       reuseResearchCache: source.input.reuseResearchCache,
+      auditedExecutionPlan: source.input.auditedExecutionPlan,
+      publicationSafeguardsVersion: source.input.publicationSafeguardsVersion,
+      benchmarkCampaign:source.input.benchmarkCampaign,
     },
     team.prompts.version,
   );
@@ -165,6 +170,8 @@ export async function researchStep(run: Run) {
   const targeted=frozenPipeline.pipeline==='targeted-experimental';
   // Pipeline v3: transcript-only brief checked for fidelity in parallel chunks.
   const faithful=frozenPipeline.pipeline==='faithful';
+  const atomicPublication=run.input.publicationSafeguardsVersion==='atomic-publication.v1';
+  if(run.input.publicationSafeguardsVersion!==undefined&&!atomicPublication)throw Error('Unsupported frozen publication safeguards version.');
   const snapshot = Snapshot.parse(run.input.snapshot);
   if (!run.output.researchBaseline) {
     const norm = (v: string) => v.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
@@ -442,14 +449,20 @@ export async function researchStep(run: Run) {
     try {
     if (faithful) {
       const screen = settings.faithfulnessPreScreen;
+      const repairEvidenceIds=previousAudit&&atomicPublication ? z.array(z.string()).parse((run.output.coverageRepair as {missingEvidenceIds:unknown}).missingEvidenceIds) : null;
+      const auditEvidence=repairEvidenceIds ? snapshot.evidence.filter(e=>repairEvidenceIds.includes(e.id)) : snapshot.evidence;
+      const retainedSentences=previousAudit ? validateBrief(draft,snapshot.evidence,external,snapshot.context,previousAudit.verdicts,snapshot.baseline).sentences.filter(s=>!repairEvidenceIds||s.evidenceIds.some(id=>repairEvidenceIds.includes(id))) : [];
       const checked = await faithfulAudit({
-        sentences: auditDraft.sentences, evidence: snapshot.evidence, invoke,
+        sentences: auditDraft.sentences, evidence: auditEvidence, invoke,
+        weightedPlan:auditedExecution(run.input)?.weightedAudit ?? false,
+        ...(previousAudit ? {retainedSentences,stagePrefix:'critique-faithful-coverage'} : {}),
         ...(screen.enabled ? { preScreen: (sentences: typeof auditDraft.sentences) => screenSentences({
-          runId: run.id, stage: "prescreen-jev", sentences, evidence: snapshot.evidence, model: screen.model,
+          runId: run.id, stage: previousAudit ? "prescreen-jev-coverage" : "prescreen-jev", sentences, evidence: snapshot.evidence, model: screen.model,
           band: screen, perVideoCapUsd: settings.budget.perVideoMaxUsd,
         }) } : {}),
       });
       run.output.faithfulAudit = { chunks: checked.chunks, failures: checked.failures, ...(checked.preScreen ? { preScreen: checked.preScreen } : {}) };
+      if(previousAudit&&checked.failures) supplementalAuditError='Supplemental fidelity check unavailable; original independently audited sentences retained.';
       repaired = { audit: ResearchAudit.parse({ verdicts: checked.verdicts, coverageFindings: checked.coverageFindings, evidenceCoverage: checked.evidenceCoverage }), attempts: [], missing: [] };
     } else {
     const useBoundedAudit = targeted || (auditDraft.sentences.length > 0 && (snapshot.evidence.length > 24 || draft.sentences.length > 12));
@@ -531,6 +544,8 @@ export async function researchStep(run: Run) {
         audit.verdicts,
         snapshot.baseline,
       );
+    const publication = acceptedPublicationProjection({...validatedBrief,evidence:snapshot.evidence,evidenceCoverage:audit.evidenceCoverage});
+    run.output.researchPublicationProjection=publication;
     const brief: ResearchBriefData = {
       ...validatedBrief,
       omissions: [...new Set([...validatedBrief.omissions, ...z.array(z.string()).parse(run.output.coverageRepairOmissions ?? []), ...snapshot.inventoryOmissions.map(o=>`${o.id}: ${o.reason}`)])],
@@ -544,7 +559,7 @@ export async function researchStep(run: Run) {
       baseline: snapshot.baseline,
       external,
       coverageFindings: audit.coverageFindings,
-      evidenceCoverage: audit.evidenceCoverage,
+      evidenceCoverage: publication.evidenceCoverage,
       retrievalNotes: records.map(
         (r) => `${r.timeMode}: ${r.query} — ${r.note}`,
       ),
@@ -565,21 +580,24 @@ export async function researchStep(run: Run) {
     const readiness = researchReadiness(brief);
     run.output.researchReadiness = readiness;
     const missingEvidence = readiness.coverage.filter(c=>c.repairEligible).map(c=>c.evidenceId);
-    if (!faithful && !run.output.coverageRepair && missingEvidence.length && draft.sentences.length < 48) {
+    const failedFidelity=(run.output.faithfulAudit as {failures?:number}|undefined)?.failures;
+    const unavailableFidelity=audit.verdicts.some(v=>!v.accepted&&/no single verdict|unavailable|withheld, not disproven/i.test(v.reason));
+    if ((!faithful || atomicPublication && !failedFidelity && !unavailableFidelity) && !run.output.coverageRepair && missingEvidence.length && draft.sentences.length < 48) {
       // Additive and bounded: never replace accepted statements to make room.
       // Both the original attempt and the supplement are retained and paid once.
       const available = Math.min(12, 48 - draft.sentences.length);
+      const repairSnapshot=atomicPublication ? {...snapshotContext,evidence:snapshot.evidence.filter(e=>missingEvidence.includes(e.id))} : modelSnapshot;
       let supplement: z.infer<typeof ResearchDraft>;
       try { supplement = parseResearchDraft(await invoke("synthesis-research-coverage", PRINCIPLES +
-        ` Repair missing coverage by adding at most ${available} atomic sentences. Include the source's exact conditions, valuation qualifications, countercases and hypothetical/no-position disclosures. Use only the missing evidence IDs and supplied eligible sources. For missing, unknown or invalid proposition assessments, reassess the supplied original retained evidence; do not treat unanchored critic quotes as transcript facts. Include only genuinely omitted material clauses; if already complete, return no additions and explain the result. An already cited evidence ID can still contain an omitted material proposition: repair the specified missing clauses, not the topic already summarized. Do not repeat or replace accepted sentences. The supplied withheldDraftPoints are NOT accepted coverage: fix their specific rejection reasons (including exact original quotes and hypothetical framing) in a new candidate, preserving source meaning and the original rejected attempt. Do not return unchanged rejected content. If evidence is insufficient, explain the unresolved gap in omissions. Return the supplied draft schema.`,
-        {...modelSnapshot, external:eligible, existingDraft:draft, acceptedSentenceIds:validatedBrief.sentences.map(s=>s.id), withheldDraftPoints:validatedBrief.rejected, missingEvidenceIds:missingEvidence, repairAssessment:readiness.coverage.filter(c=>c.repairEligible), evidenceCoverage:audit.evidenceCoverage, coverageFindings:audit.coverageFindings}, ResearchDraft));
+        ` Repair missing coverage by adding at most ${available} atomic sentences.${atomicPublication ? ' Each candidate must express one independently reviewable material proposition; preserve valid cash, margin, stance or risk clauses separately from an ambiguous number.' : ''} Include the source's exact conditions, valuation qualifications, countercases and hypothetical/no-position disclosures. Use only the missing evidence IDs${atomicPublication ? '; source-only repair: externalIds must be empty, and no external correction, plausibility-based decimal or count reconstruction is permitted' : ' and supplied eligible sources'}. For missing, unknown or invalid proposition assessments, reassess the supplied original retained evidence; do not treat unanchored critic quotes as transcript facts. Include only genuinely omitted material clauses; if already complete, return no additions and explain the result. An already cited evidence ID can still contain an omitted material proposition: repair the specified missing clauses, not the topic already summarized. Do not repeat or replace accepted sentences. The supplied withheldDraftPoints are NOT accepted coverage: fix their specific rejection reasons (including exact original quotes and hypothetical framing) in a new candidate, preserving source meaning and the original rejected attempt. Do not return unchanged rejected content. If evidence is insufficient, explain the unresolved gap in omissions.${atomicPublication ? ' Every new candidate requires its own independent audit before publication.' : ''} Return the supplied draft schema.`,
+        {...repairSnapshot, external:atomicPublication?[]:eligible, existingDraft:draft, acceptedSentenceIds:validatedBrief.sentences.map(s=>s.id), withheldDraftPoints:validatedBrief.rejected, missingEvidenceIds:missingEvidence, repairAssessment:readiness.coverage.filter(c=>c.repairEligible), evidenceCoverage:atomicPublication?publication.evidenceCoverage:audit.evidenceCoverage, coverageFindings:audit.coverageFindings}, ResearchDraft));
       } catch (error) {
         // An optional repair failure must not hide already audited research.
         // No retry or further paid work: retain the raw call/hold and original.
         run.output.coverageRepairError = error instanceof Error ? error.message : String(error);
         supplement = ResearchDraft.parse({sentences:[],mainTopics:[],omissions:['Coverage repair failed; only the original independently audited statements are available. Review the retained failed attempt and unresolved coverage.']});
       }
-      const filtered = coverageAdditions(draft, supplement, missingEvidence, validatedBrief.rejected.map(r=>r.sentence.id));
+      const filtered = coverageAdditions(draft, supplement, missingEvidence, validatedBrief.rejected.map(r=>r.sentence.id), {sourceOnly:atomicPublication});
       const overflow = filtered.sentences.splice(available);
       filtered.excluded.push(...overflow.map(sentence=>({sentence,reason:'Exceeded the bounded supplemental audit size; retained for review, not published.'})));
       if (overflow.length) supplement.omissions.push(`${overflow.length} supplemental statements exceed the bounded repair size and remain unaudited; see the retained repair trace.`);
@@ -601,7 +619,7 @@ export async function researchStep(run: Run) {
     } catch (error) {
       run.output.bottomLineError = error instanceof Error ? error.message : String(error);
     }
-    run.status = readiness.status === "review_required" || run.output.coverageRepairError || (run.output.faithfulAudit as {failures?:number}|undefined)?.failures ? "needs_review" : "completed";
+    run.status = readiness.status === "review_required" || run.output.coverageRepairError || unavailableFidelity || (run.output.faithfulAudit as {failures?:number}|undefined)?.failures ? "needs_review" : "completed";
     run.stage = "complete";
     return;
   }

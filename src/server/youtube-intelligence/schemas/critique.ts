@@ -1,5 +1,6 @@
 import { resolveListing } from "../../../features/youtube-intelligence/identity.ts";
 import { z } from "zod";
+import { deriveEvidence } from '../../../features/youtube-intelligence/contracts.ts';
 import type {
   ClaimData,
   MentionData,
@@ -104,6 +105,9 @@ export function critiquePayload(input: {
   segments?: SourceData["segments"];
   scope?: string;
   chunk?: { index: number; total: number };
+  /** Full retained source is used only to derive disjoint cited quotes that
+   * may fall outside this chronological excerpt; never copied as a gap. */
+  retainedSource?:SourceData;
 }) {
   const chunked = input.chunk && input.chunk.total > 1;
   return {
@@ -130,6 +134,13 @@ export function critiquePayload(input: {
     mentions: input.mentions.map((item) => ({
       id: item.id,
       mention: item.mention,
+      ...(chunked&&item.mention.source_ranges ? {citedSourceRanges:item.mention.source_ranges.map(range=>{
+        if(!input.retainedSource)throw Error('A chunked disjoint mention requires the retained source for every cited range.');
+        const copied=deriveEvidence(input.retainedSource,range);
+        if(copied.text_hash!==range.text_hash)throw Error('Disjoint critique source range does not match its copied hash.');
+        if(copied.start_seconds!==range.start_seconds||copied.end_seconds!==range.end_seconds)throw Error('Disjoint critique source range timestamps changed.');
+        return {source_span:range,quote_original:copied.quote_original};
+      })} : {}),
     })),
   };
 }

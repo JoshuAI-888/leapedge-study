@@ -9,6 +9,7 @@ import {
   type GenerateContentParameters,
   type GenerateContentResponse,
 } from "@google/genai";
+import { createHash } from "node:crypto";
 import {
   ModelRequest,
   TransportError,
@@ -161,6 +162,8 @@ export class GoogleNativeTransport implements ModelTransport {
   readonly name = "google-native";
   readonly family = "google-native" as const;
   private options: GoogleNativeOptions;
+  private tokenCounts = new Map<string, {at:number; count:TokenCount}>();
+  private tokenPending = new Map<string, Promise<TokenCount>>();
   private sdk: GoogleNativeClient | null = null;
   private cacheSdk: GoogleNativeCacheClient | null = null;
   constructor(options: GoogleNativeOptions = {}) {
@@ -346,8 +349,25 @@ export class GoogleNativeTransport implements ModelTransport {
    * local bytes/4 floor when the provider cannot be asked; a video part is not
    * counted there, so an estimated count over media is a floor, not a bound.
    */
-  async countTokens(request: ModelRequestData): Promise<TokenCount> {
+  async countTokens(request: ModelRequestData,options:{metadataCache?:boolean}={}): Promise<TokenCount> {
     const r = ModelRequest.parse(request);
+    if(options.metadataCache===false)return this.countUncached(r);
+    const key=createHash("sha256").update(JSON.stringify({model:r.model,system:r.system,user:r.user,video:r.video,cachedContent:r.cachedContent})).digest("hex");
+    const cached=this.tokenCounts.get(key);
+    if(cached && Date.now()-cached.at<60000) return {...cached.count};
+    const pending=this.tokenPending.get(key);
+    if(pending) return pending;
+    const work=this.countUncached(r).then(count=>{
+      if(!count.estimated){
+        if(this.tokenCounts.size>=256)this.tokenCounts.delete(this.tokenCounts.keys().next().value!);
+        this.tokenCounts.set(key,{at:Date.now(),count});
+      }
+      return count;
+    }).finally(()=>this.tokenPending.delete(key));
+    this.tokenPending.set(key,work);
+    return work;
+  }
+  private async countUncached(r: ModelRequestData): Promise<TokenCount> {
     const local = () => {
       const text = [...(r.system ?? []), ...r.user]
         .map((p) => p.text)

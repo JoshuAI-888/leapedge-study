@@ -10,7 +10,7 @@ import { ResearchBrief } from "../ResearchBrief.tsx";
 import { Timing } from "../Timing.tsx";
 import { CallUsageTable } from "../CallUsageTable.tsx";
 import type { LedgerRow } from "../../call-usage.ts";
-import { AnalystViewPanel } from "../AnalystView.tsx";
+import { AnalystViewPanel, AnalystPageHeading } from "../AnalystView.tsx";
 import { AnalystView, CheckedFindings, type AnalystViewData } from "../../analyst-view.ts";
 import { acceptsReadingUpdate } from "../../analyst-reading.ts";
 import type { RunTimelineData } from "../../timing.ts";
@@ -341,7 +341,7 @@ export function Analysis({ id }: { id: string }) {
         )}
         <div className="yi-an-head-text">
           <p className="yi-eyebrow">VIDEO ANALYSIS</p>
-          <h1>{analyst?.view.heading || run.title || "Video analysis"}</h1>
+          {analyst?.view.heading ? <AnalystPageHeading heading={analyst.view.heading}/> : <h1>{run.title || "Video analysis"}</h1>}
           {analyst?.view.heading && analyst.view.heading !== run.title && <p className="yi-muted">{run.title}</p>}
           <p className="yi-an-meta">
             {channelId ? (

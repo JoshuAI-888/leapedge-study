@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type {Run} from "../../features/youtube-intelligence/contracts.ts";
 import {
   claimJob,
   completeJob,
@@ -13,6 +14,7 @@ import {
   db,
   get,
   save,
+  lease,
   heartbeat,
   enqueueExpiredReservations,
 } from "./store.ts";
@@ -89,13 +91,38 @@ export async function dispatchOpenRuns() {
       .run(now, id);
   }
 }
+/** A healthy queue owner renews both deadlines. The job remains the ownership
+ * fence even when an older analysis deadline has elapsed during long work. */
+export async function renewWorkerLease(jobId:string,token:string,runId?:string){
+  if(!runId)return renewJob(jobId,token);
+  return db().transaction(async()=>{
+    if(!await renewJob(jobId,token))return false;
+    const result=await db().prepare("UPDATE yi_runs SET lease_until=$1 WHERE id=$2 AND lease_token=$3 AND status='running'").run(lease.window().until,runId,token);
+    if(!result.changes)throw Error('Stale worker lease.');
+    return true;
+  });
+}
+/** Same ownership fences as the terminal checkpoint, without releasing either
+ * lease while discovery/audits are still running. */
+export async function checkpointCheckedFindings(run:Run,jobId:string,token:string){
+ await db().transaction(async()=>{
+  const owner=await db().prepare("SELECT id FROM jobs WHERE id=$1 AND lease_token=$2 AND status='running' AND lease_until>now() FOR UPDATE").get(jobId,token);
+  if(!owner)throw Error('Stale worker lease.');
+  const publishedAt=new Date().toISOString();
+  run.output.checkedFindingsPublishedAt ??= publishedAt;
+  run.output.checkedFindingsUpdatedAt=publishedAt;
+  const result=await db().prepare("UPDATE yi_runs SET output=$1,updated_at=$2,lease_until=$5 WHERE id=$3 AND lease_token=$4 AND status='running'").run(JSON.stringify(run.output),new Date().toISOString(),run.id,token,lease.window().until);
+  if(!result.changes)throw Error('Stale worker lease.');
+ });
+}
 export async function processNext(executeStage: typeof step = step) {
   await heartbeat();
   const job = await claimJob();
   if (!job) return null;
   const token = job.leaseToken!;
+  let activeRunId:string|undefined;
   const timer = setInterval(() => {
-    void renewJob(job.id, token).catch(() => undefined);
+    void renewWorkerLease(job.id, token, activeRunId).catch(() => undefined);
   }, 60000);
   timer.unref();
   try {
@@ -124,6 +151,7 @@ export async function processNext(executeStage: typeof step = step) {
         "UPDATE yi_runs SET status='running',lease_token=$1,lease_until=$2 WHERE id=$3",
       )
       .run(token, Date.now() + 600000, run.id);
+    activeRunId=run.id;
     const timingId = `${job.id}:${token}`;
     const stageStarted = performance.now();
     await db()
@@ -147,7 +175,7 @@ export async function processNext(executeStage: typeof step = step) {
     let transientDelay = 0;
     let sourcePending = false;
     try {
-      await executeStage(run);
+      await executeStage(run,undefined,{checkpointCheckedFindings:()=>checkpointCheckedFindings(run,job.id,token)});
       if (run.status === "running") run.status = "queued";
     } catch (error) {
       sourcePending = error instanceof SourcePending;

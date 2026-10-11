@@ -262,7 +262,7 @@ export async function reserve(
         .get(runId, stage)
     )
       throw Error(OPEN_ATTEMPT_MESSAGE);
-    await d.prepare("SELECT id FROM yi_runs WHERE id=$1 FOR UPDATE").get(runId);
+    const owner=await d.prepare("SELECT id,input FROM yi_runs WHERE id=$1 FOR UPDATE").get(runId);
     if (
       perVideoCapUsd !== undefined &&
       Number.isFinite(perVideoCapUsd) &&
@@ -285,6 +285,12 @@ export async function reserve(
     await d
       .prepare("SELECT pg_advisory_xact_lock($1::bigint)")
       .get(BUDGET_LOCK);
+    const campaign=(json(owner?.input) as Record<string,unknown>|null)?.benchmarkCampaign;
+    if(campaign!==undefined){
+      const marker=z.object({id:z.uuid(),maxUsd:z.number().positive().max(5)}).parse(campaign);
+      const committed=Number((await d.prepare("SELECT COALESCE(SUM(c.amount),0) AS total FROM yi_calls c JOIN yi_runs r ON r.id=c.run_id WHERE c.status<>'released' AND r.input::jsonb->'benchmarkCampaign'->>'id'=$1").get(marker.id))?.total??0);
+      if(committed+amount>marker.maxUsd)throw Error('Benchmark campaign budget limit reached; retained settled costs and unknown holds count toward the cap.');
+    }
     const used = Number(
       (
         (await d

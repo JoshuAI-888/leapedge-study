@@ -318,15 +318,19 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const pick=(pool:typeof ranked,kinds:string[])=>{
     const item=pool.find(x=>kinds.includes(x.s.kind)&&!chosen.some(y=>y.s.id===x.s.id));
     if(item) chosen.push(item);
+    return !!item;
   };
   pick(main,["creator_view","action","holding"]);
   pick(main,["analysis","reported_fact","scenario"]);
   if(!chosen.some(x=>["analysis","reported_fact","scenario"].includes(x.s.kind))) pick(ranked,["analysis","reported_fact","scenario"]);
-  pick(main,["countercase","invalidation","next_check"]);
-  // Do not fill a missing countercase slot with a third favourable fact.
+  // Topic labels may describe sections ("Risks and valuation", "Next checks")
+  // rather than the company. Those accepted findings still belong up front.
+  pick(main,["countercase"]) || pick(ranked,["countercase"])
+    || pick(main,["invalidation"]) || pick(ranked,["invalidation"]);
+  pick(main,["next_check","invalidation"]) || pick(ranked,["next_check","invalidation"]);
+  // A missing downside/check remains missing; never fill it with another
+  // favourable fact. Detailed sections keep every accepted assertion.
   if(!chosen.length) pick(main.length ? main : ranked,ranked.map(x=>x.s.kind));
-  if(chosen.length<2 && !chosen.some(x=>["countercase","invalidation","next_check"].includes(x.s.kind)))
-    pick(ranked,["countercase","invalidation","next_check"]);
   const acceptedIds=new Set(sentences.map(s=>s.id));
   const validBottomLine=(input.bottomLine ?? []).filter(b=>b.statementIds.length && b.statementIds.every(id=>acceptedIds.has(id)));
   // A checked aid may fill only a missing overview; the source-derived balanced

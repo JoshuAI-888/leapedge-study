@@ -4,6 +4,20 @@ const scales:Record<string,number>={ones:1,thousands:1e3,millions:1e6,billions:1
 export function sourceNumericCheck(fact:FinancialFactData,retainedQuotes:string[]) {
  const result=(status:'literal_supported'|'unresolved'|'not_assessed',reason:string)=>({status,reason,original:fact});
  if(!fact.quote?.trim()||!retainedQuotes.some(q=>q.includes(fact.quote)))return result('unresolved','Exact original quote is not anchored.');
+ // Only explicit denomination/range grammar permits these conversions. An
+ // unpunctuated caption integer is never a decimal reconstruction candidate.
+ const close=(n:number)=>Math.abs(n-fact.value*scales[fact.scale])<=Math.max(1e-8,Math.abs(n)*1e-12);
+ const cents=[...fact.quote.matchAll(/\b(\d+(?:\.\d+)?)\s+cents?\b/gi)];
+ if(cents.some(m=>close(Number(m[1])/100)) && fact.scale==='ones' &&
+    (fact.unit==='total'||fact.unit==='per_share'&&/\b(?:EPS|per[ -]share|earnings per share)\b/i.test(fact.quote)))
+  return result('not_assessed','Explicit cents permit division by 100, not caption decimal reconstruction. Currency, metric association, period and basis still require independent audit.');
+ const ranges=[...fact.quote.matchAll(/(?:\bbetween\s+)?(?:(?:USD|US\$|\$|EUR|€|GBP|£)\s*)?(-?\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:and|to|[–—-])\s*(?:(?:USD|US\$|\$|EUR|€|GBP|£)\s*)?(-?\d+(?:,\d{3})*(?:\.\d+)?)\s*(thousand|million|billion|trillion)\b/gi)];
+ const sharedScaleMatch=ranges.some(m=>[m[1],m[2]].some(n=>close(Number(n.replaceAll(',',''))*scales[m[3].toLowerCase()])));
+ if(sharedScaleMatch && !['percent','percentage_points','basis_points','shares','contracts'].includes(fact.unit)) {
+  const explicitCurrency=/\bUSD\b|US\$/.test(fact.quote)?'USD':/\bEUR\b|€/.test(fact.quote)?'EUR':/\bGBP\b|£/.test(fact.quote)?'GBP':null;
+  if(explicitCurrency && fact.currency!==explicitCurrency)return result('unresolved','Explicit range currency mismatches proposed currency.');
+  return result('not_assessed','Explicit two-endpoint range shares its trailing scale; no scale is borrowed from a neighboring count. Currency, endpoint association and metric semantics still require independent audit.');
+ }
  // A narrowly recognized word amount can prevent a false Arabic-token mismatch.
  // It does not prove the metric, attribution, qualifier or annual/daily basis.
  const halfWords:Record<string,number>={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10};
@@ -51,4 +65,26 @@ export function numericalSentenceDisposition(sentence:{text:string;financialFact
  const hasNumber=(n:number)=>[...sentence.text.matchAll(/-?\d+(?:,\d{3})*(?:\.\d+)?/g)].some(m=>Number(m[0].replaceAll(',',''))===n);
  const unsafe=checks.some(c=>c.status==='unresolved'&&hasNumber(c.original.value));
  return {status:unsafe?'neutral_repair_required' as const:'retain_with_checks' as const,checks,reason:unsafe?'Retain original draft and audit; withhold unsupported numerical prose pending independently audited neutral/qualified repair.':'No repeated unresolved typed number detected. This is not semantic or numerical completeness certification.'};
+}
+
+/** Missing typed metadata is not a way around literal decimal safeguards.
+ * This deliberately covers only directly asserted EPS/inflation decimals;
+ * computed results and unrelated quantities still require semantic audit. */
+export function sourceQuantityProseIssues(sentence:{text:string;calculation?:unknown},quotes:string[]) {
+ const candidates=[...sentence.text.matchAll(/\b(?:EPS|earnings per share|CPI|PCE|inflation)\b[^.!?;\d]{0,40}(\d+\.\d+)/gi)].map(m=>Number(m[1]));
+ const literals=quotes.flatMap(q=>[...q.matchAll(/\d+(?:,\d{3})*(?:\.\d+)?/g)].map(m=>Number(m[0].replaceAll(',',''))));
+ const cents=quotes.flatMap(q=>[...q.matchAll(/\b(\d+(?:\.\d+)?)\s+cents?\b/gi)].map(m=>Number(m[1])/100));
+ const reconstructed=candidates.filter(value=>![...literals,...cents].some(n=>Math.abs(n-value)<1e-8)&&literals.some(n=>Number.isInteger(n)&&n>=10&&[10,100,1000].some(scale=>Math.abs(n-value*scale)<1e-8)));
+ const issues=reconstructed.length ? ['Direct numerical prose reconstructs an EPS or inflation decimal absent from the original literals. Retain caption ambiguity; a missing typed financial fact cannot establish the decimal.'] : [];
+ // A count can be an ambiguous caption integer as well as a decimal. Only
+ // direct stated customer/client/deal counts are checked here; a supplied
+ // calculation remains a distinct proposition, never a source quote.
+ const countClaims=[...sentence.text.matchAll(/\b(\d+(?:,\d{3})*)\s+(customers?|clients?|deals?)\b/gi)];
+ for(const claim of countClaims) {
+  const noun=claim[2].toLowerCase().replace(/s$/,'');
+  const hasOriginalCount=quotes.some(q=>new RegExp(`\\b${noun}s?\\b`,'i').test(q)&&/\d/.test(q));
+  const value=Number(claim[1].replaceAll(',',''));
+  if(hasOriginalCount&&!literals.includes(value))issues.push('Direct customer/client/deal count is absent from the retained original literals. Do not reconstruct a plausible count from growth rates or neighboring figures; preserve the ambiguity and independently review a narrower clause.');
+ }
+ return issues;
 }

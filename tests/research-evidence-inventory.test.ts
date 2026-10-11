@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { researchEvidenceInventory, researchEvidenceInventoryWithDiagnostics } from '../src/server/youtube-intelligence/research-evidence-inventory.ts';
-import type { Run } from '../src/features/youtube-intelligence/contracts.ts';
+import { Mention, deriveEvidence, Source, type Run } from '../src/features/youtube-intelligence/contracts.ts';
 const quote = 'On September 17, 2026 I prefer NetworkCo below 170, while ComputeCo benefits from demand.';
 function fixture(): Run {
   return { id: 'r', videoId: 'v', url: 'https://youtube.com/watch?v=v', model: 'fixture', promptVersion: 'fixture', title: 'Companies', status: 'completed', stage: 'complete', createdAt: '2026-09-20T00:00:00Z', updatedAt: '2026-09-20T00:00:00Z', error: null, input: {}, cost: 0, output: {
@@ -46,4 +46,36 @@ test('changed hashes or timestamps omit only corrupted mentions and retain an au
   assert.match(result.omissions[0].reason, /hash/i);
   mentions[1].source_span.start_seconds = 464;
   assert.equal(researchEvidenceInventory(run).length, 0);
+});
+test('disjoint mention ranges preserve the later condition as a separate exact quote without including the gap',()=>{
+ const run=fixture();
+ const source=Source.parse(run.output.source);
+ source.segments.push({id:'gap',text:'Unrelated GAP_SENTINEL.',start_seconds:480,end_seconds:490},{id:'later',text:'For me growth, debt and an eight percent return on capital do not interest me.',start_seconds:521,end_seconds:529});
+ run.output.source=source;
+ const first=(run.output.mentions as any[])[0];
+ const later=deriveEvidence(source,{start_id:'later',end_id:'later'});
+ first.source_ranges=[first.source_span,{start_id:'later',end_id:'later',start_seconds:later.start_seconds,end_seconds:later.end_seconds,text_hash:later.text_hash}];
+ assert.equal(Mention.parse(first).source_ranges?.length,2);
+ const before=structuredClone(run);
+ const item=researchEvidenceInventory(run)[0];
+ assert.deepEqual(item.quotes.map(q=>q.startId),['s1','later']);
+ assert.match(item.quotes[1].text,/eight percent/);
+ assert.ok(item.quotes.every(q=>!q.text.includes('GAP_SENTINEL')));
+ assert.deepEqual(run,before);
+});
+test('a corrupted secondary range cannot disappear while the mention remains accepted context',()=>{
+ const run=fixture();const first=(run.output.mentions as any[])[0];
+ first.source_ranges=[first.source_span,{...first.source_span,text_hash:'a'.repeat(64)}];
+ const result=researchEvidenceInventoryWithDiagnostics(run);
+ assert.deepEqual(result.evidence.map(e=>e.id),['m2']);
+ assert.match(result.omissions[0].reason,/hash/i);
+});
+test('duplicate ranges do not multiply evidence and mismatched primary or unknown endpoints fail closed',()=>{
+ const run=fixture();const first=(run.output.mentions as any[])[0];
+ first.source_ranges=[first.source_span,structuredClone(first.source_span)];
+ assert.equal(researchEvidenceInventory(run)[0].quotes.length,1);
+ first.source_ranges[1].end_id='missing';
+ assert.deepEqual(researchEvidenceInventoryWithDiagnostics(run).evidence.map(e=>e.id),['m2']);
+ first.source_ranges=[{...first.source_span,start_seconds:464}];
+ assert.match(researchEvidenceInventoryWithDiagnostics(run).omissions[0].reason,/jump pointer/);
 });

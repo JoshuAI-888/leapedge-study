@@ -228,10 +228,28 @@ test("the 30-second view balances main stance, economic driver and countercase w
     ...Array.from({length:8},(_,i)=>({...seed,id:`n${i}`,text:`Wynn next check ${i}.`,kind:"next_check",topic:"Wynn",materiality:1})),
   ] as never;
   const v = buildAnalystView(base);
-  assert.deepEqual(v.summary.map(s=>s.text), ["The creator watches Wynn if debt falls.","Wynn revenue grew 10 percent.","Wynn debt could offset growth."]);
+  assert.deepEqual(v.summary.map(s=>s.text), ["The creator watches Wynn if debt falls.","Wynn revenue grew 10 percent.","Wynn debt could offset growth.","Wynn next check 0."]);
   assert.ok(v.keyPoints.some(s=>s.text === "Wynn margins grew 20 percent."));
-  assert.equal(v.keyPoints.filter(s=>s.kind === "next_check").length,8);
+  assert.equal(v.keyPoints.filter(s=>s.kind === "next_check").length,7);
+  assert.equal(v.sections.find(s=>s.key==='next_checks')?.points.length,8);
   assert.match(analystNote(v), /Wynn next check 7/);
+});
+
+test('overview finds accepted downside and next check in separate section topics without substituting favourable facts',()=>{
+ const base=input(),seed=base.brief!.sentences[0];
+ base.brief!.mainTopics=['Palantir Investment Thesis'];
+ base.brief!.sentences=[
+  {...seed,id:'view',text:'The speaker maintains a conditional Palantir thesis.',kind:'creator_view',topic:'Palantir Investment Thesis',materiality:3},
+  {...seed,id:'driver',text:'Results reflect business demand.',kind:'reported_fact',topic:'Quarterly results',materiality:3},
+  {...seed,id:'positive',text:'Another favourable business fact.',kind:'reported_fact',topic:'Quarterly results',materiality:3},
+  {...seed,id:'downside',text:'A rich valuation could magnify downside.',kind:'countercase',topic:'Risks and Valuation',materiality:2},
+  {...seed,id:'check',text:'Check whether the next results sustain margins.',kind:'next_check',topic:'Next checks',materiality:2},
+ ] as never;
+ const v=buildAnalystView(base);
+ assert.deepEqual(v.summary.map(s=>s.text),['The speaker maintains a conditional Palantir thesis.','Results reflect business demand.','A rich valuation could magnify downside.','Check whether the next results sustain margins.']);
+ assert.equal(v.sections.find(s=>s.key==='countercase')?.points[0].text,'A rich valuation could magnify downside.');
+ assert.equal(v.sections.find(s=>s.key==='next_checks')?.points[0].text,'Check whether the next results sustain margins.');
+ assert.match(analystNote(v),/Another favourable business fact/);
 });
 
 test("checked root cards retain short conditions, every risk and distinct theses without material caps", () => {

@@ -11,6 +11,12 @@ const SENTIMENT_CLASS = { bullish: "yi-stance-long", bearish: "yi-stance-short",
 const clock = (s: number | null) =>
   s == null ? null : `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
+/** The company/topic belongs in H1; the complete checked assessment remains
+ * verbatim in the overview and detailed thesis, without truncating a claim. */
+export function AnalystPageHeading({heading}:{heading:string}) {
+  return <h1>{heading.split(" — ")[0]}</h1>;
+}
+
 function At({ at, onSeek }: { at: number | null; onSeek: (s: number) => void }) {
   const label = clock(at);
   return label ? (

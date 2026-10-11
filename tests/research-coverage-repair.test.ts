@@ -21,3 +21,12 @@ test('a corrected rejected statement can be audited again without duplicating ac
  const repaired=coverageAdditions(original,fixed,['k1'],['bad']);assert.equal(repaired.sentences.length,1);assert.notEqual(repaired.sentences[0].id,'bad');assert.deepEqual(original,before);
  assert.equal(coverageAdditions(original,original,['k1'],['bad']).sentences.length,0,'Unchanged failed content is not a new repair');
 });
+test('source-only atomic repair retains external and current candidates for review without accepting them',()=>{
+ const original=ResearchDraft.parse({sentences:[],mainTopics:[],omissions:[]});
+ const base={id:'new',text:'The retained source discusses cash.',evidenceIds:['k1'],externalIds:[],kind:'reported_fact',horizon:'general',topic:'Cash',materiality:2,importanceReason:'Cash',speaker:'unknown',timeMode:'video_date'};
+ const supplement=ResearchDraft.parse({sentences:[{...base,externalIds:['filing']},{...base,id:'current',timeMode:'current'}],mainTopics:[],omissions:[]});
+ const result=coverageAdditions(original,supplement,['k1'],[],{sourceOnly:true});
+ assert.equal(result.sentences.length,0);
+ assert.equal(result.excluded.length,2);
+ assert.deepEqual(supplement.sentences.map(s=>s.id),['new','current']);
+});
