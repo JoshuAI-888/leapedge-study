@@ -11,6 +11,9 @@ export function mixedTurnAttribution(sentence:{text:string;speaker:string;eviden
  * semantic review. Quotes remain separate; no identity or unseen instruction
  * is inferred from an uploader, stance field, or generated summary. */
 function hasAdvice(text:string) {
+ // Sentence-initial trading commands carry advice even without "recommends".
+ // A quoted personal preference or a negated reporting verb is not a command.
+ if(/(?:^|[.!?;]\s*)(?:(?:please\s+)?(?:avoid|buy|sell)\b|(?:do not|don't)\s+(?:buy|sell|invest)\b)/i.test(text.trim()))return true;
  const matches=[...text.matchAll(/\b(?:advises?|recommends?|urges?)\b[^.!?;]{0,80}\b(?:avoid(?:ing)?|buy(?:ing)?|sell(?:ing)?|invest(?:ing)?|wait(?:ing)?)\b|\b(?:investors?|viewers?|you)\s+should\s+(?:avoid|buy|sell|wait)\b/gi)];
  return matches.some(m=>!/(?:\bnot|\bnever|n't)\s+(?:(?:currently|personally|explicitly)\s+)?$/i.test(text.slice(0,m.index)));
 }
@@ -19,7 +22,7 @@ export function sourceAttributionCheck(sentence:{text:string;speaker:string;evid
  const reasons:string[]=[];
  const turns=mixedTurnAttribution(sentence,evidence);
  if(turns.requiresNeutralRepair)reasons.push(turns.reason);
- const personal=quotes.some(q=>/\b(?:for me|does not interest me|doesn't interest me|I (?:do not|don't) want to buy|I (?:would not|wouldn't) buy)\b/i.test(q));
+ const personal=quotes.some(q=>/\b(?:for me|does not interest me|doesn't interest me|I (?:do not|don't) want to (?:buy|own)|I (?:would not|wouldn't) buy|not companies I want to own)\b/i.test(q));
  const advice=hasAdvice(sentence.text);
  const sourceAdvice=quotes.some(hasAdvice);
  if(personal&&advice&&!sourceAdvice)reasons.push('A personal investment preference was promoted into advice to investors. Preserve the source actor and personal stance; independently audit a narrower candidate.');

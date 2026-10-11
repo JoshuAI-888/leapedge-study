@@ -2676,11 +2676,11 @@
       "tests/transport.test.ts",
       "tests/weighted-faithful-audit.test.ts"
     ],
-    "verification": "Both full local suites: 1193 passed, zero failed, one existing skip each. Final title/overview selector and render regressions:21 passed; focused lease, campaign, replay, overlap, source-range and transport checks passed. Typecheck, production build and offline advisory diagnostic passed. Real PostgreSQL proves concurrent campaign admission, unknown-hold retention, paired lease renewal and stale-owner fencing. Desktop reading/evidence anchor and settings save/reload passed;390px responsive layout has content width390px. Hosted nine-arm comparison and production rollout pending. No new runtime dependencies."
+    "verification": "Both full local suites: 1193 passed, zero failed, one existing skip each. Final title/overview selector and render regressions:21 passed; focused lease, campaign, replay, overlap, source-range and transport checks passed. Typecheck, production build and offline advisory diagnostic passed. Real PostgreSQL proves concurrent campaign admission, unknown-hold retention, paired lease renewal and stale-owner fencing. Desktop reading/evidence anchor and settings save/reload passed;390px responsive layout has content width390px. Nine matched hosted arms completed on production 715748e8b2fda8213f6ea9faaa0287f1ef965b02; response/source identity checks passed. Quality and performance conclusions are in haiku-speed-results-20261012.md; experimental plans remain opt-in. No new runtime dependencies."
   },
   "benchmarkQuality20261012": {
     "status": "in-review",
-    "note": "Matched experiment source/projection freeze released only after nine retained exports and blinded packs. Follow-up addresses empty source-only repair audit waste, accepted-primary-company headings, advice attribution and financial section placement. Tests-first implementation and mandatory checks pending; native defaults unchanged.",
+    "note": "Nine frozen hosted arms and six identical-input audit calls completed for US$3.132257371 with zero unsettled calls. Tests-first follow-up skips audits after an empty source-only repair while retaining unresolved coverage, fixes accepted-primary-company headings and personal-advice attribution, and improves financial section placement and accepted stance/downside selection. Native provider/model defaults and independent Claude/Jev audits remain; no measured post-fix live speed gain is claimed.",
     "files": [
       "docs/delivery/haiku-speed-results-20261012.md",
       "src/features/youtube-intelligence/analyst-view.ts",
@@ -2693,6 +2693,8 @@
       "tests/checked-findings.test.ts",
       "tests/research-attribution-readiness.test.ts",
       "tests/research-coverage-repair.test.ts"
-    ]
+    ],
+    "pr": 42,
+    "verification": "Both full local suites passed:1208 pass, zero failures, one existing skip each. Focused reading/attribution checks38/38 and empty-repair/changed-atom/unknown-payment checks23/23 passed. Final typecheck, production build and offline advisory diagnostic passed. Final desktop copy/heading/section acceptance and390px mobile with390px content width passed using retained results in a queue-paused isolated database. No dependency or migration changes. Final-head CI and release pending."
   }
 }

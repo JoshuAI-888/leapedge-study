@@ -105,3 +105,20 @@ test('accepted child publication wins even before the root status catches up and
  assert.doesNotMatch(JSON.stringify({view:detail.analystView,note:detail.analystNote}),/PENDING_SENTINEL|REJECTED_SENTINEL|recurring demand|ComputeCo/);
  assert.deepEqual(detail.run.output.source,source);
 });
+
+test('the provisional headline selects the uniquely titled accepted company and preserves secondary evidence',()=>{
+ const run=fixture();run.title='T MOBILE valuation assessment';
+ const retained=structuredClone(source);retained.segments[0].text='I watch T-Mobile if demand holds.';retained.segments[1].text='SpaceX is a secondary discussion.';
+ run.output.source=retained;run.output.mentions=[];
+ const mobile=checked('mobile','I watch T-Mobile if demand holds.','s1'),secondary=checked('secondary','SpaceX is a secondary discussion.','s2');
+ mobile.claim.instrument_as_spoken='T-Mobile';mobile.claim.ticker='TMUS';secondary.claim.instrument_as_spoken='SpaceX';
+ for(const [item,segment] of [[mobile,'s1'],[secondary,'s2']] as const){
+  const q=deriveEvidence(retained,{start_id:segment,end_id:segment});item.claim.evidence[0]={segment_id:segment,quote_original:q.quote_original,quote_translation_en:q.quote_original,source_span:{start_id:segment,end_id:segment,start_seconds:q.start_seconds,end_seconds:q.end_seconds,text_hash:q.text_hash}};
+ }
+ // An earlier, stronger secondary action previously won the headline.
+ secondary.claim.action='bought';run.output.claims=[secondary,mobile];run.output.keyPoints=[];
+ const result=project(run)!;
+ assert.match(result.note,/^# TMUS —/);assert.match(result.view.summary[0].text,/T-Mobile/);
+ assert.match(result.note,/SpaceX is a secondary discussion/);
+ mobile.audit!.verdict='reject';assert.ok(project(run)!.note.startsWith('# '+run.title+'\n'),'missing accepted primary retains original title');
+});

@@ -4,6 +4,7 @@ import {
   analystNote,
   AnalystView,
   CheckedFindings,
+  uniqueTitledEntity,
   type AnalystViewData,
 } from "../../features/youtube-intelligence/analyst-view.ts";
 import { Claim, Source, deriveEvidence, type CheckedClaim, type MentionData, type Run, type SourceData } from "../../features/youtube-intelligence/contracts.ts";
@@ -130,7 +131,8 @@ export function checkedFindingsFor(run:Run) {
     ];
   });
   const leadingClaimId=base.ideas[0]?.claimIds[0];
-  const first=points.find(p=>p.id===`${leadingClaimId}:thesis`)??points.find(p=>p.kind==='creator_view')??points[0];
+  const primary=uniqueTitledEntity(run.title,base.ideas,i=>[i.ticker,i.name,i.spoken]);
+  const first=points.find(p=>p.id===`${primary?.claimIds[0]??leadingClaimId}:thesis`)??points.find(p=>p.kind==='creator_view')??points[0];
   const driver=points.find(p=>p.kind==='analysis'&&p.topic===first.topic)??points.find(p=>p.kind==='analysis');
   const countercase=points.find(p=>p.kind==='countercase'&&p.topic===first.topic)??points.find(p=>p.kind==='countercase'||p.kind==='next_check');
   const overview=[first,driver,countercase].filter((p):p is Point=>!!p).filter((p,index,all)=>all.findIndex(q=>q.id===p.id)===index);
@@ -138,7 +140,7 @@ export function checkedFindingsFor(run:Run) {
   const sections:AnalystViewData['sections']=([['thesis','Thesis'],['valuation','Valuation and scenario'],['countercase','Countercase'],['next_checks','Next checks']] as const)
     .map(([key,title])=>({key,title,points:points.filter(p=>sectionKey(p)===key).sort((a,b)=>Number(b.topic===first.topic)-Number(a.topic===first.topic))}));
   sections.push({key:'evidence',title:'Evidence',points});
-  const view=AnalystView.parse({...base,heading:`${first.topic} — ${first.text}`,publicationState:'coverage_in_progress',sections,
+  const view=AnalystView.parse({...base,heading:primary?`${first.topic} — ${first.text}`:run.title,publicationState:'coverage_in_progress',sections,
     summary:overview.map(p=>({text:p.text,at:p.at,references:p.references})),ideas:[],sentiment:[],otherMentions:[],keyPoints:[],themes:[],numbers:[],watchOuts:[],diagnostics:['Full-source coverage and the independently reviewed research brief are still in progress.']});
   return CheckedFindings.parse({revision,view,note:analystNote(view)});
 }
