@@ -19,7 +19,7 @@ const claim = (over: Partial<ClaimData>, quote: string, at: number): ClaimData =
   evidence: [{ segment_id: "s1", quote_original: quote, quote_translation_en: quote, source_span: { start_id: "s1", end_id: "s1", start_seconds: at, end_seconds: at + 5, text_hash: "h" } }],
   ...over,
 });
-const checked = (id: string, c: ClaimData, passed = true): CheckedClaim => ({ id, claim: c, passed, reasons: [] });
+const checked = (id: string, c: ClaimData, passed = true): CheckedClaim => ({ id, claim: c, passed, reasons: [], audit:{verdict:passed ? "accept" : "reject",reason_en:"Fixture independent review"} });
 const mention = (spoken: string, sentiment: "bullish" | "bearish" | "neutral", at: number, extra: Partial<MentionData> = {}): MentionData => ({
   ticker: null,
   instrument_as_spoken: spoken,
@@ -53,7 +53,7 @@ function input(over: Partial<AnalystViewInput> = {}): AnalystViewInput {
       mention("Tesla", "bullish", 100, { claim_id: "c3" }),
       mention("Nike", "bullish", 40),
     ],
-    mentionChecks: { "Nike:m40:m40": false },
+    mentionChecks: Object.fromEntries([610,320,605,100].map((at,i)=>[`${["Wynn","win resorts","Winning Resorts","Tesla"][i]}:m${at}:m${at}`,true]).concat([["Nike:m40:m40",false]])),
     claimListings: { c1: ref("WYNN", "WYNN RESORTS LTD"), c2: ref("WYNN", "WYNN RESORTS LTD"), c3: ref("TSLA", "Tesla, Inc."), c4: ref("NKE", "NIKE, Inc."), c5: ref("CELH", "Celsius Holdings, Inc.") },
     mentionListings: [ref("WYNN", "WYNN RESORTS LTD"), ref("WYNN", "WYNN RESORTS LTD"), ref("WYNN", "WYNN RESORTS LTD"), ref("TSLA", "Tesla, Inc."), ref("NKE", "NIKE, Inc.")],
     brief: {
@@ -84,19 +84,21 @@ function input(over: Partial<AnalystViewInput> = {}): AnalystViewInput {
   };
 }
 
+function rootInput() { return input({brief:null}); }
+
 test("one card per instrument and owner: the strongest action leads, other theses and levels stay on it", () => {
-  const v = buildAnalystView(input());
+  const v = buildAnalystView(rootInput());
   const wynn = v.ideas.filter((i) => i.ticker === "WYNN");
   assert.equal(wynn.length, 1);
   assert.equal(wynn[0].action, "bought");
   assert.equal(wynn[0].size, "$8,400");
-  assert.deepEqual(wynn[0].also, [], "the strongest thesis leads; a second thesis on the same card read as repetition");
+  assert.deepEqual(wynn[0].also, ["Wynn could rip once rates fall."], "distinct conditional thesis survives alongside the executed trade");
   assert.deepEqual(wynn[0].levels, [{ kind: "target", value: "200", condition: "once rates peak" }]);
   assert.deepEqual(wynn[0].claimIds, ["c2", "c1"]);
 });
 
 test("ideas rank executed trades first and third-party views last; rejected calls never appear", () => {
-  const v = buildAnalystView(input());
+  const v = buildAnalystView(rootInput());
   assert.deepEqual(v.ideas.map((i) => i.ticker), ["WYNN", "CELH", "TSLA"]);
   const tesla = v.ideas.find((i) => i.ticker === "TSLA")!;
   assert.equal(tesla.owner, "third_party");
@@ -105,9 +107,10 @@ test("ideas rank executed trades first and third-party views last; rejected call
 });
 
 test("also discussed covers instruments without a card; passing or unresolved names are one line", () => {
-  const base = input();
+  const base = rootInput();
   const v = buildAnalystView({
     ...base,
+    mentionChecks:{...base.mentionChecks,"Amazon:m200:m200":true,"Amazon:m260:m260":true,"Costco:m300:m300":true,"pound:m310:m310":true},
     mentions: [
       ...base.mentions,
       mention("Amazon", "bullish", 200),
@@ -123,8 +126,8 @@ test("also discussed covers instruments without a card; passing or unresolved na
   assert.ok(!v.otherMentions.includes("NKE"), "a critic-rejected mention is not shown at all");
 });
 
-test("market caps are not levels, key points do not repeat the cards, a catalyst said twice appears once", () => {
-  const base = input();
+test("market caps are not levels and a catalyst said twice appears once", () => {
+  const base = rootInput();
   base.claims[1].claim.levels = [{ kind: "target", value_original: "$1 trillion plus", condition_en: null }, { kind: "target", value_original: "120", condition_en: null }];
   base.claims[1].claim.catalysts = [{ text_en: "Middle East property opening", date_original: null }, { text_en: "Middle East property opening next year", date_original: "next year" }];
   const v = buildAnalystView(base);
@@ -141,21 +144,19 @@ test("pipeline bookkeeping goes to processing notes; content gaps and misheard n
   assert.equal(v.watchOuts.length, 1);
   assert.match(v.watchOuts[0].text, /\$1\.85.*\$11\.85/);
   assert.equal(v.diagnostics.filter((d) => /Palanteer/.test(d)).length, 1, "a repeated spelling note appears once");
-  assert.deepEqual(v.themes, ["Wynn", "Macro", "Tesla", "Celsius", "Nike"]);
+  assert.deepEqual(v.themes, ["Wynn", "Macro", "Tesla", "Celsius", "Nike", "Sixth"]);
   assert.equal(v.summary[0].text, "Wynn is the main new buy.");
   assert.equal(v.summary[0].at, 600);
 });
 
-test("the note a PM copies has the ideas and none of the pipeline text", () => {
-  const note = analystNote(buildAnalystView(input()));
-  assert.match(note, /### WYNN \(WYNN RESORTS LTD\) · Bought · long · conviction high/);
-  assert.match(note, /## Summary\nWynn is the main new buy\. Rates are the key macro risk\.\n/, "the summary is one paragraph");
-  assert.doesNotMatch(note, /At a glance|Also discussed|Also mentioned|Watch-outs|Creator stance|## Numbers|## Themes/, "the note is summary, ideas and context only");
-  assert.equal(atAGlance(buildAnalystView(input())), "Bought: WYNN · Watching: CELH · Third-party view: TSLA", "the page keeps the glance line");
-  assert.match(note, /- Size: \$8,400/);
-  assert.match(note, /third party: Morgan Stanley/);
-  assert.match(note, /> "I bought \$8,400 of Winning Resorts here today\." \[10:00\]/);
-  assert.doesNotMatch(note, /withheld|source-0|baseline/);
+test("the reviewed note copies every accepted sentence and no root quantities",()=>{
+ const v=buildAnalystView(input());
+ const note=analystNote(v);
+ assert.match(note,/30-second brief/);
+ assert.match(note,/Wynn is the main new buy/);
+ assert.match(note,/Rates are the key macro risk/);
+ assert.doesNotMatch(note,/8,400|Morgan Stanley/);
+ assert.equal(atAGlance(v),"");
 });
 
 test("a quote excerpt keeps whole sentences exactly as said, starting at the instrument", () => {
@@ -168,7 +169,7 @@ test("a quote excerpt keeps whole sentences exactly as said, starting at the ins
 });
 
 test("one third party's views on several tickers are one card, and a translation that changes a number is not shown", () => {
-  const base = input();
+  const base = rootInput();
   base.claims.push(
     checked("c6", claim({ instrument_as_spoken: "Micron", stance: "short", action: "view", owner: "third_party", owner_name: "Michael Burry", thesis_en: "Burry is short Micron." }, "Burry shorted Micron.", 800)),
     checked("c7", claim({ instrument_as_spoken: "Palantir", stance: "short", action: "view", owner: "third_party", owner_name: "Michael Burry", thesis_en: "Burry is short Palantir." }, "Burry shorted Palantir.", 810)),
@@ -187,36 +188,97 @@ test("one third party's views on several tickers are one card, and a translation
   assert.equal(only.quote?.translation, null, "0.07% is not what was said");
 });
 
-test("key points never cite a card's evidence, filler conditions go, the creator leads, and the quote fits the thesis", () => {
-  const base = input();
-  base.claims[2].claim.action = "bought"; // a third party's executed trade still ranks after the creator's ideas
-  base.claims[1].claim.conditions_en = ["if long-term", "Oil prices peak and rates start heading down"];
-  base.claims[1].claim.evidence = [
-    { segment_id: "s0", quote_original: "The chart colours are green today.", quote_translation_en: "The chart colours are green today." },
-    ...base.claims[1].claim.evidence,
-  ];
-  const brief = base.brief!;
-  brief.sentences = [
-    ...brief.sentences,
-    { ...brief.sentences[1], id: "s3", text: "The creator repeats the Wynn purchase in other words.", kind: "analysis", evidenceIds: ["c2"] },
-  ] as never;
-  const v = buildAnalystView(base);
-  assert.equal(v.ideas.at(-1)?.owner, "third_party");
-  const wynn = v.ideas.find((i) => i.ticker === "WYNN")!;
-  assert.deepEqual(wynn.conditions, ["Oil prices peak and rates start heading down"]);
-  assert.match(wynn.quote!.text, /bought \$8,400/);
-  assert.ok(!v.keyPoints.some((k) => /repeats the Wynn purchase/.test(k.text)));
-  assert.doesNotMatch(analystNote(v), /## Key points[\s\S]*\[\d+:\d{2}\]\n?$/, "key points carry no approximate timestamps");
+test("root checked cards retain short conditions and quote the thesis range",()=>{
+ const base=rootInput();
+ base.claims[1].claim.conditions_en=["if long-term","Oil prices peak and rates start heading down"];
+ base.claims[1].claim.evidence.unshift({segment_id:"s0",quote_original:"The chart colours are green today.",quote_translation_en:"The chart colours are green today."});
+ const wynn=buildAnalystView(base).ideas.find(i=>i.ticker==="WYNN")!;
+ assert.deepEqual(wynn.conditions,base.claims[1].claim.conditions_en);
+ assert.match(wynn.quote!.text,/bought \$8,400/);
 });
 
-test("a checked bottom line replaces the selected summary, its sources leave key points, and a header never restates its action", () => {
-  const view = buildAnalystView(input({ bottomLine: [{ text: "The creator's thesis is Wynn, bought on the rates view.", statementIds: ["s1", "s2"] }] }));
-  assert.deepEqual(view.summary, [{ text: "The creator's thesis is Wynn, bought on the rates view.", at: 600 }]);
-  assert.equal(view.keyPoints.some((k) => k.text.startsWith("Rates are")), false, "a statement the bottom line condensed is not repeated");
-  const watching = input();
-  watching.claims = watching.claims.map((c) => (c.id === "c5" ? { ...c, claim: { ...c.claim, stance: "watch" } } : c));
-  const note = analystNote(buildAnalystView(watching));
-  assert.match(note, /### CELH \(Celsius Holdings, Inc\.\) · Watching · conviction/, "Watching · watch shows once");
-  assert.match(note, /### WYNN \(WYNN RESORTS LTD\) · Bought · long ·/, "a stance that adds to the action stays");
-  assert.deepEqual(buildAnalystView(input({ bottomLine: [] })).summary.map((s) => s.text), ["Wynn is the main new buy.", "Rates are the key macro risk."], "no bottom line falls back to the brief");
+test("a checked bottom line cannot replace distinct balanced accepted assertions",()=>{
+ const v=buildAnalystView(input({bottomLine:[{text:"The creator's thesis is Wynn.",statementIds:["s1","s2"]}]}));
+ assert.equal(v.summary[0].text,"Wynn is the main new buy.");
+ assert.ok(v.sections.flatMap(s=>s.points).some(p=>p.id==="s2"));
+});
+
+// Reviewed child output is the publication boundary, including copied notes.
+test("a reviewed brief cannot re-expose rejected root theses, quantities or rationale", () => {
+  const base = input();
+  base.claims[1].claim.thesis_en = "Wynn will guarantee 200 percent returns.";
+  base.claims[1].claim.conditions_en = ["Guaranteed profit"];
+  base.claims[1].claim.levels = [{ kind:"target", value_original:"$999", condition_en:null }];
+  const v = buildAnalystView(base);
+  assert.equal(v.ideas.length, 0, "root cards must not bypass child publication gates");
+  assert.equal(v.sentiment.length, 0, "root rationale is separate from reviewed child content");
+  assert.doesNotMatch(analystNote(v), /guarantee|\$999|Guaranteed profit|8,400/);
+  assert.match(analystNote(v), /Wynn is the main new buy/);
+});
+
+test("the 30-second view balances main stance, economic driver and countercase while preserving all material", () => {
+  const base = input();
+  const seed = base.brief!.sentences[0];
+  base.brief!.mainTopics = ["Wynn"];
+  base.brief!.sentences = [
+    {...seed,id:"a",text:"The creator watches Wynn if debt falls.",kind:"creator_view",topic:"Wynn",materiality:3},
+    {...seed,id:"b",text:"Wynn revenue grew 10 percent.",kind:"reported_fact",topic:"Wynn",materiality:3},
+    {...seed,id:"c",text:"Wynn margins grew 20 percent.",kind:"reported_fact",topic:"Wynn",materiality:3},
+    {...seed,id:"d",text:"Wynn debt could offset growth.",kind:"countercase",topic:"Wynn",materiality:2},
+    ...Array.from({length:8},(_,i)=>({...seed,id:`n${i}`,text:`Wynn next check ${i}.`,kind:"next_check",topic:"Wynn",materiality:1})),
+  ] as never;
+  const v = buildAnalystView(base);
+  assert.deepEqual(v.summary.map(s=>s.text), ["The creator watches Wynn if debt falls.","Wynn revenue grew 10 percent.","Wynn debt could offset growth."]);
+  assert.ok(v.keyPoints.some(s=>s.text === "Wynn margins grew 20 percent."));
+  assert.equal(v.keyPoints.filter(s=>s.kind === "next_check").length,8);
+  assert.match(analystNote(v), /Wynn next check 7/);
+});
+
+test("checked root cards retain short conditions, every risk and distinct theses without material caps", () => {
+  const base = input({brief:null});
+  base.claims[1].claim.conditions_en = ["if profitable", "if rates fall", "if debt drops"];
+  base.claims[1].claim.risks_en = ["Debt", "Competition", "Dilution"];
+  const v = buildAnalystView(base);
+  const wynn = v.ideas.find(i=>i.ticker === "WYNN")!;
+  assert.deepEqual(wynn.conditions,["if profitable", "if rates fall", "if debt drops"]);
+  assert.deepEqual(wynn.risks,["Debt", "Competition", "Dilution"]);
+  assert.ok(wynn.also.includes("Wynn could rip once rates fall."));
+});
+
+test("stale or foreign bottom-line IDs cannot publish unsupported summary text", () => {
+  const v = buildAnalystView(input({bottomLine:[{text:"Guaranteed impossible return",statementIds:["rejected-id"]}]}));
+  assert.doesNotMatch(JSON.stringify(v),/Guaranteed impossible return/);
+  assert.match(analystNote(v),/Wynn is the main new buy/);
+});
+
+test("pending root claims and unassessed mentions never enter checked findings",()=>{
+ const base=rootInput();
+ delete base.claims[1].audit;
+ delete base.mentionChecks!["Tesla:m100:m100"];
+ const v=buildAnalystView(base);
+ assert.doesNotMatch(analystNote(v),/8,400/);
+ assert.ok(!v.sentiment.some(s=>s.ticker==="TSLA"));
+});
+
+test("canonical company heading and multi-range evidence preserve all references without a fabricated single timestamp",()=>{
+ const base=input();
+ const seed=base.brief!.sentences[0];
+ base.brief!.sentences=[{...seed,text:"The creator watches Wynn if debt falls.",kind:"creator_view"}] as never;
+ base.brief!.evidence=[{id:"c2",quotes:[{startId:"s9",endId:"s10",text:"Watch Wynn."},{startId:"s12",endId:"s13",text:"If debt falls."}]}] as never;
+ base.segmentSeconds.s12=750;
+ const v=buildAnalystView(base);
+ assert.equal(v.heading,"WYNN · Wynn — The creator watches Wynn if debt falls.");
+ assert.equal(v.summary[0].at,null);
+ assert.deepEqual(v.summary[0].references.map(r=>[r.at,r.startId,r.endId]),[[600,"s9","s10"],[750,"s12","s13"]]);
+ assert.equal(v.sections.find(s=>s.key==="thesis")?.points[0].id,"s1");
+});
+
+test("legacy accepted numerical prose remains withheld when a decimal is reconstructed from the source",()=>{
+ const base=input();
+ const seed=base.brief!.sentences[0];
+ base.brief!.sentences=[{...seed,text:"EPS was USD0.22.",financialFacts:[{label:"EPS",value:0.22,currency:"USD",unit:"per_share",scale:"ones",relation:"exact",period:null,basis:"not_stated",nature:"reported",evidenceId:"c2",quote:"EPS was USD22."}]}] as never;
+ base.brief!.evidence=[{id:"c2",quotes:[{startId:"s9",text:"EPS was USD22."}]}] as never;
+ const v=buildAnalystView(base);
+ assert.equal(v.summary.length,0);
+ assert.doesNotMatch(analystNote(v),/EPS was USD0.22/);
 });

@@ -52,7 +52,8 @@ function Idea({ idea, onSeek }: { idea: IdeaCardData; onSeek: (s: number) => voi
           {idea.spoken && idea.spoken !== idea.name && idea.spoken !== idea.ticker ? ` · said as “${idea.spoken}”` : ""}
         </p>
       )}
-      <h3>{idea.thesis}</h3>
+      <h3>{idea.ticker ?? idea.name} · {idea.owner === "creator" ? "Creator" : "Third-party"} {idea.action ? ACTION_LABEL[idea.action] ?? idea.action : idea.stance}</h3>
+      <p>{idea.thesis}</p>
       {idea.also.map((a) => (
         <p key={a} className="yi-muted">Also: {a}</p>
       ))}
@@ -82,9 +83,10 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
   const [copied, setCopied] = useState(false);
   return (
     <section className="yi-av" aria-label="Analyst view">
+      <p className="yi-av-publication" role="status">{view.publicationState === "coverage_in_progress" ? "Checked findings — full-source coverage still in progress" : view.publicationState === "reviewed_brief" ? "Reviewed brief — inspect any stated coverage gaps" : "Checked creator findings — full brief pending"}</p>
       <div className="yi-panel yi-av-head">
         <div className="yi-section-title">
-          <h2>Summary</h2>
+          <h2>30-second brief</h2>
           <button
             type="button"
             onClick={() =>
@@ -100,7 +102,7 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
         <ul className="yi-av-summary">
           {view.summary.map((s, i) => (
             <li key={i}>
-              {s.text} <At at={s.at} onSeek={onSeek} />
+              {s.text} {s.references?.length ? s.references.map((ref,index)=><At key={index} at={ref.at} onSeek={onSeek}/>) : <At at={s.at} onSeek={onSeek} />}
             </li>
           ))}
         </ul>
@@ -112,7 +114,41 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
         </div>
       </div>
 
-      <h2 className="yi-av-h">Ideas</h2>
+      {view.sections?.some(s=>s.points.length) && view.sections.map(section=>(
+        <section className="yi-panel yi-av-section" key={section.key} aria-label={section.title}>
+          <h2>{section.title}</h2>
+          {section.points.length ? section.key === "evidence" ? (
+            section.points.map(point=>(
+              <details key={point.id} id={`yi-av-evidence-${point.id}`}>
+                <summary>{point.topic} · {point.text}</summary>
+                {point.references.length ? point.references.map((ref,index)=>(
+                  <div key={index}>
+                    <blockquote>{ref.text}</blockquote>
+                    <p className="yi-muted">Original source · {ref.startId}{ref.endId && ref.endId !== ref.startId ? `–${ref.endId}` : ""} <At at={ref.at} onSeek={onSeek}/></p>
+                  </div>
+                )) : <p className="yi-muted">No timed source reference available.</p>}
+              </details>
+            ))
+          ) : Array.from(new Set(section.points.map(p=>p.topic))).map(topic=>(
+            <div key={topic}>
+              <h3>{topic}</h3>
+              <ul>{section.points.filter(p=>p.topic===topic).map(point=>(
+                <li key={point.id}>
+                  {point.speaker !== "unknown" && <span className="yi-muted yi-av-speaker">{point.speaker.replaceAll("_"," ")} · </span>}
+                  {point.text}{" "}
+                  <a className="yi-av-evidence-link" href={`#yi-av-evidence-${point.id}`} onClick={()=>{
+                    const el=document.getElementById(`yi-av-evidence-${point.id}`);
+                    if(el instanceof HTMLDetailsElement) el.open=true;
+                  }}>Evidence</a>{" "}
+                  {point.references.map((ref,index)=><At key={index} at={ref.at} onSeek={onSeek}/>)}
+                </li>
+              ))}</ul>
+            </div>
+          )) : <p className="yi-muted">No accepted finding for this section{view.publicationState === "coverage_in_progress" ? " yet; coverage is still in progress." : "; inspect the source gaps."}</p>}
+        </section>
+      ))}
+
+      {view.ideas.length > 0 && <h2 className="yi-av-h">Creator ideas</h2>}
       {view.ideas.length ? (
         <div className="yi-card-grid">
           {view.ideas.map((i) => (
@@ -120,7 +156,7 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
           ))}
         </div>
       ) : (
-        <p className="yi-muted">No actionable idea was stated in this video; see the key points and sentiment below.</p>
+        !view.sections?.some(s=>s.points.length) && <p className="yi-muted">No independently accepted creator idea is available yet.</p>
       )}
 
       {view.sentiment.length > 0 && (
@@ -164,7 +200,7 @@ export function AnalystViewPanel({ view, note, onSeek }: { view: AnalystViewData
         <p className="yi-muted">Also mentioned: {view.otherMentions.join(", ")}</p>
       )}
 
-      {view.keyPoints.length > 0 && (
+      {view.keyPoints.length > 0 && !view.sections?.some(s=>s.points.length) && (
         <div className="yi-panel">
           <h2>Key points</h2>
           <ul>

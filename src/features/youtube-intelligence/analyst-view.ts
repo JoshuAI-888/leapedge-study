@@ -1,7 +1,8 @@
 import { z } from "zod";
 import type { CheckedClaim, ClaimData, MentionData } from "./contracts.ts";
 import type { ListingRefData } from "./listing-ref.ts";
-import type { ResearchBriefData } from "./research-brief.ts";
+import { reviewFinancialFact, type ResearchBriefData } from "./research-brief.ts";
+import { numericalSentenceDisposition } from "./research-numeric-check.ts";
 
 /**
  * The page a PM reads (analyst view, PR 3). Assembled by code from what the
@@ -48,11 +49,16 @@ export const SentimentRow = z.object({
   reasons: z.array(z.string()),
   firstAt: z.number().nullable(),
 });
+const Reference = z.object({ evidenceId:z.string(), startId:z.string().nullable(), endId:z.string().nullable(), text:z.string(), at:z.number().nullable() });
+const ReadingPoint = z.object({ id:z.string(), text:z.string(), topic:z.string(), kind:z.string(), speaker:z.string(), at:z.number().nullable(), references:z.array(Reference) });
 export const AnalystView = z.object({
+  heading: z.string().default("Research assessment"),
+  publicationState: z.enum(["root_checked", "coverage_in_progress", "reviewed_brief"]).default("root_checked"),
+  sections: z.array(z.object({ key:z.enum(["thesis","valuation","countercase","next_checks","evidence"]), title:z.string(), points:z.array(ReadingPoint) })).default([]),
   title: z.string(),
   channel: z.string().nullable(),
   publishedAt: z.string().nullable(),
-  summary: z.array(z.object({ text: z.string(), at: z.number().nullable() })),
+  summary: z.array(z.object({ text: z.string(), at: z.number().nullable(), references:z.array(Reference).default([]) })),
   stance: z.object({ bullish: z.number().int(), bearish: z.number().int(), neutral: z.number().int() }),
   ideas: z.array(IdeaCard),
   /** Instruments discussed without an idea card: resolved, with a clear stance or repeated mention. */
@@ -66,10 +72,12 @@ export const AnalystView = z.object({
   watchOuts: z.array(z.object({ text: z.string(), at: z.number().nullable() })),
   diagnostics: z.array(z.string()),
 });
+export const CheckedFindings = z.object({revision:z.number().int().nonnegative(),view:AnalystView,note:z.string()});
 export type AnalystViewData = z.infer<typeof AnalystView>;
 export type IdeaCardData = z.infer<typeof IdeaCard>;
 
 export type AnalystViewInput = {
+  publicationState?: "root_checked" | "coverage_in_progress" | "reviewed_brief";
   title: string;
   channel: string | null;
   publishedAt: string | null;
@@ -159,7 +167,7 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   // Ideas: accepted calls, one card per instrument, action and owner.
   const groups = new Map<string, { id: string; claim: ClaimData; ref: ListingRefData | null }[]>();
   for (const item of input.claims) {
-    if (!item.passed) continue;
+    if (input.brief || !item.passed || item.reasons.length || item.audit?.verdict !== "accept") continue;
     const ref = input.claimListings[item.id] ?? null;
     const c = item.claim;
     const key = [instrumentKey(c.instrument_as_spoken ?? c.ticker, ref), c.owner ?? "creator"].join("|");
@@ -190,7 +198,7 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
       conviction: c.creator_conviction,
       horizon: c.horizon_en,
       thesis: c.thesis_en,
-      also: [],
+      also: unique(all.map(x=>x.thesis_en).filter(t=>t!==c.thesis_en)),
       // A market capitalisation is not a price level a PM can trade on.
       levels: unique(
         all.flatMap((x) => x.levels.map((l) => ({ kind: l.kind, value: l.value_original, condition: l.condition_en ?? null }))),
@@ -200,11 +208,8 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
         ? { right: option.right, side: option.side, strike: option.strike_original, expiry: option.expiry_original, premium: option.premium_original }
         : null,
       size: all.find((x) => x.size_original)?.size_original ?? null,
-      // A condition of three words or fewer, or one that restates the horizon, is filler.
-      conditions: unique(all.flatMap((x) => x.conditions_en), (s) => s)
-        .filter((t) => t.trim().split(/\s+/).length > 3 && !(c.horizon_en && t.toLowerCase().includes(c.horizon_en.toLowerCase())))
-        .slice(0, 2),
-      risks: unique(all.flatMap((x) => x.risks_en), (s) => s).slice(0, 2),
+      conditions: unique(all.flatMap((x) => x.conditions_en), (s) => s),
+      risks: unique(all.flatMap((x) => x.risks_en), (s) => s),
       catalysts: dropContained(unique(all.flatMap((x) => (x.catalysts ?? []).map((k) => ({ text: k.text_en, date: k.date_original }))), (k) => k.text)),
       quote: quoteOf(c, [c.instrument_as_spoken ?? "", c.ticker ?? "", lead.ref?.symbol ?? ""]),
       claimIds: sorted.map((m) => m.id),
@@ -226,7 +231,9 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
     twin.name = twin.ticker;
     twin.claimIds.push(...idea.claimIds);
     twin.levels = unique([...twin.levels, ...idea.levels], (l) => `${l.kind}|${l.value}`);
-    twin.risks = unique([...twin.risks, ...idea.risks], (r) => r).slice(0, 2);
+    twin.risks = unique([...twin.risks, ...idea.risks], (r) => r);
+    twin.conditions = unique([...twin.conditions, ...idea.conditions]);
+    twin.also = unique([...twin.also, idea.thesis, ...idea.also]);
   }
   ideas.length = 0;
   ideas.push(...merged);
@@ -243,7 +250,7 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const rows = new Map<string, { m: MentionData; ref: ListingRefData | null }[]>();
   input.mentions.forEach((m, i) => {
     const check = input.mentionChecks?.[`${m.ticker ?? m.instrument_as_spoken}:${m.source_span.start_id}:${m.source_span.end_id}`];
-    if (check === false) return;
+    if (input.brief || check !== true) return;
     const ref = input.mentionListings[i] ?? null;
     const key = instrumentKey(m.instrument_as_spoken ?? m.ticker, ref);
     rows.set(key, [...(rows.get(key) ?? []), { m, ref }]);
@@ -262,7 +269,7 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
       mentions: ms.length,
       isCall: ms.some((x) => x.m.is_call),
       owner,
-      reasons: unique(ms.map((x) => x.m.rationale_en), (s) => s).slice(0, 2),
+      reasons: unique(ms.map((x) => x.m.rationale_en), (s) => s),
       firstAt: ms.reduce<number | null>((min, x) => {
         const t = x.m.source_span.start_seconds;
         return t == null ? min : min == null ? t : Math.min(min, t);
@@ -286,60 +293,59 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
     (n) => n.toLowerCase(),
   );
 
-  // Summary and key points from the audited brief, highest materiality first.
-  const sentences = input.brief?.sentences ?? [];
-  const evidenceAt = (ids: string[]) => {
-    for (const id of ids) {
-      const ev = input.brief?.evidence.find((e) => e.id === id) as { quotes?: { startId?: string }[] } | undefined;
-      const start = ev?.quotes?.[0]?.startId;
-      if (start && input.segmentSeconds[start] != null) return input.segmentSeconds[start]!;
-    }
-    return null;
+  // Only accepted child assertions enter a reviewed surface. Recheck legacy
+  // numerical proposals rather than letting a root card restore rejected prose.
+  const evidence = input.brief?.evidence ?? [];
+  const sentences = (input.brief?.sentences ?? []).filter(sentence => {
+    const unresolved = sentence.financialFacts.map(f=>reviewFinancialFact(f,
+      evidence.filter(e=>e.id===f.evidenceId && sentence.evidenceIds.includes(e.id)).flatMap(e=>e.quotes.map(q=>q.text))))
+      .filter(check=>check.status==="unresolved").map(check=>check.original);
+    return numericalSentenceDisposition({...sentence,financialFacts:unresolved},evidence).status !== "neutral_repair_required";
+  });
+  const referencesFor = (ids:string[]) => unique(ids.flatMap(id=>{
+    const ev = evidence.find(e=>e.id===id);
+    return (ev?.quotes ?? []).map(q=>({evidenceId:id,startId:q.startId ?? null,endId:q.endId ?? null,text:q.text ?? "",at:q.startId ? input.segmentSeconds[q.startId] ?? null : null}));
+  }));
+  const evidenceAt = (ids:string[]) => {
+    const refs = referencesFor(ids);
+    // Several distinct ranges do not imply a precise single assertion timestamp.
+    return refs.length===1 ? refs[0].at : null;
   };
-  const ranked = sentences
-    .map((s, order) => ({ s, order }))
-    .sort((a, b) => b.s.materiality - a.s.materiality || a.order - b.order);
-  // The summary is the video's takeaway: the creator's own view on the brief's
-  // main topics first, sentences that read on their own, most important first.
-  // Kind is a preference, not a filter: a video of reported facts still gets
-  // a three-sentence summary of what it is about.
-  const KIND_BONUS: Record<string, number> = {
-    creator_view: 4, action: 3, holding: 2, analysis: 1, reported_fact: 0,
-    third_party_forecast: -1, countercase: -1, invalidation: -1, next_check: -2, scenario: -3, education: -5,
+  const ranked = sentences.map((s,order)=>({s,order})).sort((a,b)=>b.s.materiality-a.s.materiality || a.order-b.order);
+  const mainTopic = input.brief?.mainTopics?.find(t=>sentences.some(s=>s.topic.toLowerCase()===t.toLowerCase())) ?? ranked[0]?.s.topic;
+  const main = ranked.filter(({s})=>s.topic.toLowerCase()===mainTopic?.toLowerCase());
+  const chosen:typeof ranked=[];
+  const pick=(pool:typeof ranked,kinds:string[])=>{
+    const item=pool.find(x=>kinds.includes(x.s.kind)&&!chosen.some(y=>y.s.id===x.s.id));
+    if(item) chosen.push(item);
   };
-  const CONNECTIVE = /^(In contrast|However|Meanwhile|Additionally|Also|Similarly|Conversely|On the other hand|Furthermore|Moreover|By contrast)\b/i;
-  const mainTopics = new Set((input.brief?.mainTopics ?? []).slice(0, 3).map((t) => t.toLowerCase()));
-  const summaryScore = (x: { materiality: number; kind: string; topic: string }) =>
-    x.materiality * 10 + (mainTopics.has(x.topic.toLowerCase()) ? 5 : 0) + (KIND_BONUS[x.kind] ?? -2);
-  const bottomLine = input.bottomLine?.length ? input.bottomLine : null;
-  const cited = new Set(bottomLine?.flatMap((b) => b.statementIds) ?? []);
-  const summary = bottomLine
-    ? bottomLine.map((b) => ({ text: b.text, at: evidenceAt(sentences.filter((s) => b.statementIds.includes(s.id)).flatMap((s) => s.evidenceIds)) }))
-    : ranked
-    .filter(({ s }) => (KIND_BONUS[s.kind] ?? -2) > -3 && !CONNECTIVE.test(s.text))
-    .sort((a, b) => summaryScore(b.s) - summaryScore(a.s) || a.order - b.order)
-    .slice(0, 3)
-    .map(({ s }) => ({ text: s.text, at: evidenceAt(s.evidenceIds) }));
-  const inSummary = new Set(summary.map((x) => x.text));
-  // Key points carry the context around the ideas: never a sentence already in
-  // the summary, an action or holding the cards show, or one about an
-  // instrument that has a card.
-  const cardKinds = ideas.length ? new Set(["action", "holding"]) : new Set<string>();
-  const cardEvidence = new Set(ideas.flatMap((i) => i.claimIds));
-  const cardNames = ideas
-    .flatMap((i) => [i.ticker, i.spoken, i.name.split(/[ ,]/)[0]])
-    .filter((n): n is string => !!n && n.length >= 2)
-    .map((n) => n.toLowerCase());
-  const namesCard = (t: string) => cardNames.some((n) => new RegExp(`(^|[^\\p{L}\\p{N}])${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^\\p{L}\\p{N}]|$)`, "iu").test(t));
-  const keyPoints = ranked
-    .filter(({ s }) => !inSummary.has(s.text) && !cited.has(s.id) && !cardKinds.has(s.kind) && !namesCard(s.text) && !s.evidenceIds.some((id) => cardEvidence.has(id)))
-    .slice(0, 6)
-    .sort((a, b) => a.order - b.order)
-    .map(({ s }) => ({ text: s.text, at: evidenceAt(s.evidenceIds), kind: s.kind }));
-  const numbers = unique(
-    sentences.flatMap((s) => s.financialFacts.map((f) => ({ label: f.label, quote: f.quote, at: evidenceAt([f.evidenceId]) }))),
-    (n) => n.label,
-  ).slice(0, 8);
+  pick(main,["creator_view","action","holding"]);
+  pick(main,["analysis","reported_fact","scenario"]);
+  if(!chosen.some(x=>["analysis","reported_fact","scenario"].includes(x.s.kind))) pick(ranked,["analysis","reported_fact","scenario"]);
+  pick(main,["countercase","invalidation","next_check"]);
+  // Do not fill a missing countercase slot with a third favourable fact.
+  if(!chosen.length) pick(main.length ? main : ranked,ranked.map(x=>x.s.kind));
+  if(chosen.length<2 && !chosen.some(x=>["countercase","invalidation","next_check"].includes(x.s.kind)))
+    pick(ranked,["countercase","invalidation","next_check"]);
+  const acceptedIds=new Set(sentences.map(s=>s.id));
+  const validBottomLine=(input.bottomLine ?? []).filter(b=>b.statementIds.length && b.statementIds.every(id=>acceptedIds.has(id)));
+  // A checked aid may fill only a missing overview; the source-derived balanced
+  // slots remain when available. Its referenced published assertions are retained.
+  const summary = chosen.length ? chosen.map(({s})=>({text:s.text,at:evidenceAt(s.evidenceIds),references:referencesFor(s.evidenceIds)}))
+    : validBottomLine.map(b=>{const ids=sentences.filter(s=>b.statementIds.includes(s.id)).flatMap(s=>s.evidenceIds);return {text:b.text,at:evidenceAt(ids),references:referencesFor(ids)};});
+  const inSummary=new Set(summary.map(s=>s.text));
+  const keyPoints=sentences.filter(s=>!inSummary.has(s.text)).map(s=>({text:s.text,at:evidenceAt(s.evidenceIds),kind:s.kind}));
+  const point=(s:typeof sentences[number])=>({id:s.id,text:s.text,topic:s.topic,kind:s.kind,speaker:s.speaker,at:evidenceAt(s.evidenceIds),references:referencesFor(s.evidenceIds)});
+  const sectionKey=(s:typeof sentences[number])=>["countercase","invalidation"].includes(s.kind) ? "countercase" : s.kind==="next_check" ? "next_checks" : s.kind==="scenario" || s.financialFacts.length>0 || /\b(?:valuation|multiple|price.to.earnings|earnings times)\b/i.test(s.text) ? "valuation" : "thesis";
+  const sections:z.infer<typeof AnalystView>["sections"]=([ ["thesis","Thesis"], ["valuation","Valuation and scenario"], ["countercase","Countercase"], ["next_checks","Next checks"] ] as const)
+    .map(([key,title])=>({key,title,points:sentences.filter(s=>sectionKey(s)===key).sort((a,b)=>Number(b.topic===mainTopic)-Number(a.topic===mainTopic)).map(point)}));
+  sections.push({key:"evidence",title:"Evidence",points:sentences.map(point)});
+  const lead=main.find(({s})=>["creator_view","action","holding"].includes(s.kind))?.s ?? main[0]?.s;
+  const ref=Object.values(input.claimListings).find(r=>r && [r.symbol,r.name].some(n=>n?.toLowerCase()===mainTopic?.toLowerCase()))
+    ?? input.claims.map(c=>({c,ref:input.claimListings[c.id]})).find(x=>x.ref && x.c.claim.instrument_as_spoken?.toLowerCase()===mainTopic?.toLowerCase())?.ref;
+  const company=ref ? `${ref.symbol ? ref.symbol+" · " : ""}${mainTopic}` : mainTopic;
+  const heading=company ? `${company} — ${lead?.text ?? "Checked research"}` : ideas[0] ? `${ideas[0].ticker ?? ideas[0].name} — ${ideas[0].thesis}` : input.title;
+  const numbers=unique(sentences.flatMap(s=>s.financialFacts.map(f=>({label:f.label,quote:f.quote,at:evidenceAt([f.evidenceId])}))),n=>`${n.label}|${n.quote}`);
 
   const omissions = input.brief?.omissions ?? [];
   const doubts = unique(input.transcriptionDoubts, (d) => `${d.heard}|${d.likely}`);
@@ -348,6 +354,9 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
   const creatorIdeas = ideas.filter((i) => i.owner === "creator");
   return AnalystView.parse({
     title: input.title,
+    heading,
+    sections,
+    publicationState: input.publicationState ?? (input.brief ? "reviewed_brief" : "root_checked"),
     channel: input.channel,
     publishedAt: input.publishedAt,
     summary,
@@ -359,13 +368,13 @@ export function buildAnalystView(input: AnalystViewInput): AnalystViewData {
     ideas,
     sentiment,
     otherMentions,
-    themes: (input.brief?.mainTopics ?? []).slice(0, 5),
+    themes: input.brief?.mainTopics ?? [],
     keyPoints,
     numbers,
-    notStated: omissions.filter(isGap).slice(0, 3),
+    notStated: omissions.filter(isGap),
     // A misheard number changes meaning and is shown; a misspelt name is
     // already handled by listing resolution and stays in processing notes.
-    watchOuts: numericDoubts.slice(0, 3).map((d) => ({
+    watchOuts: numericDoubts.map((d) => ({
       text: `Possibly misheard: "${d.heard}" may be "${d.likely}". ${d.reason_en}`,
       at: d.start_seconds ?? null,
     })),
@@ -392,6 +401,16 @@ export function headerStance(action: string | null | undefined, stance: string) 
 export function analystNote(v: AnalystViewData): string {
   // The note has one shape: a summary paragraph, the ideas, and the context
   // around them. Everything else is on the page, not in the note.
+  if (v.publicationState !== "root_checked") {
+    const lines=[`# ${v.heading}`,v.publicationState==="coverage_in_progress" ? "Checked findings — full-source coverage still in progress" : "Reviewed brief",""];
+    if(v.summary.length) lines.push("## 30-second brief",...v.summary.map(s=>s.text),"");
+    for(const section of v.sections.filter(s=>s.key!=="evidence" && s.points.length)) {
+      lines.push(`## ${section.title}`,...section.points.map(p=>`${p.text}${p.references.length===1 ? clock(p.references[0].at) : ""}`),"");
+    }
+    if(v.notStated.length) lines.push("## Source gaps",...v.notStated,"");
+    if(v.diagnostics.length || v.watchOuts.length) lines.push("## Limitations — review before relying on this brief",...v.diagnostics,...v.watchOuts.map(s=>s.text),"");
+    return lines.join("\n").trim()+"\n";
+  }
   const lines: string[] = [`# ${v.title}`, [v.channel, v.publishedAt?.slice(0, 10)].filter(Boolean).join(" · "), ""];
   if (v.summary.length) lines.push("## Summary", v.summary.map((s) => s.text).join(" "), "");
   if (v.ideas.length) {
@@ -400,7 +419,7 @@ export function analystNote(v: AnalystViewData): string {
       const who = i.owner === "creator" ? "" : ` — ${i.owner === "guest" ? "guest" : "third party"}${i.ownerName ? `: ${i.ownerName}` : ""}`;
       const doing = [i.action && (ACTION_LABEL[i.action] ?? i.action), headerStance(i.action, i.stance)].filter(Boolean).join(" · ");
       lines.push(`### ${i.ticker ?? i.name}${i.ticker && i.name !== i.ticker ? ` (${i.name})` : ""} · ${doing} · conviction ${i.conviction}${who}`);
-      lines.push(i.thesis);
+      lines.push(i.thesis,...i.also);
       const facts = [
         i.option && `Option: ${i.option.side} ${i.option.right}${i.option.strike ? ` ${i.option.strike}` : ""}${i.option.expiry ? `, expiry ${i.option.expiry}` : ""}${i.option.premium ? `, premium ${i.option.premium}` : ""}`,
         i.size && `Size: ${i.size}`,
