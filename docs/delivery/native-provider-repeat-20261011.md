@@ -99,6 +99,13 @@ More auditing is insufficient when evidence is lost or the critique contract
 does not test actor/action strength. The native literal gate catches Palantir's
 unsupported1,049 even when Claude accepts it using an invalid implied calculation.
 
+The post-deployment page also exposes older root research context containing
+the disputed future EPS decimals and conflicting price forms, even where the
+separately audited child brief withholds them. A child publication gate does
+not protect every displayed surface. The accepted proposition graph and its
+review status must govern research context, watch-outs, summaries and exported
+notes together; a suggested correction must remain explicitly unresolved.
+
 The final gate also loses valid EPS expressed in cents and lower bounds with
 shared billion-unit range suffixes. Three parser cases erase supported margin,
 FCF, cash and guidance clauses along with the disputed field; two other numeric
@@ -147,3 +154,14 @@ responses, six publication documents, browser captures,
 The calculation records SHA-256 digests and can run offline. Earlier Leap
 outputs and REA evidence remain in the neighboring fresh/paired directories.
 Credentials are excluded from reports and commits.
+
+## Verified rollout
+
+PR40 merged at `02073b96a6d178c3d72206e98c3450b73bdcd2fe` after both final
+feature-head CI runs passed. Production deployment
+`dpl_FYncMcVW6JXGtMbexiPCRD9Rn2PM` is READY at
+`youtube-intelligence-two.vercel.app` with that exact commit. Reloading the
+live Palantir repeat confirmed the completed result and published summary.
+Both full local suites passed 1,112 tests with zero failures and one existing
+skip each; routing/replay/default tests passed 40/40, and the delivery ledger
+passed 9/9. Typecheck, build and offline advisory diagnostics passed.
