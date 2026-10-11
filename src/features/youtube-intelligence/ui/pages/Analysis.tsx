@@ -10,8 +10,9 @@ import { ResearchBrief } from "../ResearchBrief.tsx";
 import { Timing } from "../Timing.tsx";
 import { CallUsageTable } from "../CallUsageTable.tsx";
 import type { LedgerRow } from "../../call-usage.ts";
-import { AnalystViewPanel } from "../AnalystView.tsx";
-import type { AnalystViewData } from "../../analyst-view.ts";
+import { AnalystViewPanel, AnalystPageHeading } from "../AnalystView.tsx";
+import { AnalystView, CheckedFindings, type AnalystViewData } from "../../analyst-view.ts";
+import { acceptsReadingUpdate } from "../../analyst-reading.ts";
 import type { RunTimelineData } from "../../timing.ts";
 import type { ResearchBriefData } from "../../research-brief.ts";
 import type { SourceData } from "../../contracts.ts";
@@ -66,6 +67,10 @@ type Metadata = {
   publishedAt?: string;
   language?: string;
 };
+function liveFindingsRevision(run: {id:string} | undefined) {
+  return (run as {findingsRevision?:number} | undefined)?.findingsRevision ?? 0;
+}
+
 export function Analysis({ id }: { id: string }) {
   const { data, perform, busy } = useWorkspace();
   useMarkSeen(id); // F70: opening an analysis marks it seen on this browser.
@@ -97,6 +102,8 @@ export function Analysis({ id }: { id: string }) {
     } | null>(null),
     [thumbFailed, setThumbFailed] = useState(false),
     [scrollRequest, setScrollRequest] = useState(0);
+  const latestReading = useRef({id,revision:-1,final:false});
+  const findingsRevision = liveFindingsRevision(data?.runs.find(r=>r.id===id));
   // A key point or brief reference was played: bring the player into view
   // once the Calls tab (which holds it) has rendered.
   useEffect(() => {
@@ -133,17 +140,29 @@ export function Analysis({ id }: { id: string }) {
       calls?: LedgerRow[];
       analystView?: AnalystViewData | null;
       analystNote?: string | null;
+      checkedFindings?: {revision:number;view:AnalystViewData;note:string} | null;
+      findingsRevision?:number;
     }>(
       `/api/intelligence/runs/${encodeURIComponent(id)}`,
       undefined,
       controller.signal,
     )
       .then((x) => {
+        if(controller.signal.aborted) return;
+        const checked = x.checkedFindings ? CheckedFindings.parse(x.checkedFindings) : null;
+        // Empty new projections still invalidate an older reading. The scalar
+        // is gated by the frozen execution plan on the detail endpoint.
+        const revision = checked?.revision ?? z.number().int().nonnegative().max(999999999).parse(x.findingsRevision ?? 0);
+        const final = x.analystView?.publicationState === "reviewed_brief";
+        if(latestReading.current.id !== id) latestReading.current={id,revision:-1,final:false};
+        if(latestReading.current.revision >= 0 && !acceptsReadingUpdate({runId:id,...latestReading.current},{runId:id,revision,final})) return;
+        latestReading.current={id,revision:Math.max(revision,latestReading.current.revision),final};
         setRun(x.run);
         setBriefs(x.researchBriefs ?? []);
         setSpans(x.evidenceSpans ?? []);
         setStoredClaims(x.claims ?? []);
-        setAnalyst(x.analystView && x.analystNote ? { view: x.analystView, note: x.analystNote } : null);
+        const reading = final || !checked ? (x.analystView && x.analystNote ? {view:x.analystView,note:x.analystNote} : null) : checked;
+        setAnalyst(reading ? {view:AnalystView.parse(reading.view),note:reading.note} : null);
         setReviewerConfigured(x.reviewerConfigured);
         setReuse(x.reuse ?? { count: 0, last_at: null });
         setProgress(x.progress ?? null);
@@ -173,6 +192,7 @@ export function Analysis({ id }: { id: string }) {
     data?.snapshot.researchBriefs,
     live?.stage,
     live?.status,
+    findingsRevision,
   ]);
   if (error)
     return (
@@ -186,11 +206,14 @@ export function Analysis({ id }: { id: string }) {
   const checked = (
     Array.isArray(run.output.claims) ? run.output.claims : []
   ) as CheckedClaim[];
-  const context = (
+  const checkedPublication=(run.input.auditedExecutionPlan as {checkedFindings?:boolean}|undefined)?.checkedFindings===true;
+  // Reviewed child publication owns this surface; raw root context remains in
+  // Processing details and cannot restore withheld child/numerical statements.
+  const context = checkedPublication || briefs.length || (analyst && analyst.view.publicationState !== "root_checked") ? [] : (
     (Array.isArray(run.output.keyPoints)
       ? run.output.keyPoints
       : []) as CheckedClaim[]
-  ).filter((point) => point.passed && point.reasons.length === 0);
+  ).filter((point) => point.passed && point.reasons.length === 0 && point.audit?.verdict === "accept");
   const original = checked.find(
     (c) => c.id === (current ? localClaimId(current.id, id) : ""),
   );
@@ -251,8 +274,8 @@ export function Analysis({ id }: { id: string }) {
     data.snapshot.channels.find((c) => c.id === channelId)?.title ||
     metadata.channel;
   const language = sourceLanguageLabel(source?.language ?? metadata.language);
-  const summary = summaryOf({ briefs, extractionSummary: run.output.summary });
-  const pointItems = keyPointItems({
+  const summary = checkedPublication || briefs.length ? null : summaryOf({ briefs, extractionSummary: run.output.summary });
+  const pointItems = checkedPublication || briefs.length ? [] : keyPointItems({
     runId: id,
     keyPoints: run.output.keyPoints,
     checkedClaims: run.output.claims,
@@ -318,7 +341,8 @@ export function Analysis({ id }: { id: string }) {
         )}
         <div className="yi-an-head-text">
           <p className="yi-eyebrow">VIDEO ANALYSIS</p>
-          <h1>{run.title || "Video analysis"}</h1>
+          {analyst?.view.heading ? <AnalystPageHeading heading={analyst.view.heading}/> : <h1>{run.title || "Video analysis"}</h1>}
+          {analyst?.view.heading && analyst.view.heading !== run.title && <p className="yi-muted">{run.title}</p>}
           <p className="yi-an-meta">
             {channelId ? (
               <Link
@@ -403,10 +427,7 @@ export function Analysis({ id }: { id: string }) {
       ) : stopped ? (
         <FailureBanner run={liveRun} stepCostUsd={progress?.stepCostUsd ?? null} />
       ) : (
-        <VerdictBox claims={claims} />
-      )}
-      {channelId && (
-        <FollowPrompt channelId={channelId} channelTitle={channelTitle} />
+        !briefs.length && analyst?.view.publicationState !== "reviewed_brief" && <VerdictBox claims={claims} />
       )}
       {analyst ? (
         // The analyst view (built on main) is the page a PM reads: when a run
@@ -425,7 +446,7 @@ export function Analysis({ id }: { id: string }) {
           !working &&
           !stopped && (
             <p className="yi-muted yi-an-summary-empty">
-              Summary appears after the research brief is generated.
+              {briefs.length ? "Open Research brief for the accepted publication; the reading projection is unavailable." : "Summary appears after the research brief is generated."}
             </p>
           )
         )}
@@ -435,6 +456,9 @@ export function Analysis({ id }: { id: string }) {
           onSeek={(to) => seekTo(to, `Playing the key point at ${clock(to)}.`)}
         />
         </>
+      )}
+      {channelId && (
+        <FollowPrompt channelId={channelId} channelTitle={channelTitle} />
       )}
       {(run.output.coverage as { status?: string } | undefined)?.status ===
         "incomplete_or_unknown" && (

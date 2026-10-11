@@ -204,6 +204,9 @@ export const Mention = z.object({
       "A mention needs a one-sentence rationale for its sentiment.",
     ),
   source_span: SourceSpan,
+  /** Independently copied disjoint ranges. The first is the legacy jump
+   * pointer; intervening source text must never be represented as cited. */
+  source_ranges: z.array(SourceSpan).min(1).optional(),
   is_call: z.boolean(),
   claim_id: z.string().nullable(),
 });

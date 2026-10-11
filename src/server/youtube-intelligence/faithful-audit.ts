@@ -68,11 +68,37 @@ export function faithfulChunks(
   });
 }
 
+/** Deterministic workload plan: target assertions and coverage independently,
+ * retaining every original quote and all citing assertions for coverage. */
+export function weightedFaithfulChunks(sentences:ResearchSentenceData[], evidence:EvidenceRecordData[], retained:ResearchSentenceData[]=[]){
+  const all=[...sentences,...retained];
+  const cited=new Set(all.flatMap(s=>s.evidenceIds));
+  const assessed=evidence.filter(e=>cited.has(e.id));
+  const sentenceWeight=(s:ResearchSentenceData)=>JSON.stringify(s).length+500;
+  const evidenceWeight=(e:EvidenceRecordData)=>JSON.stringify(e).length+1500;
+  const total=sentences.reduce((n,s)=>n+sentenceWeight(s),0)+assessed.reduce((n,e)=>n+evidenceWeight(e),0);
+  if(!sentences.length&&!assessed.length)return [];
+  const count=Math.min(4,Math.max(1,Math.ceil(total/12000),Math.ceil(sentences.length/12)));
+  const bins=Array.from({length:count},()=>({sentences:[] as ResearchSentenceData[], owned:[] as EvidenceRecordData[],weight:0}));
+  const lightest=()=>bins.reduce((a,b)=>a.weight<=b.weight?a:b);
+  for(const s of [...sentences].sort((a,b)=>sentenceWeight(b)-sentenceWeight(a)||a.id.localeCompare(b.id))){const b=lightest();b.sentences.push(s);b.weight+=sentenceWeight(s);}
+  for(const e of [...assessed].sort((a,b)=>evidenceWeight(b)-evidenceWeight(a)||a.id.localeCompare(b.id))){const b=lightest();b.owned.push(e);b.weight+=evidenceWeight(e);}
+  return bins.filter(b=>b.sentences.length||b.owned.length).map(b=>{
+    const owned=new Set(b.owned.map(e=>e.id));
+    const needed=new Set([...owned,...b.sentences.flatMap(s=>s.evidenceIds)]);
+    const targets=new Set(b.sentences.map(s=>s.id));
+    return {sentences:b.sentences,evidence:evidence.filter(e=>needed.has(e.id)),assessEvidenceIds:b.owned.map(e=>e.id),otherSentencesCitingAssessedEvidence:all.filter(s=>!targets.has(s.id)&&s.evidenceIds.some(id=>owned.has(id)))};
+  });
+}
+
 export async function faithfulAudit(input: {
   sentences: ResearchSentenceData[];
   evidence: EvidenceRecordData[];
   invoke: Invoke;
   concurrency?: number;
+  weightedPlan?: boolean;
+  retainedSentences?: ResearchSentenceData[];
+  stagePrefix?: string;
   /** Optional Jev pre-screen: settles clear sentences, the critic gets the rest. */
   preScreen?: (sentences: ResearchSentenceData[]) => Promise<ScreenResult>;
 }) {
@@ -81,17 +107,20 @@ export async function faithfulAudit(input: {
   const settledBy = (s: ResearchSentenceData) => route.get(s.id)?.route ?? "escalate";
   const escalated = input.sentences.filter((s) => settledBy(s) === "escalate");
   const preAccepted = input.sentences.filter((s) => settledBy(s) === "accept");
-  const chunks = faithfulChunks(escalated, input.evidence, 12, preAccepted);
+  const coverageContext=[...preAccepted,...(input.retainedSentences??[])];
+  const chunks = input.weightedPlan
+    ? weightedFaithfulChunks(escalated,input.evidence,coverageContext)
+    : faithfulChunks(escalated, input.evidence, 12, coverageContext);
   const results = await boundedSettled(chunks, input.concurrency ?? 4, (chunk, index) =>
     input.invoke(
-      `critique-faithful-${index + 1}`,
+      `${input.stagePrefix??"critique-faithful"}-${index + 1}`,
       FAITHFUL_INSTRUCTIONS,
       {
         sentences: chunk.sentences.map(({ id, text, evidenceIds, speaker, timeMode, kind, financialFacts }) => ({ id, text, evidenceIds, speaker, timeMode, kind, financialFacts })),
         evidence: chunk.evidence,
         assessEvidenceIds: chunk.assessEvidenceIds,
         otherSentencesCitingAssessedEvidence: chunk.otherSentencesCitingAssessedEvidence.map(({ id, text, evidenceIds }) => ({ id, text, evidenceIds })),
-        ...(screen ? { note: "otherSentencesCitingAssessedEvidence are accepted sentences for coverage only; return verdicts only for `sentences`." } : {}),
+        ...(input.weightedPlan||input.retainedSentences ? {note: "otherSentencesCitingAssessedEvidence are coverage context, not new verdict targets. Prior accepted originals are immutable; other batch candidates may still be rejected. Return verdicts only for sentences and exact coverage sentence IDs; application publication checks will remove rejected references."} : screen ? {note:"otherSentencesCitingAssessedEvidence are accepted sentences for coverage only; return verdicts only for `sentences`."} : {}),
       },
       FaithfulResponse,
     ).then((raw) => FaithfulResponse.parse(raw)),
@@ -132,7 +161,7 @@ export async function faithfulAudit(input: {
     }
   });
   // Evidence no sentence cites is recorded as missing, deterministically.
-  const cited = new Set(input.sentences.flatMap((s) => s.evidenceIds));
+  const cited = new Set([...input.sentences,...(input.retainedSentences??[])].flatMap((s) => s.evidenceIds));
   for (const e of input.evidence)
     if (!cited.has(e.id))
       evidenceCoverage.push({ evidenceId: e.id, status: "missing", sentenceIds: [], missingPoints: [], reason: "No brief sentence cites this evidence item." });

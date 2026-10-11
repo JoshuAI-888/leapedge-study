@@ -4,7 +4,7 @@ import { ResearchDraft } from '../../features/youtube-intelligence/research-brie
 /** Accepted exact-text duplicates are never new coverage. A rejected statement
  * with corrected content may return under a new ID for independent audit. Keep
  * all original statements and excluded additions in the immutable repair trace. */
-export function coverageAdditions(original: z.infer<typeof ResearchDraft>, supplement: z.infer<typeof ResearchDraft>, missingIds: string[], rejectedIds: string[] = []) {
+export function coverageAdditions(original: z.infer<typeof ResearchDraft>, supplement: z.infer<typeof ResearchDraft>, missingIds: string[], rejectedIds: string[] = [], options:{sourceOnly?:boolean}={}) {
   const key = (text: string) => text.normalize('NFKC').replace(/\s+/gu, ' ').trim().toLocaleLowerCase('en');
   const rejected = new Set(rejectedIds);
   const seen = new Set(original.sentences.filter(s=>!rejected.has(s.id)).map(s => key(s.text)));
@@ -15,6 +15,7 @@ export function coverageAdditions(original: z.infer<typeof ResearchDraft>, suppl
   const excluded: {sentence: typeof supplement.sentences[number]; reason: string}[] = [];
   for (const sentence of supplement.sentences) {
     const reason = unchangedRejected.has(content(sentence)) ? 'Unchanged rejected content; no corrected evidence or assertion to audit.'
+      : options.sourceOnly && (sentence.externalIds.length>0||sentence.timeMode!=='video_date') ? 'Source-only repair cannot introduce external assertions or current updates.'
       : seen.has(key(sentence.text)) ? 'Duplicate of an original or earlier supplemental statement.'
       : !sentence.evidenceIds.length || sentence.evidenceIds.some(id => !missing.has(id))
         ? 'Supplement must cite only unresolved evidence IDs.' : null;

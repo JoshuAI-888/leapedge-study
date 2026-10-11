@@ -457,10 +457,10 @@ export function ResearchBrief({
         ))}
       </div>
       <div
-        className={`yi-horizon-grid ${horizon !== "both" ? "yi-single-horizon" : ""}`}
+        className={`yi-horizon-grid ${horizon !== "both" || !(["tactical","fundamental"] as const).every(h=>brief.sentences.some(s=>s.timeMode==="video_date" && (s.horizon===h || s.horizon==="both"))) ? "yi-single-horizon" : ""}`}
       >
         {(["tactical", "fundamental"] as const)
-          .filter((h) => horizon === "both" || horizon === h)
+          .filter((h) => (horizon === "both" || horizon === h) && brief.sentences.some(s=>s.timeMode==="video_date" && (s.horizon===h || s.horizon==="both")))
           .map((h) => (
             <div key={h}>
               <h3>

@@ -1,4 +1,5 @@
 import { normaliseModel, isPriced } from "./prices.ts";
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import {
   ModelRequest,
@@ -9,6 +10,7 @@ import {
   type ModelRequestData,
   type ModelResponseData,
   type ModelTransport,
+  ModelDescription as Description,
 } from "./types.ts";
 /**
  * OpenRouter chat/completions (spec 4.1).
@@ -94,6 +96,7 @@ export type OpenRouterOptions = {
   apiKey?: string;
   timeoutMs?: number;
   catalogueTimeoutMs?: number;
+  now?: () => number;
 };
 function routerModel(model: string) {
   const normalized = normaliseModel(model);
@@ -106,6 +109,8 @@ export class OpenRouterTransport implements ModelTransport {
   readonly family = "openrouter" as const;
   private options: OpenRouterOptions;
   private supportedParameters = new Map<string, string[]>();
+  private catalogue: {data: z.infer<typeof Catalogue>; checkedAt: number} | null = null;
+  private cataloguePending: Promise<z.infer<typeof Catalogue>> | null = null;
   constructor(options: OpenRouterOptions = {}) {
     this.options = options;
   }
@@ -147,18 +152,34 @@ export class OpenRouterTransport implements ModelTransport {
     }
     return response.json();
   }
-  async describe(model: string): Promise<ModelDescription> {
+  async describe(model: string, options: {metadataCache?: boolean} = {}): Promise<ModelDescription> {
     this.key();
-    const catalogue = Catalogue.parse(
-      await this.json(
+    const now = this.options.now?.() ?? Date.now();
+    const cache = options.metadataCache !== false;
+    const cacheHit = cache && this.catalogue !== null && now - this.catalogue.checkedAt < 60000;
+    const read = async () => Catalogue.parse(await this.json(
         CATALOGUE_URL,
         {},
         this.options.catalogueTimeoutMs ?? 30000,
-      ),
-    );
+    ));
+    let catalogue: z.infer<typeof Catalogue>;
+    if (cacheHit) catalogue = this.catalogue!.data;
+    else if (!cache) catalogue = await read();
+    else {
+      this.cataloguePending ??= read().then(data => {
+        this.catalogue = {data, checkedAt: this.options.now?.() ?? Date.now()};
+        return data;
+      }).finally(() => {this.cataloguePending = null;});
+      catalogue = await this.cataloguePending;
+    }
     const entry = catalogue.data.find((m) => m.id === routerModel(model));
-    if (!entry) throw Error("Model is unavailable in the current catalogue.");
-    const spec = CatalogueModel.parse(entry);
+    const parsed = CatalogueModel.safeParse(entry);
+    if (!parsed.success) {
+      this.catalogue = null;
+      this.supportedParameters.delete(routerModel(model));
+      throw Error("Model is unavailable or malformed in the current catalogue.");
+    }
+    const spec = parsed.data;
     if (spec.supported_parameters)
       this.supportedParameters.set(
         routerModel(model),
@@ -166,7 +187,7 @@ export class OpenRouterTransport implements ModelTransport {
       );
     else this.supportedParameters.delete(routerModel(model));
     const rates = [spec.pricing, ...(spec.pricing.overrides || [])];
-    return {
+    const description = Description.safeParse({
       contextLength: Number(spec.context_length),
       inputRate: Math.max(
         ...rates.map((p) => Number(p.prompt ?? spec.pricing.prompt)),
@@ -176,7 +197,12 @@ export class OpenRouterTransport implements ModelTransport {
         ...rates.map((p) => Number(p.completion ?? spec.pricing.completion)),
       ),
       supportedEfforts: spec.reasoning?.supported_efforts ?? [],
-    };
+      pricingVersion: `openrouter:catalogue:${createHash("sha256").update(JSON.stringify(spec)).digest("hex")}`,
+      pricingCheckedAt: new Date(cache ? this.catalogue?.checkedAt ?? now : now).toISOString(),
+      metadataCacheHit: cacheHit,
+    });
+    if(!description.success){this.catalogue=null;this.supportedParameters.delete(routerModel(model));throw Error('Model pricing or capabilities are invalid in the current catalogue.');}
+    return description.data;
   }
   /** The chat/completions body for a request. */
   body(request: ModelRequestData) {
@@ -220,7 +246,9 @@ export class OpenRouterTransport implements ModelTransport {
             },
           }
         : {}),
-      provider: { allow_fallbacks: false, require_parameters: true },
+      provider: { allow_fallbacks: false, require_parameters: true,
+        ...(r.providerRouting ? {sort:r.providerRouting} : {}),
+        ...(r.providerMaxPrice ? {max_price:r.providerMaxPrice} : {}) },
     };
   }
   async call(request: ModelRequestData): Promise<ModelResponseData> {

@@ -129,6 +129,8 @@ export const TeamPreferences = z.object({
   processing: z
     .object({
       efficiencyProfile: ProcessingProfileSetting.default("deployment-default"),
+      auditedSpeed: z.boolean().optional(),
+      criticRouting: z.enum(["default","latency","throughput"]).optional(),
       researchPipeline: ResearchPipelineSetting.default("current"),
       userSubmitted: z.enum(["immediate", "batch"]).default("immediate"),
       channelUploads: z.enum(["immediate", "batch"]).default("batch"),
@@ -387,6 +389,8 @@ export function hashedConfiguration(team: TeamPreferencesData) {
       // Preserve historical current-path hashes; targeted work must never reuse them.
       ...(team.processing.researchPipeline === "targeted-experimental"
         ? { researchPipeline: team.processing.researchPipeline } : {}),
+      ...(team.processing.auditedSpeed ? {auditedSpeed:"audited-speed.v1"} : {}),
+      ...(team.processing.auditedSpeed && team.processing.criticRouting && team.processing.criticRouting!=="default" ? {criticRouting:team.processing.criticRouting} : {}),
       contextCaching: team.processing.contextCaching,
       chunkAboveTokens: team.processing.chunkAboveTokens,
     },

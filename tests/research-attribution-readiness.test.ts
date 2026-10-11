@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {mixedTurnAttribution} from '../src/features/youtube-intelligence/research-attribution.ts';
+import {mixedTurnAttribution,sourceAttributionCheck} from '../src/features/youtube-intelligence/research-attribution.ts';
 import {validateBrief} from '../src/features/youtube-intelligence/research-brief.ts';
 const f=JSON.parse(readFileSync(new URL('./fixtures/readiness/g7-attribution.json',import.meta.url),'utf8'));
 const check=(sentence=f.sentence)=>validateBrief({sentences:[sentence],mainTopics:[sentence.topic],omissions:[]},f.evidence,[],f.context,[{id:sentence.id,accepted:true,reason:'Model accepted source association.',factualStatus:'unverified'}]);
@@ -17,4 +17,27 @@ test('neutral discussion preserves separate rate proposals and requires its own 
 test('absence of speaker markers is not automatic rejection or independent identity proof',()=>{
  const quotes=f.evidence.map((e:any)=>({...e,quotes:e.quotes.map((q:any)=>({...q,text:q.text.replaceAll('>>','')}))}));
  assert.equal(mixedTurnAttribution(f.sentence,quotes).requiresNeutralRepair,false);
+});
+test('personal avoid preference cannot be published as viewer advice even after model acceptance',()=>{
+ const quotes=f.evidence.map((e:any)=>({...e,quotes:e.quotes.map((q:any)=>({...q,text:"For me, this stock does not interest me. Honestly I don't want to buy either stock."}))}));
+ const candidate={...f.sentence,text:'The speaker advises investors to avoid this stock.',speaker:'unknown',externalIds:[],financialFacts:[]};
+ const run=(s:any)=>validateBrief({sentences:[s],mainTopics:[s.topic],omissions:[]},quotes,[],f.context,[{id:s.id,accepted:true,reason:'Model accepted.',factualStatus:'unverified'}]);
+ assert.equal(run(candidate).sentences.length,0);
+ assert.equal(run({...candidate,text:'The speaker recommends avoiding this stock.'}).sentences.length,0);
+ assert.equal(run({...candidate,text:'The speaker personally does not want to buy the stock.'}).sentences.length,1);
+ assert.equal(run({...candidate,text:'The speaker does not recommend buying this stock personally.'}).sentences.length,1);
+ const explicit=quotes.map((e:any)=>({...e,quotes:e.quotes.map((q:any)=>({...q,text:'I advise investors to avoid this stock.'}))}));
+ assert.equal(validateBrief({sentences:[candidate],mainTopics:[candidate.topic],omissions:[]},explicit,[],f.context,[{id:candidate.id,accepted:true,reason:'Explicit advice.',factualStatus:'unverified'}]).sentences.length,1);
+});
+test('monitoring a company cannot add a before-committing-capital condition',()=>{
+ const quotes=f.evidence.map((e:any)=>({...e,quotes:e.quotes.map((q:any)=>({...q,text:'I will watch upcoming earnings to see whether growth and profitability are sustainable.'}))}));
+ const candidate={...f.sentence,text:'The speaker advises investors to watch upcoming earnings before committing capital.',speaker:'unknown',externalIds:[],financialFacts:[]};
+ assert.equal(validateBrief({sentences:[candidate],mainTopics:[candidate.topic],omissions:[]},quotes,[],f.context,[{id:candidate.id,accepted:true,reason:'Model accepted.',factualStatus:'unverified'}]).sentences.length,0);
+});
+test('explicit if-scenario stays conditional rather than becoming an unconditional earnings forecast',()=>{
+ const evidence=[{id:'k1',quotes:[{text:'If EPS reaches 14, then a 20 times multiple gives a scenario price of 280.'}]}];
+ const base={text:'EPS will reach 14.',speaker:'unknown',evidenceIds:['k1']};
+ assert.equal(sourceAttributionCheck(base,evidence).requiresNeutralRepair,true);
+ assert.equal(sourceAttributionCheck({...base,text:'If EPS reaches 14, a 20 times multiple implies a scenario price of 280.'},evidence).requiresNeutralRepair,false);
+ assert.equal(sourceAttributionCheck({...base,text:'EPS will reach 1.60.'},[{id:'k1',quotes:[{text:'If EPS reaches 1.60, the valuation could change.'}]}]).requiresNeutralRepair,true);
 });

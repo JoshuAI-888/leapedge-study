@@ -6,7 +6,7 @@ import { docs } from "../../../../../server/youtube-intelligence/research-store.
 import { get } from "../../../../../server/youtube-intelligence/store.ts";
 import { timelineFor } from "../../../../../server/youtube-intelligence/timing.ts";
 import { progressContext } from "../../../../../server/youtube-intelligence/run-progress.ts";
-import { analystViewFor } from "../../../../../server/youtube-intelligence/analyst-view.ts";
+import { analystViewFor, checkedFindingsFor, checkedFindingsRevisionFor, checkedFindingsEnabledFor } from "../../../../../server/youtube-intelligence/analyst-view.ts";
 import { bottomLineFor } from "../../../../../server/youtube-intelligence/bottom-line.ts";
 import {
   guard,
@@ -37,13 +37,19 @@ async function read(
     // The analyst view is a convenience over the retained output: a run whose
     // output it cannot read (older or partial formats) still opens, without it.
     let analyst: ReturnType<typeof analystViewFor> | null = null;
+    let checkedFindings: ReturnType<typeof checkedFindingsFor> = null;
     let analystViewError: string | null = null;
-    if (run && !run.input.task && run.status === "completed")
+    if (run && !run.input.task && (briefs.length || (run.status === "completed" && !checkedFindingsEnabledFor(run))))
       try {
         analyst = analystViewFor(run, briefs[0] ?? null, await bottomLineFor(run.id));
       } catch (error) {
         analystViewError = error instanceof Error ? error.message : String(error);
       }
+    // A completed accepted child owns publication; root candidates cannot
+    // resurface alongside it. Failure of this convenience leaves raw detail.
+    if(run && !run.input.task && !briefs.length)
+      try { checkedFindings=checkedFindingsFor(run); }
+      catch(error) { analystViewError=error instanceof Error ? error.message : String(error); }
     return run
       ? Response.json({
           claims,
@@ -51,6 +57,8 @@ async function read(
           analystView: analyst?.view ?? null,
           analystNote: analyst?.note ?? null,
           analystViewError,
+          checkedFindings,
+          findingsRevision:run ? checkedFindingsRevisionFor(run) : 0,
           evidenceSpans: await spansForClaims(claims.map((c) => c.id)),
           reviewerConfigured: Boolean(process.env.YTI_REVIEWER_ACCOUNT_ID),
           // F74: how often a resubmission was answered by this analysis.

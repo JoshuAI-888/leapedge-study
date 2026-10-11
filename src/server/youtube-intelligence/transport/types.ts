@@ -36,6 +36,9 @@ export const ModelRequest = z.object({
   maxOutputTokens: z.number().int().positive(),
   temperature: z.number().min(0).max(2),
   reasoningEffort: z.string().min(1).optional(),
+  providerRouting: z.enum(["latency", "throughput"]).optional(),
+  /** OpenRouter prices in USD per million tokens, bounded by reservation rates. */
+  providerMaxPrice: z.object({prompt:z.number().nonnegative(),completion:z.number().nonnegative()}).optional(),
 });
 export type ModelRequestData = z.infer<typeof ModelRequest>;
 export const ModelUsage = z.object({
@@ -73,6 +76,7 @@ export const ModelDescription = z.object({
   maxOutputTokens: z.number().int().positive().optional(),
   pricingVersion: z.string().optional(),
   pricingCheckedAt: z.string().optional(),
+  metadataCacheHit: z.boolean().optional(),
 });
 export type ModelDescription = z.infer<typeof ModelDescription>;
 /** An explicit context cache the provider holds; `name` is what a request names. */
@@ -119,7 +123,7 @@ export interface ModelTransport {
   readonly name: string;
   /** Which kind of transport this is; routing and same-family checks key on it. */
   readonly family: TransportKind;
-  describe(model: string): Promise<ModelDescription>;
+  describe(model: string, options?: {metadataCache?: boolean}): Promise<ModelDescription>;
   call(request: ModelRequestData): Promise<ModelResponseData>;
   /**
    * Explicit context caching (spec 5): hold `parts` once for `ttlSeconds` and
@@ -141,5 +145,6 @@ export interface ModelTransport {
    */
   countTokens?(
     request: ModelRequestData,
+    options?: {metadataCache?:boolean},
   ): Promise<{ totalTokens: number; estimated: boolean }>;
 }

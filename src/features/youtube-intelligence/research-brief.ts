@@ -1,6 +1,6 @@
 import { financialBasisIssue, semanticBasisIssues } from "./semantic-basis.ts";
-import {mixedTurnAttribution} from './research-attribution.ts';
-import {sourceNumericCheck, numericalSentenceDisposition} from './research-numeric-check.ts';
+import {sourceAttributionCheck} from './research-attribution.ts';
+import {sourceNumericCheck, numericalSentenceDisposition, sourceQuantityProseIssues} from './research-numeric-check.ts';
 import { EvidenceCoverage } from "./research-readiness.ts";
 import { z } from "zod";
 import { stockSplitDirectionCheck, explicitPercentagePointConflict, explicitRateQuantities, explicitBasisPointProseConflict } from "./source-quantity-checks.ts";
@@ -215,12 +215,14 @@ export function reviewFinancialFact(fact: FinancialFactData, retainedQuotes: str
     return result("unresolved", null, "Proposed quantity withheld: the explicit peak baseline in its label is not established by its original quote; no comparison baseline was inferred.");
   if (/\bconstant[ -]maturity\b|恒定到期|固定期限/i.test(`${fact.label} ${fact.unitDescription ?? ""}`) && !/\bconstant[ -]maturity\b|恒定到期|固定期限/i.test(fact.quote))
     return result("unresolved", null, "Proposed quantity withheld: constant-maturity observation convention is not established by the retained original quote; a generic Treasury maturity does not establish a constant-maturity series. No replacement convention was inferred.");
+  const countClauses=[...fact.quote.matchAll(/\b(?:(?:about|approximately|roughly|around|at least|at most|up to|no more than|more than|less than|over|under)\s+)?(\d+(?:,\d{3})*)\s+(customers?|clients?|deals?)\b/gi)].filter(m=>Number(m[1].replaceAll(',',''))===fact.value&&m[2].toLowerCase().replace(/s$/,'')===fact.unitDescription?.toLowerCase().replace(/s$/,''));
+  const qualifierQuote=fact.unit==='other'&&fact.currency===null&&fact.scale==='ones'&&countClauses.length===1?countClauses[0][0]:fact.quote;
   const qualifiers = new Set<string>();
-  if (/\b(?:about|approximately|roughly|around)\s+[$¥€£]?\s*\d|(?:大约|大約|约|約)\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*左右|\blike\s+\d+(?:\.\d+)?\s*(?:basis[ -]points?\b|bps?\b|percentage[ -]points?\b|percent\b|%)/i.test(fact.quote)) qualifiers.add("approximate");
-  if (/(?<!no )\b(?:more than|over)\s+[$¥€£]?\s*\d|(?:超过|超過)\s*\d/i.test(fact.quote)) qualifiers.add("greater_than");
-  if (/(?<!no )\b(?:less than|under)\s+[$¥€£]?\s*\d|不到\s*\d/i.test(fact.quote)) qualifiers.add("less_than");
-  if (/\b(?:at least|no less than)\s+[$¥€£]?\s*\d|至少\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*以上/i.test(fact.quote)) qualifiers.add("greater_than_or_equal");
-  if (/\b(?:at most|up to|no more than)\s+[$¥€£]?\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*以下/i.test(fact.quote)) qualifiers.add("less_than_or_equal");
+  if (/\b(?:about|approximately|roughly|around)\s+(?:(?:USD|EUR|GBP|US\$|[$¥€£])\s*)?\d|(?:大约|大約|约|約)\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*左右|\blike\s+\d+(?:\.\d+)?\s*(?:basis[ -]points?\b|bps?\b|percentage[ -]points?\b|percent\b|%)/i.test(qualifierQuote)) qualifiers.add("approximate");
+  if (/(?<!no )\b(?:more than|over)\s+(?:(?:USD|EUR|GBP|US\$|[$¥€£])\s*)?\d|(?:超过|超過)\s*\d/i.test(qualifierQuote)) qualifiers.add("greater_than");
+  if (/(?<!no )\b(?:less than|under)\s+(?:(?:USD|EUR|GBP|US\$|[$¥€£])\s*)?\d|不到\s*\d/i.test(qualifierQuote)) qualifiers.add("less_than");
+  if (/\b(?:at least|no less than)\s+(?:(?:USD|EUR|GBP|US\$|[$¥€£])\s*)?\d|至少\s*\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*以上/i.test(qualifierQuote)) qualifiers.add("greater_than_or_equal");
+  if (/\b(?:at most|up to|no more than)\s+(?:(?:USD|EUR|GBP|US\$|[$¥€£])\s*)?\d|\d+(?:\.\d+)?\s*(?:[%％]|percent\b)?\s*以下/i.test(qualifierQuote)) qualifiers.add("less_than_or_equal");
   if ((qualifiers.size > 0 && (qualifiers.size !== 1 || !qualifiers.has(fact.relation ?? "unknown"))) ||
       (qualifiers.size === 0 && ["approximate", "greater_than", "less_than", "greater_than_or_equal", "less_than_or_equal"].includes(fact.relation ?? "unknown")))
     return result("unresolved", null, "Proposed quantity withheld: the typed qualifier is missing, mismatched or not representable from the original quote (including mixed bounds). Preserve the original wording; no exactness or inequality direction was inferred.");
@@ -263,6 +265,11 @@ export function reviewFinancialFact(fact: FinancialFactData, retainedQuotes: str
     return result("corrected", {...fact, unit:"shares"}, `Typed unit corrected from ${fact.unit} to shares using the exact retained ordinary-share count and scale. Original model quantity remains in the audit record.`);
   }
   const rates = explicitRateQuantities(fact.quote);
+  const numerals=[...fact.quote.matchAll(/-?\d+(?:,\d{3})*(?:\.\d+)?/g)];
+  if(rates.length===1&&rates[0].unit==='percent'&&numerals.length===1&&rates[0].value===fact.value&&
+     !/[$€£¥]|\b(?:USD|EUR|GBP|dollars?|euros?|pounds?|million|billion|trillion)\b|美元|人民币|人民幣/i.test(fact.quote)&&
+     fact.unit==='percent'&&(fact.currency!==null||fact.scale!=='ones'))
+    return result('corrected',{...fact,unit:'percent',currency:null,scale:'ones',unitDescription:'percent'},'Typed rate dimension corrected from one exact percent literal: currency null, scale ones and percent unit. Numeric value and source qualifier are unchanged; original proposal retained.');
   const related = fact.unit === "basis_points" || /\bbasis[ -]points?\b|\bbps?\b|基[点點]/i.test(fact.quote);
   if (!related) {
     if (["capacity", "other"].includes(fact.unit) && !fact.unitDescription?.trim())
@@ -559,7 +566,7 @@ export function validateBrief(
       reasons.push(
         "A typed financial fact does not quote its cited original evidence.",
       );
-    const attribution=mixedTurnAttribution(sentence,evidence);
+    const attribution=sourceAttributionCheck(sentence,evidence);
     if(attribution.requiresNeutralRepair) reasons.push(attribution.reason);
     if (reasons.length) {
       rejected.push({ sentence, reasons });
@@ -590,8 +597,9 @@ export function validateBrief(
     const factualStatus = fullConflict ? "disputed" : unresolvedConflict ? "unverified" : permitted ? audit!.factualStatus : "unverified";
     const disclosedCaptionAmbiguity=/\b(?:caption|transcript|transcription)s?\b/i.test(sentence.text) && /\b(?:ambiguous|ambiguity|decimal|uncertain|error|errors)\b/i.test(sentence.text);
     const verifiedCaptionExplanation=disclosedCaptionAmbiguity && factualStatus==='corroborated' && fullSupport && !fullConflict && !unresolvedConflict;
-    if(options.phase!=='structural_preflight' && numericDisposition.status==='neutral_repair_required' && !verifiedCaptionExplanation) {
-      rejected.push({sentence,reasons:[numericDisposition.reason, ...numericDisposition.checks.filter(check=>check.status==='unresolved').map(check=>check.reason)]});
+    const proseQuantityIssues=sourceQuantityProseIssues(sentence,originalQuotes);
+    if(options.phase!=='structural_preflight' && (numericDisposition.status==='neutral_repair_required'||proseQuantityIssues.length) && !verifiedCaptionExplanation) {
+      rejected.push({sentence,reasons:[...(numericDisposition.status==='neutral_repair_required'?[numericDisposition.reason,...numericDisposition.checks.filter(check=>check.status==='unresolved').map(check=>check.reason)]:[]),...proseQuantityIssues]});
       continue;
     }
     const withheldExternalAudit = !fullConflict && (unresolvedConflict || !permitted);

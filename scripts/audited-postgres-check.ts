@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import {useDirectConnection,json} from '../src/server/youtube-intelligence/database.ts';
+import {db,create,reserve,markUnknown,settle,get} from '../src/server/youtube-intelligence/store.ts';
+import {enqueueJob} from '../src/server/youtube-intelligence/repos/jobs.ts';
+import {claimJob} from '../src/server/youtube-intelligence/queue.ts';
+import {checkpointCheckedFindings,renewWorkerLease} from '../src/server/youtube-intelligence/runner.ts';
+useDirectConnection();
+if(!process.env.DATABASE_URL||process.env.YTI_ISOLATED_DB!=='true')throw Error('Use a dedicated isolated PostgreSQL database.');
+const marker={id:crypto.randomUUID(),maxUsd:1};
+const runs=await Promise.all(Array.from({length:8},(_,i)=>create(`pg-speed-${i}`,'fixture',{nonce:crypto.randomUUID(),benchmarkCampaign:marker},'v1')));
+const results=await Promise.allSettled(runs.map(r=>reserve(r.id,'critique',.6)));
+assert.equal(results.filter(r=>r.status==='fulfilled').length,1);
+const paid=(results.find(r=>r.status==='fulfilled') as PromiseFulfilledResult<string>).value;
+await markUnknown(paid,'Isolated test outcome');await assert.rejects(reserve(runs[7].id,'coverage',.5),/campaign budget limit/);
+await settle(paid,.1,{});await reserve(runs[7].id,'coverage',.5);
+await enqueueJob({id:`pg-findings:${runs[0].id}`,kind:'analyze',payload:{runId:runs[0].id}});
+const job=(await claimJob())!,token=job.leaseToken!;
+const run=(await get((job.payload as {runId:string}).runId))!;
+await db().prepare("UPDATE yi_runs SET status='running',lease_token=$1,lease_until=$2 WHERE id=$3").run(token,Date.now()-1,run.id);
+assert.equal(await renewWorkerLease(job.id,token,run.id),true);
+assert.ok(Number((await db().prepare('SELECT lease_until FROM yi_runs WHERE id=$1').get(run.id))?.lease_until)>Date.now());
+// A still-owned job also fences an inside-stage checkpoint after an old run
+// deadline, without requiring a ten-minute paid call in this isolated check.
+await db().prepare('UPDATE yi_runs SET lease_until=$1 WHERE id=$2').run(Date.now()-1,run.id);
+run.output.checkedFindingsRevision=1;await checkpointCheckedFindings(run,job.id,token);
+const row=await db().prepare('SELECT output,lease_token,lease_until FROM yi_runs WHERE id=$1').get(run.id);
+assert.equal((json(row?.output) as Record<string,unknown>).checkedFindingsRevision,1);assert.equal(row?.lease_token,token);assert.ok(Number(row?.lease_until)>Date.now());
+await db().prepare("UPDATE jobs SET lease_until='2000-01-01' WHERE id=$1").run(job.id);
+const previousUntil=(await db().prepare('SELECT lease_until FROM yi_runs WHERE id=$1').get(run.id))?.lease_until;
+assert.equal(await renewWorkerLease(job.id,token,run.id),false);
+assert.deepEqual((await db().prepare('SELECT lease_until FROM yi_runs WHERE id=$1').get(run.id))?.lease_until,previousUntil);
+run.output.checkedFindingsRevision=2;await assert.rejects(checkpointCheckedFindings(run,job.id,token),/Stale/);
+assert.equal((json((await db().prepare('SELECT output FROM yi_runs WHERE id=$1').get(run.id))?.output) as Record<string,unknown>).checkedFindingsRevision,1);
+console.log('PostgreSQL: eight concurrent campaign admissions, unknown-hold budget retention, paired lease renewal, long-stage publication and stale-owner fencing passed. No model calls.');
+await db().close();

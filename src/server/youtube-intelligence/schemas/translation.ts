@@ -114,8 +114,9 @@ export type TranslationTarget = {
 };
 /** A copied span carrying the English reading produced for it. Mentions store it here; a claim's evidence has `quote_translation_en` in its own contract. */
 export type TranslatedSpan = SourceSpanData & { translation_en?: string };
-export type TranslatedMention = Omit<MentionData, "source_span"> & {
+export type TranslatedMention = Omit<MentionData, "source_span"|"source_ranges"> & {
   source_span: TranslatedSpan;
+  source_ranges?:TranslatedSpan[];
 };
 /** The payload: the copied text of every span that needs English, and nothing else — no segment ids, no claims, no transcript. */
 export function translationPayload(targets: TranslationTarget[]) {
@@ -166,20 +167,27 @@ export function translationTargets(input: {
       });
     });
   input.mentions.forEach((mention, i) => {
-    const span = mention.source_span;
-    const text = spanText(input.source, span);
-    if (text === null) return;
-    if (!needsTranslation(text, input.language)) return;
-    targets.push({
-      id: `m${i + 1}`,
-      text_original: text,
-      text_hash: span.text_hash,
-      // A mention stores the pointer, not the text, so its live text is the
-      // copy the source produces now.
-      current: () => spanText(input.source, span) ?? "",
-      apply: (translation) => {
-        span.translation_en = translation;
-      },
+    const spans=mention.source_ranges ?? [mention.source_span];
+    if(mention.source_ranges&&['start_id','end_id','start_seconds','end_seconds','text_hash'].some(key=>spans[0]?.[key as keyof SourceSpanData]!==mention.source_span[key as keyof SourceSpanData]))
+      throw Error('First translation range does not match the mention navigation pointer.');
+    spans.forEach((span,rangeIndex)=>{
+      const text = spanText(input.source, span);
+      if(mention.source_ranges) {
+        if(text===null)throw Error('Disjoint mention translation range cannot be derived from the retained source.');
+        const original=deriveEvidence(input.source,span);
+        if(original.text_hash!==span.text_hash)throw Error('Disjoint mention translation range does not match its copied hash.');
+        if(original.start_seconds!==span.start_seconds||original.end_seconds!==span.end_seconds)throw Error('Disjoint mention translation range timestamps changed.');
+      }
+      if (text === null || !needsTranslation(text, input.language)) return;
+      targets.push({
+        id:rangeIndex===0?`m${i+1}`:`m${i+1}.r${rangeIndex+1}`,
+        text_original:text,text_hash:span.text_hash,
+        current:()=>spanText(input.source,span) ?? '',
+        apply:(translation)=>{
+          span.translation_en=translation;
+          if(rangeIndex===0)mention.source_span.translation_en=translation;
+        },
+      });
     });
   });
   return targets;

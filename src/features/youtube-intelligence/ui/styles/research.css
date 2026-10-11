@@ -734,3 +734,13 @@
     display: none;
   }
 }
+
+/* Accepted analyst sections preserve complete material at every viewport. */
+.yi-av-section { min-width: 0; overflow-wrap: anywhere; }
+.yi-av-section h3 { font-size: 1rem; margin: 1.2rem 0 .5rem; }
+.yi-av-section li { margin-bottom: .8rem; line-height: 1.6; }
+.yi-av-section details { border-top: 1px solid var(--yi-border, #e1e4e8); padding: .8rem 0; }
+.yi-av-section details summary { cursor: pointer; overflow-wrap: anywhere; }
+.yi-av-evidence-link { font-size: .85rem; white-space: nowrap; }
+.yi-av-publication { font-size: .9rem; padding: .75rem 0; }
+.yi-an-head-text h1 { overflow-wrap: anywhere; font-size: clamp(1.35rem, 2.2vw, 2rem); line-height: 1.3; }

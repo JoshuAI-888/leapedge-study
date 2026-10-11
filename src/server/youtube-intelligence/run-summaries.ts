@@ -1,6 +1,15 @@
 import { z } from "zod";
 import { database, iso, json } from "./database.ts";
 import type { Run } from "../../features/youtube-intelligence/contracts.ts";
+// Scalar projection is gated by the frozen plan. Malformed legacy counters
+// remain zero; JSON/provider/source payloads never leave this projection.
+const revisionSql = (request:string,result:string) => `CASE WHEN
+  ${request}->>'task' IS NULL
+  AND ${request}->'auditedExecutionPlan'->>'version'='audited-speed.v1'
+  AND ${request}->'auditedExecutionPlan'->'checkedFindings'='true'::jsonb
+  AND jsonb_typeof(${result}->'checkedFindingsRevision')='number'
+  AND COALESCE(${result}->>'checkedFindingsRevision','') ~ '^[0-9]{1,9}$'
+  THEN (${result}->>'checkedFindingsRevision')::bigint ELSE 0 END`;
 const Cursor = z.object({
   at: z.iso.datetime(),
   id: z.string().min(1).max(100),
@@ -40,12 +49,14 @@ export async function runSummaryPage(input: unknown = {}) {
     ), parsed AS MATERIALIZED (
       SELECT id,video_id,url,model,prompt_version,title,status,stage,
         created_at,updated_at,error,cost,
-        input::jsonb->>'recoveryOf' AS recovery_of,output::jsonb AS result
+        input::jsonb->>'recoveryOf' AS recovery_of,input::jsonb AS request,output::jsonb AS result
       FROM page
     )
     SELECT id,video_id,url,model,prompt_version,title,status,stage,
       created_at,updated_at,error,cost,recovery_of,
+      ${revisionSql("request","result")} AS findings_revision,
       jsonb_build_object(
+        'checkedFindingsRevision',${revisionSql("request","result")},
         'metadata',result->'metadata','sourceHash',result->'sourceHash','coverage',result->'coverage',
         'acceptedEvidenceCount',claims.accepted+points.accepted,
         'rejectedEvidenceCount',claims.rejected+points.rejected,
@@ -82,6 +93,7 @@ export async function runSummaryPage(input: unknown = {}) {
     updatedAt: iso(r.updated_at)!,
     error: r.error as string | null,
     cost: Number(r.cost),
+    findingsRevision: Number(r.findings_revision ?? 0),
     input: z.uuid().safeParse(r.recovery_of).success
       ? { recoveryOf: r.recovery_of }
       : {},
@@ -103,7 +115,9 @@ export async function workspaceActivity() {
   const [active, terminal, latest, terminalCount] = await Promise.all([
     database
       .prepare(
-        "SELECT id,status,stage,title,error,cost,updated_at FROM yi_runs WHERE status IN ('queued','running') ORDER BY created_at DESC,id DESC LIMIT 201",
+        `SELECT id,status,stage,title,error,cost,updated_at,
+          ${revisionSql("(input::jsonb)","(output::jsonb)")} AS findings_revision
+          FROM yi_runs WHERE status IN ('queued','running') ORDER BY created_at DESC,id DESC LIMIT 201`,
       )
       .all(),
     database
@@ -130,6 +144,7 @@ export async function workspaceActivity() {
       title: String(r.title),
       error: r.error as string | null,
       cost: Number(r.cost),
+      findingsRevision: Number(r.findings_revision ?? 0),
       updatedAt: iso(r.updated_at)!,
     })),
     activeTruncated: active.length > 200,

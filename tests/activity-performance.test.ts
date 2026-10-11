@@ -1,4 +1,6 @@
-import test from "node:test";
+import test, {after} from "node:test";
+import {database} from "../src/server/youtube-intelligence/database.ts";
+after(async()=>database.close());
 import assert from "node:assert/strict";
 import { freshDatabase } from "./helpers/db.ts";
 import { create } from "../src/server/youtube-intelligence/store.ts";
@@ -150,4 +152,42 @@ test("workspace summaries omit duplicated analysis payloads while detail keeps t
   assert.ok(Array.isArray(detail.evidenceSpans));
   assert.equal(detail.analystView, null, "an output the view cannot read leaves the detail intact");
   assert.equal(typeof detail.analystViewError, "string");
+});
+
+test("checked-finding revisions cross narrow activity/page boundaries without source payloads",async()=>{
+ const db=await freshDatabase();
+ const run=await create("checked-live","gemini-3.8-flash",{auditedExecutionPlan:{version:"audited-speed.v1",checkedFindings:true}},"v1");
+ await db.prepare("UPDATE yi_runs SET status='running',stage='critique',output=$1 WHERE id=$2").run(JSON.stringify({checkedFindingsRevision:3,source:{text:"private checked transcript"}}),run.id);
+ const activity=await workspaceActivity();
+ assert.equal((activity.active[0] as {findingsRevision?:number}).findingsRevision,3);
+ assert.equal((await runSummaryPage()).runs[0].output.checkedFindingsRevision,3);
+ assert.doesNotMatch(JSON.stringify(activity),/private checked transcript/);
+ await db.prepare("UPDATE yi_runs SET input=$1 WHERE id=$2").run(JSON.stringify({auditedExecutionPlan:{version:"audited-speed.v1",checkedFindings:false}}),run.id);
+ assert.equal((await runSummaryPage()).runs[0].output.checkedFindingsRevision,0);
+});
+
+test("out-of-order same-stage activity cannot regress a checked-finding revision",async()=>{
+ const {applyActivity,mergeRunSummaries,Activity}=await import("../src/features/youtube-intelligence/ui/activity-state.ts");
+ await freshDatabase();
+ const run=await create("same-stage","fixture",{},"v1");
+ const existing={...run,findingsRevision:5};
+ const older=Activity.parse({active:[{...run,findingsRevision:3}],activeTruncated:false,terminalRevision:"x",latestRunId:run.id});
+ assert.equal((applyActivity([existing],older)[0] as {findingsRevision?:number}).findingsRevision,5);
+ assert.equal((mergeRunSummaries([existing],[{...run,findingsRevision:2} as typeof existing])[0] as {findingsRevision?:number}).findingsRevision,5);
+ const completed={...existing,status:'completed',stage:'complete'};
+ assert.equal(mergeRunSummaries([completed],[{...run,updatedAt:'2099-01-01T00:00:00Z'}])[0].status,'completed');
+ assert.equal(applyActivity([completed],Activity.parse({...older,active:[{...run,updatedAt:'2099-01-01T00:00:00Z',findingsRevision:3}]}))[0].stage,'complete');
+});
+
+test('malformed counters and child or non-opted-in jobs cannot raise publication revision',async()=>{
+ const db=await freshDatabase();
+ const run=await create('bad-revision','fixture',{auditedExecutionPlan:{version:'audited-speed.v1',checkedFindings:true}},'v1');
+ for(const revision of ['invalid','1',-1,1.5,10000000000]){
+  await db.prepare("UPDATE yi_runs SET output=$1 WHERE id=$2").run(JSON.stringify({checkedFindingsRevision:revision}),run.id);
+  assert.equal((await workspaceActivity()).active[0].findingsRevision,0);
+  assert.equal((await runSummaryPage()).runs[0].output.checkedFindingsRevision,0);
+ }
+ await db.prepare('UPDATE yi_runs SET input=$1,output=$2 WHERE id=$3').run(JSON.stringify({task:'research-brief',auditedExecutionPlan:{version:'audited-speed.v1',checkedFindings:true}}),JSON.stringify({checkedFindingsRevision:4}),run.id);
+ assert.equal((await workspaceActivity()).active[0].findingsRevision,0);
+ assert.equal((await runSummaryPage()).runs.length,0);
 });
