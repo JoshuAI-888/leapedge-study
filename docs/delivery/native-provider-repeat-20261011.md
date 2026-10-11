@@ -51,14 +51,17 @@ recall and final audit still add material work. Native child synthesis took
 Worker queue waits were median67ms, max214ms, and do not explain minutes.
 Parallel request durations are never summed as user latency.
 
-Native all-in settled costs were$0.301590/$0.177139/$0.472972. Prior CI settled
+App-recorded model-call costs were$0.301590/$0.177139/$0.472972. Prior CI settled
 costs were$0.284989/$0.197732/$0.311792, with an additional unresolved$0.193272
-Palantir hold. Native is cheaper for the completed Planet Labs workflow despite
+Palantir hold. The recorded model cost is lower for the completed Planet Labs workflow despite
 higher first-extraction cost. T-Mobile source work changed, and Palantir CI
 was incomplete: neither supports a general same-model cost-saving claim.
 Native first extraction alone totaled$0.069469 versus CI$0.046122; actual
 token counts and generated outputs differ. Leap's displayed$0.03/$0.03/$0.04
-cannot be equated with a verified invoice or this app's measured all-in ledger.
+cannot be equated with a verified invoice or this app's recorded model-call ledger. Google charges are calculated from returned token
+usage and the versioned rate table; they are not verified invoices. Transcript
+subscription credits, hosting/database overhead and external invoices are not
+converted into this total, so true all-in cost is not established.
 
 ## Fair LeapEdge interpretation and no-audit quality
 
@@ -126,8 +129,8 @@ Highest-likelihood sequence: source contracts and deterministic rendering first,
 bounded atomic repair second, redundant token removal third, generation/model
 experiments last. Proposed goals are reviewed caption briefs within60–90s and
 typical all-in cost≤$0.15, with no source-fidelity regression; these are goals,
-not results demonstrated by this repeat. The existing≤$0.50/video target was
-met by all three native samples. An analyst should identify the creator's
+not results demonstrated by this repeat. All three native samples recorded model costs below$0.50; full all-in cost
+is not established. An analyst should identify the creator's
 stance, economic reason, key assumption, countercase and next check within
 30seconds, with a clear distinction between source fidelity and independent
 financial verification.
