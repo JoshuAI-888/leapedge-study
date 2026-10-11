@@ -69,7 +69,7 @@ const modelSpec = (id: string, transport: z.infer<typeof Transport>, audioOnly =
 export const TeamPreferences = z.object({
   transport: z
     .object({
-      default: Transport.default("cheaper-inference"),
+      default: Transport.default("google-native"),
       fallbackToOpenRouter: z.boolean().default(false),
       allowOpenRouterInLab: z.boolean().default(true),
       cheaperInferenceRanking: z.enum(["balance", "discount", "speed"]).default("balance"),
@@ -78,17 +78,17 @@ export const TeamPreferences = z.object({
   models: z
     .object({
       transcription: modelSpec("gemini-3.8-flash", "google-native", true),
-      extraction: modelSpec("gemini-3.8-flash", "cheaper-inference"),
+      extraction: modelSpec("gemini-3.8-flash", "google-native"),
       critique: z
         .object({
           id: z.string().min(1).default("anthropic/claude-sonnet-5"),
-          transport: Transport.default("cheaper-inference"),
+          transport: Transport.default("openrouter"),
           requireDifferentFamily: z.boolean().default(true),
           thinkingBudget: ThinkingBudget.default("low"),
         })
         .prefault({}),
-      context: modelSpec("anthropic/claude-sonnet-5", "cheaper-inference"),
-      translation: modelSpec("gemini-3.1-flash-lite", "cheaper-inference"),
+      context: modelSpec("anthropic/claude-sonnet-5", "openrouter"),
+      translation: modelSpec("gemini-3.1-flash-lite", "google-native"),
       audioReview: modelSpec("gemini-3.8-flash", "google-native", true),
     })
     .prefault({}),

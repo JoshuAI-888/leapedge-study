@@ -18,9 +18,9 @@ import {
 } from "../src/server/youtube-intelligence/env.ts";
 import { freshDatabase } from "./helpers/db.ts";
 
-test("Text defaults prefer Cheaper Inference while preserving current models and native audio", () => {
+test("Defaults use native Google extraction and independent OpenRouter critique while preserving selectable providers", () => {
   const team = teamDefaults();
-  assert.equal(team.transport.default, "cheaper-inference");
+  assert.equal(team.transport.default, "google-native");
   assert.equal(team.transport.fallbackToOpenRouter, false);
   assert.equal(team.transport.cheaperInferenceRanking, "balance");
   assert.equal(team.transport.allowOpenRouterInLab, true);
@@ -30,11 +30,14 @@ test("Text defaults prefer Cheaper Inference while preserving current models and
   });
   assert.deepEqual(team.models.critique, {
     id: "anthropic/claude-sonnet-5",
-    transport: "cheaper-inference",
+    transport: "openrouter",
     requireDifferentFamily: true,
     thinkingBudget: "low",
   });
   assert.equal(team.models.translation.id, "gemini-3.1-flash-lite");
+  assert.equal(team.models.extraction.transport, "google-native");
+  assert.equal(team.models.context.transport, "openrouter");
+  assert.equal(team.models.translation.transport, "google-native");
   assert.equal(team.sources.captionProvider, "transcriptapi");
   assert.equal(team.sources.standby, "supadata");
   assert.equal(team.sources.standbyPlan, "free");
@@ -435,10 +438,12 @@ test("Store: with no old document the team and account documents start from the 
   assert.equal(resolved.benchmark, "SPY");
 });
 
- test("Cheaper Inference is a text-only route and readiness requires the selected provider", () => {
+test("Cheaper Inference is a selectable text-only route and readiness requires the selected provider", () => {
   const team = teamDefaults();
-  for (const key of ["extraction", "critique", "context", "translation"] as const)
+  for (const key of ["extraction", "critique", "context", "translation"] as const) {
+    team.models[key].transport = "cheaper-inference";
     assert.equal(team.models[key].transport, "cheaper-inference");
+  }
   assert.equal(team.models.audioReview.transport, "google-native");
   assert.throws(() => TeamPreferences.parse({models:{transcription:{transport:"cheaper-inference"}}}));
   const env = readEnv({GEMINI_API_KEY:"native",CHEAPER_INFERENCE_API_KEY:"test-ci",YOUTUBE_API_KEY:"yt",TRANSCRIPTAPI_API_KEY:"caption",FMP_API_KEY:"market",DATABASE_URL:"db",YTI_PUSH_CALLBACK_SECRET:"push"});

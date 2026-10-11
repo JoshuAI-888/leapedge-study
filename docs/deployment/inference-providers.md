@@ -12,10 +12,11 @@ the new routing preference changed; audio, prompts, budgets and other settings
 were preserved. Both final feature-head GitHub verification runs passed
 (38121401282 and 38121398472).
 
-The product defaults use Cheaper Inference for text extraction/synthesis,
-independent critique, context and translation. The models remain Gemini 3.8 Flash,
-Claude Sonnet 5, Claude Sonnet 5 and Gemini 3.1 Flash Lite. Audio transcription and
-audio review stay on Google native. Jev remains separate. A saved workspace keeps
+11 October rollback: the user restored the original provider mix. Product
+defaults use Google native for Gemini 3.8 Flash extraction/synthesis and Gemini
+3.1 Flash Lite translation, and OpenRouter for Claude Sonnet 5 critique/context.
+Cheaper Inference remains selectable with its catalog, pricing and routing controls.
+Audio transcription and audio review stay on Google native. Jev remains separate. A saved workspace keeps
 its existing explicit providers until an administrator saves a new configuration.
 Queued analyses and historical results keep their original configuration snapshots.
 
