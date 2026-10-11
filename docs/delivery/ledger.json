@@ -2236,7 +2236,7 @@
       "implementation": "Current and experimental settings, frozen per-run identity, targeted supplemental coverage audit, legacy checkpoint compatibility and nonspending paired-evaluation gate implemented.",
       "pairedLiveEvaluation": "not-started",
       "cloudAcceptance": "User explicitly selected Vercel + Neon only; Google migration cancelled. Vercel-hosted durable worker design pending implementation/acceptance. Google APIs and empty image registry were created; no application/database deployed or credentials transferred.",
-      "browser": "Temporary isolated fixture preview approved. Desktop save/reload and reset-to-current verified; explanation visually inspected at desktop and390px mobile. Run identity/drilldown/cloud checks remain pending.",
+      "browser": "Temporary isolated fixture preview approved. Desktop save/reload and reset-to-current verified; explanation visually inspected at desktop and 390px mobile. Run identity/drilldown/cloud checks remain pending.",
       "targetedTests": "47 cloud/runner/source-review/locks/convention checks passed with zero skips; full integrated rerun pending.",
       "build": "passed",
       "typecheck": "passed",
@@ -2679,8 +2679,8 @@
     "verification": "Both full local suites: 1193 passed, zero failed, one existing skip each. Final title/overview selector and render regressions:21 passed; focused lease, campaign, replay, overlap, source-range and transport checks passed. Typecheck, production build and offline advisory diagnostic passed. Real PostgreSQL proves concurrent campaign admission, unknown-hold retention, paired lease renewal and stale-owner fencing. Desktop reading/evidence anchor and settings save/reload passed;390px responsive layout has content width390px. Nine matched hosted arms completed on production 715748e8b2fda8213f6ea9faaa0287f1ef965b02; response/source identity checks passed. Quality and performance conclusions are in haiku-speed-results-20261012.md; experimental plans remain opt-in. No new runtime dependencies."
   },
   "benchmarkQuality20261012": {
-    "status": "in-review",
-    "note": "Nine frozen hosted arms and six identical-input audit calls completed for US$3.132257371 with zero unsettled calls. Tests-first follow-up skips audits after an empty source-only repair while retaining unresolved coverage, fixes accepted-primary-company headings and personal-advice attribution, and improves financial section placement and accepted stance/downside selection. Native provider/model defaults and independent Claude/Jev audits remain; no measured post-fix live speed gain is claimed.",
+    "status": "merged",
+    "note": "Nine frozen hosted arms and six identical-input audit calls completed for US$3.132257371 with zero unsettled calls. Tests-first follow-up skips audits after an empty source-only repair while retaining unresolved coverage, fixes accepted-primary-company headings and personal-advice attribution, and improves financial section placement and accepted stance/downside selection. Native provider/model defaults and independent Claude/Jev audits remain; no measured post-fix live speed gain is claimed. Merged PR42 as 8b3d4f894dd2b70a99b16b782b02cb7536cca84b; production deployment dpl_HFgp6wjXovc6j7vVk9ZY5pWhtzoi is READY on that exact commit.",
     "files": [
       "docs/delivery/haiku-speed-results-20261012.md",
       "src/features/youtube-intelligence/analyst-view.ts",
@@ -2695,6 +2695,6 @@
       "tests/research-coverage-repair.test.ts"
     ],
     "pr": 42,
-    "verification": "Both full local suites passed:1208 pass, zero failures, one existing skip each. Focused reading/attribution checks38/38 and empty-repair/changed-atom/unknown-payment checks23/23 passed. Final typecheck, production build and offline advisory diagnostic passed. Final desktop copy/heading/section acceptance and390px mobile with390px content width passed using retained results in a queue-paused isolated database. No dependency or migration changes. Final-head CI and release pending."
+    "verification": "Both full local suites passed: 1208 pass, zero failures, one existing skip each. Focused reading/attribution checks 38/38 and empty-repair/changed-atom/unknown-payment checks 23/23 passed. Final typecheck, production build and offline advisory diagnostic passed. Final desktop copy/heading/section acceptance and 390px mobile with 390px content width passed using retained results in a queue-paused isolated database. No dependency or migration changes. Final-head push 38164602631 and PR 38164606117 checks succeeded on bd2ca3c09dbfcace9bf72c3bd5c0dd569d2bc083, including 1210 tests/1209 pass/zero fail/one existing skip, typecheck, build, offline advisory diagnostic and dependency audit. PR42 merged and exact source production SHA verified READY."
   }
 }
