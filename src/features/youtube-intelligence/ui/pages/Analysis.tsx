@@ -141,6 +141,7 @@ export function Analysis({ id }: { id: string }) {
       analystView?: AnalystViewData | null;
       analystNote?: string | null;
       checkedFindings?: {revision:number;view:AnalystViewData;note:string} | null;
+      findingsRevision?:number;
     }>(
       `/api/intelligence/runs/${encodeURIComponent(id)}`,
       undefined,
@@ -149,7 +150,9 @@ export function Analysis({ id }: { id: string }) {
       .then((x) => {
         if(controller.signal.aborted) return;
         const checked = x.checkedFindings ? CheckedFindings.parse(x.checkedFindings) : null;
-        const revision = checked?.revision ?? 0;
+        // Empty new projections still invalidate an older reading. The scalar
+        // is gated by the frozen execution plan on the detail endpoint.
+        const revision = checked?.revision ?? z.number().int().nonnegative().max(999999999).parse(x.findingsRevision ?? 0);
         const final = x.analystView?.publicationState === "reviewed_brief";
         if(latestReading.current.id !== id) latestReading.current={id,revision:-1,final:false};
         if(latestReading.current.revision >= 0 && !acceptsReadingUpdate({runId:id,...latestReading.current},{runId:id,revision,final})) return;
@@ -203,9 +206,10 @@ export function Analysis({ id }: { id: string }) {
   const checked = (
     Array.isArray(run.output.claims) ? run.output.claims : []
   ) as CheckedClaim[];
+  const checkedPublication=(run.input.auditedExecutionPlan as {checkedFindings?:boolean}|undefined)?.checkedFindings===true;
   // Reviewed child publication owns this surface; raw root context remains in
   // Processing details and cannot restore withheld child/numerical statements.
-  const context = briefs.length || (analyst && analyst.view.publicationState !== "root_checked") ? [] : (
+  const context = checkedPublication || briefs.length || (analyst && analyst.view.publicationState !== "root_checked") ? [] : (
     (Array.isArray(run.output.keyPoints)
       ? run.output.keyPoints
       : []) as CheckedClaim[]
@@ -270,8 +274,8 @@ export function Analysis({ id }: { id: string }) {
     data.snapshot.channels.find((c) => c.id === channelId)?.title ||
     metadata.channel;
   const language = sourceLanguageLabel(source?.language ?? metadata.language);
-  const summary = briefs.length ? null : summaryOf({ briefs, extractionSummary: run.output.summary });
-  const pointItems = briefs.length ? [] : keyPointItems({
+  const summary = checkedPublication || briefs.length ? null : summaryOf({ briefs, extractionSummary: run.output.summary });
+  const pointItems = checkedPublication || briefs.length ? [] : keyPointItems({
     runId: id,
     keyPoints: run.output.keyPoints,
     checkedClaims: run.output.claims,
