@@ -2752,11 +2752,13 @@
       "tests/compact-faithful-audit.test.ts",
       "tests/source-recall-schema.test.ts",
       "tests/hosted-model-benchmark.test.ts"
-    ]
+    ],
+    "rollbackPr": 45,
+    "rollbackCommit": "809819e7b733774ad2e116f9d4d09e331c0877b0"
   },
   "sourceAtomRollback20261012": {
-    "status": "in-review",
-    "note": "PR45 restores runtime exactly to89ad484. All five local checks and desktop/390px browser acceptance passed; awaiting exact-head CI and production release. Historical results/data retained; no new paid calls.",
+    "status": "merged",
+    "note": "PR45 merged and verified READY on the canonical production alias. Runtime source/scripts/tests match89ad484 exactly. Original native defaults, independent audits and PR41/42 publication fixes retained; experiment control removed. Historical reports/results retained; zero new paid calls or credits.",
     "runtimeBaseline": "89ad484",
     "report": "docs/delivery/source-atom-rollback-20261012.md",
     "pr": 45,
@@ -2787,6 +2789,25 @@
       "dependencyChanges": false,
       "migrations": false,
       "paidCalls": 0
+    },
+    "mergeCommit": "809819e7b733774ad2e116f9d4d09e331c0877b0",
+    "sourceCommit": "e5814f58c3baeff4f00a90dbc06532d1d9ae97f1",
+    "ci": {
+      "push": 38200306232,
+      "pr": 38200310361,
+      "status": "success"
+    },
+    "deployment": {
+      "id": "dpl_4wYvo57KNHzatEumEg52rLAZ8B1A",
+      "url": "https://youtube-intelligence-two.vercel.app",
+      "sha": "809819e7b733774ad2e116f9d4d09e331c0877b0",
+      "state": "READY",
+      "team": "joshu-ai",
+      "project": "youtube-intelligence"
+    },
+    "activeExperimentRuns": {
+      "completed": 6,
+      "unfinished": 0
     }
   }
 }
