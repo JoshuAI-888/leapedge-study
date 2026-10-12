@@ -2756,8 +2756,37 @@
   },
   "sourceAtomRollback20261012": {
     "status": "in-review",
-    "note": "Restoration and release verification in progress; no paid requests or destructive DB changes.",
+    "note": "PR45 restores runtime exactly to89ad484. All five local checks and desktop/390px browser acceptance passed; awaiting exact-head CI and production release. Historical results/data retained; no new paid calls.",
     "runtimeBaseline": "89ad484",
-    "report": "docs/delivery/source-atom-rollback-20261012.md"
+    "report": "docs/delivery/source-atom-rollback-20261012.md",
+    "pr": 45,
+    "files": [
+      "docs/delivery/source-atom-rollback-20261012.md"
+    ],
+    "tests": [
+      "tests/delivery-ledger.test.ts"
+    ],
+    "verification": {
+      "default": {
+        "total": 1210,
+        "pass": 1209,
+        "fail": 0,
+        "skip": 1
+      },
+      "pglite": {
+        "total": 1210,
+        "pass": 1209,
+        "fail": 0,
+        "skip": 1
+      },
+      "build": true,
+      "typecheck": true,
+      "offline": "advisory-only; zero binding metrics",
+      "browser": "Desktop/390px mobile setting removed; retained live outputs readable in queue-paused isolated Postgres.",
+      "configHash": "dd611cad0893eba1875c584dc5bcbaaf8caeb2b45c2fff030746e728b8d3b345",
+      "dependencyChanges": false,
+      "migrations": false,
+      "paidCalls": 0
+    }
   }
 }

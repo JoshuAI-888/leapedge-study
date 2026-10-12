@@ -86,7 +86,8 @@ Why this is the right decision for that user:
 **12 October 2026 approved direction.** The user restored the original provider
 mix: native Google for Gemini extraction/synthesis, translation and audio;
 OpenRouter for Sonnet critique/context. Cheaper Inference remains selectable.
-Source atom optimisation is experimental and off by default. Independent checks
+The source atom optimisation experiment was reverted at the user's request on
+12 October; its setting and runtime implementation are removed. Independent checks
 and frozen queued-run configurations remain intact. This supersedes the text
 default in the historical amendment below.
 

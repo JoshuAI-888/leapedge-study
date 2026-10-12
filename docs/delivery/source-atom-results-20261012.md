@@ -1,5 +1,9 @@
 # Source atom optimisation: same-source results
 
+> Historical results. The user subsequently requested a full rollback, including
+> removal of the experimental setting. See
+> [rollback and performance direction](source-atom-rollback-20261012.md).
+
 Implemented in order: source atom metadata in existing extraction/recall calls;
 lossless exact deduplication; compact independent audit context. PR43 merged at
 `fc4a6d19263af5676620c6c07f64efc97c9680a4`. The first live request exposed a
@@ -9,7 +13,7 @@ merged at `f4358ba9171528e29430baf0afd851b7501d549c`. Corrected production
 deployment `dpl_6n7hMMLSowuFtSQ5mbhqpWoL9yGa` was verified READY on the
 canonical alias before paid runs resumed.
 
-**Keep the option off by default.** The three new audited workflows were slower
+**Decision at the end of this cohort: keep the option off by default.** The three new audited workflows were slower
 and more expensive than their retained native baselines. Original Google
 Gemini3.8Flash extraction and OpenRouter Sonnet5 critique/context defaults remain
 unchanged; Jev/Claude checks were retained in the frozen comparison treatment.

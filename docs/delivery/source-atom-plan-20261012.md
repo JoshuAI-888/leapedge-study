@@ -1,5 +1,9 @@
 # Source atom optimisation — approved 12 October 2026
 
+> Historical plan. The user subsequently requested reverting this experiment
+> after its slower, costlier measured results. See
+> [rollback and performance direction](source-atom-rollback-20261012.md).
+
 Implement in order:
 
 1. A frozen opt-in plan adds typed atomic research-context proposals to the existing pointer extraction and recall requests. Each proposal carries one independently assessable proposition, explicit actor/object, original quantities/units/period/basis, conditions/opposition and copied source ranges. Null means unknown; no numeric restoration or guessed actor. Exact original excerpts are structurally checked, and the ordinary cross-family root critic still checks every eligible proposal. No additional atomisation model stage.
