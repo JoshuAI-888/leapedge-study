@@ -91,7 +91,6 @@ function ObjectFields({
             "selection",
             "efficiencyProfile",
             "auditedSpeed",
-            "sourceAtoms",
             "criticRouting",
             "researchPipeline",
             "context",
@@ -552,12 +551,6 @@ export function Settings() {
                   onChange={e=>setTeam({...t,processing:{...t.processing,auditedSpeed:e.target.checked}})} />
                 Faster processing with independent audits
               </label>
-              <label>
-                <input type="checkbox" checked={t.processing.sourceAtoms === true} disabled={busy}
-                  onChange={e=>setTeam({...t,processing:{...t.processing,sourceAtoms:e.target.checked}})} />
-                Compact source research with independent audits (experimental)
-              </label>
-              <p>Applies to new analyses. Preserves original quotes, creator conditions and independent checks. Provider and model selections stay as configured. Compact audit context applies to the v3 faithful brief.</p>
               <label>
                 Independent audit routing
                 <select value={t.processing.criticRouting??"default"} disabled={busy||t.processing.auditedSpeed!==true}
