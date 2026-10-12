@@ -2698,32 +2698,13 @@
     "verification": "Both full local suites passed: 1208 pass, zero failures, one existing skip each. Focused reading/attribution checks 38/38 and empty-repair/changed-atom/unknown-payment checks 23/23 passed. Final typecheck, production build and offline advisory diagnostic passed. Final desktop copy/heading/section acceptance and 390px mobile with 390px content width passed using retained results in a queue-paused isolated database. No dependency or migration changes. Final-head push 38164602631 and PR 38164606117 checks succeeded on bd2ca3c09dbfcace9bf72c3bd5c0dd569d2bc083, including 1210 tests/1209 pass/zero fail/one existing skip, typecheck, build, offline advisory diagnostic and dependency audit. PR42 merged and exact source production SHA verified READY."
   },
   "sourceAtoms20261012": {
-    "status": "merged",
-    "note": "Implemented in approved order and released through PR43/44. Three same-source native candidates completed with independent audits. Mean active processing165.521s versus108.031s; recorded model cost1.348871826 versus0.863104665. Mixed source coverage and continued qualifier gaps do not support default promotion; sourceAtoms remains off and original providers/models are unchanged.",
+    "status": "removed",
+    "note": "User requested full experiment rollback on12Oct2026 after slower, costlier same-source results. PR43/44 remain historical; runtime restored to89ad484 while original native defaults, independent audits and PR41/42 publication fixes are preserved. Historical results and completed data are retained.",
     "files": [
-      "src/features/youtube-intelligence/source-atoms.ts",
-      "src/server/youtube-intelligence/source-atom-index.ts",
-      "src/server/youtube-intelligence/compact-faithful-audit.ts",
-      "src/server/youtube-intelligence/pipeline.ts",
-      "src/server/youtube-intelligence/research-pipeline.ts",
-      "src/features/youtube-intelligence/contracts.ts",
-      "src/features/youtube-intelligence/research-brief.ts",
-      "src/features/youtube-intelligence/settings.ts",
-      "src/features/youtube-intelligence/ui/pages/Settings.tsx",
-      "src/server/youtube-intelligence/schemas/source-atoms.ts",
-      "src/server/youtube-intelligence/faithful-audit.ts",
-      "src/server/youtube-intelligence/efficiency.ts",
-      "scripts/benchmark-hosted-models.ts",
-      "src/features/youtube-intelligence/chunking.ts",
+      "docs/delivery/source-atom-plan-20261012.md",
       "docs/delivery/source-atom-results-20261012.md"
     ],
-    "tests": [
-      "tests/source-atoms.test.ts",
-      "tests/source-atom-index.test.ts",
-      "tests/compact-faithful-audit.test.ts",
-      "tests/source-recall-schema.test.ts",
-      "tests/hosted-model-benchmark.test.ts"
-    ],
+    "tests": [],
     "pr": 43,
     "mergeCommit": "fc4a6d19263af5676620c6c07f64efc97c9680a4",
     "report": "docs/delivery/source-atom-results-20261012.md",
@@ -2747,6 +2728,36 @@
       "sourceAcquisitionIncluded": false,
       "quality": "Unblinded author review of inherited25 material composites; no financial-truth or accuracy claim.",
       "defaultPromoted": false
-    }
+    },
+    "historicalImplementationFiles": [
+      "src/features/youtube-intelligence/source-atoms.ts",
+      "src/server/youtube-intelligence/source-atom-index.ts",
+      "src/server/youtube-intelligence/compact-faithful-audit.ts",
+      "src/server/youtube-intelligence/pipeline.ts",
+      "src/server/youtube-intelligence/research-pipeline.ts",
+      "src/features/youtube-intelligence/contracts.ts",
+      "src/features/youtube-intelligence/research-brief.ts",
+      "src/features/youtube-intelligence/settings.ts",
+      "src/features/youtube-intelligence/ui/pages/Settings.tsx",
+      "src/server/youtube-intelligence/schemas/source-atoms.ts",
+      "src/server/youtube-intelligence/faithful-audit.ts",
+      "src/server/youtube-intelligence/efficiency.ts",
+      "scripts/benchmark-hosted-models.ts",
+      "src/features/youtube-intelligence/chunking.ts",
+      "docs/delivery/source-atom-results-20261012.md"
+    ],
+    "historicalTests": [
+      "tests/source-atoms.test.ts",
+      "tests/source-atom-index.test.ts",
+      "tests/compact-faithful-audit.test.ts",
+      "tests/source-recall-schema.test.ts",
+      "tests/hosted-model-benchmark.test.ts"
+    ]
+  },
+  "sourceAtomRollback20261012": {
+    "status": "in-review",
+    "note": "Restoration and release verification in progress; no paid requests or destructive DB changes.",
+    "runtimeBaseline": "89ad484",
+    "report": "docs/delivery/source-atom-rollback-20261012.md"
   }
 }

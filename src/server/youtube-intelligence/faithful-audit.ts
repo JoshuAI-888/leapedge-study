@@ -1,7 +1,4 @@
 import { z } from "zod";
-import {compactFaithfulChunks,compactFaithfulPayload} from "./compact-faithful-audit.ts";
-import {INDEX_INSTRUCTIONS} from "./research-evidence-index.ts";
-import {ATOM_INDEX_INSTRUCTIONS} from "./source-atom-index.ts";
 import { boundedSettled, isFatalAccountError } from "./bounded-parallel.ts";
 import { EvidenceCoverage } from "../../features/youtube-intelligence/research-readiness.ts";
 import type {
@@ -100,7 +97,6 @@ export async function faithfulAudit(input: {
   invoke: Invoke;
   concurrency?: number;
   weightedPlan?: boolean;
-  compactPlan?: boolean;
   retainedSentences?: ResearchSentenceData[];
   stagePrefix?: string;
   /** Optional Jev pre-screen: settles clear sentences, the critic gets the rest. */
@@ -112,14 +108,14 @@ export async function faithfulAudit(input: {
   const escalated = input.sentences.filter((s) => settledBy(s) === "escalate");
   const preAccepted = input.sentences.filter((s) => settledBy(s) === "accept");
   const coverageContext=[...preAccepted,...(input.retainedSentences??[])];
-  const chunks = input.compactPlan ? compactFaithfulChunks(escalated,input.evidence,coverageContext) : input.weightedPlan
+  const chunks = input.weightedPlan
     ? weightedFaithfulChunks(escalated,input.evidence,coverageContext)
     : faithfulChunks(escalated, input.evidence, 12, coverageContext);
   const results = await boundedSettled(chunks, input.concurrency ?? 4, (chunk, index) =>
     input.invoke(
       `${input.stagePrefix??"critique-faithful"}-${index + 1}`,
-      FAITHFUL_INSTRUCTIONS + (input.compactPlan ? (()=>{const p=compactFaithfulPayload(chunk);return "evidenceIndex" in p ? INDEX_INSTRUCTIONS : "atomEvidenceIndex" in p ? ATOM_INDEX_INSTRUCTIONS : "";})() : ""),
-      input.compactPlan ? compactFaithfulPayload(chunk) : {
+      FAITHFUL_INSTRUCTIONS,
+      {
         sentences: chunk.sentences.map(({ id, text, evidenceIds, speaker, timeMode, kind, financialFacts }) => ({ id, text, evidenceIds, speaker, timeMode, kind, financialFacts })),
         evidence: chunk.evidence,
         assessEvidenceIds: chunk.assessEvidenceIds,
@@ -181,5 +177,5 @@ export async function faithfulAudit(input: {
         error: screen.error,
       }
     : undefined;
-  return { verdicts, evidenceCoverage, coverageFindings, chunks: chunks.length, failures: failures.length, ...(input.compactPlan ? {context:{version:"compact-faithful.v1",payloadBytes:chunks.map(c=>Buffer.byteLength(JSON.stringify(compactFaithfulPayload(c))))}} : {}), ...(preScreen ? { preScreen } : {}) };
+  return { verdicts, evidenceCoverage, coverageFindings, chunks: chunks.length, failures: failures.length, ...(preScreen ? { preScreen } : {}) };
 }

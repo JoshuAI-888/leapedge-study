@@ -1,5 +1,3 @@
-import {sourceAtomPlan,sourceAtomIssues,ATOM_EXTRACTION_INSTRUCTIONS} from "../../features/youtube-intelligence/source-atoms.ts";
-import {atomExtractionSchema} from "./schemas/source-atoms.ts";
 import {sourceRecallSchemaFor} from "./schemas/source-recall.ts";
 import {auditedExecution} from "../../features/youtube-intelligence/audited-execution.ts";
 import {sourceAttributionCheck} from "../../features/youtube-intelligence/research-attribution.ts";
@@ -996,8 +994,6 @@ function pendingTranslations(run: Run) {
  * supply the document — tests route a stage that way without writing one.
  */
 export async function step(run: Run, settings?: TeamPreferencesData, hooks: {checkpointCheckedFindings?:()=>Promise<void>} = {}) {
-  const atoms=sourceAtomPlan(run.input);
-  if(atoms && !run.input.task && (run.input.promptSnapshot as {pointerEvidence?:boolean}|undefined)?.pointerEvidence!==true) throw Error("Source atom optimisation requires a frozen pointer-evidence prompt; no paid call made.");
   let loaded: TeamPreferencesData | undefined;
   const prefs = async () =>
     (loaded ??= await runTeamPreferences(run, settings));
@@ -1089,11 +1085,11 @@ export async function step(run: Run, settings?: TeamPreferencesData, hooks: {che
     const source=Source.parse(run.output.source);
     const inventory=(run.output.recallBaseInventory??sourceRecallInventory(run)) as ReturnType<typeof sourceRecallInventory>;
     const contexts=run.output.recallDiscoveryContexts as unknown[]|undefined;
-    return modelCall(run,`synthesis-recall-${i}`,run.model,recallPrompt+(atoms?ATOM_EXTRACTION_INSTRUCTIONS:""),{
+    return modelCall(run,`synthesis-recall-${i}`,run.model,recallPrompt,{
       ...extractionPayload(chunks[i],i,chunks.length,true),
       analysisContext:contexts?.[i]??extractionContext(run,chunks[i]).analysisContext,
       existing:execution?.recallPacking ? localRecallInventory(inventory,chunks[i],source) : inventory,
-    },false,{settings:team,responseSchema:atoms?atomExtractionSchema(sourceRecallSchemaFor(prompts)):sourceRecallSchemaFor(prompts),maxOutputTokens:12000,reasoningEffort:'low'});
+    },false,{settings:team,responseSchema:sourceRecallSchemaFor(prompts),maxOutputTokens:12000,reasoningEffort:'low'});
   });
 
   if (run.stage === "metadata") {
@@ -1370,7 +1366,7 @@ export async function step(run: Run, settings?: TeamPreferencesData, hooks: {che
           "\n" +
           prompts.extraction +
           "\n" +
-          FINANCIAL_SEMANTICS + RESEARCH_CONTEXT_POLICY + (atoms?ATOM_EXTRACTION_INSTRUCTIONS:"") +
+          FINANCIAL_SEMANTICS + RESEARCH_CONTEXT_POLICY +
           (chunks.length > 1
             ? "\nThis is one chronological excerpt. Extract only claims supported here; retain conditions and do not infer the rest of the video."
             : ""),
@@ -1380,7 +1376,7 @@ export async function step(run: Run, settings?: TeamPreferencesData, hooks: {che
           settings: team,
           reasoningEffort: "low",
           maxOutputTokens: 24000,
-          ...(pointer ? { responseSchema: atoms?atomExtractionSchema(extractionSchemaFor(prompts)):extractionSchemaFor(prompts) } : {}),
+          ...(pointer ? { responseSchema: extractionSchemaFor(prompts) } : {}),
         },
       );
     };
@@ -1523,7 +1519,7 @@ export async function step(run: Run, settings?: TeamPreferencesData, hooks: {che
         id: `${prefix}${i + 1}`,
         claim: anchored,
         passed: false,
-        reasons: [...validateClaim(anchored, source, warnings),...(atoms&&prefix==="k"?sourceAtomIssues(anchored,true):[])],
+        reasons: validateClaim(anchored, source, warnings),
       };
     };
     run.output.claims = draft.claims.map((c, i) => checked(c, "c", i));
@@ -1691,7 +1687,7 @@ export async function step(run: Run, settings?: TeamPreferencesData, hooks: {che
           (chunks.length === 1 ? "critique" : `critique-chunk-${index}`) +
             (run.output.auditRecoveryAttempts ? `-repair-${run.output.auditRecoveryAttempts}` : ""),
           model,
-          prompts.critique + "\n" + CRITIQUE_BATCH_FORMAT + (atoms ? " Independently check every source_atom actor, predicate, object, kind, quantity/unit/period/basis and linked conditions/opposition against its copied original quotes. Reject tuples joining different actors, periods or stances, or dropping meaning-changing qualifiers, even if the thesis alone sounds plausible. Atom metadata remains a proposal, not verification." : "") + (run.input.publicationSafeguardsVersion==='atomic-publication.v1' ? '\nAudit every separate source_ranges/citedSourceRanges passage including later qualifications. The first navigation pointer alone is not complete support; never invent text across gaps.' : ''),
+          prompts.critique + "\n" + CRITIQUE_BATCH_FORMAT + (run.input.publicationSafeguardsVersion==='atomic-publication.v1' ? '\nAudit every separate source_ranges/citedSourceRanges passage including later qualifications. The first navigation pointer alone is not complete support; never invent text across gaps.' : ''),
           critiquePayload({
             claims: batchClaims.map(({ item, kind }) => ({
               id: item.id,
@@ -1992,7 +1988,7 @@ export async function step(run: Run, settings?: TeamPreferencesData, hooks: {che
               id,
               claim,
               passed: false,
-              reasons: [...validateClaim(claim, source),...(atoms&&isContext?sourceAtomIssues(claim,true):[])],
+              reasons: validateClaim(claim, source),
             });
             if (!additions.at(-1)!.reasons.length) retainedCandidateRefs.add(`${isContext ? "key_points" : "claims"}:${candidateIndex}`);
           } catch (error) {
