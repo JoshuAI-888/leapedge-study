@@ -373,7 +373,7 @@ export async function modelCall(
         );
       if (fingerprint !== requestFingerprint) continue;
       const recovered = ModelResponse.parse(retained);
-      if (call.status !== "completed" && !(recovered.usage.costUsd === null && call.metrics.transport === "cheaper-inference"))
+      if (call.status !== "completed" && !(recovered.usage.costUsd === null && (call.metrics.transport === "cheaper-inference" || call.metrics.batch === true)))
         await settle(call.id, recovered.usage.costUsd, {
           ...call.metrics,
           recovered: true,

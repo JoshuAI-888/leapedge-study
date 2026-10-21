@@ -1,0 +1,9 @@
+# Bounded experiment contract
+
+Production defaults remain unchanged. Existing public seams under test: `submitBatchStage`, `pollBatch`, SDK serialization, `modelCall`, `processNext`, queue admission and lease fencing, retained source/prompt hashes, Zod source and extraction validators, independent critique and atomic publication guards.
+
+A: one native static YouTube interval, original language and absolute segments; validate with `parseWindow`, never treat generated timestamps as verified. B: identical GenerateContent request in one batch; no Interactions endpoint, download or replacement media. Persist job/resource/key/fingerprint and reservation; stop on rejection or uncertain submission. Only expand after completion and known commitments. C: frozen source through existing extraction prompt/payload/schema and model for immediate versus batch. Each independent item is separate in current orchestration; grouped SDK serialization is an offline contract check, not a throughput measurement. Dependent extraction, translation, critique and synthesis stay separate. D: evaluate a pure opt-in origin/prerequisite policy; do not wire into production.
+
+Every live arm has a fresh exclusively created manifest before any submission. Use current billing ledger with a shared campaign marker capped at $5 and a per-arm cap no greater than $0.50 or existing lower settings. Read existing cumulative/monthly limits; tighten only. No retries for uncertain outcomes. Run in isolated persistent local Postgres, queue paused, email/cron disabled. Poll/export cannot create paid jobs. No production database write, deploy, monitoring or bypassed critique/publication.
+
+Full source bytes and provider payloads stay in ignored local evidence; checked-in artifacts contain hashes, outcomes, aggregate counters and sanitized diagnostics. Reference text must be independently audio reviewed for WER/CER or timestamp accuracy; captions and prior outputs permit source agreement only.

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "batch-guide",
+    "url": "https://ai.google.dev/gemini-api/docs/batch-api",
+    "retrievedAt": "2026-10-21",
+    "statusCode": 200,
+    "lastUpdated": "Last updated 2026-09-17 UTC.",
+    "scope": "Official primary documentation",
+    "contentSha256": "8a67f3d6cbbd3d562f7cc972f91cda10bd67da47ffb1ed3bc59a24fe03f757aa"
+  },
+  {
+    "id": "batch-rest",
+    "url": "https://ai.google.dev/api/batch-api",
+    "retrievedAt": "2026-10-21",
+    "statusCode": 200,
+    "lastUpdated": "Last updated 2026-10-13 UTC.",
+    "scope": "Official primary documentation",
+    "contentSha256": "e1ebe1ee2acbcdff4330074ae01d1137cb44e0945a899120f151ab74fbb0d07a"
+  },
+  {
+    "id": "pricing",
+    "url": "https://ai.google.dev/gemini-api/docs/pricing",
+    "retrievedAt": "2026-10-21",
+    "statusCode": 200,
+    "lastUpdated": "Last updated 2026-10-19 UTC.",
+    "scope": "Official primary documentation",
+    "contentSha256": "6900867c67e7752a540060c7989b612d183a1362eebdd0e1c7332440d9e6a784"
+  },
+  {
+    "id": "video-interactions",
+    "url": "https://ai.google.dev/gemini-api/docs/video-understanding",
+    "retrievedAt": "2026-10-21",
+    "statusCode": 200,
+    "lastUpdated": "Last updated 2026-10-13 UTC.",
+    "scope": "Interactions; not evidence of Batch compatibility",
+    "contentSha256": "88c97584a40d08832f499f9b3781e10242f8bfafbe12bdd35b8530237317af7f"
+  },
+  {
+    "id": "video-generate-content",
+    "url": "https://ai.google.dev/gemini-api/docs/generate-content/video-understanding",
+    "retrievedAt": "2026-10-21",
+    "statusCode": 200,
+    "lastUpdated": "Last updated 2026-10-13 UTC.",
+    "scope": "Official primary documentation",
+    "contentSha256": "9e84119e06141bbd73527c045d394bc1eecf4810e0b9652ef3494374640b481e"
+  },
+  {
+    "id": "rate-limits",
+    "url": "https://ai.google.dev/gemini-api/docs/rate-limits",
+    "retrievedAt": "2026-10-21",
+    "statusCode": 200,
+    "lastUpdated": "Last updated 2026-10-15 UTC.",
+    "scope": "Official primary documentation",
+    "contentSha256": "5c46b7cb314392c4f72485ea2799d31a1c2b052d5d5fd42bc4362ed0bba11f9b"
+  }
+]

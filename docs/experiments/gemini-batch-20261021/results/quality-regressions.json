@@ -1,0 +1,17 @@
+{
+  "videoId": "Mepjkm_0ns4",
+  "sourceHash": "92d20823bbd8c3918a7a67cc35d413b51f5165115a7a386369f304deab68789f",
+  "sourceRange": {
+    "start_id": "s00067",
+    "end_id": "s00072"
+  },
+  "sourceQuoteSha256": "060ebedb7228987e1d41f4804320851e0995f3dc95c48ead4328db39b785b7b2",
+  "sourceQuote": "where things get tricky. Management expects third quarter revenue between under$1 million and $105 million with an adjusted EBID dollar loss of $1 million to $6 million. That outlook fell short of Wall Street's expectations at the",
+  "proposedValue": 101,
+  "unit": "USD millions",
+  "deterministicGate": "unresolved",
+  "reason": "Proposed normalized number is absent from every original literal in this exact quote; possible transcription/decimal reconstruction, not established source value.",
+  "immediate": "$101m guidance in key point; separate claim says $100m",
+  "batch": "$101m in claim risks",
+  "verdict": "Both require independent review; no output published. This is source agreement, not original-speech truth."
+}

@@ -1,0 +1,65 @@
+{
+  "status": "not_activated",
+  "totalIfExtended": 9,
+  "reason": "Do not expand until media compatibility and independent critique prerequisites are restored; first-phase semantic issue remains unresolved.",
+  "cases": [
+    {
+      "videoId": "S53iIEnGogw",
+      "path": "evaluations/analyst-view-13/transcripts/S53iIEnGogw.txt",
+      "sha256": "c430e773e385471765c2be01ba58f6517b3060c34bafac5e4f2f5c603021824c",
+      "lastCaptionStartSeconds": 1086,
+      "language": "Chinese with possible English terms; speech unverified",
+      "groundTruth": false,
+      "status": "not_executed"
+    },
+    {
+      "videoId": "1WNowIoNgtg",
+      "path": "evaluations/analyst-view-13/transcripts/1WNowIoNgtg.txt",
+      "sha256": "cc04972d3f04709392ebc6076faa7a6f6ee7774889eafc971a7bbdf8ccffdd7d",
+      "lastCaptionStartSeconds": 2146,
+      "language": "English caption text; speech unverified",
+      "groundTruth": false,
+      "status": "not_executed"
+    },
+    {
+      "videoId": "DuIyF_34ReI",
+      "path": "evaluations/analyst-view-13/transcripts/DuIyF_34ReI.txt",
+      "sha256": "e4e820b7febc9adf0baa7abffaeba19ad8e9632f1ce2e9c1a102e4f76d594cdb",
+      "lastCaptionStartSeconds": 620,
+      "language": "English caption text; speech unverified",
+      "groundTruth": false,
+      "status": "not_executed"
+    },
+    {
+      "videoId": "U32FPvvBaNI",
+      "path": "evaluations/analyst-view-13/transcripts/U32FPvvBaNI.txt",
+      "sha256": "3b33a611068824ef3dc1f720964c3081cfed6880830a49fab1245f9aa66a0eb7",
+      "lastCaptionStartSeconds": 1325,
+      "language": "English caption text; speech unverified",
+      "groundTruth": false,
+      "status": "not_executed"
+    },
+    {
+      "videoId": "T84iGsyCg-M",
+      "path": "evaluations/analyst-view-13/transcripts/T84iGsyCg-M.txt",
+      "sha256": "65f194f1c8391010dfd78e9671cb9fcc7e2918f8521df3388921574c00538bf2",
+      "lastCaptionStartSeconds": 677,
+      "language": "English caption text; speech unverified",
+      "groundTruth": false,
+      "status": "not_executed"
+    },
+    {
+      "videoId": "J25UuUqHT3Y",
+      "path": "docs/archive/free-caption-benchmark.json",
+      "status": "historical acquisition failures; current caption absence/access unknown",
+      "groundTruth": false
+    }
+  ],
+  "coverageGaps": [
+    "independent human-listened speech/anchors",
+    "confirmed captionless video",
+    "poor audio and rapid speech labels",
+    "code-switching verified in audio",
+    "long >30 minute asset with licensed supported access"
+  ]
+}

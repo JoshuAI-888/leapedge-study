@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-10-21T05:11:29.050Z",
+  "cost": "read-only metadata; no generation",
+  "results": [
+    {
+      "requestedModel": "gemini-3.8-flash",
+      "name": "models/gemini-3.8-flash",
+      "inputTokenLimit": 1048576,
+      "outputTokenLimit": 65536,
+      "supportedActions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "requestedModel": "gemini-3.1-flash-lite",
+      "name": "models/gemini-3.1-flash-lite",
+      "inputTokenLimit": 1048576,
+      "outputTokenLimit": 65536,
+      "supportedActions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "requestedModel": "gemini-3.1-pro-preview",
+      "name": "models/gemini-3.1-pro-preview",
+      "inputTokenLimit": 1048576,
+      "outputTokenLimit": 65536,
+      "supportedActions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    }
+  ]
+}

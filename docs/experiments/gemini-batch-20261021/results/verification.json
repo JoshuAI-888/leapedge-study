@@ -1,0 +1,155 @@
+{
+  "version": "gemini-batch-verification.v1",
+  "status": "implementation-verified",
+  "updatedAt": "2026-10-21T05:38:15.099Z",
+  "baseline": "32a65994dcdd31f1e2caf1e86db2afaa75549c7b",
+  "workingSourceSnapshot": "3d180195036359bc38c3bc313818eeef42f896a072ec8bcb2616f5624c6121f5",
+  "runtime": {
+    "node": "v24.18.0",
+    "googleGenai": "2.22.0",
+    "postgres": "16.14"
+  },
+  "checks": [
+    {
+      "command": "npm test",
+      "sha256": "e1e558340b062b41838d98082b62f0e3e0193272da13c6ef23716fb9f605ef28",
+      "tests": 1230,
+      "passed": 1229,
+      "failed": 0,
+      "skipped": 1,
+      "durationMs": 248026.059292,
+      "scope": "Full local suite before final harness parking helper; final helper has focused and real PostgreSQL coverage, with exact-head full CI pending."
+    },
+    {
+      "command": "YTI_DB=pglite npm test",
+      "sha256": "c6411f82a86f17b101cc97aa67d8d34f0429cc9a4dbcb6faaad49a682dd0221a",
+      "tests": 1230,
+      "passed": 1229,
+      "failed": 0,
+      "skipped": 1,
+      "durationMs": 252447.3345,
+      "scope": "Same pre-parking full source snapshot40a670b6d6e3ecc000453d4eee666803a140d3cd92ccfa8581c3c6861ad4a9f1."
+    },
+    {
+      "command": "node --experimental-strip-types --test tests/batch.test.ts",
+      "sha256": "49d6dbae445180d7229364b1585bc16dd0541388a3b659d9d95d3ccd8e061907",
+      "tests": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 26678.577791
+    },
+    {
+      "command": "node --experimental-strip-types --test tests/gemini-batch-*.test.ts",
+      "sha256": "8a30f293c6258a052aef0134b9255b5f2fb09902c963430cd24f988e09c5bca7",
+      "tests": 11,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 996.116125
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "passed"
+    },
+    {
+      "command": "npm run build",
+      "status": "passed"
+    },
+    {
+      "command": "node --experimental-strip-types scripts/promotion-gate.ts --offline",
+      "status": "advisory-only",
+      "binding": {
+        "total": 0,
+        "passed": 0,
+        "failed": 0
+      },
+      "accuracyMeasured": false
+    },
+    {
+      "command": "npm audit --omit=dev",
+      "status": "passed",
+      "vulnerabilities": 0
+    },
+    {
+      "command": "scripts/postgres-check.ts",
+      "status": "passed",
+      "provider": "none",
+      "scope": "Isolated real Postgres; locks, admission, per-run costs and fencing"
+    },
+    {
+      "command": "scripts/audited-postgres-check.ts",
+      "status": "passed",
+      "provider": "none",
+      "scope": "Real Postgres campaign guards, unknown holds, checkpoint and lease fencing"
+    },
+    {
+      "command": "scripts/gemini-batch-postgres-check.ts",
+      "status": "passed",
+      "provider": "mocked; no paid calls",
+      "scope": "Separate-process kill after simulated submission, lease reclaim/stale owner, eight simultaneous submissions, pending preservation, atomic experiment parking"
+    }
+  ],
+  "tdd": {
+    "observedRedBeforeGreen": [
+      "incomplete usage hold",
+      "unknown billing replay",
+      "unpriced/foreign model and media/cache admission",
+      "provider rejection detail",
+      "malformed envelope",
+      "media routing prerequisite",
+      "matched-input paired economics",
+      "audit costs and unknown holds in exporter",
+      "automatic-worker exclusion for isolated arms"
+    ],
+    "redLogsKeptPrivately": true
+  },
+  "live": {
+    "generationSuccesses": 9,
+    "mediaSubmissionsRejected": 1,
+    "independentCritiqueRejected": 1,
+    "recordedModelCostUsd": 0.097319625,
+    "unresolvedHoldUsd": 0,
+    "captionCreditsPurchased": 0,
+    "reviewedPublications": 0,
+    "quality": "unverified; literal guidance regression unresolved",
+    "invoiceConfirmed": false,
+    "allInSavingMeasured": null
+  },
+  "security": {
+    "configuredSecretsMatchedInTrackedDiff": 0,
+    "privateRawEvidenceIgnored": true,
+    "localDatabaseBackedUp": true,
+    "localDatabaseServerStopped": true
+  },
+  "production": {
+    "deployed": false,
+    "defaultsChanged": false,
+    "automaticMonitoringActivated": false
+  },
+  "ci": {
+    "status": "passed",
+    "verifiedCommit": "2a0be70357037083faa2e801822ed3205deee1a8",
+    "sourceSnapshot": "3d180195036359bc38c3bc313818eeef42f896a072ec8bcb2616f5624c6121f5",
+    "tests": {
+      "total": 1231,
+      "passed": 1230,
+      "failed": 0,
+      "skipped": 1
+    },
+    "runs": [
+      {
+        "id": 39549866723,
+        "url": "https://github.com/JoshuAI-888/leapedge-study/actions/runs/39549866723",
+        "conclusion": "success"
+      },
+      {
+        "id": 39549860828,
+        "url": "https://github.com/JoshuAI-888/leapedge-study/actions/runs/39549860828",
+        "conclusion": "success"
+      }
+    ],
+    "logSha256": "f27bcfead2807fe8f310bc6c7002e6fe5a4300cc3440501dc7b45ede82cd0195",
+    "scope": "Both exact implementation commit push/PR checks passed. Final documentation-only evidence commit does not alter this source snapshot."
+  }
+}

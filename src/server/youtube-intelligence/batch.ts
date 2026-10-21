@@ -30,6 +30,7 @@ import {
   type ModelResponseData,
 } from "./transport/types.ts";
 import type { Run } from "../../features/youtube-intelligence/contracts.ts";
+import { isPriced, normaliseModel } from "./transport/prices.ts";
 export class BatchPending extends SourcePending {}
 export type BatchClient = {
   create: (input: CreateBatchJobParameters) => Promise<unknown>;
@@ -51,6 +52,12 @@ function client(): BatchClient {
     apiKey: process.env.GEMINI_API_KEY,
     httpOptions: { retryOptions: { attempts: 1 }, timeout: 60000 },
   }).batches;
+}
+function diagnostic(error: unknown) {
+  let message = error instanceof Error ? error.message : String(error);
+  for (const key of ["GEMINI_API_KEY", "GOOGLE_API_KEY", "OPENROUTER_API_KEY", "DATABASE_URL", "DATABASE_URL_UNPOOLED"])
+    if (process.env[key]) message = message.replaceAll(process.env[key]!, "[REDACTED]");
+  return message.slice(0, 1800);
 }
 const RecordSchema = z.object({
   id: z.string(),
@@ -123,6 +130,13 @@ export async function submitBatchStage(
     createHash("sha256").update(JSON.stringify(request)).digest("hex");
   let record = await batchRecord(run.id, request.stage, requestFingerprint);
   if (record) return result(record);
+  if (!normaliseModel(request.model).startsWith("gemini-") || !isPriced(request.model))
+    throw Error("Batch model must have a reviewed native Gemini price and compatibility entry.");
+  if (request.cachedContent)
+    throw Error("Batch cache references require a validated cache lifecycle; inline the complete source.");
+  if (request.video?.startSeconds !== undefined && request.video.endSeconds !== undefined &&
+      request.video.endSeconds <= request.video.startSeconds)
+    throw Error("Batch media window must end after it starts.");
   const sdk = client(); // Validate credentials before reserving.
   const parameters = new GoogleNativeTransport().parameters({
     ...request,
@@ -177,16 +191,17 @@ export async function submitBatchStage(
       await schedule(record!);
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = diagnostic(error);
     const status = Number((error as { status?: unknown })?.status);
     if ([400, 401, 403, 404, 429].includes(status)) {
+      const rejection = `Batch submission rejected: ${status}: ${message}`;
       await release(record.callId, `Batch submission rejected: ${status}`);
       await put(KIND, id, {
         ...record,
         status: "failed",
-        error: `Batch submission rejected: ${status}`,
+        error: rejection,
       });
-      throw Error(`Batch submission rejected: ${status}`);
+      throw Error(rejection);
     }
     await markUnknown(record.callId, "Batch submission outcome uncertain");
     await put(KIND, id, { ...record, status: "uncertain", error: message });
@@ -213,6 +228,17 @@ const Output = z.looseObject({
     })
     .optional(),
 });
+// Missing counters are not zero consumption. Keep the paid-call commitment
+// unresolved while still allowing a structurally usable result to be replayed.
+const BillableUsage = z.looseObject({
+  promptTokenCount: z.number().int().positive(),
+  candidatesTokenCount: z.number().int().nonnegative(),
+  thoughtsTokenCount: z.number().int().nonnegative().optional(),
+  cachedContentTokenCount: z.number().int().nonnegative().optional(),
+  promptTokensDetails: z.array(z.looseObject({
+    modality: z.string(), tokenCount: z.number().int().nonnegative(),
+  })).optional(),
+}).refine(u => (u.cachedContentTokenCount ?? 0) <= u.promptTokenCount);
 /** Polling is read-only at the provider. Match exact request key, never position. */
 export async function pollBatch(id: string) {
   const record = await read(id);
@@ -281,12 +307,22 @@ export async function pollBatch(id: string) {
         usageMetadata: z.looseObject({}).optional(),
         modelVersion: z.string().optional(),
       })
-      .parse(match.response);
+      .safeParse(match.response);
+    if (!parsedResponse.success) {
+      await retainResponse(`${record.callId}:malformed`, record.runId, record.stage, match.response);
+      await uncertain(record, "Batch generated response was malformed");
+      throw Error("Batch generated response was malformed; reconciliation required.");
+    }
     const response: GenerateContentResponse = Object.assign(
       new GenerateContentResponse(),
-      parsedResponse,
+      parsedResponse.data,
     );
-    const usage = usageOf(record.model, response);
+    const checkedUsage = BillableUsage.safeParse(response.usageMetadata);
+    const validUsage = checkedUsage.success &&
+      (!textOf(response).trim() || checkedUsage.data.candidatesTokenCount > 0);
+    const usage = validUsage
+      ? usageOf(record.model, response)
+      : { inputTokens: 0, outputTokens: 0, costUsd: null };
     const reported = z
       .looseObject({ usage: z.looseObject({ cost: z.number().nonnegative() }) })
       .safeParse(response);
@@ -320,7 +356,7 @@ export async function pollBatch(id: string) {
         record.stage,
         { ...normalized, requestFingerprint: record.requestFingerprint },
       );
-      await settle(record.callId, normalized.usage.costUsd ?? estimatedHold!, {
+      await settle(record.callId, normalized.usage.costUsd, {
         batch: true,
         requestFingerprint: record.requestFingerprint,
         costEstimated: normalized.usage.costUsd === null,
@@ -330,6 +366,8 @@ export async function pollBatch(id: string) {
         usage: normalized.usage,
         discount: 0.5,
       });
+      if (normalized.usage.costUsd === null)
+        await markUnknown(record.callId, "Batch usage is incomplete; reconcile provider billing");
       await put(KIND, id, { ...record, status: "completed" });
     });
     return;

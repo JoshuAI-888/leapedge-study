@@ -1,0 +1,56 @@
+{
+  "live": false,
+  "version": "gemini-batch-experiment.v1",
+  "campaignId": "1da952a2-311d-4181-94c2-3e47499e4687",
+  "maxAdditionalUsd": 5,
+  "maxPerArmUsd": 0.5,
+  "productionDefaultsChanged": false,
+  "cases": [
+    {
+      "videoId": "_mEvVWGfmjU",
+      "title": "T MOBILE STOCK ANALYSIS",
+      "durationSeconds": 544,
+      "sourceKind": "native_captions_transcriptapi",
+      "language": "asr-en",
+      "sourceHash": "ccce03bd978b717b3c7d99cf2ddc9dfe8af20a75eeff05f74dbc1f253812ec9b",
+      "sourceBytesHash": "ccce03bd978b717b3c7d99cf2ddc9dfe8af20a75eeff05f74dbc1f253812ec9b",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "f5defdae6ffc6234c30ee1b8ac014da4dbf8dd9a005e85528a067f655ebbc72f",
+      "model": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "independentAudioReference": false,
+      "mediaConservativeMaximumUsd": 0.13008
+    },
+    {
+      "videoId": "Mepjkm_0ns4",
+      "title": "PL Stock Analysis: Revenue Surges 58% — Is Planet Labs Stock a Buy Now?",
+      "durationSeconds": 346,
+      "sourceKind": "native_captions_transcriptapi",
+      "language": "asr-en",
+      "sourceHash": "92d20823bbd8c3918a7a67cc35d413b51f5165115a7a386369f304deab68789f",
+      "sourceBytesHash": "92d20823bbd8c3918a7a67cc35d413b51f5165115a7a386369f304deab68789f",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "f5defdae6ffc6234c30ee1b8ac014da4dbf8dd9a005e85528a067f655ebbc72f",
+      "model": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "independentAudioReference": false,
+      "mediaConservativeMaximumUsd": 0.08553
+    },
+    {
+      "videoId": "fSx-Ho8mi18",
+      "title": "Palantir Stock: Too Expensive? Here’s Why I’m Still Bullish And Believe It Can Go Higher",
+      "durationSeconds": 1108,
+      "sourceKind": "native_captions_transcriptapi",
+      "language": "en",
+      "sourceHash": "1ee815c0f9953386ce47eb66632fdc78342a712f3ca75c90a504f530ea4b7e52",
+      "sourceBytesHash": "1ee815c0f9953386ce47eb66632fdc78342a712f3ca75c90a504f530ea4b7e52",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "f5defdae6ffc6234c30ee1b8ac014da4dbf8dd9a005e85528a067f655ebbc72f",
+      "model": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "independentAudioReference": false,
+      "mediaConservativeMaximumUsd": 0.25698
+    }
+  ],
+  "note": "No DB/provider access. Each paid arm requires --live and an exclusive new manifest. Poll/export never submit."
+}
