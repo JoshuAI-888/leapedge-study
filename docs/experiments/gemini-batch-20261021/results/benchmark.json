@@ -1,0 +1,883 @@
+{
+  "version": "gemini-batch-report.v1",
+  "generatedAt": "2026-10-21T05:23:57.491Z",
+  "sampleCount": 10,
+  "uniqueVideos": 3,
+  "recordedTokenPriceCostUsd": 0.097319625,
+  "unresolvedHoldUsd": 0,
+  "costBasis": "Provider token usage × repository price table; not invoice-confirmed all-in charges. Unknown infra/audit/caption cost is not zero.",
+  "rows": [
+    {
+      "runId": "62b85f57-be8c-4421-b457-d304c232c646",
+      "videoId": "fSx-Ho8mi18",
+      "kind": "media",
+      "mode": "immediate",
+      "status": "received",
+      "sourceHash": "1ee815c0f9953386ce47eb66632fdc78342a712f3ca75c90a504f530ea4b7e52",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "220b2a980e11c01d71e1183b5b88dc0af9aab276eb54654bd9ee5011242ec62d",
+      "payloadHash": "467cea47cc2ab1ddb997e2d32d87e40e63d4790905fa71e04424282618d2922d",
+      "schemaHash": "46ac8ce7a3f710882371dadfb8bbef81f21c942047c103140827e058cdfcdf7a",
+      "requestFingerprint": "52aac4290194c42ccce04065a5bf947991088e7f31cf7df80e59300fcf130239",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": null,
+      "createdAt": "2026-10-21T05:11:01.961Z",
+      "lastObservedAt": "2026-10-21T05:16:43.266Z",
+      "submissionOrCallMs": 15489.020375,
+      "elapsedToLastObservationMs": 341305,
+      "firstResultObservedAt": "2026-10-21T05:11:17.467Z",
+      "timeToRawResultObservedMs": 15506,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.25698,
+      "commitmentsUsd": 0.00361275,
+      "recordedTokenPriceCostUsd": 0.00361275,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "e99ae4c7-ca3f-440c-889a-1b9e408e154e",
+          "status": "completed",
+          "amount": 0.00361275,
+          "usage": {
+            "costUsd": 0.00361275,
+            "inputTokens": 2837,
+            "outputTokens": 396
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 2837,
+          "candidatesTokenCount": 396,
+          "totalTokenCount": 3233,
+          "promptTokensDetails": [
+            {
+              "modality": "VIDEO",
+              "tokenCount": 2731
+            },
+            {
+              "modality": "TEXT",
+              "tokenCount": 106
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "44a9dab643f57645f79f0bd28360c40b6cf2df35651f643f2b3dc1335943785e"
+      },
+      "validation": {
+        "schemaAndBounds": true,
+        "accessible": true,
+        "segments": 7,
+        "language": "en",
+        "verifiedAccuracy": null,
+        "verifiedTimestampError": null
+      },
+      "validationError": null,
+      "error": null
+    },
+    {
+      "runId": "f66b408f-8edf-4202-915c-051ceb01ead0",
+      "videoId": "Mepjkm_0ns4",
+      "kind": "media",
+      "mode": "immediate",
+      "status": "received",
+      "sourceHash": "92d20823bbd8c3918a7a67cc35d413b51f5165115a7a386369f304deab68789f",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "220b2a980e11c01d71e1183b5b88dc0af9aab276eb54654bd9ee5011242ec62d",
+      "payloadHash": "467cea47cc2ab1ddb997e2d32d87e40e63d4790905fa71e04424282618d2922d",
+      "schemaHash": "46ac8ce7a3f710882371dadfb8bbef81f21c942047c103140827e058cdfcdf7a",
+      "requestFingerprint": "cbb15090805cd64bc8cfa355eac601e7ffb6f45dcaf33c1477acf3926ee9799e",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": null,
+      "createdAt": "2026-10-21T05:05:13.715Z",
+      "lastObservedAt": "2026-10-21T05:16:42.848Z",
+      "submissionOrCallMs": 8029.305832999999,
+      "elapsedToLastObservationMs": 689133,
+      "firstResultObservedAt": "2026-10-21T05:05:21.772Z",
+      "timeToRawResultObservedMs": 8057,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.08553,
+      "commitmentsUsd": 0.003609,
+      "recordedTokenPriceCostUsd": 0.003609,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "7079eaa1-d785-46fe-a3a9-7be040ad49d5",
+          "status": "completed",
+          "amount": 0.003609,
+          "usage": {
+            "costUsd": 0.003609,
+            "inputTokens": 2837,
+            "outputTokens": 395
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 2837,
+          "candidatesTokenCount": 395,
+          "totalTokenCount": 3232,
+          "promptTokensDetails": [
+            {
+              "modality": "VIDEO",
+              "tokenCount": 2731
+            },
+            {
+              "modality": "TEXT",
+              "tokenCount": 106
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "e87a6621c2ad9390bb1970f7c4adb5dd7a6c58628c1cad80895e1233b9a25bec"
+      },
+      "validation": {
+        "schemaAndBounds": true,
+        "accessible": true,
+        "segments": 11,
+        "language": "en",
+        "verifiedAccuracy": null,
+        "verifiedTimestampError": null
+      },
+      "validationError": null,
+      "error": null
+    },
+    {
+      "runId": "0cefd257-1270-49a3-b64c-c5af7a1f0224",
+      "videoId": "_mEvVWGfmjU",
+      "kind": "media",
+      "mode": "immediate",
+      "status": "received",
+      "sourceHash": "ccce03bd978b717b3c7d99cf2ddc9dfe8af20a75eeff05f74dbc1f253812ec9b",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "220b2a980e11c01d71e1183b5b88dc0af9aab276eb54654bd9ee5011242ec62d",
+      "payloadHash": "467cea47cc2ab1ddb997e2d32d87e40e63d4790905fa71e04424282618d2922d",
+      "schemaHash": "46ac8ce7a3f710882371dadfb8bbef81f21c942047c103140827e058cdfcdf7a",
+      "requestFingerprint": "dbdeff4df9991bbcfd254b36c00ef06616db34975c6a388bded0a0d815d2bbbd",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": null,
+      "createdAt": "2026-10-21T05:11:00.838Z",
+      "lastObservedAt": "2026-10-21T05:16:43.063Z",
+      "submissionOrCallMs": 6038.110000000001,
+      "elapsedToLastObservationMs": 342225,
+      "firstResultObservedAt": "2026-10-21T05:11:06.891Z",
+      "timeToRawResultObservedMs": 6053,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.13008,
+      "commitmentsUsd": 0.00337275,
+      "recordedTokenPriceCostUsd": 0.00337275,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "08234876-ac57-479f-89f2-45e6d0b504ce",
+          "status": "completed",
+          "amount": 0.00337275,
+          "usage": {
+            "costUsd": 0.00337275,
+            "inputTokens": 2837,
+            "outputTokens": 332
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 2837,
+          "candidatesTokenCount": 332,
+          "totalTokenCount": 3169,
+          "promptTokensDetails": [
+            {
+              "modality": "VIDEO",
+              "tokenCount": 2731
+            },
+            {
+              "modality": "TEXT",
+              "tokenCount": 106
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "7e50bba5013f0345108ba46afca5bfd7fdadb0fc71b73e746835acdbbaf26442"
+      },
+      "validation": {
+        "schemaAndBounds": true,
+        "accessible": true,
+        "segments": 5,
+        "language": "eng",
+        "verifiedAccuracy": null,
+        "verifiedTimestampError": null
+      },
+      "validationError": null,
+      "error": null
+    },
+    {
+      "runId": "0a626468-8a6a-4a73-8600-7171c7ddfd2c",
+      "videoId": "Mepjkm_0ns4",
+      "kind": "media",
+      "mode": "batch",
+      "status": "stopped",
+      "sourceHash": "92d20823bbd8c3918a7a67cc35d413b51f5165115a7a386369f304deab68789f",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "220b2a980e11c01d71e1183b5b88dc0af9aab276eb54654bd9ee5011242ec62d",
+      "payloadHash": "467cea47cc2ab1ddb997e2d32d87e40e63d4790905fa71e04424282618d2922d",
+      "schemaHash": "46ac8ce7a3f710882371dadfb8bbef81f21c942047c103140827e058cdfcdf7a",
+      "requestFingerprint": "cbb15090805cd64bc8cfa355eac601e7ffb6f45dcaf33c1477acf3926ee9799e",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": null,
+      "createdAt": "2026-10-21T05:05:36.661Z",
+      "lastObservedAt": "2026-10-21T05:16:43.468Z",
+      "submissionOrCallMs": 911.7886250000001,
+      "elapsedToLastObservationMs": 666807,
+      "firstResultObservedAt": null,
+      "timeToRawResultObservedMs": null,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.08553,
+      "commitmentsUsd": 0,
+      "recordedTokenPriceCostUsd": 0,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "56ce9722-28aa-4dfe-91fd-326ae4163d79",
+          "status": "released",
+          "amount": 0,
+          "usage": null
+        }
+      ],
+      "providerEvidence": null,
+      "validation": null,
+      "validationError": null,
+      "error": "Batch submission rejected: 400"
+    },
+    {
+      "runId": "95e97b83-6e98-4497-8215-b17ea8d3e1cf",
+      "videoId": "fSx-Ho8mi18",
+      "kind": "text",
+      "mode": "batch",
+      "status": "completed",
+      "sourceHash": "1ee815c0f9953386ce47eb66632fdc78342a712f3ca75c90a504f530ea4b7e52",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "805d6afba8b1a407d8d97dc751cf9589854433e5fadfa49222ca883ea37ea1a4",
+      "payloadHash": "f4236609168daf04ba010a7542d887e3ba2a3f9498d4eabf22bb8ee75dba6764",
+      "schemaHash": "f614654c557c8c8104cc6a324a003d1ec2f3e98a906701716ba6caa9e14a6b39",
+      "requestFingerprint": "bf4c1e9a626fb304f04914421c3abdac646d7deefc73ed14dde44010acd0dc35",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": "batches/wa8tv06u82xpdv1wv82kvo5blmbplrfzpv8u",
+      "createdAt": "2026-10-21T05:12:04.539Z",
+      "lastObservedAt": "2026-10-21T05:16:44.731Z",
+      "submissionOrCallMs": 7238.700084,
+      "elapsedToLastObservationMs": 280192,
+      "firstResultObservedAt": "2026-10-21T05:15:15.518Z",
+      "timeToRawResultObservedMs": 190979,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.1530795,
+      "commitmentsUsd": 0.0120255,
+      "recordedTokenPriceCostUsd": 0.0120255,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "8ed59243-f5e3-4144-811e-e1bb55bd0452",
+          "status": "completed",
+          "amount": 0.0120255,
+          "usage": {
+            "costUsd": 0.0120255,
+            "inputTokens": 21808,
+            "outputTokens": 2052
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 21808,
+          "candidatesTokenCount": 2052,
+          "totalTokenCount": 23860,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 21808
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "6ee9db8f096661a316bc40c08e515ebcb29111c453d49d259d2f741f98fe0e0e"
+      },
+      "validation": {
+        "schemaAndPointers": true,
+        "claims": 1,
+        "keyPoints": 3,
+        "mentions": 3,
+        "pointers": 13,
+        "independentCritique": "not_run",
+        "publication": "not_attempted",
+        "researchFidelity": "unverified"
+      },
+      "validationError": null,
+      "error": null
+    },
+    {
+      "runId": "ced7ba8a-3363-4478-a03d-ffa1b6e296e3",
+      "videoId": "fSx-Ho8mi18",
+      "kind": "text",
+      "mode": "immediate",
+      "status": "received",
+      "sourceHash": "1ee815c0f9953386ce47eb66632fdc78342a712f3ca75c90a504f530ea4b7e52",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "805d6afba8b1a407d8d97dc751cf9589854433e5fadfa49222ca883ea37ea1a4",
+      "payloadHash": "f4236609168daf04ba010a7542d887e3ba2a3f9498d4eabf22bb8ee75dba6764",
+      "schemaHash": "f614654c557c8c8104cc6a324a003d1ec2f3e98a906701716ba6caa9e14a6b39",
+      "requestFingerprint": "bf4c1e9a626fb304f04914421c3abdac646d7deefc73ed14dde44010acd0dc35",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": null,
+      "createdAt": "2026-10-21T05:11:03.122Z",
+      "lastObservedAt": "2026-10-21T05:16:44.528Z",
+      "submissionOrCallMs": 15156.681750000002,
+      "elapsedToLastObservationMs": 341406,
+      "firstResultObservedAt": "2026-10-21T05:11:18.296Z",
+      "timeToRawResultObservedMs": 15174,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.1530795,
+      "commitmentsUsd": 0.0253935,
+      "recordedTokenPriceCostUsd": 0.0253935,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "149c3ce3-0f71-4e30-9dfc-fdf1e11d3808",
+          "status": "completed",
+          "amount": 0.0253935,
+          "usage": {
+            "costUsd": 0.0253935,
+            "inputTokens": 21808,
+            "outputTokens": 2410
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 21808,
+          "candidatesTokenCount": 2410,
+          "totalTokenCount": 24218,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 21808
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "390166f462db5f348aee494c012d02cbb14563004a6431f3b18a9a7ae93bdc22"
+      },
+      "validation": {
+        "schemaAndPointers": true,
+        "claims": 1,
+        "keyPoints": 4,
+        "mentions": 3,
+        "pointers": 17,
+        "independentCritique": "not_run",
+        "publication": "not_attempted",
+        "researchFidelity": "unverified"
+      },
+      "validationError": null,
+      "error": null
+    },
+    {
+      "runId": "2cca3a23-9f56-407d-868e-b6548517329f",
+      "videoId": "Mepjkm_0ns4",
+      "kind": "text",
+      "mode": "batch",
+      "status": "completed",
+      "sourceHash": "92d20823bbd8c3918a7a67cc35d413b51f5165115a7a386369f304deab68789f",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "805d6afba8b1a407d8d97dc751cf9589854433e5fadfa49222ca883ea37ea1a4",
+      "payloadHash": "26732af3f991c04c62bb27364454e1e263122e9d722ccff8a880e2d2ae839365",
+      "schemaHash": "f614654c557c8c8104cc6a324a003d1ec2f3e98a906701716ba6caa9e14a6b39",
+      "requestFingerprint": "dcbb7e1618b8179991e999c4a0a2462865e9be225688eb3968989592e96f8009",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": "batches/ioet55114ol9q3lkbtokocb23spq9pw4hceq",
+      "createdAt": "2026-10-21T05:06:11.414Z",
+      "lastObservedAt": "2026-10-21T05:16:43.878Z",
+      "submissionOrCallMs": 7841.579332999999,
+      "elapsedToLastObservationMs": 632464,
+      "firstResultObservedAt": "2026-10-21T05:08:40.808Z",
+      "timeToRawResultObservedMs": 149394,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.115935,
+      "commitmentsUsd": 0.00488175,
+      "recordedTokenPriceCostUsd": 0.00488175,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "f2b312f2-5568-4fcf-9c64-5f8d96a05884",
+          "status": "completed",
+          "amount": 0.00488175,
+          "usage": {
+            "costUsd": 0.00488175,
+            "inputTokens": 10715,
+            "outputTokens": 2086
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 10715,
+          "candidatesTokenCount": 2086,
+          "totalTokenCount": 12801,
+          "cachedContentTokenCount": 9030,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 10715
+            }
+          ],
+          "cacheTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 9030
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "afea10a10ed97dd0c310cbdd04c1c0ecc876f09e65c5b75c7dc3c008167ac42f"
+      },
+      "validation": {
+        "schemaAndPointers": true,
+        "claims": 1,
+        "keyPoints": 5,
+        "mentions": 1,
+        "pointers": 14,
+        "independentCritique": "not_run",
+        "publication": "not_attempted",
+        "researchFidelity": "unverified"
+      },
+      "validationError": null,
+      "error": null
+    },
+    {
+      "runId": "6b58dd89-0b39-4999-a02b-0b56beb30d97",
+      "videoId": "Mepjkm_0ns4",
+      "kind": "text",
+      "mode": "immediate",
+      "status": "received",
+      "sourceHash": "92d20823bbd8c3918a7a67cc35d413b51f5165115a7a386369f304deab68789f",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "805d6afba8b1a407d8d97dc751cf9589854433e5fadfa49222ca883ea37ea1a4",
+      "payloadHash": "26732af3f991c04c62bb27364454e1e263122e9d722ccff8a880e2d2ae839365",
+      "schemaHash": "f614654c557c8c8104cc6a324a003d1ec2f3e98a906701716ba6caa9e14a6b39",
+      "requestFingerprint": "dcbb7e1618b8179991e999c4a0a2462865e9be225688eb3968989592e96f8009",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": null,
+      "createdAt": "2026-10-21T05:06:28.049Z",
+      "lastObservedAt": "2026-10-21T05:16:43.666Z",
+      "submissionOrCallMs": 12480.556166,
+      "elapsedToLastObservationMs": 615617,
+      "firstResultObservedAt": "2026-10-21T05:06:40.536Z",
+      "timeToRawResultObservedMs": 12487,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.115935,
+      "commitmentsUsd": 0.01474875,
+      "recordedTokenPriceCostUsd": 0.01474875,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "b2a09cae-7605-44b7-bc3e-83fee9fa6cdf",
+          "status": "completed",
+          "amount": 0.01474875,
+          "usage": {
+            "costUsd": 0.01474875,
+            "inputTokens": 10715,
+            "outputTokens": 1790
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 10715,
+          "candidatesTokenCount": 1790,
+          "totalTokenCount": 12505,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 10715
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "77d6265ba52cef40057d1c7c5cf78746ede4eafaf7bd0ab06b8c4b9a049bffee"
+      },
+      "validation": {
+        "schemaAndPointers": true,
+        "claims": 1,
+        "keyPoints": 5,
+        "mentions": 1,
+        "pointers": 11,
+        "independentCritique": "not_run",
+        "publication": "not_attempted",
+        "researchFidelity": "unverified"
+      },
+      "validationError": null,
+      "error": null
+    },
+    {
+      "runId": "53c8f930-cdbb-4e11-b4b9-566783147c66",
+      "videoId": "_mEvVWGfmjU",
+      "kind": "text",
+      "mode": "batch",
+      "status": "completed",
+      "sourceHash": "ccce03bd978b717b3c7d99cf2ddc9dfe8af20a75eeff05f74dbc1f253812ec9b",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "805d6afba8b1a407d8d97dc751cf9589854433e5fadfa49222ca883ea37ea1a4",
+      "payloadHash": "becaab7eb2de0c3f2ba27cfe17439fe55fe95906a70609f0cb98bdf23a9c2b84",
+      "schemaHash": "f614654c557c8c8104cc6a324a003d1ec2f3e98a906701716ba6caa9e14a6b39",
+      "requestFingerprint": "ae4da93ba5f7de20605e41d5cbffedab541fe0e56a84e9c34739c7ba26702546",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": "batches/1nxo41htcserzdnlay6yehfeyotzkuldafne",
+      "createdAt": "2026-10-21T05:09:19.785Z",
+      "lastObservedAt": "2026-10-21T05:16:44.327Z",
+      "submissionOrCallMs": 7432.682042,
+      "elapsedToLastObservationMs": 444542,
+      "firstResultObservedAt": "2026-10-21T05:13:39.160Z",
+      "timeToRawResultObservedMs": 259375,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.1331055,
+      "commitmentsUsd": 0.009894375,
+      "recordedTokenPriceCostUsd": 0.009894375,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "a0bb34bc-7a16-4b41-be0d-622512e4f8fa",
+          "status": "completed",
+          "amount": 0.009894375,
+          "usage": {
+            "costUsd": 0.009894375,
+            "inputTokens": 15655,
+            "outputTokens": 2146
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 15655,
+          "candidatesTokenCount": 2146,
+          "totalTokenCount": 17801,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 15655
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "b15529f8ba2333cccdf5d7c2383e3f7bf7633b3cf8e7871c9a82ee539a7e522d"
+      },
+      "validation": {
+        "schemaAndPointers": true,
+        "claims": 3,
+        "keyPoints": 3,
+        "mentions": 4,
+        "pointers": 18,
+        "independentCritique": "not_run",
+        "publication": "not_attempted",
+        "researchFidelity": "unverified"
+      },
+      "validationError": null,
+      "error": null
+    },
+    {
+      "runId": "f3edb27c-2e99-4240-b61b-2907fc04c0e0",
+      "videoId": "_mEvVWGfmjU",
+      "kind": "text",
+      "mode": "immediate",
+      "status": "received",
+      "sourceHash": "ccce03bd978b717b3c7d99cf2ddc9dfe8af20a75eeff05f74dbc1f253812ec9b",
+      "promptVersion": "evidence-first.web.v10-pm1",
+      "promptHash": "805d6afba8b1a407d8d97dc751cf9589854433e5fadfa49222ca883ea37ea1a4",
+      "payloadHash": "becaab7eb2de0c3f2ba27cfe17439fe55fe95906a70609f0cb98bdf23a9c2b84",
+      "schemaHash": "f614654c557c8c8104cc6a324a003d1ec2f3e98a906701716ba6caa9e14a6b39",
+      "requestFingerprint": "ae4da93ba5f7de20605e41d5cbffedab541fe0e56a84e9c34739c7ba26702546",
+      "requestedModel": "gemini-3.8-flash",
+      "sdk": "2.22.0",
+      "providerJob": null,
+      "createdAt": "2026-10-21T05:09:20.690Z",
+      "lastObservedAt": "2026-10-21T05:16:44.105Z",
+      "submissionOrCallMs": 14130.226083,
+      "elapsedToLastObservationMs": 443415,
+      "firstResultObservedAt": "2026-10-21T05:09:34.838Z",
+      "timeToRawResultObservedMs": 14148,
+      "providerQueueMs": null,
+      "providerProcessingMs": null,
+      "checkedFindingsMs": null,
+      "reviewedPublicationMs": null,
+      "maximumChargeUsd": 0.1331055,
+      "commitmentsUsd": 0.01978125,
+      "recordedTokenPriceCostUsd": 0.01978125,
+      "unresolvedHoldUsd": 0,
+      "attempts": [
+        {
+          "id": "95366c83-ee61-42bb-8da3-5502d172ee65",
+          "status": "completed",
+          "amount": 0.01978125,
+          "usage": {
+            "costUsd": 0.01978125,
+            "inputTokens": 15655,
+            "outputTokens": 2144
+          }
+        }
+      ],
+      "providerEvidence": {
+        "servedModelVersion": "gemini-3.8-flash",
+        "usageMetadata": {
+          "promptTokenCount": 15655,
+          "candidatesTokenCount": 2144,
+          "totalTokenCount": 17799,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 15655
+            }
+          ],
+          "serviceTier": "standard"
+        },
+        "responseSha256": "9057def4c7fef0d5bac39849e424e776921748bc567646142c95ef86cc302e63"
+      },
+      "validation": {
+        "schemaAndPointers": true,
+        "claims": 3,
+        "keyPoints": 4,
+        "mentions": 4,
+        "pointers": 15,
+        "independentCritique": "not_run",
+        "publication": "not_attempted",
+        "researchFidelity": "unverified"
+      },
+      "validationError": null,
+      "error": null
+    }
+  ],
+  "audits": [
+    {
+      "videoId": "Mepjkm_0ns4",
+      "state": "stopped",
+      "requestedModel": "anthropic/claude-sonnet-5",
+      "error": "Provider HTTP 401. No automatic paid retry. Provider said: API key expired.",
+      "accepted": null,
+      "rejected": null,
+      "totalMs": 301.8151250000001,
+      "attempts": [
+        {
+          "id": "b991626e-31c7-43ac-a439-d8eabfa0a2e2",
+          "status": "released",
+          "amount": 0,
+          "metrics": {
+            "reservedAt": "2026-10-21T05:10:38.220Z",
+            "release": {
+              "reason": "Provider HTTP 401. No automatic paid retry. Provider said: API key expired.",
+              "at": "2026-10-21T05:10:38.475Z"
+            }
+          },
+          "runId": "67461c3e-2276-43f4-ba64-bcfe528e833c",
+          "stage": "critique",
+          "attempt": 1,
+          "priceTableVersion": null,
+          "reservationRates": null,
+          "open": false
+        }
+      ]
+    }
+  ],
+  "scaling": [
+    {
+      "videosPerDay": 50,
+      "totalDailyAtTargetUsd": 7.5,
+      "totalDailyAtHardObjectiveUsd": 25,
+      "example": {
+        "eligibleSpendFraction": 0.4,
+        "grossSavingUsd": 0.04,
+        "netSavingUsd": 0.03,
+        "netSavingFraction": 0.15,
+        "meetsProposedGate": true
+      },
+      "exampleDailyNetUsd": 8.5,
+      "kind": "illustrative_not_measured"
+    },
+    {
+      "videosPerDay": 250,
+      "totalDailyAtTargetUsd": 37.5,
+      "totalDailyAtHardObjectiveUsd": 125,
+      "example": {
+        "eligibleSpendFraction": 0.4,
+        "grossSavingUsd": 0.04,
+        "netSavingUsd": 0.03,
+        "netSavingFraction": 0.15,
+        "meetsProposedGate": true
+      },
+      "exampleDailyNetUsd": 42.5,
+      "kind": "illustrative_not_measured"
+    },
+    {
+      "videosPerDay": 1000,
+      "totalDailyAtTargetUsd": 150,
+      "totalDailyAtHardObjectiveUsd": 500,
+      "example": {
+        "eligibleSpendFraction": 0.4,
+        "grossSavingUsd": 0.04,
+        "netSavingUsd": 0.03,
+        "netSavingFraction": 0.15,
+        "meetsProposedGate": true
+      },
+      "exampleDailyNetUsd": 170,
+      "kind": "illustrative_not_measured"
+    }
+  ],
+  "quality": {
+    "independentAudioReferences": 0,
+    "verifiedWer": null,
+    "verifiedCer": null,
+    "verifiedTimestampError": null,
+    "liveIndependentAudits": 0,
+    "reviewedPublications": 0,
+    "allInSavingMeasured": null
+  },
+  "breakEven": {
+    "formula": "savingFraction = 0.5 * eligibleSpendFraction - incrementalOverheadUsd / synchronousAllInUsd",
+    "minimumEligibleFractionFor15PercentWithZeroOverhead": 0.3
+  },
+  "historical": {
+    "totalRecordedUsd": 0.951700502,
+    "groups": {
+      "nativeChildText": 0.10479075,
+      "nativeRootText": 0.3828876,
+      "other": 0.001426152,
+      "openrouter": 0.462596
+    },
+    "currentRootEligibleUsd": 0.3828876,
+    "allNativeTextEligibleUsd": 0.48767835,
+    "kind": "historical token-ledger attribution; potential discount, not measured Batch or all-in saving",
+    "callsSha256": "dc5eee1d55e63b10c8e61a32e788d12fe326b18b963e4eaca7a7790a28ff29d1",
+    "runsSha256": "9acefbd09749d3e6791d38d0226ed8bf1efa667b68e9df77cea6e6fbcff55769"
+  },
+  "sourceAgreement": [
+    {
+      "videoId": "fSx-Ho8mi18",
+      "referenceKind": "native_captions_transcriptapi",
+      "referenceHash": "2a0e5bdf05e5d3bab7e200ec9314bfb3d06707e7681da8bd91f46f0d788eeef4",
+      "candidateHash": "8d5ee0118dba96526113771d118690682f9095151495250644fdc5ff4b3aaf0f",
+      "referenceUnits": 52,
+      "candidateUnits": 63,
+      "edits": {
+        "errors": 20,
+        "substitutions": 5,
+        "deletions": 2,
+        "insertions": 13
+      },
+      "normalizedEditAgreement": 0.6825396825,
+      "boundaryCuesIndependentlyReviewed": false,
+      "scope": "caption text agreement only; full cues within 0-30s; boundary omissions can inflate edit distance",
+      "verifiedWordErrorRate": null,
+      "verifiedCharacterErrorRate": null,
+      "verifiedTimestampError": null
+    },
+    {
+      "videoId": "Mepjkm_0ns4",
+      "referenceKind": "native_captions_transcriptapi",
+      "referenceHash": "df2e1ba067d46a64cb7e34c99ddd4d1637d406d42b3e6e9f2fb27bf48e88d2e3",
+      "candidateHash": "78caa6e9431516e5c341179e8f293cf5e45b5a77df2ebe85e372353b22f5fa4e",
+      "referenceUnits": 84,
+      "candidateUnits": 90,
+      "edits": {
+        "errors": 9,
+        "substitutions": 1,
+        "deletions": 1,
+        "insertions": 7
+      },
+      "normalizedEditAgreement": 0.9,
+      "boundaryCuesIndependentlyReviewed": false,
+      "scope": "caption text agreement only; full cues within 0-30s; boundary omissions can inflate edit distance",
+      "verifiedWordErrorRate": null,
+      "verifiedCharacterErrorRate": null,
+      "verifiedTimestampError": null
+    },
+    {
+      "videoId": "_mEvVWGfmjU",
+      "referenceKind": "native_captions_transcriptapi",
+      "referenceHash": "b16b96993a077e5d6fe4fc4195c52f07d2a33ea97fa6d69b43464f17497d9c12",
+      "candidateHash": "ba47dcf2b0e543606186edfcc47b833aebb24fa597e9a07c3dbd6b6c4299e5c1",
+      "referenceUnits": 79,
+      "candidateUnits": 88,
+      "edits": {
+        "errors": 21,
+        "substitutions": 4,
+        "deletions": 4,
+        "insertions": 13
+      },
+      "normalizedEditAgreement": 0.7613636364,
+      "boundaryCuesIndependentlyReviewed": false,
+      "scope": "caption text agreement only; full cues within 0-30s; boundary omissions can inflate edit distance",
+      "verifiedWordErrorRate": null,
+      "verifiedCharacterErrorRate": null,
+      "verifiedTimestampError": null
+    }
+  ],
+  "pairedExtractionCosts": [
+    {
+      "videoId": "fSx-Ho8mi18",
+      "synchronousUsd": 0.0253935,
+      "batchUsd": 0.0120255,
+      "savingFraction": 0.5264339299,
+      "scope": "same-input extraction stage only; cache/output variation remains; no all-in or research-quality claim"
+    },
+    {
+      "videoId": "Mepjkm_0ns4",
+      "synchronousUsd": 0.01474875,
+      "batchUsd": 0.00488175,
+      "savingFraction": 0.669005848,
+      "scope": "same-input extraction stage only; cache/output variation remains; no all-in or research-quality claim"
+    },
+    {
+      "videoId": "_mEvVWGfmjU",
+      "synchronousUsd": 0.01978125,
+      "batchUsd": 0.009894375,
+      "savingFraction": 0.4998104265,
+      "scope": "same-input extraction stage only; cache/output variation remains; no all-in or research-quality claim"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "version": "delivery-ledger.v1",
-  "updated": "2026-10-12",
+  "updated": "2026-10-21",
   "source": "docs/spec/youtube-intelligence-v2-build-plan.md",
   "readMeFirst": "This file is the single source of truth for where delivery stands. tests/delivery-ledger.test.ts keeps it honest; update it in the same commit as the work it describes.",
   "statusMeaning": {
@@ -1834,6 +1834,37 @@
       "note": "Pre-merge gate on the PR #19 head in fixture mode: 112/112 browser matrix cells (28 surfaces x 1440/390 x light/dark), 11/11 flows, no page-wide overflow at 390, no application console errors; 14 defects fixed during and after the gate. Loading states deferred (gate-debt.md). No live-provider run or LeapEdge comparison; the offline promotion gate measured nothing (binding.total 0). A human approves the gate before merge.",
       "planned": true,
       "pr": 19
+    },
+    {
+      "id": "F40b",
+      "phase": 3,
+      "lane": "automation",
+      "title": "Isolated Gemini Batch feasibility audit and billing regression repairs",
+      "spec": "4.4, 4.8, 5, 9",
+      "status": "in-review",
+      "planned": false,
+      "prereqs": [
+        "F40",
+        "F17"
+      ],
+      "files": [
+        "src/server/youtube-intelligence/batch.ts",
+        "src/server/youtube-intelligence/pipeline.ts",
+        "scripts/gemini-batch-experiment.ts",
+        "scripts/gemini-batch-report.ts",
+        "scripts/gemini-batch-audit.ts",
+        "scripts/gemini-batch-postgres-check.ts",
+        "docs/experiments/gemini-batch-20261021/README.md"
+      ],
+      "tests": [
+        "tests/batch.test.ts",
+        "tests/gemini-batch-experiment.test.ts",
+        "tests/gemini-batch-sdk.test.ts",
+        "tests/gemini-batch-report.test.ts",
+        "tests/gemini-batch-audit.test.ts"
+      ],
+      "pr": 46,
+      "note": "Draft experiment only. Usage/unknown-hold replay, admission and diagnostic repairs under review; no production deployment, mode/default change or quality promotion. Exact Batch media request rejected HTTP400 with lost legacy detail; three frozen text Batch jobs completed. Independent live critic unavailable (expired key), so reviewed investment quality and all-in economics remain unproven."
     }
   ],
   "executionScope": "docs/delivery/standalone-scope.json",
@@ -2809,5 +2840,19 @@
       "completed": 6,
       "unfinished": 0
     }
+  },
+  "geminiBatchExperiment20261021": {
+    "status": "in-review",
+    "pr": 46,
+    "report": "docs/experiments/gemini-batch-20261021/README.md",
+    "productionDefaultsChanged": false,
+    "deployed": false,
+    "maxAdditionalLiveTestUsd": 5,
+    "verified": "Flash3.8 synchronous YouTube interval access and frozen text batch compatibility; deterministic and isolated real-Postgres checks.",
+    "unverified": "Independent speech/timestamp accuracy, cross-family live audit, end-to-end reviewed publication, grouped live throughput and >=15% all-in saving.",
+    "decision": "No production promotion; retain manual synchronous UX and investigate opt-in text-only backfills after operational/pricing/quality prerequisites.",
+    "liveRecordedModelCostUsd": 0.097319625,
+    "liveUnresolvedHoldUsd": 0,
+    "liveReviewedPublications": 0
   }
 }
