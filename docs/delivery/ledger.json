@@ -2853,6 +2853,15 @@
     "decision": "No production promotion; retain manual synchronous UX and investigate opt-in text-only backfills after operational/pricing/quality prerequisites.",
     "liveRecordedModelCostUsd": 0.097319625,
     "liveUnresolvedHoldUsd": 0,
-    "liveReviewedPublications": 0
+    "liveReviewedPublications": 0,
+    "verification": {
+      "implementationCommit": "2a0be70357037083faa2e801822ed3205deee1a8",
+      "ci": "both push and PR checks passed",
+      "tests": 1231,
+      "passed": 1230,
+      "skipped": 1,
+      "failed": 0,
+      "sourceSnapshot": "3d180195036359bc38c3bc313818eeef42f896a072ec8bcb2616f5624c6121f5"
+    }
   }
 }
